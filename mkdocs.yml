@@ -69,6 +69,11 @@ pages:
 - 'Introduction': 'index.md'
 - 'Getting started': 'getting-started.md'
 
+- 'Concepts':
+  - 'Synchronization': 'concept-synchronization.md'
+  - 'Matchmaking': 'concept-matchmaking.md'
+  - 'Worker processes': 'concept-worker-processes.md'
+
 - 'Server API': 
   - 'Room API': 'api-room.md'
   - 'Room handlers': 'api-room-handlers.md'

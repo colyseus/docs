@@ -1,37 +1,5 @@
 # Architecture
 
-### Clustered Environment
-
-
-```
-                +----------------+                                                      
-                | Master process |                                                      
-                +--------|-------+                                                      
-                         |                                                              
-              +----------+-----------+                                                  
-              | Match-making process |                                                  
-              +----------------------+                                                  
-                         |                                                              
-         +----------------                                                              
-         |                                                                              
-+--------|-------+----------------+----------------+                                    
-| Worker process | Worker process | Worker process |                                    
-+----------------+----------------+----------------+                                    
-  # FooRoom        # FooRoom        # QuxRoom                                           
-  # BarRoom                
-```
-
-### Master process
-
-The master process will handle redirecting the WebSocket connection to the suitable process. When not connected to a room, the Match-making process will be selected for that connection.
-
-### Match-making process
-
-The Match-making process is responsible for responding to requests for joining a room/session. After the request has been completed, the client will establish a new WebSocket connection which will be redirected the Worker process that room is living in.
-
-### Worker process
-
-Each Worker processes can handle multiple rooms/sessions.
 
 ## State sync / Binary patches
 

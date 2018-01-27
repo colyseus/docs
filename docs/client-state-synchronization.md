@@ -1,5 +1,3 @@
-> THIS IS A DRAFT DOCUMENT
-
 Whenever the [state mutates](Room-state) in the server-side, you can listen to particular variable changes in the client-side.
 
 The `Room` instance in the client-side uses [delta-listener](https://github.com/endel/delta-listener) to allow you to trigger callbacks for particular mutations.
