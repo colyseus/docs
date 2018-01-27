@@ -3,7 +3,7 @@ site_name: 'Colyseus - Multiplayer Game Server for Node.js'
 site_description: 'Documentation for Colyseus Multiplayer Game Server for Node.js'
 site_author: 'gamestd.io'
 site_url: 'https://colyseus.io/'
-edit_uri: 'https://github.com/gamestdio/colyseus/edit/master/docs/'
+edit_uri: 'https://github.com/colyseus/docs/edit/master/docs/'
 
 # Deployment
 remote_name: 'origin'
