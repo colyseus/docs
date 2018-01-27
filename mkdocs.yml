@@ -1,0 +1,89 @@
+# Project information
+site_name: 'Colyseus - Multiplayer Game Server for Node.js'
+site_description: 'Documentation for Colyseus Multiplayer Game Server for Node.js'
+site_author: 'gamestd.io'
+site_url: 'https://colyseus.io/'
+edit_uri: 'https://github.com/gamestdio/colyseus/edit/master/docs/'
+
+# Deployment
+remote_name: 'origin'
+remote_branch: 'gh-pages'
+
+# Repository
+repo_name: 'gamestdio/colyseus'
+repo_url: 'https://github.com/gamestdio/colyseus'
+
+# Copyright
+copyright: 'Copyright &copy; 2018 Endel Dreyer'
+
+# Documentation and theme
+theme:
+  name: 'material'
+  language: 'en'
+  logo: 'images/logo-white.png'
+  favicon: 'images/favicon.ico'
+  palette:
+    primary: 'indigo'
+    accent: 'indigo'
+  font:
+    text: 'Roboto'
+    code: 'Roboto Mono'
+
+extra_css:
+  - 'stylesheets/code-tabs.css'
+
+extra_javascript:
+  - 'javascripts/main.js'
+
+# Options
+extra:
+  search:
+    language: 'en'
+  social:
+  - type: 'money'
+    link: 'https://www.patreon.com/endel'
+  - type: 'comments'
+    link: 'https://discuss.colyseus.io'
+  - type: 'globe'
+    link: 'http://colyseus.io'
+  - type: 'github'
+    link: 'https://github.com/gamestdio'
+  - type: 'twitter'
+    link: 'https://twitter.com/gstdio'
+  - type: 'linkedin'
+    link: 'https://www.linkedin.com/company/game-std-io/'
+
+# Extensions
+markdown_extensions:
+  - admonition
+  - codehilite:
+      linenums: False
+      guess_lang: False
+  - toc:
+      permalink: True
+  - markdown_fenced_code_tabs:
+      single_block_as_tab: False
+
+# Nav menu
+pages:
+- 'Introduction': 'index.md'
+- 'Getting started': 'getting-started.md'
+
+- 'Server API': 
+  - 'Room API': 'api-room.md'
+  - 'Room handlers': 'api-room-handlers.md'
+  - 'State handling': 'api-room-state.md'
+  - 'Authentication': 'api-authentication.md'
+  - 'Graceful shutdown': 'api-graceful-shutdown.md'
+  - 'Debugging': 'api-debugging.md'
+
+- 'Client API': 
+  - 'Overview': 'client-overview.md'
+  - 'State synchronization': 'client-state-synchronization.md'
+
+- 'Deployment': 'deployment.md'
+- 'FAQ': 'faq.md'
+
+- 'More': 
+  - 'Architecture': 'architecture.md'
+  - 'Roadmap': 'roadmap.md'
