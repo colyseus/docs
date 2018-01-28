@@ -74,7 +74,7 @@ pages:
   - 'Matchmaking': 'concept-matchmaking.md'
   - 'Worker processes': 'concept-worker-processes.md'
 
-- 'Server API': 
+- 'Server-side': 
   - 'Room API': 'api-room.md'
   - 'Room handlers': 'api-room-handlers.md'
   - 'State handling': 'api-room-state.md'
@@ -82,7 +82,7 @@ pages:
   - 'Graceful shutdown': 'api-graceful-shutdown.md'
   - 'Debugging': 'api-debugging.md'
 
-- 'Client API': 
+- 'Client-side': 
   - 'Overview': 'client-overview.md'
   - 'State synchronization': 'client-state-synchronization.md'
 
