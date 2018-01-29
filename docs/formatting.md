@@ -1,8 +1,8 @@
 !!! Warning "Important"
     This is a warning
 
-!!! Tip
-    This is a tip
+!!! tip
+    this is a tip
 
 !!! Note "Server configuration"
     This is a note

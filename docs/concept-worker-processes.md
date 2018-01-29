@@ -8,12 +8,9 @@ The clustered environment is recommended for your production environment. To lev
 import * as cluster from "cluster";
 import * as path from 'path';
 import * as express from 'express';
-
 import { ClusterServer } from "colyseus";
-import { ChatRoom } from "./ChatRoom";
 
 const PORT = 8080;
-
 const gameServer = new ClusterServer();
 
 if (cluster.isMaster) {
@@ -23,10 +20,6 @@ if (cluster.isMaster) {
 } else {
   const app = new express();
 
-  // Register ChatRoom as "chat"
-  gameServer.register("chat", ChatRoom);
-
-  // Create HTTP Server
   gameServer.attach({ server: app });
 }
 
@@ -37,12 +30,9 @@ console.log(`Listening on ${ PORT }`);
 const cluster = require("cluster");
 const path = require("path");
 const express = require("express");
-
 const ClusterServer = require("colyseus").ClusterServer;
-const ChatRoom = require("./ChatRoom").ChatRoom;
 
 const PORT = 8080;
-
 const gameServer = new ClusterServer();
 
 if (cluster.isMaster) {
@@ -52,10 +42,6 @@ if (cluster.isMaster) {
 } else {
   const app = new express();
 
-  // Register ChatRoom as "chat"
-  gameServer.register("chat", ChatRoom);
-
-  // Create HTTP Server
   gameServer.attach({ server: app });
 }
 
@@ -102,9 +88,7 @@ The single process environment is lightweight and is best for local development 
 ```typescript fct_label="TypeScript"
 import * as http from "http";
 import * as express from "express";
-
 import { Server } from "colyseus";
-import { ChatRoom } from "./ChatRoom";
 
 const port = 8080;
 const endpoint = "localhost";
@@ -115,19 +99,15 @@ const app = express();
 const server = http.createServer(app);
 const gameServer = new Server({ server: server });
 
-// Register ChatRoom as "chat"
-gameServer.register("chat", ChatRoom);
+// Listen on port
 gameServer.listen(port);
-
 console.log(`Listening on http://${ endpoint }:${ port }`)
 ```
 
 ```typescript fct_label="JavaScript"
 const http = require("http");
 const express = require("express");
-
 const Server = require("colyseus").Server;
-const ChatRoom = require("./ChatRoom").ChatRoom;
 
 const port = 8080;
 const endpoint = "localhost";
@@ -138,9 +118,7 @@ const app = express();
 const server = http.createServer(app);
 const gameServer = new Server({ server: server });
 
-// Register ChatRoom as "chat"
-gameServer.register("chat", ChatRoom);
+// Listen on port
 gameServer.listen(port);
-
 console.log(`Listening on http://${ endpoint }:${ port }`)
 ```

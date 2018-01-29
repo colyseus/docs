@@ -5,27 +5,26 @@ Considering that you already [set up your server](concept-worker-processes), now
 You'll define session handlers creating classes that extends from `Room`.
 
 ```typescript fct_label="TypeScript"
-import { Room } from "colyseus";
+import { Room, Client } from "colyseus";
 
 export class MyRoom extends Room {
-
     // When room is initialized
-    onInit (options) {} 
+    onInit (options: any) { } 
 
     // Checks if a new client is allowed to join. (default: `return true`)
-    requestJoin (options) {} 
+    requestJoin (options: any) { } 
 
     // When client successfully join the room
-    onJoin (client) {} 
+    onJoin (client: Client) { } 
 
     // When a client leaves the room
-    onLeave (client) {} 
+    onLeave (client: Client) { } 
 
     // When a client sends a message
-    onMessage (client, data) {} 
+    onMessage (client: Client, data: any) { } 
 
     // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
-    onDispose () {} 
+    onDispose () { }
 }
 ```
 
@@ -35,7 +34,10 @@ Room handlers can implement all these methods.
 
 ### `onInit (options)`
 
-Is called once when room is initialized.
+Is called once when room is initialized. You may specify custom initialization options when registering the room handler.
+
+!!! Tip
+    The `options` will contain the merged values you specified on [Server#register()](api-server/#register-name-string-handler-room-options-any) + the options provided by the first client on `client.join()`
 
 ### `verifyClient (client, options)`
 
@@ -88,58 +90,65 @@ You can define this function as `async`. See [graceful shutdown](api-graceful-sh
 
 ## Public properties
 
-### `patchRate` 
+### `clients: WebSocket[]` 
 
-Frequency to send the room state to connected clients (in milliseconds)
+The array of connected clients.
 
-### `maxClients` 
+### `maxClients: number`
 
 Maximum number of clients allowed to connect into the room
 
-### `autoDispose` 
+### `patchRate: number`
+
+Frequency to send the room state to connected clients (in milliseconds)
+
+See [state synchronization](concept-state-synchronization/).
+
+### `autoDispose: boolean`
 
 Automatically dispose the room when last client disconnect. (default: `true`)
 
-### `clock` 
+### `clock: ClockTimer` 
 
-A [`ClockTimer`](https://github.com/gamestdio/clock-timer.js) instance
-
-### `clients` 
-
-Array of connected clients
+A [`ClockTimer`](https://github.com/gamestdio/timer#api) instance.
 
 ## Public methods
 
 Room handlers have these methods available.
 
-### `setState( object )` 
+### `setState (object)` 
+
+Set the new room state. 
+
+!!! tip
+    You'll usually call this method only once in your handler.
 
 Set the current state to be broadcasted / patched.
 
-### `setSimulationInterval( callback[, milliseconds=16.6] )` 
+### `setSimulationInterval (callback[, milliseconds=16.6])` 
 
 (Optional) Create the simulation interval that will change the state of the game. Default simulation interval: 16.6ms (60fps)
 
-### `setPatchRate( milliseconds )` 
+### `setPatchRate (milliseconds)` 
 
 Set frequency the patched state should be sent to all clients. (default: `50` = 20fps)
 
-### `send( client, data )` 
+### `send (client, data)` 
 
 Send data to a particular client
 
-### `lock()` 
+### `lock ()` 
 
-Prevent new clients from joining the room
+Locking the room will remove it from the pool of available rooms for new clients to connect to.
 
-### `unlock()`
+### `unlock ()`
 
-Unlock the room for new clients
+Unlocking the room returns it to the pool of available rooms for new clients to connect to.
 
-### `broadcast( data )`
+### `broadcast ( data )`
 
-Send data to all connected clients
+Send raw data to all connected clients.
 
-### `disconnect()`
+### `disconnect ()`
 
 Disconnect all clients, then dispose

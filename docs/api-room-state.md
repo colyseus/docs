@@ -1,50 +1,39 @@
-The room handlers are stateful in Colyseus. Each room holds its own state. The server automatically broadcasts the changes (patched state) to all connected clients in a configurable interval.
+The room handlers are **stateful** in Colyseus. Each room holds its own state. To allow [synchronization](concept-state-synchronization), you **must** mutate the room's state. The server automatically broadcasts the changes to all connected clients at each patch interval.
 
-**Room state diagram:**
+## Raw Object State
 
-```
-              room.send({ action: "left" })                             
-                                                                        
-                           |                                            
-      +------------+       |       +-----------------------------------+
-+-----| Client #1  --------|       |  Room handler #1                  |
-|     +------------+       |       |                                   |
-|     +------------+       |       |  onMessage (client, data) {       |
-|------ Client #2  |       --------+    if (data.action === "left") {  |
-|     +------------+               |      // update the room state     |
-|     +------------+               |    }                              |
-|------ Client #3  |               |  }                                |
-|     +------------+               +-----------------------------------+
-|                                                    |                  
-|        patch state broadcast (binary diff)         |                  
-|----------------------------------------------------+
-```
+The simplest way to deal with the room state is using a raw JavaScript objects directly in the `Room` handler.
 
-There are two ways of dealing with the room state: using plain JavaScript objects, or having a state handler class.
+```typescript
+import { Room, Client } from "colyseus";
 
-## Plain Object State
+class BattleRoom extends Room {
 
-The simplest way to deal with the room state is using a plain JavaScript object.
-
-```javascript
-class ChatRoom extends Room {
-  constructor(options) {
-    super(options)
-
-    // broadcast patched state every 1 second
-    this.setPatchRate( 1000 )
-
-    // use a plain object state, holding the room "messages".
+  onInit (options: any) {
     this.setState({
       messages: []
-    })
+    });
   }
 
-  onMessage (client, data) {
-    this.state.messages.push(data.message)
+  onMessage (client: Client, data: any) {
+    this.state.messages.push(data.message);
   }
 }
 ```
+
+## Best practices
+
+### Data structures
+
+Use small data structures to re
+
+### Map of entities (`EntityMap`)
+
+### Private variables (`@nosync`)
+
+### Avoid mutating arrays
+
+You can use arrays in your room's state. If possible, avoid mutating them because it's tricky to synchronize the state properly in the client-side when you do.
 
 ## State Handler Class
 

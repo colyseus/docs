@@ -75,9 +75,9 @@ pages:
   - 'Worker processes': 'concept-worker-processes.md'
 
 - 'Server-side': 
-  - 'Room API': 'api-room.md'
-  - 'Room handlers': 'api-room-handlers.md'
-  - 'State handling': 'api-room-state.md'
+  - 'Web-Socket Server': 'api-server.md'
+  - 'Room': 'api-room.md'
+  - 'State management': 'api-room-state.md'
   - 'Authentication': 'api-authentication.md'
   - 'Graceful shutdown': 'api-graceful-shutdown.md'
   - 'Debugging': 'api-debugging.md'
