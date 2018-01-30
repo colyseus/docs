@@ -49,7 +49,7 @@ See [authentication](api-authentication) section.
 
 ### `requestJoin (options)` 
 
-Synchronous function used to checks if a new client is allowed to join. 
+Synchronous function used to check if a new client is allowed to join. 
 
 If left non-implemented it returns `true`, allowing any client to connect.
 
