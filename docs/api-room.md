@@ -120,8 +120,8 @@ Room handlers have these methods available.
 
 Set the new room state.
 
-!!! Warning "Important"
-    Do not use this method to update the room state. The binary patch algorithm is re-set every time you call `setState`.
+!!! Warning 
+    Do not call this method for updates in the room state. The binary patch algorithm is re-set every time you call it.
 
 !!! tip
     You'll usually call this method only once (on [`Room.onInit()`](#oninit-options)) in your room handler.
