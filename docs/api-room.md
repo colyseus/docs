@@ -92,7 +92,7 @@ You can define this function as `async`. See [graceful shutdown](api-graceful-sh
 
 ### `clients: WebSocket[]` 
 
-The array of connected clients.
+The array of connected clients. See [Web-Socket Client](api-client).
 
 ### `maxClients: number`
 
@@ -118,12 +118,13 @@ Room handlers have these methods available.
 
 ### `setState (object)` 
 
-Set the new room state. 
+Set the new room state.
+
+!!! Warning "Important"
+    Do not use this method to update the room state. The binary patch algorithm is re-set every time you call `setState`.
 
 !!! tip
-    You'll usually call this method only once in your handler.
-
-Set the current state to be broadcasted / patched.
+    You'll usually call this method only once (on [`Room.onInit()`](#oninit-options)) in your room handler.
 
 ### `setSimulationInterval (callback[, milliseconds=16.6])` 
 
@@ -135,7 +136,22 @@ Set frequency the patched state should be sent to all clients. (default: `50` = 
 
 ### `send (client, data)` 
 
-Send data to a particular client
+Send data to a particular client.
+
+```typescript fct_label="Server"
+this.send(client, { message: "Hello world!" });
+```
+
+```typescript fct_label="Client: JavaScript"
+room.onData.add(function(data) {
+    console.log(data);
+    // => {message: "Hello world!"}
+});
+```
+
+```typescript fct_label="Client: C#"
+room.OnData += (object sender, MessageEventArgs e) => Debug.Log(e.data);
+```
 
 ### `lock ()` 
 
@@ -149,6 +165,22 @@ Unlocking the room returns it to the pool of available rooms for new clients to 
 
 Send raw data to all connected clients.
 
+```typescript fct_label="Server"
+this.broadcast({ message: "Hello world!" });
+```
+
+```typescript fct_label="Client: JavaScript"
+room.onData.add(function(data) {
+    console.log(data);
+    // => {message: "Hello world!"}
+});
+```
+
+```typescript fct_label="Client: C#"
+room.OnData += (object sender, MessageEventArgs e) => Debug.Log(e.data);
+```
+
+
 ### `disconnect ()`
 
-Disconnect all clients, then dispose
+Disconnect all clients, then dispose.

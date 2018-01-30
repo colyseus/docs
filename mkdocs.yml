@@ -78,6 +78,7 @@ pages:
 - 'Server-side': 
   - 'Web-Socket Server': 'api-server.md'
   - 'Room': 'api-room.md'
+  - 'Web-Socket Client': 'api-client.md'
   - 'State management': 'api-room-state.md'
   - 'Authentication': 'api-authentication.md'
   - 'Graceful shutdown': 'api-graceful-shutdown.md'
