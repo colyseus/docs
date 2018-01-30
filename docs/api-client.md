@@ -8,6 +8,10 @@ The `client` instance present on:
 - [`Room#onMessage()`](api-room/#onmessage-client-data)
 - [`Room#onLeave()`](api-room/#onleave-client)
 
+
+!!! Note 
+    This is the raw WebSocket connection coming from the [`ws`](https://www.npmjs.com/package/ws) package. There are more methods available which aren't encouraged to use along with Colyseus.
+
 ## Methods
 
 ### `close(code?: number)`

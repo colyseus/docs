@@ -10,7 +10,7 @@ Recommended for development and prototyping environments.
 
 ### `register (name: string, handler: Room, options?: any)`
 
-Register a new session handler. 
+Register a new session handler.
 
 **Parameters:**
 
@@ -28,6 +28,30 @@ gameServer.register("battle", BattleRoom);
 
 !!! Tip
     You may register the same room handler multiple times with different `options`. When [Room#onInit()](http://localhost:8000/api-room/#oninit-options) is called, the `options` will contain the merged values you specified on [Server#register()](api-server/#register-name-string-handler-room-options-any) + the options provided by the first client on `client.join()`
+
+#### Listening to matchmake events
+
+The `register` method will return the registered handler instance, which you can listen to match-making events from outside the room instance scope. Such as:
+
+- `"create"` - when a room has been created
+- `"dispose"` - when a room has been disposed
+- `"join"` - when a client join a room
+- `"leave"` - when a client leave a room
+- `"lock"` - when a room has been locked
+- `"unlock"` - when a room has been unlocked
+
+**Usage:**
+
+```typescript
+gameServer.register("chat", ChatRoom).
+  on("create", (room) => console.log("room created:", room.roomId)).
+  on("dispose", (room) => console.log("room disposed:", room.roomId)).
+  on("join", (room, client) => console.log(client.id, "joined", room.roomId)).
+  on("leave", (room, client) => console.log(client.id, "left", room.roomId));
+```
+
+!!! Warning
+    It's completely discouraged to manipulate a room's state through these events. Use the [abstract methods](api-room/#abstract-methods) in your room handler instead.
 
 ### `attach (options: any)`
 
