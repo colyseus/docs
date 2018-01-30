@@ -1,139 +1,175 @@
 The room handlers are **stateful** in Colyseus. Each room holds its own state. To allow [synchronization](concept-state-synchronization), you **must** mutate the room's state. The server automatically broadcasts the changes to all connected clients at each patch interval.
 
+!!! Tip
+    - For synchronization with the client-side, see [client-side state synchronization](client-state-synchronization).
+    - See Colyseus' technical approach on [state synchronization](concept-state-synchronization).
+
 ## Raw Object State
 
 The simplest way to deal with the room state is using a raw JavaScript objects directly in the `Room` handler.
 
+**On the following example, you'll see:**
+
+- Creating player upon client connection.
+- Handling client-side actions and updating the state to move `x` position.
+- Removing player upon client disconnection.
+
 ```typescript
 import { Room, Client } from "colyseus";
 
-class BattleRoom extends Room {
+export class BattleRoom extends Room {
 
   onInit (options: any) {
     this.setState({
-      messages: []
+      players: {}
     });
   }
 
-  onMessage (client: Client, data: any) {
-    this.state.messages.push(data.message);
+  onJoin (client) {
+    this.state.players[ client.sessionId ] = {
+      x: 0,
+      y: 0 
+    };
+  }
+
+  onLeave (client) {
+    delete this.state.players[ client.sessionId ];
+  }
+
+  onMessage (client, data) {
+    if (data.action === "left") {
+      this.state.players[ client.sessionId ].x -= 1;
+
+    } else if (data.action === "right") {
+      this.state.players[ client.sessionId ].x += 1;
+    }
   }
 }
 ```
 
-## Best practices
+## Your Own Data Structures
 
-### Data structures
+Whilst it's possible to use raw data directly on `this.state`. The recommended way to handle your state is through your own data structures. By creating your own structures, you can have a more decoupled structure to represent your state. 
 
-Use small data structures to re
+**On the following (rewritten) example, you'll see:**
 
-### Map of entities (`EntityMap`)
+- A clean `BattleRoom` implementation, directly coupled to the state structure.
+- A large data structure holding the entire room state (`BattleState`)
+    - Usage of built-in [`EntityMap`](#map-of-entities-entitymap) type.
+    - Methods manipulating smaller data structures
+- A small decoupled data structure representing a single entity (`Player`)
 
-### Private variables (`@nosync`)
+```typescript fct_label="BattleState.ts"
+// BattleRoom.ts
+import { Room, Client } from "colyseus";
+import { BattleState } from "./BattleState";
 
-### Avoid mutating arrays
+export class BattleRoom extends Room<BattleState> {
 
-You can use arrays in your room's state. If possible, avoid mutating them because it's tricky to synchronize the state properly in the client-side when you do.
-
-## State Handler Class
-
-Even though you can use plain objects to define the state directly in the room handler, the recommended way is to define your own data structures for it, and methods to manipulate the state inside these data structures.
-
-You can use the `@nosync` decorator to define data that won't be synched with the clients (non-enumerable).
-
-```typescript
-import { nosync, EntityMap } from "colyseus";
-
-export class StateHandler {
-  players: any = {};
-
-  @nosync mapBuilder =  new MapBuilder();
-
-  constructor () {
-    this.players = {};
-    this.map = this.mapBuilder.build();
-  }
-
-  restart () {
-    this.map = this.mapBuilder.build();
-  }
-
-  addPlayer (client) {
-    this.players[ client.id ] = {};
-  }
-
-  removePlayer (client) {
-    delete this.players[ client.id ];
-  }
-
-}
-```
-
-On this example, the `StateHandler` creates a `MapBuilder` instance (that won't be visible in the client-side), which would be responsible for creating the map data. It exposes some methods to be called from the parent `Room` instance, such as `addPlayer` and `restart`.
-
-To use this `StateHandler` class in a `Room` instance it would look like this:
-
-```typescript
-import { Room } from "colyseus"
-import { StateHandler } from "./StateHandler";
-
-export class MapRoom extends Room<StateHandler> {
-  onInit (options) {
-
-    // sync state every 50ms
-    this.setPatchRate( 1000 / 20 );
-
-    // initialize StateHandler
-    this.setState( new StateHandler() );
-
-    // reset the state every 3 minutes
-    setInterval(() => this.state.restart(), 1000 * 60 * 3);
+  onInit (options: any) {
+    this.setState(new BattleState());
   }
 
   onJoin (client) {
-    // add player instance to room state
     this.state.addPlayer(client);
   }
 
   onLeave (client) {
-    // add player instance to room state
     this.state.removePlayer(client);
+  }
+
+  onMessage (client, data) {
+    if (data.action) {
+      this.state.movePlayer(client, data.action);
+    }
   }
 }
 ```
 
-You can go on and define more data structures for any kind of object you need. Let's define the `Player` now.
+```typescript fct_label="BattleState.ts"
+// BattleState.ts
+import { EntityMap } from "colyseus";
+import { Player } from "./Player";
+
+export class BattleState {
+  players: EntityMap<Player> = {};
+
+  addPlayer (client) {
+    this.players[ client.sesssionId ] = new Player(0, 0);
+  }
+
+  removePlayer (client) {
+    delete this.players[ client.sessionId ];
+  }
+
+  movePlayer (client, action) {
+    if (action === "left") {
+      this.players[ client.sessionId ].x -= 1;
+
+    } else if (action === "right") {
+      this.players[ client.sessionId ].x += 1;
+    }
+  }
+}
+```
+
+```typescript fct_label="Player.ts"
+// Player.ts
+export class Player {
+  constructor (
+    public x: number,
+    public y: number
+  ) {
+    this.x = x;
+    this.y = y;
+  }
+}
+```
+
+### Map of entities (`EntityMap`)
+
+The `EntityMap` is useful to have strong data typing during development. Since you cannot use `Map` to describe public synchronizeable properties (see [avoid using `Map` and `Set`](#avoid-using-map-set)), the `EntityMap` is used to describe a simple map of keys (`string`) to a custom type (`T`).
+
+```typescript
+type EntityMap<T> = {[ entityId:string ]: T};
+```
+
+Your state will usualy have at least one usage of `EntityMap` for the map of connected clients. As described on [previous example](#your-own-data-structures).
+
+### Private variables (`@nosync`)
+
+To prevent private properties from leaking into your clients' state, you need to set those properties as **non-enumerable**. The decorator `@nosync` is a syntax sugar for this purpose.
 
 ```typescript
 export class Player {
-  life: number = 50;
-  maxLife: number = 50;
-  damage: number = 9;
+  x: number;
+  y: number;
 
-  constructor () {
-    // recovers a life a little every 2 seconds
-    setInterval(() => this.recoverLife(), 2000);
-  }
-
-  recoverLife () {
-    if (this.life < this.maxLife) {
-      this.life++
-    }
-  }
-
-  takeDamage (otherPlayer) {
-    this.life -= otherPlayer.damage
-  }
+  @nosync 
+  wontBeSynched: string = "This property won't be synched with clients";
 }
 ```
 
-Having defined the `Player` class, you'd instantiate it rather than using plain objects in the `StateHandler#addPlayer` method:
+### Avoid using `Map`, `Set`
+
+Avoid using `Map` and `Set` for public, synchronizeable, properties.
+
+Unfortunately, the JavaScript built-in types `Map` and `Set` aren't serializeable by default. This means MessagePack cannot encode them properly.
+
+**See why:**
 
 ```typescript
-// StateHandler.ts
-// ...
-  addPlayer (client) {
-    this.players[ client.id ] = new Player();
-  }
-// ...
+var myMap = new Map([["k1", "v1"], ["k2", "v2"]]);
+// => Map(2) {"key" => "value", "key2" => "value2"}
+JSON.stringify(myMap);
+// => "{}"
 ```
+
+You're encourage to use them for private variables, though. See [`@nosync`](#private-variables-nosync) for not synchronizeable properties.
+
+### Avoid mutating arrays
+
+- `push`ing new entries is OK - the clients will receive a single `"add"` operation.
+- `pop`ing the last entry is OK - the clients will receive a single `"remove"` operation.
+
+Removing or inserting entries in-between will generate one `"replace"` operation for each entry that had the index changed. Be careful to handle these changes in the client-side properly.

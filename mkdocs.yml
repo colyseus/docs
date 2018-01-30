@@ -63,6 +63,7 @@ markdown_extensions:
       permalink: True
   - markdown_fenced_code_tabs:
       single_block_as_tab: False
+  - del_ins
 
 # Nav menu
 pages:
@@ -87,8 +88,5 @@ pages:
   - 'State synchronization': 'client-state-synchronization.md'
 
 - 'Deployment': 'deployment.md'
+- 'Roadmap': 'roadmap.md'
 - 'FAQ': 'faq.md'
-
-- 'More': 
-  - 'Architecture': 'architecture.md'
-  - 'Roadmap': 'roadmap.md'
