@@ -83,6 +83,7 @@ pages:
   - 'Authentication': 'api-authentication.md'
   - 'Graceful shutdown': 'api-graceful-shutdown.md'
   - 'Debugging': 'api-debugging.md'
+  - 'µWS Support': 'api-uws-support.md'
 
 - 'Client-side': 
   - 'Overview': 'client-overview.md'
