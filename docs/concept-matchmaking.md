@@ -30,11 +30,11 @@ requestJoin (options: any) {
 ```
 
 ```typescript fct_label="Example 2"
+// server-side
 onInit (options: any) {
     this.password = options.password;
 }
 
-// server-side
 requestJoin (options: any) {
     // Private room. Only accept connections with the correct password.
     return this.password === options.password;
