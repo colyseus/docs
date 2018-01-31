@@ -8,8 +8,7 @@ The `client` instance present on:
 - [`Room#onMessage()`](api-room/#onmessage-client-data)
 - [`Room#onLeave()`](api-room/#onleave-client)
 
-
-!!! Note 
+!!! Note
     This is the raw WebSocket connection coming from the [`ws`](https://www.npmjs.com/package/ws) package. There are more methods available which aren't encouraged to use along with Colyseus.
 
 ## Methods
@@ -17,6 +16,9 @@ The `client` instance present on:
 ### `close(code?: number)`
 
 Force disconnection of the `client` with the server.
+
+!!! Tip
+    This will trigger [`room.onLeave`](client-room/#onleave) event on the client-side.
 
 ## Properties
 

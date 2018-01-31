@@ -75,7 +75,7 @@ pages:
   - 'Matchmaking': 'concept-matchmaking.md'
   - 'Worker processes': 'concept-worker-processes.md'
 
-- 'Server-side': 
+- 'Server-side':
   - 'Web-Socket Server': 'api-server.md'
   - 'Room': 'api-room.md'
   - 'Web-Socket Client': 'api-client.md'
@@ -85,8 +85,9 @@ pages:
   - 'Debugging': 'api-debugging.md'
   - 'µWS Support': 'api-uws-support.md'
 
-- 'Client-side': 
+- 'Client-side':
   - 'Overview': 'client-overview.md'
+  - 'Room': 'client-room.md'
   - 'State synchronization': 'client-state-synchronization.md'
 
 - 'Deployment': 'deployment.md'

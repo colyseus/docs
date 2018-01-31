@@ -1,4 +1,4 @@
-# Room API
+# Server-side Room API
 
 Considering that you already [set up your server](concept-worker-processes), now it's time to register session handlers, and start accepting connections from your users.
 
@@ -9,19 +9,19 @@ import { Room, Client } from "colyseus";
 
 export class MyRoom extends Room {
     // When room is initialized
-    onInit (options: any) { } 
+    onInit (options: any) { }
 
     // Checks if a new client is allowed to join. (default: `return true`)
-    requestJoin (options: any) { } 
+    requestJoin (options: any) { }
 
     // When client successfully join the room
-    onJoin (client: Client) { } 
+    onJoin (client: Client) { }
 
     // When a client leaves the room
-    onLeave (client: Client) { } 
+    onLeave (client: Client) { }
 
     // When a client sends a message
-    onMessage (client: Client, data: any) { } 
+    onMessage (client: Client, data: any) { }
 
     // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
     onDispose () { }
@@ -41,23 +41,23 @@ Is called once when room is initialized. You may specify custom initialization o
 
 ### `verifyClient (client, options)`
 
-Can be used to verify authenticity of the client that's joining the room. 
+Can be used to verify authenticity of the client that's joining the room.
 
 If left non-implemented it returns `true`, allowing any client to connect.
 
 See [authentication](api-authentication) section.
 
-### `requestJoin (options)` 
+### `requestJoin (options)`
 
-Synchronous function used to check if a new client is allowed to join. 
+Synchronous function used to check if a new client is allowed to join.
 
 If left non-implemented it returns `true`, allowing any client to connect.
 
-### `onJoin (client)` 
+### `onJoin (client)`
 
 Is called when client successfully join the room, after `requestJoin` and `verifyClient` succeeded.
 
-### `onMessage (client, data)` 
+### `onMessage (client, data)`
 
 Is called when a client sends a message to the server. Here's where you'll process client actions to update the room's state.
 
@@ -76,13 +76,13 @@ onMessage (client, data) {
 }
 ```
 
-### `onLeave (client)` 
+### `onLeave (client)`
 
-Is called when a client leave the room. 
+Is called when a client leave the room.
 
 You can define this function as `async`. See [graceful shutdown](api-graceful-shutdown)
 
-### `onDispose ()` 
+### `onDispose ()`
 
 Cleanup callback, called after there are no more clients in the room.
 
@@ -90,7 +90,7 @@ You can define this function as `async`. See [graceful shutdown](api-graceful-sh
 
 ## Public properties
 
-### `clients: WebSocket[]` 
+### `clients: WebSocket[]`
 
 The array of connected clients. See [Web-Socket Client](api-client).
 
@@ -108,7 +108,7 @@ See [state synchronization](concept-state-synchronization/).
 
 Automatically dispose the room when last client disconnect. (default: `true`)
 
-### `clock: ClockTimer` 
+### `clock: ClockTimer`
 
 A [`ClockTimer`](https://github.com/gamestdio/timer#api) instance.
 
@@ -116,25 +116,25 @@ A [`ClockTimer`](https://github.com/gamestdio/timer#api) instance.
 
 Room handlers have these methods available.
 
-### `setState (object)` 
+### `setState (object)`
 
 Set the new room state.
 
-!!! Warning 
+!!! Warning
     Do not call this method for updates in the room state. The binary patch algorithm is re-set every time you call it.
 
 !!! tip
     You'll usually call this method only once (on [`Room.onInit()`](#oninit-options)) in your room handler.
 
-### `setSimulationInterval (callback[, milliseconds=16.6])` 
+### `setSimulationInterval (callback[, milliseconds=16.6])`
 
 (Optional) Create the simulation interval that will change the state of the game. Default simulation interval: 16.6ms (60fps)
 
-### `setPatchRate (milliseconds)` 
+### `setPatchRate (milliseconds)`
 
 Set frequency the patched state should be sent to all clients. (default: `50` = 20fps)
 
-### `send (client, data)` 
+### `send (client, data)`
 
 Send data to a particular client.
 
@@ -153,7 +153,7 @@ room.onData.add(function(data) {
 room.OnData += (object sender, MessageEventArgs e) => Debug.Log(e.data);
 ```
 
-### `lock ()` 
+### `lock ()`
 
 Locking the room will remove it from the pool of available rooms for new clients to connect to.
 
