@@ -28,7 +28,7 @@ export class BattleRoom extends Room {
   onJoin (client) {
     this.state.players[ client.sessionId ] = {
       x: 0,
-      y: 0 
+      y: 0
     };
   }
 
@@ -49,7 +49,7 @@ export class BattleRoom extends Room {
 
 ## Your Own Data Structures
 
-Whilst it's possible to use raw data directly on `this.state`. The recommended way to handle your state is through your own data structures. By creating your own structures, you can have a more decoupled structure to represent your state. 
+Whilst it's possible to use raw data directly on `this.state`. The recommended way to handle your state is through your own data structures. By creating your own structures, you can have a more decoupled structure to represent your state.
 
 **On the following (rewritten) example, you'll see:**
 
@@ -59,7 +59,7 @@ Whilst it's possible to use raw data directly on `this.state`. The recommended w
     - Methods manipulating smaller data structures
 - A small decoupled data structure representing a single entity (`Player`)
 
-```typescript fct_label="BattleState.ts"
+```typescript fct_label="BattleRoom.ts"
 // BattleRoom.ts
 import { Room, Client } from "colyseus";
 import { BattleState } from "./BattleState";
@@ -145,7 +145,7 @@ export class Player {
   x: number;
   y: number;
 
-  @nosync 
+  @nosync
   wontBeSynched: string = "This property won't be synched with clients";
 }
 ```
