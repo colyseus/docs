@@ -21,7 +21,7 @@ theme:
   name: 'material'
   language: 'en'
   logo: 'images/logo-white.png'
-  favicon: 'images/favicon.ico'
+  favicon: 'images/favicon.png'
   palette:
     primary: 'indigo'
     accent: 'indigo'
