@@ -83,7 +83,6 @@ pages:
   - 'Authentication': 'api-authentication.md'
   - 'Graceful shutdown': 'api-graceful-shutdown.md'
   - 'Debugging': 'api-debugging.md'
-  - 'µWS Support': 'api-uws-support.md'
 
 - 'Client-side':
   - 'Overview': 'client-overview.md'
@@ -91,5 +90,8 @@ pages:
   - 'State synchronization': 'client-state-synchronization.md'
 
 - 'Deployment': 'deployment.md'
-- 'Roadmap': 'roadmap.md'
+
 - 'FAQ': 'faq.md'
+- 'More':
+  - 'µWS Support': 'api-uws-support.md'
+  - 'Roadmap': 'roadmap.md'

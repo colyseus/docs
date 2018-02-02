@@ -1,5 +1,20 @@
 # Getting started
 
+## Environment
+
+Colyseus requires [Node.js](https://nodejs.org/) v6.0.0 or higher.
+
+See some examples in action by cloning the [examples](https://github.com/gamestdio/colyseus-examples) project and running it locally.
+
+```
+git clone https://github.com/gamestdio/colyseus-examples.git
+cd colyseus-examples
+npm install
+```
+
+To run the http + websocket server, run `npm start`.
+
+
 ## The Mindset
 
 The authoritative game server mindset is quite simple. The Server validates the user actions, and clients are dumb visual representations of the current game state.
@@ -19,9 +34,9 @@ Here's how the "multiplayer game loop" looks like on Colyseus:
 ### Diagram
 
 ```
-              room.send({ action: "left" })                             
-                                                                        
-                           |                                            
+              room.send({ action: "left" })
+
+                           |
       +------------+       |       +-----------------------------------+
 +-----+ Client #1  +-------|       |  Room handler #1                  |
 |     +------------+       |       |                                   |
@@ -31,8 +46,8 @@ Here's how the "multiplayer game loop" looks like on Colyseus:
 |     +------------+               |    }                              |
 |-----+ Client #3  |               |  }                                |
 |     +------------+               +-----------------------------------+
-|                                                    |                  
-|        patch state broadcast (binary diff)         |                  
+|                                                    |
+|        patch state broadcast (binary diff)         |
 |----------------------------------------------------+
 ```
 
@@ -41,9 +56,9 @@ Here's how the "multiplayer game loop" looks like on Colyseus:
 These modules can be useful while developing games on both NodeJS and the Browser.
 
 - [@gamestdio/mathf](https://github.com/gamestdio/mathf) - Mathematical functions, borrowed from Unity3D's API
-- [@gamestdio/timer](https://github.com/gamestdio/timer) - Reliable timing events 
+- [@gamestdio/timer](https://github.com/gamestdio/timer) - Reliable timing events
 - [@gamestdio/keycode](https://github.com/gamestdio/keycode) - Constants for keyboard key codes (`event.which`)
 
 These modules can be used only in the browser:
 
-- [@gamestdio/pixi-engine](https://github.com/gamestdio/pixi-engine) 
+- [@gamestdio/pixi-engine](https://github.com/gamestdio/pixi-engine)
