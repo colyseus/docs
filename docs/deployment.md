@@ -4,7 +4,7 @@
 
 ## Heroku
 
-You can deploy the [colyseus-examples](https://github.com/gamestdio/colyseus-examples) project on Heroku by gitting this button: 
+You can deploy the [colyseus-examples](https://github.com/gamestdio/colyseus-examples) project on Heroku by hitting this button: 
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/gamestdio/colyseus-examples)
 
@@ -12,7 +12,7 @@ You can deploy the [colyseus-examples](https://github.com/gamestdio/colyseus-exa
 
 ## Zeit Now
 
-You can deploy the [colyseus-examples](https://github.com/gamestdio/colyseus-examples) project on Zeit Now by gitting this button: 
+You can deploy the [colyseus-examples](https://github.com/gamestdio/colyseus-examples) project on Zeit Now by hitting this button: 
 
 [![Deploy to now](https://deploy.now.sh/static/button.svg)](https://deploy.now.sh/?repo=https://github.com/gamestdio/colyseus-examples)
 
