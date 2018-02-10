@@ -83,6 +83,10 @@ export class BattleRoom extends Room<BattleState> {
       this.state.movePlayer(client, data.action);
     }
   }
+
+  onDispose () {
+    console.log("Dispose BattleRoom");
+  }
 }
 ```
 
