@@ -57,7 +57,7 @@ Current time in milliseconds. Read only.
 
 #### `clock.deltaTime`
 
-The difference in time between the last and current `tick` time. Read only.
+The difference in milliseconds between the last and current `clock.tick()` call. Read only.
 
 ## Delayed
 
