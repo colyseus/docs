@@ -76,10 +76,11 @@ pages:
   - 'Worker processes': 'concept-worker-processes.md'
 
 - 'Server-side':
-  - 'Web-Socket Server': 'api-server.md'
   - 'Room': 'api-room.md'
-  - 'Web-Socket Client': 'api-client.md'
+  - 'Timing events': 'api-timing-events.md'
   - 'State management': 'api-room-state.md'
+  - 'Web-Socket Server': 'api-server.md'
+  - 'Web-Socket Client': 'api-client.md'
   - 'Authentication': 'api-authentication.md'
   - 'Graceful shutdown': 'api-graceful-shutdown.md'
   - 'Debugging': 'api-debugging.md'

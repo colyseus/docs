@@ -110,7 +110,8 @@ Automatically dispose the room when last client disconnect. (default: `true`)
 
 ### `clock: ClockTimer`
 
-A [`ClockTimer`](https://github.com/gamestdio/timer#api) instance.
+A [`ClockTimer`](https://github.com/gamestdio/timer#api) instance, used for
+[timing events](api-timing-events.md).
 
 ## Public methods
 
