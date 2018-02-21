@@ -4,6 +4,7 @@ Colyseus currently have clients for the platforms:
 
 - [HTML5](https://github.com/gamestdio/colyseus.js/)
 - [Unity3D](https://github.com/gamestdio/colyseus-unity3d)
+- [Defold](https://github.com/gamestdio/colyseus-defold)
 
 Need a client for another platform? Share your interest on the [discussion board](https://discuss.colyseus.io/)!
 
@@ -22,6 +23,14 @@ using Colyseus;
 
 Client client = new Client("ws://localhost:2657");
 ```
+
+```lua fct_label="lua"
+local ColyseusClient = require("colyseus.client")
+// ...
+
+local client = ColyseusClient.new("ws://localhost:2657");
+```
+
 ## Methods
 
 ### `join (roomName: string, options: any)`
@@ -32,6 +41,10 @@ let room = client.join("battle");
 
 ```csharp fct_label="C#"
 Room room = client.Join("battle");
+```
+
+```lua fct_label="lua"
+local room = client:join("battle")
 ```
 
 ## Events
@@ -52,6 +65,12 @@ client.OnOpen += (object sender, EventArgs e) => {
 }
 ```
 
+```lua fct_label="lua"
+client:on('open', function()
+  print("connection is now open")
+end)
+```
+
 ### `onClose`
 
 This event is triggered when the connection is closed.
@@ -68,6 +87,12 @@ client.OnClose += (object sender, EventArgs e) => {
 }
 ```
 
+```lua fct_label="lua"
+client:on('close', function()
+  print("connection has been closed")
+end)
+```
+
 ### `onError`
 
 This event is triggered when some error occurs in the server.
@@ -82,6 +107,12 @@ client.onError.add(function(err) {
 client.OnError += (object sender, EventArgs e) => {
   Debug.Log ("something wrong happened");
 }
+```
+
+```lua fct_label="lua"
+client:on("error", function()
+  print("something wrong happened")
+end)
 ```
 
 <!-- TODO: document raw `onMessage` -->

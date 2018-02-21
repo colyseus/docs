@@ -43,10 +43,24 @@ void OnPlayerChange (DataChange change)
     Debug.Log (change.value);
 
   } else if (change.operation == "remove") {
-    console.log("player has been removed from the state");
+    Debug.Log ("player has been removed from the state");
     Debug.Log (change.path["id"]);
   }
 });
+```
+
+```lua fct_label="lua"
+room:listen("players/:id", function(change)
+  if (change.operation == "add") then
+    print("new player added to the state")
+    print(change.path["id"])
+    print(change.value)
+
+  elseif (change.operation == "remove") then
+    print("player has been removed from the state")
+    print(change.path["id"])
+  end
+end)
 ```
 
 ##### Listening to attribute changes of deep data structures
@@ -78,6 +92,15 @@ void OnPlayerAttributeChange (DataChange change)
 });
 ```
 
+```lua fct_label="lua"
+room:listen("players/:id/:attribute", function()
+  print(change.operation) // => "add" | "remove" | "replace"
+  print(change.path["attribute"] + "has been changed")
+  print(change.path["id"])
+  print(change.value)
+end)
+```
+
 !!! Tip
     See [State synchronization](client-state-synchronization) for more examples on how to use the `listen` method.
 
@@ -93,6 +116,10 @@ room.send({ move: "left" });
 room.Send(new { move = "left" });
 ```
 
+```lua fct_label="lua"
+room:send({ move = "left" })
+```
+
 Use [Room#onMessage()](api-room/#onmessage-client-data) from the server-side to read the message.
 
 ### `leave ()`
@@ -105,6 +132,10 @@ room.leave();
 
 ```csharp fct_label="C#"
 room.Leave();
+```
+
+```lua fct_label="lua"
+room:leave()
 ```
 
 !!! Tip
@@ -168,6 +199,12 @@ room.OnUpdate += (object sender, RoomUpdateEventArgs e) => {
 }
 ```
 
+```lua fct_label="lua"
+room:on("update", function(state)
+  print("new state:", state)
+end)
+```
+
 ### onData
 
 This event is triggered when the server sends data directly to the client.
@@ -184,6 +221,13 @@ room.OnData += (object sender, MessageEventArgs e) => {
   Debug.Log ("server just sent this message:");
   Debug.Log(e.data);
 }
+```
+
+```lua fct_label="lua"
+room:on("data", function(data)
+  print("server just sent this message:")
+  print(data)
+end)
 ```
 
 !!! Tip
@@ -207,6 +251,12 @@ room.OnJoin += (object sender, EventArgs e) => {
 }
 ```
 
+```lua fct_label="lua"
+room:on("join", function()
+  print("client joined successfully")
+end)
+```
+
 ### onLeave
 
 This event is triggered when the client leave the room.
@@ -221,6 +271,12 @@ room.onLeave.add(function() {
 room.OnLeave += (object sender, EventArgs e) => {
   Debug.Log ("client left the room");
 }
+```
+
+```lua fct_label="lua"
+room:on("leave", function()
+  print("client left the room")
+end)
 ```
 
 ### onError
@@ -239,4 +295,11 @@ room.OnError += (object sender, EventArgs e) => {
   Debug.Log ("oops, error ocurred:");
   Debug.Log(e);
 }
+```
+
+```lua fct_label="lua"
+room:on("error", function()
+  print("oops, error ocurred:")
+  print(e)
+end)
 ```
