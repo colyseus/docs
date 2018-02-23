@@ -74,4 +74,4 @@ class MyRoomHandler extends Room {
 }
 ```
 
-[requestJoin]: api-room/#requestjoin-options
+[requestJoin]: api-room/#requestjoin-options-isnew

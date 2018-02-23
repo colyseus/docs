@@ -12,7 +12,7 @@ export class MyRoom extends Room {
     onInit (options: any) { }
 
     // Checks if a new client is allowed to join. (default: `return true`)
-    requestJoin (options: any) { }
+    requestJoin (options: any, isNew: boolean) { }
 
     // When client successfully join the room
     onJoin (client: Client) { }
@@ -47,11 +47,16 @@ If left non-implemented it returns `true`, allowing any client to connect.
 
 See [authentication](api-authentication) section.
 
-### `requestJoin (options)`
+### `requestJoin (options, isNew)`
 
-Synchronous function used to check if a new client is allowed to join.
+**Parameters:**
 
-If left non-implemented it returns `true`, allowing any client to connect.
+- `options`: The options provided by the client ([`client.join()`](client-overview#join-roomname-string-options-any)), merged with options provided by the server ([`gameServer.register()`](api-server/#register-name-string-handler-room-options-any)).
+- `isNew`: will be `true` for rooms being created and `false` for existing ones.
+
+Synchronous function to check if a new client is allowed to join.
+
+If left non-implemented, this method returns `true`, allowing any client to connect.
 
 ### `onJoin (client)`
 

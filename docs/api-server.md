@@ -1,6 +1,6 @@
 # Web-Socket Server
 
-The [`Server`](#server) and [`ClusterServer`](#clusterserver) have pretty much the same API. 
+The [`Server`](#server) and [`ClusterServer`](#clusterserver) have pretty much the same API.
 
 They're responsible for providing the WebSocket server to enable communication between server and client.
 
@@ -24,6 +24,9 @@ gameServer.register("chat", ChatRoom);
 
 // Register "battle" room
 gameServer.register("battle", BattleRoom);
+
+// Register "battle" room with custom options
+gameServer.register("battle_woods", BattleRoom, { map: "woods" });
 ```
 
 !!! Tip
@@ -107,9 +110,9 @@ Register a callback that should be called before the process shut down. See [gra
 
 ## ClusterServer
 
-Recommended for production environment. 
+Recommended for production environment.
 
-The `ClusterServer` has the same functionality of `Server`, with some caveats. You'll need to use the `"cluster"` module by yourself and call its methods in the right node type. 
+The `ClusterServer` has the same functionality of `Server`, with some caveats. You'll need to use the `"cluster"` module by yourself and call its methods in the right node type.
 
 See [Clustered environment](concept-worker-processes/#clustered-environment) for more details.
 
