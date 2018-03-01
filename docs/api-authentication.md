@@ -1,4 +1,4 @@
-You may implement the `verifyClient(client, options)` method validate the authenticity of your clients. 
+You may implement the `verifyClient(client, options)` method validate the authenticity of your clients.
 
 When requesting to join a room, that's the order of methods which will be called in your room handler:
 
@@ -14,15 +14,21 @@ client.join("world", {
 });
 ```
 
-```javascript fct_label="C#"
+```csharp fct_label="C#"
 client.Join("world", new {
   accessToken = yourFacebookAccessToken
 });
 ```
 
+```lua fct_label="Lua"
+client:join("world", {
+  accessToken = yourFacebookAccessToken
+})
+```
+
 The `verifyClient` method in your room handler should return `true` only if the access token is valid.
 
-### Synchronous usage 
+### Synchronous usage
 
 You can immediatelly return a `boolean` value.
 
@@ -36,7 +42,7 @@ class MyRoom extends Room {
 }
 ```
 
-### Asynchronous usage 
+### Asynchronous usage
 
 You can return a `Promise`, and perform some asynchronous task to validate the client.
 
@@ -47,7 +53,7 @@ class MyRoom extends Room {
   verifyClient (client, options): Promise {
     return new Promise((resolve, reject) => {
       validateToken(options.accessToken, (err, success) => {
-        if (!err) { 
+        if (!err) {
           resolve();
         } else {
           reject(err);
