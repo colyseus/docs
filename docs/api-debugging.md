@@ -4,8 +4,9 @@
 ## Inspector
 
 To be able to use the built-in inspector from Node.js you'll need to use the
-[`Server`](https://github.com/gamestdio/colyseus/blob/master/usage/Server.ts)
-class, which doesn't use inter-process communication.
+[single-process environment](concept-worker-processes/#single-process-environment), by using the
+`Server` class. The `ClusterServer` class uses inter-process communication,
+which doesn't play nice with the built-in inspector.
 
 !!! Tip
     Read more about [Debugging Node.js Applications](https://nodejs.org/en/docs/inspector/).
