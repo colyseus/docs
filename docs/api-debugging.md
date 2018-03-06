@@ -1,5 +1,17 @@
-- [Debug messages](#debug-messages)
 - [Inspector (`--inspect` flag)](#inspector)
+- [Debug messages](#debug-messages)
+
+## Inspector
+
+To be able to use the built-in inspector from Node.js you'll need to use the
+[`Server`](https://github.com/gamestdio/colyseus/blob/master/usage/Server.ts)
+class, which doesn't use inter-process communication.
+
+!!! Tip
+    Read more about [Debugging Node.js Applications](https://nodejs.org/en/docs/inspector/).
+
+!!! Note
+    For production environment, it's recommended to use [`ClusterServer`](concept-worker-processes/#clustered-environment).
 
 ## Debug messages
 
@@ -31,7 +43,7 @@ colyseus:patch:data [ { op: 'replace', path: '/players/BygiLqrLpZ/x', value: 5 }
 
 ### `colyseus:cluster`
 
-Logs when worker processes are spawned and re-spawned. 
+Logs when worker processes are spawned and re-spawned.
 
 ```
 colyseus:cluster master spawned with pid 77216 +0ms
@@ -51,10 +63,3 @@ colyseus:matchmaking requesting CREATE_ROOM +54s
 colyseus:matchmaking spawning 'chat' on worker 77218 +52s
 colyseus:matchmaking disposing 'chat' on worker 77218 +2s
 ```
-
-## Inspector
-
-To be able to use the [built-in inspector from Node.js](https://nodejs.org/en/docs/inspector/)
-you'll need to use the [`Server`](https://github.com/gamestdio/colyseus/blob/master/usage/Server.ts) class, which doesn't use inter-process communication. 
-
-For production, `ClusterServer` is recommended, though.
