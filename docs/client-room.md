@@ -205,35 +205,35 @@ room:on("update", function(state)
 end)
 ```
 
-### onData
+### onMessage
 
-This event is triggered when the server sends data directly to the client.
+This event is triggered when the server sends a message directly to the client.
 
 ```typescript fct_label="TypeScript"
-room.onData.add(function(data) {
+room.onMessage.add(function(message) {
   console.log("server just sent this message:");
-  console.log(data);
+  console.log(message);
 });
 ```
 
 ```csharp fct_label="C#"
-room.OnData += (object sender, MessageEventArgs e) => {
+room.OnMessage += (object sender, MessageEventArgs e) => {
   Debug.Log ("server just sent this message:");
-  Debug.Log(e.data);
+  Debug.Log(e.message);
 }
 ```
 
 ```lua fct_label="lua"
-room:on("data", function(data)
+room:on("message", function(message)
   print("server just sent this message:")
-  print(data)
+  print(message)
 end)
 ```
 
 !!! Tip
-    To send data from the server directly to the clients you'll need to use
-    either [room.send()](api-room/#send-client-data) or
-    [room.broadcast()](api-room/#broadcast-data)
+    To send a message from the server directly to the clients you'll need to use
+    either [room.send()](api-room/#send-client-message) or
+    [room.broadcast()](api-room/#broadcast-message)
 
 ### onJoin
 

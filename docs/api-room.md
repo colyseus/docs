@@ -24,7 +24,7 @@ export class MyRoom extends Room {
     onLeave (client: Client) { }
 
     // When a client sends a message
-    onMessage (client: Client, data: any) { }
+    onMessage (client: Client, message: any) { }
 
     // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
     onDispose () { }
@@ -164,43 +164,23 @@ Set frequency the patched state should be sent to all clients. (default: `50` = 
 Set metadata for the room instance. This metadata is public when requesting the
 room list through [`client.getAvailableRooms()`](client-overview/#getavailablerooms-roomname) method.
 
-### `send (client, data)`
+### `send (client, message)`
 
-Send data to a particular client.
+Send a message to a particular client.
 
 ```typescript fct_label="Server"
 this.send(client, { message: "Hello world!" });
 ```
 
-```typescript fct_label="Client: JavaScript"
-room.onData.add(function(data) {
-    console.log(data);
-    // => {message: "Hello world!"}
-});
-```
+!!! Tip
+    [See how to handle these messages on client-side.](client-room/#onmessage)
 
-```typescript fct_label="Client: C#"
-room.OnData += (object sender, MessageEventArgs e) => Debug.Log(e.data);
-```
+### `broadcast ( message )`
 
-### `broadcast ( data )`
+Send a message to all connected clients.
 
-Send raw data to all connected clients.
-
-```typescript fct_label="Server"
-this.broadcast({ message: "Hello world!" });
-```
-
-```typescript fct_label="Client: JavaScript"
-room.onData.add(function(data) {
-    console.log(data);
-    // => {message: "Hello world!"}
-});
-```
-
-```typescript fct_label="Client: C#"
-room.OnData += (object sender, MessageEventArgs e) => Debug.Log(e.data);
-```
+!!! Tip
+    [See how to handle these messages on client-side.](client-room/#onmessage)
 
 ### `lock ()`
 
