@@ -1,4 +1,4 @@
-# Server-side Room API
+# Room API (Server-side)
 
 Considering that you already [set up your server](concept-worker-processes), now it's time to register session handlers, and start accepting connections from your users.
 

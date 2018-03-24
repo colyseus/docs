@@ -36,25 +36,15 @@ Displays a human-readable version of the data broadcasted to all clients.
 colyseus:patch:data [ { op: 'replace', path: '/players/BygiLqrLpZ/x', value: 5 } ] +56ms
 ```
 
-### `colyseus:cluster`
+### `colyseus:errors`
 
-Logs when worker processes are spawned and re-spawned.
-
-```
-colyseus:cluster master spawned with pid 77216 +0ms
-colyseus:cluster matchmaking spawned with pid 77217 +8ms
-colyseus:cluster fork spawned with pid 77218 +7ms
-colyseus:cluster fork spawned with pid 77219 +3ms
-colyseus:cluster fork spawned with pid 77220 +3ms
-colyseus:cluster fork spawned with pid 77221 +17ms
-```
+Logs whenever unexpected (or expected, internally) errors happens on the server-side.
 
 ### `colyseus:matchmaking`
 
-Logs the messages sent back and forth from master node to worker processes. You'll see them only if using `ClusterServer`.
+Logs whenever a room is spanwed or disposed.
 
 ```
-colyseus:matchmaking requesting CREATE_ROOM +54s
 colyseus:matchmaking spawning 'chat' on worker 77218 +52s
 colyseus:matchmaking disposing 'chat' on worker 77218 +2s
 ```

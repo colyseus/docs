@@ -75,11 +75,11 @@ pages:
   - 'Matchmaking': 'concept-matchmaking.md'
 
 - 'Server-side':
+  - 'Server': 'api-server.md'
   - 'Room': 'api-room.md'
+  - 'Client': 'api-client.md'
   - 'Timing events': 'api-timing-events.md'
   - 'State management': 'api-room-state.md'
-  - 'Web-Socket Server': 'api-server.md'
-  - 'Web-Socket Client': 'api-client.md'
   - 'Authentication': 'api-authentication.md'
   - 'Graceful shutdown': 'api-graceful-shutdown.md'
   - 'Debugging': 'api-debugging.md'
@@ -90,8 +90,8 @@ pages:
   - 'State synchronization': 'client-state-synchronization.md'
 
 - 'Deployment': 'deployment.md'
+- 'Migrating': 'migrating.md'
 
 - 'FAQ': 'faq.md'
 - 'More':
-  - 'µWS Support': 'api-uws-support.md'
   - 'Roadmap': 'roadmap.md'

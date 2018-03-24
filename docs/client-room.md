@@ -1,4 +1,4 @@
-# Client-side Room API
+# Room API (Client-side)
 
 ## Methods
 
@@ -175,22 +175,22 @@ Name of the room handler. Ex: `"battle"`.
 
 ## Events
 
-### onUpdate
+### onStateChange
 
 This event is triggered when the server updates its state.
 
 ```typescript fct_label="TypeScript"
-room.onUpdate.addOnce(function(state) {
+room.onStateChange.addOnce(function(state) {
   console.log("this is the first room state!", state);
 });
 
-room.onUpdate.add(function(state) {
+room.onStateChange.add(function(state) {
   console.log("the room state has been updated:", state);
 });
 ```
 
 ```csharp fct_label="C#"
-room.OnUpdate += (object sender, RoomUpdateEventArgs e) => {
+room.OnStateChange += (object sender, RoomUpdateEventArgs e) => {
   if (e.isFirstState) {
     Debug.Log ("this is the first room state!");
   }
@@ -200,7 +200,7 @@ room.OnUpdate += (object sender, RoomUpdateEventArgs e) => {
 ```
 
 ```lua fct_label="lua"
-room:on("update", function(state)
+room:on("statechange", function(state)
   print("new state:", state)
 end)
 ```
