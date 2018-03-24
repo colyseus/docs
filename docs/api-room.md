@@ -8,6 +8,9 @@ You'll define session handlers creating classes that extends from `Room`.
 import { Room, Client } from "colyseus";
 
 export class MyRoom extends Room {
+    // Authorize client based on provided options before WebSocket handshake is complete
+    onAuth (options: any) { }
+
     // When room is initialized
     onInit (options: any) { }
 
@@ -39,14 +42,6 @@ Is called once when room is initialized. You may specify custom initialization o
 !!! Tip
     The `options` will contain the merged values you specified on [Server#register()](api-server/#register-name-string-handler-room-options-any) + the options provided by the first client on `client.join()`
 
-### `verifyClient (client, options)`
-
-Can be used to verify authenticity of the client that's joining the room.
-
-If left non-implemented it returns `true`, allowing any client to connect.
-
-See [authentication](api-authentication) section.
-
 ### `requestJoin (options, isNew)`
 
 **Parameters:**
@@ -58,9 +53,23 @@ Synchronous function to check if a new client is allowed to join.
 
 If left non-implemented, this method returns `true`, allowing any client to connect.
 
-### `onJoin (client)`
+### `onAuth (options)`
 
-Is called when client successfully join the room, after `requestJoin` and `verifyClient` succeeded.
+Can be used to verify authenticity of the client that's joining the room.
+
+If left non-implemented it returns `true`, allowing any client to connect.
+
+See [authentication](api-authentication) section.
+
+### `onJoin (client, options, auth?)`
+
+**Parameters:**
+
+- `client`: The [`client`](api-client) instance.
+- `options`: merged values specified on [Server#register()](api-server/#register-name-string-handler-room-options-any) with the options provided the client on [`client.join()`](client-overview/#join-roomname-string-options-any)
+- `auth`: (optional) auth data returned by [`onAuth`](#onauth-options) method.
+
+Is called when client successfully join the room, after `requestJoin` and `onAuth` has been succeeded.
 
 ### `onMessage (client, data)`
 
@@ -101,7 +110,10 @@ The array of connected clients. See [Web-Socket Client](api-client).
 
 ### `maxClients: number`
 
-Maximum number of clients allowed to connect into the room
+Maximum number of clients allowed to connect into the room. When room reaches
+this limit, it is locked automatically. Unless the room was explicitly locked by
+you via [lock()](#lock) method, the room will be unlocked as soon as a client
+disconnects from it.
 
 ### `patchRate: number`
 
@@ -112,6 +124,13 @@ See [state synchronization](concept-state-synchronization/).
 ### `autoDispose: boolean`
 
 Automatically dispose the room when last client disconnect. (default: `true`)
+
+### `locked: boolean` (read-only)
+
+This property will change on these situations:
+
+- The maximum number of allowed clients has been reached (`maxClients`)
+- You manually locked, or unlocked the room using [`lock()`](#lock) or [`unlock()`](#unlock).
 
 ### `clock: ClockTimer`
 
@@ -140,6 +159,11 @@ Set the new room state.
 
 Set frequency the patched state should be sent to all clients. (default: `50` = 20fps)
 
+### `setMetadata (metadata)`
+
+Set metadata for the room instance. This metadata is public when requesting the
+room list through [`client.getAvailableRooms()`](client-overview/#getavailablerooms-roomname) method.
+
 ### `send (client, data)`
 
 Send data to a particular client.
@@ -158,14 +182,6 @@ room.onData.add(function(data) {
 ```typescript fct_label="Client: C#"
 room.OnData += (object sender, MessageEventArgs e) => Debug.Log(e.data);
 ```
-
-### `lock ()`
-
-Locking the room will remove it from the pool of available rooms for new clients to connect to.
-
-### `unlock ()`
-
-Unlocking the room returns it to the pool of available rooms for new clients to connect to.
 
 ### `broadcast ( data )`
 
@@ -186,6 +202,13 @@ room.onData.add(function(data) {
 room.OnData += (object sender, MessageEventArgs e) => Debug.Log(e.data);
 ```
 
+### `lock ()`
+
+Locking the room will remove it from the pool of available rooms for new clients to connect to.
+
+### `unlock ()`
+
+Unlocking the room returns it to the pool of available rooms for new clients to connect to.
 
 ### `disconnect ()`
 

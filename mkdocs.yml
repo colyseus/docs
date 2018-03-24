@@ -73,7 +73,6 @@ pages:
 - 'Concepts':
   - 'State synchronization': 'concept-state-synchronization.md'
   - 'Matchmaking': 'concept-matchmaking.md'
-  - 'Worker processes': 'concept-worker-processes.md'
 
 - 'Server-side':
   - 'Room': 'api-room.md'

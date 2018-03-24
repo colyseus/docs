@@ -3,7 +3,7 @@
 The `client` instance present on:
 
 - [`Room#clients`](api-room/#clients-websocket)
-- [`Room#verifyClient()`](api-room/#verifyclient-client-options)
+- [`Room#onAuth()`](api-room/#onauth-options)
 - [`Room#onJoin()`](api-room/#onjoin-client)
 - [`Room#onMessage()`](api-room/#onmessage-client-data)
 - [`Room#onLeave()`](api-room/#onleave-client)

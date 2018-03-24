@@ -1,10 +1,10 @@
-# Graceful Shutdown 
+# Graceful Shutdown
 
 Colyseus provides graceful shutting down mechanism by default. These actions will be performed before the process kill itself:
 
 - Disconnect all connected clients asynchronously (`Room#onLeave`)
 - Dispose all spawned rooms asynchronously (`Room#onDispose`)
-- Perform optional asynchronous callback before shutting down the process (`Server#onShutdown` / `ClusterServer#onShutdown`)
+- Perform optional asynchronous callback before shutting down the process `Server#onShutdown`
 
 If you're performing async tasks on `onLeave` / `onDispose`, you should return a `Promise`, and resolve it when the task is ready. The same applies to `onShutdown(callback)`.
 
@@ -43,7 +43,7 @@ class MyRoom extends Room {
 }
 ```
 
-## Using `async` 
+## Using `async`
 
 The `async` keyword will makes your function return a `Promise` under the hood. [Read more about Async / Await](https://basarat.gitbooks.io/typescript/content/docs/async-await.html).
 
@@ -73,22 +73,4 @@ let server = new Server();
 server.onShutdown(function () {
     console.log("master process is being shut down!");
 });
-```
-
-```typescript fct_label="Cluster Server"
-import * as cluster from "cluster";
-import { ClusterServer } from "colyseus";
-
-let server = new ClusterServer();
-
-if (cluster.isMaster) {
-    server.onShutdown(function () {
-        console.log("master process is being shut down!");
-    });
-
-} else {
-    server.onShutdown(function () {
-        console.log("worker process is being shut down!");
-    });
-}
 ```

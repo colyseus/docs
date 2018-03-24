@@ -47,6 +47,40 @@ Room room = client.Join("battle");
 local room = client:join("battle")
 ```
 
+### `getAvailableRooms (roomName: string)`
+
+List all spawned rooms available to connect (not locked), which
+
+```typescript fct_label="TypeScript"
+client.getAvailableRooms("battle", function(rooms, err) {
+  if (err) console.error(err);
+  rooms.forEach(function(room) {
+    console.log(room.roomId);
+    console.log(room.clients);
+    console.log(room.maxClients);
+    console.log(room.metadata);
+  });
+});
+```
+
+```csharp fct_label="C#"
+client.GetAvailableRooms("battle", (rooms: RoomsAvailable, err: ErrorEventArgs) => {
+  rooms.
+});
+```
+
+```lua fct_label="lua"
+client:getAvailableRooms("battle", function(rooms, err)
+  if (err) console.error(err);
+  for i, rooms in pairs(rooms) do
+    print(rooms[i].roomId)
+    print(rooms[i].clients)
+    print(rooms[i].maxClients)
+    print(rooms[i].metadata)
+  end
+end);
+```
+
 ## Events
 
 ### `onOpen`

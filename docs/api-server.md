@@ -1,8 +1,6 @@
 # Web-Socket Server
 
-The [`Server`](#server) and [`ClusterServer`](#clusterserver) have pretty much the same API.
-
-They're responsible for providing the WebSocket server to enable communication between server and client.
+The [`Server`](#server) is responsible for providing the WebSocket server to enable communication between server and client.
 
 ## Server
 
@@ -107,45 +105,3 @@ Binds the WebSocket server into the specified port.
 ### `onShutdown (callback: Function)`
 
 Register a callback that should be called before the process shut down. See [graceful shutdown](api-graceful-shutdown/) for more details.
-
-## ClusterServer
-
-Recommended for production environment.
-
-The `ClusterServer` has the same functionality of `Server`, with some caveats. You'll need to use the `"cluster"` module by yourself and call its methods in the right node type.
-
-See [Clustered environment](concept-worker-processes/#clustered-environment) for more details.
-
-### `fork (workers?: number)`
-
-Specify the number of session workers to spawn. By default it uses the number of available CPUs.
-
-```typescript fct_label="TypeScript"
-import * as cluster from "cluster";
-import { ClusterServer } from "colyseus";
-
-let gameServer = new ClusterServer();
-
-if (cluster.isMaster) {
-    gameServer.listen(8080);
-    gameServer.fork(4);
-
-} else {
-    // ...
-}
-```
-
-```javascript fct_label="JavaScript"
-const cluster = require("cluster");
-const ClusterServer = require("colyseus").ClusterServer;
-
-let gameServer = new ClusterServer();
-
-if (cluster.isMaster) {
-    gameServer.listen(8080);
-    gameServer.fork(4);
-
-} else {
-    // ...
-}
-```

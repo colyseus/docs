@@ -3,16 +3,10 @@
 
 ## Inspector
 
-To be able to use the built-in inspector from Node.js you'll need to use the
-[single-process environment](concept-worker-processes/#single-process-environment), by using the
-`Server` class. The `ClusterServer` class uses inter-process communication,
-which doesn't play nice with the built-in inspector.
+You can use the the built-in inspector from Node.js to debug your application.
 
 !!! Tip
     Read more about [Debugging Node.js Applications](https://nodejs.org/en/docs/inspector/).
-
-!!! Note
-    For production environment, it's recommended to use [`ClusterServer`](concept-worker-processes/#clustered-environment).
 
 ## Debug messages
 

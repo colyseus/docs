@@ -4,38 +4,33 @@
 
 ## Heroku
 
-You can deploy the [colyseus-examples](https://github.com/gamestdio/colyseus-examples) project on Heroku by hitting this button: 
+You can deploy the [colyseus-examples](https://github.com/gamestdio/colyseus-examples) project on Heroku by hitting this button:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/gamestdio/colyseus-examples)
 
-**Note:** You can't use the `ClusterServer` under Heroku's free tier. Only `Server` works on free tier, which doesn't use multiple processes.
-
 ## Zeit Now
 
-You can deploy the [colyseus-examples](https://github.com/gamestdio/colyseus-examples) project on Zeit Now by hitting this button: 
+You can deploy the [colyseus-examples](https://github.com/gamestdio/colyseus-examples) project on Zeit Now by hitting this button:
 
 [![Deploy to now](https://deploy.now.sh/static/button.svg)](https://deploy.now.sh/?repo=https://github.com/gamestdio/colyseus-examples)
-
-**Note:** You can't use the `ClusterServer` under Zeit Now's free tier. Only `Server` works on free tier, which doesn't use multiple processes.
 
 ## Nginx (recommended)
 
 It's recommended to use `forever` and `nginx` in your production environment.
 
-### Forever
+### PM2
 
-Install `forever` in your environment.
+Install `pm2` in your environment.
 
 ```
-npm install -g forever
+npm install -g pm2
 ```
 
 Then start your game server using it:
 
 ```
-forever your-server.js
+pm2 start your-server.js -i 0
 ```
-
 
 ### Nginx configuration
 
