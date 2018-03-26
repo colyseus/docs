@@ -81,6 +81,22 @@ client:getAvailableRooms("battle", function(rooms, err)
 end);
 ```
 
+### `close ()`
+
+Close connection with the server.
+
+```typescript fct_label="TypeScript"
+client.close();
+```
+
+```csharp fct_label="C#"
+client.Close();
+```
+
+```lua fct_label="lua"
+client:close()
+```
+
 ## Events
 
 ### `onOpen`
