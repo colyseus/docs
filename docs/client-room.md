@@ -173,6 +173,12 @@ This property matches the [`client.sessionId`](api-client/#sessionid-string) fro
 
 Name of the room handler. Ex: `"battle"`.
 
+### `state: any`
+
+The current room's state. This variable is always synched with the latest
+`state` from the server-side. To listen for updates on the whole state, see
+[`onStateChange`](#onstatechange) event.
+
 ## Events
 
 ### onStateChange
