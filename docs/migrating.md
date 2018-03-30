@@ -13,8 +13,9 @@ to do to keep your server working on the latest version.
 
 ### Client-side
 
-- `room.onData` has been renamed to [`room.onMessage`](api-room#onmessage).
-- `room.onUpdate` has been renamed to [`room.onStateChange`](api-room#onstatechange)
+- `room.onData` has been renamed to [`room.onMessage`](client-room#onmessage).
+- `room.onUpdate` has been renamed to [`room.onStateChange`](client-room#onstatechange)
+- `room.data` has been renamed to [`room.state`](client-room/#state-any)
 
 ## Migrating to 0.5.x (from 0.4.x)
 
