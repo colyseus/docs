@@ -49,7 +49,8 @@ local room = client:join("battle")
 
 ### `getAvailableRooms (roomName: string)`
 
-List all spawned rooms available to connect (not locked), which
+List all available rooms to connect with the provided `roomName`. Locked rooms
+won't be listed.
 
 ```typescript fct_label="TypeScript"
 client.getAvailableRooms("battle", function(rooms, err) {
