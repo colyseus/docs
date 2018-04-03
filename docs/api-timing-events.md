@@ -1,5 +1,11 @@
 For [timing events](https://www.w3.org/TR/2011/WD-html5-20110525/timers.html),
-it's recommended to use the [`ClockTimer`](api-room/#clock-clocktimer) methods.
+it's recommended to use the [`this.clock`](api-room/#clock-clocktimer) methods,
+from your `Room` instance.
+
+!!! Tip
+    All intervals and timeouts registered on
+    [`this.clock`](api-room/#clock-clocktimer) are cleared automatically when
+    the `Room` is disposed.
 
 !!! Warning "Important"
     The built-in
@@ -8,7 +14,7 @@ it's recommended to use the [`ClockTimer`](api-room/#clock-clocktimer) methods.
     [`setInterval`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setInterval)
     methods rely on CPU load, which may delay an unexpected amount of time to execute.
 
-## ClockTimer
+## Clock
 
 ### Public methods
 
