@@ -13,8 +13,14 @@ to do to keep your server working on the latest version.
 
 ### Client-side
 
+#### colyseus.js
 - `room.onData` has been renamed to [`room.onMessage`](client-room#onmessage).
 - `room.onUpdate` has been renamed to [`room.onStateChange`](client-room#onstatechange)
+- `room.data` has been renamed to [`room.state`](client-room/#state-any)
+
+#### colyseus-unity3d
+- `room.OnData` has been renamed to [`room.OnMessage`](client-room#onmessage).
+- `room.OnUpdate` has been renamed to [`room.OnStateChange`](client-room#onstatechange)
 - `room.data` has been renamed to [`room.state`](client-room/#state-any)
 
 ## Migrating to 0.5.x (from 0.4.x)
