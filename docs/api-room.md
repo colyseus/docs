@@ -1,6 +1,6 @@
 # Room API (Server-side)
 
-Considering that you already [set up your server](concept-worker-processes), now it's time to register session handlers, and start accepting connections from your users.
+Considering that you already [set up your server](api-server), now it's time to register session handlers, and start accepting connections from your users.
 
 You'll define session handlers creating classes that extends from `Room`.
 
