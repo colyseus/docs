@@ -1,5 +1,5 @@
 # Project information
-site_name: 'Colyseus v0.9.0'
+site_name: 'Colyseus v0.9.x'
 site_description: 'Documentation for Colyseus Multiplayer Game Server for Node.js'
 site_author: 'gamestd.io'
 site_url: 'https://colyseus.io/'
