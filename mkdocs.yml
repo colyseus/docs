@@ -22,6 +22,7 @@ theme:
   language: 'en'
   logo: 'images/logo-white.png'
   favicon: 'images/favicon.png'
+  custom_dir: 'theme'
   palette:
     primary: 'indigo'
     accent: 'indigo'
@@ -34,6 +35,7 @@ extra_css:
 
 extra_javascript:
   - 'javascripts/main.js'
+  - 'javascripts/codefund.js'
 
 # Options
 extra:
