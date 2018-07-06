@@ -165,7 +165,7 @@ JSON.stringify(myMap);
 // => "{}"
 ```
 
-You're encourage to use them for private variables, though. See [`@nosync`](#private-variables-nosync) for not synchronizeable properties.
+You're encouraged to use them for private variables, though. See [`@nosync`](#private-variables-nosync) for not synchronizeable properties.
 
 ### Avoid mutating arrays
 
