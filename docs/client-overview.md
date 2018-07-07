@@ -58,7 +58,7 @@ let room = client.rejoin("battle", "SkNaHTazQ");
 ```
 
 ```csharp fct_label="C#"
-Room room = client.Rejoin("battle", "SkNaHTazQ");
+Room room = client.ReJoin("battle", "SkNaHTazQ");
 ```
 
 ```lua fct_label="lua"
