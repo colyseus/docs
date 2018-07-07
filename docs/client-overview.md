@@ -47,6 +47,24 @@ Room room = client.Join("battle");
 local room = client:join("battle")
 ```
 
+### `rejoin (roomName: string, sessionId: string)`
+
+Reconnects the client into a room he was previously connected with.
+
+Must be used along with [`allowReconnection()`](api-room#allowreconnection-client-seconds) in the server-side.
+
+```typescript fct_label="TypeScript"
+let room = client.rejoin("battle", "SkNaHTazQ");
+```
+
+```csharp fct_label="C#"
+Room room = client.Rejoin("battle", "SkNaHTazQ");
+```
+
+```lua fct_label="lua"
+local room = client:rejoin("battle", "SkNaHTazQ")
+```
+
 ### `getAvailableRooms (roomName: string)`
 
 List all available rooms to connect with the provided `roomName`. Locked rooms
