@@ -139,7 +139,7 @@ room:leave()
 ```
 
 !!! Tip
-    Use [Room#onLeave()](api-room/#onleave-client) to handle the disconnection from the server-side.
+    Use [Room#onLeave()](api-room/#onleave-client-consented) to handle the disconnection from the server-side.
 
 ### `removeAllListeners()`
 

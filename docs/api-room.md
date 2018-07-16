@@ -21,7 +21,7 @@ export class MyRoom extends Room {
     onJoin (client: Client) { }
 
     // When a client leaves the room
-    onLeave (client: Client) { }
+    onLeave (client: Client, consented: boolean) { }
 
     // When a client sends a message
     onMessage (client: Client, message: any) { }
@@ -90,9 +90,9 @@ onMessage (client, data) {
 }
 ```
 
-### `onLeave (client)`
+### `onLeave (client, consented)`
 
-Is called when a client leave the room.
+Is called when a client leave the room. If the disconnection was [initiated by the client](client-room/#leave), the `consented` parameter will be `true`, otherwise, it will be `false`.
 
 You can define this function as `async`. See [graceful shutdown](api-graceful-shutdown)
 
@@ -163,6 +163,10 @@ Set frequency the patched state should be sent to all clients. (default: `50` = 
 
 Set metadata for the room instance. This metadata is public when requesting the
 room list through [`client.getAvailableRooms()`](client-overview/#getavailablerooms-roomname) method.
+
+### `setSeatReservationTime (seconds)`
+
+(Default=3) Set the number of seconds a room can wait for a client to effectively join the room. You should consider how long your [`onAuth()`](#onauth-options) will have to wait for setting a different seat reservation time. The default value is usually good enough.
 
 ### `send (client, message)`
 
