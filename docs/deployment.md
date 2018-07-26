@@ -16,7 +16,7 @@ You can deploy the [colyseus-examples](https://github.com/gamestdio/colyseus-exa
 
 ## Nginx (recommended)
 
-It's recommended to use `forever` and `nginx` in your production environment.
+It's recommended to use `pm2` and `nginx` in your production environment.
 
 ### PM2
 
