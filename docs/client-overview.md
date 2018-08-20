@@ -31,6 +31,13 @@ local ColyseusClient = require("colyseus.client")
 local client = ColyseusClient.new("ws://localhost:2657");
 ```
 
+```haxe fct_label="Haxe"
+import io.colyseus.Client;
+// ...
+
+var client = new Client("ws://localhost:2657");
+```
+
 ## Methods
 
 ### `join (roomName: string, options: any)`
@@ -45,6 +52,10 @@ Room room = client.Join("battle");
 
 ```lua fct_label="lua"
 local room = client:join("battle")
+```
+
+```haxe fct_label="Haxe"
+var room = client.join("battle");
 ```
 
 ### `rejoin (roomName: string, sessionId: string)`
@@ -63,6 +74,10 @@ Room room = client.ReJoin("battle", "SkNaHTazQ");
 
 ```lua fct_label="lua"
 local room = client:rejoin("battle", "SkNaHTazQ")
+```
+
+```haxe fct_label="Haxe"
+var room = client.rejoin("battle", "SkNaHTazQ");
 ```
 
 ### `getAvailableRooms (roomName: string)`
@@ -116,6 +131,10 @@ client.Close();
 client:close()
 ```
 
+```haxe fct_label="Haxe"
+client.close();
+```
+
 ## Events
 
 ### `onOpen`
@@ -140,6 +159,12 @@ client:on('open', function()
 end)
 ```
 
+```haxe fct_label="Haxe"
+client.onOpen = function() {
+  trace("connection is now open");
+};
+```
+
 ### `onClose`
 
 This event is triggered when the connection is closed.
@@ -162,6 +187,12 @@ client:on('close', function()
 end)
 ```
 
+```haxe fct_label="Haxe"
+client.onClose = function() {
+  trace("connection has been closed");
+};
+```
+
 ### `onError`
 
 This event is triggered when some error occurs in the server.
@@ -182,6 +213,12 @@ client.OnError += (object sender, EventArgs e) => {
 client:on("error", function()
   print("something wrong happened")
 end)
+```
+
+```haxe fct_label="Haxe"
+client.onError = function() {
+  trace("something wrong happened");
+};
 ```
 
 <!-- TODO: document raw `onMessage` -->

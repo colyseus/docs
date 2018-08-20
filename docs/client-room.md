@@ -63,6 +63,20 @@ room:listen("players/:id", function(change)
 end)
 ```
 
+```haxe fct_label="Haxe"
+room.listen("players/:id", function (change) {
+  if (change.operation === "add") {
+    trace("new player added to the state");
+    trace("player id:" + change.path.id);
+    trace("player data:" + Std.string(change.value));
+
+  } else if (change.operation === "remove") {
+    trace("player has been removed from the state");
+    trace("player id:" + change.path.id);
+  }
+});
+```
+
 ##### Listening to attribute changes of deep data structures
 
 ```typescript fct_label="TypeScript"
@@ -101,6 +115,15 @@ room:listen("players/:id/:attribute", function()
 end)
 ```
 
+```haxe fct_label="Haxe"
+room.listen("players/:id/:attribute", function(change) {
+  trace(change.operation); // => "add" | "remove" | "replace"
+  trace(change.path.attribute + " has been changed");
+  trace(change.path.id);
+  trace(Std.string(change.value));
+});
+```
+
 !!! Tip
     See [State synchronization](client-state-synchronization) for more examples on how to use the `listen` method.
 
@@ -120,6 +143,10 @@ room.Send(new { move = "left" });
 room:send({ move = "left" })
 ```
 
+```haxe fct_label="Haxe"
+room.send({ move: "left" });
+```
+
 Use [Room#onMessage()](api-room/#onmessage-client-data) from the server-side to read the message.
 
 ### `leave ()`
@@ -136,6 +163,10 @@ room.Leave();
 
 ```lua fct_label="lua"
 room:leave()
+```
+
+```haxe fct_label="Haxe"
+room.leave();
 ```
 
 !!! Tip
@@ -211,6 +242,12 @@ room:on("statechange", function(state)
 end)
 ```
 
+```haxe fct_label="Haxe"
+room.onStateChange = function(state) {
+  trace("new state:" + Std.string(state));
+};
+```
+
 ### onMessage
 
 This event is triggered when the server sends a message directly to the client.
@@ -234,6 +271,13 @@ room:on("message", function(message)
   print("server just sent this message:")
   print(message)
 end)
+```
+
+```haxe fct_label="Haxe"
+room.onMessage = function(message) {
+  trace("server just sent this message:");
+  trace(Std.string(message));
+};
 ```
 
 !!! Tip
@@ -263,6 +307,12 @@ room:on("join", function()
 end)
 ```
 
+```haxe fct_label="Haxe"
+room.onJoin = function () {
+  trace("client joined successfully");
+};
+```
+
 ### onLeave
 
 This event is triggered when the client leave the room.
@@ -283,6 +333,12 @@ room.OnLeave += (object sender, EventArgs e) => {
 room:on("leave", function()
   print("client left the room")
 end)
+```
+
+```haxe fct_label="Haxe"
+room.onLeave = function () {
+  trace("client left the room");
+};
 ```
 
 ### onError
@@ -308,4 +364,11 @@ room:on("error", function()
   print("oops, error ocurred:")
   print(e)
 end)
+```
+
+```haxe fct_label="Haxe"
+room.onError = function(err) {
+  trace("oops, error ocurred:");
+  trace(err);
+};
 ```
