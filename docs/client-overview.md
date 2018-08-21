@@ -98,9 +98,14 @@ client.getAvailableRooms("battle", function(rooms, err) {
 ```
 
 ```csharp fct_label="C#"
-client.GetAvailableRooms("battle", (rooms: RoomsAvailable, err: ErrorEventArgs) => {
-  rooms.
-});
+client.GetAvailableRooms("battle", (RoomAvailable[] rooms) => {
+  for (int i = 0; i < rooms.Length; i++) {
+    Debug.Log(rooms[i].roomId);
+    Debug.Log(rooms[i].clients);
+    Debug.Log(rooms[i].maxClients);
+    Debug.Log(rooms[i].metadata);
+  }
+);
 ```
 
 ```lua fct_label="lua"
@@ -116,7 +121,7 @@ end);
 ```
 
 ```haxe fct_label="Haxe"
-client.getAvailableRooms("state_handler", function(rooms, ?err) {
+client.getAvailableRooms("battle", function(rooms, ?err) {
   if (err != null) trace(err);
   for (room in rooms) {
     trace(room.roomId);
