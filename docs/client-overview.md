@@ -115,6 +115,18 @@ client:getAvailableRooms("battle", function(rooms, err)
 end);
 ```
 
+```haxe fct_label="Haxe"
+client.getAvailableRooms("state_handler", function(rooms, ?err) {
+  if (err != null) trace(err);
+  for (room in rooms) {
+    trace(room.roomId);
+    trace(room.clients);
+    trace(room.maxClients);
+    trace(room.metadata);
+  }
+});
+```
+
 ### `close ()`
 
 Close connection with the server.
