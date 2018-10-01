@@ -56,8 +56,8 @@ Room room = client.Join("KRYAKzRo2"); // a specific battle between one user and 
 ```
 
 ```lua fct_label="lua"
-local room = client:join("battle")    // a general battle room
-local room = client:join("KRYAKzRo2") // a specific battle between one user and another
+local room = client:join("battle")    -- a general battle room
+local room = client:join("KRYAKzRo2") -- a specific battle between one user and another
 ```
 
 ```haxe fct_label="Haxe"
