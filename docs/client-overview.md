@@ -43,20 +43,26 @@ var client = new Client("ws://localhost:2657");
 
 ### `join (roomName: string, options: any)`
 
+Joins `roomName`. `roomName` can be either a room name or a roomId (gotten from `getAvailableRooms()`).
+
 ```typescript fct_label="TypeScript"
-let room = client.join("battle");
+let room = client.join("battle");     // a general battle room
+let room = client.join("KRYAKzRo2");  // a specific battle between one user and another
 ```
 
 ```csharp fct_label="C#"
-Room room = client.Join("battle");
+Room room = client.Join("battle");    // a general battle room
+Room room = client.Join("KRYAKzRo2"); // a specific battle between one user and another
 ```
 
 ```lua fct_label="lua"
-local room = client:join("battle")
+local room = client:join("battle")    // a general battle room
+local room = client:join("KRYAKzRo2") // a specific battle between one user and another
 ```
 
 ```haxe fct_label="Haxe"
-var room = client.join("battle");
+var room = client.join("battle");     // a general battle room
+var room = client.join("KRYAKzRo2");  // a specific battle between one user and another
 ```
 
 ### `rejoin (roomName: string, sessionId: string)`
