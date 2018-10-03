@@ -137,6 +137,10 @@ This property will change on these situations:
 A [`ClockTimer`](https://github.com/gamestdio/timer#api) instance, used for
 [timing events](api-timing-events.md).
 
+### `presence: Presence`
+
+The `presence` instance. Check [Presence API](api-presence) for more details.
+
 ## Public methods
 
 Room handlers have these methods available.

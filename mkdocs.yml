@@ -83,6 +83,7 @@ pages:
   - 'Timing events': 'api-timing-events.md'
   - 'State management': 'api-room-state.md'
   - 'Authentication': 'api-authentication.md'
+  - 'Presence': 'api-presence.md'
   - 'Graceful shutdown': 'api-graceful-shutdown.md'
   - 'Debugging': 'api-debugging.md'
 

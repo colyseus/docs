@@ -41,31 +41,46 @@ var client = new Client("ws://localhost:2657");
 
 ## Methods
 
-### `join (roomName: string, options: any)`
+### `join (roomNameOrId: string, options: any)`
 
-Joins `roomName`. `roomName` can be either a room name or a roomId (gotten from `getAvailableRooms()`).
+Joins `roomName`. `roomName` can be either a room name or a `roomId`.
 
 ```typescript fct_label="TypeScript"
-let room = client.join("battle");     // a general battle room
-let room = client.join("KRYAKzRo2");  // a specific battle between one user and another
+// joining a room by name
+let room = client.join("battle");
+
+// joining a room by id
+let room = client.join("KRYAKzRo2");
 ```
 
 ```csharp fct_label="C#"
-Room room = client.Join("battle");    // a general battle room
-Room room = client.Join("KRYAKzRo2"); // a specific battle between one user and another
+// joining a room by name
+Room room = client.Join("battle");
+
+// joining a room by id
+Room room = client.Join("KRYAKzRo2");
 ```
 
 ```lua fct_label="lua"
-local room = client:join("battle")    -- a general battle room
-local room = client:join("KRYAKzRo2") -- a specific battle between one user and another
+-- joining a room by name
+local room = client:join("battle")
+
+-- joining a room by id
+local room = client:join("KRYAKzRo2")
 ```
 
 ```haxe fct_label="Haxe"
-var room = client.join("battle");     // a general battle room
-var room = client.join("KRYAKzRo2");  // a specific battle between one user and another
+// joining a room by name
+var room = client.join("battle");
+
+// joining a room by id
+var room = client.join("KRYAKzRo2");
 ```
 
-### `rejoin (roomName: string, sessionId: string)`
+!!! Tip
+    Use [`getAvailableRooms()`](#getavailablerooms-roomname-string) to retrieve a list of `roomId`'s available for joining.
+
+### `rejoin (roomNameOrId: string, sessionId: string)`
 
 Reconnects the client into a room he was previously connected with.
 

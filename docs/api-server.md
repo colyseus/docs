@@ -125,7 +125,7 @@ const gameServer = new colyseus.Server({
 
 #### `options.presence`
 
-When scaling Colyseus through multiple processes / machines, you need to provide a presence server.
+When scaling Colyseus through multiple processes / machines, you need to provide a presence server. Read more about [`Presence`](api-presence).
 
 ```typescript fct_label="TypeScript"
 import { Server, RedisPresence } from "colyseus";
@@ -142,7 +142,7 @@ const colyseus = require("colyseus");
 const http = require("http");
 
 const gameServer = new colyseus.Server({
-  server: createServer(),
+  server: http.createServer(),
   presence: new colyseus.RedisPresence()
 });
 ```
