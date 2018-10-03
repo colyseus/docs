@@ -104,7 +104,7 @@ if (cluster.isMaster) {
 
 The `Presence` API is highly based on Redis's API, which is a key-value database.
 
-Every [`Room`](api-room) instance has a [`presence`](api-room/#presence-presence) property, which implements this API.
+Every [`Room`](api-room) instance has a [`presence`](api-room/#presence-presence) property, which implements the following methods:
 
 ### `subscribe(topic: string, callback: Function)`
 
