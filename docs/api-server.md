@@ -152,6 +152,12 @@ The currently avaialble Presence servers are currently:
 - `RedisPresence` (scales on a single server and multiple servers)
 - `MemsharedPresence` (scales on a single server)
 
+#### `options.gracefullyShutdown`
+
+Register shutdown routine automatically. Default is `true`. If disabled, you
+should call [`gracefullyShutdown()`](#gracefullyshutdown-exit-boolean) method
+manually in your shutdown process.
+
 ### `register (name: string, handler: Room, options?: any)`
 
 Register a new session handler.
@@ -190,11 +196,13 @@ The `register` method will return the registered handler instance, which you can
 **Usage:**
 
 ```typescript
-gameServer.register("chat", ChatRoom).
-  on("create", (room) => console.log("room created:", room.roomId)).
-  on("dispose", (room) => console.log("room disposed:", room.roomId)).
-  on("join", (room, client) => console.log(client.id, "joined", room.roomId)).
-  on("leave", (room, client) => console.log(client.id, "left", room.roomId));
+gameServer.register("chat", ChatRoom).then((handler) => {
+  handler.
+    on("create", (room) => console.log("room created:", room.roomId)).
+    on("dispose", (room) => console.log("room disposed:", room.roomId)).
+    on("join", (room, client) => console.log(client.id, "joined", room.roomId)).
+    on("leave", (room, client) => console.log(client.id, "left", room.roomId));
+})
 ```
 
 !!! Warning
@@ -251,3 +259,8 @@ Binds the WebSocket server into the specified port.
 ### `onShutdown (callback: Function)`
 
 Register a callback that should be called before the process shut down. See [graceful shutdown](api-graceful-shutdown/) for more details.
+
+### `gracefullyShutdown (exit: boolean)`
+
+Shutdown all rooms and clean-up its cached data. Returns a promise that fulfils
+whenever the clean-up has been complete.
