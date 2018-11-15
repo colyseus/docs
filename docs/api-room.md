@@ -157,7 +157,7 @@ Set the new room state.
 
 ### `setSimulationInterval (callback[, milliseconds=16.6])`
 
-(Optional) Create the simulation interval that will change the state of the game. Default simulation interval: 16.6ms (60fps)
+(Optional) Set a simulation interval that can change the state of the game. The simulation interval is your game loop. Default simulation interval: 16.6ms (60fps)
 
 ### `setPatchRate (milliseconds)`
 
