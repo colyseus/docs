@@ -9,6 +9,7 @@ See some examples in action by cloning the [examples](https://github.com/gamestd
 ```
 git clone https://github.com/gamestdio/colyseus-examples.git
 cd colyseus-examples
+npm run bundle-colyseus-client
 npm install
 ```
 
