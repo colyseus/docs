@@ -131,7 +131,7 @@ client.GetAvailableRooms("battle", (RoomAvailable[] rooms) => {
 ```
 
 ```lua fct_label="lua"
-client:getAvailableRooms("battle", function(rooms, err)
+client:get_available_rooms("battle", function(rooms, err)
   if (err) console.error(err);
   for i, rooms in pairs(rooms) do
     print(rooms[i].roomId)
