@@ -28,6 +28,7 @@ This framework is fairly new and is being evolved constantly. You're encouraged 
 
 ## External links
 
-- [🌐 &nbsp; Website](https://colyseus.io)
+- [💬 &nbsp; Chat / Discord](https://discord.gg/RY8rRS7)
 - [💬 &nbsp; Forum](http://discuss.colyseus.io/)
 - [💰 &nbsp; Support the project](https://www.patreon.com/endel)
+- [🌐 &nbsp; Website](https://colyseus.io)
