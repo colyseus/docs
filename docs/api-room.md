@@ -204,7 +204,7 @@ Disconnect all clients, then dispose.
 
 ### `allowReconnection (client, seconds)`
 
-Allow the specified client to [`rejoin`](client-overview/#rejoin-roomnameorid-string-sessionid-string) into the room. Must be unsed inside [`onLeave()`](#onleave-client) method.
+Allow the specified client to [`rejoin`](client-overview/#rejoin-roomnameorid-string-sessionid-string) into the room. Must be used inside [`onLeave()`](#onleave-client) method.
 
 ```typescript
 async onLeave (client) {
