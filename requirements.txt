@@ -1,0 +1,4 @@
+mkdocs
+mkdocs-material
+markdown-fenced-code-tabs
+-e git://github.com/aleray/mdx_del_ins.git#egg=mdx_del_ins
