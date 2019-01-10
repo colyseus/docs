@@ -12,11 +12,8 @@ Use this method to synchronize the room state from the server with the clients.
 
 ##### Listening to map data structures
 
-```typescript fct_label="TypeScript"
-import { DataChange } from "colyseus.js";
-// ...
-
-room.listen("players/:id", (change: DataChange) => {
+```typescript fct_label="JavaScript"
+room.listen("players/:id", (change) => {
   if (change.operation === "add") {
     console.log("new player added to the state");
     console.log("player id:", change.path.id);
@@ -79,11 +76,8 @@ room.listen("players/:id", function (change) {
 
 ##### Listening to attribute changes of deep data structures
 
-```typescript fct_label="TypeScript"
-import { DataChange } from "colyseus.js";
-// ...
-
-room.listen("players/:id/:attribute", (change: DataChange) => {
+```typescript fct_label="JavaScript"
+room.listen("players/:id/:attribute", (change) => {
   console.log(change.operation); // => "add" | "remove" | "replace"
   console.log(change.path.attribute, "has been changed");
   console.log(change.path.id);
@@ -131,7 +125,7 @@ room.listen("players/:id/:attribute", function(change) {
 
 Send message to the room handler.
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 room.send({ move: "left" });
 ```
 
@@ -153,7 +147,7 @@ Use [Room#onMessage()](api-room/#onmessage-client-data) from the server-side to 
 
 Disconnect from the room.
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 room.leave();
 ```
 
@@ -183,7 +177,7 @@ Remove all event and data listeners.
 The unique idenfitier of the room. You can share this id with other clients in
 order to allow them to connect directly to this room.
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 // get `roomId` from the query string
 let roomId = location.href.match(/roomId=([a-zA-Z0-9\-_]+)/)[1];
 
@@ -216,7 +210,7 @@ The current room's state. This variable is always synched with the latest
 
 This event is triggered when the server updates its state.
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 room.onStateChange.addOnce(function(state) {
   console.log("this is the first room state!", state);
 });
@@ -252,7 +246,7 @@ room.onStateChange = function(state) {
 
 This event is triggered when the server sends a message directly to the client.
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 room.onMessage.add(function(message) {
   console.log("server just sent this message:");
   console.log(message);
@@ -289,7 +283,7 @@ room.onMessage = function(message) {
 
 This event is triggered when the client successfuly joins the room.
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 room.onJoin.add(function() {
   console.log("client joined successfully");
 });
@@ -317,7 +311,7 @@ room.onJoin = function () {
 
 This event is triggered when the client leave the room.
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 room.onLeave.add(function() {
   console.log("client left the room");
 });
@@ -345,7 +339,7 @@ room.onLeave = function () {
 
 This event is triggered when some error occurs in the room handler.
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 room.onError.add(function(err) {
   console.log("oops, error ocurred:");
   console.log(err);

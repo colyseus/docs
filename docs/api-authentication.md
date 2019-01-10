@@ -1,35 +1,33 @@
-You may implement the `onAuth(options)` method validate the authenticity of your clients.
+You may implement the `onAuth (options)` method to validate the authenticity of your clients.
 
-When requesting to join a room, that's the order of methods which will be called in your room handler:
+When requesting to join a room, this is the order of methods which will be called in your room handler:
 
-1. `requestJoin` - should check if a room is available for new clients
+1. `requestJoin (options)` - should check if a room is available for new clients
 2. `onAuth (options)` - should validate the client based on the options provided (i.e. auth token)
 3. `onJoin (client, options, auth)` - should initialize the new client into your room's state.
 
-From the client-side, you'd call the `join` method with a token from some authentication service (i. e. Facebook):
+From the client-side, you'd call the `join` method with a token from some authentication service of your choice (i. e. Facebook):
 
 ```javascript fct_label="JavaScript"
-client.join("world", {
-  accessToken: yourFacebookAccessToken
-});
+client.join("world", { accessToken: yourFacebookAccessToken });
 ```
 
 ```csharp fct_label="C#"
-client.Join("world", new {
-  accessToken = yourFacebookAccessToken
-});
+client.Join("world", new { accessToken = yourFacebookAccessToken });
 ```
 
 ```lua fct_label="Lua"
-client:join("world", {
-  accessToken = yourFacebookAccessToken
-})
+client:join("world", { accessToken = yourFacebookAccessToken })
+```
+
+```lua fct_label="Haxe"
+client.join("world", { accessToken: yourFacebookAccessToken })
 ```
 
 The `onAuth` method in your room handler should return a truthy value if the
 access token is valid.
 
-You may return custom user-related data, which will be passed on the third
+You may also return custom user-related data, which will be passed on the third
 parameter of `onJoin`.
 
 ### Synchronous usage

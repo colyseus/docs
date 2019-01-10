@@ -9,7 +9,7 @@ See:
 
 **1.** Client asks to connect into a specific room:
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 // client-side
 let room = client.join("battle");
 ```
@@ -45,7 +45,7 @@ requestJoin (options: any) {
 
 **4.** If [`requestJoin`][requestJoin] fails on every available room instance, a new instance will be spawned for that client. In case [`requestJoin`][requestJoin] fails again, the client will receive an `"error"` event.
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 // client-side
 room.onError.add(function(err) {
     console.log("error ocurred:", err);

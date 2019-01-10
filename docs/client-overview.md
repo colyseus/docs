@@ -11,7 +11,7 @@ Need a client for another platform? Share your interest on the [discussion board
 
 ## Connecting to the Server
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 import * as Colyseus from "colyseus.js";
 // ...
 
@@ -45,7 +45,7 @@ var client = new Client("ws://localhost:2657");
 
 Joins `roomName`. `roomName` can be either a room name or a `roomId`.
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 // joining a room by name
 let room = client.join("battle");
 
@@ -86,7 +86,7 @@ Reconnects the client into a room he was previously connected with.
 
 Must be used along with [`allowReconnection()`](api-room#allowreconnection-client-seconds) in the server-side.
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 let room = client.rejoin("battle", "SkNaHTazQ");
 ```
 
@@ -107,7 +107,7 @@ var room = client.rejoin("battle", "SkNaHTazQ");
 List all available rooms to connect with the provided `roomName`. Locked rooms
 won't be listed.
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 client.getAvailableRooms("battle", function(rooms, err) {
   if (err) console.error(err);
   rooms.forEach(function(room) {
@@ -158,7 +158,7 @@ client.getAvailableRooms("battle", function(rooms, ?err) {
 
 Close connection with the server.
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 client.close();
 ```
 
@@ -180,7 +180,7 @@ client.close();
 
 This event is triggered when the connection is accepted by the server.
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 client.onOpen.add(function() {
   console.log("connection is now open");
 });
@@ -208,7 +208,7 @@ client.onOpen = function() {
 
 This event is triggered when the connection is closed.
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 client.onClose.add(function() {
   console.log("connection has been closed");
 });
@@ -236,7 +236,7 @@ client.onClose = function() {
 
 This event is triggered when some error occurs in the server.
 
-```typescript fct_label="TypeScript"
+```typescript fct_label="JavaScript"
 client.onError.add(function(err) {
   console.log("something wrong happened", err);
 });

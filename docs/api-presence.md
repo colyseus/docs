@@ -20,19 +20,6 @@ Use this option when you're running Colyseus on multiple processes and/or machin
 
 - `clientOpts`: The redis client options (host/credentials). [See full list of options](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/redis/index.d.ts#L28-L52).
 
-```typescript fct_label="TypeScript"
-import { Server, RedisPresence } from "colyseus";
-import { createServer } from "http";
-
-// This happens on the slave processes.
-const gameServer = new Server({
-    server: createServer(),
-    presence: new RedisPresence()
-});
-
-gameServer.listen(2657);
-```
-
 ```typescript fct_label="JavaScript"
 const colyseus = require('colyseus');
 const http = require('http');
@@ -46,35 +33,24 @@ const gameServer = new colyseus.Server({
 gameServer.listen(2657);
 ```
 
+```typescript fct_label="TypeScript"
+import { Server, RedisPresence } from "colyseus";
+import { createServer } from "http";
+
+// This happens on the slave processes.
+const gameServer = new Server({
+    server: createServer(),
+    presence: new RedisPresence()
+});
+
+gameServer.listen(2657);
+```
+
 ### `MemsharedPresence`
 
 You may use this option if you're running Colyseus on a single machine, using multiple processes through the `cluster` module.
 
 On the following example, we're going to spawn a different process for each CPU available.
-
-```typescript fct_label="TypeScript"
-import * as cluster from "cluster";
-import * as os from "os";
-import { Server, MemsharedPresence } from "colyseus";
-import { createServer } from "http";
-
-if (cluster.isMaster) {
-    // This only happens on the master server
-    const cpus = os.cpus().length;
-    for (let i = 0; i < cpus; ++i) {
-        cluster.fork();
-    }
-
-} else {
-    // This happens on the slave processes.
-    const gameServer = new Server({
-        server: createServer(),
-        presence: new MemsharedPresence()
-    });
-
-    gameServer.listen(2657);
-}
-```
 
 ```typescript fct_label="JavaScript"
 const cluster = require('cluster');
@@ -94,6 +70,30 @@ if (cluster.isMaster) {
     const gameServer = new colyseus.Server({
         server: http.createServer(),
         presence: new colyseus.MemsharedPresence()
+    });
+
+    gameServer.listen(2657);
+}
+```
+
+```typescript fct_label="TypeScript"
+import * as cluster from "cluster";
+import * as os from "os";
+import { Server, MemsharedPresence } from "colyseus";
+import { createServer } from "http";
+
+if (cluster.isMaster) {
+    // This only happens on the master server
+    const cpus = os.cpus().length;
+    for (let i = 0; i < cpus; ++i) {
+        cluster.fork();
+    }
+
+} else {
+    // This happens on the slave processes.
+    const gameServer = new Server({
+        server: createServer(),
+        presence: new MemsharedPresence()
     });
 
     gameServer.listen(2657);

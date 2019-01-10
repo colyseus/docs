@@ -10,15 +10,6 @@ The [`Server`](#server) is responsible for providing the WebSocket server to ena
 
 The HTTP server to bind the WebSocket Server into. You may use [`express`](https://www.npmjs.com/package/express) for your server too.
 
-```typescript fct_label="TypeScript"
-import { Server } from "colyseus";
-import { createServer } from "http";
-
-const gameServer = new Server({
-  server: createServer()
-});
-```
-
 ```typescript fct_label="JavaScript"
 const colyseus = require("colyseus");
 const http = require("http");
@@ -28,14 +19,12 @@ const gameServer = new colyseus.Server({
 });
 ```
 
-```typescript fct_label="TypeScript (express)"
+```typescript fct_label="TypeScript"
 import { Server } from "colyseus";
 import { createServer } from "http";
-import * as express from "express";
 
-const app = express();
 const gameServer = new Server({
-  server: createServer(app)
+  server: createServer()
 });
 ```
 
@@ -50,31 +39,14 @@ const gameServer = new colyseus.Server({
 });
 ```
 
-#### `options.engine`
-
-You may provide a different WebSocket engine. By default, it uses
-[`ws`](https://www.npmjs.com/package/ws). You may use
-[`uws`](https://www.npmjs.com/package/uws) by passing it as a reference.
-
-```typescript fct_label="TypeScript"
+```typescript fct_label="TypeScript (express)"
 import { Server } from "colyseus";
 import { createServer } from "http";
-import * as WebSocket from "uws";
+import * as express from "express";
 
+const app = express();
 const gameServer = new Server({
-  engine: WebSocket.Server,
-  server: createServer()
-});
-```
-
-```javascript fct_label="JavaScript"
-const colyseus = require("colyseus");
-const http = require("http");
-const WebSocket = require("uws")
-
-const gameServer = new colyseus.Server({
-  engine: WebSocket.Server,
-  server: http.createServer()
+  server: createServer(app)
 });
 ```
 
@@ -93,6 +65,21 @@ then the handshake is automatically accepted.
     - `code` (Number) When `result` is `false` this field determines the HTTP error status code to be sent to the client.
     - `name` (String) When `result` is `false` this field determines the HTTP reason phrase.
 
+```typescript fct_label="JavaScript"
+const colyseus = require("colyseus");
+const http = require("http");
+
+const gameServer = new colyseus.Server({
+  server: createServer(),
+  verifyClient: function (info, next) {
+    // validate 'info'
+    //
+    // - next(false) will reject the websocket handshake
+    // - next(true) will accept the websocket handshake
+  }
+});
+```
+
 ```typescript fct_label="TypeScript"
 import { Server } from "colyseus";
 import { createServer } from "http";
@@ -108,34 +95,9 @@ const gameServer = new Server({
 });
 ```
 
-```typescript fct_label="JavaScript"
-const colyseus = require("colyseus");
-const http = require("http");
-
-const gameServer = new colyseus.Server({
-  server: createServer(),
-  verifyClient: function (info, next) {
-    // validate 'info'
-    //
-    // - next(false) will reject the websocket handshake
-    // - next(true) will accept the websocket handshake
-  }
-});
-```
-
 #### `options.presence`
 
 When scaling Colyseus through multiple processes / machines, you need to provide a presence server. Read more about [`Presence`](api-presence).
-
-```typescript fct_label="TypeScript"
-import { Server, RedisPresence } from "colyseus";
-import { createServer } from "http";
-
-const gameServer = new Server({
-  server: createServer(),
-  presence: new RedisPresence()
-});
-```
 
 ```typescript fct_label="JavaScript"
 const colyseus = require("colyseus");
@@ -144,6 +106,16 @@ const http = require("http");
 const gameServer = new colyseus.Server({
   server: http.createServer(),
   presence: new colyseus.RedisPresence()
+});
+```
+
+```typescript fct_label="TypeScript"
+import { Server, RedisPresence } from "colyseus";
+import { createServer } from "http";
+
+const gameServer = new Server({
+  server: createServer(),
+  presence: new RedisPresence()
 });
 ```
 

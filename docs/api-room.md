@@ -4,27 +4,54 @@ Considering that you already [set up your server](api-server), now it's time to 
 
 You'll define session handlers creating classes that extends from `Room`.
 
+```typescript fct_label="JavaScript"
+const colyseus = require('colyseus');
+
+export class MyRoom extends colyseus.Room {
+    // When room is initialized
+    onInit (options) { }
+
+    // Checks if a new client is allowed to join. (default: `return true`)
+    requestJoin (options, isNew) { }
+
+    // Authorize client based on provided options before WebSocket handshake is complete
+    onAuth (options) { }
+
+    // When client successfully join the room
+    onJoin (client, options, auth) { }
+
+    // When a client sends a message
+    onMessage (client, message) { }
+
+    // When a client leaves the room
+    onLeave (client, consented) { }
+
+    // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
+    onDispose () { }
+}
+```
+
 ```typescript fct_label="TypeScript"
 import { Room, Client } from "colyseus";
 
 export class MyRoom extends Room {
-    // Authorize client based on provided options before WebSocket handshake is complete
-    onAuth (options: any) { }
-
     // When room is initialized
     onInit (options: any) { }
 
     // Checks if a new client is allowed to join. (default: `return true`)
     requestJoin (options: any, isNew: boolean) { }
 
-    // When client successfully join the room
-    onJoin (client: Client) { }
+    // Authorize client based on provided options before WebSocket handshake is complete
+    onAuth (options: any) { }
 
-    // When a client leaves the room
-    onLeave (client: Client, consented: boolean) { }
+    // When client successfully join the room
+    onJoin (client: Client, options: any, auth: any) { }
 
     // When a client sends a message
     onMessage (client: Client, message: any) { }
+
+    // When a client leaves the room
+    onLeave (client: Client, consented: boolean) { }
 
     // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
     onDispose () { }
