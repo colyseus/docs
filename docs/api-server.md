@@ -33,10 +33,12 @@ const colyseus = require("colyseus");
 const http = require("http");
 const express = require("express");
 
+const port = process.env.port || 3000;
 const app = express();
 const gameServer = new colyseus.Server({
   server: http.createServer(app)
 });
+gameServer.listen(port);
 ```
 
 ```typescript fct_label="TypeScript (express)"
@@ -44,10 +46,12 @@ import { Server } from "colyseus";
 import { createServer } from "http";
 import * as express from "express";
 
+const port = process.env.port || 3000;
 const app = express();
 const gameServer = new Server({
   server: createServer(app)
 });
+gameServer.listen(port);
 ```
 
 #### `options.verifyClient`
