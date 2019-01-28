@@ -22,7 +22,6 @@ theme:
   language: 'en'
   logo: 'images/logo-white.png'
   favicon: 'images/favicon.png'
-  custom_dir: 'theme'
   palette:
     primary: 'indigo'
     accent: 'indigo'
@@ -65,10 +64,11 @@ markdown_extensions:
       permalink: True
   - markdown_fenced_code_tabs:
       single_block_as_tab: False
-  - del_ins
+      active_class: 'active'
+      template: 'default'
 
 # Nav menu
-pages:
+nav:
 - 'Introduction': 'index.md'
 - 'Getting started': 'getting-started.md'
 
