@@ -21,7 +21,7 @@ Unique id per client. When the same client connects with multiple browser tabs, 
 Unique id per session. Whilst you may have the same `id` for multiple sessions from the same client, the `sessionId` is always unique.
 
 !!! Note
-    In the client-side, you can find the [`sessionId` in the `room` instance](client-room/#sessionid-string).
+    In the client-side, you can find the [`sessionId` in the `room` instance](/client-room/#sessionid-string).
 
 ## Methods
 
