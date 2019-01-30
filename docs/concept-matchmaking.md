@@ -2,7 +2,7 @@ To allow matchmaking on your Colyseus server, you'll need to implement a room ha
 
 See:
 
-- [Room](api-room)
+- [Room](/api-room/)
 - [Server#register()](api-server/#register-name-string-handler-room-options-any)
 
 ## The matchmaking cycle
