@@ -1,6 +1,6 @@
 # Presence
 
-When you need to scale your server on multiple processes and/or machines, you'd need to provide the [`Presence`](api-server/#optionspresence) option to the `Server`. The purpose of `Presence` is to allow communicating and sharing data between different processes, specially during match-making.
+When you need to scale your server on multiple processes and/or machines, you'd need to provide the [`Presence`](/api-server/#optionspresence) option to the `Server`. The purpose of `Presence` is to allow communicating and sharing data between different processes, specially during match-making.
 
 - [`LocalPresence`](#localpresence) (default)
 - [`RedisPresence`](##redispresence-clientopts)
@@ -104,7 +104,7 @@ if (cluster.isMaster) {
 
 The `Presence` API is highly based on Redis's API, which is a key-value database.
 
-Every [`Room`](api-room) instance has a [`presence`](api-room/#presence-presence) property, which implements the following methods:
+Every [`Room`](/api-room) instance has a [`presence`](/api-room/#presence-presence) property, which implements the following methods:
 
 ### `subscribe(topic: string, callback: Function)`
 
