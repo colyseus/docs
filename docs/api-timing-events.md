@@ -1,10 +1,10 @@
 For [timing events](https://www.w3.org/TR/2011/WD-html5-20110525/timers.html),
-it's recommended to use the [`this.clock`](api-room/#clock-clocktimer) methods,
+it's recommended to use the [`this.clock`](/api-room/#clock-clocktimer) methods,
 from your `Room` instance.
 
 !!! Tip
     All intervals and timeouts registered on
-    [`this.clock`](api-room/#clock-clocktimer) are cleared automatically when
+    [`this.clock`](/api-room/#clock-clocktimer) are cleared automatically when
     the `Room` is disposed.
 
 !!! Warning "Important"
@@ -49,13 +49,13 @@ This method is called automatically at every simulation interval step. All
 `Delayed` instances are checked during `tick`.
 
 !!! tip
-    See [Room#setSimiulationInterval()](api-room/#setsimulationinterval-callback-milliseconds166) for more details.
+    See [Room#setSimiulationInterval()](/api-room/#setsimulationinterval-callback-milliseconds166) for more details.
 
 ### Public properties
 
 #### `clock.elapsedTime`
 
-Elased time in milliseconds since [`clock.start()`]() method was called. Read only.
+Elased time in milliseconds since [`clock.start()`](#clockstart) method was called. Read only.
 
 #### `clock.currentTime`
 

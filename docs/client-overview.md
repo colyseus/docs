@@ -5,6 +5,8 @@ Colyseus currently have clients for the platforms:
 - [HTML5](https://github.com/gamestdio/colyseus.js)
 - [Defold](https://github.com/gamestdio/colyseus-defold)
 - [Haxe](https://github.com/gamestdio/colyseus-hx)
+- [Cocos2d-X](https://github.com/gamestdio/colyseus-cocos2d-x)
+- [Construct3](https://github.com/gamestdio/colyseus-construct3)
 - [Unity3D](https://github.com/gamestdio/colyseus-unity3d)
 
 Need a client for another platform? Share your interest on the [discussion board](https://discuss.colyseus.io/)!
@@ -84,7 +86,7 @@ var room = client.join("KRYAKzRo2");
 
 Reconnects the client into a room he was previously connected with.
 
-Must be used along with [`allowReconnection()`](api-room#allowreconnection-client-seconds) in the server-side.
+Must be used along with [`allowReconnection()`](/api-room#allowreconnection-client-seconds) in the server-side.
 
 ```typescript fct_label="JavaScript"
 let room = client.rejoin("battle", "SkNaHTazQ");

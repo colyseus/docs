@@ -3,7 +3,7 @@ To allow matchmaking on your Colyseus server, you'll need to implement a room ha
 See:
 
 - [Room](/api-room/)
-- [Server#register()](api-server/#register-name-string-handler-room-options-any)
+- [Server#register()](/api-server/#register-name-string-handler-room-options-any)
 
 ## The matchmaking cycle
 
@@ -41,7 +41,7 @@ requestJoin (options: any) {
 }
 ```
 
-**3.** If [`requestJoin`][requestJoin] succeeds, [`Room#onJoin()`](api-room/#onjoin-client) will be called with the [`client`](api-client) reference and `options` given by the client.
+**3.** If [`requestJoin`][requestJoin] succeeds, [`Room#onJoin()`](/api-room/#onjoin-client) will be called with the [`client`](/api-client) reference and `options` given by the client.
 
 **4.** If [`requestJoin`][requestJoin] fails on every available room instance, a new instance will be spawned for that client. In case [`requestJoin`][requestJoin] fails again, the client will receive an `"error"` event.
 

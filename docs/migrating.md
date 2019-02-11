@@ -7,21 +7,21 @@ to do to keep your server working on the latest version.
 
 ### Server-side
 
-- `ClusterServer` has been deprecated. Use [`Server`](api-server) instead.
-- `Room#verifyClient(client, options)` has been renamed to [`Room#onAuth(options)`](api-room#onauth-options)
-- Integration with [`uws`](https://www.npmjs.com/package/uws) module has changed. See [how to integrate here](api-server/#optionsengine).
+- `ClusterServer` has been deprecated. Use [`Server`](/api-server) instead.
+- `Room#verifyClient(client, options)` has been renamed to [`Room#onAuth(options)`](/api-room#onauth-options)
+- Integration with [`uws`](https://www.npmjs.com/package/uws) module has changed. See [how to integrate here](/api-server/#optionsengine).
 
 ### Client-side
 
 #### colyseus.js
-- `room.onData` has been renamed to [`room.onMessage`](client-room#onmessage).
-- `room.onUpdate` has been renamed to [`room.onStateChange`](client-room#onstatechange)
-- `room.data` has been renamed to [`room.state`](client-room/#state-any)
+- `room.onData` has been renamed to [`room.onMessage`](/client-room#onmessage).
+- `room.onUpdate` has been renamed to [`room.onStateChange`](/client-room#onstatechange)
+- `room.data` has been renamed to [`room.state`](/client-room/#state-any)
 
 #### colyseus-unity3d
-- `room.OnData` has been renamed to [`room.OnMessage`](client-room#onmessage).
-- `room.OnUpdate` has been renamed to [`room.OnStateChange`](client-room#onstatechange)
-- `room.data` has been renamed to [`room.state`](client-room/#state-any)
+- `room.OnData` has been renamed to [`room.OnMessage`](/client-room#onmessage).
+- `room.OnUpdate` has been renamed to [`room.OnStateChange`](/client-room#onstatechange)
+- `room.data` has been renamed to [`room.state`](/client-room/#state-any)
 
 ## Migrating to 0.5.x (from 0.4.x)
 
