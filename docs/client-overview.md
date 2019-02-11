@@ -2,12 +2,12 @@
 
 Colyseus currently have clients for the platforms:
 
-- [HTML5](https://github.com/gamestdio/colyseus.js)
-- [Defold](https://github.com/gamestdio/colyseus-defold)
-- [Haxe](https://github.com/gamestdio/colyseus-hx)
-- [Cocos2d-X](https://github.com/gamestdio/colyseus-cocos2d-x)
-- [Construct3](https://github.com/gamestdio/colyseus-construct3)
-- [Unity3D](https://github.com/gamestdio/colyseus-unity3d)
+- [HTML5](https://github.com/colyseus/colyseus.js)
+- [Defold](https://github.com/colyseus/colyseus-defold)
+- [Haxe](https://github.com/colyseus/colyseus-hx)
+- [Cocos2d-X](https://github.com/colyseus/colyseus-cocos2d-x)
+- [Construct3](https://github.com/colyseus/colyseus-construct3)
+- [Unity3D](https://github.com/colyseus/colyseus-unity3d)
 
 Need a client for another platform? Share your interest on the [discussion board](https://discuss.colyseus.io/)!
 

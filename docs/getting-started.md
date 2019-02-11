@@ -4,10 +4,10 @@
 
 Colyseus requires [Node.js](https://nodejs.org/) v6.0.0 or higher.
 
-See some examples in action by cloning the [examples](https://github.com/gamestdio/colyseus-examples) project and running it locally.
+See some examples in action by cloning the [examples](https://github.com/colyseus/colyseus-examples) project and running it locally.
 
 ```
-git clone https://github.com/gamestdio/colyseus-examples.git
+git clone https://github.com/colyseus/colyseus-examples.git
 cd colyseus-examples
 npm run bundle-colyseus-client
 npm install
