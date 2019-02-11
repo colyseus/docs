@@ -3,7 +3,7 @@
 When you need to scale your server on multiple processes and/or machines, you'd need to provide the [`Presence`](/api-server/#optionspresence) option to the `Server`. The purpose of `Presence` is to allow communicating and sharing data between different processes, specially during match-making.
 
 - [`LocalPresence`](#localpresence) (default)
-- [`RedisPresence`](##redispresence-clientopts)
+- [`RedisPresence`](#redispresence-clientopts)
 - [`MemsharedPresence`](#memsharedpresence)
 
 The `presence` instance is also available on every `Room` handler. You may use its [API](#api) to persist data and communicate between rooms via PUB/SUB.
