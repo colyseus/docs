@@ -162,7 +162,7 @@ This property will change on these situations:
 ### `clock: ClockTimer`
 
 A [`ClockTimer`](https://github.com/gamestdio/timer#api) instance, used for
-[timing events](/api-timing-events.md).
+[timing events](/api-timing-events).
 
 ### `presence: Presence`
 
