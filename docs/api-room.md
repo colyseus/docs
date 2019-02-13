@@ -234,21 +234,25 @@ Disconnect all clients, then dispose.
 Allow the specified client to [`rejoin`](/client-overview/#rejoin-roomnameorid-string-sessionid-string) into the room. Must be used inside [`onLeave()`](#onleave-client) method.
 
 ```typescript
-async onLeave (client) {
+async onLeave (client, consented: boolean) {
   // flag client as inactive for other users
-  this.state.inactivateClient(client);
+  this.state.players[client.sessionId].connected = false;
 
   try {
+    if (consented) {
+        throw new Error("consented leave");
+    }
+
     // allow disconnected client to rejoin into this room until 20 seconds
     await this.allowReconnection(client, 20);
 
     // client returned! let's re-activate it.
-    this.state.activateClient(client);
+    this.state.players[client.sessionId].connected = true;
 
   } catch (e) {
 
     // 20 seconds expired. let's remove the client.
-    this.state.removeClient(client);
+    delete this.state.players[client.sessionId];
   }
 }
 ```
