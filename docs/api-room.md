@@ -215,6 +215,7 @@ this.send(client, { message: "Hello world!" });
 Send a message to all connected clients. 
 
 Available options are:
+
 - **`except`**: a [`Client`](/api-client/) instance not to send the message to
 - **`afterNextPatch`**: waits until next patch to broadcast the message
 
