@@ -210,9 +210,13 @@ this.send(client, { message: "Hello world!" });
 !!! Tip
     [See how to handle these messages on client-side.](/client-room/#onmessage)
 
-### `broadcast ( message )`
+### `broadcast ( message, options? )`
 
-Send a message to all connected clients.
+Send a message to all connected clients. 
+
+Available options are:
+- **`except`**: a [`Client`](/api-client/) instance not to send the message to
+- **`afterNextPatch`**: waits until next patch to broadcast the message
 
 !!! Tip
     [See how to handle these messages on client-side.](/client-room/#onmessage)
