@@ -219,6 +219,44 @@ Available options are:
 - **`except`**: a [`Client`](/api-client/) instance not to send the message to
 - **`afterNextPatch`**: waits until next patch to broadcast the message
 
+#### Examples
+
+Broadcasting a message to all clients:
+
+```typescript
+onMessage (client, message) {
+    if (message === "action") {
+        // broadcast a message to all clients
+        this.broadcast("an action was taken!");
+    }
+}
+```
+
+Broadcasting a message to all clients, except the one who sent it:
+
+```typescript
+onMessage (client, message) {
+    if (message === "fire") {
+        // sends "fire" event to every client, except the one who triggered it.
+        this.broadcast("fire!", { except: client });
+    }
+}
+```
+
+Broadcasting a message to all clients, only after a change in the state has been applied:
+
+```typescript
+onMessage (client, message) {
+    if (message === "destroy") {
+        // perform changes in your state!
+        this.state.destroySomething();
+
+        // this message will arrive only after new state has been applied
+        this.broadcast("has been destroyed!", { afterNextPatch: true });
+    }
+}
+```
+
 !!! Tip
     [See how to handle these messages on client-side.](/client-room/#onmessage)
 
