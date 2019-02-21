@@ -117,7 +117,7 @@ room.listen("players/:id/:attribute", function(change) {
 });
 ```
 
-##### Initial state / Listening to incoming AND existing data in the state
+#### Initial state / Listening to incoming AND existing data in the state
 
 The callbacks will be triggered for each incoming **change** in the state after
 the moment of registration. To listen also for existing data on the state, make
@@ -126,14 +126,14 @@ sure to pass `true` on the `immediate` argument.
 ```typescript fct_label="JavaScript"
 room.listen("players/:id", (change) => {
   // ...
-}, true); // <= immediate
+}, true); // immediate
 ```
 
 ```csharp fct_label="C#"
 using Colyseus;
 // ...
 
-room.Listen("players/:id", OnPlayerChange, true);
+room.Listen("players/:id", OnPlayerChange, true); // immediate
 
 void OnPlayerChange (DataChange change)
 {
@@ -144,13 +144,13 @@ void OnPlayerChange (DataChange change)
 ```lua fct_label="lua"
 room:listen("players/:id", function(change)
   -- ...
-end, true)
+end, true) -- immediate
 ```
 
 ```haxe fct_label="Haxe"
 room.listen("players/:id", function (change) {
   // ...
-}, true);
+}, true); // immediate
 ```
 
 !!! Tip
