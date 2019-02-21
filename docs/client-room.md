@@ -2,11 +2,10 @@
 
 ## Methods
 
-### `listen (path: string, callback: Function)`
+### `listen (path: string, callback: Function, immediate?: boolean)`
 
-Listen to room state changes from the room handler.
-
-Use this method to synchronize the room state from the server with the clients.
+Listen to room state changes from the room handler. Use this method to
+synchronize the room state from the server with the clients.
 
 #### Examples
 
@@ -116,6 +115,42 @@ room.listen("players/:id/:attribute", function(change) {
   trace(change.path.id);
   trace(Std.string(change.value));
 });
+```
+
+##### Initial state / Listening to incoming AND existing data in the state
+
+The callbacks will be triggered for each incoming **change** in the state after
+the moment of registration. To listen also for existing data on the state, make
+sure to pass `true` on the `immediate` argument.
+
+```typescript fct_label="JavaScript"
+room.listen("players/:id", (change) => {
+  // ...
+}, true); // <= immediate
+```
+
+```csharp fct_label="C#"
+using Colyseus;
+// ...
+
+room.Listen("players/:id", OnPlayerChange, true);
+
+void OnPlayerChange (DataChange change)
+{
+  // ...
+});
+```
+
+```lua fct_label="lua"
+room:listen("players/:id", function(change)
+  -- ...
+end, true)
+```
+
+```haxe fct_label="Haxe"
+room.listen("players/:id", function (change) {
+  // ...
+}, true);
 ```
 
 !!! Tip
