@@ -17,7 +17,7 @@ Make sure you have `es2015` or higher in your `tsconfig.json`:
 
 ### How can I sync data of the `state` only to a specific client?
 
-In the current state of the framework, you can't do that. You'd need to send data manually to each client (through [room's send method](/api-room/#send-client-)), and not use the state for the data you'd like to hide from particular players.
+In the current state of the framework, you can't do that. You'd need to send data manually to each client (through [room's send method](/api-room/#send-client-message)), and not use the state for the data you'd like to hide from particular players.
 
 - There's a big discussion about this on issue [#59](https://github.com/colyseus/colyseus/issues/59)
 - Hopefully this will be improved when the [new serialization](https://github.com/colyseus/schema) gets stable, and integrated with the framework.
