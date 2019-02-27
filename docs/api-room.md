@@ -186,6 +186,17 @@ Set the new room state.
 
 (Optional) Set a simulation interval that can change the state of the game. The simulation interval is your game loop. Default simulation interval: 16.6ms (60fps)
 
+```typescript
+onInit () {
+    this.setSimulationInterval(() => this.update());
+}
+
+update () {
+    // implement your physics or world updates here!
+    // this is a good place to update your `this.state`
+}
+```
+
 ### `setPatchRate (milliseconds)`
 
 Set frequency the patched state should be sent to all clients. (default: `50` = 20fps)
