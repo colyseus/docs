@@ -176,6 +176,35 @@ Room handlers have these methods available.
 
 Set the new room state.
 
+**Using plain JavaScript object as the state**
+
+```typescript
+onInit () {
+    this.setState({
+        players: {}
+    });
+}
+```
+
+**Using your own data structure for the state**
+
+```typescript
+class Player {
+    x: number;
+    y: number;
+}
+
+class State {
+    players: {[id: string]: Player} = {};
+}
+
+// ...
+
+onInit () {
+    this.setState(new State());
+}
+```
+
 !!! Warning
     Do not call this method for updates in the room state. The binary patch algorithm is re-set every time you call it.
 
