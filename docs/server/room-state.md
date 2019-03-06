@@ -1,7 +1,7 @@
 The room handlers are **stateful** in Colyseus. Each room holds its own state. To allow [synchronization](/concept-state-synchronization), you **must** mutate the room's state. The server automatically broadcasts the changes to all connected clients at each patch interval.
 
 !!! Tip
-    - For synchronization with the client-side, see [client-side state synchronization](/client-state-synchronization).
+    - For synchronization with the client-side, see [client-side state synchronization](/client/state-synchronization).
     - See Colyseus' technical approach on [state synchronization](/concept-state-synchronization).
 
 ## Raw Object State

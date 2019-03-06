@@ -70,27 +70,33 @@ markdown_extensions:
 # Nav menu
 nav:
 - 'Introduction': 'index.md'
-- 'Getting started': 'getting-started.md'
+- 'Getting started':
+  - 'Server-side': 'getting-started/server.md'
+  - 'JavaScript Client': 'getting-started/javascript-client.md'
+  - 'Defold Engine Client': 'getting-started/defold-client.md'
+  - 'Haxe Client': 'getting-started/haxe-client.md'
+  - 'Cocos2d-x Client': 'getting-started/cocos2dx-client.md'
+  - 'Unity3d Client': 'getting-started/unity3d-client.md'
 
 - 'Concepts':
   - 'State synchronization': 'concept-state-synchronization.md'
   - 'Matchmaking': 'concept-matchmaking.md'
 
 - 'Server-side':
-  - 'Server': 'api-server.md'
-  - 'Room': 'api-room.md'
-  - 'Client': 'api-client.md'
-  - 'Timing events': 'api-timing-events.md'
-  - 'State management': 'api-room-state.md'
-  - 'Authentication': 'api-authentication.md'
-  - 'Presence': 'api-presence.md'
-  - 'Graceful shutdown': 'api-graceful-shutdown.md'
-  - 'Debugging': 'api-debugging.md'
+  - 'Server': 'server/api.md'
+  - 'Room': 'server/room.md'
+  - 'Client': 'server/client.md'
+  - 'Timing events': 'server/timing-events.md'
+  - 'State management': 'server/room-state.md'
+  - 'Authentication': 'server/authentication.md'
+  - 'Presence': 'server/presence.md'
+  - 'Graceful shutdown': 'server/graceful-shutdown.md'
+  - 'Debugging': 'server/debugging.md'
 
 - 'Client-side':
-  - 'Overview': 'client-overview.md'
-  - 'Room': 'client-room.md'
-  - 'State synchronization': 'client-state-synchronization.md'
+  - 'Overview': 'client/overview.md'
+  - 'Room': 'client/room.md'
+  - 'State synchronization': 'client/state-synchronization.md'
 
 - 'Deployment': 'deployment.md'
 - 'Migrating': 'migrating.md'

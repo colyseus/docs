@@ -1,6 +1,6 @@
 # Presence
 
-When you need to scale your server on multiple processes and/or machines, you'd need to provide the [`Presence`](/api-server/#optionspresence) option to the `Server`. The purpose of `Presence` is to allow communicating and sharing data between different processes, specially during match-making.
+When you need to scale your server on multiple processes and/or machines, you'd need to provide the [`Presence`](/server/api/#optionspresence) option to the `Server`. The purpose of `Presence` is to allow communicating and sharing data between different processes, specially during match-making.
 
 - [`LocalPresence`](#localpresence) (default)
 - [`RedisPresence`](#redispresence-clientopts)
@@ -30,7 +30,7 @@ const gameServer = new colyseus.Server({
     presence: new colyseus.RedisPresence()
 });
 
-gameServer.listen(2657);
+gameServer.listen(2567);
 ```
 
 ```typescript fct_label="TypeScript"
@@ -43,7 +43,7 @@ const gameServer = new Server({
     presence: new RedisPresence()
 });
 
-gameServer.listen(2657);
+gameServer.listen(2567);
 ```
 
 ### `MemsharedPresence`
@@ -72,7 +72,7 @@ if (cluster.isMaster) {
         presence: new colyseus.MemsharedPresence()
     });
 
-    gameServer.listen(2657);
+    gameServer.listen(2567);
 }
 ```
 
@@ -96,7 +96,7 @@ if (cluster.isMaster) {
         presence: new MemsharedPresence()
     });
 
-    gameServer.listen(2657);
+    gameServer.listen(2567);
 }
 ```
 
@@ -104,7 +104,7 @@ if (cluster.isMaster) {
 
 The `Presence` API is highly based on Redis's API, which is a key-value database.
 
-Every [`Room`](/api-room) instance has a [`presence`](/api-room/#presence-presence) property, which implements the following methods:
+Every [`Room`](/server/room) instance has a [`presence`](/server/room/#presence-presence) property, which implements the following methods:
 
 ### `subscribe(topic: string, callback: Function)`
 

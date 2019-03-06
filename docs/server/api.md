@@ -101,7 +101,7 @@ const gameServer = new Server({
 
 #### `options.presence`
 
-When scaling Colyseus through multiple processes / machines, you need to provide a presence server. Read more about [`Presence`](/api-presence).
+When scaling Colyseus through multiple processes / machines, you need to provide a presence server. Read more about [`Presence`](/server/presence).
 
 ```typescript fct_label="JavaScript"
 const colyseus = require("colyseus");
@@ -156,7 +156,7 @@ gameServer.register("battle_woods", BattleRoom, { map: "woods" });
 ```
 
 !!! Tip
-    You may register the same room handler multiple times with different `options`. When [Room#onInit()](http://localhost:8000/api-room/#oninit-options) is called, the `options` will contain the merged values you specified on [Server#register()](/api-server/#register-name-string-handler-room-options-any) + the options provided by the first client on `client.join()`
+    You may register the same room handler multiple times with different `options`. When [Room#onInit()](http://localhost:8000/server/room/#oninit-options) is called, the `options` will contain the merged values you specified on [Server#register()](/server/api/#register-name-string-handler-room-options-any) + the options provided by the first client on `client.join()`
 
 #### Listening to matchmake events
 
@@ -182,7 +182,7 @@ gameServer.register("chat", ChatRoom).then((handler) => {
 ```
 
 !!! Warning
-    It's completely discouraged to manipulate a room's state through these events. Use the [abstract methods](/api-room/#abstract-methods) in your room handler instead.
+    It's completely discouraged to manipulate a room's state through these events. Use the [abstract methods](/server/room/#abstract-methods) in your room handler instead.
 
 ### `attach (options: any)`
 
@@ -234,7 +234,7 @@ Binds the WebSocket server into the specified port.
 
 ### `onShutdown (callback: Function)`
 
-Register a callback that should be called before the process shut down. See [graceful shutdown](/api-graceful-shutdown/) for more details.
+Register a callback that should be called before the process shut down. See [graceful shutdown](/server/graceful-shutdown/) for more details.
 
 ### `gracefullyShutdown (exit: boolean)`
 

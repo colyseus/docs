@@ -154,7 +154,7 @@ room.listen("players/:id", function (change) {
 ```
 
 !!! Tip
-    See [State synchronization](/client-state-synchronization) for more examples on how to use the `listen` method.
+    See [State synchronization](/client/state-synchronization) for more examples on how to use the `listen` method.
 
 ### `send (data)`
 
@@ -176,7 +176,7 @@ room:send({ move = "left" })
 room.send({ move: "left" });
 ```
 
-Use [Room#onMessage()](/api-room/#onmessage-client-data) from the server-side to read the message.
+Use [Room#onMessage()](/server/room/#onmessage-client-data) from the server-side to read the message.
 
 ### `leave ()`
 
@@ -199,7 +199,7 @@ room.leave();
 ```
 
 !!! Tip
-    Use [Room#onLeave()](/api-room/#onleave-client-consented) to handle the disconnection from the server-side.
+    Use [Room#onLeave()](/server/room/#onleave-client-consented) to handle the disconnection from the server-side.
 
 ### `removeAllListeners()`
 
@@ -221,13 +221,13 @@ let room = client.join(roomId);
 ```
 
 !!! Warning
-    If you're looking for the unique identifier of the client, use [`client.id`](/client-overview/#id-string) instead.
+    If you're looking for the unique identifier of the client, use [`client.id`](/client/overview/#id-string) instead.
 
 ### `sessionId: string`
 
 Unique session identifier.
 
-This property matches the [`client.sessionId`](/api-client/#sessionid-string) from the server-side.
+This property matches the [`client.sessionId`](/server/client/#sessionid-string) from the server-side.
 
 ### `name: string`
 
@@ -311,8 +311,8 @@ room.onMessage = function(message) {
 
 !!! Tip
     To send a message from the server directly to the clients you'll need to use
-    either [room.send()](/api-room/#send-client-message) or
-    [room.broadcast()](/api-room/#broadcast-message)
+    either [room.send()](/server/room/#send-client-message) or
+    [room.broadcast()](/server/room/#broadcast-message)
 
 ### onJoin
 

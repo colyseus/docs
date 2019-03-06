@@ -2,12 +2,12 @@
 
 Colyseus currently have clients for the platforms:
 
-- [HTML5](https://github.com/colyseus/colyseus.js)
-- [Defold](https://github.com/colyseus/colyseus-defold)
-- [Haxe](https://github.com/colyseus/colyseus-hx)
-- [Cocos2d-X](https://github.com/colyseus/colyseus-cocos2d-x)
-- [Construct3](https://github.com/colyseus/colyseus-construct3)
-- [Unity3D](https://github.com/colyseus/colyseus-unity3d)
+- [HTML5](/getting-started/javascript-client) ([colyseus/colyseus.js](https://github.com/colyseus/colyseus.js))
+- [Defold](/getting-started/defold-client) ([colyseus/colyseus-defold](https://github.com/colyseus/colyseus-defold))
+- [Haxe](/getting-started/haxe-client) ([colyseus/colyseus-hx](https://github.com/colyseus/colyseus-hx))
+- [Cocos2d-X](/getting-started/cocos2dx-client) ([colyseus/colyseus-cocos2d-x](https://github.com/colyseus/colyseus-cocos2d-x))
+- [Construct3](/getting-started/construct3-client) ([colyseus/colyseus-construct3](https://github.com/colyseus/colyseus-construct3))
+- [Unity3D](/getting-started/unity3d-client) ([colyseus/colyseus-unity3d](https://github.com/colyseus/colyseus-unity3d))
 
 Need a client for another platform? Share your interest on the [discussion board](https://discuss.colyseus.io/)!
 
@@ -17,28 +17,28 @@ Need a client for another platform? Share your interest on the [discussion board
 import * as Colyseus from "colyseus.js";
 // ...
 
-let client = new Colyseus.Client("ws://localhost:2657");
+let client = new Colyseus.Client("ws://localhost:2567");
 ```
 
 ```csharp fct_label="C#"
 using Colyseus;
 // ...
 
-Client client = new Client("ws://localhost:2657");
+Client client = new Client("ws://localhost:2567");
 ```
 
 ```lua fct_label="lua"
 local ColyseusClient = require("colyseus.client")
 // ...
 
-local client = ColyseusClient.new("ws://localhost:2657");
+local client = ColyseusClient.new("ws://localhost:2567");
 ```
 
 ```haxe fct_label="Haxe"
 import io.colyseus.Client;
 // ...
 
-var client = new Client("ws://localhost:2657");
+var client = new Client("ws://localhost:2567");
 ```
 
 ## Methods

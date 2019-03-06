@@ -1,6 +1,6 @@
 # Room API (Server-side)
 
-Considering that you already [set up your server](/api-server), now it's time to register session handlers, and start accepting connections from your users.
+Considering that you already [set up your server](/server/api), now it's time to register session handlers, and start accepting connections from your users.
 
 You'll define session handlers creating classes that extends from `Room`.
 
@@ -67,13 +67,13 @@ Room handlers can implement all these methods.
 Is called once when room is initialized. You may specify custom initialization options when registering the room handler.
 
 !!! Tip
-    The `options` will contain the merged values you specified on [Server#register()](/api-server/#register-name-string-handler-room-options-any) + the options provided by the first client on `client.join()`
+    The `options` will contain the merged values you specified on [Server#register()](/server/api/#register-name-string-handler-room-options-any) + the options provided by the first client on `client.join()`
 
 ### `requestJoin (options, isNew)`
 
 **Parameters:**
 
-- `options`: The options provided by the client ([`client.join()`](/client-overview#join-roomname-string-options-any)), merged with options provided by the server ([`gameServer.register()`](/api-server/#register-name-string-handler-room-options-any)).
+- `options`: The options provided by the client ([`client.join()`](/client/overview#join-roomname-string-options-any)), merged with options provided by the server ([`gameServer.register()`](/server/api/#register-name-string-handler-room-options-any)).
 - `isNew`: will be `true` for rooms being created and `false` for existing ones.
 
 Synchronous function to check if a new client is allowed to join.
@@ -86,14 +86,14 @@ Can be used to verify authenticity of the client that's joining the room.
 
 If left non-implemented it returns `true`, allowing any client to connect.
 
-See [authentication](/api-authentication) section.
+See [authentication](/server/authentication) section.
 
 ### `onJoin (client, options, auth?)`
 
 **Parameters:**
 
-- `client`: The [`client`](/api-client) instance.
-- `options`: merged values specified on [Server#register()](/api-server/#register-name-string-handler-room-options-any) with the options provided the client on [`client.join()`](/client-overview/#join-roomname-string-options-any)
+- `client`: The [`client`](/server/client) instance.
+- `options`: merged values specified on [Server#register()](/server/api/#register-name-string-handler-room-options-any) with the options provided the client on [`client.join()`](/client/overview/#join-roomname-string-options-any)
 - `auth`: (optional) auth data returned by [`onAuth`](#onauth-options) method.
 
 Is called when client successfully join the room, after `requestJoin` and `onAuth` has been succeeded.
@@ -119,21 +119,21 @@ onMessage (client, data) {
 
 ### `onLeave (client, consented)`
 
-Is called when a client leave the room. If the disconnection was [initiated by the client](/client-room/#leave), the `consented` parameter will be `true`, otherwise, it will be `false`.
+Is called when a client leave the room. If the disconnection was [initiated by the client](/client/room/#leave), the `consented` parameter will be `true`, otherwise, it will be `false`.
 
-You can define this function as `async`. See [graceful shutdown](/api-graceful-shutdown)
+You can define this function as `async`. See [graceful shutdown](/server/graceful-shutdown)
 
 ### `onDispose ()`
 
 Cleanup callback, called after there are no more clients in the room.
 
-You can define this function as `async`. See [graceful shutdown](/api-graceful-shutdown)
+You can define this function as `async`. See [graceful shutdown](/server/graceful-shutdown)
 
 ## Public properties
 
 ### `clients: WebSocket[]`
 
-The array of connected clients. See [Web-Socket Client](/api-client).
+The array of connected clients. See [Web-Socket Client](/server/client).
 
 ### `maxClients: number`
 
@@ -162,11 +162,11 @@ This property will change on these situations:
 ### `clock: ClockTimer`
 
 A [`ClockTimer`](https://github.com/gamestdio/timer#api) instance, used for
-[timing events](/api-timing-events).
+[timing events](/server/timing-events).
 
 ### `presence: Presence`
 
-The `presence` instance. Check [Presence API](/api-presence) for more details.
+The `presence` instance. Check [Presence API](/server/presence) for more details.
 
 ## Public methods
 
@@ -193,7 +193,7 @@ Set frequency the patched state should be sent to all clients. (default: `50` = 
 ### `setMetadata (metadata)`
 
 Set metadata for the room instance. This metadata is public when requesting the
-room list through [`client.getAvailableRooms()`](/client-overview/#getavailablerooms-roomname) method.
+room list through [`client.getAvailableRooms()`](/client/overview/#getavailablerooms-roomname) method.
 
 ### `setSeatReservationTime (seconds)`
 
@@ -208,7 +208,7 @@ this.send(client, { message: "Hello world!" });
 ```
 
 !!! Tip
-    [See how to handle these messages on client-side.](/client-room/#onmessage)
+    [See how to handle these messages on client-side.](/client/room/#onmessage)
 
 ### `broadcast ( message, options? )`
 
@@ -216,7 +216,7 @@ Send a message to all connected clients.
 
 Available options are:
 
-- **`except`**: a [`Client`](/api-client/) instance not to send the message to
+- **`except`**: a [`Client`](/server/client/) instance not to send the message to
 - **`afterNextPatch`**: waits until next patch to broadcast the message
 
 #### Examples
@@ -258,7 +258,7 @@ onMessage (client, message) {
 ```
 
 !!! Tip
-    [See how to handle these messages on client-side.](/client-room/#onmessage)
+    [See how to handle these messages on client-side.](/client/room/#onmessage)
 
 ### `lock ()`
 
@@ -274,7 +274,7 @@ Disconnect all clients, then dispose.
 
 ### `allowReconnection (client, seconds)`
 
-Allow the specified client to [`rejoin`](/client-overview/#rejoin-roomnameorid-string-sessionid-string) into the room. Must be used inside [`onLeave()`](#onleave-client) method.
+Allow the specified client to [`rejoin`](/client/overview/#rejoin-roomnameorid-string-sessionid-string) into the room. Must be used inside [`onLeave()`](#onleave-client) method.
 
 ```typescript
 async onLeave (client, consented: boolean) {

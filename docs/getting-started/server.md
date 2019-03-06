@@ -2,7 +2,7 @@
 
 ## Environment
 
-Colyseus requires [Node.js](https://nodejs.org/) v6.0.0 or higher.
+Colyseus requires [Node.js](https://nodejs.org/) v8.0.0 or higher.
 
 See some examples in action by cloning the [examples](https://github.com/colyseus/colyseus-examples) project and running it locally.
 
@@ -14,7 +14,6 @@ npm install
 ```
 
 To run the http + websocket server, run `npm start`.
-
 
 ## The Mindset
 

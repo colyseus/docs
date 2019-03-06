@@ -3,25 +3,29 @@
 This document presents all breaking changes on the framework, and what you need
 to do to keep your server working on the latest version.
 
+## Migrating to 0.10.x (from 0.9.x)
+
+TODO
+
 ## Migrating to 0.9.x (from 0.6.x or 0.8.x)
 
 ### Server-side
 
-- `ClusterServer` has been deprecated. Use [`Server`](/api-server) instead.
-- `Room#verifyClient(client, options)` has been renamed to [`Room#onAuth(options)`](/api-room#onauth-options)
-- Integration with [`uws`](https://www.npmjs.com/package/uws) module has changed. See [how to integrate here](/api-server/#optionsengine).
+- `ClusterServer` has been deprecated. Use [`Server`](/server/api) instead.
+- `Room#verifyClient(client, options)` has been renamed to [`Room#onAuth(options)`](/server/room#onauth-options)
+- Integration with [`uws`](https://www.npmjs.com/package/uws) module has changed. See [how to integrate here](/server/api/#optionsengine).
 
 ### Client-side
 
 #### colyseus.js
-- `room.onData` has been renamed to [`room.onMessage`](/client-room#onmessage).
-- `room.onUpdate` has been renamed to [`room.onStateChange`](/client-room#onstatechange)
-- `room.data` has been renamed to [`room.state`](/client-room/#state-any)
+- `room.onData` has been renamed to [`room.onMessage`](/client/room#onmessage).
+- `room.onUpdate` has been renamed to [`room.onStateChange`](/client/room#onstatechange)
+- `room.data` has been renamed to [`room.state`](/client/room/#state-any)
 
 #### colyseus-unity3d
-- `room.OnData` has been renamed to [`room.OnMessage`](/client-room#onmessage).
-- `room.OnUpdate` has been renamed to [`room.OnStateChange`](/client-room#onstatechange)
-- `room.data` has been renamed to [`room.state`](/client-room/#state-any)
+- `room.OnData` has been renamed to [`room.OnMessage`](/client/room#onmessage).
+- `room.OnUpdate` has been renamed to [`room.OnStateChange`](/client/room#onstatechange)
+- `room.data` has been renamed to [`room.state`](/client/room/#state-any)
 
 ## Migrating to 0.5.x (from 0.4.x)
 
@@ -38,7 +42,7 @@ import { createServer } from 'http';
 import { Server } from 'colyseus';
 const httpServer = createServer(app);
 const gameServer = new Server({ server: httpServer });
-httpServer.listen(2657);
+httpServer.listen(2567);
 ```
 
 NEW
@@ -48,7 +52,7 @@ import { createServer } from 'http';
 import { Server } from 'colyseus';
 const httpServer = createServer(app);
 const gameServer = new Server({ server: httpServer });
-gameServer.listen(2657); // calling 'listen' from gameServer instead of httpServer
+gameServer.listen(2567); // calling 'listen' from gameServer instead of httpServer
 ```
 
 #### `constructor` signature changed. use `onInit` instead.
