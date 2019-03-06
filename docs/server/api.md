@@ -13,31 +13,38 @@ The HTTP server to bind the WebSocket Server into. You may use [`express`](https
 ```typescript fct_label="JavaScript"
 const colyseus = require("colyseus");
 const http = require("http");
+const port = process.env.port || 3000;
 
 const gameServer = new colyseus.Server({
   server: http.createServer()
 });
+
+gameServer.listen(port);
 ```
 
 ```typescript fct_label="TypeScript"
 import { Server } from "colyseus";
 import { createServer } from "http";
+const port = process.env.port || 3000;
 
 const gameServer = new Server({
   server: createServer()
 });
+
+gameServer.listen(port);
 ```
 
 ```typescript fct_label="JavaScript (express)"
 const colyseus = require("colyseus");
 const http = require("http");
 const express = require("express");
-
 const port = process.env.port || 3000;
+
 const app = express();
 const gameServer = new colyseus.Server({
   server: http.createServer(app)
 });
+
 gameServer.listen(port);
 ```
 
@@ -45,12 +52,13 @@ gameServer.listen(port);
 import { Server } from "colyseus";
 import { createServer } from "http";
 import * as express from "express";
-
 const port = process.env.port || 3000;
+
 const app = express();
 const gameServer = new Server({
   server: createServer(app)
 });
+
 gameServer.listen(port);
 ```
 

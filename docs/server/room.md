@@ -176,6 +176,35 @@ Room handlers have these methods available.
 
 Set the new room state.
 
+**Using plain JavaScript object as the state**
+
+```typescript
+onInit () {
+    this.setState({
+        players: {}
+    });
+}
+```
+
+**Using your own data structure for the state**
+
+```typescript
+class Player {
+    x: number;
+    y: number;
+}
+
+class State {
+    players: {[id: string]: Player} = {};
+}
+
+// ...
+
+onInit () {
+    this.setState(new State());
+}
+```
+
 !!! Warning
     Do not call this method for updates in the room state. The binary patch algorithm is re-set every time you call it.
 
@@ -185,6 +214,17 @@ Set the new room state.
 ### `setSimulationInterval (callback[, milliseconds=16.6])`
 
 (Optional) Set a simulation interval that can change the state of the game. The simulation interval is your game loop. Default simulation interval: 16.6ms (60fps)
+
+```typescript
+onInit () {
+    this.setSimulationInterval(() => this.update());
+}
+
+update () {
+    // implement your physics or world updates here!
+    // this is a good place to update your `this.state`
+}
+```
 
 ### `setPatchRate (milliseconds)`
 
