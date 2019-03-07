@@ -19,7 +19,7 @@ Read more about [Defold library dependencies](http://www.defold.com/manuals/libr
 
 You can also specify a [specific release](https://github.com/colyseus/colyseus-defold/releases) of the client, by copying its respective zip archive URL.
 
-# Usage
+## Usage
 
 ```lua
 local ColyseusClient = require "colyseus.client"
