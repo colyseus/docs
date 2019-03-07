@@ -5,7 +5,24 @@ to do to keep your server working on the latest version.
 
 ## Migrating to 0.10.x (from 0.9.x)
 
-TODO
+> TODO
+
+### Server-side
+
+- `EntityMap<T>` has been deprecated. If you're using `EntityMap<T>` to describe a map of entities, you should use the plain TypeScript alternative now. e.g. Replace "`EntityMap<Player>`" with "`{[id: string]: Player}`".
+
+### Client-side
+
+#### colyseus-unity3d
+
+- `client.id` has been renamed to `client.Id`
+- `room.id` has been renamed to `room.Id`
+- `room.name` has been renamed to `room.Name`
+- `room.sessionId` has been renamed to `room.SessionId`
+- `room.state` has been renamed to `room.State`
+- `e.message` has been renamed to `e.Message` (on `MessageEventArgs` and `ErrorEventArgs`)
+- `RoomUpdateEventArgs` has been renamed to `StateChangeEventArgs`
+    - `e.state` has been renamed to `e.State`
 
 ## Migrating to 0.9.x (from 0.6.x or 0.8.x)
 

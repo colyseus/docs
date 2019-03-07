@@ -55,7 +55,6 @@ Whilst it's possible to use raw data directly on `this.state`. The recommended w
 
 - A clean `BattleRoom` implementation, directly coupled to the state structure.
 - A large data structure holding the entire room state (`BattleState`)
-    - Usage of built-in [`EntityMap`](#map-of-entities-entitymap) type.
     - Methods manipulating smaller data structures
 - A small decoupled data structure representing a single entity (`Player`)
 
@@ -88,11 +87,10 @@ export class BattleRoom extends Room<BattleState> {
 
 ```typescript fct_label="BattleState.ts"
 // BattleState.ts
-import { EntityMap } from "colyseus";
 import { Player } from "./Player";
 
 export class BattleState {
-  players: EntityMap<Player> = {};
+  players: {[id: string]: Player} = {};
 
   addPlayer (client) {
     this.players[ client.sesssionId ] = new Player(0, 0);
@@ -126,9 +124,13 @@ export class Player {
 }
 ```
 
-### Map of entities (`EntityMap`)
+### Map of entities 
 
-The `EntityMap` is useful to have strong data typing during development. Since you cannot use `Map` to describe public synchronizeable properties (see [avoid using `Map` and `Set`](#avoid-using-map-set)), the `EntityMap` is used to describe a simple map of keys (`string`) to a custom type (`T`).
+Since you cannot use `Map` to describe public synchronizeable properties (see [avoid using `Map` and `Set`](#avoid-using-map-set)), you can use a plain JavaScript object to assign keys of `string` to a custom type (`T`).
+
+```ts
+players: {[id: string]: Player} = {}
+```
 
 ```typescript
 type EntityMap<T> = {[ entityId:string ]: T};
