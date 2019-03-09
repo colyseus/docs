@@ -95,7 +95,7 @@ export class BattleState {
   players: EntityMap<Player> = {};
 
   addPlayer (client) {
-    this.players[ client.sesssionId ] = new Player(0, 0);
+    this.players[ client.sessionId ] = new Player(0, 0);
   }
 
   removePlayer (client) {
