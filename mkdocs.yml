@@ -99,6 +99,8 @@ nav:
   - 'State synchronization': 'client/state-synchronization.md'
 
 - 'Deployment': 'deployment.md'
-- 'Migrating': 'migrating.md'
+- 'Migrating': 
+  - '0.10.x': 'migrating/0.10.md'
+  - '0.9.x': 'migrating/0.9.md'
 
 - 'FAQ': 'faq.md'
