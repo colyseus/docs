@@ -217,10 +217,10 @@ onInit () {
 
 ```typescript
 onInit () {
-    this.setSimulationInterval(() => this.update());
+    this.setSimulationInterval((deltaTime) => this.update(deltaTime));
 }
 
-update () {
+update (deltaTime) {
     // implement your physics or world updates here!
     // this is a good place to update your `this.state`
 }
