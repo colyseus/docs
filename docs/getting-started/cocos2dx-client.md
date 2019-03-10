@@ -58,12 +58,14 @@ The example is using [colyseus-examples](https://github.com/colyseus/colyseus-ex
 From the `Example` directory, run the `cocos run -p {platform-id}` command,
 e.g.:
 
+**Building for Windows:**
+
 ```
-# running on windows
 cocos run -p win32
 ```
 
+**Building for Mac:**
+
 ```
-# running on mac
 cocos run -p mac
 ```
