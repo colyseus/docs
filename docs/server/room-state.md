@@ -93,7 +93,7 @@ export class BattleState {
   players: {[id: string]: Player} = {};
 
   addPlayer (client) {
-    this.players[ client.sesssionId ] = new Player(0, 0);
+    this.players[ client.sessionId ] = new Player(0, 0);
   }
 
   removePlayer (client) {
