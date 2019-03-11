@@ -40,7 +40,7 @@ function update(self, dt)
 end
 ```
 
-See [client-side documentation](/client/overview/).
+See [client-side documentation](/client/client/).
 
 ## Example
 

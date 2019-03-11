@@ -154,7 +154,7 @@ room.listen("players/:id", function (change) {
 ```
 
 !!! Tip
-    See [State synchronization](/client/state-synchronization) for more examples on how to use the `listen` method.
+    See [State synchronization](/client/state/fossil-delta) for more examples on how to use the `listen` method.
 
 ### `send (data)`
 
@@ -221,7 +221,7 @@ let room = client.join(roomId);
 ```
 
 !!! Warning
-    If you're looking for the unique identifier of the client, use [`client.id`](/client/overview/#id-string) instead.
+    If you're looking for the unique identifier of the client, use [`client.id`](/client/client/#id-string) instead.
 
 ### `sessionId: string`
 

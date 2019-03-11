@@ -78,25 +78,27 @@ nav:
   - 'Cocos2d-x Client': 'getting-started/cocos2dx-client.md'
   - 'Unity3d Client': 'getting-started/unity3d-client.md'
 
-- 'Concepts':
-  - 'State synchronization': 'concept-state-synchronization.md'
-  - 'Matchmaking': 'concept-matchmaking.md'
-
 - 'Server-side':
   - 'Server': 'server/api.md'
   - 'Room': 'server/room.md'
   - 'Client': 'server/client.md'
+  - 'State Serialization': 'server/state-serialization.md'
   - 'Timing events': 'server/timing-events.md'
-  - 'State management': 'server/room-state.md'
   - 'Authentication': 'server/authentication.md'
   - 'Presence': 'server/presence.md'
   - 'Graceful shutdown': 'server/graceful-shutdown.md'
   - 'Debugging': 'server/debugging.md'
 
 - 'Client-side':
-  - 'Overview': 'client/overview.md'
+  - 'Client': 'client/client.md'
   - 'Room': 'client/room.md'
-  - 'State synchronization': 'client/state-synchronization.md'
+
+- 'State Handling':
+  - 'Overview': 'state/overview.md'
+  - 'Schema (0.10.x)': 'state/schema.md'
+  - 'Fossil Delta (0.9.x)': 'state/fossil-delta.md'
+
+- 'Matchmaking': 'matchmaking.md'
 
 - 'Deployment': 'deployment.md'
 - 'Migrating': 

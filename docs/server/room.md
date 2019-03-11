@@ -73,7 +73,7 @@ Is called once when room is initialized. You may specify custom initialization o
 
 **Parameters:**
 
-- `options`: The options provided by the client ([`client.join()`](/client/overview#join-roomname-string-options-any)), merged with options provided by the server ([`gameServer.register()`](/server/api/#register-name-string-handler-room-options-any)).
+- `options`: The options provided by the client ([`client.join()`](/client/client#join-roomname-string-options-any)), merged with options provided by the server ([`gameServer.register()`](/server/api/#register-name-string-handler-room-options-any)).
 - `isNew`: will be `true` for rooms being created and `false` for existing ones.
 
 Synchronous function to check if a new client is allowed to join.
@@ -93,7 +93,7 @@ See [authentication](/server/authentication) section.
 **Parameters:**
 
 - `client`: The [`client`](/server/client) instance.
-- `options`: merged values specified on [Server#register()](/server/api/#register-name-string-handler-room-options-any) with the options provided the client on [`client.join()`](/client/overview/#join-roomname-string-options-any)
+- `options`: merged values specified on [Server#register()](/server/api/#register-name-string-handler-room-options-any) with the options provided the client on [`client.join()`](/client/client/#join-roomname-string-options-any)
 - `auth`: (optional) auth data returned by [`onAuth`](#onauth-options) method.
 
 Is called when client successfully join the room, after `requestJoin` and `onAuth` has been succeeded.
@@ -131,6 +131,10 @@ You can define this function as `async`. See [graceful shutdown](/server/gracefu
 
 ## Public properties
 
+### `state: T`
+
+The state instance you provided to [`setState()`](#setstate-object).
+
 ### `clients: WebSocket[]`
 
 The array of connected clients. See [Web-Socket Client](/server/client).
@@ -146,7 +150,7 @@ disconnects from it.
 
 Frequency to send the room state to connected clients (in milliseconds)
 
-See [state synchronization](/concept-state-synchronization/).
+See [state synchronization](/state/fossil-delta/).
 
 ### `autoDispose: boolean`
 
@@ -174,7 +178,7 @@ Room handlers have these methods available.
 
 ### `setState (object)`
 
-Set the new room state.
+Set the new room state instance.
 
 **Using plain JavaScript object as the state**
 
@@ -209,7 +213,7 @@ onInit () {
     Do not call this method for updates in the room state. The binary patch algorithm is re-set every time you call it.
 
 !!! tip
-    You'll usually call this method only once (on [`Room.onInit()`](#oninit-options)) in your room handler.
+    You usually will call this method only once during [`onInit()`](#oninit-options) in your room handler.
 
 ### `setSimulationInterval (callback[, milliseconds=16.6])`
 
@@ -222,7 +226,7 @@ onInit () {
 
 update (deltaTime) {
     // implement your physics or world updates here!
-    // this is a good place to update your `this.state`
+    // this is a good place to update the room state
 }
 ```
 
@@ -233,7 +237,7 @@ Set frequency the patched state should be sent to all clients. (default: `50` = 
 ### `setMetadata (metadata)`
 
 Set metadata for the room instance. This metadata is public when requesting the
-room list through [`client.getAvailableRooms()`](/client/overview/#getavailablerooms-roomname) method.
+room list through [`client.getAvailableRooms()`](/client/client/#getavailablerooms-roomname) method.
 
 ### `setSeatReservationTime (seconds)`
 
@@ -250,7 +254,7 @@ this.send(client, { message: "Hello world!" });
 !!! Tip
     [See how to handle these messages on client-side.](/client/room/#onmessage)
 
-### `broadcast ( message, options? )`
+### `broadcast (message, options?)`
 
 Send a message to all connected clients. 
 
@@ -259,7 +263,7 @@ Available options are:
 - **`except`**: a [`Client`](/server/client/) instance not to send the message to
 - **`afterNextPatch`**: waits until next patch to broadcast the message
 
-#### Examples
+#### Broadcast examples
 
 Broadcasting a message to all clients:
 
@@ -272,7 +276,7 @@ onMessage (client, message) {
 }
 ```
 
-Broadcasting a message to all clients, except the one who sent it:
+Broadcasting a message to all clients, except the sender.
 
 ```typescript
 onMessage (client, message) {
@@ -298,7 +302,7 @@ onMessage (client, message) {
 ```
 
 !!! Tip
-    [See how to handle these messages on client-side.](/client/room/#onmessage)
+    [See how to handle these onMessage() in the client-side.](/client/room/#onmessage)
 
 ### `lock ()`
 
@@ -308,13 +312,9 @@ Locking the room will remove it from the pool of available rooms for new clients
 
 Unlocking the room returns it to the pool of available rooms for new clients to connect to.
 
-### `disconnect ()`
-
-Disconnect all clients, then dispose.
-
 ### `allowReconnection (client, seconds)`
 
-Allow the specified client to [`rejoin`](/client/overview/#rejoin-roomnameorid-string-sessionid-string) into the room. Must be used inside [`onLeave()`](#onleave-client) method.
+Allow the specified client to [`rejoin`](/client/client/#rejoin-roomnameorid-string-sessionid-string) into the room. Must be used inside [`onLeave()`](#onleave-client) method.
 
 ```typescript
 async onLeave (client, consented: boolean) {
@@ -339,3 +339,7 @@ async onLeave (client, consented: boolean) {
   }
 }
 ```
+
+### `disconnect ()`
+
+Disconnect all clients, then dispose.

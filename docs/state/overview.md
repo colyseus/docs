@@ -1,4 +1,6 @@
-# State synchronization
+# State Handling
+
+
 
 - Colyseus uses [MessagePack](https://msgpack.org/) to encode the room state in a binary format.
 - Upon first connection, the client receives the latest full binary room state.
