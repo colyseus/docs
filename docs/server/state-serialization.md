@@ -1,9 +1,9 @@
-Colyseus currently provides two methods of serialization out of the box:
+Colyseus currently provides two serialization methods out of the box:
 
 - [Schema](/state/schema/) (default)
 - [Fossil Delta](/state/fossil-delta/)
 
-To customize which serialization method to use, you should call 
+See below how to specify which serialization method to use.
 
 ```typescript fct_label="TypeScript"
 import { serialize, FossilDeltaSerializer, Room } from "colyseus";
