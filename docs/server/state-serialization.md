@@ -27,6 +27,9 @@ colyseus.serialize(colyseus.FossilDeltaSerializer)(MyRoom);
 
 If you feel the need to implement a custom state serializer, you should be able to.
 
+!!! Warning "👻 You probably don't need this! 👻"
+    If you're just starting out with the framework, read the ["State Handling"](/state/overview/) pages instead.
+
 !!! Warning "This feature is experimental"
     You are likely to need to fork the [client library](/client/client/) you're working with to integrate the de-serializer in the client. In the future, all clients should support an API to set a custom de-serializer.
 

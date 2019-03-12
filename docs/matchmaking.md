@@ -57,7 +57,7 @@ room.onError.add(function(err) {
 room.OnError += (object sender, MessageEventArgs e) => Debug.Log(e.data);
 ```
 
-### Ranked matches
+### Priority matches
 
 As an alternative to returning `true` or `false` on `requestJoin`, you can provide a number between `0` and `1` to manage priority. The match-making service will select the highest number for the new user to connect.
 

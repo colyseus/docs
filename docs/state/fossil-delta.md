@@ -1,12 +1,12 @@
 # [State Handling](/state/overview) » Fossil Delta
 
+The `FossilDeltaSerializer` is permissive about which structure you provide as the state. You may provide a raw object, a class instance, and all its [enumerable properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty#Description) are going to be serialized to the clients.
+
 ## Server-side
 
-The room handlers are **stateful** in Colyseus. Each room holds its own state. To allow [synchronization](/state/fossil-delta), you **must** mutate the room's state. The server automatically broadcasts the changes to all connected clients at each patch interval.
-
-!!! Tip
+<!-- !!! Tip
     - For synchronization with the client-side, see [client-side state synchronization](/client/state/fossil-delta).
-    - See Colyseus' technical approach on [state synchronization](/state/fossil-delta).
+    - See Colyseus' technical approach on [state synchronization](/state/fossil-delta). -->
 
 ### Raw Object State
 
