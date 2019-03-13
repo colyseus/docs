@@ -82,7 +82,7 @@ type(Map)(State.prototype, "map");
 
 When using arrays, it's important to use the `ArraySchema` type. Do not use plain arrays.
 
-`ArraySchema` is recommended for defining your maps, or any collection in your game.
+`ArraySchema` is recommended for describing the world map, or any collection in your game.
 
 ```typescript fct_label="TypeScript"
 import { Schema, ArraySchema, type } from "@colyseus/schema";
@@ -124,7 +124,7 @@ type([ Block ])(State.prototype, "blocks");
 
 ### Map of custom data type
 
-When using a map, it's important to use the `MapSchema` type. Do not use a plain object or type Map type.
+When using a map, it's important to use the `MapSchema` type. Do not use a plain object or the native Map type.
 
 `MapSchema` is recommended to track your game entities by id, such as players, enemies, etc.
 
@@ -195,27 +195,52 @@ These are the types you can provide for the `@type()` decorator, and their limit
 
 ## Client-side
 
-> TODO: describe how to listen for object changes (single callback per object), arrays and maps
+There are three ways to handle changes in the client-side when using `SchemaSerializer`:
 
-```typescript
+- [onChange (changes)](#onchangechanges-datachange)
+- [onAdd (instance, key)](#onadd-instance-key)
+- [onRemove (instance, key)](#onremove-instance-key)
+
+### `onChange(changes: DataChange[])`
+
+You can register the `onChange` to track a single object's property changes. The `onChange` callback is called with an array of changed properties, along with their previous value.
+
+```javascript
 room.state.onChange = (changes) => {
+    changes.forEach(change => {
+        console.log(change.field);
+        console.log(change.value);
+        console.log(change.previousValue);
+    });
 };
+```
 
-// map of players
+You cannot register a `onChange` callback for objects that haven't been synchronized to the client-side yet.
+
+### `onAdd (instance, key)`
+
+The `onAdd` callback can only be used in maps (`MapSchema`) and arrays (`ArraySchema`). The `onAdd` callback is called with the added instance and its key on holder object as argument.
+
+```javascript
 room.state.players.onAdd = (player, key) => {
+    console.log(player, "has been added at", key);
+
+    // add your player entity to the game world!
+
+    // If you want to track changes on a child object inside a map, this is a common pattern:
     player.onChange = functin(changes) {
     }
 };
+```
 
-// map of players
+### `onRemove (instance, key)`
+
+The `onRemove` callback can only be used in maps (`MapSchema`) and arrays (`ArraySchema`). The `onRemove` callback is called with the added instance and its key on holder object as argument.
+
+```javascript
 room.state.players.onRemove = (player, key) => {
-};
+    console.log(player, "has been removed at", key);
 
-// array of blocks
-room.state.blocks.onAdd = (block, key) => {
-};
-
-// map of players
-room.state.blocks.onRemove = (block, key) => {
+    // remove your player entity from the game world!
 };
 ```
