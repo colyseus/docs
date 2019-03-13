@@ -78,7 +78,10 @@ nav:
   - 'Cocos2d-x Client': 'getting-started/cocos2dx-client.md'
   - 'Unity3d Client': 'getting-started/unity3d-client.md'
 
-- 'Server-side':
+# - 'Tutorials':
+#   - ''
+
+- 'Server API':
   - 'Server': 'server/api.md'
   - 'Room': 'server/room.md'
   - 'Client': 'server/client.md'
@@ -87,9 +90,8 @@ nav:
   - 'Authentication': 'server/authentication.md'
   - 'Presence': 'server/presence.md'
   - 'Graceful shutdown': 'server/graceful-shutdown.md'
-  - 'Debugging': 'server/debugging.md'
 
-- 'Client-side':
+- 'Client API':
   - 'Client': 'client/client.md'
   - 'Room': 'client/room.md'
 
@@ -100,6 +102,7 @@ nav:
 
 - 'Matchmaking': 'matchmaking.md'
 
+- 'Debugging': 'debugging.md'
 - 'Deployment': 'deployment.md'
 - 'Migrating': 
   - '0.10.x': 'migrating/0.10.md'

@@ -146,6 +146,9 @@ manually in your shutdown process.
 
 Register a new session handler.
 
+!!! Tip "Registering the same room handler multiple times"
+    You may register the same room handler multiple times with different `options`. When [Room#onInit()](http://localhost:8000/server/room/#oninit-options) is called, the `options` will contain the merged values you specified on [Server#register()](/server/api/#register-name-string-handler-room-options-any) + the options provided by the first client on `client.join()`
+
 **Parameters:**
 
 - `name: string` - The public name of the room. You'll use this name when joining the room from the client-side.
@@ -162,9 +165,6 @@ gameServer.register("battle", BattleRoom);
 // Register "battle" room with custom options
 gameServer.register("battle_woods", BattleRoom, { map: "woods" });
 ```
-
-!!! Tip
-    You may register the same room handler multiple times with different `options`. When [Room#onInit()](http://localhost:8000/server/room/#oninit-options) is called, the `options` will contain the merged values you specified on [Server#register()](/server/api/#register-name-string-handler-room-options-any) + the options provided by the first client on `client.join()`
 
 #### Listening to matchmake events
 
@@ -248,3 +248,5 @@ Register a callback that should be called before the process shut down. See [gra
 
 Shutdown all rooms and clean-up its cached data. Returns a promise that fulfils
 whenever the clean-up has been complete.
+
+This method is called automatically unless `gracefullyShutdown: false` has been provided on `Server` constructor.

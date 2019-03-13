@@ -8,7 +8,7 @@ To use the `SchemaSerializer`, you must:
 
 - Have a state class extending the `Schema` class
 - Annotate all your synchonizable properties with the `@type()` decorator
-- Instantiate the state for your room (`this.setState(new YourState())`)
+- Instantiate the state for your room (`this.setState(new MyState())`)
 
 !!! Warning "Are you not using TypeScript?"
     Decorators [are not part of ECMAScript yet](https://github.com/tc39/proposal-decorators), so the `type` syntax on plain JavaScript is still a bit odd to use, which you can see in the "JavaScript" tab for each snippet.
@@ -16,7 +16,7 @@ To use the `SchemaSerializer`, you must:
 ```typescript fct_label="TypeScript"
 import { Schema, type } from "@colyseus/schema";
 
-class State extends Schema {
+class MyState extends Schema {
     @type("string")
     currentTurn: string;
 }
@@ -27,7 +27,7 @@ const schema = require('@colyseus/schema');
 const Schema = schema.Schema;
 const type = schema.type;
 
-class State extends Schema {
+class MyState extends Schema {
 }
 
 type("string")(State.prototype, "currentTurn");
@@ -51,7 +51,7 @@ class Map {
     items: number = 10;
 }
 
-class State extends Schema {
+class MyState extends Schema {
     @type(Map)
     map: Map = new Map();
 }
@@ -68,7 +68,7 @@ type("number")(Map.prototype, "width");
 type("number")(Map.prototype, "height");
 type("number")(Map.prototype, "items");
 
-class State extends Schema {
+class MyState extends Schema {
     constructor () {
         super();
 
@@ -95,7 +95,7 @@ class Block {
     height: number;
 }
 
-class State extends Schema {
+class MyState extends Schema {
     @type([ Block ])
     blocks = new ArraySchema<Block>();
 }
@@ -112,7 +112,7 @@ class Block extends Schema {
 type("number")(Map.prototype, "x");
 type("number")(Map.prototype, "y");
 
-class State extends Schema {
+class MyState extends Schema {
     constructor () {
         super();
 
@@ -139,7 +139,7 @@ class Player {
     height: number;
 }
 
-class State extends Schema {
+class MyState extends Schema {
     @type({ map: Player })
     players = new MapSchema<Player>();
 }
@@ -156,7 +156,7 @@ class Player extends Schema {
 type("number")(Map.prototype, "x");
 type("number")(Map.prototype, "y");
 
-class State extends Schema {
+class MyState extends Schema {
     constructor () {
         super();
 

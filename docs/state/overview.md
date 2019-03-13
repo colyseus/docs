@@ -2,9 +2,12 @@
 
 The room handlers are **stateful** in Colyseus. Each room holds its own state. The mutations of the state are synchronized automatically to all connected clients.
 
-The room state is where you put 
+Colyseus currently provides two serialization methods out of the box:
 
-- Colyseus uses [MessagePack](https://msgpack.org/) to encode the room state in a binary format.
-- Upon first connection, the client receives the latest full binary room state.
-- The binary patch is evaluated through [Fossil's Delta algorithm](http://fossil-scm.org/xfer/doc/trunk/www/delta_format.wiki) at every [patch interval](/server/room/#setpatchrate-milliseconds).
-- The patched room state is sent to all connected clients.
+- [Schema](/state/schema/) (default)
+- [Fossil Delta](/state/fossil-delta/)
+
+## When the state is synchronized
+
+- When the user successfully joins the room, he receives the full state from the server.
+- At every [patchRate](/server/room/#patchrate-number), binary patches of the state are sent to every client (default is `50ms`)

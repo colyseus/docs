@@ -148,13 +148,11 @@ disconnects from it.
 
 ### `patchRate: number`
 
-Frequency to send the room state to connected clients (in milliseconds)
-
-See [state synchronization](/state/fossil-delta/).
+Frequency to send the room state to connected clients, in milliseconds. Default is `50`ms (20fps)
 
 ### `autoDispose: boolean`
 
-Automatically dispose the room when last client disconnect. (default: `true`)
+Automatically dispose the room when last client disconnect. Default is `true`
 
 ### `locked: boolean` (read-only)
 
@@ -232,7 +230,7 @@ update (deltaTime) {
 
 ### `setPatchRate (milliseconds)`
 
-Set frequency the patched state should be sent to all clients. (default: `50` = 20fps)
+Set frequency the patched state should be sent to all clients. Default is `50ms` (20fps)
 
 ### `setMetadata (metadata)`
 
