@@ -211,11 +211,9 @@ colyseus.nosync(Player.prototype, "wontBeSynched");
 
 #### Avoid using `Map`, `Set`
 
-Avoid using `Map` and `Set` for public, synchronizeable, properties.
+Avoid using `Map` and `Set` for public, synchronizeable, properties. 
 
-Unfortunately, the JavaScript built-in types `Map` and `Set` aren't serializeable by default. This means MessagePack cannot encode them properly.
-
-**See why:**
+Unfortunately, the JavaScript built-in types `Map` and `Set` aren't serializeable. That's because their internal structure is not exposed as enumerable properties:
 
 ```typescript
 var myMap = new Map([["k1", "v1"], ["k2", "v2"]]);
@@ -224,7 +222,7 @@ JSON.stringify(myMap);
 // => "{}"
 ```
 
-You're encouraged to use them for private variables, though. See [`@nosync`](#private-variables-nosync) for not synchronizeable properties.
+You're encouraged to use these structures as private, non-synchronizable variables, though. See [`@nosync`](#non-synchronizable-properties-nosync).
 
 #### Avoid mutating arrays
 
@@ -235,46 +233,19 @@ Removing or inserting entries in-between will generate one `"replace"` operation
 
 ## Client-side
 
-Whenever the [state mutates](/server/room) in the server-side, you can listen to particular variable changes in the client-side.
+> TODO
+> Describe usage of `:wildcards`, multiple callbacks per property, etc.
 
-The `Room` instance in the client-side uses [delta-listener](https://github.com/endel/delta-listener) to allow you to trigger callbacks for particular mutations.
+Listening to changes in a particular variable
 
-**Example**
-
-Let's say you have a list of entities and its positions in your server-side:
-
-```javascript
-class MyRoom extends Room {
-    onInit () {
-        this.setState({
-            entities: {
-                "f98h3f": { x: 0, y: 0, hp: 10 },
-                "24jgd3": { x: 100, y: 0, hp: 6 }
-            }
-        });
-    }
-}
+```javascript fct_label="JavaScript"
+room.listen("currentTurn", (change) => {
+    console.log(change.operation); // => "replace" (can be "add", "remove" or "replace")
+    console.log(change.value); // => "f98h3f"
+})
 ```
 
-In the client-side, you want to listen for mutations in the attributes of these entities. Before being able to catch them, we need to mutate them. The mutation can occur during your simulation interval, or by actions taken by connected clients (during `onMessage` in the server-side).
-
-```javascript
-class MyRoom extends Room {
-    onInit () {
-        // this.setState(...) see above
-        this.setSimulationInterval(() => this.update());
-    }
-
-    update () {
-        for (let entityId in this.state.entities) {
-            // simple and naive gravity
-            this.state.entities[entityId].y += 1;
-        }
-    }
-}
-```
-
-Now that we have the mutations in place, we can listen to them in the client-side. The callback will be called for each attribute, of each entity.
+Listening to changes in maps
 
 ```javascript fct_label="JavaScript"
 room.listen("entities/:id/:attribute", (change) => {
