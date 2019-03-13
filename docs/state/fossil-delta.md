@@ -1,6 +1,9 @@
 # [State Handling](/state/overview) » Fossil Delta
 
-The `FossilDeltaSerializer` is permissive about which structure you provide as the state. You may provide a raw object, a class instance, and all its [enumerable properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty#Description) are going to be serialized to the clients.
+The `FossilDeltaSerializer` is permissive about which structure you provide as the state. You may provide a raw object, or a class instance. All the [enumerable properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty#Description) of the object provided are going to be serialized to the clients.
+
+- Non-synchronizable properties should be non-enumerable (through [`@nosync`](#non-synchronizable-properties-nosync))
+- You may white-list synchronizable propertires through [`toJSON()`](#tojson) method.
 
 ## Server-side
 
@@ -18,7 +21,7 @@ The simplest way to deal with the room state is using a raw JavaScript objects d
 - Handling client-side actions and updating the state to move `x` position.
 - Removing player upon client disconnection.
 
-```typescript
+```typescript fct_label="TypeScript"
 import { Room, Client } from "colyseus";
 
 export class BattleRoom extends Room {
@@ -51,9 +54,42 @@ export class BattleRoom extends Room {
 }
 ```
 
+```typescript fct_label="JavaScript"
+const colyseus = require('colyseus')
+
+export class BattleRoom extends colyseus.Room {
+
+  onInit (options: any) {
+    this.setState({
+      players: {}
+    });
+  }
+
+  onJoin (client) {
+    this.state.players[ client.sessionId ] = {
+      x: 0,
+      y: 0
+    };
+  }
+
+  onLeave (client) {
+    delete this.state.players[ client.sessionId ];
+  }
+
+  onMessage (client, data) {
+    if (data.action === "left") {
+      this.state.players[ client.sessionId ].x -= 1;
+
+    } else if (data.action === "right") {
+      this.state.players[ client.sessionId ].x += 1;
+    }
+  }
+}
+```
+
 ### Your Own Data Structures
 
-Whilst it's possible to use raw data directly on `this.state`. The recommended way to handle your state is through your own data structures. By creating your own structures, you can have a more decoupled structure to represent your state.
+Whilst it's possible to use raw data directly on [`this.setState()`](/server/room/#setstate-object). The recommended way to handle your state is through your own data structures. 
 
 **On the following (rewritten) example, you'll see:**
 
@@ -142,19 +178,36 @@ type EntityMap<T> = {[ entityId:string ]: T};
 
 Your state will usualy have at least one usage of `EntityMap` for the map of connected clients. As described on [previous example](#your-own-data-structures).
 
-#### Private variables (`@nosync`)
+#### Non-synchronizable properties (`@nosync`)
 
 To prevent private properties from leaking into your clients' state, you need to set those properties as **non-enumerable**. The decorator `@nosync` is a syntax sugar for this purpose.
 
-```typescript
+```typescript fct_label="TypeScript"
+import { nosync } from "colyseus";
+
 export class Player {
-  x: number;
-  y: number;
+  x: number = 0;
+  y: number = 0;
 
   @nosync
   wontBeSynched: string = "This property won't be synched with clients";
 }
 ```
+
+```typescript fct_label="JavaScript"
+const colyseus = require('colyseus');
+
+export class Player {
+  constructor () {
+    this.x = 0;
+    this.y = 0;
+    this.wontBeSynched = "This property won't be synched with clients";
+  }
+}
+colyseus.nosync(Player.prototype, "wontBeSynched");
+```
+
+### Limitations
 
 #### Avoid using `Map`, `Set`
 
