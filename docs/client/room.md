@@ -2,159 +2,19 @@
 
 ## Methods
 
-### `listen (path: string, callback: Function, immediate?: boolean)`
+### `listen (path: string, callback: Function, immediate?: boolean): Listener`
 
-Listen to room state changes from the room handler. Use this method to
-synchronize the room state from the server with the clients.
+Listen to state changes applied in the client. Returns a `Listener` instance, that can be removed through [`removeListener()`](#removelistener-listener-listener) method.
 
-#### Examples
+!!! Warning "The `listen()` method is only available for [Fossil Delta](/state/fossil-delta/#client-side)"
+    See [Fossil Delta](/state/fossil-delta/#client-side) state handling for more details.
 
-##### Listening to map data structures
+### `removeListener (listener: Listener)`
 
-```typescript fct_label="JavaScript"
-room.listen("players/:id", (change) => {
-  if (change.operation === "add") {
-    console.log("new player added to the state");
-    console.log("player id:", change.path.id);
-    console.log("player data:", change.value);
+Removes a listener registered through `listen()` method.
 
-  } else if (change.operation === "remove") {
-    console.log("player has been removed from the state");
-    console.log("player id:", change.path.id);
-  }
-});
-```
-
-```csharp fct_label="C#"
-using Colyseus;
-// ...
-
-room.Listen("players/:id", OnPlayerChange);
-
-void OnPlayerChange (DataChange change)
-{
-  if (change.operation == "add") {
-    Debug.Log ("new player added to the state");
-    Debug.Log (change.path["id"]);
-    Debug.Log (change.value);
-
-  } else if (change.operation == "remove") {
-    Debug.Log ("player has been removed from the state");
-    Debug.Log (change.path["id"]);
-  }
-});
-```
-
-```lua fct_label="lua"
-room:listen("players/:id", function(change)
-  if (change.operation == "add") then
-    print("new player added to the state")
-    print(change.path["id"])
-    print(change.value)
-
-  elseif (change.operation == "remove") then
-    print("player has been removed from the state")
-    print(change.path["id"])
-  end
-end)
-```
-
-```haxe fct_label="Haxe"
-room.listen("players/:id", function (change) {
-  if (change.operation === "add") {
-    trace("new player added to the state");
-    trace("player id:" + change.path.id);
-    trace("player data:" + Std.string(change.value));
-
-  } else if (change.operation === "remove") {
-    trace("player has been removed from the state");
-    trace("player id:" + change.path.id);
-  }
-});
-```
-
-##### Listening to attribute changes of deep data structures
-
-```typescript fct_label="JavaScript"
-room.listen("players/:id/:attribute", (change) => {
-  console.log(change.operation); // => "add" | "remove" | "replace"
-  console.log(change.path.attribute, "has been changed");
-  console.log(change.path.id);
-  console.log(change.value);
-});
-```
-
-```csharp fct_label="C#"
-using Colyseus;
-// ...
-
-room.Listen("players/:id/:attribute", OnPlayerAttributeChange);
-
-void OnPlayerAttributeChange (DataChange change)
-{
-  Debug.Log (change.operation); // => "add" | "remove" | "replace"
-  Debug.Log (change.path["attribute"] + "has been changed");
-  Debug.Log (change.path["id"]);
-  Debug.Log (change.value);
-});
-```
-
-```lua fct_label="lua"
-room:listen("players/:id/:attribute", function()
-  print(change.operation) // => "add" | "remove" | "replace"
-  print(change.path["attribute"] + "has been changed")
-  print(change.path["id"])
-  print(change.value)
-end)
-```
-
-```haxe fct_label="Haxe"
-room.listen("players/:id/:attribute", function(change) {
-  trace(change.operation); // => "add" | "remove" | "replace"
-  trace(change.path.attribute + " has been changed");
-  trace(change.path.id);
-  trace(Std.string(change.value));
-});
-```
-
-#### Initial state / Listening to incoming AND existing data in the state
-
-The callbacks will be triggered for each incoming **change** in the state after
-the moment of registration. To listen also for existing data on the state, make
-sure to pass `true` on the `immediate` argument.
-
-```typescript fct_label="JavaScript"
-room.listen("players/:id", (change) => {
-  // ...
-}, true); // immediate
-```
-
-```csharp fct_label="C#"
-using Colyseus;
-// ...
-
-room.Listen("players/:id", OnPlayerChange, true); // immediate
-
-void OnPlayerChange (DataChange change)
-{
-  // ...
-});
-```
-
-```lua fct_label="lua"
-room:listen("players/:id", function(change)
-  -- ...
-end, true) -- immediate
-```
-
-```haxe fct_label="Haxe"
-room.listen("players/:id", function (change) {
-  // ...
-}, true); // immediate
-```
-
-!!! Tip
-    See [State synchronization](/client/state/fossil-delta) for more examples on how to use the `listen` method.
+!!! Warning "The `removeListener()` method is only available for [Fossil Delta](/state/fossil-delta/#client-side)"
+    See [Fossil Delta](/state/fossil-delta/#client-side) state handling for more details.
 
 ### `send (data)`
 

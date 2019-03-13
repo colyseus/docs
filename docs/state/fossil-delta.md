@@ -98,12 +98,92 @@ Whilst it's possible to use raw data directly on [`this.setState()`](/server/roo
     - Methods manipulating smaller data structures
 - A small decoupled data structure representing a single entity (`Player`)
 
-```typescript fct_label="BattleRoom.ts"
-// BattleRoom.ts
+```typescript fct_label="TypeScript"
 import { Room, Client } from "colyseus";
-import { BattleState } from "./BattleState";
+
+class Player {
+  x: number;
+  y: number;
+}
+
+class BattleState {
+  players: {[id: string]: Player} = {};
+
+  addPlayer (client) {
+    this.players[ client.sessionId ] = new Player(0, 0);
+  }
+
+  removePlayer (client) {
+    delete this.players[ client.sessionId ];
+  }
+
+  movePlayer (client, action) {
+    if (action === "left") {
+      this.players[ client.sessionId ].x -= 1;
+
+    } else if (action === "right") {
+      this.players[ client.sessionId ].x += 1;
+    }
+  }
+}
 
 export class BattleRoom extends Room<BattleState> {
+
+  onInit (options: any) {
+    this.setState(new BattleState());
+  }
+
+  onJoin (client: Client) {
+    this.state.addPlayer(client);
+  }
+
+  onLeave (client: Client) {
+    this.state.removePlayer(client);
+  }
+
+  onMessage (client: Client, data: any) {
+    if (data.action) {
+      this.state.movePlayer(client, data.action);
+    }
+  }
+}
+```
+
+
+```typescript fct_label="JavaScript"
+const colyseus = require('colyseus');
+
+class Player {
+  constructor (x, y) {
+    this.x = x;
+    this.y = y;
+  }
+}
+
+class BattleState {
+  constructor () {
+    this.players = {};
+  }
+
+  addPlayer (client) {
+    this.players[ client.sessionId ] = new Player(0, 0);
+  }
+
+  removePlayer (client) {
+    delete this.players[ client.sessionId ];
+  }
+
+  movePlayer (client, action) {
+    if (action === "left") {
+      this.players[ client.sessionId ].x -= 1;
+
+    } else if (action === "right") {
+      this.players[ client.sessionId ].x += 1;
+    }
+  }
+}
+
+module.exports = class BattleRoom extends colyseus.Room {
 
   onInit (options: any) {
     this.setState(new BattleState());
@@ -125,59 +205,6 @@ export class BattleRoom extends Room<BattleState> {
 }
 ```
 
-```typescript fct_label="BattleState.ts"
-// BattleState.ts
-import { Player } from "./Player";
-
-export class BattleState {
-  players: {[id: string]: Player} = {};
-
-  addPlayer (client) {
-    this.players[ client.sessionId ] = new Player(0, 0);
-  }
-
-  removePlayer (client) {
-    delete this.players[ client.sessionId ];
-  }
-
-  movePlayer (client, action) {
-    if (action === "left") {
-      this.players[ client.sessionId ].x -= 1;
-
-    } else if (action === "right") {
-      this.players[ client.sessionId ].x += 1;
-    }
-  }
-}
-```
-
-```typescript fct_label="Player.ts"
-// Player.ts
-export class Player {
-  constructor (
-    public x: number,
-    public y: number
-  ) {
-    this.x = x;
-    this.y = y;
-  }
-}
-```
-
-#### Map of entities 
-
-Since you cannot use `Map` to describe public synchronizeable properties (see [avoid using `Map` and `Set`](#avoid-using-map-set)), you can use a plain JavaScript object to assign keys of `string` to a custom type (`T`).
-
-```ts
-players: {[id: string]: Player} = {}
-```
-
-```typescript
-type EntityMap<T> = {[ entityId:string ]: T};
-```
-
-Your state will usualy have at least one usage of `EntityMap` for the map of connected clients. As described on [previous example](#your-own-data-structures).
-
 #### Non-synchronizable properties (`@nosync`)
 
 To prevent private properties from leaking into your clients' state, you need to set those properties as **non-enumerable**. The decorator `@nosync` is a syntax sugar for this purpose.
@@ -197,14 +224,51 @@ export class Player {
 ```typescript fct_label="JavaScript"
 const colyseus = require('colyseus');
 
-export class Player {
+module.exports = class Player {
   constructor () {
     this.x = 0;
     this.y = 0;
     this.wontBeSynched = "This property won't be synched with clients";
   }
 }
+
 colyseus.nosync(Player.prototype, "wontBeSynched");
+```
+
+#### White-listing synchronizable properties thorugh `toJSON()`
+
+In your data structures, you may implement a `toJSON()` method, to explicitly define how it should be serialized for the clients. This way, you don't need to use [`nosync`](#non-synchronizable-properties-nosync), since you're white-listing the properties manually.
+
+```typescript fct_label="TypeScript"
+export class Player {
+  x: number = 0;
+  y: number = 0;
+  complexObject = new SomethingElse();
+
+  toJSON () {
+    return {
+      x: this.x,
+      y: this.y,
+    }
+  }
+}
+```
+
+```typescript fct_label="JavaScript"
+module.exports = class Player {
+  constructor (x, y) {
+    this.x = x;
+    this.y = y;
+    this.complexObject = new SomethingElse();
+  }
+
+  toJSON () {
+    return {
+      x: this.x,
+      y: this.y,
+    }
+  }
+}
 ```
 
 ### Limitations
@@ -245,26 +309,146 @@ room.listen("currentTurn", (change) => {
 })
 ```
 
-Listening to changes in maps
+### Listening to map data structures
 
-```javascript fct_label="JavaScript"
-room.listen("entities/:id/:attribute", (change) => {
-    console.log(change.operation); // => "replace" (can be "add", "remove" or "replace")
-    console.log(change.path["id"]); // => "f98h3f"
-    console.log(change.path["attribute"]); // => "y"
-    console.log(change.value); // => 1
-})
+```typescript fct_label="JavaScript"
+room.listen("players/:id", (change) => {
+  if (change.operation === "add") {
+    console.log("new player added to the state");
+    console.log("player id:", change.path.id);
+    console.log("player data:", change.value);
+
+  } else if (change.operation === "remove") {
+    console.log("player has been removed from the state");
+    console.log("player id:", change.path.id);
+  }
+});
 ```
 
-```javascript fct_label="C#"
-room.Listen("entities/:id/:attribute", OnAttributeChange);
+```csharp fct_label="C#"
+using Colyseus;
+// ...
 
-void OnAttributeChange (DataChange change)
+room.Listen("players/:id", OnPlayerChange);
+
+void OnPlayerChange (DataChange change)
 {
-    Debug.Log ("OnAttributeChange");
-    Debug.Log (change.operation); // => "replace" (can be "add", "remove" or "replace")
-    Debug.Log (change.path["id"]); // => "f98h3f"
-    Debug.Log (change.path["attribute"]); // => "y"
-    Debug.Log (change.value); // => 1
-})
+  if (change.operation == "add") {
+    Debug.Log ("new player added to the state");
+    Debug.Log (change.path["id"]);
+    Debug.Log (change.value);
+
+  } else if (change.operation == "remove") {
+    Debug.Log ("player has been removed from the state");
+    Debug.Log (change.path["id"]);
+  }
+});
+```
+
+```lua fct_label="lua"
+room:listen("players/:id", function(change)
+  if (change.operation == "add") then
+    print("new player added to the state")
+    print(change.path["id"])
+    print(change.value)
+
+  elseif (change.operation == "remove") then
+    print("player has been removed from the state")
+    print(change.path["id"])
+  end
+end)
+```
+
+```haxe fct_label="Haxe"
+room.listen("players/:id", function (change) {
+  if (change.operation === "add") {
+    trace("new player added to the state");
+    trace("player id:" + change.path.id);
+    trace("player data:" + Std.string(change.value));
+
+  } else if (change.operation === "remove") {
+    trace("player has been removed from the state");
+    trace("player id:" + change.path.id);
+  }
+});
+```
+
+### Listening to attribute changes of deep data structures
+
+```typescript fct_label="JavaScript"
+room.listen("players/:id/:attribute", (change) => {
+  console.log(change.operation); // => "add" | "remove" | "replace"
+  console.log(change.path.attribute, "has been changed");
+  console.log(change.path.id);
+  console.log(change.value);
+});
+```
+
+```csharp fct_label="C#"
+using Colyseus;
+// ...
+
+room.Listen("players/:id/:attribute", OnPlayerAttributeChange);
+
+void OnPlayerAttributeChange (DataChange change)
+{
+  Debug.Log (change.operation); // => "add" | "remove" | "replace"
+  Debug.Log (change.path["attribute"] + "has been changed");
+  Debug.Log (change.path["id"]);
+  Debug.Log (change.value);
+});
+```
+
+```lua fct_label="lua"
+room:listen("players/:id/:attribute", function()
+  print(change.operation) // => "add" | "remove" | "replace"
+  print(change.path["attribute"] + "has been changed")
+  print(change.path["id"])
+  print(change.value)
+end)
+```
+
+```haxe fct_label="Haxe"
+room.listen("players/:id/:attribute", function(change) {
+  trace(change.operation); // => "add" | "remove" | "replace"
+  trace(change.path.attribute + " has been changed");
+  trace(change.path.id);
+  trace(Std.string(change.value));
+});
+```
+
+### Initial state / Listening to incoming AND existing data in the state
+
+The callbacks will be triggered for each incoming **change** in the state after
+the moment of registration. To listen also for existing data on the state, make
+sure to pass `true` on the `immediate` argument.
+
+```typescript fct_label="JavaScript"
+room.listen("players/:id", (change) => {
+  // ...
+}, true); // immediate
+```
+
+```csharp fct_label="C#"
+using Colyseus;
+// ...
+
+room.Listen("players/:id", OnPlayerChange, true); // immediate
+
+void OnPlayerChange (DataChange change)
+{
+  // ...
+});
+```
+
+```lua fct_label="lua"
+room:listen("players/:id", function(change)
+  -- ...
+end, true) -- immediate
+```
+
+```haxe fct_label="Haxe"
+room.listen("players/:id", function (change) {
+  // ...
+}, true); // immediate
 ```
