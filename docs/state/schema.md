@@ -194,3 +194,28 @@ These are the types you can provide for the `@type()` decorator, and their limit
 | `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |
 
 ## Client-side
+
+> TODO: describe how to listen for object changes (single callback per object), arrays and maps
+
+```typescript
+room.state.onChange = (changes) => {
+};
+
+// map of players
+room.state.players.onAdd = (player, key) => {
+    player.onChange = functin(changes) {
+    }
+};
+
+// map of players
+room.state.players.onRemove = (player, key) => {
+};
+
+// array of blocks
+room.state.blocks.onAdd = (block, key) => {
+};
+
+// map of players
+room.state.blocks.onRemove = (block, key) => {
+};
+```
