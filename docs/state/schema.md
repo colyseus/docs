@@ -228,7 +228,7 @@ room.state.players.onAdd = (player, key) => {
     // add your player entity to the game world!
 
     // If you want to track changes on a child object inside a map, this is a common pattern:
-    player.onChange = functin(changes) {
+    player.onChange = function(changes) {
     }
 };
 ```
