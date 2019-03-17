@@ -30,7 +30,7 @@ const type = schema.type;
 class MyState extends Schema {
 }
 
-type("string")(State.prototype, "currentTurn");
+type("string")(MyState.prototype, "currentTurn");
 ```
 
 ### Custom child data type
@@ -75,7 +75,7 @@ class MyState extends Schema {
         this.map = new Map();
     }
 }
-type(Map)(State.prototype, "map");
+type(Map)(MyState.prototype, "map");
 ```
 
 ### Array of custom data type
@@ -119,7 +119,7 @@ class MyState extends Schema {
         this.blocks = new ArraySchema();
     }
 }
-type([ Block ])(State.prototype, "blocks");
+type([ Block ])(MyState.prototype, "blocks");
 ```
 
 ### Map of custom data type
@@ -163,7 +163,7 @@ class MyState extends Schema {
         this.players = new MapSchema();
     }
 }
-type({ map: Player })(State.prototype, "players");
+type({ map: Player })(MyState.prototype, "players");
 ```
 
 ### Primitive types
