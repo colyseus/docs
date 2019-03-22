@@ -297,19 +297,47 @@ Removing or inserting entries in-between will generate one `"replace"` operation
 
 ## Client-side
 
-> TODO
-> Describe usage of `:wildcards`, multiple callbacks per property, etc.
+### Listening for changes in a particular variable.
 
-Listening to changes in a particular variable
+The example below describes how to listen for a particular variable. You may use the full path of a known variable, such as `"a/really/deep/path"`, `"world/fog"`, etc.
 
 ```javascript fct_label="JavaScript"
 room.listen("currentTurn", (change) => {
-    console.log(change.operation); // => "replace" (can be "add", "remove" or "replace")
-    console.log(change.value); // => "f98h3f"
+    console.log("current turn is now", change.value); 
 })
 ```
 
+```csharp fct_label="C#"
+using Colyseus;
+// ...
+
+room.Listen("currentTurn", OnCurrentTurnChange);
+
+void OnCurrentTurnChange (DataChange change)
+{
+  Debug.Log ("current turn is now:");
+  Debug.Log (change.value);
+});
+```
+
+```lua fct_label="lua"
+room:listen("currentTurn", function(change)
+  print("current turn is now: " .. change.value); 
+end)
+```
+
+```haxe fct_label="Haxe"
+room.listen("currentTurn", function (change) {
+  trace("current turn is now: " + change.value);
+});
+```
+
 ### Listening to map data structures
+
+The example below describes how to catch addition and removals of a map. The callback will be called multiple times, for each entry added or removed from a map of players.
+
+!!! Tip "This example do not listen for changes **inside** each player instance."
+    To listen for changes **inside** each player instance, you should listen for [`"players/:id/:attribute"` path as well](#listening-to-attribute-changes-of-deep-data-structures).
 
 ```typescript fct_label="JavaScript"
 room.listen("players/:id", (change) => {
@@ -375,6 +403,8 @@ room.listen("players/:id", function (change) {
 
 ### Listening to attribute changes of deep data structures
 
+The example below describes how to catch each attribute change from inside a map of players. The callback will be called multiple times, for each attribute that has changed.
+
 ```typescript fct_label="JavaScript"
 room.listen("players/:id/:attribute", (change) => {
   console.log(change.operation); // => "add" | "remove" | "replace"
@@ -419,9 +449,7 @@ room.listen("players/:id/:attribute", function(change) {
 
 ### Initial state / Listening to incoming AND existing data in the state
 
-The callbacks will be triggered for each incoming **change** in the state after
-the moment of registration. To listen also for existing data on the state, make
-sure to pass `true` on the `immediate` argument.
+The callbacks will be triggered for each incoming **change** in the state after the moment of registration. To listen also for existing data on the state at the moment you register the callback, make sure to pass `true` on the `immediate` argument. 
 
 ```typescript fct_label="JavaScript"
 room.listen("players/:id", (change) => {
@@ -452,3 +480,13 @@ room.listen("players/:id", function (change) {
   // ...
 }, true); // immediate
 ```
+
+<!-- ### Using wildcards
+
+You may use a wildcard (a path segment starting with `:`) in the `listen` method for attributes of unknown name. The matched name will be available at `change.path`.
+
+**Examples**
+
+- Wildcard for a map of entities: (`"entities/:id/:attribute"`)
+    - The `:id` of the entity will be available at `change.path.id`
+    - The `:attribute` (any attribute change, such as `x`, `y`, etc) of the entity will be available at `change.path.attribute` -->

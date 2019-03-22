@@ -77,6 +77,7 @@ nav:
   - 'Haxe Client': 'getting-started/haxe-client.md'
   - 'Cocos2d-x Client': 'getting-started/cocos2dx-client.md'
   - 'Unity3d Client': 'getting-started/unity3d-client.md'
+  - 'Construct3 Client': 'getting-started/construct3-client.md'
 
 # - 'Tutorials':
 #   - ''
