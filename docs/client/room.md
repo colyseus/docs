@@ -1,5 +1,39 @@
 # Room API (Client-side)
 
+## Properties
+
+### `state: any`
+
+The current room's state. This variable is always synched with the latest
+`state` from the server-side. To listen for updates on the whole state, see
+[`onStateChange`](#onstatechange) event.
+
+### `sessionId: string`
+
+Unique session identifier.
+
+This property matches the [`client.sessionId`](/server/client/#sessionid-string) from the server-side.
+
+### `id: string`
+
+The unique idenfitier of the room. You can share this id with other clients in
+order to allow them to connect directly to this room.
+
+```typescript fct_label="JavaScript"
+// get `roomId` from the query string
+let roomId = location.href.match(/roomId=([a-zA-Z0-9\-_]+)/)[1];
+
+// connect the client directly into a specific room id
+let room = client.join(roomId);
+```
+
+!!! Warning
+    If you're looking for the unique identifier of the client, use [`client.id`](/client/client/#id-string) instead.
+
+### `name: string`
+
+Name of the room handler. Ex: `"battle"`.
+
 ## Methods
 
 ### `listen (path: string, callback: Function, immediate?: boolean): Listener`
@@ -64,40 +98,6 @@ room.leave();
 ### `removeAllListeners()`
 
 Remove all event and data listeners.
-
-## Properties
-
-### `id: string`
-
-The unique idenfitier of the room. You can share this id with other clients in
-order to allow them to connect directly to this room.
-
-```typescript fct_label="JavaScript"
-// get `roomId` from the query string
-let roomId = location.href.match(/roomId=([a-zA-Z0-9\-_]+)/)[1];
-
-// connect the client directly into a specific room id
-let room = client.join(roomId);
-```
-
-!!! Warning
-    If you're looking for the unique identifier of the client, use [`client.id`](/client/client/#id-string) instead.
-
-### `sessionId: string`
-
-Unique session identifier.
-
-This property matches the [`client.sessionId`](/server/client/#sessionid-string) from the server-side.
-
-### `name: string`
-
-Name of the room handler. Ex: `"battle"`.
-
-### `state: any`
-
-The current room's state. This variable is always synched with the latest
-`state` from the server-side. To listen for updates on the whole state, see
-[`onStateChange`](#onstatechange) event.
 
 ## Events
 
