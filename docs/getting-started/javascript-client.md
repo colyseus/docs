@@ -6,7 +6,7 @@ The JavaScript client is compatible with:
 
 - Major browsers environments ([Electron](https://github.com/electron/electron), Chrome, Firefox, Safari, Opera, etc)
 - [React Native](https://github.com/facebook/react-native) ([with some caveats](#react-native-compatibility))
-- [Cocos Creator](http://www.cocos2d-x.org/creator)
+- [Cocos Creator](http://www.cocos2d-x.org/creator) ([instructions](#cocos-creator-instructions))
 - [NodeJS](https://nodejs.org/)
 
 Don't know NodeJS build-systems like `webpack`? Just save and drop the [JavaScript distribution file](https://github.com/colyseus/colyseus.js/raw/master/dist/colyseus.js) into your project and ignore the `import` statements presented here in the documentation.
@@ -120,3 +120,9 @@ client.onOpen.add(() => {
     let room = client.join("your_room");
 });
 ```
+
+## Cocos Creator Instructions
+
+- [Download the latest colyseus.js](https://raw.githubusercontent.com/colyseus/colyseus.js/master/dist/colyseus.js) distribution file from GitHub.
+- Save it into your project's `scripts` folder.
+- Require it using `const Colyseus = require('colyseus.js')`
