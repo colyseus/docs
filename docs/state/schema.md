@@ -200,8 +200,9 @@ There are three ways to handle changes in the client-side when using `SchemaSeri
 - [onChange (changes)](#onchangechanges-datachange)
 - [onAdd (instance, key)](#onadd-instance-key)
 - [onRemove (instance, key)](#onremove-instance-key)
+- [onChange (instance, key)](#onchangeinstance-key)
 
-### `onChange(changes: DataChange[])`
+### `onChange (changes: DataChange[])`
 
 You can register the `onChange` to track a single object's property changes. The `onChange` callback is called with an array of changed properties, along with their previous value.
 
@@ -215,7 +216,8 @@ room.state.onChange = (changes) => {
 };
 ```
 
-You cannot register a `onChange` callback for objects that haven't been synchronized to the client-side yet.
+- You cannot register a `onChange` callback for objects that haven't been synchronized to the client-side yet.
+- [The `onChange` works differently if used directly in an `ArraySchema` or `MapSchema`]()
 
 ### `onAdd (instance, key)`
 
@@ -229,6 +231,11 @@ room.state.players.onAdd = (player, key) => {
 
     // If you want to track changes on a child object inside a map, this is a common pattern:
     player.onChange = function(changes) {
+        changes.forEach(change => {
+            console.log(change.field);
+            console.log(change.value);
+            console.log(change.previousValue);
+        })
     }
 };
 ```
@@ -244,3 +251,20 @@ room.state.players.onRemove = (player, key) => {
     // remove your player entity from the game world!
 };
 ```
+
+### `onChange (instance, key)`
+
+When registering a `onChange` callback on a `MapSchema` or `ArraySchema` instance, you can detect whenever a object has been changed inside that container.
+
+```javascript
+room.state.players.onChange = (player, key) => {
+    console.log(player, "have changes at", key);
+};
+```
+
+It's not possible to know exactly which properties have changed using this method. See [`onChange (changes)`](#onchangechanges-datachange) if you need to access the list of changes 
+
+!!! Warning "Important"
+    The `onChange` callback is not triggered during [`onAdd`](#onadd-instance-key) or [`onRemove`](#onremove-instance-key).
+
+    Consider registering `onAdd` and `onRemove` if you need to detect changes during these steps too.
