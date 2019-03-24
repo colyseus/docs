@@ -197,10 +197,10 @@ These are the types you can provide for the `@type()` decorator, and their limit
 
 There are three ways to handle changes in the client-side when using `SchemaSerializer`:
 
-- [onChange (changes)](#onchangechanges-datachange)
+- [onChange (changes)](#onchange-changes-datachange)
 - [onAdd (instance, key)](#onadd-instance-key)
 - [onRemove (instance, key)](#onremove-instance-key)
-- [onChange (instance, key)](#onchangeinstance-key)
+- [onChange (instance, key)](#onchange-instance-key)
 
 ### `onChange (changes: DataChange[])`
 
@@ -262,7 +262,7 @@ room.state.players.onChange = (player, key) => {
 };
 ```
 
-It's not possible to know exactly which properties have changed using this method. See [`onChange (changes)`](#onchangechanges-datachange) if you need to access the list of changes 
+It's not possible to know exactly which properties have changed using this method. See [`onChange (changes)`](#onchange-changes-datachange) if you need to access the list of changes 
 
 !!! Warning "Important"
     The `onChange` callback is not triggered during [`onAdd`](#onadd-instance-key) or [`onRemove`](#onremove-instance-key).
