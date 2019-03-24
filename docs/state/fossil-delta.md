@@ -3,7 +3,7 @@
 The `FossilDeltaSerializer` is permissive about which structure you provide as the state. You may provide a raw object, or a class instance. All the [enumerable properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty#Description) of the object provided are going to be serialized to the clients.
 
 - Non-synchronizable properties should be non-enumerable (through [`@nosync`](#non-synchronizable-properties-nosync))
-- You may white-list synchronizable propertires through [`toJSON()`](#tojson) method.
+- You may white-list synchronizable propertires through [`toJSON()`](#white-listing-synchronizable-properties-thorugh-tojson) method.
 
 ## Server-side
 
