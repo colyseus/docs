@@ -88,11 +88,11 @@ When using arrays, it's important to use the `ArraySchema` type. Do not use plai
 import { Schema, ArraySchema, type } from "@colyseus/schema";
 
 class Block {
-    @type("x")
-    width: number;
+    @type("number")
+    x: number;
 
-    @type("y")
-    height: number;
+    @type("number")
+    y: number;
 }
 
 class MyState extends Schema {
@@ -132,11 +132,11 @@ When using a map, it's important to use the `MapSchema` type. Do not use a plain
 import { Schema, MapSchema, type } from "@colyseus/schema";
 
 class Player {
-    @type("x")
-    width: number;
+    @type("number")
+    x: number;
 
-    @type("y")
-    height: number;
+    @type("number")
+    y: number;
 }
 
 class MyState extends Schema {
