@@ -220,7 +220,7 @@ room.state.onChange = (changes) => {
 ```
 
 ```lua fct_label="LUA"
-room.state['on_change'] = function (changes) 
+room.state['on_change'] = function (changes)
     for i, change in ipairs(changes) do
         print(change.field)
         print(change.value)
@@ -242,7 +242,7 @@ room.State.OnChange += (object sender, OnChangeEventArgs e) =>
 ```
 
 - You cannot register a `onChange` callback for objects that haven't been synchronized to the client-side yet.
-- [The `onChange` works differently if used directly in an `ArraySchema` or `MapSchema`]()
+- [The `onChange` works differently if used directly in an `ArraySchema` or `MapSchema`](#onchange-instance-key)
 
 ### `onAdd (instance, key)`
 
@@ -266,13 +266,13 @@ room.state.players.onAdd = (player, key) => {
 ```
 
 ```lua fct_label="LUA"
-room.state.players['on_add'] = function (player, key) 
+room.state.players['on_add'] = function (player, key)
     print("player has been added at", key);
 
     -- add your player entity to the game world!
 
     -- If you want to track changes on a child object inside a map, this is a common pattern:
-    player['on_change'] = function(changes) 
+    player['on_change'] = function(changes)
         for i, change in ipairs(changes) do
             print(change.field)
             print(change.value)
@@ -354,7 +354,7 @@ room.State.players.OnChange += (object sender, KeyValueEventArgs<Player, string>
 };
 ```
 
-It's not possible to know exactly which properties have changed using this method. See [`onChange (changes)`](#onchange-changes-datachange) if you need to access the list of changes 
+It's not possible to know exactly which properties have changed using this method. See [`onChange (changes)`](#onchange-changes-datachange) if you need to access the list of changes
 
 !!! Warning "Important"
     The `onChange` callback is not triggered during [`onAdd`](#onadd-instance-key) or [`onRemove`](#onremove-instance-key).
