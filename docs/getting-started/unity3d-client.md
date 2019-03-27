@@ -66,3 +66,39 @@ void OnStateChange (object sender, RoomUpdateEventArgs<State> e)
 	}
 }
 ```
+
+### Attaching callbacks to your [schema](/state/schema/#client-side) structures
+
+See [State Handling](/state/schema/#client-side) for more details.
+
+```csharp
+Room room = client.Join ("room_name");
+room.OnJoin += (sender, e) => {
+	Debug.Log("Joined room successfully.");
+
+	room.State.players.OnAdd += OnPlayerAdd;
+	room.State.players.OnRemove += OnPlayerRemove;
+	room.State.players.OnChange += OnPlayerChange;
+};
+
+void OnPlayerAdd(object sender, KeyValueEventArgs<Player, string> item)
+{
+	Debug.Log("player added!");
+	Debug.Log(item.Value); // Here's your `Player` instance
+	Debug.Log(item.Key); // Here's your `Player` key
+}
+
+void OnPlayerRemove(object sender, KeyValueEventArgs<Player, string> item)
+{
+	Debug.Log("player removed!");
+	Debug.Log(item.Value); // Here's your `Player` instance
+	Debug.Log(item.Key); // Here's your `Player` key
+}
+
+void OnPlayerChange(object sender, KeyValueEventArgs<Player, string> item)
+{
+	Debug.Log("player moved!");
+	Debug.Log(item.Value); // Here's your `Player` instance
+	Debug.Log(item.Key); // Here's your `Player` key
+}
+```
