@@ -5,7 +5,7 @@
 
 ## Running the demo server
 
-The [colyseus-unity3d](https://github.com/colyseus/colyseus-unity3d) comes with a [usage example](https://github.com/colyseus/colyseus-unity3d/blob/master/Assets/ColyseusClient.cs), and a simple [room handler](https://github.com/colyseus/colyseus-unity3d/blob/master/Server/demo_room.js) for basic testing. You can test it locally by running these commands in your commandline:
+The [colyseus-unity3d](https://github.com/colyseus/colyseus-unity3d) comes with a [usage example](https://github.com/colyseus/colyseus-unity3d/blob/master/Assets/ColyseusClient.cs), and a simple [room handler](https://github.com/colyseus/colyseus-unity3d/blob/master/Server/DemoRoom.ts) for basic testing. You can test it locally by running these commands in your commandline:
 
 ```
 cd Server
@@ -22,9 +22,23 @@ Each `Client` and `Room` connections need to run on its own Coroutine. See [usag
 
 ### Connecting to the Server
 
+In your connection's `MonoBehaviour`, you must call `Recv()` in order to communicate with the server.
+
 ```csharp
-Client client = new Colyseus.Client ("ws://localhost:2567");
-StartCoroutine(client.Connect());
+IEnumerator Start () {
+	Client client = new Colyseus.Client ("ws://localhost:2567");
+	StartCoroutine(client.Connect());
+
+	/* Always call Recv if Colyseus connection is open */
+	while (true)
+	{
+		if (client != null)
+		{
+			client.Recv();
+		}
+		yield return 0;
+	}
+}
 ```
 
 ### Joining a Room
@@ -36,45 +50,19 @@ room.OnReadyToConnect += (sender, e) => {
 };
 ```
 
-### Getting the full room state
+### Getting the full room state from the server.
 
 ```csharp
 room.OnStateChange += OnStateChange;
 
-void OnStateChange (object sender, RoomUpdateEventArgs e)
+void OnStateChange (object sender, RoomUpdateEventArgs<State> e)
 {
-	if (e.isFirstState) {
+	if (e.IsFirstState) {
 		// First setup of your client state
-		Debug.Log(e.state);
+		Debug.Log(e.State);
 	} else {
 		// Further updates on your client state
-		Debug.Log(e.state);
+		Debug.Log(e.State);
 	}
-}
-```
-
-### Listening to add/remove on a specific key on the room state
-
-```csharp
-room.Listen ("players/:id", OnPlayerChange);
-
-void OnPlayerChange (DataChange change)
-{
-	Debug.Log (change.path["id"]);
-	Debug.Log (change.operation); // "add" or "remove"
-	Debug.Log (change.value); // the player object
-}
-```
-
-### Listening to specific data changes in the state
-
-```csharp
-room.Listen ("players/:id/:axis", OnPlayerMove);
-
-void OnPlayerMove (DataChange change)
-{
-	Debug.Log ("OnPlayerMove");
-	Debug.Log ("playerId: " + change.path["id"] + ", axis: " + change.path["axis"]);
-	Debug.Log (change.value);
 }
 ```
