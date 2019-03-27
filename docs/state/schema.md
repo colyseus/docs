@@ -202,6 +202,9 @@ There are three ways to handle changes in the client-side when using `SchemaSeri
 - [onRemove (instance, key)](#onremove-instance-key)
 - [onChange (instance, key)](#onchange-instance-key)
 
+!!! Warning "C#, C++, Haxe"
+    When using statically typed languages, you need to generate the client-side schema files based on your TypeScript schema definitions. [See generating schema on the client-side](#client-side-schema-generation).
+
 ### `onChange (changes: DataChange[])`
 
 You can register the `onChange` to track a single object's property changes. The `onChange` callback is called with an array of changed properties, along with their previous value.
@@ -268,3 +271,41 @@ It's not possible to know exactly which properties have changed using this metho
     The `onChange` callback is not triggered during [`onAdd`](#onadd-instance-key) or [`onRemove`](#onremove-instance-key).
 
     Consider registering `onAdd` and `onRemove` if you need to detect changes during these steps too.
+
+## Client-side schema generation
+
+This is only applicable if you're using a statically typed language such as C#, C++, or Haxe.
+
+From your server project, you can run `npx schema-codegen` to automatically generate the client-side schema files.
+
+```
+npx schema-codegen --help
+```
+
+**Output:**
+
+```
+schema-codegen [path/to/Schema.ts]
+
+Usage (C#/Unity)
+    schema-codegen src/Schema.ts --output client-side/ --cs --namespace MyGame.Schema
+
+Valid options:
+    --output: fhe output directory for generated client-side schema files
+    --cs: generate files C#/Unity
+    --cpp: generate files C++
+    --hx: generate files for Haxe
+
+Optional:
+    --namespace: generate namespace on output code
+```
+
+### C# / Unity3d
+
+Below is a real example to generate the C# schema files from the [demo Unity3d project](https://github.com/colyseus/colyseus-unity3d/tree/master/Server).
+
+```
+npx schema-codegen DemoRoom.ts --cs --output ../Assets/
+generated: Player.cs
+generated: State.cs
+```
