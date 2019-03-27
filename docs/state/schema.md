@@ -209,12 +209,34 @@ There are three ways to handle changes in the client-side when using `SchemaSeri
 
 You can register the `onChange` to track a single object's property changes. The `onChange` callback is called with an array of changed properties, along with their previous value.
 
-```javascript
+```javascript fct_label="JavaScript"
 room.state.onChange = (changes) => {
     changes.forEach(change => {
         console.log(change.field);
         console.log(change.value);
         console.log(change.previousValue);
+    });
+};
+```
+
+```lua fct_label="LUA"
+room.state['on_change'] = function (changes) 
+    for i, change in ipairs(changes) do
+        print(change.field)
+        print(change.value)
+        print(change.previousValue)
+    end
+end
+```
+
+```csharp fct_label="C#"
+room.State.OnChange += (object sender, OnChangeEventArgs e) =>
+{
+    e.Changes.ForEach((Colyseus.Schema.DataChange obj) =>
+    {
+        Debug.Log(obj.Field);
+        Debug.Log(obj.Value);
+        Debug.Log(obj.PreviousValue);
     });
 };
 ```
@@ -226,7 +248,7 @@ room.state.onChange = (changes) => {
 
 The `onAdd` callback can only be used in maps (`MapSchema`) and arrays (`ArraySchema`). The `onAdd` callback is called with the added instance and its key on holder object as argument.
 
-```javascript
+```javascript fct_label="JavaScript"
 room.state.players.onAdd = (player, key) => {
     console.log(player, "has been added at", key);
 
@@ -243,13 +265,67 @@ room.state.players.onAdd = (player, key) => {
 };
 ```
 
+```lua fct_label="LUA"
+room.state.players['on_add'] = function (player, key) 
+    print("player has been added at", key);
+
+    -- add your player entity to the game world!
+
+    -- If you want to track changes on a child object inside a map, this is a common pattern:
+    player['on_change'] = function(changes) 
+        for i, change in ipairs(changes) do
+            print(change.field)
+            print(change.value)
+            print(change.previousValue)
+        end
+    end
+end
+```
+
+```csharp fct_label="C#"
+room.State.players.OnAdd += (object sender, KeyValueEventArgs<Player, string> e) =>
+{
+    Debug.Log("player has been added at " + e.Key);
+
+    // add your player entity to the game world!
+
+    // If you want to track changes on a child object inside a map, this is a common pattern:
+    e.Value.OnChange += (object sender2, OnChangeEventArgs e) =>
+    {
+        e.Changes.ForEach((Colyseus.Schema.DataChange obj) =>
+        {
+            Debug.Log(obj.Field);
+            Debug.Log(obj.Value);
+            Debug.Log(obj.PreviousValue);
+        });
+    };
+};
+```
+
 ### `onRemove (instance, key)`
 
 The `onRemove` callback can only be used in maps (`MapSchema`) and arrays (`ArraySchema`). The `onRemove` callback is called with the added instance and its key on holder object as argument.
 
-```javascript
+```javascript fct_label="JavaScript"
 room.state.players.onRemove = (player, key) => {
     console.log(player, "has been removed at", key);
+
+    // remove your player entity from the game world!
+};
+```
+
+```lua fct_label="LUA"
+room.state.players['on_remove'] = function (player, key)
+    print("player has been removed at " .. key);
+
+    -- remove your player entity from the game world!
+end
+```
+
+```csharp fct_label="C#"
+room.State.players.OnRemove += (object sender, KeyValueEventArgs<Player, string> e) =>
+{
+    Debug.Log("player has been removed at " + e.Key);
 
     // remove your player entity from the game world!
 };
@@ -259,9 +335,22 @@ room.state.players.onRemove = (player, key) => {
 
 When registering a `onChange` callback on a `MapSchema` or `ArraySchema` instance, you can detect whenever a object has been changed inside that container.
 
-```javascript
+```javascript fct_label="JavaScript"
 room.state.players.onChange = (player, key) => {
     console.log(player, "have changes at", key);
+};
+```
+
+```lua fct_label="LUA"
+room.state.players['on_change'] = function (player, key)
+    print("player have changes at " .. key);
+end
+```
+
+```csharp fct_label="C#"
+room.State.players.OnChange += (object sender, KeyValueEventArgs<Player, string> e) =>
+{
+    Debug.Log("player have changes at " + e.Key);
 };
 ```
 
