@@ -40,7 +40,7 @@ You may define more custom data types inside your "root" state definition, as a 
 ```typescript fct_label="TypeScript"
 import { Schema, type } from "@colyseus/schema";
 
-class Map {
+class Map extends Schema {
     @type("number")
     width: number;
 
@@ -87,7 +87,7 @@ When using arrays, it's important to use the `ArraySchema` type. Do not use plai
 ```typescript fct_label="TypeScript"
 import { Schema, ArraySchema, type } from "@colyseus/schema";
 
-class Block {
+class Block extends Schema {
     @type("number")
     x: number;
 
@@ -131,7 +131,7 @@ When using a map, it's important to use the `MapSchema` type. Do not use a plain
 ```typescript fct_label="TypeScript"
 import { Schema, MapSchema, type } from "@colyseus/schema";
 
-class Player {
+class Player extends Schema {
     @type("number")
     x: number;
 
