@@ -36,32 +36,7 @@ room.onJoin.add(function() {
 });
 ```
 
-### Listening to room state change:
-
-Here comes the most powerful feature of the client. You can listen to every
-state update in the server-side, and bind them into client-side functions.
-
-The first parameter is the path of the variable you want to listen to. When you
-provide placeholders (such as `:number`, `:id`, `:string`) to the path, they
-will populate the function with the value found on it. See examples below.
-
-Listening to entities being added/removed from the room:
-
-```ts
-room.listen("entities/:id", (change) => {
-    console.log(`new entity ${change.path.id}`, change.value);
-});
-```
-
-Listening to entity attributes being added/replaced/removed:
-
-```ts
-room.listen("entities/:id/:attribute", (change) => {
-    console.log(`entity ${change.path.id} changed attribute ${change.path.attribute} to ${change.value}`);
-});
-```
-
-### Other room events
+### Room events
 
 Room state has been updated:
 
