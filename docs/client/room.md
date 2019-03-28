@@ -97,7 +97,9 @@ room.leave();
 
 ### `removeAllListeners()`
 
-Remove all event and data listeners.
+Remove `onJoin`, `onMessage`, `onLeave` and `onError` listeners.
+
+Also removes all `.listen()` calls if you're using [Fossil Delta](/state/fossil-delta/#client-side) serializer..
 
 ## Events
 
