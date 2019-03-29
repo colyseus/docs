@@ -200,7 +200,7 @@ Attaches or creates the WebSocket server.
 - `options.ws`: An existing WebSocket server to be re-used.
 
 ```javascript fct_label="Express"
-import * as express from "express";
+import express from "express";
 import { Server } from "colyseus";
 
 const app = new express();
@@ -210,7 +210,7 @@ gameServer.attach({ server: app });
 ```
 
 ```javascript fct_label="http.createServer"
-import * as http from "http";
+import http from "http";
 import { Server } from "colyseus";
 
 const httpServer = http.createServer();
@@ -220,9 +220,9 @@ gameServer.attach({ server: httpServer });
 ```
 
 ```javascript fct_label="WebSocket.Server"
-import * as http from "http";
-import * as express from "express";
-import * as ws from "ws";
+import http from "http";
+import express from "express";
+import ws from "ws";
 import { Server } from "colyseus";
 
 const app = express();

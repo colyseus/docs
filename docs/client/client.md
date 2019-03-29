@@ -14,7 +14,7 @@ Need a client for another platform? Share your interest on the [discussion board
 ## Connecting to the Server
 
 ```typescript fct_label="JavaScript"
-import * as Colyseus from "colyseus.js";
+import Colyseus from "colyseus.js";
 // ...
 
 let client = new Colyseus.Client("ws://localhost:2567");

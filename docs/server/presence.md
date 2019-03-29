@@ -77,8 +77,8 @@ if (cluster.isMaster) {
 ```
 
 ```typescript fct_label="TypeScript"
-import * as cluster from "cluster";
-import * as os from "os";
+import cluster from "cluster";
+import os from "os";
 import { Server, MemsharedPresence } from "colyseus";
 import { createServer } from "http";
 

@@ -22,7 +22,7 @@ npm install --save colyseus.js
 ### Connecting to server:
 
 ```ts
-import * as Colyseus from "colyseus.js";
+import Colyseus from "colyseus.js";
 
 var client = new Colyseus.Client('ws://localhost:2567');
 ```
