@@ -51,7 +51,7 @@ gameServer.listen(port);
 ```typescript fct_label="TypeScript (express)"
 import { Server } from "colyseus";
 import { createServer } from "http";
-import * as express from "express";
+import express from "express";
 const port = process.env.port || 3000;
 
 const app = express();
