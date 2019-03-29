@@ -45,7 +45,13 @@ npm install colyseus --save
 npm install typescript ts-node --save-dev
 ```
 
-#### 4. Create a `index.ts` file for the server:
+#### 4. Create the `tsconfig.json` file:
+
+```
+npx tsc --init
+```
+
+#### 5. Create a `index.ts` file for the server:
 
 ```typescript
 // index.ts
@@ -58,10 +64,10 @@ const server = http.createServer();
 const gameServer = new Server({ server });
 
 gameServer.listen(port);
-console.log(`Listening on ws://${ endpoint }:${ port }`)
+console.log(`Listening on ws://localhost:${ port }`)
 ```
 
-#### 5. Create your room handler (e.g. `MyRoom.ts`)
+#### 6. Create your room handler (e.g. `MyRoom.ts`)
 
 ```typescript
 // MyRoom.ts
@@ -79,7 +85,7 @@ export class MyRoom extends Room {
 !!! tip "More on room handlers"
     See the [Room API](/server/room/) for more details about room handlers.
 
-#### 6. Import and register your room handler in the `index.ts` file:
+#### 7. Import and register your room handler in the `index.ts` file:
 
 ```typescript
 // index.ts
@@ -90,7 +96,7 @@ gameServer.register('my_room', MyRoom);
 // ...
 ```
 
-#### 7. Start the server!
+#### 8. Start the server!
 
 ```
 npx ts-node index.ts
@@ -113,7 +119,7 @@ const gameServer = new Server({
 });
 
 gameServer.listen(port);
-console.log(`Listening on ws://${ endpoint }:${ port }`)
+console.log(`Listening on ws://localhost:${ port }`)
 ```
 
 #### 4. Create your room handler (e.g. `MyRoom.js`)
