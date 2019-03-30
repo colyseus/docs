@@ -105,7 +105,7 @@ void OnPlayerChange(object sender, KeyValueEventArgs<Player, string> item)
 
 ## Debugging
 
-If you set a breakpoint in your application while the WebSocket connection is open, the conenction will be closed automatically after 3 seconds due to inactivity. To prevent the WebSocket connection from dropping, set `pingTimeout: 0` when creating your server during development:
+If you set a breakpoint in your application while the WebSocket connection is open, the conenction will be closed automatically after 3 seconds due to inactivity. To prevent the WebSocket connection from dropping, use `pingTimeout: 0` during development:
 
 ```typescript
 import { Server, RedisPresence } from "colyseus";
