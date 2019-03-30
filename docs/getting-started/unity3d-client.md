@@ -102,3 +102,19 @@ void OnPlayerChange(object sender, KeyValueEventArgs<Player, string> item)
 	Debug.Log(item.Key); // Here's your `Player` key
 }
 ```
+
+## Debugging
+
+If you set a breakpoint in your application while the WebSocket connection is open, the conenction will be closed automatically after 3 seconds due to inactivity. To prevent the WebSocket connection from dropping, set `pingTimeout: 0` when creating your server during development:
+
+```typescript
+import { Server, RedisPresence } from "colyseus";
+import { createServer } from "http";
+
+const gameServer = new Server({
+  server: createServer(),
+  pingTimeout: 0 // HERE
+});
+```
+
+Make sure to have a `pingTimeout` higher than `0` on production. The default `pingTimeout` value is `1500`.
