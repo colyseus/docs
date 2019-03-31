@@ -144,7 +144,7 @@ manually in your shutdown process.
 
 ### `register (name: string, handler: Room, options?: any)`
 
-Register a new session handler.
+Register a new room handler.
 
 !!! Tip "Registering the same room handler multiple times"
     You may register the same room handler multiple times with different `options`. When [Room#onInit()](http://localhost:8000/server/room/#oninit-options) is called, the `options` will contain the merged values you specified on [Server#register()](/server/api/#register-name-string-handler-room-options-any) + the options provided by the first client on `client.join()`

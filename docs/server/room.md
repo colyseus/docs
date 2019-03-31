@@ -1,8 +1,8 @@
 # Room API (Server-side)
 
-Considering that you already [set up your server](/server/api), now it's time to register session handlers, and start accepting connections from your users.
+Considering that you already [set up your server](/server/api), now it's time to register room handlers, and start accepting connections from your users.
 
-You'll define session handlers creating classes that extends from `Room`.
+You'll define room handlers creating classes that extends from `Room`.
 
 ```typescript fct_label="JavaScript"
 const colyseus = require('colyseus');
