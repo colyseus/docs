@@ -377,11 +377,11 @@ npx schema-codegen --help
 schema-codegen [path/to/Schema.ts]
 
 Usage (C#/Unity)
-    schema-codegen src/Schema.ts --output client-side/ --cs --namespace MyGame.Schema
+    schema-codegen src/Schema.ts --output client-side/ --csharp --namespace MyGame.Schema
 
 Valid options:
     --output: fhe output directory for generated client-side schema files
-    --cs: generate files C#/Unity
+    --csharp: generate files C#/Unity
     --cpp: generate files C++
     --hx: generate files for Haxe
 
@@ -394,7 +394,7 @@ Optional:
 Below is a real example to generate the C# schema files from the [demo Unity3d project](https://github.com/colyseus/colyseus-unity3d/tree/master/Server).
 
 ```
-npx schema-codegen DemoRoom.ts --cs --output ../Assets/
+npx schema-codegen DemoRoom.ts --csharp --output ../Assets/
 generated: Player.cs
 generated: State.cs
 ```
