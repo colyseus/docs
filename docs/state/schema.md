@@ -381,9 +381,9 @@ Usage (C#/Unity)
 
 Valid options:
     --output: fhe output directory for generated client-side schema files
-    --csharp: generate files C#/Unity
-    --cpp: generate files C++
-    --hx: generate files for Haxe
+    --csharp: generate files for C#/Unity
+    --cpp: generate files for C++
+    --haxe: generate files for Haxe
 
 Optional:
     --namespace: generate namespace on output code
