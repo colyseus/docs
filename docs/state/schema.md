@@ -261,7 +261,10 @@ room.state.players.onAdd = (player, key) => {
             console.log(change.value);
             console.log(change.previousValue);
         })
-    }
+    };
+
+    // force "onChange" to be called immediatelly
+    player.triggerAll();
 };
 ```
 
@@ -279,6 +282,9 @@ room.state.players['on_add'] = function (player, key)
             print(change.previousValue)
         end
     end
+
+    -- force "on_change" to be called immediatelly
+    player.trigger_all()
 end
 ```
 
@@ -299,6 +305,9 @@ room.State.players.OnAdd += (object sender, KeyValueEventArgs<Player, string> e)
             Debug.Log(obj.PreviousValue);
         });
     };
+
+    // force "OnChange" to be called immediatelly
+    e.Value.TriggerAll();
 };
 ```
 
