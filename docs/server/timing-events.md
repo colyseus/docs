@@ -55,7 +55,7 @@ This method is called automatically at every simulation interval step. All
 
 #### `clock.elapsedTime`
 
-Elased time in milliseconds since [`clock.start()`](#clockstart) method was called. Read only.
+Elapsed time in milliseconds since [`clock.start()`](#clockstart) method was called. Read only.
 
 #### `clock.currentTime`
 
