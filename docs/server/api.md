@@ -134,7 +134,6 @@ const gameServer = new Server({
 The currently avaialble Presence servers are currently:
 
 - `RedisPresence` (scales on a single server and multiple servers)
-- `MemsharedPresence` (scales on a single server)
 
 #### `options.gracefullyShutdown`
 
