@@ -18,7 +18,7 @@ To run the http + websocket server, run `npm start`.
 
 ## Creating a barebones Colyseus server
 
-#### Create a directory for your server. 
+#### Create a directory for your server.
 
 ```
 mkdir server
@@ -58,7 +58,7 @@ npx tsc --init
 import http from "http";
 import { Server } from "colyseus";
 
-const port = Number(process.env.PORT || 2657);
+const port = Number(process.env.PORT || 2567);
 
 const server = http.createServer();
 const gameServer = new Server({ server });
@@ -89,7 +89,7 @@ export class MyRoom extends Room {
 
 ```typescript
 // index.ts
-// ... 
+// ...
 import { MyRoom } from "./MyRoom";
 // ...
 gameServer.register('my_room', MyRoom);
@@ -111,11 +111,11 @@ npx ts-node index.ts
 const http = require("http");
 const colyseus = require("colyseus");
 
-const port = process.env.PORT || 2657;
+const port = process.env.PORT || 2567;
 
 const server = http.createServer();
 const gameServer = new Server({
-      server: server 
+      server: server
 });
 
 gameServer.listen(port);
@@ -144,7 +144,7 @@ export class MyRoom extends Room {
 
 ```typescript
 // index.js
-// ... 
+// ...
 const MyRoom = require("./MyRoom")
 // ...
 gameServer.register('my_room', MyRoom);
