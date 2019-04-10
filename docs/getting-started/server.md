@@ -114,7 +114,7 @@ const colyseus = require("colyseus");
 const port = process.env.PORT || 2567;
 
 const server = http.createServer();
-const gameServer = new Server({
+const gameServer = new colyseus.Server({
       server: server
 });
 
@@ -128,7 +128,7 @@ console.log(`Listening on ws://localhost:${ port }`)
 // MyRoom.ts
 const colyseus = require("colyseus")
 
-export class MyRoom extends Room {
+export class MyRoom extends colyseus.Room {
       onInit (options) {}
       onJoin (client, options) {}
       onMessage (client, message) {}
@@ -145,7 +145,7 @@ export class MyRoom extends Room {
 ```typescript
 // index.js
 // ...
-const MyRoom = require("./MyRoom")
+const MyRoom = require("./MyRoom").MyRoom
 // ...
 gameServer.register('my_room', MyRoom);
 // ...
