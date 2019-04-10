@@ -125,7 +125,7 @@ console.log(`Listening on ws://localhost:${ port }`)
 #### 4. Create your room handler (e.g. `MyRoom.js`)
 
 ```javascript
-// MyRoom.ts
+// MyRoom.js
 const colyseus = require("colyseus")
 
 export class MyRoom extends colyseus.Room {
