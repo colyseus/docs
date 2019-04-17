@@ -193,6 +193,19 @@ These are the types you can provide for the `@type()` decorator, and their limit
 | `"float32"` | single-precision floating-point number | `-3.40282347e+38` to `3.40282347e+38`|
 | `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |
 
+### Limitations and best practices
+
+- `NaN` or `null` numbers are encoded as `0`
+- `null` strings are encoded as `""`
+- `Infinity` numbers are encoded as `Number.MAX_SAFE_INTEGER`
+- Multi-dimensional arrays are not supported.
+- Items inside Arrays and Maps must be all of the same type.
+- `@colyseus/schema` encodes only field values in the specified order.
+  - Both encoder (server) and decoder (client) must have same schema definition.
+  - The order of the fields must be the same.
+- Avoid manipulating indexes of an array. This result in at least `2` extra bytes for each index change. **Example:** If you have an array of 20 items, and remove the first item (through `shift()`) this means `38` extra bytes to be serialized.
+- Avoid moving keys of maps. As of arrays, it adds `2` extra bytes per key move.
+
 ## Client-side
 
 There are three ways to handle changes in the client-side when using `SchemaSerializer`:
