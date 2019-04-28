@@ -18,144 +18,16 @@ To run the http + websocket server, run `npm start`.
 
 ## Creating a barebones Colyseus server
 
-#### Create a directory for your server.
+Use the `npm init colyseus-app` command to generate a barabones Colyseus server. You may select between TypeScript (recommended) and JavaScript as your language of choice.
 
 ```
-mkdir server
-cd server
+npm init colyseus-app ./my-colyseus-app
 ```
 
-#### 1. Create a `package.json` file:
+See the contents of the project templates:
 
-```
-npm init
-```
-
-#### 2. Install the `colyseus` module:
-
-```
-npm install colyseus --save
-```
-
-### Using TypeScript (recommended)
-
-#### 3. Install the `typescript`, and `ts-node` modules as development dependencies.
-
-```
-npm install typescript ts-node --save-dev
-```
-
-#### 4. Create the `tsconfig.json` file:
-
-```
-npx tsc --init
-```
-
-#### 5. Create a `index.ts` file for the server:
-
-```typescript
-// index.ts
-import http from "http";
-import { Server } from "colyseus";
-
-const port = Number(process.env.PORT || 2567);
-
-const server = http.createServer();
-const gameServer = new Server({ server });
-
-gameServer.listen(port);
-console.log(`Listening on ws://localhost:${ port }`)
-```
-
-#### 6. Create your room handler (e.g. `MyRoom.ts`)
-
-```typescript
-// MyRoom.ts
-import { Room, Client } from "colyseus";
-
-export class MyRoom extends Room {
-      onInit (options: any) {}
-      onJoin (client: Client, options: any) {}
-      onMessage (client: Client, message: any) {}
-      onLeave (client: Client, consented: boolean) {}
-      onDispose() {}
-}
-```
-
-!!! tip "More on room handlers"
-    See the [Room API](/server/room/) for more details about room handlers.
-
-#### 7. Import and register your room handler in the `index.ts` file:
-
-```typescript
-// index.ts
-// ...
-import { MyRoom } from "./MyRoom";
-// ...
-gameServer.register('my_room', MyRoom);
-// ...
-```
-
-#### 8. Start the server!
-
-```
-npx ts-node index.ts
-```
-
-### Using JavaScript
-
-#### 3. Create a `index.js` file for the server:
-
-```javascript
-// index.js
-const http = require("http");
-const colyseus = require("colyseus");
-
-const port = process.env.PORT || 2567;
-
-const server = http.createServer();
-const gameServer = new colyseus.Server({
-      server: server
-});
-
-gameServer.listen(port);
-console.log(`Listening on ws://localhost:${ port }`)
-```
-
-#### 4. Create your room handler (e.g. `MyRoom.js`)
-
-```javascript
-// MyRoom.js
-const colyseus = require("colyseus")
-
-export class MyRoom extends colyseus.Room {
-      onInit (options) {}
-      onJoin (client, options) {}
-      onMessage (client, message) {}
-      onLeave (client, consented) {}
-      onDispose() {}
-}
-```
-
-!!! tip "More on room handlers"
-    See the [Room API](/server/room/) for more details about room handlers.
-
-#### 5. Import and register your room handler in the `index.js` file:
-
-```typescript
-// index.js
-// ...
-const MyRoom = require("./MyRoom").MyRoom
-// ...
-gameServer.register('my_room', MyRoom);
-// ...
-```
-
-#### 6. Start the server!
-
-```
-node index.js
-```
+- [TypeScript](https://github.com/colyseus/create-colyseus-app/tree/typescript)
+- [JavaScript](https://github.com/colyseus/create-colyseus-app/tree/javascript)
 
 ## Recommended NodeJS packages for games
 
