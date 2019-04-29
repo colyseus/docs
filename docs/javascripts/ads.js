@@ -20,7 +20,7 @@ var patreonAd = document.createElement("div");
 patreonAd.id = "patreon_ad";
 patreonAd.innerHTML = '<hr/>' +
 '<center>' + 
-    '<p>Colyseus is fully open-source. Consider supporting the project on Patreon ❤️</p>' +
+    '<p>Colyseus is fully open-source. Consider donating any amount to support the project ❤️</p>' +
         '<a href="https://patreon.com/endel" title="Support Colyseus on Patreon">' +
         '<img src="https://img.shields.io/badge/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fendel%2Fpatrons&style=for-the-badge&label=donations" alt="Support Colyseus on Patreon"/>' +
     '</a>' + 
