@@ -22,29 +22,29 @@ var client = new Client('ws://localhost:2567');
 
 ### Joining to a room:
 
+You need to provide your [root Schema state](/state/schema/) as third argument when joining a room.
+
 ```haxe
-var room = client.join("room_name");
+var room = client.join("room_name", [], State);
 room.onJoin = function() {
     trace(client.id + " joined " + room.name);
+
+    room.state.entities.onAdd = function(entity, key) {
+        trace("entity added at " + key + " => " + entity);
+
+        entity.onChange = function (changes) {
+            trace("entity changes => " + changes);
+        }
+    }
+
+    room.state.entities.onChange = function(entity, key) {
+        trace("entity changed at " + key + " => " + entity);
+    }
+
+    room.state.entities.onRemove = function(entity, key) {
+        trace("entity removed at " + key + " => " + entity);
+    }
 }
-```
-
-### Listening to room state change:
-
-Listening to entities being added/removed from the room:
-
-```haxe
-room.listen("entities/:id", function (change) {
-    trace("new entity " +  change.path.id + " => " + change.value);
-});
-```
-
-Listening to entity attributes being added/replaced/removed:
-
-```haxe
-room.listen("entities/:id/:attribute", function (change) {
-    trace("entity " + change.path.id + " changed attribute " + change.path.attribute + " to " + change.value);
-});
 ```
 
 ### Other room events
