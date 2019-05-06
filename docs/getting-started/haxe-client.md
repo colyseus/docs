@@ -83,7 +83,7 @@ room.onLeave = function() {
 
 ## Running the demo project
 
-The [`example`](https://github.com/colyseus/colyseus-hx/blob/master/example/NyanCat) project can be compiled to `html5`, `neko`, `cpp`, `ios`, etc.
+The [`example`](https://github.com/colyseus/colyseus-hx/blob/master/example/openfl) project can be compiled to `html5`, `neko`, `cpp`, `ios`, etc.
 
 It uses the `state_handler` room from the [colyseus-examples](https://github.com/colyseus/colyseus-examples) project, which you can find [here](https://github.com/colyseus/colyseus-examples/blob/master/rooms/02-state-handler.ts).
 
@@ -91,7 +91,7 @@ It uses the `state_handler` room from the [colyseus-examples](https://github.com
 
 ```
 git clone https://github.com/colyseus/colyseus-hx.git
-cd colyseus-hx/example/NyanCat
+cd colyseus-hx/example/openfl
 lime build project.xml html5
 ```
 
