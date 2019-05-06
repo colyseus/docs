@@ -6,6 +6,7 @@ Install the latest version from the git repository:
 
 ```
 haxelib git colyseus https://github.com/colyseus/colyseus-hx.git
+haxelib git haxe-ws https://github.com/colyseus/haxe-ws.git
 ```
 
 ## Usage
