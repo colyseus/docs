@@ -326,7 +326,7 @@ room.State.players.OnAdd += (object sender, KeyValueEventArgs<Player, string> e)
 
 ### `onRemove (instance, key)`
 
-The `onRemove` callback can only be used in maps (`MapSchema`) and arrays (`ArraySchema`). The `onRemove` callback is called with the added instance and its key on holder object as argument.
+The `onRemove` callback can only be used in maps (`MapSchema`) and arrays (`ArraySchema`). The `onRemove` callback is called with the removed instance and its key on holder object as argument.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onRemove = (player, key) => {
