@@ -103,6 +103,7 @@ nav:
 
 - 'Matchmaking': 'matchmaking.md'
 - 'Authentication': 'authentication.md'
+- 'Push Messages': 'push.md'
 
 - 'Debugging': 'debugging.md'
 - 'Deployment': 'deployment.md'
