@@ -14,6 +14,7 @@ This section covers the configuration and usage of [`@colyseus/social`](http://g
 
 ```
 npm install @colyseus/social
+npm install express-jwt
 ```
 
 3. Import and expose the Express routes provided by `@colyseus/social`.
