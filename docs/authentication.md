@@ -10,7 +10,7 @@ This section covers the configuration and usage of [`@colyseus/social`](http://g
 
 1. [Download and install MongoDB](https://docs.mongodb.com/manual/installation/)
 
-2. Install the @colyseus/social module.
+2. Install the `@colyseus/social` module.
 
 ```
 npm install @colyseus/social
