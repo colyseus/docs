@@ -225,7 +225,7 @@ this.send(client, { message: "Hello world!" });
 
 ### `broadcast (message, options?)`
 
-Send a message to all connected clients. 
+Send a message to all connected clients.
 
 Available options are:
 

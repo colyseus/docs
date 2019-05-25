@@ -102,6 +102,7 @@ nav:
   - 'Fossil Delta (0.9.x)': 'state/fossil-delta.md'
 
 - 'Matchmaking': 'matchmaking.md'
+- 'Authentication': 'authentication.md'
 
 - 'Debugging': 'debugging.md'
 - 'Deployment': 'deployment.md'

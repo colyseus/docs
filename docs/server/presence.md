@@ -4,7 +4,6 @@ When you need to scale your server on multiple processes and/or machines, you'd 
 
 - [`LocalPresence`](#localpresence) (default)
 - [`RedisPresence`](#redispresence-clientopts)
-- [`MemsharedPresence`](#memsharedpresence)
 
 The `presence` instance is also available on every `Room` handler. You may use its [API](#api) to persist data and communicate between rooms via PUB/SUB.
 
@@ -44,60 +43,6 @@ const gameServer = new Server({
 });
 
 gameServer.listen(2567);
-```
-
-### `MemsharedPresence`
-
-You may use this option if you're running Colyseus on a single machine, using multiple processes through the `cluster` module.
-
-On the following example, we're going to spawn a different process for each CPU available.
-
-```typescript fct_label="JavaScript"
-const cluster = require('cluster');
-const os = require('os');
-const colyseus = require('colyseus');
-const http = require('http');
-
-if (cluster.isMaster) {
-    // This only happens on the master server
-    const cpus = os.cpus().length;
-    for (let i = 0; i < cpus; ++i) {
-        cluster.fork();
-    }
-
-} else {
-    // This happens on the slave processes.
-    const gameServer = new colyseus.Server({
-        server: http.createServer(),
-        presence: new colyseus.MemsharedPresence()
-    });
-
-    gameServer.listen(2567);
-}
-```
-
-```typescript fct_label="TypeScript"
-import cluster from "cluster";
-import os from "os";
-import { Server, MemsharedPresence } from "colyseus";
-import { createServer } from "http";
-
-if (cluster.isMaster) {
-    // This only happens on the master server
-    const cpus = os.cpus().length;
-    for (let i = 0; i < cpus; ++i) {
-        cluster.fork();
-    }
-
-} else {
-    // This happens on the slave processes.
-    const gameServer = new Server({
-        server: createServer(),
-        presence: new MemsharedPresence()
-    });
-
-    gameServer.listen(2567);
-}
 ```
 
 ## API
