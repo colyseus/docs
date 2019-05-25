@@ -123,6 +123,20 @@ client.auth:facebook_login(function(err, auth)
 end)
 ```
 
+### Logout
+
+```javascript fct_label="JavaScript"
+client.auth.logout();
+```
+
+```csharp fct_label="C#"
+client.Auth.Logout();
+```
+
+```lua fct_label="lua"
+client.auth:logout();
+```
+
 ### Get Friends
 
 ```javascript fct_label="JavaScript"
