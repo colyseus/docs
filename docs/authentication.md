@@ -1,6 +1,6 @@
 This section covers the configuration and usage of [`@colyseus/social`](http://github.com/colyseus/colyseus-social).
 
-`@colyseus/social` is an experimental module that provides general-purpose services to speed-up your multiplayer game development experience. Its API is not final, and is open for suggestions and improvement.
+`@colyseus/social` is an experimental module that provides general-purpose backend services to speed-up your multiplayer game development experience. The API is open for suggestions and improvement.
 
 
 !!! Tip
