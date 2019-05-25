@@ -283,7 +283,11 @@ import { User, verifyToken } from "@colyseus/social";
 class MyRoom extends Room {
 
   async onAuth(options) {
-    return User.findById(verifyToken(options.token)._id);
+    // verify token authenticity
+    const token = verifyToken(options.token);
+
+    // query the user by its id
+    return User.findById(token._id);
   }
 
   onJoin(client, options, user) {
