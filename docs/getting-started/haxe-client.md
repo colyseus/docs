@@ -26,7 +26,7 @@ You need to provide your [root Schema state](/state/schema/) as third argument w
 
 ```haxe
 var room = client.join("room_name", [], State);
-room.onJoin = function() {
+room.onJoin += function() {
     trace(client.id + " joined " + room.name);
 
     room.state.entities.onAdd = function(entity, key) {
@@ -52,7 +52,7 @@ room.onJoin = function() {
 Room state has been updated:
 
 ```haxe
-room.onStateChange = function(state) {
+room.onStateChange += function(state) {
   // full new state avaialble on 'state' variable
 }
 ```
@@ -60,7 +60,7 @@ room.onStateChange = function(state) {
 Message broadcasted from server or directly to this client:
 
 ```haxe
-room.onMessage = function (message) {
+room.onMessage += function (message) {
   trace(client.id + " received on " + room.name + ": " + message);
 }
 ```
@@ -68,7 +68,7 @@ room.onMessage = function (message) {
 Server error occurred:
 
 ```haxe
-room.onError = function() {
+room.onError += function() {
   trace(client.id + " couldn't join " + room.name);
 }
 ```
@@ -76,7 +76,7 @@ room.onError = function() {
 The client left the room:
 
 ```haxe
-room.onLeave = function() {
+room.onLeave += function() {
   trace(client.id + " left " + room.name);
 }
 ```

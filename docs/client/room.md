@@ -134,7 +134,7 @@ end)
 ```
 
 ```haxe fct_label="Haxe"
-room.onStateChange = function(state) {
+room.onStateChange += function(state) {
   trace("new state:" + Std.string(state));
 };
 ```
@@ -165,7 +165,7 @@ end)
 ```
 
 ```haxe fct_label="Haxe"
-room.onMessage = function(message) {
+room.onMessage += function(message) {
   trace("server just sent this message:");
   trace(Std.string(message));
 };
@@ -199,7 +199,7 @@ end)
 ```
 
 ```haxe fct_label="Haxe"
-room.onJoin = function () {
+room.onJoin += function () {
   trace("client joined successfully");
 };
 ```
@@ -227,7 +227,7 @@ end)
 ```
 
 ```haxe fct_label="Haxe"
-room.onLeave = function () {
+room.onLeave += function () {
   trace("client left the room");
 };
 ```
@@ -258,7 +258,7 @@ end)
 ```
 
 ```haxe fct_label="Haxe"
-room.onError = function(err) {
+room.onError += function(err) {
   trace("oops, error ocurred:");
   trace(err);
 };

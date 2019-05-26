@@ -201,7 +201,7 @@ end)
 ```
 
 ```haxe fct_label="Haxe"
-client.onOpen = function() {
+client.onOpen += function() {
   trace("connection is now open");
 };
 ```
@@ -229,7 +229,7 @@ end)
 ```
 
 ```haxe fct_label="Haxe"
-client.onClose = function() {
+client.onClose += function() {
   trace("connection has been closed");
 };
 ```
@@ -257,7 +257,7 @@ end)
 ```
 
 ```haxe fct_label="Haxe"
-client.onError = function() {
+client.onError += function() {
   trace("something wrong happened");
 };
 ```
