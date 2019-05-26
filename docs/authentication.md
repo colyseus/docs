@@ -302,7 +302,7 @@ class MyRoom extends Room {
     const token = verifyToken(options.token);
 
     // query the user by its id
-    return User.findById(token._id);
+    return await User.findById(token._id);
   }
 
   onJoin(client, options, user) {
