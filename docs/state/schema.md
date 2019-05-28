@@ -40,7 +40,7 @@ You may define more custom data types inside your "root" state definition, as a 
 ```typescript fct_label="TypeScript"
 import { Schema, type } from "@colyseus/schema";
 
-class Map extends Schema {
+class World extends Schema {
     @type("number")
     width: number;
 
@@ -52,8 +52,8 @@ class Map extends Schema {
 }
 
 class MyState extends Schema {
-    @type(Map)
-    map: Map = new Map();
+    @type(World)
+    world: World = new World();
 }
 ```
 
@@ -62,20 +62,20 @@ const schema = require('@colyseus/schema');
 const Schema = schema.Schema;
 const type = schema.type;
 
-class Map extends Schema {
+class World extends Schema {
 }
-type("number")(Map.prototype, "width");
-type("number")(Map.prototype, "height");
-type("number")(Map.prototype, "items");
+type("number")(World.prototype, "width");
+type("number")(World.prototype, "height");
+type("number")(World.prototype, "items");
 
 class MyState extends Schema {
     constructor () {
         super();
 
-        this.map = new Map();
+        this.world = new World();
     }
 }
-type(Map)(MyState.prototype, "map");
+type(World)(MyState.prototype, "world");
 ```
 
 ### Array of custom data type
@@ -109,8 +109,8 @@ const type = schema.type;
 
 class Block extends Schema {
 }
-type("number")(Map.prototype, "x");
-type("number")(Map.prototype, "y");
+type("number")(Block.prototype, "x");
+type("number")(Block.prototype, "y");
 
 class MyState extends Schema {
     constructor () {
@@ -153,8 +153,8 @@ const type = schema.type;
 
 class Player extends Schema {
 }
-type("number")(Map.prototype, "x");
-type("number")(Map.prototype, "y");
+type("number")(Player.prototype, "x");
+type("number")(Player.prototype, "y");
 
 class MyState extends Schema {
     constructor () {
