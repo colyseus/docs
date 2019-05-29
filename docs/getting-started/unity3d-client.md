@@ -13,6 +13,8 @@ npm install
 npm start
 ```
 
+The demo server is using [`@colyseus/social`](/authentication) for user authentication. Please download and install MongoDB locally: https://www.mongodb.com/download-center/community
+
 !!! Tip
     Ensure you have [Node v8+](http://nodejs.org/) installed locally to run the server.
 
