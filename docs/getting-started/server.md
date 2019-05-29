@@ -10,7 +10,6 @@ See some examples in action by cloning the [examples project](https://github.com
 git clone https://github.com/colyseus/colyseus-examples.git
 cd colyseus-examples
 npm install
-npm run bundle-colyseus-client
 ```
 
 To run the http + websocket server, run `npm start`.
