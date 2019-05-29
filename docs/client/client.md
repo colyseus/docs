@@ -86,7 +86,7 @@ var room = client.join("KRYAKzRo2");
 
 Reconnects the client into a room he was previously connected with.
 
-Must be used along with [`allowReconnection()`](/api-room#allowreconnection-client-seconds) in the server-side.
+Must be used along with [`allowReconnection()`](/server/room#allowreconnection-client-seconds) in the server-side.
 
 ```typescript fct_label="JavaScript"
 let room = client.rejoin("battle", "SkNaHTazQ");
