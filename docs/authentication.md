@@ -8,7 +8,7 @@ This section covers the configuration and usage of [`@colyseus/social`](http://g
 
 ## Installation
 
-1. [Download and install MongoDB](https://docs.mongodb.com/manual/installation/)
+1. [Download and install MongoDB](https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installation-tutorials)
 
 2. Install the `@colyseus/social` module.
 
