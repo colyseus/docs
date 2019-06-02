@@ -45,8 +45,10 @@ IEnumerator Start () {
 
 ### Joining a Room
 
+> See how to generate your `RoomState` from [State Handling](https://docs.colyseus.io/state/schema/#client-side-schema-generation)
+
 ```csharp
-Room room = client.Join ("room_name");
+Room room = client.Join<RoomState> ("room_name");
 room.OnReadyToConnect += (sender, e) => {
     StartCoroutine(room.Connect());
 };
@@ -71,10 +73,10 @@ void OnStateChange (object sender, RoomUpdateEventArgs<State> e)
 
 ### Attaching callbacks to your [schema](/state/schema/#client-side) structures
 
-See [State Handling](/state/schema/#client-side) for more details.
+> See how to generate your `RoomState` from [State Handling](https://docs.colyseus.io/state/schema/#client-side-schema-generation)
 
 ```csharp
-Room room = client.Join ("room_name");
+Room room = client.Join<RoomState> ("room_name");
 room.OnJoin += (sender, e) => {
 	Debug.Log("Joined room successfully.");
 
