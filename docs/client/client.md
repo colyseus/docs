@@ -110,9 +110,9 @@ List all available rooms to connect with the provided `roomName`. Locked rooms
 won't be listed.
 
 ```typescript fct_label="JavaScript"
-client.getAvailableRooms("battle", function(rooms, err) {
+client.getAvailableRooms("battle", (rooms, err) => {
   if (err) console.error(err);
-  rooms.forEach(function(room) {
+  rooms.forEach((room) => {
     console.log(room.roomId);
     console.log(room.clients);
     console.log(room.maxClients);
@@ -183,7 +183,7 @@ client.close();
 This event is triggered when the connection is accepted by the server.
 
 ```typescript fct_label="JavaScript"
-client.onOpen.add(function() {
+client.onOpen.add(() => {
   console.log("connection is now open");
 });
 ```
@@ -211,7 +211,7 @@ client.onOpen += function() {
 This event is triggered when the connection is closed.
 
 ```typescript fct_label="JavaScript"
-client.onClose.add(function() {
+client.onClose.add(() => {
   console.log("connection has been closed");
 });
 ```
@@ -239,7 +239,7 @@ client.onClose += function() {
 This event is triggered when some error occurs in the server.
 
 ```typescript fct_label="JavaScript"
-client.onError.add(function(err) {
+client.onError.add((err) => {
   console.log("something wrong happened", err);
 });
 ```

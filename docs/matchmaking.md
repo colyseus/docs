@@ -47,7 +47,7 @@ requestJoin (options: any) {
 
 ```typescript fct_label="JavaScript"
 // client-side
-room.onError.add(function(err) {
+room.onError.add((err) => {
     console.log("error ocurred:", err);
 });
 ```

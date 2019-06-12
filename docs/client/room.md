@@ -108,11 +108,11 @@ Also removes all `.listen()` calls if you're using [Fossil Delta](/state/fossil-
 This event is triggered when the server updates its state.
 
 ```typescript fct_label="JavaScript"
-room.onStateChange.addOnce(function(state) {
+room.onStateChange.addOnce((state) => {
   console.log("this is the first room state!", state);
 });
 
-room.onStateChange.add(function(state) {
+room.onStateChange.add((state) => {
   console.log("the room state has been updated:", state);
 });
 ```
@@ -144,7 +144,7 @@ room.onStateChange += function(state) {
 This event is triggered when the server sends a message directly to the client.
 
 ```typescript fct_label="JavaScript"
-room.onMessage.add(function(message) {
+room.onMessage.add((message) => {
   console.log("server just sent this message:");
   console.log(message);
 });
@@ -181,7 +181,7 @@ room.onMessage += function(message) {
 This event is triggered when the client successfuly joins the room.
 
 ```typescript fct_label="JavaScript"
-room.onJoin.add(function() {
+room.onJoin.add(() => {
   console.log("client joined successfully");
 });
 ```
@@ -209,7 +209,7 @@ room.onJoin += function () {
 This event is triggered when the client leave the room.
 
 ```typescript fct_label="JavaScript"
-room.onLeave.add(function() {
+room.onLeave.add(() => {
   console.log("client left the room");
 });
 ```
@@ -237,7 +237,7 @@ room.onLeave += function () {
 This event is triggered when some error occurs in the room handler.
 
 ```typescript fct_label="JavaScript"
-room.onError.add(function(err) {
+room.onError.add((err) => {
   console.log("oops, error ocurred:");
   console.log(err);
 });

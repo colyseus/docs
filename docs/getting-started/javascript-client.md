@@ -1,4 +1,4 @@
-# JavaScript Client 
+# JavaScript Client
 
 ## Platforms
 
@@ -31,7 +31,7 @@ var client = new Colyseus.Client('ws://localhost:2567');
 
 ```ts
 var room = client.join("room_name");
-room.onJoin.add(function() {
+room.onJoin.add(() => {
     console.log(client.id, "joined", room.name);
 });
 ```
@@ -41,7 +41,7 @@ room.onJoin.add(function() {
 Room state has been updated:
 
 ```ts
-room.onStateChange.add(function(state) {
+room.onStateChange.add((state) => {
   console.log(room.name, "has new state:", state);
 });
 ```
@@ -49,7 +49,7 @@ room.onStateChange.add(function(state) {
 Message broadcasted from server or directly to this client:
 
 ```ts
-room.onMessage.add(function(message) {
+room.onMessage.add((message) => {
   console.log(client.id, "received on", room.name, message);
 });
 ```
@@ -57,7 +57,7 @@ room.onMessage.add(function(message) {
 Server error occurred:
 
 ```ts
-room.onError.add(function() {
+room.onError.add(() => {
   console.log(client.id, "couldn't join", room.name);
 });
 ```
@@ -65,7 +65,7 @@ room.onError.add(function() {
 The client left the room:
 
 ```ts
-room.onLeave.add(function() {
+room.onLeave.add(() => {
   console.log(client.id, "left", room.name);
 });
 ```
