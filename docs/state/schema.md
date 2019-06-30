@@ -82,7 +82,7 @@ type(World)(MyState.prototype, "world");
 
 When using arrays, it's important to use the `ArraySchema` type. Do not use plain arrays.
 
-`ArraySchema` is recommended for describing the world map, or any collection in your game.
+`ArraySchema` is recommended for describing the world map, or any collection in your game. They have all the methods available in an [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), but it's synchronizable.
 
 ```typescript fct_label="TypeScript"
 import { Schema, ArraySchema, type } from "@colyseus/schema";
@@ -164,6 +164,15 @@ class MyState extends Schema {
     }
 }
 type({ map: Player })(MyState.prototype, "players");
+```
+
+#### Looping through the items of a `MapSchema`
+
+```typescript
+for (let id in this.players) {
+  const player: Player = this.players[id];
+  console.log(id, player);
+}
 ```
 
 ### Primitive types
