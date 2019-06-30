@@ -2,8 +2,7 @@
 
 The `SchemaSerializer` has been introduced since Colyseus 0.10, and it's the default serialization method.
 
-!!! Warning "When not to use the `Schema`?"
-  The `Schema` strutures are meant to be used **only for the room's state** (synchronizeable data). Do you **not** need to use `Schema` and its other structures for data that's part of your algorithms that aren't synchronizeable.
+The `Schema` strutures are meant to be used **only for the room's state** (synchronizeable data). Do you **not** need to use `Schema` and its other structures for data that's part of your algorithms that aren't synchronizeable.
 
 ## Server-side
 
