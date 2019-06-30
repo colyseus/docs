@@ -205,8 +205,32 @@ Set frequency the patched state should be sent to all clients. Default is `50ms`
 
 ### `setMetadata (metadata)`
 
-Set metadata for the room instance. This metadata is public when requesting the
-room list through [`client.getAvailableRooms()`](/client/client/#getavailablerooms-roomname) method.
+Set metadata to this room. Each room instance may have metadata attached to it - the only purpose for attaching metadata is to differentiate one room from another when getting the list of available rooms from the client-side, to connect to it by its `roomId`, using [`client.getAvailableRooms()`](/client/client/#getavailablerooms-roomname).
+
+```typescript
+// server-side
+this.setMetadata({ friendlyFire: true });
+```
+
+Now that a room has metadata attached to it, the client-side can check which room has `friendlyFire`, for example, and connect directly to it via its `roomId`:
+
+```javascript
+client.getAvailableRooms("battle", (rooms, err) => {
+  if (err) console.error(err);
+  for (var i=0; i<rooms.length; i++) {
+    if (room.metadata && room.metadata.friendlyFire) {
+      //
+      // join the room with `friendlyFire` by id:
+      //
+      var room = client.join(room.roomId);
+      return;
+    }
+  }
+});
+```
+
+!!! Tip
+    [See how to call `getAvailableRooms()` in other languages.](/client/client/#getavailablerooms-roomname)
 
 ### `setSeatReservationTime (seconds)`
 
