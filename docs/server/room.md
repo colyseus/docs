@@ -215,6 +215,7 @@ this.setMetadata({ friendlyFire: true });
 Now that a room has metadata attached to it, the client-side can check which room has `friendlyFire`, for example, and connect directly to it via its `roomId`:
 
 ```javascript
+// client-side
 client.getAvailableRooms("battle", (rooms, err) => {
   if (err) console.error(err);
   for (var i=0; i<rooms.length; i++) {
