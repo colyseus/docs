@@ -131,7 +131,7 @@ const gameServer = new Server({
 });
 ```
 
-The currently avaialble Presence servers are currently:
+The currently available Presence servers are currently:
 
 - `RedisPresence` (scales on a single server and multiple servers)
 
