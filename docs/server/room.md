@@ -131,6 +131,14 @@ You can define this function as `async`. See [graceful shutdown](/server/gracefu
 
 ## Public properties
 
+### `roomId: string`
+
+A unique, auto-generated, 9-character-long id of the room.
+
+### `roomName: string`
+
+The name of the room you provided as first argument for [`gameServer.register()`](/server/api/#register-name-string-handler-room-options-any).
+
 ### `state: T`
 
 The state instance you provided to [`setState()`](#setstate-object).
