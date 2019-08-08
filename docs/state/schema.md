@@ -263,9 +263,9 @@ end
 ```
 
 ```csharp fct_label="C#"
-room.State.OnChange += (object sender, OnChangeEventArgs e) =>
+room.State.OnChange += (changes) =>
 {
-    e.Changes.ForEach((Colyseus.Schema.DataChange obj) =>
+    changes.ForEach((obj) =>
     {
         Debug.Log(obj.Field);
         Debug.Log(obj.Value);
@@ -322,16 +322,16 @@ end
 ```
 
 ```csharp fct_label="C#"
-room.State.players.OnAdd += (object sender, KeyValueEventArgs<Player, string> e) =>
+room.State.players.OnAdd += (Player player, string key) =>
 {
-    Debug.Log("player has been added at " + e.Key);
+    Debug.Log("player has been added at " + key);
 
     // add your player entity to the game world!
 
     // If you want to track changes on a child object inside a map, this is a common pattern:
-    e.Value.OnChange += (object sender2, OnChangeEventArgs e) =>
+    player.OnChange += (changes) =>
     {
-        e.Changes.ForEach((Colyseus.Schema.DataChange obj) =>
+        changes.ForEach((obj) =>
         {
             Debug.Log(obj.Field);
             Debug.Log(obj.Value);
@@ -365,9 +365,9 @@ end
 ```
 
 ```csharp fct_label="C#"
-room.State.players.OnRemove += (object sender, KeyValueEventArgs<Player, string> e) =>
+room.State.players.OnRemove += (Player player, string key) =>
 {
-    Debug.Log("player has been removed at " + e.Key);
+    Debug.Log("player has been removed at " + key);
 
     // remove your player entity from the game world!
 };
@@ -390,9 +390,9 @@ end
 ```
 
 ```csharp fct_label="C#"
-room.State.players.OnChange += (object sender, KeyValueEventArgs<Player, string> e) =>
+room.State.players.OnChange += (Player player, string key) =>
 {
-    Debug.Log("player have changes at " + e.Key);
+    Debug.Log("player have changes at " + key);
 };
 ```
 

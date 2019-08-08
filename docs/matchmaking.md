@@ -16,7 +16,7 @@ let room = client.join("battle");
 
 ```csharp fct_label="C#"
 // client-side
-Room room = client.Join("battle");
+Room room = await client.Join("battle");
 ```
 
 **2.** Server will loop through all spawned room instances named `"battle"` and call [`requestJoin`][requestJoin] method against that instance.
@@ -54,7 +54,7 @@ room.onError.add((err) => {
 
 ```csharp fct_label="C#"
 // client-side
-room.OnError += (object sender, MessageEventArgs e) => Debug.Log(e.data);
+room.OnError += (message) => Debug.Log(message);
 ```
 
 ### Priority matches

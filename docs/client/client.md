@@ -57,10 +57,10 @@ let room = client.join("KRYAKzRo2");
 
 ```csharp fct_label="C#"
 // joining a room by name
-Room room = client.Join("battle");
+Room room = await client.Join("battle");
 
 // joining a room by id
-Room room = client.Join("KRYAKzRo2");
+Room room = await client.Join("KRYAKzRo2");
 ```
 
 ```lua fct_label="lua"
@@ -93,7 +93,7 @@ let room = client.rejoin("battle", "SkNaHTazQ");
 ```
 
 ```csharp fct_label="C#"
-Room room = client.ReJoin("battle", "SkNaHTazQ");
+Room room = await client.ReJoin("battle", "SkNaHTazQ");
 ```
 
 ```lua fct_label="lua"
@@ -122,7 +122,7 @@ client.getAvailableRooms("battle", (rooms, err) => {
 ```
 
 ```csharp fct_label="C#"
-client.GetAvailableRooms("battle", (RoomAvailable[] rooms) => {
+await client.GetAvailableRooms("battle", (RoomAvailable[] rooms) => {
   for (int i = 0; i < rooms.Length; i++) {
     Debug.Log(rooms[i].roomId);
     Debug.Log(rooms[i].clients);
@@ -189,7 +189,7 @@ client.onOpen.add(() => {
 ```
 
 ```csharp fct_label="C#"
-client.OnOpen += (object sender, EventArgs e) => {
+client.OnOpen += () => {
   Debug.Log ("connection is now open");
 }
 ```
@@ -217,7 +217,7 @@ client.onClose.add(() => {
 ```
 
 ```csharp fct_label="C#"
-client.OnClose += (object sender, EventArgs e) => {
+client.OnClose += (code) => {
   Debug.Log ("connection has been closed");
 }
 ```
@@ -245,8 +245,8 @@ client.onError.add((err) => {
 ```
 
 ```csharp fct_label="C#"
-client.OnError += (object sender, EventArgs e) => {
-  Debug.Log ("something wrong happened");
+client.OnError += (message) => {
+  Debug.Log ("something wrong happened: " + message);
 }
 ```
 

@@ -27,19 +27,9 @@ Each `Client` and `Room` connections need to run on its own Coroutine. See [usag
 In your connection's `MonoBehaviour`, you must call `Recv()` in order to communicate with the server.
 
 ```csharp
-IEnumerator Start () {
+async void Start () {
 	Client client = new Colyseus.Client ("ws://localhost:2567");
-	StartCoroutine(client.Connect());
-
-	/* Always call Recv if Colyseus connection is open */
-	while (true)
-	{
-		if (client != null)
-		{
-			client.Recv();
-		}
-		yield return 0;
-	}
+	await client.Connect();
 }
 ```
 
@@ -48,10 +38,7 @@ IEnumerator Start () {
 > See how to generate your `RoomState` from [State Handling](https://docs.colyseus.io/state/schema/#client-side-schema-generation)
 
 ```csharp
-Room room = client.Join<RoomState> ("room_name");
-room.OnReadyToConnect += (sender, e) => {
-    StartCoroutine(room.Connect());
-};
+Room room = await client.Join<RoomState> ("room_name");
 ```
 
 ### Getting the full room state from the server.
@@ -59,14 +46,14 @@ room.OnReadyToConnect += (sender, e) => {
 ```csharp
 room.OnStateChange += OnStateChange;
 
-void OnStateChange (object sender, RoomUpdateEventArgs<State> e)
+void OnStateChange (State state, bool isFirstState)
 {
-	if (e.IsFirstState) {
+	if (isFirstState) {
 		// First setup of your client state
-		Debug.Log(e.State);
+		Debug.Log(state);
 	} else {
 		// Further updates on your client state
-		Debug.Log(e.State);
+		Debug.Log(state);
 	}
 }
 ```
@@ -76,8 +63,8 @@ void OnStateChange (object sender, RoomUpdateEventArgs<State> e)
 > See how to generate your `RoomState` from [State Handling](https://docs.colyseus.io/state/schema/#client-side-schema-generation)
 
 ```csharp
-Room room = client.Join<RoomState> ("room_name");
-room.OnJoin += (sender, e) => {
+Room room = await client.Join<RoomState> ("room_name");
+room.OnJoin += () => {
 	Debug.Log("Joined room successfully.");
 
 	room.State.players.OnAdd += OnPlayerAdd;
@@ -85,25 +72,25 @@ room.OnJoin += (sender, e) => {
 	room.State.players.OnChange += OnPlayerChange;
 };
 
-void OnPlayerAdd(object sender, KeyValueEventArgs<Player, string> item)
+void OnPlayerAdd(Player player, string key)
 {
 	Debug.Log("player added!");
-	Debug.Log(item.Value); // Here's your `Player` instance
-	Debug.Log(item.Key); // Here's your `Player` key
+	Debug.Log(player); // Here's your `Player` instance
+	Debug.Log(key); // Here's your `Player` key
 }
 
-void OnPlayerRemove(object sender, KeyValueEventArgs<Player, string> item)
+void OnPlayerRemove(Player player, string key)
 {
 	Debug.Log("player removed!");
-	Debug.Log(item.Value); // Here's your `Player` instance
-	Debug.Log(item.Key); // Here's your `Player` key
+	Debug.Log(player); // Here's your `Player` instance
+	Debug.Log(key); // Here's your `Player` key
 }
 
-void OnPlayerChange(object sender, KeyValueEventArgs<Player, string> item)
+void OnPlayerChange(Player player, string key)
 {
 	Debug.Log("player moved!");
-	Debug.Log(item.Value); // Here's your `Player` instance
-	Debug.Log(item.Key); // Here's your `Player` key
+	Debug.Log(player); // Here's your `Player` instance
+	Debug.Log(key); // Here's your `Player` key
 }
 ```
 

@@ -59,7 +59,7 @@ room.send({ move: "left" });
 ```
 
 ```csharp fct_label="C#"
-room.Send(new { move = "left" });
+await room.Send(new { move = "left" });
 ```
 
 ```lua fct_label="lua"
@@ -118,8 +118,8 @@ room.onStateChange.add((state) => {
 ```
 
 ```csharp fct_label="C#"
-room.OnStateChange += (object sender, RoomUpdateEventArgs e) => {
-  if (e.isFirstState) {
+room.OnStateChange += (state, isFirstState) => {
+  if (isFirstState) {
     Debug.Log ("this is the first room state!");
   }
 
@@ -151,9 +151,9 @@ room.onMessage.add((message) => {
 ```
 
 ```csharp fct_label="C#"
-room.OnMessage += (object sender, MessageEventArgs e) => {
+room.OnMessage += (message) => {
   Debug.Log ("server just sent this message:");
-  Debug.Log(e.message);
+  Debug.Log(message);
 }
 ```
 
@@ -187,7 +187,7 @@ room.onJoin.add(() => {
 ```
 
 ```csharp fct_label="C#"
-room.OnJoin += (object sender, EventArgs e) => {
+room.OnJoin += () => {
   Debug.Log ("client joined successfully");
 }
 ```
@@ -215,7 +215,7 @@ room.onLeave.add(() => {
 ```
 
 ```csharp fct_label="C#"
-room.OnLeave += (object sender, EventArgs e) => {
+room.OnLeave += (code) => {
   Debug.Log ("client left the room");
 }
 ```
@@ -244,9 +244,9 @@ room.onError.add((err) => {
 ```
 
 ```csharp fct_label="C#"
-room.OnError += (object sender, EventArgs e) => {
+room.OnError += (message) => {
   Debug.Log ("oops, error ocurred:");
-  Debug.Log(e);
+  Debug.Log(message);
 }
 ```
 
