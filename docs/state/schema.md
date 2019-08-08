@@ -27,12 +27,12 @@ class MyState extends Schema {
 ```typescript fct_label="JavaScript"
 const schema = require('@colyseus/schema');
 const Schema = schema.Schema;
-const type = schema.type;
 
 class MyState extends Schema {
 }
-
-type("string")(MyState.prototype, "currentTurn");
+schema.defineTypes(MyState, {
+  currentTurn: "string"
+});
 ```
 
 ### Custom child data type
@@ -62,13 +62,14 @@ class MyState extends Schema {
 ```typescript fct_label="JavaScript"
 const schema = require('@colyseus/schema');
 const Schema = schema.Schema;
-const type = schema.type;
 
 class World extends Schema {
 }
-type("number")(World.prototype, "width");
-type("number")(World.prototype, "height");
-type("number")(World.prototype, "items");
+schema.defineTypes(World, {
+  width: "number",
+  height: "number",
+  items: "number"
+});
 
 class MyState extends Schema {
     constructor () {
@@ -77,7 +78,9 @@ class MyState extends Schema {
         this.world = new World();
     }
 }
-type(World)(MyState.prototype, "world");
+schema.defineTypes(MyState, {
+  world: World
+});
 ```
 
 ### Array of custom data type
@@ -107,12 +110,13 @@ class MyState extends Schema {
 const schema = require('@colyseus/schema');
 const Schema = schema.Schema;
 const ArraySchema = schema.ArraySchema;
-const type = schema.type;
 
 class Block extends Schema {
 }
-type("number")(Block.prototype, "x");
-type("number")(Block.prototype, "y");
+schema.defineTypes(Block, {
+  x: "number",
+  y: "number"
+});
 
 class MyState extends Schema {
     constructor () {
@@ -121,7 +125,9 @@ class MyState extends Schema {
         this.blocks = new ArraySchema();
     }
 }
-type([ Block ])(MyState.prototype, "blocks");
+schema.defineTypes(MyState, {
+  blocks: [ Block ],
+});
 ```
 
 ### Map of custom data type
@@ -151,12 +157,13 @@ class MyState extends Schema {
 const schema = require('@colyseus/schema');
 const Schema = schema.Schema;
 const MapSchema = schema.MapSchema;
-const type = schema.type;
 
 class Player extends Schema {
 }
-type("number")(Player.prototype, "x");
-type("number")(Player.prototype, "y");
+schema.defineTypes(Player, {
+  x: "number",
+  y: "number"
+});
 
 class MyState extends Schema {
     constructor () {
@@ -165,7 +172,9 @@ class MyState extends Schema {
         this.players = new MapSchema();
     }
 }
-type({ map: Player })(MyState.prototype, "players");
+schema.defineTypes(MyState, {
+  players: { map: Player }
+});
 ```
 
 #### Looping through the items of a `MapSchema`
