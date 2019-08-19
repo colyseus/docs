@@ -1,5 +1,5 @@
 # Project information
-site_name: 'Colyseus 0.10.x'
+site_name: 'Colyseus 0.11.x'
 site_description: 'Documentation for Colyseus Multiplayer Game Server for Node.js'
 site_author: 'Endel Dreyer'
 site_url: 'https://colyseus.io/'
@@ -79,8 +79,10 @@ nav:
   - 'Unity3d Client': 'getting-started/unity3d-client.md'
   - 'Construct3 Client': 'getting-started/construct3-client.md'
 
-# - 'Tutorials':
-#   - ''
+- "How-to":
+  - 'Password-protect a room': 'how-to/password-protect-room.md'
+  - 'Deny a player to join a room': 'how-to/deny-player-join-a-room.md'
+  - 'Rate-limit': 'how-to/rate-limit.md'
 
 - 'Server API':
   - 'Server': 'server/api.md'
@@ -98,8 +100,8 @@ nav:
 
 - 'State Handling':
   - 'Overview': 'state/overview.md'
-  - 'Schema (0.10.x)': 'state/schema.md'
-  - 'Fossil Delta (0.9.x)': 'state/fossil-delta.md'
+  - 'Schema': 'state/schema.md'
+  - 'Fossil Delta (deprecated)': 'state/fossil-delta.md'
 
 - 'Matchmaking': 'matchmaking.md'
 - 'Authentication': 'authentication.md'
@@ -108,6 +110,7 @@ nav:
 - 'Debugging': 'debugging.md'
 - 'Deployment': 'deployment.md'
 - 'Migrating':
+  - '0.11.x': 'migrating/0.11.md'
   - '0.10.x': 'migrating/0.10.md'
   - '0.9.x': 'migrating/0.9.md'
 

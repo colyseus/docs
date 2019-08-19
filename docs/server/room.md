@@ -9,13 +9,10 @@ const colyseus = require('colyseus');
 
 export class MyRoom extends colyseus.Room {
     // When room is initialized
-    onInit (options) { }
-
-    // Checks if a new client is allowed to join. (default: `return true`)
-    requestJoin (options, isNew) { }
+    onCreate (options) { }
 
     // Authorize client based on provided options before WebSocket handshake is complete
-    onAuth (options) { }
+    onAuth (client, options) { }
 
     // When client successfully join the room
     onJoin (client, options, auth) { }
@@ -36,13 +33,10 @@ import { Room, Client } from "colyseus";
 
 export class MyRoom extends Room {
     // When room is initialized
-    onInit (options: any) { }
-
-    // Checks if a new client is allowed to join. (default: `return true`)
-    requestJoin (options: any, isNew: boolean) { }
+    onCreate (options: any) { }
 
     // Authorize client based on provided options before WebSocket handshake is complete
-    onAuth (options: any) { }
+    onAuth (client: Client, options: any) { }
 
     // When client successfully join the room
     onJoin (client: Client, options: any, auth: any) { }
@@ -62,25 +56,15 @@ export class MyRoom extends Room {
 
 Room handlers can implement all these methods.
 
-### `onInit (options)`
+### `onCreate (options)`
 
 Is called once when room is initialized. You may specify custom initialization options when registering the room handler.
 
 !!! Tip
-    The `options` will contain the merged values you specified on [Server#register()](/server/api/#register-name-string-handler-room-options-any) + the options provided by the first client on `client.join()`
+    The `options` will contain the merged values you specified on [Server#register()](/server/api/#define-name-string-handler-room-options-any) + the options provided by the first client on `client.join()`
 
-### `requestJoin (options, isNew)`
 
-**Parameters:**
-
-- `options`: The options provided by the client ([`client.join()`](/client/client#join-roomname-string-options-any)), merged with options provided by the server ([`gameServer.register()`](/server/api/#register-name-string-handler-room-options-any)).
-- `isNew`: will be `true` for rooms being created and `false` for existing ones.
-
-Synchronous function to check if a new client is allowed to join.
-
-If left non-implemented, this method returns `true`, allowing any client to connect.
-
-### `onAuth (options)`
+### `onAuth (client, options)`
 
 Can be used to verify authenticity of the client that's joining the room.
 
@@ -93,8 +77,8 @@ See [authentication](/server/authentication) section.
 **Parameters:**
 
 - `client`: The [`client`](/server/client) instance.
-- `options`: merged values specified on [Server#register()](/server/api/#register-name-string-handler-room-options-any) with the options provided the client on [`client.join()`](/client/client/#join-roomname-string-options-any)
-- `auth`: (optional) auth data returned by [`onAuth`](#onauth-options) method.
+- `options`: merged values specified on [Server#register()](/server/api/#define-name-string-handler-room-options-any) with the options provided the client on [`client.join()`](/client/client/#join-roomname-string-options-any)
+- `auth`: (optional) auth data returned by [`onAuth`](#onauth-client-options) method.
 
 Is called when client successfully join the room, after `requestJoin` and `onAuth` has been succeeded.
 
@@ -137,7 +121,7 @@ A unique, auto-generated, 9-character-long id of the room.
 
 ### `roomName: string`
 
-The name of the room you provided as first argument for [`gameServer.register()`](/server/api/#register-name-string-handler-room-options-any).
+The name of the room you provided as first argument for [`gameServer.define()`](/server/api/#define-name-string-handler-room-options-any).
 
 ### `state: T`
 
@@ -190,14 +174,14 @@ Set the new room state instance. See [State Handling](/state/overview/) for more
     Do not call this method for updates in the room state. The binary patch algorithm is re-set every time you call it.
 
 !!! tip
-    You usually will call this method only once during [`onInit()`](#oninit-options) in your room handler.
+    You usually will call this method only once during [`onCreate()`](#onCreate-options) in your room handler.
 
 ### `setSimulationInterval (callback[, milliseconds=16.6])`
 
 (Optional) Set a simulation interval that can change the state of the game. The simulation interval is your game loop. Default simulation interval: 16.6ms (60fps)
 
 ```typescript
-onInit () {
+onCreate () {
     this.setSimulationInterval((deltaTime) => this.update(deltaTime));
 }
 
@@ -210,6 +194,12 @@ update (deltaTime) {
 ### `setPatchRate (milliseconds)`
 
 Set frequency the patched state should be sent to all clients. Default is `50ms` (20fps)
+
+### `setPrivate (bool)`
+
+Set the room listing as private (or revert to public, if `false` is provided).
+
+Private rooms are not listed in the [`getAvailableRooms()`](/client/client/#getavailablerooms-roomname-string) method.
 
 ### `setMetadata (metadata)`
 
@@ -224,8 +214,7 @@ Now that a room has metadata attached to it, the client-side can check which roo
 
 ```javascript
 // client-side
-client.getAvailableRooms("battle", (rooms, err) => {
-  if (err) console.error(err);
+client.getAvailableRooms("battle").then(rooms => {
   for (var i=0; i<rooms.length; i++) {
     if (room.metadata && room.metadata.friendlyFire) {
       //
@@ -243,7 +232,7 @@ client.getAvailableRooms("battle", (rooms, err) => {
 
 ### `setSeatReservationTime (seconds)`
 
-(Default=3) Set the number of seconds a room can wait for a client to effectively join the room. You should consider how long your [`onAuth()`](#onauth-options) will have to wait for setting a different seat reservation time. The default value is usually good enough.
+(Default=3) Set the number of seconds a room can wait for a client to effectively join the room. You should consider how long your [`onAuth()`](#onauth-client-options) will have to wait for setting a different seat reservation time. The default value is usually good enough.
 
 ### `send (client, message)`
 

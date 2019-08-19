@@ -4,8 +4,8 @@ The room handlers are **stateful** in Colyseus. Each room holds its own state. T
 
 ## Serialization methods
 
-- [Schema](/state/schema/) (default) 
-- [Fossil Delta](/state/fossil-delta/) 
+- [Schema](/state/schema/) (default)
+- [Fossil Delta](/state/fossil-delta/) (deprecated)
 
 ## When the state is synchronized
 

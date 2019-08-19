@@ -3,7 +3,7 @@ To allow matchmaking on your Colyseus server, you'll need to implement a room ha
 See:
 
 - [Room](/server/room/)
-- [Server#register()](/server/api/#register-name-string-handler-room-options-any)
+- [Server#define()](/server/api/#define-name-string-handler-room-options-any)
 
 ## The matchmaking cycle
 
@@ -31,7 +31,7 @@ requestJoin (options: any) {
 
 ```typescript fct_label="Example 2"
 // server-side
-onInit (options: any) {
+onCreate (options: any) {
     this.password = options.password;
 }
 

@@ -3,11 +3,11 @@
 Colyseus currently have clients for the platforms:
 
 - [HTML5](/getting-started/javascript-client) ([colyseus/colyseus.js](https://github.com/colyseus/colyseus.js))
+- [Unity3D](/getting-started/unity3d-client) ([colyseus/colyseus-unity3d](https://github.com/colyseus/colyseus-unity3d))
 - [Defold](/getting-started/defold-client) ([colyseus/colyseus-defold](https://github.com/colyseus/colyseus-defold))
 - [Haxe](/getting-started/haxe-client) ([colyseus/colyseus-hx](https://github.com/colyseus/colyseus-hx))
 - [Cocos2d-X](/getting-started/cocos2dx-client) ([colyseus/colyseus-cocos2d-x](https://github.com/colyseus/colyseus-cocos2d-x))
 - [Construct3](/getting-started/construct3-client) ([colyseus/colyseus-construct3](https://github.com/colyseus/colyseus-construct3))
-- [Unity3D](/getting-started/unity3d-client) ([colyseus/colyseus-unity3d](https://github.com/colyseus/colyseus-unity3d))
 
 Need a client for another platform? Share your interest on the [discussion board](https://discuss.colyseus.io/)!
 
@@ -43,98 +43,330 @@ var client = new Client("ws://localhost:2567");
 
 ## Methods
 
-### `join (roomNameOrId: string, options: any)`
+### `joinOrCreate (roomName: string, options: any)`
 
-Joins `roomName`. `roomName` can be either a room name or a `roomId`.
+Join an existing room or create a new one, by provided `roomName` and `options`.
 
 ```typescript fct_label="JavaScript"
-// joining a room by name
-let room = client.join("battle");
-
-// joining a room by id
-let room = client.join("KRYAKzRo2");
+client.joinOrCreate("battle", {/* options */}).then(room => {
+  console.log("joined successfully", room);
+}).catch(e => {
+  console.error("join error", e);
+});
 ```
 
 ```csharp fct_label="C#"
-// joining a room by name
-Room room = await client.Join("battle");
+try {
+  Room<YourStateClass> room = await client.JoinOrCreate<YourStateClass>("battle", /* Dictionary of options */);
+  Debug.Log("joined successfully");
 
-// joining a room by id
-Room room = await client.Join("KRYAKzRo2");
+} catch (ex) {
+  Debug.Log("join error");
+  Debug.Log(ex.Message);
+}
 ```
 
 ```lua fct_label="lua"
--- joining a room by name
-local room = client:join("battle")
+client:join_or_create("battle", {--[[options]]}, function(err, room)
+  if (err ~= nil) then
+    print("join error: " .. err)
+    return
+  end
 
--- joining a room by id
-local room = client:join("KRYAKzRo2")
+  print("joined successfully")
+end)
 ```
 
 ```haxe fct_label="Haxe"
-// joining a room by name
-var room = client.join("battle");
+client.joinOrCreate("battle", [/* options */], YourStateClass, function(err, room) {
+  if (err != null) {
+    trace("join error: " + err);
+    return;
+  }
 
-// joining a room by id
-var room = client.join("KRYAKzRo2");
+  trace("joined successfully");
+});
 ```
+
+```cpp fct_label="C++"
+client->joinOrCreate<YourStateClass>("battle", {/* options */}, [=](std::string err, Room<State>* room) {
+  if (err != "") {
+    std::cout << "join error: " << err << std::endl;
+    return;
+  }
+
+  std::cout << "joined successfully" << std::endl;
+});
+```
+
+### `create (roomName: string, options: any)`
+
+Creates a new room by provided `roomName` and `options`.
+
+```typescript fct_label="JavaScript"
+client.create("battle", {/* options */}).then(room => {
+  console.log("joined successfully", room);
+}).catch(e => {
+  console.error("join error", e);
+});
+```
+
+```csharp fct_label="C#"
+try {
+  Room<YourStateClass> room = await client.Create<YourStateClass>("battle", /* Dictionary of options */);
+  Debug.Log("joined successfully");
+
+} catch (ex) {
+  Debug.Log("join error");
+  Debug.Log(ex.Message);
+}
+```
+
+```lua fct_label="lua"
+client:create("battle", {--[[options]]}, function(err, room)
+  if (err ~= nil) then
+    print("join error: " .. err)
+    return
+  end
+
+  print("joined successfully")
+end)
+```
+
+```haxe fct_label="Haxe"
+client.create("battle", [/* options */], YourStateClass, function(err, room) {
+  if (err != null) {
+    trace("join error: " + err);
+    return;
+  }
+
+  trace("joined successfully");
+});
+```
+
+```cpp fct_label="C++"
+client->create<YourStateClass>("battle", {/* options */}, [=](std::string err, Room<State>* room) {
+  if (err != "") {
+    std::cout << "join error: " << err << std::endl;
+    return;
+  }
+
+  std::cout << "joined successfully" << std::endl;
+});
+```
+
+### `join (roomName: string, options: any)`
+
+Creates a new room by provided `roomName` and `options`.
+
+```typescript fct_label="JavaScript"
+client.join("battle", {/* options */}).then(room => {
+  console.log("joined successfully", room);
+}).catch(e => {
+  console.error("join error", e);
+});
+```
+
+```csharp fct_label="C#"
+try {
+  Room<YourStateClass> room = await client.Join<YourStateClass>("battle", /* Dictionary of options */);
+  Debug.Log("joined successfully");
+
+} catch (ex) {
+  Debug.Log("join error");
+  Debug.Log(ex.Message);
+}
+```
+
+```lua fct_label="lua"
+client:join("battle", {--[[options]]}, function(err, room)
+  if (err ~= nil) then
+    print("join error: " .. err)
+    return
+  end
+
+  print("joined successfully")
+end)
+```
+
+```haxe fct_label="Haxe"
+client.join("battle", [/* options */], YourStateClass, function(err, room) {
+  if (err != null) {
+    trace("join error: " + err);
+    return;
+  }
+
+  trace("joined successfully");
+});
+```
+
+```cpp fct_label="C++"
+client->join<YourStateClass>("battle", {/* options */}, [=](std::string err, Room<State>* room) {
+  if (err != "") {
+    std::cout << "join error: " << err << std::endl;
+    return;
+  }
+
+  std::cout << "joined successfully" << std::endl;
+});
+```
+
+### `joinById (roomId: string, options: any)`
+
+Joins an existing room by its `roomId`.
+
+```typescript fct_label="JavaScript"
+client.joinById("KRYAKzRo2", {/* options */}).then(room => {
+  console.log("joined successfully", room);
+}).catch(e => {
+  console.error("join error", e);
+});
+```
+
+```csharp fct_label="C#"
+try {
+  Room<YourStateClass> room = await client.JoinById<YourStateClass>("battle", /* Dictionary of options */);
+  Debug.Log("joined successfully");
+
+} catch (ex) {
+  Debug.Log("join error");
+  Debug.Log(ex.Message);
+}
+```
+
+```lua fct_label="lua"
+client:join_by_id("battle", {--[[options]]}, function(err, room)
+  if (err ~= nil) then
+    print("join error: " .. err)
+    return
+  end
+
+  print("joined successfully")
+end)
+```
+
+```haxe fct_label="Haxe"
+client.joinById("battle", [/* options */], YourStateClass, function(err, room) {
+  if (err != null) {
+    trace("join error: " + err);
+    return;
+  }
+
+  trace("joined successfully");
+});
+```
+
+```cpp fct_label="C++"
+client->joinById<YourStateClass>("battle", {/* options */}, [=](std::string err, Room<State>* room) {
+  if (err != "") {
+    std::cout << "join error: " << err << std::endl;
+    return;
+  }
+
+  std::cout << "joined successfully" << std::endl;
+});
+```
+
 
 !!! Tip
     Use [`getAvailableRooms()`](#getavailablerooms-roomname-string) to retrieve a list of `roomId`'s available for joining.
 
-### `rejoin (roomNameOrId: string, sessionId: string)`
+### `reconnect (roomId: string, sessionId: string)`
 
 Reconnects the client into a room he was previously connected with.
 
 Must be used along with [`allowReconnection()`](/server/room#allowreconnection-client-seconds) in the server-side.
 
 ```typescript fct_label="JavaScript"
-let room = client.rejoin("battle", "SkNaHTazQ");
+let room = client.reconnect("wNHTX5qik", "SkNaHTazQ").then(room => {
+  console.log("joined successfully", room);
+}).catch(e => {
+  console.error("join error", e);
+});
 ```
 
 ```csharp fct_label="C#"
-Room room = await client.ReJoin("battle", "SkNaHTazQ");
+try {
+  Room<YourStateClass> room = await client.Reconnect<YourStateClass>("wNHTX5qik", "SkNaHTazQ");
+  Debug.Log("joined successfully");
+
+} catch (ex) {
+  Debug.Log("join error");
+  Debug.Log(ex.Message);
+}
 ```
 
 ```lua fct_label="lua"
-local room = client:rejoin("battle", "SkNaHTazQ")
+client:reconnect("wNHTX5qik", "SkNaHTazQ", function(err, room)
+  if (err ~= nil) then
+    print("join error: " .. err)
+    return
+  end
+
+  print("joined successfully")
+end)
 ```
 
 ```haxe fct_label="Haxe"
-var room = client.rejoin("battle", "SkNaHTazQ");
+client.reconnect("wNHTX5qik", "SkNaHTazQ", YourStateClass, function(err, room) {
+  if (err != null) {
+    trace("join error: " + err);
+    return;
+  }
+
+  trace("joined successfully");
+});
 ```
 
-### `getAvailableRooms (roomName: string)`
+```haxe fct_label="C++"
+client->reconnect<YourStateClass>("wNHTX5qik", "SkNaHTazQ", [=](std::string err, Room<State>* room) {
+  if (err != "") {
+    std::cout << "join error: " << err << std::endl;
+    return;
+  }
 
-List all available rooms to connect with the provided `roomName`. Locked rooms
-won't be listed.
+  std::cout << "joined successfully" << std::endl;
+});
+```
+
+### `getAvailableRooms (roomName?: string)`
+
+List all available rooms to connect. Locked and private rooms won't be listed. `roomName` is optional.
 
 ```typescript fct_label="JavaScript"
-client.getAvailableRooms("battle", (rooms, err) => {
-  if (err) console.error(err);
+client.getAvailableRooms("battle").then(rooms => {
   rooms.forEach((room) => {
     console.log(room.roomId);
     console.log(room.clients);
     console.log(room.maxClients);
     console.log(room.metadata);
   });
+}).catch(e => {
+  console.error(e);
 });
 ```
 
 ```csharp fct_label="C#"
-await client.GetAvailableRooms("battle", (RoomAvailable[] rooms) => {
+try {
+  var rooms = await client.GetAvailableRooms("battle");
   for (int i = 0; i < rooms.Length; i++) {
     Debug.Log(rooms[i].roomId);
     Debug.Log(rooms[i].clients);
     Debug.Log(rooms[i].maxClients);
     Debug.Log(rooms[i].metadata);
   }
-);
+} catch (ex) {
+  Debug.Log(ex.Message)
+}
 ```
 
 ```lua fct_label="lua"
-client:get_available_rooms("battle", function(rooms, err)
-  if (err) console.error(err);
+client:get_available_rooms("battle", function(err, rooms)
+  if (err) then
+    console.error(err);
+    return
+  end
+
   for i, rooms in pairs(rooms) do
     print(rooms[i].roomId)
     print(rooms[i].clients)
@@ -145,8 +377,12 @@ end);
 ```
 
 ```haxe fct_label="Haxe"
-client.getAvailableRooms("battle", function(rooms, ?err) {
-  if (err != null) trace(err);
+client.getAvailableRooms("battle", function(err, rooms) {
+  if (err != null) {
+    trace(err);
+    return;
+  }
+
   for (room in rooms) {
     trace(room.roomId);
     trace(room.clients);
@@ -156,120 +392,13 @@ client.getAvailableRooms("battle", function(rooms, ?err) {
 });
 ```
 
-### `close ()`
+```cpp fct_label="C++"
+client.getAvailableRooms("battle", [=](std::string err, nlohmann::json rooms) {
+  if (err != "") {
+    std::cout << "error: " << err << std::endl;
+    return;
+  }
 
-Close connection with the server.
-
-```typescript fct_label="JavaScript"
-client.close();
-```
-
-```csharp fct_label="C#"
-client.Close();
-```
-
-```lua fct_label="lua"
-client:close()
-```
-
-```haxe fct_label="Haxe"
-client.close();
-```
-
-## Events
-
-### `onOpen`
-
-This event is triggered when the connection is accepted by the server.
-
-```typescript fct_label="JavaScript"
-client.onOpen.add(() => {
-  console.log("connection is now open");
+  // rooms
 });
 ```
-
-```csharp fct_label="C#"
-client.OnOpen += () => {
-  Debug.Log ("connection is now open");
-}
-```
-
-```lua fct_label="lua"
-client:on('open', function()
-  print("connection is now open")
-end)
-```
-
-```haxe fct_label="Haxe"
-client.onOpen += function() {
-  trace("connection is now open");
-};
-```
-
-### `onClose`
-
-This event is triggered when the connection is closed.
-
-```typescript fct_label="JavaScript"
-client.onClose.add(() => {
-  console.log("connection has been closed");
-});
-```
-
-```csharp fct_label="C#"
-client.OnClose += (code) => {
-  Debug.Log ("connection has been closed");
-}
-```
-
-```lua fct_label="lua"
-client:on('close', function()
-  print("connection has been closed")
-end)
-```
-
-```haxe fct_label="Haxe"
-client.onClose += function() {
-  trace("connection has been closed");
-};
-```
-
-### `onError`
-
-This event is triggered when some error occurs in the server.
-
-```typescript fct_label="JavaScript"
-client.onError.add((err) => {
-  console.log("something wrong happened", err);
-});
-```
-
-```csharp fct_label="C#"
-client.OnError += (message) => {
-  Debug.Log ("something wrong happened: " + message);
-}
-```
-
-```lua fct_label="lua"
-client:on("error", function()
-  print("something wrong happened")
-end)
-```
-
-```haxe fct_label="Haxe"
-client.onError += function() {
-  trace("something wrong happened");
-};
-```
-
-<!-- TODO: document raw `onMessage` -->
-<!-- ### `onMessage` -->
-
-## Properties
-
-### `id: string`
-
-Unique identifier for the client.
-
-!!! Note
-    The same client id can connect into the same room handler when joining from multiple browser tabs.

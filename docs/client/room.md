@@ -10,9 +10,7 @@ The current room's state. This variable is always synched with the latest
 
 ### `sessionId: string`
 
-Unique session identifier.
-
-This property matches the [`client.sessionId`](/server/client/#sessionid-string) from the server-side.
+Unique identifier for the player. This property matches the [`client.sessionId`](/server/client/#sessionid-string) from the server-side.
 
 ### `id: string`
 
@@ -23,32 +21,17 @@ order to allow them to connect directly to this room.
 // get `roomId` from the query string
 let roomId = location.href.match(/roomId=([a-zA-Z0-9\-_]+)/)[1];
 
-// connect the client directly into a specific room id
-let room = client.join(roomId);
+// joining a room by its id
+client.joinById(roomId).then(room => {
+  // ...
+});
 ```
-
-!!! Warning
-    If you're looking for the unique identifier of the client, use [`client.id`](/client/client/#id-string) instead.
 
 ### `name: string`
 
 Name of the room handler. Ex: `"battle"`.
 
 ## Methods
-
-### `listen (path: string, callback: Function, immediate?: boolean): Listener`
-
-Listen to state changes applied in the client. Returns a `Listener` instance, that can be removed through [`removeListener()`](#removelistener-listener-listener) method.
-
-!!! Warning "The `listen()` method is only available for [Fossil Delta](/state/fossil-delta/#client-side)"
-    See [Fossil Delta](/state/fossil-delta/#client-side) state handling for more details.
-
-### `removeListener (listener: Listener)`
-
-Removes a listener registered through `listen()` method.
-
-!!! Warning "The `removeListener()` method is only available for [Fossil Delta](/state/fossil-delta/#client-side)"
-    See [Fossil Delta](/state/fossil-delta/#client-side) state handling for more details.
 
 ### `send (data)`
 
@@ -108,11 +91,11 @@ Also removes all `.listen()` calls if you're using [Fossil Delta](/state/fossil-
 This event is triggered when the server updates its state.
 
 ```typescript fct_label="JavaScript"
-room.onStateChange.addOnce((state) => {
+room.onStateChange.once((state) => {
   console.log("this is the first room state!", state);
 });
 
-room.onStateChange.add((state) => {
+room.onStateChange((state) => {
   console.log("the room state has been updated:", state);
 });
 ```
@@ -139,35 +122,49 @@ room.onStateChange += function(state) {
 };
 ```
 
+```cpp fct_label="C++"
+room.onStateChange = [=](State>* state) {
+  std::cout << "new state" << std::endl;
+  // ...
+};
+```
+
 ### onMessage
 
 This event is triggered when the server sends a message directly to the client.
 
 ```typescript fct_label="JavaScript"
-room.onMessage.add((message) => {
-  console.log("server just sent this message:");
+room.onMessage((message) => {
+  console.log("message received from server");
   console.log(message);
 });
 ```
 
 ```csharp fct_label="C#"
 room.OnMessage += (message) => {
-  Debug.Log ("server just sent this message:");
+  Debug.Log ("message received from server");
   Debug.Log(message);
 }
 ```
 
 ```lua fct_label="lua"
 room:on("message", function(message)
-  print("server just sent this message:")
+  print("message received from server")
   print(message)
 end)
 ```
 
 ```haxe fct_label="Haxe"
 room.onMessage += function(message) {
-  trace("server just sent this message:");
+  trace("message received from server");
   trace(Std.string(message));
+};
+```
+
+```cpp fct_label="C++"
+room.onMessage = [=](msgpack::object message) -> void {
+    std::cout << "message received from server" << std::endl;
+    std::cout << message << std::endl;
 };
 ```
 
@@ -181,7 +178,7 @@ room.onMessage += function(message) {
 This event is triggered when the client successfuly joins the room.
 
 ```typescript fct_label="JavaScript"
-room.onJoin.add(() => {
+room.onJoin(() => {
   console.log("client joined successfully");
 });
 ```
@@ -204,12 +201,18 @@ room.onJoin += function () {
 };
 ```
 
+```cpp fct_label="C++"
+room.onJoin = [=]() -> void {
+  std::cout << "client joined successfully" << std::endl;
+};
+```
+
 ### onLeave
 
 This event is triggered when the client leave the room.
 
 ```typescript fct_label="JavaScript"
-room.onLeave.add(() => {
+room.onLeave((code) => {
   console.log("client left the room");
 });
 ```
@@ -232,14 +235,20 @@ room.onLeave += function () {
 };
 ```
 
+```haxe fct_label="Haxe"
+room.onLeave = [=]() -> void {
+  std::cout << "client left the room" << std::endl;
+};
+```
+
 ### onError
 
 This event is triggered when some error occurs in the room handler.
 
 ```typescript fct_label="JavaScript"
-room.onError.add((err) => {
+room.onError((message) => {
   console.log("oops, error ocurred:");
-  console.log(err);
+  console.log(message);
 });
 ```
 
@@ -251,15 +260,21 @@ room.OnError += (message) => {
 ```
 
 ```lua fct_label="lua"
-room:on("error", function()
+room:on("error", function(message)
   print("oops, error ocurred:")
-  print(e)
+  print(message)
 end)
 ```
 
 ```haxe fct_label="Haxe"
-room.onError += function(err) {
+room.onError += function(message) {
   trace("oops, error ocurred:");
-  trace(err);
+  trace(message);
+};
+```
+
+```cpp fct_label="C++"
+room.onError = [=] (std::string message) => void {
+  std::cout << "oops, error ocurred: " << message << std::endl;
 };
 ```

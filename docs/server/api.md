@@ -79,10 +79,10 @@ then the handshake is automatically accepted.
 
 ```typescript fct_label="JavaScript"
 const colyseus = require("colyseus");
-const http = require("http");
 
 const gameServer = new colyseus.Server({
-  server: createServer(),
+  // ...
+
   verifyClient: function (info, next) {
     // validate 'info'
     //
@@ -94,10 +94,10 @@ const gameServer = new colyseus.Server({
 
 ```typescript fct_label="TypeScript"
 import { Server } from "colyseus";
-import { createServer } from "http";
 
 const gameServer = new Server({
-  server: createServer(),
+  // ...
+
   verifyClient: function (info, next) {
     // validate 'info'
     //
@@ -113,20 +113,18 @@ When scaling Colyseus through multiple processes / machines, you need to provide
 
 ```typescript fct_label="JavaScript"
 const colyseus = require("colyseus");
-const http = require("http");
 
 const gameServer = new colyseus.Server({
-  server: http.createServer(),
+  // ...
   presence: new colyseus.RedisPresence()
 });
 ```
 
 ```typescript fct_label="TypeScript"
 import { Server, RedisPresence } from "colyseus";
-import { createServer } from "http";
 
 const gameServer = new Server({
-  server: createServer(),
+  // ...
   presence: new RedisPresence()
 });
 ```
@@ -141,12 +139,12 @@ Register shutdown routine automatically. Default is `true`. If disabled, you
 should call [`gracefullyShutdown()`](#gracefullyshutdown-exit-boolean) method
 manually in your shutdown process.
 
-### `register (name: string, handler: Room, options?: any)`
+### `define (name: string, handler: Room, options?: any)`
 
-Register a new room handler.
+Define a new room handler.
 
-!!! Tip "Registering the same room handler multiple times"
-    You may register the same room handler multiple times with different `options`. When [Room#onInit()](http://localhost:8000/server/room/#oninit-options) is called, the `options` will contain the merged values you specified on [Server#register()](/server/api/#register-name-string-handler-room-options-any) + the options provided by the first client on `client.join()`
+!!! Tip "Defining the same room handler multiple times"
+    You may define the same room handler multiple times with different `options`. When [Room#onCreate()](http://localhost:8000/server/room/#onCreate-options) is called, the `options` will contain the merged values you specified on [Server#define()](/server/api/#define-name-string-handler-room-options-any) + the options provided by the first client on `client.join()`
 
 **Parameters:**
 
@@ -155,19 +153,19 @@ Register a new room handler.
 - `options?: any` - Custom options for room initialization.
 
 ```typescript
-// Register "chat" room
-gameServer.register("chat", ChatRoom);
+// Define "chat" room
+gameServer.define("chat", ChatRoom);
 
-// Register "battle" room
-gameServer.register("battle", BattleRoom);
+// Define "battle" room
+gameServer.define("battle", BattleRoom);
 
-// Register "battle" room with custom options
-gameServer.register("battle_woods", BattleRoom, { map: "woods" });
+// Define "battle" room with custom options
+gameServer.define("battle_woods", BattleRoom, { map: "woods" });
 ```
 
 #### Listening to matchmake events
 
-The `register` method will return the registered handler instance, which you can listen to match-making events from outside the room instance scope. Such as:
+The `define` method will return the registered handler instance, which you can listen to match-making events from outside the room instance scope. Such as:
 
 - `"create"` - when a room has been created
 - `"dispose"` - when a room has been disposed
@@ -179,7 +177,7 @@ The `register` method will return the registered handler instance, which you can
 **Usage:**
 
 ```typescript
-gameServer.register("chat", ChatRoom).then((handler) => {
+gameServer.define("chat", ChatRoom).then((handler) => {
   handler.
     on("create", (room) => console.log("room created:", room.roomId)).
     on("dispose", (room) => console.log("room disposed:", room.roomId)).

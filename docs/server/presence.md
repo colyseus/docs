@@ -21,11 +21,10 @@ Use this option when you're running Colyseus on multiple processes and/or machin
 
 ```typescript fct_label="JavaScript"
 const colyseus = require('colyseus');
-const http = require('http');
 
 // This happens on the slave processes.
 const gameServer = new colyseus.Server({
-    server: http.createServer(),
+    // ...
     presence: new colyseus.RedisPresence()
 });
 
@@ -34,11 +33,10 @@ gameServer.listen(2567);
 
 ```typescript fct_label="TypeScript"
 import { Server, RedisPresence } from "colyseus";
-import { createServer } from "http";
 
 // This happens on the slave processes.
 const gameServer = new Server({
-    server: createServer(),
+    // ...
     presence: new RedisPresence()
 });
 

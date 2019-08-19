@@ -1,5 +1,7 @@
 # [State Handling](/state/overview) » Fossil Delta
 
+## FossilDelta is going to be deprecated on future versions of Colyseus. Make sure to use the [Schema Serializer](/state/schema).
+
 The `FossilDeltaSerializer` is permissive about which structure you provide as the state. You may provide a raw object, or a class instance. All the [enumerable properties](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty#Description) of the object provided are going to be serialized to the clients.
 
 - Non-synchronizable properties should be non-enumerable (through [`@nosync`](#non-synchronizable-properties-nosync))
@@ -26,7 +28,7 @@ import { Room, Client } from "colyseus";
 
 export class BattleRoom extends Room {
 
-  onInit (options: any) {
+  onCreate (options: any) {
     this.setState({
       players: {}
     });
@@ -59,7 +61,7 @@ const colyseus = require('colyseus')
 
 export class BattleRoom extends colyseus.Room {
 
-  onInit (options: any) {
+  onCreate (options: any) {
     this.setState({
       players: {}
     });
@@ -89,7 +91,7 @@ export class BattleRoom extends colyseus.Room {
 
 ### Your Own Data Structures
 
-Whilst it's possible to use raw data directly on [`this.setState()`](/server/room/#setstate-object). The recommended way to handle your state is through your own data structures. 
+Whilst it's possible to use raw data directly on [`this.setState()`](/server/room/#setstate-object). The recommended way to handle your state is through your own data structures.
 
 **On the following (rewritten) example, you'll see:**
 
@@ -129,7 +131,7 @@ class BattleState {
 
 export class BattleRoom extends Room<BattleState> {
 
-  onInit (options: any) {
+  onCreate (options: any) {
     this.setState(new BattleState());
   }
 
@@ -185,7 +187,7 @@ class BattleState {
 
 module.exports = class BattleRoom extends colyseus.Room {
 
-  onInit (options: any) {
+  onCreate (options: any) {
     this.setState(new BattleState());
   }
 
@@ -275,7 +277,7 @@ module.exports = class Player {
 
 #### Avoid using `Map`, `Set`
 
-Avoid using `Map` and `Set` for public, synchronizeable, properties. 
+Avoid using `Map` and `Set` for public, synchronizeable, properties.
 
 Unfortunately, the JavaScript built-in types `Map` and `Set` aren't serializeable. That's because their internal structure is not exposed as enumerable properties:
 
@@ -303,7 +305,7 @@ The example below describes how to listen for a particular variable. You may use
 
 ```javascript fct_label="JavaScript"
 room.listen("currentTurn", (change) => {
-    console.log("current turn is now", change.value); 
+    console.log("current turn is now", change.value);
 })
 ```
 
@@ -322,7 +324,7 @@ void OnCurrentTurnChange (DataChange change)
 
 ```lua fct_label="lua"
 room:listen("currentTurn", function(change)
-  print("current turn is now: " .. change.value); 
+  print("current turn is now: " .. change.value);
 end)
 ```
 
@@ -449,7 +451,7 @@ room.listen("players/:id/:attribute", function(change) {
 
 ### Initial state / Listening to incoming AND existing data in the state
 
-The callbacks will be triggered for each incoming **change** in the state after the moment of registration. To listen also for existing data on the state at the moment you register the callback, make sure to pass `true` on the `immediate` argument. 
+The callbacks will be triggered for each incoming **change** in the state after the moment of registration. To listen also for existing data on the state at the moment you register the callback, make sure to pass `true` on the `immediate` argument.
 
 ```typescript fct_label="JavaScript"
 room.listen("players/:id", (change) => {

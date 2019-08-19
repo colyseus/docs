@@ -38,6 +38,36 @@ app.listen(8080);
 - `JWT_SECRET`: Secure secret string for authentication.
 - `FACEBOOK_APP_TOKEN`: Facebook App Token (`"appid|appsecret"`)
 
+## Server-side API
+
+The `@colyseus/social` module provides the MongoDB models, and the token validation function available for you to use.
+
+```typescript
+import { User, FriendRequest, verifyToken } from "@colyseus/social";
+```
+
+### Implementing `onAuth` to retrieve the current user
+
+```typescript
+import { User, verifyToken } from "@colyseus/social";
+
+class MyRoom extends Room {
+
+  async onAuth(client, options) {
+    // verify token authenticity
+    const token = verifyToken(options.token);
+
+    // query the user by its id
+    return await User.findById(token._id);
+  }
+
+  onJoin(client, options, user) {
+    console.log(user.username, "has joined the room!");
+  }
+
+}
+```
+
 ## Client-side API
 
 ### Login
@@ -280,34 +310,4 @@ await client.Auth.UnblockUser(friendId);
 
 ```lua fct_label="lua"
 client.auth:unblock_user(friend_id)
-```
-
-## Server-side API
-
-The `@colyseus/social` module provides the MongoDB models, and the token validation function avaialble for you to use.
-
-```typescript
-import { User, FriendRequest, verifyToken } from "@colyseus/social";
-```
-
-### Implementing `onAuth` to retrieve the current user
-
-```typescript
-import { User, verifyToken } from "@colyseus/social";
-
-class MyRoom extends Room {
-
-  async onAuth(options) {
-    // verify token authenticity
-    const token = verifyToken(options.token);
-
-    // query the user by its id
-    return await User.findById(token._id);
-  }
-
-  onJoin(client, options, user) {
-    console.log(user.username, "has joined the room!");
-  }
-
-}
 ```
