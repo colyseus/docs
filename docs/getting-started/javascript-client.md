@@ -30,9 +30,10 @@ var client = new Colyseus.Client('ws://localhost:2567');
 ### Joining to a room:
 
 ```ts
-var room = client.join("room_name");
-room.onJoin.add(() => {
-    console.log(client.id, "joined", room.name);
+client.join("room_name").then(room => {
+    console.log(room.sessionId, "joined", room.name);
+}).catch(e => {
+    console.log("JOIN ERROR", e);
 });
 ```
 
@@ -41,7 +42,7 @@ room.onJoin.add(() => {
 Room state has been updated:
 
 ```ts
-room.onStateChange.add((state) => {
+room.onStateChange((state) => {
   console.log(room.name, "has new state:", state);
 });
 ```
@@ -49,7 +50,7 @@ room.onStateChange.add((state) => {
 Message broadcasted from server or directly to this client:
 
 ```ts
-room.onMessage.add((message) => {
+room.onMessage((message) => {
   console.log(client.id, "received on", room.name, message);
 });
 ```
@@ -57,7 +58,7 @@ room.onMessage.add((message) => {
 Server error occurred:
 
 ```ts
-room.onError.add(() => {
+room.onError(() => {
   console.log(client.id, "couldn't join", room.name);
 });
 ```
@@ -65,7 +66,7 @@ room.onError.add(() => {
 The client left the room:
 
 ```ts
-room.onLeave.add(() => {
+room.onLeave(() => {
   console.log(client.id, "left", room.name);
 });
 ```
@@ -84,16 +85,6 @@ import { AsyncStorage } from 'react-native';
 import { Buffer } from "buffer";
 window.localStorage = AsyncStorage;
 global.Buffer = Buffer;
-```
-
-Another caveat is that you can only join rooms after the first connection open.
-
-```js
-var client = new Colyseus.Client('ws://localhost:2567');
-
-client.onOpen.add(() => {
-    let room = client.join("your_room");
-});
 ```
 
 ## Cocos Creator Instructions

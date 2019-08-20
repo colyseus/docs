@@ -9,43 +9,70 @@
 Below you can see how to use the `Client`, matchmake into a `Room`, and send and
 receive messages from the connected room.
 
+> See how to generate your `RoomState` from [State Handling](/state/schema/#client-side-schema-generation)
+
 ```cpp
 #include "Colyseus/Client.h";
 
-Client* client;
+Client* client = new Client("ws://localhost:2567");
 Room* room;
 
 bool HelloWorld::init()
 {
     client = new Client("ws://localhost:2667");
-    client->onOpen = CC_CALLBACK_0(HelloWorld::onConnectToServer, this);
-    client->connect();
-}
+    client->joinOrCreate<RoomState>("state_handler", {}, [=](std::string err, Room<RoomState>* _room) {
+        if (err != "") {
+            std::cout << "JOIN ERROR! " << err << std::endl;
+            return;
+        }
 
-void HelloWorld::onConnectToServer()
-{
-    log("Colyseus: CONNECTED TO SERVER!");
-    room->onMessage = CC_CALLBACK_2(HelloWorld::onRoomMessage, this);
-    room->onStateChange = CC_CALLBACK_1(HelloWorld::onRoomStateChange, this);
+        room = _room;
 
-    room->listen("players/:id", [this](std::map<std::string, std::string> path, PatchObject patch) -> void {
-        std::cout << "CALLBACK FOR 'players/:id' >>" << std::endl;
-        std::cout << "OPERATION: " << patch.op << std::endl;
-        std::cout << "PLAYER ID:" << path.at(":id") << std::endl;
-        std::cout << "VALUE: " << patch.value << std::endl;
+        room->onMessage = [=] (msgpack::object message) -> void {
+            std::cout << message << std::endl;
+        }
+
+        room->onStateChange = [=] (RoomState* state) -> void {
+            // ...
+        };
+
+        room->onError = [this](std::string message) -> void {
+            std::cout << "ROOM ERROR => " << message.c_str() << std::endl;
+        };
+
+        room->onLeave = [this]() -> void {
+            std::cout << "LEFT ROOM" << std::endl;
+        };
+
+        room->getState()->players->onAdd = [this](Player* player, string sessionId) -> void {
+            // add player sprite
+            auto sprite = Sprite::create("HelloWorld.png");
+            sprite->setPosition(player->x, player->y);
+            players.insert(sessionId, sprite);
+            this->addChild(sprite, 0);
+
+            player->onChange = [this, sprite, player](std::vector<colyseus::schema::DataChange> changes) -> void {
+                for(int i=0; i < changes.size(); i++)   {
+                    if (changes[i].field == "x") {
+                        sprite->setPositionX(player->x);
+
+                    } else if (changes[i].field == "y") {
+                        sprite->setPositionY(player->y);
+                    }
+                }
+            };
+        };
+
+        room->getState()->players->onRemove = [this](Player* player, string sessionId) -> void {
+            std::cout << "onRemove called!" << std::endl;
+            auto sprite = players.at(sessionId);
+            this->removeChild(sprite);
+            players.erase(sessionId);
+            std::cout << "onRemove complete!" << std::endl;
+        };
+
+        std::cout << "Done!" << std::endl;
     });
-}
-
-void HelloWorld::onRoomMessage(Room* sender, msgpack::object message)
-{
-    std::cout << "!! HelloWorld::onRoomMessage !!" << std::endl;
-    std::cout << message << std::endl;
-}
-
-void HelloWorld::onRoomStateChange(Room* sender)
-{
-    std::cout << "!! HelloWorld::onRoomStateChange !!" << std::endl;
-    std::cout << sender->state->get() << std::endl;
 }
 ```
 

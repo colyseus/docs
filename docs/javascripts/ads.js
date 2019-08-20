@@ -28,7 +28,7 @@ patreonAdBottom.id = "patreon_ad_bottom";
 patreonAdBottom.innerHTML = '<hr/>' + patreonAd;
 content.querySelector('article').append(patreonAdBottom);
 
-var patreonAdTop = document.createElement("div");
-patreonAdTop.id = "patreon_ad_top";
-patreonAdTop.innerHTML = patreonAd + '<hr/>';
-content.querySelector('article').prepend(patreonAdTop);
+// var patreonAdTop = document.createElement("div");
+// patreonAdTop.id = "patreon_ad_top";
+// patreonAdTop.innerHTML = patreonAd + '<hr/>';
+// content.querySelector('article').prepend(patreonAdTop);

@@ -80,7 +80,7 @@ room.leave();
 
 ### `removeAllListeners()`
 
-Removes `onJoin`, `onMessage`, `onLeave` and `onError` listeners.
+Removes `onMessage`, `onStateChange`, `onLeave` and `onError` listeners.
 
 Also removes all `.listen()` calls if you're using [Fossil Delta](/state/fossil-delta/#client-side) serializer..
 
@@ -172,40 +172,6 @@ room.onMessage = [=](msgpack::object message) -> void {
     To send a message from the server directly to the clients you'll need to use
     either [room.send()](/server/room/#send-client-message) or
     [room.broadcast()](/server/room/#broadcast-message)
-
-### onJoin
-
-This event is triggered when the client successfuly joins the room.
-
-```typescript fct_label="JavaScript"
-room.onJoin(() => {
-  console.log("client joined successfully");
-});
-```
-
-```csharp fct_label="C#"
-room.OnJoin += () => {
-  Debug.Log ("client joined successfully");
-}
-```
-
-```lua fct_label="lua"
-room:on("join", function()
-  print("client joined successfully")
-end)
-```
-
-```haxe fct_label="Haxe"
-room.onJoin += function () {
-  trace("client joined successfully");
-};
-```
-
-```cpp fct_label="C++"
-room.onJoin = [=]() -> void {
-  std::cout << "client joined successfully" << std::endl;
-};
-```
 
 ### onLeave
 

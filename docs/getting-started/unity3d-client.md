@@ -27,18 +27,21 @@ Each `Client` and `Room` connections need to run on its own Coroutine. See [usag
 In your connection's `MonoBehaviour`, you must call `Recv()` in order to communicate with the server.
 
 ```csharp
-async void Start () {
-	Client client = new Colyseus.Client ("ws://localhost:2567");
-	await client.Connect();
-}
+Client client = new Colyseus.Client ("ws://localhost:2567");
 ```
 
 ### Joining a Room
 
-> See how to generate your `RoomState` from [State Handling](https://docs.colyseus.io/state/schema/#client-side-schema-generation)
+> See how to generate your `RoomState` from [State Handling](/state/schema/#client-side-schema-generation)
 
 ```csharp
-Room room = await client.Join<RoomState> ("room_name");
+try {
+    Room room = await client.Join<RoomState> ("room_name");
+    Debug.Log("Joined successfully!");
+
+} catch (ex) {
+    Debug.Log("Error joining: " + ex.Message);
+}
 ```
 
 ### Getting the full room state from the server.
@@ -64,13 +67,11 @@ void OnStateChange (State state, bool isFirstState)
 
 ```csharp
 Room room = await client.Join<RoomState> ("room_name");
-room.OnJoin += () => {
-	Debug.Log("Joined room successfully.");
+Debug.Log("Joined room successfully.");
 
-	room.State.players.OnAdd += OnPlayerAdd;
-	room.State.players.OnRemove += OnPlayerRemove;
-	room.State.players.OnChange += OnPlayerChange;
-};
+room.State.players.OnAdd += OnPlayerAdd;
+room.State.players.OnRemove += OnPlayerRemove;
+room.State.players.OnChange += OnPlayerChange;
 
 void OnPlayerAdd(Player player, string key)
 {
@@ -100,10 +101,9 @@ If you set a breakpoint in your application while the WebSocket connection is op
 
 ```typescript
 import { Server, RedisPresence } from "colyseus";
-import { createServer } from "http";
 
 const gameServer = new Server({
-  server: createServer(),
+  // ...
   pingTimeout: 0 // HERE
 });
 ```

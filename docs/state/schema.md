@@ -218,7 +218,7 @@ These are the types you can provide for the `@type()` decorator, and their limit
 - `NaN` or `null` numbers are encoded as `0`
 - `null` strings are encoded as `""`
 - `Infinity` numbers are encoded as `Number.MAX_SAFE_INTEGER`
-- Multi-dimensional arrays are not supported.
+- Multi-dimensional arrays are not supported. [See how to use 1D arrays as multi-dimensional](https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid/212813#212813)
 - Items inside Arrays and Maps must be all instance of the same type.
 - `@colyseus/schema` encodes only field values in the specified order.
   - Both encoder (server) and decoder (client) must have same schema definition.

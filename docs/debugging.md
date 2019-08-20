@@ -28,14 +28,6 @@ Logs the number of bytes and interval between patches broadcasted to all clients
 colyseus:patch "chat" (roomId: "ryWiL5rLTZ") is sending 28 bytes: +57ms
 ```
 
-### `colyseus:patch:data`
-
-Displays a human-readable version of the data broadcasted to all clients.
-
-```
-colyseus:patch:data [ { op: 'replace', path: '/players/BygiLqrLpZ/x', value: 5 } ] +56ms
-```
-
 ### `colyseus:errors`
 
 Logs whenever unexpected (or expected, internally) errors happens on the server-side.

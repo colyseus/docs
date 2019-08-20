@@ -22,12 +22,14 @@ var client = new Client('ws://localhost:2567');
 
 ### Joining to a room:
 
-You need to provide your [root Schema state](/state/schema/) as third argument when joining a room.
+> See how to generate your `RoomState` from [State Handling](/state/schema/#client-side-schema-generation)
 
 ```haxe
-var room = client.join("room_name", [], State);
-room.onJoin += function() {
-    trace(client.id + " joined " + room.name);
+client.joinOrCreate("room_name", [], RoomState, function(err, room) {
+    if (err != null) {
+        trace("JOIN ERROR: " + err);
+        return;
+    }
 
     room.state.entities.onAdd = function(entity, key) {
         trace("entity added at " + key + " => " + entity);
@@ -44,7 +46,7 @@ room.onJoin += function() {
     room.state.entities.onRemove = function(entity, key) {
         trace("entity removed at " + key + " => " + entity);
     }
-}
+});
 ```
 
 ### Other room events

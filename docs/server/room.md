@@ -61,7 +61,7 @@ Room handlers can implement all these methods.
 Is called once when room is initialized. You may specify custom initialization options when registering the room handler.
 
 !!! Tip
-    The `options` will contain the merged values you specified on [Server#register()](/server/api/#define-name-string-handler-room-options-any) + the options provided by the first client on `client.join()`
+    The `options` will contain the merged values you specified on [Server#define()](/server/api/#define-name-string-handler-room-options-any) + the options provided by [`client.joinOrCreate()`](/client/client/#joinorcreate-roomname-string-options-any) or [`client.create()`](/client/client/#create-roomname-string-options-any)
 
 
 ### `onAuth (client, options)`
@@ -77,7 +77,7 @@ See [authentication](/server/authentication) section.
 **Parameters:**
 
 - `client`: The [`client`](/server/client) instance.
-- `options`: merged values specified on [Server#register()](/server/api/#define-name-string-handler-room-options-any) with the options provided the client on [`client.join()`](/client/client/#join-roomname-string-options-any)
+- `options`: merged values specified on [Server#define()](/server/api/#define-name-string-handler-room-options-any) with the options provided the client on [`client.join()`](/client/client/#join-roomname-string-options-any)
 - `auth`: (optional) auth data returned by [`onAuth`](#onauth-client-options) method.
 
 Is called when client successfully join the room, after `requestJoin` and `onAuth` has been succeeded.
@@ -305,7 +305,7 @@ Unlocking the room returns it to the pool of available rooms for new clients to 
 
 ### `allowReconnection (client, seconds)`
 
-Allow the specified client to [`rejoin`](/client/client/#rejoin-roomnameorid-string-sessionid-string) into the room. Must be used inside [`onLeave()`](#onleave-client) method.
+Allow the specified client to [`reconnect`](/client/client/#reconnect-roomid-string-sessionid-string) into the room. Must be used inside [`onLeave()`](#onleave-client) method.
 
 ```typescript
 async onLeave (client, consented: boolean) {
@@ -317,7 +317,7 @@ async onLeave (client, consented: boolean) {
         throw new Error("consented leave");
     }
 
-    // allow disconnected client to rejoin into this room until 20 seconds
+    // allow disconnected client to reconnect into this room until 20 seconds
     await this.allowReconnection(client, 20);
 
     // client returned! let's re-activate it.

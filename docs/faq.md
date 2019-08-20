@@ -28,4 +28,4 @@ You usually don't do that. By using an authoritative game server, the clients ge
 
 ### Does Colyseus help me with client-prediction?
 
-Colyseus does not provide any client-prediction solution out of the box. Games such as [wilds.io](http://wilds.io/) and [crashracing.com](https://crashracing.com/) do not use any form of client-prediction. [`lerp`](http://gamestd.io/mathf/globals.html#lerp)ing user coordinates usually gives reasonable results.
+Colyseus does not provide any client-prediction solution out of the box. Games such as [wilds.io](http://wilds.io/) and [mazmorra.io](https://mazmorra.io/) do not use any form of client-prediction. [`lerp`](http://gamestd.io/mathf/globals.html#lerp)ing user coordinates usually gives reasonable results.

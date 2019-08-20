@@ -10,7 +10,7 @@ You will need to add [colyseus-defold](https://github.com/colyseus/colyseus-defo
 
 Open your `game.project` file, and add the following URLs to the `Dependencies` section (under `Project -> Dependencies`):
 
-	https://github.com/colyseus/colyseus-defold/archive/master.zip
+    https://github.com/colyseus/colyseus-defold/archive/master.zip
     https://github.com/britzl/defold-websocket/archive/master.zip
     https://github.com/britzl/defold-luasocket/archive/0.11.zip
     https://github.com/britzl/defold-luasec/archive/master.zip
@@ -32,7 +32,14 @@ function init(self)
     client = ColyseusClient.new("ws://localhost:2567")
 
     -- join chat room
-    room = client:join("chat")
+    client:join_or_create("chat", {}, function(err, _room)
+      if err then
+        print("JOIN ERROR: " .. err)
+        return
+      end
+
+      room = _room
+    end)
 end
 
 function update(self, dt)
@@ -55,9 +62,9 @@ When running on localhost, make sure you don't have any service running on port
 
 Alternatively, you can bind the Colyseus server to port 80.
 
-### "`rejoin()` is not working on iOS!"
+### "`reconnect()` is not working on iOS!"
 
-If you lock your phone, all WebSocket connections will be closed. You can call `rejoin()` to reestablish the session, which needs a workaround for iOS:
+If you lock your phone, all WebSocket connections will be closed. You can call `reconnect()` to reestablish the session, which needs a workaround for iOS:
 
 ```lua
 function window_callback(self, event, data)

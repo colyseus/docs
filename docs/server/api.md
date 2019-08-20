@@ -144,7 +144,7 @@ manually in your shutdown process.
 Define a new room handler.
 
 !!! Tip "Defining the same room handler multiple times"
-    You may define the same room handler multiple times with different `options`. When [Room#onCreate()](http://localhost:8000/server/room/#onCreate-options) is called, the `options` will contain the merged values you specified on [Server#define()](/server/api/#define-name-string-handler-room-options-any) + the options provided by the first client on `client.join()`
+    You may define the same room handler multiple times with different `options`. When [Room#onCreate()](/server/room/#oncreate-options) is called, the `options` will contain the merged values you specified on [Server#define()](/server/api/#define-name-string-handler-room-options-any) + the options provided when the room is created.
 
 **Parameters:**
 
@@ -177,13 +177,11 @@ The `define` method will return the registered handler instance, which you can l
 **Usage:**
 
 ```typescript
-gameServer.define("chat", ChatRoom).then((handler) => {
-  handler.
-    on("create", (room) => console.log("room created:", room.roomId)).
-    on("dispose", (room) => console.log("room disposed:", room.roomId)).
-    on("join", (room, client) => console.log(client.id, "joined", room.roomId)).
-    on("leave", (room, client) => console.log(client.id, "left", room.roomId));
-})
+gameServer.define("chat", ChatRoom)
+  .on("create", (room) => console.log("room created:", room.roomId))
+  .on("dispose", (room) => console.log("room disposed:", room.roomId))
+  .on("join", (room, client) => console.log(client.id, "joined", room.roomId))
+  .on("leave", (room, client) => console.log(client.id, "left", room.roomId));
 ```
 
 !!! Warning
