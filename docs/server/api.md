@@ -273,6 +273,8 @@ gameServer.define("chat", ChatRoom)
 
 ### `attach (options: any)`
 
+> You usually do not need to call this. Use it only if you have a very specific reason to do so.
+
 Attaches or creates the WebSocket server.
 
 - `options.server`: The HTTP server to attach the WebSocket server on.
