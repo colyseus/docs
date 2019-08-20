@@ -63,9 +63,9 @@ You can either pass the MongoDB connection URI to the `new MongooseDriver(uri)` 
 
 The `driver` is used to store and query available rooms for matchmaking.
 
-## Running multiple Colyseus processes in the same server
+## Running multiple Colyseus processes
 
-To run multiple Colyseus instances in the same server, you need each one of them to listen on a different port number. It's recommended to use ports `3001`, `3002`, `3003`, and so on. The Colyseus processes are **NOT** exposed publicly. Only the [dynamic proxy](#dynamic-proxy) is.
+To run multiple Colyseus instances in the same server, you need each one of them to listen on a different port number. It's recommended to use ports `3001`, `3002`, `3003`, and so on. The Colyseus processes should **NOT** be exposed publicly. Only the [dynamic proxy](#dynamic-proxy) is.
 
 The [PM2 process manager](http://pm2.keymetrics.io/) is highly recommended for managing multiple Node.js app instances.
 
@@ -94,7 +94,7 @@ Use the following `ecosystem.config.js` configuration:
 const os = require('os');
 module.exports = {
     apps: [{
-        port        : 8080,
+        port        : 3000,
         name        : "colyseus",
         script      : "lib/index.js", // your entrypoint file
         watch       : true,           // optional
@@ -114,8 +114,8 @@ Now you're ready to start multiple Colyseus proceses.
 pm2 start
 ```
 
-> If you're using TypeScript, compile your project before running `pm2 start`,
-> via `npx tsc`.
+!!! Tip "PM2 and TypeScript"
+    It's recommended compile your .ts files before running `pm2 start`, via `npx tsc`. Alternatively, you can install the TypeScript interpreter for PM2 (`pm2 install typescript`) and set the `exec_interpreter: "ts-node"` ([read more](http://pm2.keymetrics.io/docs/tutorials/using-transpilers-with-pm2)).
 
 
 ## Dynamic proxy
