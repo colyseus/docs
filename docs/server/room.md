@@ -4,30 +4,6 @@ Considering that you already [set up your server](/server/api), now it's time to
 
 You'll define room handlers creating classes that extends from `Room`.
 
-```typescript fct_label="JavaScript"
-const colyseus = require('colyseus');
-
-export class MyRoom extends colyseus.Room {
-    // When room is initialized
-    onCreate (options) { }
-
-    // Authorize client based on provided options before WebSocket handshake is complete
-    onAuth (client, options) { }
-
-    // When client successfully join the room
-    onJoin (client, options, auth) { }
-
-    // When a client sends a message
-    onMessage (client, message) { }
-
-    // When a client leaves the room
-    onLeave (client, consented) { }
-
-    // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
-    onDispose () { }
-}
-```
-
 ```typescript fct_label="TypeScript"
 import { Room, Client } from "colyseus";
 
@@ -46,6 +22,30 @@ export class MyRoom extends Room {
 
     // When a client leaves the room
     onLeave (client: Client, consented: boolean) { }
+
+    // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
+    onDispose () { }
+}
+```
+
+```typescript fct_label="JavaScript"
+const colyseus = require('colyseus');
+
+export class MyRoom extends colyseus.Room {
+    // When room is initialized
+    onCreate (options) { }
+
+    // Authorize client based on provided options before WebSocket handshake is complete
+    onAuth (client, options) { }
+
+    // When client successfully join the room
+    onJoin (client, options, auth) { }
+
+    // When a client sends a message
+    onMessage (client, message) { }
+
+    // When a client leaves the room
+    onLeave (client, consented) { }
 
     // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
     onDispose () { }

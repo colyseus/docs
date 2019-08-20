@@ -10,55 +10,57 @@ The [`Server`](#server) is responsible for providing the WebSocket server to ena
 
 The HTTP server to bind the WebSocket Server into. You may use [`express`](https://www.npmjs.com/package/express) for your server too.
 
-```typescript fct_label="JavaScript"
-const colyseus = require("colyseus");
-const http = require("http");
-const port = process.env.port || 3000;
-
-const gameServer = new colyseus.Server({
-  server: http.createServer()
-});
-
-gameServer.listen(port);
-```
-
 ```typescript fct_label="TypeScript"
-import { Server } from "colyseus";
-import { createServer } from "http";
-const port = process.env.port || 3000;
-
-const gameServer = new Server({
-  server: createServer()
-});
-
-gameServer.listen(port);
-```
-
-```typescript fct_label="JavaScript (express)"
-const colyseus = require("colyseus");
-const http = require("http");
-const express = require("express");
-const port = process.env.port || 3000;
-
-const app = express();
-const gameServer = new colyseus.Server({
-  server: http.createServer(app)
-});
-
-gameServer.listen(port);
-```
-
-```typescript fct_label="TypeScript (express)"
+// Colyseus + Express
 import { Server } from "colyseus";
 import { createServer } from "http";
 import express from "express";
 const port = process.env.port || 3000;
 
 const app = express();
+app.use(express.json());
+
 const gameServer = new Server({
-  server: createServer(app)
+  server: createServer(app),
+  express: app,
 });
 
+gameServer.listen(port);
+```
+
+```typescript fct_label="JavaScript"
+// Colyseus + Express
+const colyseus = require("colyseus");
+const http = require("http");
+const express = require("express");
+const port = process.env.port || 3000;
+
+const app = express();
+app.use(express.json());
+
+const gameServer = new colyseus.Server({
+  server: http.createServer(app)
+  express: app,
+});
+
+gameServer.listen(port);
+```
+
+```typescript fct_label="TypeScript (barebones)"
+// Colyseus (barebones)
+import { Server } from "colyseus";
+const port = process.env.port || 3000;
+
+const gameServer = new Server();
+gameServer.listen(port);
+```
+
+```typescript fct_label="JavaScript (barebones)"
+// Colyseus (barebones)
+const colyseus = require("colyseus");
+const port = process.env.port || 3000;
+
+const gameServer = new colyseus.Server();
 gameServer.listen(port);
 ```
 
@@ -77,21 +79,6 @@ then the handshake is automatically accepted.
     - `code` (Number) When `result` is `false` this field determines the HTTP error status code to be sent to the client.
     - `name` (String) When `result` is `false` this field determines the HTTP reason phrase.
 
-```typescript fct_label="JavaScript"
-const colyseus = require("colyseus");
-
-const gameServer = new colyseus.Server({
-  // ...
-
-  verifyClient: function (info, next) {
-    // validate 'info'
-    //
-    // - next(false) will reject the websocket handshake
-    // - next(true) will accept the websocket handshake
-  }
-});
-```
-
 ```typescript fct_label="TypeScript"
 import { Server } from "colyseus";
 
@@ -107,18 +94,24 @@ const gameServer = new Server({
 });
 ```
 
-#### `options.presence`
-
-When scaling Colyseus through multiple processes / machines, you need to provide a presence server. Read more about [`Presence`](/server/presence).
-
 ```typescript fct_label="JavaScript"
 const colyseus = require("colyseus");
 
 const gameServer = new colyseus.Server({
   // ...
-  presence: new colyseus.RedisPresence()
+
+  verifyClient: function (info, next) {
+    // validate 'info'
+    //
+    // - next(false) will reject the websocket handshake
+    // - next(true) will accept the websocket handshake
+  }
 });
 ```
+
+#### `options.presence`
+
+When scaling Colyseus through multiple processes / machines, you need to provide a presence server. Read more about [scalability](/scalability/), and the [`Presence API`](/server/presence/#api).
 
 ```typescript fct_label="TypeScript"
 import { Server, RedisPresence } from "colyseus";
@@ -126,6 +119,15 @@ import { Server, RedisPresence } from "colyseus";
 const gameServer = new Server({
   // ...
   presence: new RedisPresence()
+});
+```
+
+```typescript fct_label="JavaScript"
+const colyseus = require("colyseus");
+
+const gameServer = new colyseus.Server({
+  // ...
+  presence: new colyseus.RedisPresence()
 });
 ```
 
@@ -163,7 +165,61 @@ gameServer.define("battle", BattleRoom);
 gameServer.define("battle_woods", BattleRoom, { map: "woods" });
 ```
 
-#### Listening to matchmake events
+#### Matchmaking filters: `filterBy(options)`
+
+**Parameters**
+
+- `options: string[]` - a list of option names
+
+Whenever a room is created by the `create()` or `findOrCreate()` methods, only the `options` defined by the `filterBy()` method are going to be stored internally, and used to filter out rooms in further `find()` or `findOrCreate()` calls.
+
+**Example:** allowing different "game modes".
+
+```typescript
+gameServer.define("battle", BattleRoom)
+  .filterBy(['mode']);
+```
+
+Whenever the room is created, the `mode` option is going to be stored internally.
+
+```typescript
+client.findOrCreate("battle", { mode: "duo" }).then(room => {/* ... */});
+```
+
+You can handle the provided option in the `onCreate()` and/or `onJoin()` to implement the requested feature inside your room implementation.
+
+```typescript
+class BattleRoom extends Room {
+  onCreate(options) {
+    if (options.mode === "duo") {
+      // do something!
+    }
+  }
+  onJoin(client, options) {
+    if (options.mode === "duo") {
+      // put this player into a team!
+    }
+  }
+}
+```
+
+**Example:** filtering by built-in `maxClients`
+
+The `maxClients` is an internal variable stored for matchmaking, and can be used for filtering too.
+
+```typescript
+gameServer.define("battle", BattleRoom)
+  .filterBy(['maxClients']);
+```
+
+The client can then ask to join a room capable of handling a certain number of players.
+
+```typescript
+client.findOrCreate("battle", { maxClients: 10 }).then(room => {/* ... */});
+client.findOrCreate("battle", { maxClients: 20 }).then(room => {/* ... */});
+```
+
+#### Listening to room instance events
 
 The `define` method will return the registered handler instance, which you can listen to match-making events from outside the room instance scope. Such as:
 

@@ -19,18 +19,6 @@ Use this option when you're running Colyseus on multiple processes and/or machin
 
 - `clientOpts`: The redis client options (host/credentials). [See full list of options](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/redis/index.d.ts#L28-L52).
 
-```typescript fct_label="JavaScript"
-const colyseus = require('colyseus');
-
-// This happens on the slave processes.
-const gameServer = new colyseus.Server({
-    // ...
-    presence: new colyseus.RedisPresence()
-});
-
-gameServer.listen(2567);
-```
-
 ```typescript fct_label="TypeScript"
 import { Server, RedisPresence } from "colyseus";
 
@@ -38,6 +26,18 @@ import { Server, RedisPresence } from "colyseus";
 const gameServer = new Server({
     // ...
     presence: new RedisPresence()
+});
+
+gameServer.listen(2567);
+```
+
+```typescript fct_label="JavaScript"
+const colyseus = require('colyseus');
+
+// This happens on the slave processes.
+const gameServer = new colyseus.Server({
+    // ...
+    presence: new colyseus.RedisPresence()
 });
 
 gameServer.listen(2567);

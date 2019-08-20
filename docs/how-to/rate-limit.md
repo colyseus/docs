@@ -8,8 +8,8 @@ npm install --save express-rate-limit
 
 ## Usage
 
-```javascript fct_label="JavaScript"
-const rateLimit = require("express-rate-limit");
+```typescript fct_label="TypeScript"
+import rateLimit from "express-rate-limit";
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -18,8 +18,8 @@ const apiLimiter = rateLimit({
 app.use("/matchmake/", apiLimiter);
 ```
 
-```typescript fct_label="TypeScript"
-import rateLimit from "express-rate-limit";
+```javascript fct_label="JavaScript"
+const rateLimit = require("express-rate-limit");
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
