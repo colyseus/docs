@@ -145,9 +145,6 @@ manually in your shutdown process.
 
 Define a new room handler.
 
-!!! Tip "Defining the same room handler multiple times"
-    You may define the same room handler multiple times with different `options`. When [Room#onCreate()](/server/room/#oncreate-options) is called, the `options` will contain the merged values you specified on [Server#define()](/server/api/#define-name-string-handler-room-options-any) + the options provided when the room is created.
-
 **Parameters:**
 
 - `name: string` - The public name of the room. You'll use this name when joining the room from the client-side.
@@ -164,6 +161,11 @@ gameServer.define("battle", BattleRoom);
 // Define "battle" room with custom options
 gameServer.define("battle_woods", BattleRoom, { map: "woods" });
 ```
+
+!!! Tip "Defining the same room handler multiple times"
+    You may define the same room handler multiple times with different `options`. When [Room#onCreate()](/server/room/#oncreate-options) is called, the `options` will contain the merged values you specified on [Server#define()](/server/api/#define-name-string-handler-room-options-any) + the options provided when the room is created.
+
+---
 
 #### Matchmaking filters: `filterBy(options)`
 
@@ -218,6 +220,32 @@ The client can then ask to join a room capable of handling a certain number of p
 client.findOrCreate("battle", { maxClients: 10 }).then(room => {/* ... */});
 client.findOrCreate("battle", { maxClients: 20 }).then(room => {/* ... */});
 ```
+
+---
+
+#### Matchmaking priority: `sortBy(options)`
+
+You can also give a different priority for joining rooms depending on their information upon creation.
+
+The `options` parameter is a key-value object containing the field name in the left, and the sorting direction in the right. Sorting direction can be one of these values: `-1`, `"desc"`, `"descending"`, `1`, `"asc"` or `"ascending"`.
+
+**Example:** sorting by the built-in `clients`
+
+The `clients` is an internal variable stored for matchmaking, which contains the current number of connected clients. On the example below, the rooms with the highest amount of clients connected will have priority. Use `-1`, `"desc"` or `"descending"` for descending order:
+
+```typescript
+gameServer.define("battle", BattleRoom)
+  .sortBy({ clients: -1 });
+```
+
+To sort by the fewest amount of players, you can do the opposite. Use `1`, `"asc"` or `"ascending"` for ascending order:
+
+```typescript
+gameServer.define("battle", BattleRoom)
+  .sortBy({ clients: 1 });
+```
+
+---
 
 #### Listening to room instance events
 
