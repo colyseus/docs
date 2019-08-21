@@ -14,7 +14,7 @@ The `client` instance present on:
 
 ### `id: string`
 
-Unique id per client. When the same client connects with multiple browser tabs, the `id` will be the same for every connection.
+Alias to `sessionId`.
 
 ### `sessionId: string`
 
@@ -22,6 +22,10 @@ Unique id per session. Whilst you may have the same `id` for multiple sessions f
 
 !!! Note
     In the client-side, you can find the [`sessionId` in the `room` instance](/client/room/#sessionid-string).
+
+### `auth: any`
+
+Custom data you return during [`onAuth()`](/server/room/#onauth-client-options).
 
 ## Methods
 
