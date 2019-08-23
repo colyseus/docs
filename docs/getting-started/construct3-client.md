@@ -1,3 +1,5 @@
+> THIS CLIENT CURRENTLY ONLY WORKS WITH VERSION `0.10` OF THE SERVER
+
 The [colyseus-construct3](https://github.com/colyseus/colyseus-construct3) client is compatible with C2 and C3 runtime from Construct3.
 
 See [Multiplayer Drawing Prototype](https://github.com/endel/multiplayer-drawing-prototype) made with this plugin. ([live demo](https://drawing-prototype.herokuapp.com/))
