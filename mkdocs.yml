@@ -92,6 +92,7 @@ nav:
   - 'Authentication': 'server/authentication.md'
   - 'Presence': 'server/presence.md'
   - 'Graceful shutdown': 'server/graceful-shutdown.md'
+  - 'Custom State Serialization': 'server/state-serialization.md'
 
 - 'Client API':
   - 'Client': 'client/client.md'
