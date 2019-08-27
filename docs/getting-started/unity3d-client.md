@@ -24,8 +24,6 @@ Each `Client` and `Room` connections need to run on its own Coroutine. See [usag
 
 ### Connecting to the Server
 
-In your connection's `MonoBehaviour`, you must call `Recv()` in order to communicate with the server.
-
 ```csharp
 Client client = new Colyseus.Client ("ws://localhost:2567");
 ```
