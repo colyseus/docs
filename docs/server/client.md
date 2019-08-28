@@ -25,7 +25,7 @@ Unique id per session. Whilst you may have the same `id` for multiple sessions f
 
 ### `auth: any`
 
-Custom data you return during [`onAuth()`](/server/room/#onauth-client-options).
+Custom data you return during [`onAuth()`](/server/room/#onauth-client-options-request).
 
 ## Methods
 

@@ -5,6 +5,7 @@ Considering that you already [set up your server](/server/api), now it's time to
 You'll define room handlers creating classes that extends from `Room`.
 
 ```typescript fct_label="TypeScript"
+import http from "http";
 import { Room, Client } from "colyseus";
 
 export class MyRoom extends Room {
@@ -12,7 +13,7 @@ export class MyRoom extends Room {
     onCreate (options: any) { }
 
     // Authorize client based on provided options before WebSocket handshake is complete
-    onAuth (client: Client, options: any) { }
+    onAuth (client: Client, options: any, request: http.IncomingMessage) { }
 
     // When client successfully join the room
     onJoin (client: Client, options: any, auth: any) { }
@@ -64,7 +65,7 @@ Is called once when room is initialized. You may specify custom initialization o
     The `options` will contain the merged values you specified on [Server#define()](/server/api/#define-name-string-handler-room-options-any) + the options provided by [`client.joinOrCreate()`](/client/client/#joinorcreate-roomname-string-options-any) or [`client.create()`](/client/client/#create-roomname-string-options-any)
 
 
-### `onAuth (client, options)`
+### `onAuth (client, options, request)`
 
 Can be used to verify authenticity of the client that's joining the room.
 
@@ -72,13 +73,16 @@ If left non-implemented it returns `true`, allowing any client to connect.
 
 See [authentication](/server/authentication) section.
 
+!!! Tip "Getting player's IP address
+    You can use the `request` variable to retrieve the user IP address, http headers, and more. E.g.: `request.headers['x-forwarded-for'] || request.connection.remoteAddress`.
+
 ### `onJoin (client, options, auth?)`
 
 **Parameters:**
 
 - `client`: The [`client`](/server/client) instance.
 - `options`: merged values specified on [Server#define()](/server/api/#define-name-string-handler-room-options-any) with the options provided the client on [`client.join()`](/client/client/#join-roomname-string-options-any)
-- `auth`: (optional) auth data returned by [`onAuth`](#onauth-client-options) method.
+- `auth`: (optional) auth data returned by [`onAuth`](#onauth-client-options-request) method.
 
 Is called when client successfully join the room, after `requestJoin` and `onAuth` has been succeeded.
 
@@ -232,7 +236,7 @@ client.getAvailableRooms("battle").then(rooms => {
 
 ### `setSeatReservationTime (seconds)`
 
-(Default=3) Set the number of seconds a room can wait for a client to effectively join the room. You should consider how long your [`onAuth()`](#onauth-client-options) will have to wait for setting a different seat reservation time. The default value is usually good enough.
+(Default=3) Set the number of seconds a room can wait for a client to effectively join the room. You should consider how long your [`onAuth()`](#onauth-client-options-request) will have to wait for setting a different seat reservation time. The default value is usually good enough.
 
 ### `send (client, message)`
 
