@@ -36,7 +36,7 @@ export class MyRoom extends colyseus.Room {
     onCreate (options) { }
 
     // Authorize client based on provided options before WebSocket handshake is complete
-    onAuth (client, options) { }
+    onAuth (client, options, request) { }
 
     // When client successfully join the room
     onJoin (client, options, auth) { }
