@@ -13,6 +13,9 @@ embedScript.type = 'text/javascript';
 embedScript.src = "https://codefund.io/scripts/b7284271-5f29-43a7-8e6e-cd68f0769509/embed.js";
 document.getElementsByTagName('head')[0].appendChild(embedScript);
 
+/**
+ * Patreon
+ */
 var patreonAd = '<center>' +
     '<p>Colyseus is fully open-source. Consider donating any amount to support the project ❤️</p>' +
         '<a href="https://patreon.com/endel" title="Support Colyseus on Patreon">' +
@@ -20,9 +23,6 @@ var patreonAd = '<center>' +
     '</a>' +
 '</center>';
 
-/**
- * Patreon
- */
 var patreonAdBottom = document.createElement("div");
 patreonAdBottom.id = "patreon_ad_bottom";
 patreonAdBottom.innerHTML = '<hr/>' + patreonAd;
@@ -32,3 +32,16 @@ content.querySelector('article').append(patreonAdBottom);
 // patreonAdTop.id = "patreon_ad_top";
 // patreonAdTop.innerHTML = patreonAd + '<hr/>';
 // content.querySelector('article').prepend(patreonAdTop);
+
+
+/**
+ * Craftpix
+ */
+var craftpixAd = '<center>' +
+    '<a href="https://craftpix.net/categorys/2d-game-kits/?affiliate=101234" target="_blank"><img src="/images/craftpix.png" alt="Craftpix: Free and Premium Game Assets" /></a>'
+'</center>';
+
+var craftpixAdTop = document.createElement("div");
+craftpixAdTop.id = "craftpix_ad_top";
+craftpixAdTop.innerHTML = craftpixAd + '<hr/>';
+content.querySelector('article').prepend(craftpixAdTop);
