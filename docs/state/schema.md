@@ -423,9 +423,12 @@ Usage (C#/Unity)
 
 Valid options:
     --output: fhe output directory for generated client-side schema files
-    --csharp: generate files for C#/Unity
-    --cpp: generate files for C++
-    --haxe: generate files for Haxe
+    --csharp: generate for C#/Unity
+    --cpp: generate for C++
+    --haxe: generate for Haxe
+    --ts: generate for TypeScript
+    --js: generate for JavaScript
+    --java: generate for Java
 
 Optional:
     --namespace: generate namespace on output code
