@@ -157,7 +157,7 @@ client->create<YourStateClass>("battle", {/* options */}, [=](std::string err, R
 
 ### `join (roomName: string, options: any)`
 
-Creates a new room by provided `roomName` and `options`.
+Joins an existing room by provided `roomName` and `options`.
 
 ```typescript fct_label="JavaScript"
 client.join("battle", {/* options */}).then(room => {
