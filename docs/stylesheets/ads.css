@@ -1,0 +1,15 @@
+.top-ads {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  border-bottom: .1rem dotted rgba(0,0,0,.26);
+  padding-bottom: 1em;
+  margin-bottom: 2.5em;
+}
+
+.top-ads > a {
+  flex: 1;
+  padding: 1em;
+  text-align: center;
+}

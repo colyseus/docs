@@ -31,6 +31,7 @@ theme:
 
 extra_css:
   - 'stylesheets/code-tabs.css'
+  - 'stylesheets/ads.css'
 
 extra_javascript:
   - 'javascripts/main.js'

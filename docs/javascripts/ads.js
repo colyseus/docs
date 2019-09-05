@@ -37,11 +37,11 @@ content.querySelector('article').append(patreonAdBottom);
 /**
  * Craftpix
  */
-var craftpixAd = '<center>' +
-    '<a href="https://craftpix.net/categorys/2d-game-kits/?affiliate=101234" target="_blank"><img src="/images/craftpix.png" alt="Craftpix: Free and Premium Game Assets" /></a>'
-'</center>';
+var craftpixAd =
+    '<a href="https://m.do.co/c/6833100c4766" target="_blank"><img src="/images/digitalocean.png" alt="Host on DigitalOcean: Get $50 for 30 days." /></a>' +
+    '<a href="https://craftpix.net/categorys/2d-game-kits/?affiliate=101234" target="_blank"><img src="/images/craftpix.png" alt="Craftpix: Free and Premium Game Assets" /></a>';
 
 var craftpixAdTop = document.createElement("div");
-craftpixAdTop.id = "craftpix_ad_top";
-craftpixAdTop.innerHTML = craftpixAd + '<hr/>';
+craftpixAdTop.className = "top-ads";
+craftpixAdTop.innerHTML = craftpixAd;
 content.querySelector('article').prepend(craftpixAdTop);
