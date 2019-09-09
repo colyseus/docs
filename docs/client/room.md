@@ -175,7 +175,11 @@ room.onMessage = [=](msgpack::object message) -> void {
 
 ### onLeave
 
-This event is triggered when the client leave the room.
+This event is triggered when the client leave the room. 
+
+**Possible codes:**
+- `1000`: Regular Socket Shutdown
+- higher than `1000`: Abnormal Socket Shutdown ([more details](https://github.com/Luka967/websocket-close-codes#websocket-close-codes))
 
 ```typescript fct_label="JavaScript"
 room.onLeave((code) => {
