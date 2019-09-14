@@ -64,6 +64,16 @@ const gameServer = new colyseus.Server();
 gameServer.listen(port);
 ```
 
+#### `options.pingTimeout`
+
+Number of milliseconds for the server to "ping" the clients. Default: `1500`
+
+The clients are going to be forcibly disconnected if they can't respond after [pingCountMax](/server/api/#optionspingcountmax) retries.
+
+#### `options.pingCountMax`
+
+Maximum allowed number of pings without a response. Default: `2`.
+
 #### `options.verifyClient`
 
 This method happens before WebSocket handshake. If `verifyClient` is not set
