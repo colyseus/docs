@@ -79,11 +79,9 @@ import { hooks } from "@colyseus/social";
 
 hooks.beforeAuthenticate((provider, $setOnInsert, $set) => {
     // assign default metadata upon registration
-    $setOnInsert = {
-        metadata: {
-            coins: 100,
-            trophies: 0
-        }
+    $setOnInsert.metadata = {
+      coins: 100,
+      trophies: 0
     };
 });
 ```
