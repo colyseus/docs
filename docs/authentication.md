@@ -68,6 +68,41 @@ class MyRoom extends Room {
 }
 ```
 
+### Hooks
+
+#### `hooks.beforeAuthenticate`
+
+The `beforeAuthenticate` hook is triggered before a user logs in or registers.
+
+```typescript
+import { hooks } from "@colyseus/social";
+
+hooks.beforeAuthenticate((provider, $setOnInsert, $set) => {
+    // assign default metadata upon registration
+    $setOnInsert = {
+        metadata: {
+            coins: 100,
+            trophies: 0
+        }
+    };
+});
+```
+
+#### `hooks.beforeUserUpdate`
+
+The `beforeUserUpdate` hooks is triggered before a user update his own information [through the save() method](#update-user-data).
+
+```typescript
+import Filter from "bad-words";
+const filter = new Filter();
+
+hooks.beforeUserUpdate((_id, fields) => {
+  if (fields['username'] && filter.isProfane(fields['username'])) {
+    throw new Error("no_swearing_allowed");
+  }
+})
+```
+
 ## Client-side API
 
 ### Login
@@ -152,6 +187,26 @@ client.auth:facebook_login(function(err, auth)
   pprint(auth)
 end)
 ```
+
+### Update User Data
+
+You can modify the `username`, `displayName`, `avatarUrl`, `lang`, `location`, and `timezone` from the client-side, and then call the `save()` method.
+
+```javascript fct_label="JavaScript"
+client.auth.username = "Hello world!"
+await client.auth.save();
+```
+
+```csharp fct_label="C#"
+client.Auth.Username = "Hello world!";
+await client.Auth.Save();
+```
+
+```lua fct_label="lua"
+client.auth.username = "Hello world!"
+client.auth:save()
+```
+
 
 ### Logout
 
