@@ -183,7 +183,7 @@ gameServer.define("battle_woods", BattleRoom, { map: "woods" });
 
 - `options: string[]` - a list of option names
 
-Whenever a room is created by the `create()` or `findOrCreate()` methods, only the `options` defined by the `filterBy()` method are going to be stored internally, and used to filter out rooms in further `find()` or `findOrCreate()` calls.
+Whenever a room is created by the `create()` or `joinOrCreate()` methods, only the `options` defined by the `filterBy()` method are going to be stored internally, and used to filter out rooms in further `join()` or `joinOrCreate()` calls.
 
 **Example:** allowing different "game modes".
 
@@ -195,7 +195,7 @@ gameServer.define("battle", BattleRoom)
 Whenever the room is created, the `mode` option is going to be stored internally.
 
 ```typescript
-client.findOrCreate("battle", { mode: "duo" }).then(room => {/* ... */});
+client.joinOrCreate("battle", { mode: "duo" }).then(room => {/* ... */});
 ```
 
 You can handle the provided option in the `onCreate()` and/or `onJoin()` to implement the requested feature inside your room implementation.
@@ -227,8 +227,8 @@ gameServer.define("battle", BattleRoom)
 The client can then ask to join a room capable of handling a certain number of players.
 
 ```typescript
-client.findOrCreate("battle", { maxClients: 10 }).then(room => {/* ... */});
-client.findOrCreate("battle", { maxClients: 20 }).then(room => {/* ... */});
+client.joinOrCreate("battle", { maxClients: 10 }).then(room => {/* ... */});
+client.joinOrCreate("battle", { maxClients: 20 }).then(room => {/* ... */});
 ```
 
 ---
