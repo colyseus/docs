@@ -228,7 +228,9 @@ These are the types you can provide for the `@type()` decorator, and their limit
 
 ## Client-side
 
-There are three ways to handle changes in the client-side when using `SchemaSerializer`:
+### Callbacks
+
+You can use the following callbacks within the schema structures in the client-side to handle changes coming from the server-side.
 
 - [onChange (changes)](#onchange-changes-datachange)
 - [onAdd (instance, key)](#onadd-instance-key)
@@ -238,7 +240,7 @@ There are three ways to handle changes in the client-side when using `SchemaSeri
 !!! Warning "C#, C++, Haxe"
     When using statically typed languages, you need to generate the client-side schema files based on your TypeScript schema definitions. [See generating schema on the client-side](#client-side-schema-generation).
 
-### `onChange (changes: DataChange[])`
+#### `onChange (changes: DataChange[])`
 
 You can register the `onChange` to track a single object's property changes. The `onChange` callback is called with an array of changed properties, along with their previous value.
 
@@ -277,7 +279,7 @@ room.State.OnChange += (changes) =>
 - You cannot register a `onChange` callback for objects that haven't been synchronized to the client-side yet.
 - [The `onChange` works differently if used directly in an `ArraySchema` or `MapSchema`](#onchange-instance-key)
 
-### `onAdd (instance, key)`
+#### `onAdd (instance, key)`
 
 The `onAdd` callback can only be used in maps (`MapSchema`) and arrays (`ArraySchema`). The `onAdd` callback is called with the added instance and its key on holder object as argument.
 
@@ -344,7 +346,7 @@ room.State.players.OnAdd += (Player player, string key) =>
 };
 ```
 
-### `onRemove (instance, key)`
+#### `onRemove (instance, key)`
 
 The `onRemove` callback can only be used in maps (`MapSchema`) and arrays (`ArraySchema`). The `onRemove` callback is called with the removed instance and its key on holder object as argument.
 
@@ -373,7 +375,7 @@ room.State.players.OnRemove += (Player player, string key) =>
 };
 ```
 
-### `onChange (instance, key)`
+#### `onChange (instance, key)`
 
 When registering a `onChange` callback on a `MapSchema` or `ArraySchema` instance, you can detect whenever a object has been changed inside that container.
 
