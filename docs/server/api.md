@@ -64,13 +64,13 @@ const gameServer = new colyseus.Server();
 gameServer.listen(port);
 ```
 
-#### `options.pingTimeout`
+#### `options.pingInterval`
 
 Number of milliseconds for the server to "ping" the clients. Default: `1500`
 
-The clients are going to be forcibly disconnected if they can't respond after [pingCountMax](/server/api/#optionspingcountmax) retries.
+The clients are going to be forcibly disconnected if they can't respond after [pingMaxRetries](/server/api/#optionspingMaxRetries) retries.
 
-#### `options.pingCountMax`
+#### `options.pingMaxRetries`
 
 Maximum allowed number of pings without a response. Default: `2`.
 
