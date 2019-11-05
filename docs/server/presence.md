@@ -93,6 +93,10 @@ Remove the specified members from the set stored at key. Specified members that 
 
 Returns the set cardinality (number of elements) of the set stored at key.
 
+### `sinter(...keys: string[])`
+
+Returns the members of the set resulting from the intersection of all the given sets.
+
 ### `hset(key: string, field: string, value: string)`
 
 Sets field in the hash stored at key to value. If key does not exist, a new key holding a hash is created. If field already exists in the hash, it is overwritten.
