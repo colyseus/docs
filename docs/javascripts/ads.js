@@ -17,7 +17,7 @@ document.getElementsByTagName('head')[0].appendChild(embedScript);
  * Patreon
  */
 var patreonAd = '<center>' +
-    '<p>Colyseus is fully open-source. Consider donating any amount to support the project ❤️</p>' +
+    '<p><em>Colyseus is fully open-source. Please consider <a href="https://www.patreon.com/endel">donating any amount to support the project</a></em> ❤️</p>' +
         '<a href="https://patreon.com/endel" title="Support Colyseus on Patreon">' +
         '<img src="https://img.shields.io/badge/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fendel%2Fpatrons&style=for-the-badge&label=donations" alt="Support Colyseus on Patreon"/>' +
     '</a>' +
@@ -28,20 +28,10 @@ patreonAdBottom.id = "patreon_ad_bottom";
 patreonAdBottom.innerHTML = '<hr/>' + patreonAd;
 content.querySelector('article').append(patreonAdBottom);
 
-// var patreonAdTop = document.createElement("div");
-// patreonAdTop.id = "patreon_ad_top";
-// patreonAdTop.innerHTML = patreonAd + '<hr/>';
-// content.querySelector('article').prepend(patreonAdTop);
-
-
 /**
- * Craftpix
+ * Top ads
  */
-var craftpixAd =
-    '<a href="https://m.do.co/c/6833100c4766" target="_blank"><img src="/images/digitalocean.png" alt="Host on DigitalOcean: Get $50 for 30 days." /></a>' +
-    '<a href="https://craftpix.net/categorys/2d-game-kits/?affiliate=101234" target="_blank"><img src="/images/craftpix.png" alt="Craftpix: Free and Premium Game Assets" /></a>';
-
-var craftpixAdTop = document.createElement("div");
-craftpixAdTop.className = "top-ads";
-craftpixAdTop.innerHTML = craftpixAd;
-content.querySelector('article').prepend(craftpixAdTop);
+var topAds = document.createElement("div");
+topAds.className = "top-ads";
+topAds.innerHTML = patreonAd;
+content.querySelector('article').prepend(topAds);
