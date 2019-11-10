@@ -21,8 +21,7 @@ const app = express();
 app.use(express.json());
 
 const gameServer = new Server({
-  server: createServer(app),
-  express: app,
+  server: createServer(app)
 });
 
 gameServer.listen(port);
@@ -40,7 +39,6 @@ app.use(express.json());
 
 const gameServer = new colyseus.Server({
   server: http.createServer(app)
-  express: app,
 });
 
 gameServer.listen(port);
