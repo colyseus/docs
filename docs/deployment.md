@@ -22,7 +22,7 @@ npm install -g pm2
 Then start your game server using it:
 
 ```
-pm2 start your-server.js -i 0
+pm2 start your-server.js
 ```
 
 ### Nginx configuration
@@ -33,7 +33,7 @@ server {
     server_name yourdomain.com;
 
     location / {
-        proxy_pass http://localhost:8080;
+        proxy_pass http://localhost:2567;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -59,7 +59,7 @@ server {
     ssl_certificate_key /path/to/your/cert.key;
 
     location / {
-        proxy_pass http://localhost:8080;
+        proxy_pass http://localhost:2567;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';

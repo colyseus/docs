@@ -71,7 +71,7 @@ Can be used to verify authenticity of the client that's joining the room.
 
 If left non-implemented it returns `true`, allowing any client to connect.
 
-See [authentication](/server/authentication) section.
+See [Authentication API](/server/authentication) section.
 
 !!! Tip "Getting player's IP address"
     You can use the `request` variable to retrieve the user IP address, http headers, and more. E.g.: `request.headers['x-forwarded-for'] || request.connection.remoteAddress`

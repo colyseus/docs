@@ -47,6 +47,8 @@ var client = new Client("ws://localhost:2567");
 
 Join an existing room or create a new one, by provided `roomName` and `options`.
 
+Locked or private rooms are ignored by this method.
+
 ```typescript fct_label="JavaScript"
 client.joinOrCreate("battle", {/* options */}).then(room => {
   console.log("joined successfully", room);
@@ -159,6 +161,8 @@ client->create<YourStateClass>("battle", {/* options */}, [=](std::string err, R
 
 Joins an existing room by provided `roomName` and `options`.
 
+Locked or private rooms are ignored by this method.
+
 ```typescript fct_label="JavaScript"
 client.join("battle", {/* options */}).then(room => {
   console.log("joined successfully", room);
@@ -213,7 +217,7 @@ client->join<YourStateClass>("battle", {/* options */}, [=](std::string err, Roo
 
 ### `joinById (roomId: string, options: any)`
 
-Joins an existing room by its `roomId`.
+Joins an existing room by its `roomId`. Private rooms can be joined by id.
 
 ```typescript fct_label="JavaScript"
 client.joinById("KRYAKzRo2", {/* options */}).then(room => {
@@ -400,5 +404,64 @@ client.getAvailableRooms("battle", [=](std::string err, nlohmann::json rooms) {
   }
 
   // rooms
+});
+```
+
+### `consumeSeatReservation (reservation)`
+
+Join a room by consuming a seat reservation.
+
+!!! Tip "Advanced usage"
+    See [Match-maker API](/server/matchmaker/#reserveseatforroom-options) to see how to retrieve the seat reservation data.
+
+```typescript fct_label="JavaScript"
+client.consumeSeatReservation(reservation).then(room => {
+  console.log("joined successfully", room);
+}).catch(e => {
+  console.error("join error", e);
+});
+```
+
+```csharp fct_label="C#"
+try {
+  Room<YourStateClass> room = await client.ConsumeSeatReservation<YourStateClass>(reservation);
+  Debug.Log("joined successfully");
+
+} catch (ex) {
+  Debug.Log("join error");
+  Debug.Log(ex.Message);
+}
+```
+
+```lua fct_label="lua"
+client:consume_seat_reservation(reservation, function(err, room)
+  if (err ~= nil) then
+    print("join error: " .. err)
+    return
+  end
+
+  print("joined successfully")
+end)
+```
+
+```haxe fct_label="Haxe"
+client.consumeSeatReservation(reservation, YourStateClass, function(err, room) {
+  if (err != null) {
+    trace("join error: " + err);
+    return;
+  }
+
+  trace("joined successfully");
+});
+```
+
+```cpp fct_label="C++"
+client->consumeSeatReservation<YourStateClass>(reservation, [=](std::string err, Room<State>* room) {
+  if (err != "") {
+    std::cout << "join error: " << err << std::endl;
+    return;
+  }
+
+  std::cout << "joined successfully" << std::endl;
 });
 ```
