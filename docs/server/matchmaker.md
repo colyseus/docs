@@ -1,5 +1,5 @@
 !!! Warning "You may not need this!"
-    The methods described below are for advanced usage. You're usually good to go by using the [client-side methods](/client/client/#methods). If you think you can't achieve your goal with the built-in methods, you should consider using the methods directly from the `matchMaker` methods documented here.
+    This section is for advanced usage. You're usually good to go by using the [client-side methods](/client/client/#methods). If you think you can't achieve your goal with the client-side methods, you should consider using the ones described on this page.
 
 The methods described below are provided by the `matchMaker` singleton, which can be imported from the `"colyseus"` package:
 
