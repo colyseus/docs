@@ -31,6 +31,9 @@ console.log(reservation);
 */
 ```
 
+!!! Tip "Consuming the seat reservation"
+    You can use [`consumeSeatReservation()` from the client-side](/client/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
+
 ## `.create(roomName, options)`
 Create a new room and return client seat reservation.
 
@@ -49,6 +52,9 @@ console.log(reservation);
   }
 */
 ```
+
+!!! Tip "Consuming the seat reservation"
+    You can use [`consumeSeatReservation()` from the client-side](/client/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 
 ## `.join(roomName, options)`
 Join a room and return seat reservation. An exception is thrown if there are no rooms available for `roomName`.
@@ -69,6 +75,9 @@ console.log(reservation);
 */
 ```
 
+!!! Tip "Consuming the seat reservation"
+    You can use [`consumeSeatReservation()` from the client-side](/client/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
+
 ## `.joinById(roomId, options)`
 Join a room by id and return client seat reservation. An exception is thrown if room is not found for `roomId`.
 
@@ -87,6 +96,9 @@ console.log(reservation);
   }
 */
 ```
+
+!!! Tip "Consuming the seat reservation"
+    You can use [`consumeSeatReservation()` from the client-side](/client/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 
 ## `.query(conditions)`
 Perform a query against cached rooms.
