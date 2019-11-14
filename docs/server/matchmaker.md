@@ -21,7 +21,7 @@ Join or create a room and return a client seat reservation.
 - **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`)
 
 ```typescript
-const reservation = matchMaker.joinOrCreate("battle", { mode: "duo" });
+const reservation = await matchMaker.joinOrCreate("battle", { mode: "duo" });
 console.log(reservation);
 /*
   {
@@ -43,7 +43,7 @@ Create a new room and return client seat reservation.
 - **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`)
 
 ```typescript
-const reservation = matchMaker.create("battle", { mode: "duo" });
+const reservation = await matchMaker.create("battle", { mode: "duo" });
 console.log(reservation);
 /*
   {
@@ -65,7 +65,7 @@ Join a room and return seat reservation. An exception is thrown if there are no 
 - **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`)
 
 ```typescript
-const reservation = matchMaker.join("battle", { mode: "duo" });
+const reservation = await matchMaker.join("battle", { mode: "duo" });
 console.log(reservation);
 /*
   {
@@ -87,7 +87,7 @@ Join a room by id and return client seat reservation. An exception is thrown if 
 - **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`)
 
 ```typescript
-const reservation = matchMaker.join("battle", { mode: "duo" });
+const reservation = await matchMaker.joinById("xxxxxxxxx", {});
 console.log(reservation);
 /*
   {
@@ -104,7 +104,7 @@ console.log(reservation);
 Perform a query against cached rooms.
 
 ```typescript
-const rooms = matchMaker.query({ name: "battle", mode: "duo" });
+const rooms = await matchMaker.query({ name: "battle", mode: "duo" });
 console.log(rooms);
 /*
   [
@@ -124,7 +124,7 @@ Find for a public and unlocked room available
 - **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`)
 
 ```typescript
-const room = matchMaker.findOneRoomAvailable("battle", { mode: "duo" });
+const room = await matchMaker.findOneRoomAvailable("battle", { mode: "duo" });
 console.log(room);
 /*
   { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
@@ -140,6 +140,11 @@ Call a method or return a property on a remote room.
 - **`method`**: method or attribute to call or retrieve
 - **`args`**: array of arguments
 
+```typescript
+// call lock() on a remote room by id
+await matchMaker.remoteRoomCall("xxxxxxxxx", "lock");
+```
+
 ## `.createRoom(roomName, options)`
 Create a new room
 
@@ -149,7 +154,7 @@ Create a new room
 - **`options`**: options for `onCreate`
 
 ```typescript
-const room = matchMaker.createRoom("battle", { mode: "duo" });
+const room = await matchMaker.createRoom("battle", { mode: "duo" });
 console.log(room);
 /*
   { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
@@ -168,7 +173,7 @@ Reserve a seat for a client in a room.
 - **`options`**: options for `onCreate`
 
 ```typescript
-const reservation = matchMaker.reserveSeatFor("battle", { mode: "duo" });
+const reservation = await matchMaker.reserveSeatFor("battle", { mode: "duo" });
 console.log(reservation);
 /*
   {
