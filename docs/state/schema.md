@@ -186,6 +186,40 @@ for (let id in this.players) {
 }
 ```
 
+### Experimental: Filtering out fields for specific clients
+
+!!! Warning "This feature is experimental"
+    The `@filter()` currently only works for a limited use cases, and it's not recommended for fast-paced games as it will consume too much CPU. It's only possible to filter out schema fields, it **does not work** for items inside arrays and maps.
+
+Field filtering is useful when you want to hide portions of your state for a particular client, to avoid cheating in case a player decides to inspect data coming from the network and seeing the unfiltered state information.
+
+**Example:** In a card game, the relevant data of each card should be available only for the owner of the card, or on certain conditions (e.g. card has been discarded)
+
+See `@filter()` callback signature:
+
+```typescript
+import { Client } from "colyseus";
+
+/**
+ * DO NOT USE ARROW FUNCTION INSIDE `@filter`, AS IT WILL FORCE A DIFFERENT `this` SCOPE
+ */
+
+class Card extends Schema {
+  @type("string") owner: string; // contains the sessionId of Card owner
+  @type("boolean") discarded: boolean = false;
+
+  @filter(function(
+    this: Card, // the instance of the class `@filter` has been defined (instance of `Card`)
+    client: Client, // the Room's `client` instance which this data is going to be filtered to
+    value?: Card['number'], // the value of the field to be filtered. (value of `number` field)
+    root?: Schema // the root state Schema instance
+  ) {
+    return this.discarded || this.owner === client.sessionId;
+  });
+  @type("uint8") number: number;
+}
+```
+
 ### Primitive types
 
 These are the types you can provide for the `@type()` decorator, and their limitations.
@@ -194,7 +228,6 @@ These are the types you can provide for the `@type()` decorator, and their limit
     If you know exactly the range of your `number` properties, you can optimize the serialization by providing the right primitive type for it.
 
     Otherwise, use `"number"`, which will adds an extra byte to identify itself during serialization.
-
 
 
 | Type | Description | Limitation |
@@ -212,6 +245,12 @@ These are the types you can provide for the `@type()` decorator, and their limit
 | `"uint64"` | unsigned 64-bit integer | `0` to `18446744073709551615` |
 | `"float32"` | single-precision floating-point number | `-3.40282347e+38` to `3.40282347e+38`|
 | `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |
+
+### Backwards/forwards compability
+
+Backwards/fowards compatibility is possible by declaring new fields at the end of existing structures, and earlier declarations to not be removed, but be marked `@deprecated()` when needed.
+
+This is particularly useful for native-compiled targets, such as C#, C++, Haxe, etc - where the client-side can potentially not have the most up-to-date version of the schema definitions.
 
 ### Limitations and best practices
 
