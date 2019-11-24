@@ -145,6 +145,20 @@ room.OnMessage += (message) => {
   Debug.Log ("message received from server");
   Debug.Log(message);
 }
+
+/**
+ * Handling schema-encoded messages:
+ */
+room.OnMessage += (message) => {
+  if (message is MyMessage)
+  {
+    Debug.Log ("MyMessage type has been received");
+    Debug.Log(message);
+  }
+  else if (message is AnotherMessage) {
+    // ...
+  }
+}
 ```
 
 ```lua fct_label="lua"
@@ -175,7 +189,7 @@ room.onMessage = [=](msgpack::object message) -> void {
 
 ### onLeave
 
-This event is triggered when the client leave the room. 
+This event is triggered when the client leave the room.
 
 **Possible codes:**
 

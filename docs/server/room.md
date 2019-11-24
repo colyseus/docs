@@ -240,10 +240,28 @@ client.getAvailableRooms("battle").then(rooms => {
 
 ### `send (client, message)`
 
-Send a message to a particular client.
+Send a message to a particular client. The `message` can be either a plain JavaScript object, or a [`Schema`](/state/schema) instance.
 
-```typescript fct_label="Server"
+**Sending a msgpack-encoded message:**
+
+This is the recommended way if you're using an interpreted language on the client-side, such as JavaScript or LUA.
+
+```typescript
 this.send(client, { message: "Hello world!" });
+```
+
+**Sending a schema-encoded message:**
+
+Sending schema-encoded messages is particularly useful for statically-typed languages such as C#.
+
+```typescript
+class MyMessage extends Schema {
+  @type("string") message: string;
+}
+
+const data = new MyMessage();
+data.message = "Hello world!";
+this.send(client, data);
 ```
 
 !!! Tip
@@ -266,7 +284,7 @@ Broadcasting a message to all clients:
 onMessage (client, message) {
     if (message === "action") {
         // broadcast a message to all clients
-        this.broadcast("an action was taken!");
+        this.broadcast("an action has been taken!");
     }
 }
 ```
@@ -292,6 +310,24 @@ onMessage (client, message) {
 
         // this message will arrive only after new state has been applied
         this.broadcast("has been destroyed!", { afterNextPatch: true });
+    }
+}
+```
+
+Broadcasting a schema-encoded message:
+
+```typescript
+class MyMessage extends Schema {
+  @type("string") message: string;
+}
+
+// ...
+
+onMessage (client, message) {
+    if (message === "action") {
+        const data = new MyMessage();
+        data.message = "an action has been taken!";
+        this.broadcast(data);
     }
 }
 ```
