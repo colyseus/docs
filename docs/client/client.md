@@ -362,6 +362,25 @@ try {
 } catch (ex) {
   Debug.Log(ex.Message)
 }
+
+/**
+ * Retrieving custom metadata
+ */
+[Serializable]
+class Metadata
+{
+	public string mode;
+	public string name;
+}
+
+[Serializable]
+class CustomRoomAvailable : RoomAvailable
+{
+	public Metadata metadata;
+}
+
+var rooms = await client.GetAvailableRooms<CustomRoomAvailable>("battle");
+Debug.Log(rooms[0].metadata.mode);
 ```
 
 ```lua fct_label="lua"
