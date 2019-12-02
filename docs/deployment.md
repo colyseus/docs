@@ -1,5 +1,6 @@
 - [Deploying on Heroku](#heroku)
 - [Deploying on Nginx (recommended)](#nginx-recommended)
+- [Deploying on Apache](#apache)
 
 ## Heroku
 
@@ -69,4 +70,59 @@ server {
         proxy_send_timeout 86400s;
     }
 }
+```
+
+## Apache
+
+Here's how to use Apache as a proxy to your Node.js Colyseus app. (Thanks [tomkleine](https://github.com/tomkleine)!)
+
+Install the required Apache modules:
+
+```
+sudo a2enmod ssl
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+sudo a2enmod proxy_html
+sudo a2enmod proxy_wstunnel
+```
+
+Virtual host configuration:
+
+```
+<VirtualHost *:80>
+    ServerName servername.xyz
+
+    # Redirect all requests received from port 80 to the HTTPS variant (force ssl)
+    RewriteEngine On
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}$1 [R=301,L]
+
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName servername.xyz
+
+    # enable SSL
+    SSLEngine On
+    SSLCertificateFile          /PATH/TO/CERT/FILE
+    SSLCertificateKeyFile       /PATH/TO/PRIVATE/KEY/FILE
+
+    #
+    # setup the proxy to forward websocket requests properly to a normal websocket
+    # and vice versa, so there's no need to change the colyseus library or the
+    # server for that matter)
+    #
+    # (note: this proxy automatically converts the secure websocket (wss)
+
+    RewriteEngine On
+    RewriteCond %{HTTP:UPGRADE} ^WebSocket$           [NC,OR]
+    RewriteCond %{HTTP:CONNECTION} ^Upgrade$          [NC]
+    RewriteRule .* ws://127.0.0.1:APP-PORT-HERE%{REQUEST_URI}  [P,QSA,L]
+
+    # setup the proxy to forward all https requests to http backend
+    # (also automatic conversion from https to http and vice versa)
+
+    ProxyPass "/" "http://localhost:APP-PORT-HERE/"
+    ProxyPassReverse "/" "http://localhost:APP-PORT-HERE/"
+
+</VirtualHost>
 ```
