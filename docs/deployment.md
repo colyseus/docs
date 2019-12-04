@@ -130,7 +130,7 @@ Virtual host configuration:
 
 ## greenlock-express
 
-When using [`greenlock-express`](https://www.npmjs.com/package/greenlock-express), it is not expected that you'll have any reverse-proxy configured as well, such as [Nginx](#nginx-recommended) or [Apache](#apache).
+When using [`greenlock-express`](https://www.npmjs.com/package/greenlock-express), you should **not** have any reverse-proxy configured behind it, such as [Nginx](#nginx-recommended) or [Apache](#apache).
 
 Please follow [greenlock-express's README section first](https://www.npmjs.com/package/greenlock-express#serve-your-sites-with-free-ssl).
 
