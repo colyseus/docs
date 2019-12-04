@@ -168,7 +168,7 @@ if (process.env.NODE_ENV === "production") {
 
 } else {
   // development port
-  const PORT = process.env.PORT || 3553;
+  const PORT = process.env.PORT || 2567;
 
   const app = express();
   const server = http.createServer(app);
