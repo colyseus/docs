@@ -1,6 +1,7 @@
 - [Deploying on Heroku](#heroku)
 - [Deploying on Nginx (recommended)](#nginx-recommended)
 - [Deploying on Apache](#apache)
+- [Using greenlock-express](#greenlock-express)
 
 ## Heroku
 
@@ -125,4 +126,55 @@ Virtual host configuration:
     ProxyPassReverse "/" "http://localhost:APP-PORT-HERE/"
 
 </VirtualHost>
+```
+
+## greenlock-express
+
+When using [`greenlock-express`](https://www.npmjs.com/package/greenlock-express), it is not expected that you'll have any reverse-proxy configured as well, such as [Nginx](#nginx-recommended) or [Apache](#apache).
+
+Please follow [greenlock-express's README section first](https://www.npmjs.com/package/greenlock-express#serve-your-sites-with-free-ssl).
+
+Here's the recommended way to handle both development and production environments if you decide to use `greenlock-express`:
+
+```typescript
+import http from "http";
+import express from "express";
+import { Server } from "colyseus";
+
+function setup(app: express.Application, server: http.Server) {
+  const gameServer = new Server({ server });
+
+  // TODO: configure `app` and `gameServer` accourding to your needs.
+  // gameServer.define("room", YourRoom);
+
+  return app;
+}
+
+if (process.env.NODE_ENV === "production") {
+  require('greenlock-express')
+    .init(function () {
+      return {
+        greenlock: require('./greenlock'),
+        cluster: false
+      };
+    })
+    .ready(function (glx) {
+      const app = express();
+
+      // Serves on 80 and 443
+      // Get's SSL certificates magically!
+      glx.serveApp(setup(app, glx.httpsServer(undefined, app)));
+    });
+
+} else {
+  // development port
+  const PORT = process.env.PORT || 3553;
+
+  const app = express();
+  const server = http.createServer(app);
+
+  setup(app, server);
+  server.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`));
+}
+
 ```
