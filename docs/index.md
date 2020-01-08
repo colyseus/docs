@@ -15,6 +15,13 @@ The mission of this framework is to be the easiest solution for creating your ow
 - Game Engine: Colyseus is agnostic of the engine you're using. Need Physics? Add your own logic / package.
 - Database: It's up to you to configure and select which database you'd like to use.
 
+## How many CCU a Colyseus server can handle?!
+
+The maximum number of concurrent users (CCU) a Colyseus server can handle will vary accourding to how CPU-intensive your game loop is, and how much traffic your server is sending back to the clients.
+
+The default "file descriptor limit" (amount of open connections you can have) of Linux servers is around 1024 - this value can be increased at your own risk. So, you can safely assume the cheapest cloud server is capable of holding 1024 concurrent connections. There are reports of people managing to have up to [600k open WebSocket connections](https://blog.jayway.com/2015/04/13/600k-concurrent-websocket-connections-on-aws-using-node-js/), even though they're idle connections, without transferring data - it proves you can potentially handle more than 1024 concurrent connections by fine tuning the server specs and configuration.
+
+
 ## The Mindset
 
 The authoritative game server mindset is quite simple. The Server validates the user actions, and clients are dumb visual representations of the current game state.
