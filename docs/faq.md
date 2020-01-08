@@ -1,5 +1,12 @@
 # Frequently Asked Questions
 
+### How many CCU a Colyseus server can handle?!
+
+The maximum number of concurrent users (CCU) a Colyseus server can handle will vary accourding to how CPU-intensive your game loop is, and how much traffic your server is sending back to the clients.
+
+The default "file descriptor limit" (amount of open connections you can have) of Linux servers is around 1024 - this value can be increased at your own risk. So, you can safely assume the cheapest cloud server is capable of holding 1024 concurrent connections. There are reports of people managing to have up to [600k open WebSocket connections](https://blog.jayway.com/2015/04/13/600k-concurrent-websocket-connections-on-aws-using-node-js/), even though they're idle connections, without transferring data - it proves you can potentially handle more than 1024 concurrent connections by fine tuning the server specs and configuration.
+
+
 ### I'm getting this error: `Class constructor Room cannot be invoked without 'new'"`, what should I do?
 
 Make sure you have `es2015` or higher in your `tsconfig.json`:
