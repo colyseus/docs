@@ -236,7 +236,7 @@ client.getAvailableRooms("battle").then(rooms => {
 
 ### `setSeatReservationTime (seconds)`
 
-(Default=3) Set the number of seconds a room can wait for a client to effectively join the room. You should consider how long your [`onAuth()`](#onauth-client-options-request) will have to wait for setting a different seat reservation time. The default value is usually good enough.
+Set the number of seconds a room can wait for a client to effectively join the room. You should consider how long your [`onAuth()`](#onauth-client-options-request) will have to wait for setting a different seat reservation time. The default value is usually enough. (8 seconds)
 
 ### `send (client, message)`
 
