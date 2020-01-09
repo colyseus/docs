@@ -36,6 +36,8 @@ kill -usr1 PID
 ssh -L 9229:localhost:9229 root@remote.example.com
 ```
 
+Your production server should now appear on [`chrome://inspect`](`chrome://inspect`).
+
 ## Debug messages
 
 The server provides some debug messages that you can enable individually per category, by setting the `DEBUG` environment variable.
