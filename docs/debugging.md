@@ -8,27 +8,29 @@ You can use the the built-in inspector from Node.js to debug your application.
 !!! Tip
     Read more about [Debugging Node.js Applications](https://nodejs.org/en/docs/inspector/).
 
-## Using the inspector on production environment
+### Using the inspector on production environment
 
-1. Connect to the remote server:
+Be careful when using the inspector on production. Using memory snapshots and breakpoints will impact the experience of your users directly.
+
+*1.* Connect to the remote server:
 
 ```
 ssh root@remote.example.com
 ```
 
-2. Check the PID of the Node process
+*2.* Check the PID of the Node process
 
 ```
 ps aux | grep node
 ```
 
-3. Attach the inspector on the process
+*3.* Attach the inspector on the process
 
 ```
 kill -usr1 PID
 ```
 
-4. Create a SSH tunnel from your local machine to the remote inspector
+*4.* Create a SSH tunnel from your local machine to the remote inspector
 
 ```
 ssh -L 9229:localhost:9229 root@remote.example.com
