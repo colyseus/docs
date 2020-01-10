@@ -20,6 +20,8 @@ The clock is provided as a useful mechanism to time events outside of a stateful
 
 ### Public methods
 
+*N.B `time` parameters are in milliseconds*
+
 #### `clock.setInterval(callback, time, ...args): Delayed`
 
 The `setInterval()` method repeatedly calls a function or executes a code
