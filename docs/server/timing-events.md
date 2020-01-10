@@ -16,6 +16,8 @@ from your `Room` instance.
 
 ## Clock
 
+The clock is provided as a useful mechanism to time events outside of a stateful simulation. An example use case could be: when a player collects an item you might `clock.setTimeout` to create a new collectible. One advantage to using `clock.` is that you do not have to be concerned with room updates and deltas and can instead focus on timing your events independently of the room state.
+
 ### Public methods
 
 #### `clock.setInterval(callback, time, ...args): Delayed`
