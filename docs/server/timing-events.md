@@ -35,13 +35,12 @@ The `setTimeout()` method sets a timer which executes a function or specified
 piece of code once after the timer expires. It returns [`Delayed`](#delayed)
 instance which identifies the interval, so you can manipulate it later.
 
-#### Example
+**Example**
 
 This MVP example shows a Room with: `setInterval()`, `setTimeout` and clearing a previously stored instance of type `Delayed`; along with showing the currentTime from the Room's clock instance.
 After 1 second 'Time now ' + `this.clock.currentTime` is `console.log`'d, and then after 10 seconds we clear the interval: `this.delayedInterval.clear();`.
 
 ```typescript fct_label="TypeScript"
-import http from "http";
 // Import Delayed
 import { Room, Client, Delayed } from "colyseus";
 
