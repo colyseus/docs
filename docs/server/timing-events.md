@@ -20,6 +20,8 @@ The clock is provided as a useful mechanism to time events outside of a stateful
 
 ### Public methods
 
+*Note: `time` parameters are in milliseconds*
+
 #### `clock.setInterval(callback, time, ...args): Delayed`
 
 The `setInterval()` method repeatedly calls a function or executes a code
@@ -32,6 +34,41 @@ manipulate it later.
 The `setTimeout()` method sets a timer which executes a function or specified
 piece of code once after the timer expires. It returns [`Delayed`](#delayed)
 instance which identifies the interval, so you can manipulate it later.
+
+#### Example
+
+This MVP example shows a Room with: `setInterval()`, `setTimeout` and clearing a previously stored instance of type `Delayed`; along with showing the currentTime from the Room's clock instance.
+After 1 second 'Time now ' + `this.clock.currentTime` is `console.log`'d, and then after 10 seconds we clear the interval: `this.delayedInterval.clear();`.
+
+```typescript fct_label="TypeScript"
+import http from "http";
+// Import Delayed
+import { Room, Client, Delayed } from "colyseus";
+
+export class MyRoom extends Room {
+    // For this example
+    public delayedInterval!: Delayed;
+
+    // When room is initialized
+    onCreate(options: any) {
+        // start the clock ticking
+        this.clock.start();
+
+        // Set an interval and store a reference to it
+        // so that we may clear it later
+        this.delayedInterval = this.clock.setInterval(() => {
+            console.log("Time now " + this.clock.currentTime);
+        }, 1000);
+
+        // After 10 seconds clear the timeout;
+        // this will *stop and destroy* the timeout completely
+        this.clock.setTimeout(() => {
+            this.delayedInterval.clear();
+        }, 10_000);
+    }
+    onMessage() { }
+}
+```
 
 #### `clock.clear()`
 
