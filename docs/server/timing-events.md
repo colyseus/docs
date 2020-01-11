@@ -20,7 +20,7 @@ The clock is provided as a useful mechanism to time events outside of a stateful
 
 ### Public methods
 
-*N.B `time` parameters are in milliseconds*
+*Note: `time` parameters are in milliseconds*
 
 #### `clock.setInterval(callback, time, ...args): Delayed`
 
@@ -42,16 +42,18 @@ After 1 second 'Time now ' + `this.clock.currentTime` is `console.log`'d, and th
 
 ```typescript fct_label="TypeScript"
 import http from "http";
-import { Room, Client } from "colyseus";
+// Import Delayed
+import { Room, Client, Delayed } from "colyseus";
 
 export class MyRoom extends Room {
-    public delayedInterval: any;
+    // For this example
+    public delayedInterval!: Delayed;
 
     // When room is initialized
     onCreate(options: any) {
         // start the clock ticking
         this.clock.start();
-        
+
         // Set an interval and store a reference to it
         // so that we may clear it later
         this.delayedInterval = this.clock.setInterval(() => {
@@ -63,8 +65,8 @@ export class MyRoom extends Room {
         this.clock.setTimeout(() => {
             this.delayedInterval.clear();
         }, 10_000);
-
     }
+    onMessage() { }
 }
 ```
 
