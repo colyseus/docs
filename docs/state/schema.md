@@ -85,7 +85,9 @@ schema.defineTypes(MyState, {
 
 ### Array of custom data type
 
-When using arrays, it's important to use the `ArraySchema` type. Do not use plain arrays.
+When using arrays within `State` related schema it's important to use the `ArraySchema` type.
+Do not use plain arrays inside your `State` classes (those which extend `Schema`).
+Using plain arrays inside your methods is ok for game logic or otherwise; but not for syncronised state members.
 
 `ArraySchema` is recommended for describing the world map, or any collection in your game. They have all the methods available in an [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), but it's synchronizable.
 
