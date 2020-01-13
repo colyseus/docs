@@ -94,7 +94,8 @@ Is called when a client sends a message to the server. Here's where you'll proce
 
 ```typescript
 onMessage (client, data) {
-    let player = this.playersByClientId.get(client);
+    // typically this object would be held in the Room State
+    let player = {x: 1, y: 0};
 
     if (data.command === "left") {
         player.x -= 1;
@@ -104,6 +105,7 @@ onMessage (client, data) {
     }
 }
 ```
+Note: The suggested way to maintain shared information about a game world us through using a [Room State](/state/overview.md)
 
 ### `onLeave (client, consented)`
 
