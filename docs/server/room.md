@@ -105,7 +105,7 @@ onMessage (client, data) {
     }
 }
 ```
-Note: The suggested way to maintain shared information about a game world is through using a [Room State](/state/overview.md)
+Note: The suggested way to maintain shared information about a game world is through using a [Room State](/state/overview/)
 
 ### `onLeave (client, consented)`
 
