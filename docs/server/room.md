@@ -1,8 +1,8 @@
 # Room API (Server-side)
 
-Considering that you already [set up your server](/server/api), now it's time to register room handlers, and start accepting connections from your users.
+Considering that you already [set up your server](/server/api), now it's time to register room handlers and start accepting connections from your users.
 
-You'll define room handlers creating classes that extends from `Room`.
+You'll define room handlers creating classes that extend from `Room`.
 
 ```typescript fct_label="TypeScript"
 import http from "http";
@@ -55,11 +55,11 @@ export class MyRoom extends colyseus.Room {
 
 ## Abstract methods
 
-Room handlers can implement all these methods.
+Room handlers can implement all of these methods.
 
 ### `onCreate (options)`
 
-Is called once when room is initialized. You may specify custom initialization options when registering the room handler.
+Is called once when the room is initialized. You may specify custom initialization options when registering the room handler.
 
 !!! Tip
     The `options` will contain the merged values you specified on [Server#define()](/server/api/#define-name-string-handler-room-options-any) + the options provided by [`client.joinOrCreate()`](/client/client/#joinorcreate-roomname-string-options-any) or [`client.create()`](/client/client/#create-roomname-string-options-any)
@@ -74,7 +74,7 @@ If left non-implemented it returns `true`, allowing any client to connect.
 See [Authentication API](/server/authentication) section.
 
 !!! Tip "Getting player's IP address"
-    You can use the `request` variable to retrieve the user IP address, http headers, and more. E.g.: `request.headers['x-forwarded-for'] || request.connection.remoteAddress`
+    You can use the `request` variable to retrieve the user's IP address, http headers, and more. E.g.: `request.headers['x-forwarded-for'] || request.connection.remoteAddress`
 
 ### `onJoin (client, options, auth?)`
 
@@ -84,30 +84,15 @@ See [Authentication API](/server/authentication) section.
 - `options`: merged values specified on [Server#define()](/server/api/#define-name-string-handler-room-options-any) with the options provided the client on [`client.join()`](/client/client/#join-roomname-string-options-any)
 - `auth`: (optional) auth data returned by [`onAuth`](#onauth-client-options-request) method.
 
-Is called when client successfully join the room, after `requestJoin` and `onAuth` has been succeeded.
+Is called when the client successfully joins the room, after `requestJoin` and `onAuth` has succeeded.
 
 ### `onMessage (client, data)`
 
-Is called when a client sends a message to the server. Here's where you'll process client actions to update the room's state.
-
-**Example:**
-
-```typescript
-onMessage (client, data) {
-    let player = this.playersByClientId.get(client);
-
-    if (data.command === "left") {
-        player.x -= 1;
-
-    } else if (data.command === "right") {
-        player.x += 1;
-    }
-}
-```
+Is called when a client sends a message to the server. Here's where you'll process client actions to update the [Room State](/state/overview/)
 
 ### `onLeave (client, consented)`
 
-Is called when a client leave the room. If the disconnection was [initiated by the client](/client/room/#leave), the `consented` parameter will be `true`, otherwise, it will be `false`.
+Is called when a client leaves the room. If the disconnection was [initiated by the client](/client/room/#leave), the `consented` parameter will be `true`, otherwise, it will be `false`.
 
 You can define this function as `async`. See [graceful shutdown](/server/graceful-shutdown)
 
@@ -116,6 +101,55 @@ You can define this function as `async`. See [graceful shutdown](/server/gracefu
 Cleanup callback, called after there are no more clients in the room.
 
 You can define this function as `async`. See [graceful shutdown](/server/graceful-shutdown)
+
+
+#### Example room
+This example demonstrates an entire room implementing the `onCreate`, `onJoin` and `onMessage` methods.
+
+```typescript
+import { Room, Client } from "colyseus";
+import { Schema, MapSchema, type } from "@colyseus/schema";
+
+// An abstract player object, demonstrating a potential 2D world position
+export class Player {
+  x: number = 0.11;
+  y: number = 2.22;
+}
+
+// Our custom game state, an ArraySchema of type Player only at the moment
+export class State extends Schema {
+  @type({ map: "string" })
+  players = new MapSchema<Player>();
+}
+
+export class GameRoom extends Room<State, Player> {
+  // Colyseus will invoke when creating the room instance
+  onCreate(options: any) {
+    // initialize empty room state
+    this.setState(new State());
+  }
+
+  // Called every time a client joins
+  onJoin(client: Client, options: any) {
+    this.state.players[client.sessionId] = new Player();
+  }
+
+  // Called every time this room receives a message
+  onMessage(client: Client, message: any) {
+    // Retrieve a previously stored player by their sessionId
+    const player = this.state.players[client.sessionId];
+
+    // Pretend that we sent the room the message: {command: "left"}
+    if (message.command === "left") {
+      player.x -= 1;
+    } else if (message.command === "right") {
+      player.x += 1;
+    }
+
+    console.log(client.sessionId + " at, x: " + player.x, "y: " + player.y);
+  }
+}
+```
 
 ## Public properties
 
