@@ -103,7 +103,7 @@ Cleanup callback, called after there are no more clients in the room.
 You can define this function as `async`. See [graceful shutdown](/server/graceful-shutdown)
 
 
-#### Example room
+### Example room
 This example demonstrates an entire room implementing the `onCreate`, `onJoin` and `onMessage` methods.
 
 ```typescript
