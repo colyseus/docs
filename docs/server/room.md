@@ -122,7 +122,7 @@ export class State extends Schema {
   players = new MapSchema<Player>();
 }
 
-export class GameRoom extends Room<State, Player> {
+export class GameRoom extends Room<State> {
   // Colyseus will invoke when creating the room instance
   onCreate(options: any) {
     // initialize empty room state
