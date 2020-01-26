@@ -11,13 +11,13 @@ to parse it.
 
 **Server-side**
 
-```
+```typescript
 this.broadcast({ type: "foo", data: "bar" });
 ```
 
 **Client-side**
 
-Use the `On message` condition, with `"foo"` type.
+Use the `On Message` condition, with `"foo"` as argument.
 
 
 ## Properties
