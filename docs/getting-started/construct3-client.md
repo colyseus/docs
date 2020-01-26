@@ -1,26 +1,50 @@
-> THIS CLIENT CURRENTLY ONLY WORKS WITH VERSION `0.10` OF THE SERVER
-
 The [colyseus-construct3](https://github.com/colyseus/colyseus-construct3) client is compatible with C2 and C3 runtime from Construct3.
 
 See [Multiplayer Drawing Prototype](https://github.com/endel/multiplayer-drawing-prototype) made with this plugin. ([live demo](https://drawing-prototype.herokuapp.com/))
 
+## Handling messages
+
+An important note when sending messages from the server to the clients: you need
+to provide an object with a `"type"` field, in order for the client to be able
+to parse it.
+
+**Server-side**
+
+```
+this.broadcast({ type: "foo", data: "bar" });
+```
+
+**Client-side**
+
+Use the `On message` condition, with `"foo"` type.
+
+
 ## Properties
 
-### Endpoint
-Endpoint of the Colyseus server
+### Default Endpoint
+Default Endpoint to use on "Connect" action.
 
 ## Actions
 
-### Connect
-Open connection with server
+### Set endpoint to {0}
+Format: wss://example.com
 
-### Disconnect
-Close connection with server
-
-### Join room "{0}" with options {1}, {...}.
+### Join room {0} with options {1}.
 Join a room by name
 
-### Send message {0} to room.
+### Join room {0} with options {1}.
+Join a room by name
+
+### Create room {0} with options {1}.
+Create a room by name
+
+### Join room {0} with options {1}.
+Join an existing room by its ID
+
+### Reconnect into room {0} with sessionId {1}.
+Reconnect using a previously connected room
+
+### Send {0} with {1}
 Send message to a room
 
 ### Leave from the room
@@ -28,46 +52,62 @@ Disconnect client from the room.
 
 ## Conditions
 
-### On open
-Triggered when connection with server is opened.
-
-### On error
-Triggered when an error happened on the server.
-
-### On close
-Triggered when connection with server is closed.
-
-### On join
+### On Join
 Triggered when joined successfully into a room.
 
-### On leave
+### On Leave
 Triggered when left from a room.
 
-### On error
+### On Error
 Triggered when an error happened on the server.
 
-### On message ({0})
+### On Message ({0})
 Triggered when the room broadcasts a message, or sends a message directly to this client.
 
-### On state change
+### On State Change
 Triggered when the state of the room changes.
 
-### Listen for {0} ({1} operations)
-Triggered when a variable at the selected path changes.
+### On add at {0}
+Triggers when an item is added to ArraySchema or MapSchema.
+
+### On field change at {0}
+Triggers when a field is changed inside a Schema instance. Need to use
+
+### On change at {0}
+Triggers when an item is changed inside ArraySchema or MapSchema.
+
+### On remove at {0}
+Triggers when an item is removed from ArraySchema or MapSchema.
+
+### Is index {0}
+Only available for Arrays and Maps. Check if index of current item is equals to provided value.
+
+### Is field {0}
+Only available during "On change" of a direct object. Checks if a field name has changed.
 
 ## Expressions
 
-### Value
-The value you're listening to. (Only avaliable during Listen)
+### JSON
+Declare a JSON value.
 
-### ValueAt
-The nested value you're listening to. (Only avaliable during Listen)
+### CurrentValue
+Get value from current item
 
-### Path
-A variable present in the path you're listening to.
+### PreviousValue
+Get previous value from current field. Only available during "On change" on an instance variable. Not avaialble for arrays and maps.
+
+### CurrentValueAt
+Get nested value from current item
+
+### CurrentIndex
+Get index of current item. Available during "On Add", "On Change" or "On Remove"
+
+### CurrentField
+Get current field being changed. Available during "On field change"
 
 ### State
-Returns a value from room's state
+Get a value from room's state
 
 ### SessionId
 Unique sessionId of the current user
+
