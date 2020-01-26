@@ -2,11 +2,10 @@ You're encouraged to use this client along with any Haxe Game Engine, such as: [
 
 ## Installation
 
-Install the latest version from the git repository:
+Install `colyseus` from haxelib:
 
 ```
-haxelib git colyseus https://github.com/colyseus/colyseus-hx.git
-haxelib git haxe-ws https://github.com/colyseus/haxe-ws.git
+haxelib install colyseus
 ```
 
 ## Usage
