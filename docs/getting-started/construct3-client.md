@@ -3,6 +3,10 @@
 
 See [Multiplayer Drawing Prototype](https://github.com/endel/multiplayer-drawing-prototype) made with this plugin. ([live demo](https://drawing-prototype.herokuapp.com/))
 
+## Important
+
+Construct has well-known existing features to "host" a multiplayer from the client. This is not possible via Colyseus. Colyseus is an authoritative SERVER, written in Node.js. You can't make your client be the host of the game sessions.
+
 ## Handling messages
 
 An important note when sending messages from the server to the clients: you need
