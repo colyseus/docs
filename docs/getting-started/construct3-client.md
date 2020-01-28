@@ -5,7 +5,7 @@ See [Multiplayer Drawing Prototype](https://github.com/endel/multiplayer-drawing
 
 ## Important
 
-Construct has well-known existing features to "host" a multiplayer from the client. This is not possible via Colyseus. Colyseus is an authoritative SERVER, written in Node.js. You can't make your client be the host of the game sessions.
+Construct has well-known existing features to "host" a multiplayer session from the client. This is not possible via Colyseus. Colyseus is an authoritative SERVER, written in Node.js. You can't make your client be the host of the game sessions.
 
 ## Handling messages
 
