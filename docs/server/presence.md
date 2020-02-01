@@ -101,9 +101,17 @@ Returns the members of the set resulting from the intersection of all the given 
 
 Sets field in the hash stored at key to value. If key does not exist, a new key holding a hash is created. If field already exists in the hash, it is overwritten.
 
+### `hincrby(key: string, field: string, value: number)`
+
+Increments the number stored at field in the hash stored at key by increment. If key does not exist, a new key holding a hash is created. If field does not exist the value is set to 0 before the operation is performed.
+
 ### `hget(key: string, field: string): Promise<string>`
 
 Returns the value associated with field in the hash stored at key.
+
+### `hgetall(key: string): Promise<{[field: string]: string}>`
+
+Returns all fields and values of the hash stored at key.
 
 ### `hdel(key: string, field: string)`
 
