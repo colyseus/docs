@@ -420,7 +420,7 @@ async onLeave (client, consented: boolean) {
     }
 
     // get reconnection token
-    const reconnection = this.allowReconnection(client, 20);
+    const reconnection = this.allowReconnection(client);
 
     //
     // here is the custom logic for rejecting the reconnection.
