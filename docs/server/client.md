@@ -18,7 +18,7 @@ Alias to `sessionId`.
 
 ### `sessionId: string`
 
-Unique id per session. Whilst you may have the same `id` for multiple sessions from the same client, the `sessionId` is always unique.
+Unique id per session.
 
 !!! Note
     In the client-side, you can find the [`sessionId` in the `room` instance](/client/room/#sessionid-string).
