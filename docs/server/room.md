@@ -377,9 +377,11 @@ Locking the room will remove it from the pool of available rooms for new clients
 
 Unlocking the room returns it to the pool of available rooms for new clients to connect to.
 
-### `allowReconnection (client, seconds)`
+### `allowReconnection (client, seconds?)`
 
 Allow the specified client to [`reconnect`](/client/client/#reconnect-roomid-string-sessionid-string) into the room. Must be used inside [`onLeave()`](#onleave-client) method.
+
+If **`seconds`** is provided, the reconnection is going to be cancelled after the provided amout of seconds.
 
 ```typescript
 async onLeave (client, consented: boolean) {
@@ -393,6 +395,54 @@ async onLeave (client, consented: boolean) {
 
     // allow disconnected client to reconnect into this room until 20 seconds
     await this.allowReconnection(client, 20);
+
+    // client returned! let's re-activate it.
+    this.state.players[client.sessionId].connected = true;
+
+  } catch (e) {
+
+    // 20 seconds expired. let's remove the client.
+    delete this.state.players[client.sessionId];
+  }
+}
+```
+
+Alternatively, you may not provide the amount of **`seconds`** to automatically reject the reconnection, and reject it yourself using your own logic.
+
+```typescript
+async onLeave (client, consented: boolean) {
+  // flag client as inactive for other users
+  this.state.players[client.sessionId].connected = false;
+
+  try {
+    if (consented) {
+        throw new Error("consented leave");
+    }
+
+    // get reconnection token
+    const reconnection = this.allowReconnection(client, 20);
+
+    //
+    // here is the custom logic for rejecting the reconnection.
+    // for demonstration purposes of the API, an interval is created
+    // rejecting the reconnection if the player has missed 2 rounds,
+    // (assuming he's playing a turn-based game)
+    //
+    // in a real scenario, you would store the `reconnection` in
+    // your Player instance, for example, and perform this check during your
+    // game loop logic
+    //
+    const currentRound = this.state.currentRound;
+    const interval = setInterval(() => {
+      if ((this.state.currentRound - currentRound) > 2) {
+        // manually reject the client reconnection
+        reconnection.reject();
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    // allow disconnected client to reconnect
+    await reconnection;
 
     // client returned! let's re-activate it.
     this.state.players[client.sessionId].connected = true;
