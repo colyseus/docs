@@ -2,6 +2,10 @@ Colyseus is a Authoritative Multiplayer Game Server for Node.js. It allows you t
 
 The mission of this framework is to be the easiest solution for creating your own multiplayer games in JavaScript.
 
+<center>
+  <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vSjJtmU-SIkng_bFQ5z1000M6nPSoAoQL54j0Y_Cbg7R5tRe9FXLKaBmcKbY_iyEpnMqQGDjx_335QJ/embed?start=false&loop=false&delayms=3000" frameborder="0" width="680" height="411" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+</center>
+
 ## What Colyseus provides to you:
 
 - WebSocket-based communication
