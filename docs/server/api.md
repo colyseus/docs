@@ -15,7 +15,7 @@ The HTTP server to bind the WebSocket Server into. You may use [`express`](https
 import { Server } from "colyseus";
 import { createServer } from "http";
 import express from "express";
-const port = process.env.port || 3000;
+const port = Number(process.env.port) || 3000;
 
 const app = express();
 app.use(express.json());
