@@ -17,7 +17,7 @@ To run the http + websocket server, run `npm start`.
 
 ## Creating a barebones Colyseus server
 
-Use the `npm init colyseus-app` command to generate a barabones Colyseus server. You may select between TypeScript (recommended), JavaScript and Haxe as your language of choice for the server.
+Use the `npm init colyseus-app` command to generate a barebones Colyseus server. You may select between TypeScript (recommended), JavaScript and Haxe as your language of choice for the server.
 
 ```
 npm init colyseus-app ./my-colyseus-app
