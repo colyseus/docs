@@ -217,7 +217,7 @@ class Card extends Schema {
     root?: Schema // the root state Schema instance
   ) {
     return this.discarded || this.owner === client.sessionId;
-  });
+  })
   @type("uint8") number: number;
 }
 ```
