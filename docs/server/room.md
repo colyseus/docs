@@ -118,7 +118,7 @@ export class Player {
 
 // Our custom game state, an ArraySchema of type Player only at the moment
 export class State extends Schema {
-  @type({ map: "string" })
+  @type({ map: Player })
   players = new MapSchema<Player>();
 }
 
