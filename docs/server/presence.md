@@ -85,6 +85,15 @@ Add the specified members to the set stored at key. Specified members that are a
 
 Returns all the members of the set value stored at key.
 
+### `sismember(member: string)`
+
+Returns if `member` is a member of the set stored at key
+
+**Return value**
+
+- `1` if the element is a member of the set.
+- `0` if the element is not a member of the set, or if key does not exist.
+
 ### `srem(key: string, value: any)`
 
 Remove the specified members from the set stored at key. Specified members that are not a member of this set are ignored. If key does not exist, it is treated as an empty set and this command returns 0.
