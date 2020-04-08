@@ -1,4 +1,4 @@
-You may implement the `onAuth (client, options)` method to validate the authenticity of your clients.
+You may implement the `onAuth (client, options[, request])` method to validate the authenticity of your clients.
 
 The `onAuth()` method will be executed before `onJoin()`. You can use it to validate if the player is allowed to join the room.
 
@@ -103,3 +103,6 @@ class MyRoom extends Room {
   }
 }
 ```
+
+!!! Tip "Getting player's IP address"
+    You can use the `request` variable to retrieve the user's IP address, http headers, and more. E.g.: `request.headers['x-forwarded-for'] || request.connection.remoteAddress`
