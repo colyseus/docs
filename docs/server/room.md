@@ -111,7 +111,7 @@ import { Room, Client } from "colyseus";
 import { Schema, MapSchema, type } from "@colyseus/schema";
 
 // An abstract player object, demonstrating a potential 2D world position
-export class Player {
+export class Player extends Schema {
   x: number = 0.11;
   y: number = 2.22;
 }
