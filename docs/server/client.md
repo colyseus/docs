@@ -31,7 +31,7 @@ Custom data you return during [`onAuth()`](/server/room/#onauth-client-options-r
 
 ### `close(code?: number)`
 
-Force disconnection of the `client` with the server.
+Force disconnection of the `client` with the room.
 
 !!! Tip
     This will trigger [`room.onLeave`](/client/room/#onleave) event on the client-side.
