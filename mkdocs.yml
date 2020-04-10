@@ -111,6 +111,7 @@ nav:
 - 'Debugging': 'debugging.md'
 - 'Deployment': 'deployment.md'
 - 'Scalability': 'scalability.md'
+
 - 'Migrating':
   - '0.12.x': 'migrating/0.12.md'
   - '0.11.x': 'migrating/0.11.md'
@@ -118,3 +119,7 @@ nav:
   - '0.9.x': 'migrating/0.9.md'
 
 - 'FAQ': 'faq.md'
+
+- 'Previous versions':
+  - '0.11.x': 'https://0-11-x.docs.colyseus.io/'
+  - '0.10.x': 'https://0-10-x.docs.colyseus.io/'
