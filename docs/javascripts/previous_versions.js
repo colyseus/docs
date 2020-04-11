@@ -16,7 +16,7 @@ select.appendChild(option);
 versions.forEach(function(version) {
   var option = document.createElement('option');
   option.text = version;
-  option.value = 'https://' + version + '.docs.colyseus.io/';
+  option.value = 'https://' + (version.replace(/\./g, "-")) + '.docs.colyseus.io/';
   select.appendChild(option);
 });
 
