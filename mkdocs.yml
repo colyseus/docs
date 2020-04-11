@@ -35,6 +35,7 @@ extra_css:
 
 extra_javascript:
   - 'javascripts/main.js'
+  - 'https://docs.colyseus.io/javascripts/previous_versions.js'
   - 'javascripts/ads.js'
 
 # Options
@@ -119,7 +120,3 @@ nav:
   - '0.9.x': 'migrating/0.9.md'
 
 - 'FAQ': 'faq.md'
-
-- 'Previous versions':
-  - '0.11.x': 'https://0-11-x.docs.colyseus.io/'
-  - '0.10.x': 'https://0-10-x.docs.colyseus.io/'
