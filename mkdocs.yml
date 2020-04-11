@@ -31,11 +31,11 @@ theme:
 
 extra_css:
   - 'stylesheets/code-tabs.css'
-  - 'https://docs.colyseus.io/javascripts/previous_versions.js'
   - 'stylesheets/ads.css'
 
 extra_javascript:
   - 'javascripts/main.js'
+  - 'https://docs.colyseus.io/javascripts/previous_versions.js'
   - 'javascripts/ads.js'
 
 # Options
