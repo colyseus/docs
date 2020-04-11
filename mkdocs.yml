@@ -31,6 +31,7 @@ theme:
 
 extra_css:
   - 'stylesheets/code-tabs.css'
+  - 'https://docs.colyseus.io/javascripts/previous_versions.js'
   - 'stylesheets/ads.css'
 
 extra_javascript:
@@ -119,7 +120,3 @@ nav:
   - '0.9.x': 'migrating/0.9.md'
 
 - 'FAQ': 'faq.md'
-
-- 'Previous versions':
-  - '0.11.x': 'https://0-11-x.docs.colyseus.io/'
-  - '0.10.x': 'https://0-10-x.docs.colyseus.io/'
