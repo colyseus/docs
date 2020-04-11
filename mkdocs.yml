@@ -106,6 +106,10 @@ nav:
   - 'Schema': 'state/schema.md'
   - 'Fossil Delta (deprecated)': 'state/fossil-delta.md'
 
+- 'Best practices':
+  - 'Overview': 'best-practices/overview.md'
+  - 'The Command Pattern': 'best-practices/command-pattern.md'
+
 - 'Authentication': 'authentication.md'
 # - 'Push Notifications': 'push.md'
 
