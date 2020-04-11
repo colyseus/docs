@@ -34,6 +34,7 @@ extra_css:
 
 extra_javascript:
   - 'javascripts/main.js'
+  - 'https://docs.colyseus.io/javascripts/previous_versions.js'
   - 'javascripts/codefund.js'
 
 # Options
