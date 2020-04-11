@@ -107,7 +107,7 @@ nav:
   - 'Fossil Delta (deprecated)': 'state/fossil-delta.md'
 
 - 'Authentication': 'authentication.md'
-- 'Push Notifications': 'push.md'
+# - 'Push Notifications': 'push.md'
 
 - 'Debugging': 'debugging.md'
 - 'Deployment': 'deployment.md'

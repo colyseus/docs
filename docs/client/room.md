@@ -33,27 +33,59 @@ Name of the room handler. Ex: `"battle"`.
 
 ## Methods
 
-### `send (data)`
+### `send (type, message)`
 
-Send message to the room handler.
+Send message a type of message to the room handler. Messages are encoded with MsgPack and can hold any JSON-seriazeable data structure.
 
 ```typescript fct_label="JavaScript"
-room.send({ move: "left" });
+//
+// sending message with string type
+//
+room.send("move", { direction: "left"});
+
+//
+// sending message with number type
+//
+room.send(0, { direction: "left"});
 ```
 
 ```csharp fct_label="C#"
-await room.Send(new { move = "left" });
+//
+// sending message with string type
+//
+await room.Send("move", new { direction = "left" });
+
+//
+// sending message with number type
+//
+await room.Send(0, new { direction = "left" });
 ```
 
 ```lua fct_label="lua"
-room:send({ move = "left" })
+--
+-- sending message with string type
+--
+room:send("move", { direction = "left" })
+
+--
+-- sending message with number type
+--
+room:send(0, { direction = "left" })
 ```
 
 ```haxe fct_label="Haxe"
-room.send({ move: "left" });
+//
+// sending message with string type
+//
+room.send("move", { direction: "left" });
+
+//
+// sending message with number type
+//
+room.send(0, { direction: "left" });
 ```
 
-Use [Room#onMessage()](/server/room/#onmessage-client-data) from the server-side to read the message.
+Use [Room#onMessage()](/server/room/#onmessage-type-callback) from the server-side to read the message.
 
 ### `leave ()`
 
@@ -131,25 +163,29 @@ room.onStateChange = [=](State>* state) {
 
 ### onMessage
 
-This event is triggered when the server sends a message directly to the client.
+This event is triggered when the server sends a message directly to the client, or via broadcast.
 
 ```typescript fct_label="JavaScript"
-room.onMessage((message) => {
+room.onMessage("powerup", (message) => {
   console.log("message received from server");
   console.log(message);
 });
 ```
 
 ```csharp fct_label="C#"
-room.OnMessage += (message) => {
+class PowerUpMessage {
+  string type;
+}
+
+room.OnMessage<PowerUpMessage>("powerup", (message) => {
   Debug.Log ("message received from server");
   Debug.Log(message);
-}
+});
 
 /**
  * Handling schema-encoded messages:
  */
-room.OnMessage += (message) => {
+room.OnMessage("powerup", (message) => {
   if (message is MyMessage)
   {
     Debug.Log ("MyMessage type has been received");
@@ -158,34 +194,34 @@ room.OnMessage += (message) => {
   else if (message is AnotherMessage) {
     // ...
   }
-}
+});
 ```
 
 ```lua fct_label="lua"
-room:on("message", function(message)
+room:on_message("powerup", function(message)
   print("message received from server")
   print(message)
 end)
 ```
 
 ```haxe fct_label="Haxe"
-room.onMessage += function(message) {
+room.onMessage("powerup", function(message) {
   trace("message received from server");
   trace(Std.string(message));
-};
+});
 ```
 
 ```cpp fct_label="C++"
-room.onMessage = [=](msgpack::object message) -> void {
+room.onMessage("powerup", [=](msgpack::object message) -> void {
     std::cout << "message received from server" << std::endl;
     std::cout << message << std::endl;
-};
+});
 ```
 
 !!! Tip
     To send a message from the server directly to the clients you'll need to use
-    either [room.send()](/server/room/#send-client-message) or
-    [room.broadcast()](/server/room/#broadcast-message)
+    either [client.send()](/server/client/#sendtype-message) or
+    [room.broadcast()](/server/room/#broadcast-type-message-options)
 
 ### onLeave
 
@@ -231,35 +267,35 @@ room.onLeave = [=]() -> void {
 This event is triggered when some error occurs in the room handler.
 
 ```typescript fct_label="JavaScript"
-room.onError((message) => {
+room.onError((code, message) => {
   console.log("oops, error ocurred:");
   console.log(message);
 });
 ```
 
 ```csharp fct_label="C#"
-room.OnError += (message) => {
+room.OnError += (code, message) => {
   Debug.Log ("oops, error ocurred:");
   Debug.Log(message);
 }
 ```
 
 ```lua fct_label="lua"
-room:on("error", function(message)
+room:on("error", function(code, message)
   print("oops, error ocurred:")
   print(message)
 end)
 ```
 
 ```haxe fct_label="Haxe"
-room.onError += function(message) {
+room.onError += function(code, message) {
   trace("oops, error ocurred:");
   trace(message);
 };
 ```
 
 ```cpp fct_label="C++"
-room.onError = [=] (std::string message) => void {
+room.onError = [=] (uint code, std::string message) => void {
   std::cout << "oops, error ocurred: " << message << std::endl;
 };
 ```

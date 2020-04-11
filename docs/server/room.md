@@ -273,7 +273,7 @@ this.send(client, data);
 !!! Tip
     [See how to handle these messages on client-side.](/client/room/#onmessage)
 
-### `broadcast (message, options?)`
+### `broadcast (type, message, options?)`
 
 Send a message to all connected clients.
 
@@ -287,36 +287,36 @@ Available options are:
 Broadcasting a message to all clients:
 
 ```typescript
-onMessage (client, message) {
-    if (message === "action") {
+onCreate() {
+    this.onMessage("action", (client, message) => {
         // broadcast a message to all clients
-        this.broadcast("an action has been taken!");
-    }
+        this.broadcast("action-taken", "an action has been taken!");
+    });
 }
 ```
 
 Broadcasting a message to all clients, except the sender.
 
 ```typescript
-onMessage (client, message) {
-    if (message === "fire") {
+onCreate() {
+    this.onMessage("fire", (client, message) => {
         // sends "fire" event to every client, except the one who triggered it.
-        this.broadcast("fire!", { except: client });
-    }
+        this.broadcast("fire", { except: client });
+    });
 }
 ```
 
 Broadcasting a message to all clients, only after a change in the state has been applied:
 
 ```typescript
-onMessage (client, message) {
-    if (message === "destroy") {
+onCreate() {
+    this.onMessage("destroy", (client, message) => {
         // perform changes in your state!
         this.state.destroySomething();
 
         // this message will arrive only after new state has been applied
-        this.broadcast("has been destroyed!", { afterNextPatch: true });
-    }
+        this.broadcast("destroy", "something has been destroyed", { afterNextPatch: true });
+    });
 }
 ```
 
@@ -328,13 +328,12 @@ class MyMessage extends Schema {
 }
 
 // ...
-
-onMessage (client, message) {
-    if (message === "action") {
+onCreate() {
+    this.onMessage("action", (client, message) => {
         const data = new MyMessage();
         data.message = "an action has been taken!";
         this.broadcast(data);
-    }
+    });
 }
 ```
 
