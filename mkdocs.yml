@@ -107,8 +107,8 @@ nav:
   - 'Fossil Delta (deprecated)': 'state/fossil-delta.md'
 
 - 'Built-in Rooms':
-  - 'Relay room': 'builtin-rooms/relay.md'
   - 'Lobby room': 'builtin-rooms/lobby.md'
+  - 'Relay room': 'builtin-rooms/relay.md'
 
 - 'Best practices':
   - 'Overview': 'best-practices/overview.md'
