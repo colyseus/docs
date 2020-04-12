@@ -28,17 +28,19 @@ const client = new Client("ws://localhost:2567");
 //
 // Join the relayed room
 //
-const relay = await client.joinOrCreate("your_relayed_room");
+const relay = await client.joinOrCreate("your_relayed_room", {
+  name: "This is my name!"
+});
 
 //
 // Detect when a player joined the room
 //
 relay.state.players.onAdd = (player, sessionId) => {
   if (relay.sessionId === sessionId) {
-    console.log("It's me!");
+    console.log("It's me!", player.name);
 
   } else {
-    console.log("It's an opponent", player, sessionId);
+    console.log("It's an opponent", player.name, sessionId);
   }
 }
 

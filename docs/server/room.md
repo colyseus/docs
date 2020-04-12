@@ -246,32 +246,8 @@ Set the number of seconds a room can wait for a client to effectively join the r
 
 ### `send (client, message)`
 
-Send a message to a particular client. The `message` can be either a plain JavaScript object, or a [`Schema`](/state/schema) instance.
+DEPRECATED: `this.send()` has been deprecated. Please use [`client.send()` instead](/server/client/#sendtype-message).
 
-**Sending a msgpack-encoded message:**
-
-This is the recommended way if you're using an interpreted language on the client-side, such as JavaScript or LUA.
-
-```typescript
-this.send(client, { message: "Hello world!" });
-```
-
-**Sending a schema-encoded message:**
-
-Sending schema-encoded messages is particularly useful for statically-typed languages such as C#.
-
-```typescript
-class MyMessage extends Schema {
-  @type("string") message: string;
-}
-
-const data = new MyMessage();
-data.message = "Hello world!";
-this.send(client, data);
-```
-
-!!! Tip
-    [See how to handle these messages on client-side.](/client/room/#onmessage)
 
 ### `broadcast (type, message, options?)`
 
