@@ -44,10 +44,10 @@ Here's how the "multiplayer game loop" looks like on Colyseus:
       +------------+       |       +-----------------------------------+
 +-----+ Client #1  +-------|       |  Room handler #1                  |
 |     +------------+       |       |                                   |
-|     +------------+       |       |  onMessage (client, data) {       |
-|-----+ Client #2  |       --------+    if (data.action === "left") {  |
-|     +------------+               |      // update the room state     |
-|     +------------+               |    }                              |
+|     +------------+       |       |  onMessage () {                   |
+|-----+ Client #2  |       --------+    //                             |
+|     +------------+               |    // update the room state       |
+|     +------------+               |    //                             |
 |-----+ Client #3  |               |  }                                |
 |     +------------+               +-----------------------------------+
 |                                                    |

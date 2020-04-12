@@ -186,7 +186,8 @@ Whenever a room is created by the `create()` or `joinOrCreate()` methods, only t
 **Example:** allowing different "game modes".
 
 ```typescript
-gameServer.define("battle", BattleRoom)
+gameServer
+  .define("battle", BattleRoom)
   .filterBy(['mode']);
 ```
 

@@ -65,7 +65,6 @@ export class MyRoom extends Room {
             this.delayedInterval.clear();
         }, 10_000);
     }
-    onMessage() { }
 }
 ```
 

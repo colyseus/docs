@@ -50,7 +50,7 @@ room.onStateChange((state) => {
 Message broadcasted from server or directly to this client:
 
 ```ts
-room.onMessage((message) => {
+room.onMessage("message_type", (message) => {
   console.log(client.id, "received on", room.name, message);
 });
 ```
@@ -58,7 +58,7 @@ room.onMessage((message) => {
 Server error occurred:
 
 ```ts
-room.onError(() => {
+room.onError((code, message) => {
   console.log(client.id, "couldn't join", room.name);
 });
 ```
@@ -66,7 +66,7 @@ room.onError(() => {
 The client left the room:
 
 ```ts
-room.onLeave(() => {
+room.onLeave((code) => {
   console.log(client.id, "left", room.name);
 });
 ```
