@@ -219,7 +219,8 @@ class BattleRoom extends Room {
 The `maxClients` is an internal variable stored for matchmaking, and can be used for filtering too.
 
 ```typescript
-gameServer.define("battle", BattleRoom)
+gameServer
+  .define("battle", BattleRoom)
   .filterBy(['maxClients']);
 ```
 
@@ -243,16 +244,32 @@ The `options` parameter is a key-value object containing the field name in the l
 The `clients` is an internal variable stored for matchmaking, which contains the current number of connected clients. On the example below, the rooms with the highest amount of clients connected will have priority. Use `-1`, `"desc"` or `"descending"` for descending order:
 
 ```typescript
-gameServer.define("battle", BattleRoom)
+gameServer
+  .define("battle", BattleRoom)
   .sortBy({ clients: -1 });
 ```
 
 To sort by the fewest amount of players, you can do the opposite. Use `1`, `"asc"` or `"ascending"` for ascending order:
 
 ```typescript
-gameServer.define("battle", BattleRoom)
+gameServer
+  .define("battle", BattleRoom)
   .sortBy({ clients: 1 });
 ```
+
+---
+
+#### Enable realtime room listing for Lobby
+
+To allow the `LobbyRoom` to receive updates from a specific room type, you should define them with realtime listing enabled:
+
+```typescript
+gameServer
+  .define("battle", BattleRoom)
+  .enableRealtimeListing();
+```
+
+[See more about the `LobbyRoom`](/builtin-rooms/lobby/)
 
 ---
 
@@ -270,7 +287,8 @@ The `define` method will return the registered handler instance, which you can l
 **Usage:**
 
 ```typescript
-gameServer.define("chat", ChatRoom)
+gameServer
+  .define("chat", ChatRoom)
   .on("create", (room) => console.log("room created:", room.roomId))
   .on("dispose", (room) => console.log("room disposed:", room.roomId))
   .on("join", (room, client) => console.log(client.id, "joined", room.roomId))
