@@ -23,8 +23,10 @@ gameServer.define("your_relayed_room", RelayRoom, {
 
 See how to register callbacks for players joining, leaving, sending and receiving messages from the relayed room.
 
+### Connecting into the room
+
 ```typescript
-import { Client, RoomAvailable } from "colyseus.js";
+import { Client } from "colyseus.js";
 
 const client = new Client("ws://localhost:2567");
 
@@ -34,7 +36,12 @@ const client = new Client("ws://localhost:2567");
 const relay = await client.joinOrCreate("your_relayed_room", {
   name: "This is my name!"
 });
+```
 
+### Registering callbacks when players join and leave
+
+
+```typescript
 //
 // Detect when a player joined the room
 //
@@ -66,7 +73,11 @@ relay.state.players.onChange = (player, sessionId) => {
     console.log("Opponent has disconnected!", player, sessionId);
   }
 }
+```
 
+### Sending an receiving messages
+
+```typescript
 //
 // By sending a message, all other clients will receive it under the same name
 // Messages are only sent to other connected clients, never the current one.
