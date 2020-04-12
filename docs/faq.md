@@ -11,8 +11,7 @@ The default "file descriptor limit" (amount of open connections you can have) of
 
 In the current state of the framework, you can't do that. You'd need to send data manually to each client (through [room's send method](/api-room/#send-client-message)), and not use the state for the data you'd like to hide from particular players.
 
-- There's a big discussion about this on issue [#59](https://github.com/colyseus/colyseus/issues/59)
-- Hopefully this will be improved when the [new serialization](https://github.com/colyseus/schema) gets stable, and integrated with the framework.
+There's a big discussion about this on issue [#59](https://github.com/colyseus/colyseus/issues/59)
 
 ### How would I broadcast data from one client to others?
 
