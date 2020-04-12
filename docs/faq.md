@@ -13,10 +13,6 @@ In the current state of the framework, you can't do that. You'd need to send dat
 
 There's a big discussion about this on issue [#59](https://github.com/colyseus/colyseus/issues/59)
 
-### How would I broadcast data from one client to others?
-
-You usually don't do that. By using an authoritative game server, the clients generally send **actions** to the server, and the server **mutates** the state of the game session. After having the mutation, all clients will receive the latest state from the server in the next patch interval.
-
 ### Does Colyseus help me with client-prediction?
 
 Colyseus does not provide any client-prediction solution out of the box. Games such as [wilds.io](http://wilds.io/) and [mazmorra.io](https://mazmorra.io/) do not use any form of client-prediction. [`lerp`](http://gamestd.io/mathf/globals.html#lerp)ing user coordinates usually gives reasonable results.
