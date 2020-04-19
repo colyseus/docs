@@ -1,4 +1,4 @@
-# Built-in Relay Room
+# Built-in room &raquo; Relay Room
 
 The built-in `RelayRoom` is useful for simple use cases, where you don't need to hold any state in the server-side other than the clients connected to it.
 

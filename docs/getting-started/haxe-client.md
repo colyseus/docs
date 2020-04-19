@@ -61,9 +61,9 @@ room.onStateChange += function(state) {
 Message broadcasted from server or directly to this client:
 
 ```haxe
-room.onMessage += function (message) {
+room.onMessage("type", function (message) {
   trace(client.id + " received on " + room.name + ": " + message);
-}
+});
 ```
 
 Server error occurred:

@@ -20,7 +20,7 @@ Room* room;
 bool HelloWorld::init()
 {
     client = new Client("ws://localhost:2667");
-    client->joinOrCreate<RoomState>("state_handler", {}, [=](std::string err, Room<RoomState>* _room) {
+    client->joinOrCreate<RoomState>("state_handler", {}, [=](MatchMakeError *err, Room<RoomState>* _room) {
         if (err != "") {
             std::cout << "JOIN ERROR! " << err << std::endl;
             return;
@@ -28,9 +28,9 @@ bool HelloWorld::init()
 
         room = _room;
 
-        room->onMessage = [=] (msgpack::object message) -> void {
+        room->onMessage("type", [=] (msgpack::object message) -> void {
             std::cout << message << std::endl;
-        }
+        });
 
         room->onStateChange = [=] (RoomState* state) -> void {
             // ...

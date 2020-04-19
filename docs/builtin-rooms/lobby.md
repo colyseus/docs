@@ -1,6 +1,6 @@
-# Built-in Lobby Room
+# Built-in room &raquo; Lobby Room
 
-!!! Warning "Lobby room will change on Colyseus 1.0.0"
+!!! Warning "Client-side API for lobby room will change on Colyseus 1.0.0"
     The built-in lobby room currently relies on sending messages to notify clients about available rooms. When `@filter()` becomes stable, the LobbyRoom is going to use the state instead.
 
 ## Server-side

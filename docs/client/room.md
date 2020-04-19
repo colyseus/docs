@@ -295,7 +295,7 @@ room.onError += function(code, message) {
 ```
 
 ```cpp fct_label="C++"
-room.onError = [=] (uint code, std::string message) => void {
+room.onError = [=] (int code, std::string message) => void {
   std::cout << "oops, error ocurred: " << message << std::endl;
 };
 ```
