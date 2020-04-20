@@ -65,7 +65,7 @@ lobby.onMessage("rooms", (rooms) => {
 });
 
 lobby.onMessage("+", ([roomId, room]) => {
-  const roomIndex = allRooms.findIndex((room) => room.id === roomId);
+  const roomIndex = allRooms.findIndex((room) => room.roomId === roomId);
   if (roomIndex) {
     allRooms[roomIndex] = room;
 
@@ -75,6 +75,6 @@ lobby.onMessage("+", ([roomId, room]) => {
 });
 
 lobby.onMessage("-", (roomId) => {
-  allRooms = allRooms.filter((room) => room.id !== roomId);
+  allRooms = allRooms.filter((room) => room.roomId !== roomId);
 });
 ```
