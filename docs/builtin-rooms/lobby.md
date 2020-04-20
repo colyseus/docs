@@ -66,7 +66,7 @@ lobby.onMessage("rooms", (rooms) => {
 
 lobby.onMessage("+", ([roomId, room]) => {
   const roomIndex = allRooms.findIndex((room) => room.roomId === roomId);
-  if (roomIndex) {
+  if (roomIndex !== -1) {
     allRooms[roomIndex] = room;
 
   } else {
