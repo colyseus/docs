@@ -122,7 +122,7 @@ export class GameRoom extends Room<State> {
     this.setState(new State());
 
     // Called every time this room receives a "move" message
-    this.onMessage("move", (data) => {
+    this.onMessage("move", (client, data) => {
       const player: Player = this.state.players[client.sessionId];
       player.x += data.x;
       player.y += data.y;
