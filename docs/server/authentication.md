@@ -18,7 +18,7 @@ client.joinOrCreate("world", {
 
 ```csharp fct_label="C#"
 try {
-  var room = client.JoinOrCreate<YourStateClass>("world", new {
+  var room = await client.JoinOrCreate<YourStateClass>("world", new {
     accessToken = yourFacebookAccessToken
   });
   // success
@@ -33,6 +33,11 @@ client:join_or_create("world", {
   accessToken = yourFacebookAccessToken
 
 }, function(err, room)
+  if err then
+    -- handle error...
+    return
+  end
+
   -- success
 end)
 ```
@@ -55,7 +60,7 @@ client.joinOrCreate("world", {
 client.joinOrCreate("world", {
   {"accessToken", yourFacebookAccessToken }
 
-}, [=](std::string err, Room<YourStateClass>* room) {
+}, [=](MatchMakeError *err, Room<YourStateClass>* room) {
   if (err != "") {
     // handle error...
     return;
