@@ -1,5 +1,5 @@
 # Project information
-site_name: 'Colyseus 0.12.x'
+site_name: 'Colyseus 0.13'
 site_description: 'Documentation for Colyseus Multiplayer Game Server for Node.js'
 site_author: 'Endel Dreyer'
 site_url: 'https://colyseus.io/'
@@ -14,7 +14,7 @@ repo_name: 'colyseus/colyseus'
 repo_url: 'https://github.com/colyseus/colyseus'
 
 # Copyright
-copyright: 'Copyright &copy; 2019 Endel Dreyer'
+copyright: 'Copyright &copy; 2020 Endel Dreyer'
 
 # Documentation and theme
 theme:
@@ -95,7 +95,7 @@ nav:
   - 'Authentication API': 'server/authentication.md'
   - 'Presence': 'server/presence.md'
   - 'Graceful shutdown': 'server/graceful-shutdown.md'
-  - 'Custom State Serialization': 'server/state-serialization.md'
+  # - 'Custom State Serialization': 'server/state-serialization.md'
 
 - 'Client API':
   - 'Client': 'client/client.md'
@@ -106,14 +106,23 @@ nav:
   - 'Schema': 'state/schema.md'
   - 'Fossil Delta (deprecated)': 'state/fossil-delta.md'
 
+- 'Built-in Rooms':
+  - 'Lobby room': 'builtin-rooms/lobby.md'
+  - 'Relay room': 'builtin-rooms/relay.md'
+
+- 'Best practices':
+  - 'Overview': 'best-practices/overview.md'
+  - 'The Command Pattern': 'best-practices/command-pattern.md'
+
 - 'Authentication': 'authentication.md'
-- 'Push Notifications': 'push.md'
+# - 'Push Notifications': 'push.md'
 
 - 'Debugging': 'debugging.md'
 - 'Deployment': 'deployment.md'
 - 'Scalability': 'scalability.md'
 
 - 'Migrating':
+  - '0.13.x': 'migrating/0.13.md'
   - '0.12.x': 'migrating/0.12.md'
   - '0.11.x': 'migrating/0.11.md'
   - '0.10.x': 'migrating/0.10.md'

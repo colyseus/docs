@@ -11,12 +11,7 @@ The default "file descriptor limit" (amount of open connections you can have) of
 
 In the current state of the framework, you can't do that. You'd need to send data manually to each client (through [room's send method](/api-room/#send-client-message)), and not use the state for the data you'd like to hide from particular players.
 
-- There's a big discussion about this on issue [#59](https://github.com/colyseus/colyseus/issues/59)
-- Hopefully this will be improved when the [new serialization](https://github.com/colyseus/schema) gets stable, and integrated with the framework.
-
-### How would I broadcast data from one client to others?
-
-You usually don't do that. By using an authoritative game server, the clients generally send **actions** to the server, and the server **mutates** the state of the game session. After having the mutation, all clients will receive the latest state from the server in the next patch interval.
+There's a big discussion about this on issue [#59](https://github.com/colyseus/colyseus/issues/59)
 
 ### Does Colyseus help me with client-prediction?
 

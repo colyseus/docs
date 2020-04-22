@@ -32,38 +32,13 @@ export class BattleRoom extends Room {
     this.setState({
       players: {}
     });
-  }
 
-  onJoin (client) {
-    this.state.players[ client.sessionId ] = {
-      x: 0,
-      y: 0
-    };
-  }
-
-  onLeave (client) {
-    delete this.state.players[ client.sessionId ];
-  }
-
-  onMessage (client, data) {
-    if (data.action === "left") {
+    this.onMessage("left", (client, message) => {
       this.state.players[ client.sessionId ].x -= 1;
+    });
 
-    } else if (data.action === "right") {
+    this.onMessage("right", (client, message) => {
       this.state.players[ client.sessionId ].x += 1;
-    }
-  }
-}
-```
-
-```typescript fct_label="JavaScript"
-const colyseus = require('colyseus')
-
-export class BattleRoom extends colyseus.Room {
-
-  onCreate (options: any) {
-    this.setState({
-      players: {}
     });
   }
 
@@ -78,14 +53,40 @@ export class BattleRoom extends colyseus.Room {
     delete this.state.players[ client.sessionId ];
   }
 
-  onMessage (client, data) {
-    if (data.action === "left") {
-      this.state.players[ client.sessionId ].x -= 1;
+}
+```
 
-    } else if (data.action === "right") {
+```typescript fct_label="JavaScript"
+const colyseus = require('colyseus')
+
+export class BattleRoom extends colyseus.Room {
+
+  onCreate (options: any) {
+    this.setState({
+      players: {}
+    });
+
+    this.onMessage("left", (client, message) => {
+      this.state.players[ client.sessionId ].x -= 1;
+    });
+
+    this.onMessage("right", (client, message) => {
       this.state.players[ client.sessionId ].x += 1;
-    }
+    });
+
   }
+
+  onJoin (client) {
+    this.state.players[ client.sessionId ] = {
+      x: 0,
+      y: 0
+    };
+  }
+
+  onLeave (client) {
+    delete this.state.players[ client.sessionId ];
+  }
+
 }
 ```
 
@@ -133,6 +134,10 @@ export class BattleRoom extends Room<BattleState> {
 
   onCreate (options: any) {
     this.setState(new BattleState());
+
+    this.onMessage("action", (client, message) => {
+      this.state.movePlayer(client, message);
+    })
   }
 
   onJoin (client: Client) {
@@ -141,12 +146,6 @@ export class BattleRoom extends Room<BattleState> {
 
   onLeave (client: Client) {
     this.state.removePlayer(client);
-  }
-
-  onMessage (client: Client, data: any) {
-    if (data.action) {
-      this.state.movePlayer(client, data.action);
-    }
   }
 }
 ```
@@ -189,6 +188,10 @@ module.exports = class BattleRoom extends colyseus.Room {
 
   onCreate (options: any) {
     this.setState(new BattleState());
+
+    this.onMessage("action", (client, data) => {
+      this.state.movePlayer(client, data.action);
+    });
   }
 
   onJoin (client) {
@@ -199,11 +202,6 @@ module.exports = class BattleRoom extends colyseus.Room {
     this.state.removePlayer(client);
   }
 
-  onMessage (client, data) {
-    if (data.action) {
-      this.state.movePlayer(client, data.action);
-    }
-  }
 }
 ```
 

@@ -11,7 +11,11 @@ Colyseus currently have clients for the platforms:
 
 Need a client for another platform? Share your interest on the [discussion board](https://discuss.colyseus.io/)!
 
-## Connecting to the Server
+## Instantiate the Colyseus client
+
+The client is used to perform matchmaking calls, and later connect to one or many rooms.
+
+There is no actual server-side connection at this point.
 
 ```typescript fct_label="JavaScript"
 import Colyseus from "colyseus.js";

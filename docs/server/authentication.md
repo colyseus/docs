@@ -5,8 +5,12 @@ The `onAuth()` method will be executed before `onJoin()`. You can use it to vali
 From the client-side, you'd call the `join` method with a token from some authentication service of your choice (i. e. Facebook):
 
 ```javascript fct_label="JavaScript"
-client.joinOrCreate("world", { accessToken: yourFacebookAccessToken }).then(room => {
+client.joinOrCreate("world", {
+  accessToken: yourFacebookAccessToken
+
+}).then(room => {
   // success
+
 }).catch(err => {
   // handle error...
 });
@@ -14,21 +18,35 @@ client.joinOrCreate("world", { accessToken: yourFacebookAccessToken }).then(room
 
 ```csharp fct_label="C#"
 try {
-  var room = client.JoinOrCreate<YourStateClass>("world", new { accessToken = yourFacebookAccessToken });
+  var room = await client.JoinOrCreate<YourStateClass>("world", new {
+    accessToken = yourFacebookAccessToken
+  });
   // success
+
 } catch (ex) {
   // handle error...
 }
 ```
 
 ```lua fct_label="Lua"
-client:join_or_create("world", { accessToken = yourFacebookAccessToken }, function(err, room)
+client:join_or_create("world", {
+  accessToken = yourFacebookAccessToken
+
+}, function(err, room)
+  if err then
+    -- handle error...
+    return
+  end
+
   -- success
 end)
 ```
 
 ```haxe fct_label="Haxe"
-client.joinOrCreate("world", { accessToken: yourFacebookAccessToken }, YourStateClass, function (err, room) {
+client.joinOrCreate("world", {
+  accessToken: yourFacebookAccessToken
+
+}, YourStateClass, function (err, room) {
   if (err != null) {
     // handle error...
     return;
@@ -39,7 +57,10 @@ client.joinOrCreate("world", { accessToken: yourFacebookAccessToken }, YourState
 ```
 
 ```cpp fct_label="C++"
-client.joinOrCreate("world", {{"accessToken", yourFacebookAccessToken }}, [=](std::string err, Room<YourStateClass>* room) {
+client.joinOrCreate("world", {
+  {"accessToken", yourFacebookAccessToken }
+
+}, [=](MatchMakeError *err, Room<YourStateClass>* room) {
   if (err != "") {
     // handle error...
     return;
@@ -63,7 +84,7 @@ You can immediatelly return a `boolean` value.
 import { Room } from "colyseus";
 
 class MyRoom extends Room {
-  onAuth (client, options): boolean {
+  onAuth (client, options, request): boolean {
     return (options.password === "secret");
   }
 }
@@ -77,7 +98,7 @@ You can return a `Promise`, and perform some asynchronous task to validate the c
 import { Room } from "colyseus";
 
 class MyRoom extends Room {
-  onAuth (client, options): Promise<any> {
+  onAuth (client, options, request): Promise<any> {
     return new Promise((resolve, reject) => {
       validateToken(options.accessToken, (err, userData) => {
         if (!err) {
@@ -97,7 +118,7 @@ Alternatively, you can use `async` / `await`, which will return a `Promise` unde
 import { Room } from "colyseus";
 
 class MyRoom extends Room {
-  async onAuth (client, options) {
+  async onAuth (client, options, request) {
     const userData = await validateToken(options.accessToken);
     return (userData) ? userData : false;
   }

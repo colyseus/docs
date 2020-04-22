@@ -18,9 +18,6 @@ export class MyRoom extends Room {
     // When client successfully join the room
     onJoin (client: Client, options: any, auth: any) { }
 
-    // When a client sends a message
-    onMessage (client: Client, message: any) { }
-
     // When a client leaves the room
     onLeave (client: Client, consented: boolean) { }
 
@@ -42,9 +39,6 @@ export class MyRoom extends colyseus.Room {
     // When client successfully join the room
     onJoin (client, options, auth) { }
 
-    // When a client sends a message
-    onMessage (client, message) { }
-
     // When a client leaves the room
     onLeave (client, consented) { }
 
@@ -53,9 +47,9 @@ export class MyRoom extends colyseus.Room {
 }
 ```
 
-## Abstract methods
+## Room lifecycle
 
-Room handlers can implement all of these methods.
+These methods correspond to the room lifecycle.
 
 ### `onCreate (options)`
 
@@ -85,10 +79,6 @@ See [Authentication API](/server/authentication) section.
 - `auth`: (optional) auth data returned by [`onAuth`](#onauth-client-options-request) method.
 
 Is called when the client successfully joins the room, after `requestJoin` and `onAuth` has succeeded.
-
-### `onMessage (client, data)`
-
-Is called when a client sends a message to the server. Here's where you'll process client actions to update the [Room State](/state/overview/)
 
 ### `onLeave (client, consented)`
 
@@ -130,82 +120,64 @@ export class GameRoom extends Room<State> {
   onCreate(options: any) {
     // initialize empty room state
     this.setState(new State());
+
+    // Called every time this room receives a "move" message
+    this.onMessage("move", (data) => {
+      const player: Player = this.state.players[client.sessionId];
+      player.x += data.x;
+      player.y += data.y;
+      console.log(client.sessionId + " at, x: " + player.x, "y: " + player.y);
+    });
   }
 
   // Called every time a client joins
   onJoin(client: Client, options: any) {
     this.state.players[client.sessionId] = new Player();
   }
-
-  // Called every time this room receives a message
-  onMessage(client: Client, message: any) {
-    // Retrieve a previously stored player by their sessionId
-    const player = this.state.players[client.sessionId];
-
-    // Pretend that we sent the room the message: {command: "left"}
-    if (message.command === "left") {
-      player.x -= 1;
-    } else if (message.command === "right") {
-      player.x += 1;
-    }
-
-    console.log(client.sessionId + " at, x: " + player.x, "y: " + player.y);
-  }
 }
 ```
-
-## Public properties
-
-### `roomId: string`
-
-A unique, auto-generated, 9-character-long id of the room.
-
-### `roomName: string`
-
-The name of the room you provided as first argument for [`gameServer.define()`](/server/api/#define-name-string-handler-room-options-any).
-
-### `state: T`
-
-The state instance you provided to [`setState()`](#setstate-object).
-
-### `clients: WebSocket[]`
-
-The array of connected clients. See [Web-Socket Client](/server/client).
-
-### `maxClients: number`
-
-Maximum number of clients allowed to connect into the room. When room reaches
-this limit, it is locked automatically. Unless the room was explicitly locked by
-you via [lock()](#lock) method, the room will be unlocked as soon as a client
-disconnects from it.
-
-### `patchRate: number`
-
-Frequency to send the room state to connected clients, in milliseconds. Default is `50`ms (20fps)
-
-### `autoDispose: boolean`
-
-Automatically dispose the room when last client disconnect. Default is `true`
-
-### `locked: boolean` (read-only)
-
-This property will change on these situations:
-
-- The maximum number of allowed clients has been reached (`maxClients`)
-- You manually locked, or unlocked the room using [`lock()`](#lock) or [`unlock()`](#unlock).
-
-### `clock: ClockTimer`
-
-A [`ClockTimer`](https://github.com/gamestdio/timer#api) instance, used for
-[timing events](/server/timing-events).
-
-### `presence: Presence`
-
-The `presence` instance. Check [Presence API](/server/presence) for more details.
 
 ## Public methods
 
 Room handlers have these methods available.
+
+### `onMessage (type, callback)`
+
+Register a callback to process a type of message sent by the client-side.
+
+The `type` argument can be either `string` or `number`.
+
+**Callback for specific type of message**
+
+```typescript
+onCreate () {
+    this.onMessage("action", (client, message) => {
+        console.log(client.sessionId, "sent 'action' message: ", message);
+    });
+}
+```
+
+**Callback for ALL messages**
+
+You can register a single callback to handle all other types of messages.
+
+```typescript
+onCreate () {
+    this.onMessage("action", (client, message) => {
+        //
+        // Triggers when 'action' message is sent.
+        //
+    });
+
+    this.onMessage("*", (client, type, message) => {
+        //
+        // Triggers when any other type of message is sent,
+        // excluding "action", which has its own specific handler defined above.
+        //
+        console.log(client.sessionId, "sent", type, message);
+    });
+}
+```
 
 ### `setState (object)`
 
@@ -277,34 +249,10 @@ Set the number of seconds a room can wait for a client to effectively join the r
 
 ### `send (client, message)`
 
-Send a message to a particular client. The `message` can be either a plain JavaScript object, or a [`Schema`](/state/schema) instance.
+DEPRECATED: `this.send()` has been deprecated. Please use [`client.send()` instead](/server/client/#sendtype-message).
 
-**Sending a msgpack-encoded message:**
 
-This is the recommended way if you're using an interpreted language on the client-side, such as JavaScript or LUA.
-
-```typescript
-this.send(client, { message: "Hello world!" });
-```
-
-**Sending a schema-encoded message:**
-
-Sending schema-encoded messages is particularly useful for statically-typed languages such as C#.
-
-```typescript
-class MyMessage extends Schema {
-  @type("string") message: string;
-}
-
-const data = new MyMessage();
-data.message = "Hello world!";
-this.send(client, data);
-```
-
-!!! Tip
-    [See how to handle these messages on client-side.](/client/room/#onmessage)
-
-### `broadcast (message, options?)`
+### `broadcast (type, message, options?)`
 
 Send a message to all connected clients.
 
@@ -318,36 +266,36 @@ Available options are:
 Broadcasting a message to all clients:
 
 ```typescript
-onMessage (client, message) {
-    if (message === "action") {
+onCreate() {
+    this.onMessage("action", (client, message) => {
         // broadcast a message to all clients
-        this.broadcast("an action has been taken!");
-    }
+        this.broadcast("action-taken", "an action has been taken!");
+    });
 }
 ```
 
 Broadcasting a message to all clients, except the sender.
 
 ```typescript
-onMessage (client, message) {
-    if (message === "fire") {
+onCreate() {
+    this.onMessage("fire", (client, message) => {
         // sends "fire" event to every client, except the one who triggered it.
-        this.broadcast("fire!", { except: client });
-    }
+        this.broadcast("fire", { except: client });
+    });
 }
 ```
 
 Broadcasting a message to all clients, only after a change in the state has been applied:
 
 ```typescript
-onMessage (client, message) {
-    if (message === "destroy") {
+onCreate() {
+    this.onMessage("destroy", (client, message) => {
         // perform changes in your state!
         this.state.destroySomething();
 
         // this message will arrive only after new state has been applied
-        this.broadcast("has been destroyed!", { afterNextPatch: true });
-    }
+        this.broadcast("destroy", "something has been destroyed", { afterNextPatch: true });
+    });
 }
 ```
 
@@ -359,13 +307,12 @@ class MyMessage extends Schema {
 }
 
 // ...
-
-onMessage (client, message) {
-    if (message === "action") {
+onCreate() {
+    this.onMessage("action", (client, message) => {
         const data = new MyMessage();
         data.message = "an action has been taken!";
         this.broadcast(data);
-    }
+    });
 }
 ```
 
@@ -461,3 +408,54 @@ async onLeave (client, consented: boolean) {
 ### `disconnect ()`
 
 Disconnect all clients, then dispose.
+
+## Public properties
+
+### `roomId: string`
+
+A unique, auto-generated, 9-character-long id of the room.
+
+You may replace `this.roomId` during `onCreate()`. You need to make sure `roomId` is unique.
+
+### `roomName: string`
+
+The name of the room you provided as first argument for [`gameServer.define()`](/server/api/#define-name-string-handler-room-options-any).
+
+### `state: T`
+
+The state instance you provided to [`setState()`](#setstate-object).
+
+### `clients: Client[]`
+
+The array of connected clients. See [Web-Socket Client](/server/client).
+
+### `maxClients: number`
+
+Maximum number of clients allowed to connect into the room. When room reaches
+this limit, it is locked automatically. Unless the room was explicitly locked by
+you via [lock()](#lock) method, the room will be unlocked as soon as a client
+disconnects from it.
+
+### `patchRate: number`
+
+Frequency to send the room state to connected clients, in milliseconds. Default is `50`ms (20fps)
+
+### `autoDispose: boolean`
+
+Automatically dispose the room when last client disconnect. Default is `true`
+
+### `locked: boolean` (read-only)
+
+This property will change on these situations:
+
+- The maximum number of allowed clients has been reached (`maxClients`)
+- You manually locked, or unlocked the room using [`lock()`](#lock) or [`unlock()`](#unlock).
+
+### `clock: ClockTimer`
+
+A [`ClockTimer`](https://github.com/gamestdio/timer#api) instance, used for
+[timing events](/server/timing-events).
+
+### `presence: Presence`
+
+The `presence` instance. Check [Presence API](/server/presence) for more details.
