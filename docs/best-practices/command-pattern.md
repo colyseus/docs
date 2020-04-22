@@ -13,18 +13,23 @@
 
 ## Usage
 
+Installation
+
 ```
 npm install --save @colyseus/command
 ```
+
+Initialize the `dispatcher` in your room implementation:
 
 ```typescript
 import { Room } from "colyseus";
 import { Dispatcher } from "@colyseus/command";
 
 class MyRoom extends Room<YourState> {
+  dispatcher = new Dispatcher(this);
+
   onCreate() {
     this.setState(new YourState());
-    this.dispatcher = new Dispatcher(this);
   }
 
   onJoin(client, options) {
@@ -36,6 +41,8 @@ class MyRoom extends Room<YourState> {
   }
 }
 ```
+
+How a command implementation looks like:
 
 ```typescript
 import { Command } from "@colyseus/command";
