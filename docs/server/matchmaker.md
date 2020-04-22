@@ -11,6 +11,22 @@ import { matchMaker } from "colyseus";
 const matchMaker = require("colyseus").matchMaker;
 ```
 
+## `.createRoom(roomName, options)`
+Create a new room
+
+**Parameters:**
+
+- **`roomName`**: the identifier you defined on `gameServer.define()`.
+- **`options`**: options for `onCreate`
+
+```typescript
+const room = await matchMaker.createRoom("battle", { mode: "duo" });
+console.log(room);
+/*
+  { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+*/
+```
+
 ## `.joinOrCreate(roomName, options)`
 
 Join or create a room and return a client seat reservation.
@@ -34,16 +50,19 @@ console.log(reservation);
 !!! Tip "Consuming the seat reservation"
     You can use [`consumeSeatReservation()` from the client-side](/client/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 
-## `.create(roomName, options)`
-Create a new room and return client seat reservation.
+## `.reserveSeatFor(room, options)`
+Reserve a seat for a client in a room.
+
+!!! Tip "Consuming the seat reservation"
+    You can use [`consumeSeatReservation()` from the client-side](/client/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 
 **Parameters:**
 
-- **`roomName`**: the identifier you defined on `gameServer.define()`.
-- **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`)
+- **`room`**: room data (result from `createRoom()`, etc)
+- **`options`**: options for `onCreate`
 
 ```typescript
-const reservation = await matchMaker.create("battle", { mode: "duo" });
+const reservation = await matchMaker.reserveSeatFor("battle", { mode: "duo" });
 console.log(reservation);
 /*
   {
@@ -52,9 +71,6 @@ console.log(reservation);
   }
 */
 ```
-
-!!! Tip "Consuming the seat reservation"
-    You can use [`consumeSeatReservation()` from the client-side](/client/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 
 ## `.join(roomName, options)`
 Join a room and return seat reservation. An exception is thrown if there are no rooms available for `roomName`.
@@ -88,6 +104,28 @@ Join a room by id and return client seat reservation. An exception is thrown if 
 
 ```typescript
 const reservation = await matchMaker.joinById("xxxxxxxxx", {});
+console.log(reservation);
+/*
+  {
+    "sessionId": "zzzzzzzzz",
+    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+  }
+*/
+```
+
+!!! Tip "Consuming the seat reservation"
+    You can use [`consumeSeatReservation()` from the client-side](/client/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
+
+## `.create(roomName, options)`
+Create a new room and return client seat reservation.
+
+**Parameters:**
+
+- **`roomName`**: the identifier you defined on `gameServer.define()`.
+- **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`)
+
+```typescript
+const reservation = await matchMaker.create("battle", { mode: "duo" });
 console.log(reservation);
 /*
   {
@@ -143,43 +181,5 @@ Call a method or return a property on a remote room.
 ```typescript
 // call lock() on a remote room by id
 await matchMaker.remoteRoomCall("xxxxxxxxx", "lock");
-```
-
-## `.createRoom(roomName, options)`
-Create a new room
-
-**Parameters:**
-
-- **`roomName`**: the identifier you defined on `gameServer.define()`.
-- **`options`**: options for `onCreate`
-
-```typescript
-const room = await matchMaker.createRoom("battle", { mode: "duo" });
-console.log(room);
-/*
-  { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
-*/
-```
-
-## `.reserveSeatFor(room, options)`
-Reserve a seat for a client in a room.
-
-!!! Tip "Consuming the seat reservation"
-    You can use [`consumeSeatReservation()` from the client-side](/client/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
-
-**Parameters:**
-
-- **`room`**: room data (result from `createRoom()`, etc)
-- **`options`**: options for `onCreate`
-
-```typescript
-const reservation = await matchMaker.reserveSeatFor("battle", { mode: "duo" });
-console.log(reservation);
-/*
-  {
-    "sessionId": "zzzzzzzzz",
-    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
-  }
-*/
 ```
 
