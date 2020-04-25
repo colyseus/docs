@@ -15,7 +15,7 @@ import { RelayRoom } from "colyseus";
 // Expose your relayed room
 gameServer.define("your_relayed_room", RelayRoom, {
   maxClients: 4,
-  allowReconnection: true
+  allowReconnectionTime: 120
 });
 ```
 
