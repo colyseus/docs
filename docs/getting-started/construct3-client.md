@@ -16,12 +16,12 @@ to parse it.
 **Server-side**
 
 ```typescript
-this.broadcast({ type: "foo", data: "bar" });
+this.broadcast("foo", "bar");
 ```
 
 **Client-side**
 
-Use the `On Message` condition, with `"foo"` as argument.
+Use the `On Message` condition, with `"foo"` as argument. The expression `CurrentValue` will have the value `"bar"`.
 
 
 ## Properties
@@ -55,6 +55,9 @@ Send message to a room
 ### Leave from the room
 Disconnect client from the room.
 
+### Get available {0} rooms.
+Get available rooms by name, OnGetAvailableRooms triggered when data is available. Data returned as JSON string in expression CurrentValue
+
 ## Conditions
 
 ### On Join
@@ -71,6 +74,9 @@ Triggered when the room broadcasts a message, or sends a message directly to thi
 
 ### On State Change
 Triggered when the state of the room changes.
+
+### On Get Available Rooms
+Triggers when available rooms data is ready in the CurrentValue expresssion.
 
 ### On add at {0}
 Triggers when an item is added to ArraySchema or MapSchema.
@@ -116,3 +122,8 @@ Get a value from room's state
 ### SessionId
 Unique sessionId of the current user
 
+### ErrorCode
+Get last error code
+
+### ErrorMessage
+Get last error message
