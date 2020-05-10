@@ -130,11 +130,17 @@ Virtual host configuration:
 
 ## greenlock-express
 
+Greenlock is a great tool if you want to quickly have SSL configured on your server, without the need to configure a reverse-proxy.
+
 When using [`greenlock-express`](https://www.npmjs.com/package/greenlock-express), you should **not** have any reverse-proxy configured behind it, such as [Nginx](#nginx-recommended) or [Apache](#apache).
 
-Please follow [greenlock-express's README section first](https://www.npmjs.com/package/greenlock-express#serve-your-sites-with-free-ssl).
+```
+npm install --save greenlock-express
+```
 
-Here's the recommended way to handle both development and production environments if you decide to use `greenlock-express`:
+Please follow [greenlock-express's README section first](https://www.npmjs.com/package/greenlock-express#1-create-your-project).
+
+Here's the recommended way to handle both development and production environments:
 
 ```typescript
 import http from "http";
