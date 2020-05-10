@@ -35,7 +35,7 @@ schema.defineTypes(MyState, {
 });
 ```
 
-### Custom child data type
+### Child schema properties
 
 You may define more custom data types inside your "root" state definition, as a direct reference, map, or array.
 
@@ -83,7 +83,7 @@ schema.defineTypes(MyState, {
 });
 ```
 
-### Array of custom data type
+### ArraySchema
 
 When using arrays within `State` related schema it's important to use the `ArraySchema` type.
 Do not use plain arrays inside your `State` classes (those which extend `Schema`).
@@ -132,7 +132,22 @@ schema.defineTypes(MyState, {
 });
 ```
 
-### Map of custom data type
+#### Usage examples
+
+Removing an item from `ArraySchema`
+
+```typescript
+// having a reference to the item you want to remove
+const itemToRemove = this.state.blocks[3];
+
+// find the index of the item you'd like to remove
+const itemIndex = this.state.blocks.findIndex((block) => block === itemToRemove);
+
+// remove it!
+this.state.blocks.splice(itemIndex, 1);
+```
+
+### MapSchema
 
 When using a map, it's important to use the `MapSchema` type. Do not use a plain object or the native Map type.
 
@@ -179,14 +194,32 @@ schema.defineTypes(MyState, {
 });
 ```
 
-#### Looping through the items of a `MapSchema`
+#### Usage examples
+
+Getting the length of the `MapSchema`
 
 ```typescript
-for (let id in this.players) {
-  const player: Player = this.players[id];
-  console.log(id, player);
+const length = Object.keys(this.state.players).length;
+console.log("Map length =>", length);
+```
+
+Looping through the items of a `MapSchema`
+
+```typescript
+for (let key in this.state.players) {
+  const player: Player = this.state.players[key];
+  console.log(key, player);
 }
 ```
+
+
+Removing an item from a `MapSchema`:
+
+```typescript
+const keyToRemove = "player1";
+delete this.state.players[keyToRemove]
+```
+
 
 ### Experimental: Filtering out fields for specific clients
 
