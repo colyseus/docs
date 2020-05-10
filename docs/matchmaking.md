@@ -1,1 +1,0 @@
-The `requestJoin()` method has been removed from version `0.11`. See [Server#define()](/server/api/#define-name-string-handler-room-options-any) for new matchmaking system.
