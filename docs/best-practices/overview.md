@@ -10,3 +10,8 @@
 - Your game logic should be handled by other structures, such as:
     - See how to use the [Command Pattern](/best-practices/command-pattern/).
     - An Entity-Component System WE NEED ONE THAT WORKS WELL WITH COLYSEUS PLEASE HELP
+    
+##Javascript
+
+###Bad practices
+Using numbers as keys on mapschema produces bad sync, because of the way keys are ordered in javascript
