@@ -1,7 +1,12 @@
 - [Construct 3](https://github.com/colyseus/colyseus-construct3) (compatible with C3 and C2 runtime from Construct3)
-- [Construct 2](https://github.com/colyseus/colyseus-construct2)
+- [Construct 2](https://github.com/colyseus/colyseus-construct2) (Not up-to-date - compatible with server 0.9.x)
 
-See [Multiplayer Drawing Prototype](https://github.com/endel/multiplayer-drawing-prototype) made with this plugin. ([live demo](https://drawing-prototype.herokuapp.com/))
+## Example project
+
+The example project has a similar result as the [TypeScript (pixijs-boilerplate)](https://github.com/endel/colyseus-pixijs-boilerplate).
+
+- [Client-side (c3p project)](/_downloads/ColyAgarClient-0-13-1.c3p)
+- [Server-side (source-code)](https://glitch.com/~held-quartz)
 
 ## Important
 
