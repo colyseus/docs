@@ -117,6 +117,10 @@ nav:
 - 'Authentication': 'authentication.md'
 # - 'Push Notifications': 'push.md'
 
+- "Tools":
+  - "Monitoring Panel": 'tools/monitor.md'
+  - "Load Testing": 'tools/loadtest.md'
+
 - 'Debugging': 'debugging.md'
 - 'Deployment': 'deployment.md'
 - 'Scalability': 'scalability.md'
