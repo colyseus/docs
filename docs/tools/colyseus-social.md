@@ -1,3 +1,5 @@
+# Authentication + Social (`@colyseus/social`)
+
 This section covers the configuration and usage of [`@colyseus/social`](http://github.com/colyseus/colyseus-social).
 
 `@colyseus/social` is an experimental module that provides general-purpose backend services to speed-up your multiplayer game development experience. The API is open for suggestions and improvement.

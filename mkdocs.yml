@@ -114,12 +114,10 @@ nav:
   - 'Overview': 'best-practices/overview.md'
   - 'The Command Pattern': 'best-practices/command-pattern.md'
 
-- 'Authentication': 'authentication.md'
-# - 'Push Notifications': 'push.md'
-
 - "Tools":
   - "Monitoring Panel": 'tools/monitor.md'
   - "Load Testing": 'tools/loadtest.md'
+  - "Authentication + Social": 'tools/colyseus-social.md'
 
 - 'Debugging': 'debugging.md'
 - 'Deployment': 'deployment.md'
