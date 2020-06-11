@@ -21,10 +21,19 @@ npm install express-jwt
 
 3. Import and expose the Express routes provided by `@colyseus/social`.
 
-
-```typescript
+```typescript fct_label="TypeScript"
 import express from "express";
 import socialRoutes from "@colyseus/social/express"
+
+const app = express();
+app.use("/", socialRoutes);
+
+app.listen(8080);
+```
+
+```typescript fct_label="JavaScript"
+const express = require("express");
+const socialRoutes = require("@colyseus/social/express").default;
 
 const app = express();
 app.use("/", socialRoutes);
