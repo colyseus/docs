@@ -13,3 +13,21 @@
   padding: 1em;
   text-align: center;
 }
+
+.md-content {
+  /* position: relative; */
+}
+
+.md-nav.md-nav--secondary {
+  height: calc(100vh - 280px);
+}
+
+#ethical_ad {
+  position: fixed;
+  right: 3em;
+  bottom: 1em;
+  z-index: 9999;
+}
+#ethical_ad .ea-content {
+  background: rgb(245, 245, 245) !important;
+}

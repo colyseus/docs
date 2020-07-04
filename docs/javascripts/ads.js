@@ -2,16 +2,24 @@ var content = document.querySelector(".md-content");
 var insertBefore = document.querySelector(".md-content > .md-content__inner");
 
 /**
- * Codefund
+ * EthicalAd
  */
-var codefundAd = document.createElement("div");
-codefundAd.id = "codefund_ad";
-codefundAd.setAttribute("data-behavior", "sticky");
-content.insertBefore(codefundAd, insertBefore);
+var ethicalAdContainer = document.createElement("div");
+ethicalAdContainer.id = "ethical_ad";
+
+var ethicalAd = document.createElement("div");
+ethicalAd.classList.add("horizontal");
+ethicalAd.classList.add("raised");
+ethicalAd.setAttribute("data-ea-publisher", "colyseus");
+ethicalAd.setAttribute("data-ea-type", "image");
+// ethicalAd.setAttribute("data-ea-type", "text");
+ethicalAdContainer.appendChild(ethicalAd);
+
+content.insertBefore(ethicalAdContainer, insertBefore);
 
 var embedScript = document.createElement('script');
 embedScript.type = 'text/javascript';
-embedScript.src = "https://codefund.io/properties/b7284271-5f29-43a7-8e6e-cd68f0769509/funder.js";
+embedScript.src = "https://media.ethicalads.io/media/client/ethicalads.min.js";
 document.getElementsByTagName('head')[0].appendChild(embedScript);
 
 /**
