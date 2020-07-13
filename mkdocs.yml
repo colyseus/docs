@@ -1,5 +1,5 @@
 # Project information
-site_name: 'Colyseus 0.13'
+site_name: 'Colyseus 0.14'
 site_description: 'Documentation for Colyseus Multiplayer Game Server for Node.js'
 site_author: 'Endel Dreyer'
 site_url: 'https://colyseus.io/'
@@ -125,10 +125,11 @@ nav:
 - 'Scalability': 'scalability.md'
 
 - 'Migrating':
-  - '0.13.x': 'migrating/0.13.md'
-  - '0.12.x': 'migrating/0.12.md'
-  - '0.11.x': 'migrating/0.11.md'
-  - '0.10.x': 'migrating/0.10.md'
-  - '0.9.x': 'migrating/0.9.md'
+  - '0.14': 'migrating/0.14.md'
+  - '0.13': 'migrating/0.13.md'
+  - '0.12': 'migrating/0.12.md'
+  - '0.11': 'migrating/0.11.md'
+  - '0.10': 'migrating/0.10.md'
+  - '0.9': 'migrating/0.9.md'
 
 - 'FAQ': 'faq.md'
