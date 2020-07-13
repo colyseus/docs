@@ -53,6 +53,16 @@ Join an existing room or create a new one, by provided `roomName` and `options`.
 
 Locked or private rooms are ignored by this method.
 
+```typescript fct_label="TypeScript"
+try {
+  const room = await client.joinOrCreate("battle", {/* options */});
+  console.log("joined successfully", room);
+
+} catch (e) {
+  console.error("join error", e);
+}
+```
+
 ```typescript fct_label="JavaScript"
 client.joinOrCreate("battle", {/* options */}).then(room => {
   console.log("joined successfully", room);
@@ -108,6 +118,16 @@ client->joinOrCreate<YourStateClass>("battle", {/* options */}, [=](std::string 
 ### `create (roomName: string, options: any)`
 
 Creates a new room by provided `roomName` and `options`.
+
+```typescript fct_label="TypeScript"
+try {
+  const room = await client.create("battle", {/* options */});
+  console.log("joined successfully", room);
+
+} catch (e) {
+  console.error("join error", e);
+}
+```
 
 ```typescript fct_label="JavaScript"
 client.create("battle", {/* options */}).then(room => {
@@ -167,6 +187,16 @@ Joins an existing room by provided `roomName` and `options`.
 
 Locked or private rooms are ignored by this method.
 
+```typescript fct_label="TypeScript"
+try {
+  const room = await client.join("battle", {/* options */});
+  console.log("joined successfully", room);
+
+} catch (e) {
+  console.error("join error", e);
+}
+```
+
 ```typescript fct_label="JavaScript"
 client.join("battle", {/* options */}).then(room => {
   console.log("joined successfully", room);
@@ -223,6 +253,16 @@ client->join<YourStateClass>("battle", {/* options */}, [=](std::string err, Roo
 
 Joins an existing room by its `roomId`. Private rooms can be joined by id.
 
+```typescript fct_label="TypeScript"
+try {
+  const room = await client.joinById("KRYAKzRo2", {/* options */});
+  console.log("joined successfully", room);
+
+} catch (e) {
+  console.error("join error", e);
+}
+```
+
 ```typescript fct_label="JavaScript"
 client.joinById("KRYAKzRo2", {/* options */}).then(room => {
   console.log("joined successfully", room);
@@ -275,7 +315,6 @@ client->joinById<YourStateClass>("battle", {/* options */}, [=](std::string err,
 });
 ```
 
-
 !!! Tip
     Use [`getAvailableRooms()`](#getavailablerooms-roomname-string) to retrieve a list of `roomId`'s available for joining.
 
@@ -285,8 +324,18 @@ Reconnects the client into a room he was previously connected with.
 
 Must be used along with [`allowReconnection()`](/server/room#allowreconnection-client-seconds) in the server-side.
 
+```typescript fct_label="TypeScript"
+try {
+  const room = await client.reconnect("wNHTX5qik", "SkNaHTazQ");
+  console.log("joined successfully", room);
+
+} catch (e) {
+  console.error("join error", e);
+}
+```
+
 ```typescript fct_label="JavaScript"
-let room = client.reconnect("wNHTX5qik", "SkNaHTazQ").then(room => {
+client.reconnect("wNHTX5qik", "SkNaHTazQ").then(room => {
   console.log("joined successfully", room);
 }).catch(e => {
   console.error("join error", e);
@@ -436,6 +485,16 @@ Join a room by consuming a seat reservation.
 
 !!! Tip "Advanced usage"
     See [Match-maker API](/server/matchmaker/#reserveseatforroom-options) to see how to retrieve the seat reservation data.
+
+```typescript fct_label="TypeScript"
+try {
+  const room = await client.consumeSeatReservation(reservation);
+  console.log("joined successfully", room);
+
+} catch (e) {
+  console.error("join error", e);
+}
+```
 
 ```typescript fct_label="JavaScript"
 client.consumeSeatReservation(reservation).then(room => {
