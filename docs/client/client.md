@@ -394,11 +394,11 @@ client:get_available_rooms("battle", function(err, rooms)
     return
   end
 
-  for i, rooms in pairs(rooms) do
-    print(rooms[i].roomId)
-    print(rooms[i].clients)
-    print(rooms[i].maxClients)
-    print(rooms[i].metadata)
+  for i, room in pairs(rooms) do
+    print(room.roomId)
+    print(room.clients)
+    print(room.maxClients)
+    print(room.metadata)
   end
 end);
 ```
