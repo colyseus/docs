@@ -593,7 +593,7 @@ console.log(set.size);
 ## Data filters (`@filter` / `@filterChildren`)
 
 !!! Warning "This feature is experimental"
-    The `@filter()`/`@filterChildren()` are experimental and may not work very well for fast-paced games.
+    The `@filter()`/`@filterChildren()` are experimental and may not be optimized for fast-paced games.
 
 Filtering is useful when you would like to hide portions of your state for a particular client, to avoid cheating in case a player decides to inspect data coming from the network and seeing the unfiltered state information.
 
@@ -671,8 +671,8 @@ class Card extends Schema {
   @filter(function(
     this: Card, // the instance of the class `@filter` has been defined (instance of `Card`)
     client: Client, // the Room's `client` instance which this data is going to be filtered to
-    value?: Card['number'], // the value of the field to be filtered. (value of `number` field)
-    root?: Schema // the root state Schema instance
+    value: Card['number'], // the value of the field to be filtered. (value of `number` field)
+    root: Schema // the root state Schema instance
   ) {
     return this.discarded || this.owner === client.sessionId;
   })
