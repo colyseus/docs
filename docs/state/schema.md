@@ -615,7 +615,7 @@ class State extends Schema {
         // value is:
         // the value of the field @filter() is being applied to
 
-        // root is: 
+        // root is:
         // the root instance of your room state. you may use it to access other
         // structures in the process of decision whether this value is going to be
         // synched or not.
@@ -644,7 +644,7 @@ class State extends Schema {
         // value is:
         // the current value inside the structure
 
-        // root is: 
+        // root is:
         // the root instance of your room state. you may use it to access other
         // structures in the process of decision whether this value is going to be
         // synched or not.
@@ -688,6 +688,7 @@ This is particularly useful for native-compiled targets, such as C#, C++, Haxe, 
 
 ### Limitations and best practices
 
+- Each `Schema` structure can hold up to `64` fields. If you need more fields, use nested `Schema` structures.
 - `NaN` or `null` numbers are encoded as `0`
 - `null` strings are encoded as `""`
 - `Infinity` numbers are encoded as `Number.MAX_SAFE_INTEGER`
