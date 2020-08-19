@@ -64,7 +64,7 @@ gameServer.listen(port);
 
 #### `options.pingInterval`
 
-Number of milliseconds for the server to "ping" the clients. Default: `1500`
+Number of milliseconds for the server to "ping" the clients. Default: `3000`
 
 The clients are going to be forcibly disconnected if they can't respond after [pingMaxRetries](/server/api/#optionspingMaxRetries) retries.
 

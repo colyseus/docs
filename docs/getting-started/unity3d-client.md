@@ -106,4 +106,4 @@ const gameServer = new Server({
 });
 ```
 
-Make sure to have a `pingInterval` higher than `0` on production. The default `pingInterval` value is `1500`.
+Make sure to have a `pingInterval` higher than `0` on production. The default `pingInterval` value is `3000`.
