@@ -188,4 +188,74 @@ if (process.env.NODE_ENV === "production") {
 
 ## Docker
 
-TBD
+Prerequisite: 
+
+* `package.json` and `package-lock.json` are in the project.
+
+* Set up the `npm start` command so it starts the server
+ 
+Steps:
+
+**Step 1** Install [Docker](https://www.docker.com/)
+
+**Step 2** Create `Dockerfile` in the root of the colyseus project
+```dockerfile
+FROM node:12
+
+ENV PORT 8080
+
+WORKDIR /usr/src/app
+
+# A wildcard is used to ensure both package.json AND package-lock.json are copied
+COPY package*.json ./
+
+RUN npm ci
+# run this for production
+# npm ci --only=production
+
+COPY . .
+
+EXPOSE 8080
+
+CMD [ "npm", "start" ]
+```
+**Step 3** Create `.dockerignore` file in the same directory
+```
+node_modules
+npm-debug.log
+```
+This will prevent your local modules and debug logs from being copied onto your Docker image and possibly overwriting modules installed within your image.
+
+**Step 4** Go to the directory that has your Dockerfile and run the following command to build the Docker image. The -t flag lets you tag your image so it's easier to find later using the docker images command:
+
+```
+docker build -t <your username>/colyseus-server .
+```
+
+**Step 5** Your image will now be listed by Docker with following command:
+```
+docker images
+
+```
+Output: 
+```
+# Example
+REPOSITORY                      TAG        ID              CREATED
+node                            12         1934b0b038d1    About a minute ago
+<your username>/colseus-server    latest     d64d3505b0d2    About a minute ago
+```
+
+**Step 6** Run the Docker Image wiht following command:
+```
+docker run -p 8080:8080 -d <your username>/colyseus-server
+```
+Running your image with -d runs the container in detached mode, leaving the container running in the background. The -p flag redirects a public port to a private port inside the container.
+
+
+**Step 7** Done, now you can connect to the server with `localhost:8080`
+
+More informations:
+
+- [Official Node.js Docker Image](https://hub.docker.com/_/node/)
+
+- [Node.js Docker Best Practices Guide](https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md)
