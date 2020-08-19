@@ -1,6 +1,12 @@
 # Getting started
 
-Colyseus requires [Node.js](https://nodejs.org/) v8.0 or higher.
+Welcome to the getting started guide to for Colyseus! Before we start, let's make sure we have the necessary system requirements instaled in your local machine.
+
+**Requirements**:
+
+- [Node.js](https://nodejs.org/) v12.0 or higher
+- [Git SCM](https://git-scm.com/downloads)
+- [Visual Studio Code](https://code.visualstudio.com/) - or other editor of your choice.
 
 ## From examples project
 
@@ -12,8 +18,7 @@ cd colyseus-examples
 npm install
 ```
 
-To run the http + websocket server, run `npm start`.
-
+To run the server locally, run `npm start`, then open [http://localhost:2567](http://localhost:2567) to explore each example.
 
 ## Creating a barebones Colyseus server
 
@@ -22,9 +27,3 @@ Use the `npm init colyseus-app` command to generate a barebones Colyseus server.
 ```
 npm init colyseus-app ./my-colyseus-app
 ```
-
-See the contents of the project templates:
-
-- [TypeScript](https://github.com/colyseus/create-colyseus-app/tree/typescript)
-- [JavaScript](https://github.com/colyseus/create-colyseus-app/tree/javascript)
-- [Haxe](https://github.com/colyseus/create-colyseus-app/tree/haxe)
