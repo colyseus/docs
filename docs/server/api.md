@@ -303,19 +303,13 @@ gameServer
 This is a convenience method for when you would like to locally test how "laggy" clients will behave without having to deploy your server to a remote cloud.
 
 ```typescript
-// simulate 200ms latency between server and client.
-gameServer.simulateLatency(200);
-```
-
-Make sure not to allow this piece of code to land in your production servers.
-
-```typescript
-// simulate 200ms latency between server and client.
+// Make sure to never call the `simulateLatency()` method in production.
 if (process.env.NODE_ENV !== "production") {
+
+  // simulate 200ms latency between server and client.
   gameServer.simulateLatency(200);
 }
 ```
-
 
 ### `attach (options: any)`
 
