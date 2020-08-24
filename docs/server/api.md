@@ -298,6 +298,25 @@ gameServer
 !!! Warning
     It's completely discouraged to manipulate a room's state through these events. Use the [abstract methods](/server/room/#abstract-methods) in your room handler instead.
 
+### `simulateLatency (milliseconds: number)`
+
+This is a convenience method for when you would like to locally test how "laggy" clients will behave without having to deploy your server to a remote cloud.
+
+```typescript
+// simulate 200ms latency between server and client.
+gameServer.simulateLatency(200);
+```
+
+Make sure not to allow this piece of code to land in your production servers.
+
+```typescript
+// simulate 200ms latency between server and client.
+if (process.env.NODE_ENV !== "production") {
+  gameServer.simulateLatency(200);
+}
+```
+
+
 ### `attach (options: any)`
 
 > You usually do not need to call this. Use it only if you have a very specific reason to do so.
