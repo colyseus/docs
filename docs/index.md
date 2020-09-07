@@ -1,4 +1,4 @@
-Colyseus is a Authoritative Multiplayer Game Server for Node.js. It allows you to focus on your gameplay instead of bothering about networking.
+Colyseus is a Authoritative Multiplayer Framework for Node.js. It allows you to focus on your gameplay instead of bothering about networking.
 
 The mission of this framework is to be the easiest solution for creating your own multiplayer games in JavaScript.
 
@@ -21,7 +21,7 @@ The mission of this framework is to be the easiest solution for creating your ow
 
 ## The Mindset
 
-The authoritative game server mindset is quite simple. The Server validates the user actions, and clients are dumb visual representations of the current game state.
+The authoritative server mindset is quite simple. The Server validates the user actions, and clients are dumb visual representations of the current game state.
 
 The server should take care of all data involved in your game, such as positioning, speeds, collisions, etc.
 
