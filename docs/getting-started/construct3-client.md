@@ -7,7 +7,6 @@ The example project has a similar result as the [TypeScript (pixijs-boilerplate)
 
 - [Client-side (c3p project)](/_downloads/ColyAgarClient-0-13-1.c3p)
 - [Server-side on Glitch (source-code)](https://glitch.com/~held-quartz)
-- [Server-side on Heroku (source-code)](https://github.com/MikalDev/colyServer)
 
 ## Important
 
