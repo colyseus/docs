@@ -599,9 +599,9 @@ Filtering is meant to hide portions of your state for a particular client, to av
 
 The data filters are callbacks that are going to be triggered **per client** and **per field** (or per child structure, in case of `@filterChildren`). If the filter callback returns `true` the field data is going to be sent for that particular client, otherwise, the data is not going to be sent for that client.
 
-### `@filter()` annotation
+### `@filter()` property decorator
 
-The `@filter()` type annotation can be used to filter out entire Schema fields.
+The `@filter()` property decorator can be used to filter out entire Schema fields.
 
 Here's how the `@filter()` signature looks like:
 
@@ -652,9 +652,9 @@ schema.filter(function(client, value, root) {
 })(State.prototype, "field");
 ```
 
-### `@filterChildren()` annotation
+### `@filterChildren()` property decorator
 
-The `@filterChildren()` type annotation can be used to filter out items inside arrays, maps, sets, etc. Its signature is pretty much the same as `@filter()`, with the addition of the `key` parameter before the `value` - representing each item inside a [ArraySchema](#arrayschema), [MapSchema](#mapschema), [CollectionSchema](#collectionschema), etc.
+The `@filterChildren()` property decorator can be used to filter out items inside arrays, maps, sets, etc. Its signature is pretty much the same as `@filter()`, with the addition of the `key` parameter before the `value` - representing each item inside a [ArraySchema](#arrayschema), [MapSchema](#mapschema), [CollectionSchema](#collectionschema), etc.
 
 ```typescript fct_label="TypeScript"
 class State extends Schema {
