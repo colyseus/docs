@@ -6,7 +6,7 @@ This section covers the configuration and usage of [`@colyseus/social`](http://g
 
 
 !!! Tip
-    If you're looking to implement your own authentication method, see [Server API » Authentication](/server/authentication)
+    If you're looking to implement your own authentication method, see [Room » onAuth()](/server/room/#onauth-client-options-request)
 
 ## Installation
 

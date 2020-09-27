@@ -2,7 +2,7 @@ You can deny a player connection by throwing an error during `onAuth()` or `onJo
 
 The implementation of when to deny a player connection will depend on your use-case.
 
-Below you can see an example validating the [@colyseus/social](/authentication/#server-side-api) authentication token, and retrieving a `Hero` record linked with the user id.
+Below you can see an example validating the [@colyseus/social](/tools/colyseus-social/#server-side-api) authentication token, and retrieving a `Hero` record linked with the user id.
 
 ```typescript
 export class BattleRoom extends Room {
