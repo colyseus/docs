@@ -61,14 +61,157 @@ Is called once when the room is initialized. You may specify custom initializati
 
 ### `onAuth (client, options, request)`
 
-Can be used to verify authenticity of the client that's joining the room.
+The `onAuth()` method will be executed before `onJoin()`. It can be used to verify authenticity of a client joining the room.
 
-If left non-implemented it returns `true`, allowing any client to connect.
+- If `onAuth()` returns a truthy value, `onJoin()` is going to be called with the returned value as the third argument.
+- If `onAuth()` returns a falsy value, the client is immediatelly rejected, causing the matchmaking function call from the client-side to fail.
+- You may also throw a `ServerError` to expose a custom error to be handled in the client-side.
 
-See [Authentication API](/server/authentication) section.
+If left non-implemented, it always returns `true` - allowing any client to connect.
 
 !!! Tip "Getting player's IP address"
     You can use the `request` variable to retrieve the user's IP address, http headers, and more. E.g.: `request.headers['x-forwarded-for'] || request.connection.remoteAddress`
+
+**Implementations examples**
+
+```typescript fct_label="async / await"
+import { Room, ServerError } from "colyseus";
+
+class MyRoom extends Room {
+  async onAuth (client, options, request) {
+    /**
+     * Alternatively, you can use `async` / `await`,
+     * which will return a `Promise` under the hood.
+     */
+    const userData = await validateToken(options.accessToken);
+    if (userData) {
+        return userData;
+
+    } else {
+        throw new ServerError(400, "bad access token");
+    }
+  }
+}
+```
+
+```typescript fct_label="Synchronous"
+import { Room } from "colyseus";
+
+class MyRoom extends Room {
+  onAuth (client, options, request): boolean {
+    /**
+     * You can immediatelly return a `boolean` value.
+     */
+     if (options.password === "secret") {
+       return true;
+
+     } else {
+       throw new ServerError(400, "bad access token");
+     }
+  }
+}
+```
+
+```typescript fct_label="Promises"
+import { Room } from "colyseus";
+
+class MyRoom extends Room {
+  onAuth (client, options, request): Promise<any> {
+    /**
+     * You can return a `Promise`, and perform some asynchronous task to validate the client.
+     */
+    return new Promise((resolve, reject) => {
+      validateToken(options.accessToken, (err, userData) => {
+        if (!err) {
+          resolve(userData);
+        } else {
+          reject(new ServerError(400, "bad access token"));
+        }
+      });
+    });
+  }
+}
+```
+
+**Client-side examples**
+
+From the client-side, you may call the matchmaking method (`join`, `joinOrCreate`, etc) with a token from some authentication service of your choice (i. e. Facebook):
+
+```javascript fct_label="JavaScript"
+client.joinOrCreate("world", {
+  accessToken: yourFacebookAccessToken
+
+}).then((room) => {
+  // success
+
+}).catch((err) => {
+  // handle error...
+  err.code // 400
+  err.message // "bad access token"
+});
+```
+
+```csharp fct_label="C#"
+try {
+  var room = await client.JoinOrCreate<YourStateClass>("world", new {
+    accessToken = yourFacebookAccessToken
+  });
+  // success
+
+} catch (err) {
+  // handle error...
+  err.code // 400
+  err.message // "bad access token"
+}
+```
+
+```lua fct_label="Lua"
+client:join_or_create("world", {
+  accessToken = yourFacebookAccessToken
+
+}, function(err, room)
+  if err then
+    -- handle error...
+    err.code -- 400
+    err.message -- "bad access token"
+    return
+  end
+
+  -- success
+end)
+```
+
+```haxe fct_label="Haxe"
+client.joinOrCreate("world", {
+  accessToken: yourFacebookAccessToken
+
+}, YourStateClass, function (err, room) {
+  if (err != null) {
+    // handle error...
+    err.code // 400
+    err.message // "bad access token"
+    return;
+  }
+
+  // success
+})
+```
+
+```cpp fct_label="C++"
+client.joinOrCreate("world", {
+  { "accessToken", yourFacebookAccessToken }
+
+}, [=](MatchMakeError *err, Room<YourStateClass>* room) {
+  if (err != "") {
+    // handle error...
+    err.code // 400
+    err.message // "bad access token"
+    return;
+  }
+
+  // success
+});
+```
 
 ### `onJoin (client, options, auth?)`
 
@@ -86,11 +229,31 @@ Is called when a client leaves the room. If the disconnection was [initiated by 
 
 You can define this function as `async`. See [graceful shutdown](/server/graceful-shutdown)
 
+```typescript fct_label="Synchronous"
+onLeave(client, consented) {
+    if (this.state.players.has(client.sessionId)) {
+        this.state.players.delete(client.sessionId);
+    }
+}
+```
+
+```typescript fct_label="Asynchronous"
+async onLeave(client, consented) {
+    const player = this.state.players.get(client.sessionId);
+    await persistUserOnDatabase(player);
+}
+```
+
 ### `onDispose ()`
 
-Cleanup callback, called after there are no more clients in the room.
+The `onDispose()` method is called before the room is destroyed, which happens when:
 
-You can define this function as `async`. See [graceful shutdown](/server/graceful-shutdown)
+- there are no more clients left in the room, and `autoDispose` is set to `true` (default)
+- you manually call [`.disconnect()`](#disconnect).
+
+You may define `async onDispose()` an asynchronous method in order to persist some data in the database. In fact, this is a great place to persist player's data in the database after a game match ends.
+
+See [graceful shutdown](/server/graceful-shutdown).
 
 
 ### Example room
@@ -245,12 +408,14 @@ client.getAvailableRooms("battle").then(rooms => {
 
 ### `setSeatReservationTime (seconds)`
 
-Set the number of seconds a room can wait for a client to effectively join the room. You should consider how long your [`onAuth()`](#onauth-client-options-request) will have to wait for setting a different seat reservation time. The default value is usually enough. (8 seconds)
+Set the number of seconds a room can wait for a client to effectively join the room. You should consider how long your [`onAuth()`](#onauth-client-options-request) will have to wait for setting a different seat reservation time. The default value is 15 seconds.
+
+You may set the `COLYSEUS_SEAT_RESERVATION_TIME` environment variable if you'd like to change the seat reservation time globally.
 
 ### `send (client, message)`
 
-DEPRECATED: `this.send()` has been deprecated. Please use [`client.send()` instead](/server/client/#sendtype-message).
-
+!!! Warning "Deprecated"
+    `this.send()` has been deprecated. Please use [`client.send()` instead](/server/client/#sendtype-message).
 
 ### `broadcast (type, message, options?)`
 

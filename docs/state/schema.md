@@ -590,14 +590,16 @@ console.log(set.size);
 !!! Note "More"
     There are many more methods you can use from Sets. [Have a look at the MDN Documentation for Sets](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
 
-## Data filters (`@filter` / `@filterChildren`)
+## Filtering data per client
 
 !!! Warning "This feature is experimental"
     The `@filter()`/`@filterChildren()` are experimental and may not be optimized for fast-paced games.
 
-Filtering is useful when you would like to hide portions of your state for a particular client, to avoid cheating in case a player decides to inspect data coming from the network and seeing the unfiltered state information.
+Filtering is meant to hide portions of your state for a particular client, to avoid cheating in case a player decides to inspect data coming from the network and seeing the unfiltered state information.
 
-### The `@filter()` type annotation
+The data filters are callbacks that are going to be triggered **per client** and **per field** (or per child structure, in case of `@filterChildren`). If the filter callback returns `true` the field data is going to be sent for that particular client, otherwise, the data is not going to be sent for that client.
+
+### `@filter()` annotation
 
 The `@filter()` type annotation can be used to filter out entire Schema fields.
 
@@ -650,7 +652,7 @@ schema.filter(function(client, value, root) {
 })(State.prototype, "field");
 ```
 
-### The `@filterChildren()` decorator
+### `@filterChildren()` annotation
 
 The `@filterChildren()` type annotation can be used to filter out items inside arrays, maps, sets, etc. Its signature is pretty much the same as `@filter()`, with the addition of the `key` parameter before the `value` - representing each item inside a [ArraySchema](#arrayschema), [MapSchema](#mapschema), [CollectionSchema](#collectionschema), etc.
 
