@@ -15,14 +15,28 @@ Don't know NodeJS build-systems like `webpack`? Just save and drop the [JavaScri
 
 ### Installing the module
 
+Use this method if you're using a build tool (`webpack`, `rollup`, or similar)
+
 ```
 npm install --save colyseus.js
+```
+
+If you're not using a build tool, it is recommended to download the release binaries from [GitHub Releases](https://github.com/colyseus/colyseus.js/releases)
+
+```html
+<script src="colyseus.js"></script>
+```
+
+Alternatively, you may include the distribution file directly by using unpkg. Make sure to replace the `@x.x.x` portion of it with a version compatible with your server.
+
+```html
+<script src="https://unpkg.com/colyseus.js@0.14.0/dist/colyseus.js"></script>
 ```
 
 ### Connecting to server:
 
 ```ts
-import * as Colyseus from "colyseus.js";
+import * as Colyseus from "colyseus.js"; // not necessary if included via <script> tag.
 
 var client = new Colyseus.Client('ws://localhost:2567');
 ```
