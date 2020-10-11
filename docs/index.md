@@ -1,71 +1,37 @@
-Colyseus is a Authoritative Multiplayer Framework for Node.js. It allows you to focus on your gameplay instead of bothering about networking.
+# Welcome to Colyseus
 
-The mission of this framework is to be the easiest solution for creating your own multiplayer games in JavaScript.
+## Getting started
+
+Before we start, let's make sure we have the necessary system requirements instaled in your local machine.
+
+**Requirements**:
+
+- [Download and install Node.js](https://nodejs.org/) v12.0 or higher
+- [Download and install Git SCM](https://git-scm.com/downloads)
+- [Download and install Visual Studio Code](https://code.visualstudio.com/) (or other editor of your choice)
+
+### Creating a barebones Colyseus server
+
+Use the `npm init colyseus-app` command to generate a barebones Colyseus server. You may select between TypeScript (recommended), JavaScript and Haxe as your language of choice for the server.
+
+```
+npm init colyseus-app ./my-colyseus-app
+```
+
+### From examples project
+
+See some examples in action by cloning the [examples project](https://github.com/colyseus/colyseus-examples) and running it locally.
+
+```
+git clone https://github.com/colyseus/colyseus-examples.git
+cd colyseus-examples
+npm install
+```
+
+To run the server locally, run `npm start`, then open [http://localhost:2567](http://localhost:2567) to explore each example.
+
+### Presentation: Overview of how Colyseus works
 
 <center>
   <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vSjJtmU-SIkng_bFQ5z1000M6nPSoAoQL54j0Y_Cbg7R5tRe9FXLKaBmcKbY_iyEpnMqQGDjx_335QJ/embed?start=false&loop=false&delayms=3000" frameborder="0" width="680" height="411" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
 </center>
-
-## What Colyseus provides to you:
-
-- WebSocket-based communication
-- Simple API in the server-side and client-side.
-- Automatic state synchronization between server and client.
-- Matchmaking clients into game sessions
-- Scale vertically or horizontally
-
-## What Colyseus won't provide:
-
-- Game Engine: Colyseus is agnostic of the engine you're using. Need Physics? Add your own logic / package.
-- Database: It's up to you to configure and select which database you'd like to use.
-
-## The Mindset
-
-The authoritative server mindset is quite simple. The Server validates the user actions, and clients are dumb visual representations of the current game state.
-
-The server should take care of all data involved in your game, such as positioning, speeds, collisions, etc.
-
-Making multiplayer games is usually tricky because your gameplay must take the multiple delays into account - the other clients sending data to the server, and the server sending data back to all clients. It's the art of faking something that has already happened is actually happening as the current player sees and plays the game.
-
-Here's how the "multiplayer game loop" looks like on Colyseus:
-
-- Client sends a message to the server, requesting to change its state.
-- The input must be validated by your room handler.
-- The room state is updated.
-- All clients receive the latest version of the game state.
-- The visual representation of the game state is updated.
-
-### Diagram
-
-```
-              room.send({ action: "left" })
-
-                           |
-      +------------+       |       +-----------------------------------+
-+-----+ Client #1  +-------|       |  Room handler #1                  |
-|     +------------+       |       |                                   |
-|     +------------+       |       |  onMessage () {                   |
-|-----+ Client #2  |       --------+    //                             |
-|     +------------+               |    // update the room state       |
-|     +------------+               |    //                             |
-|-----+ Client #3  |               |  }                                |
-|     +------------+               +-----------------------------------+
-|                                                    |
-|        patch state broadcast (binary diff)         |
-|----------------------------------------------------+
-```
-
-## What people are saying about Colyseus?
-
-!!! Quote "[@bmovement](https://twitter.com/bmovement)"
-    "Thanks again for this framework... it allowed someone like me who just wants the server to be a black box to focus on my game instead of getting bogged down learning a whole new skill set!"
-
-!!! Quote "[@sagestudios](https://github.com/sagestudios)"
-    Loved the framework. Exactly what we are looking for in terms of features.
-
-## External links
-
-- [💬 &nbsp; Chat / Discord](https://discord.gg/RY8rRS7)
-- [💬 &nbsp; Forum](http://discuss.colyseus.io/)
-- [💰 &nbsp; Support the project](https://www.patreon.com/endel)
-- [🌐 &nbsp; Website](https://colyseus.io)
