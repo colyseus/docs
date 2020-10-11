@@ -18,9 +18,9 @@ Use the `npm init colyseus-app` command to generate a barebones Colyseus server.
 npm init colyseus-app ./my-colyseus-app
 ```
 
-### From examples project
+### From the official examples
 
-See some examples in action by cloning the [examples project](https://github.com/colyseus/colyseus-examples) and running it locally.
+Alternatively, you can check some examples in action by cloning the [examples project](https://github.com/colyseus/colyseus-examples) and running it locally.
 
 ```
 git clone https://github.com/colyseus/colyseus-examples.git
