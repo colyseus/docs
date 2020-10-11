@@ -376,6 +376,9 @@ this.state.players.forEach((value, key) => {
 
 ### CollectionSchema
 
+!!! Warning "`CollectionSchema` is only implemented in JavaScript"
+    The `CollectionSchema` can only be used with JavaScript so far. Haxe, C#, LUA and C++ clients are not supported yet.
+
 The `CollectionSchema` works similarly as the `ArraySchema`, with the caveat that you don't have control over its indexes.
 
 ```typescript fct_label="TypeScript"
@@ -486,6 +489,9 @@ collection.forEach((value, at) => {
 ```
 
 ### SetSchema
+
+!!! Warning "`SetSchema` is only implemented in JavaScript"
+    The `SetSchema` can only be used with JavaScript so far. Haxe, C#, LUA and C++ clients are not supported yet.
 
 The `SetSchema` is a synchronizeable version of the built-in JavaScript [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) type.
 

@@ -103,6 +103,6 @@ global.Buffer = Buffer;
 
 ## Cocos Creator Instructions
 
-- [Download the latest colyseus.js](https://raw.githubusercontent.com/colyseus/colyseus.js/master/dist/colyseus.js) distribution file from GitHub.
+- [Download the release binaries from GitHub Releases](https://github.com/colyseus/colyseus.js/releases).
 - Save it into your project's `scripts` folder.
 - Require it using `const Colyseus = require('colyseus.js')`
