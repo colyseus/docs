@@ -110,6 +110,14 @@ Delayed instances are created from
 
 ### Public methods
 
+#### `delayed.pause()`
+
+Pause the time of a particular `Delayed` instance. (`elapsedTime` is not going to increase until `.resume()` is called.)
+
+#### `delayed.resume()`
+
+Resumes the time of a particular `Delayed` instance. (`elapsedTime` is going to continue to increase normally)
+
 #### `delayed.clear()`
 
 Clears the timeout or interval.
@@ -120,7 +128,16 @@ Reset the elapsed time.
 
 ### Public properties
 
+#### `delayed.elapsedTime: number`
+
+Elapsed time of the `Delayed` instance, in milliseconds since started.
+
 #### `delayed.active: boolean`
 
 Returns `true` if timer is still running.
+
+#### `delayed.paused: boolean`
+
+Returns `true` if timer has been paused via `.pause()`.
+
 
