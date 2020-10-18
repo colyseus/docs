@@ -574,6 +574,32 @@ async onLeave (client, consented: boolean) {
 
 Disconnect all clients, then dispose.
 
+### `broadcastPatch ()`
+
+!!! Warning "You may not need this!"
+    This method is called automatically by the framework.
+
+This method will check whether mutations have occurred in the `state`, and broadcast them to all connected clients.
+
+If you'd like to have control over when to broadcast patches, you can do this by disabling the default patch interval:
+
+```typescript
+onCreate() {
+    // disable automatic patches
+    this.setPatchRate(null);
+
+    // ensure clock timers are enabled
+    this.setSimulationInterval(() => {/* */});
+
+    this.clock.setInterval(() => {
+        // only broadcast patches if your custom conditions are met.
+        if (yourCondition) {
+            this.broadcastPatch();
+        }
+    }, 2000);
+}
+```
+
 ## Public properties
 
 ### `roomId: string`
