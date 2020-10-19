@@ -9,4 +9,4 @@
     - Custom getters and setters methods can be implemented, as long as you don't have game logic in them.
 - Your game logic should be handled by other structures, such as:
     - See how to use the [Command Pattern](/best-practices/command-pattern/).
-    - An Entity-Component System WE NEED ONE THAT WORKS WELL WITH COLYSEUS PLEASE HELP
+    - An Entity-Component System. We currently lack an ECS package that works well with Colyseus, some work [has started trying to combine ECSY with @colyseus/schema](http://github.com/endel/ecs).
