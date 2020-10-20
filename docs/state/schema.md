@@ -35,6 +35,32 @@ schema.defineTypes(MyState, {
 });
 ```
 
+### Primitive types
+
+These are the types you can provide for the `@type()` decorator, and their limitations.
+
+!!! tip
+    If you know exactly the range of your `number` properties, you can optimize the serialization by providing the right primitive type for it.
+
+    Otherwise, use `"number"`, which will adds an extra byte to identify itself during serialization.
+
+
+| Type | Description | Limitation |
+|------|-------------|------------|
+| `"string"` | utf8 strings | maximum byte size of `4294967295` |
+| `"number"` | auto-detects the `int` or `float` type to be used. (adds an extra byte on output) | `0` to `18446744073709551615` |
+| `"boolean"` | `true` or `false` | `0` or `1` |
+| `"int8"` | signed 8-bit integer | `-128` to `127` |
+| `"uint8"` | unsigned 8-bit integer | `0` to `255` |
+| `"int16"` | signed 16-bit integer | `-32768` to `32767` |
+| `"uint16"` | unsigned 16-bit integer | `0` to `65535` |
+| `"int32"` | signed 32-bit integer | `-2147483648` to `2147483647` |
+| `"uint32"` | unsigned 32-bit integer | `0` to `4294967295` |
+| `"int64"` | signed 64-bit integer | `-9223372036854775808` to `9223372036854775807` |
+| `"uint64"` | unsigned 64-bit integer | `0` to `18446744073709551615` |
+| `"float32"` | single-precision floating-point number | `-3.40282347e+38` to `3.40282347e+38`|
+| `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |
+
 ### Child schema properties
 
 You may define more custom data types inside your "root" state definition, as a direct reference, map, or array.
@@ -85,11 +111,7 @@ schema.defineTypes(MyState, {
 
 ### ArraySchema
 
-When using arrays within `State` related schema it's important to use the `ArraySchema` type.
-Do not use plain arrays inside your `State` classes (those which extend `Schema`).
-Using plain arrays inside your methods is ok for game logic or otherwise; but not for syncronised state members.
-
-`ArraySchema` is recommended for describing the world map, or any collection in your game. They have all the methods available in an [`Array`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array), but it's synchronizable.
+The `ArraySchema` is a synchronizeable version of the built-in JavaScript [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) type.
 
 ```typescript fct_label="TypeScript"
 import { Schema, ArraySchema, type } from "@colyseus/schema";
@@ -132,26 +154,94 @@ schema.defineTypes(MyState, {
 });
 ```
 
-#### Usage examples
+#### `array.push()`
 
-Removing an item from `ArraySchema`
+Adds one or more elements to the end of an array and returns the new length of the array.
 
 ```typescript
-// having a reference to the item you want to remove
-const itemToRemove = this.state.blocks[3];
+const animals = new ArraySchema<string>();
+animals.push("pigs", "goats");
+animals.push("sheeps");
+animals.push("cows");
+// output: 4
+```
 
+#### `array.pop()`
+
+Removes the last element from an array and returns that element. This method changes the length of the array.
+
+```typescript
+animals.pop();
+// output: "cows"
+
+animals.length
+// output: 3
+```
+
+#### `array.shift()`
+
+Removes the first element from an array and returns that removed element. This method changes the length of the array.
+
+```typescript
+animals.shift();
+// output: "pigs"
+
+animals.length
+// output: 2
+```
+
+#### `array.unshift()`
+
+Adds one or more elements to the beginning of an array and returns the new length of the array.
+
+```typescript
+animals.unshift("pigeon");
+// output: 3
+```
+
+#### `array.indexOf()`
+
+Returns the first index at which a given element can be found in the array, or -1 if it is not present
+
+```typescript
+const itemIndex = animals.indexOf("sheeps");
+```
+
+#### `array.splice()`
+
+Changes the contents of an array by removing or replacing existing elements and/or adding new elements [in place](https://en.wikipedia.org/wiki/In-place_algorithm).
+
+```typescript
 // find the index of the item you'd like to remove
-const itemIndex = this.state.blocks.findIndex((block) => block === itemToRemove);
+const itemIndex = animals.findIndex((animal) => animal === "sheeps");
 
 // remove it!
-this.state.blocks.splice(itemIndex, 1);
+animals.splice(itemIndex, 1);
 ```
+
+#### `array.forEach()`
+
+Executes a provided function once for each array element.
+
+```typescript
+const array1 = new ArraySchema<string>('a', 'b', 'c');
+
+array1.forEach(element => {
+    console.log(element);
+});
+// output: "a"
+// output: "b"
+// output: "c"
+```
+
+!!! Note "More"
+    There are many more methods you can use from Arrays. [Have a look at the MDN Documentation for Arrays](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/).
 
 ### MapSchema
 
-When using a map, it's important to use the `MapSchema` type. Do not use a plain object or the native Map type.
+The `MapSchema` is a synchronizeable version of the built-in JavaScript [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) type.
 
-`MapSchema` is recommended to track your game entities by id, such as players, enemies, etc.
+Maps are recommended to track your game entities by id, such as players, enemies, etc.
 
 ```typescript fct_label="TypeScript"
 import { Schema, MapSchema, type } from "@colyseus/schema";
@@ -194,92 +284,482 @@ schema.defineTypes(MyState, {
 });
 ```
 
-#### Usage examples
+#### `map.get()`
 
-Getting the length of the `MapSchema`
+Getting a map item by its key:
 
 ```typescript
-const length = Object.keys(this.state.players).length;
-console.log("Map length =>", length);
+const map = new MapSchema<string>();
+const item = map.get("key");
 ```
 
-Looping through the items of a `MapSchema`
+OR
 
 ```typescript
-for (let key in this.state.players) {
-  const player: Player = this.state.players[key];
-  console.log(key, player);
+//
+// NOT RECOMMENDED
+//
+// This is a compatibility layer with previous versions of @colyseus/schema
+// This is going to be deprecated in the future.
+//
+const item = map["key"];
+```
+
+#### `map.set()`
+
+Setting a map item by key:
+
+```typescript
+const map = new MapSchema<string>();
+map.set("key", "value");
+```
+
+OR
+
+```typescript
+//
+// NOT RECOMMENDED
+//
+// This is a compatibility layer with previous versions of @colyseus/schema
+// This is going to be deprecated in the future.
+//
+map["key"] = "value";
+```
+
+#### `map.delete()`
+
+Removes a map item by key:
+
+```typescript
+map.delete("key");
+```
+
+OR
+
+```typescript
+//
+// NOT RECOMMENDED
+//
+// This is a compatibility layer with previous versions of @colyseus/schema
+// This is going to be deprecated in the future.
+//
+delete map["key"];
+```
+
+#### `map.size`
+
+Return the number of elements in a `MapSchema` object.
+
+```typescript
+const map = new MapSchema<number>();
+map.set("one", 1);
+map.set("two", 2);
+
+console.log(map.size);
+// output: 2
+```
+
+#### `map.forEach()`
+
+The `forEach()` method executes a provided function once per each key/value pair in the `MapSchema` object, in insertion order.
+
+```typescript
+this.state.players.forEach((value, key) => {
+    console.log("key =>", key)
+    console.log("value =>", value)
+});
+```
+
+!!! Note "More"
+    There are many more methods you can use from Maps. [Have a look at the MDN Documentation for Maps](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/).
+
+
+### CollectionSchema
+
+!!! Warning "`CollectionSchema` is only implemented in JavaScript"
+    The `CollectionSchema` can only be used with JavaScript so far. Haxe, C#, LUA and C++ clients are not supported yet.
+
+The `CollectionSchema` works similarly as the `ArraySchema`, with the caveat that you don't have control over its indexes.
+
+```typescript fct_label="TypeScript"
+import { Schema, CollectionSchema, type } from "@colyseus/schema";
+
+class Item extends Schema {
+    @type("number")
+    damage: number;
+}
+
+class Player extends Schema {
+    @type({ collection: Item })
+    items = new CollectionSchema<Item>();
 }
 ```
 
+```typescript fct_label="JavaScript"
+const schema = require('@colyseus/schema');
+const Schema = schema.Schema;
+const CollectionSchema = schema.CollectionSchema;
 
-Removing an item from a `MapSchema`:
+class Item extends Schema {
+}
+schema.defineTypes(Item, {
+  damage: "number",
+});
 
-```typescript
-const keyToRemove = "player1";
-delete this.state.players[keyToRemove]
+class Player extends Schema {
+    constructor () {
+        super();
+
+        this.items = new CollectionSchema();
+    }
+}
+schema.defineTypes(Player, {
+  items: { collection: Item }
+});
 ```
 
+#### `collection.add()`
 
-### Experimental: Filtering out fields for specific clients
+Appends an item to the `CollectionSchema` object.
+
+```typescript
+const collection = new CollectionSchema<number>();
+collection.add(1);
+collection.add(2);
+collection.add(3);
+```
+
+#### `collection.at()`
+
+Gets an item at the specified `index`.
+
+```typescript
+const collection = new CollectionSchema<string>();
+collection.add("one");
+collection.add("two");
+collection.add("three");
+
+collection.at(1);
+// output: "two"
+```
+
+#### `collection.delete()`
+
+Delete an item by its value.
+
+```typescript
+collection.delete("three");
+```
+
+#### `collection.has()`
+
+Returns a boolean value wheter an item exists in the Collection or not.
+
+```typescript
+if (collection.has("two")) {
+    console.log("Exists!");
+} else {
+    console.log("Does not exist!");
+}
+```
+
+#### `collection.size`
+
+Return the number of elements in a `CollectionSchema` object.
+
+```typescript
+const collection = new CollectionSchema<number>();
+collection.add(10);
+collection.add(20);
+collection.add(30);
+
+console.log(collection.size);
+// output: 3
+```
+
+#### `collection.forEach()`
+
+The `forEach()` method executes a provided function once per each index/value pair in the `CollectionSchema` object, in insertion order.
+
+```typescript
+collection.forEach((value, at) => {
+    console.log("at =>", at)
+    console.log("value =>", value)
+});
+```
+
+### SetSchema
+
+!!! Warning "`SetSchema` is only implemented in JavaScript"
+    The `SetSchema` can only be used with JavaScript so far. Haxe, C#, LUA and C++ clients are not supported yet.
+
+The `SetSchema` is a synchronizeable version of the built-in JavaScript [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) type.
+
+The usage of `SetSchema` is very similar to [`CollectionSchema`], the biggest difference is that Sets hold unique values. Sets do not have a way to access a value directly. (like [collection.at()](#collectionat))
+
+```typescript fct_label="TypeScript"
+import { Schema, SetSchema, type } from "@colyseus/schema";
+
+class Effect extends Schema {
+    @type("number")
+    radius: number;
+}
+
+class Player extends Schema {
+    @type({ set: Effect })
+    effects = new SetSchema<Effect>();
+}
+```
+
+```typescript fct_label="JavaScript"
+const schema = require('@colyseus/schema');
+const Schema = schema.Schema;
+const SetSchema = schema.SetSchema;
+
+class Effect extends Schema {
+}
+schema.defineTypes(Effect, {
+  radius: "number",
+});
+
+class Player extends Schema {
+    constructor () {
+        super();
+
+        this.effects = new SetSchema();
+    }
+}
+schema.defineTypes(Player, {
+  effects: { set: Effect }
+});
+```
+
+#### `set.add()`
+
+Appends an item to the `SetSchema` object.
+
+```typescript
+const set = new CollectionSchema<number>();
+set.add(1);
+set.add(2);
+set.add(3);
+```
+
+#### `set.at()`
+
+Gets an item at the specified `index`.
+
+```typescript
+const set = new CollectionSchema<string>();
+set.add("one");
+set.add("two");
+set.add("three");
+
+set.at(1);
+// output: "two"
+```
+
+#### `set.delete()`
+
+Delete an item by its value.
+
+```typescript
+set.delete("three");
+```
+
+#### `set.has()`
+
+Returns a boolean value wheter an item exists in the Collection or not.
+
+```typescript
+if (set.has("two")) {
+    console.log("Exists!");
+} else {
+    console.log("Does not exist!");
+}
+```
+
+#### `set.size`
+
+Return the number of elements in a `SetSchema` object.
+
+```typescript
+const set = new SetSchema<number>();
+set.add(10);
+set.add(20);
+set.add(30);
+
+console.log(set.size);
+// output: 3
+```
+
+!!! Note "More"
+    There are many more methods you can use from Sets. [Have a look at the MDN Documentation for Sets](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
+
+## Filtering data per client
 
 !!! Warning "This feature is experimental"
-    The `@filter()` currently only works for a limited use cases, and it's not recommended for fast-paced games as it will consume too much CPU. It's only possible to filter out schema fields, it **does not work** for items inside arrays and maps.
+    The `@filter()`/`@filterChildren()` are experimental and may not be optimized for fast-paced games.
 
-Field filtering is useful when you want to hide portions of your state for a particular client, to avoid cheating in case a player decides to inspect data coming from the network and seeing the unfiltered state information.
+Filtering is meant to hide portions of your state for a particular client, to avoid cheating in case a player decides to inspect data coming from the network and seeing the unfiltered state information.
+
+The data filters are callbacks that are going to be triggered **per client** and **per field** (or per child structure, in case of `@filterChildren`). If the filter callback returns `true` the field data is going to be sent for that particular client, otherwise, the data is not going to be sent for that client.
+
+### `@filter()` property decorator
+
+The `@filter()` property decorator can be used to filter out entire Schema fields.
+
+Here's how the `@filter()` signature looks like:
+
+```typescript fct_label="TypeScript"
+class State extends Schema {
+    @filter(function(client, value, root) {
+        // client is:
+        //
+        // the current client that's going to receive this data. you may use its
+        // client.sessionId, or other information to decide whether this value is
+        // going to be synched or not.
+
+        // value is:
+        // the value of the field @filter() is being applied to
+
+        // root is:
+        // the root instance of your room state. you may use it to access other
+        // structures in the process of decision whether this value is going to be
+        // synched or not.
+    })
+    @type("string") field: string;
+}
+```
+
+```typescript fct_label="JavaScript"
+const schema = require('@colyseus/schema');
+class State extends schema.Schema {}
+
+schema.defineTypes(State, {
+    field: "string"
+});
+
+schema.filter(function(client, value, root) {
+    // client is:
+    //
+    // the current client that's going to receive this data. you may use its
+    // client.sessionId, or other information to decide whether this value is
+    // going to be synched or not.
+
+    // value is:
+    // the value of the field @filter() is being applied to
+
+    // root is:
+    // the root instance of your room state. you may use it to access other
+    // structures in the process of decision whether this value is going to be
+    // synched or not.
+    return true;
+})(State.prototype, "field");
+```
+
+### `@filterChildren()` property decorator
+
+The `@filterChildren()` property decorator can be used to filter out items inside arrays, maps, sets, etc. Its signature is pretty much the same as `@filter()`, with the addition of the `key` parameter before the `value` - representing each item inside a [ArraySchema](#arrayschema), [MapSchema](#mapschema), [CollectionSchema](#collectionschema), etc.
+
+```typescript fct_label="TypeScript"
+class State extends Schema {
+    @filterChildren(function(client, key, value, root) {
+        // client is:
+        //
+        // the current client that's going to receive this data. you may use its
+        // client.sessionId, or other information to decide whether this value is
+        // going to be synched or not.
+
+        // key is:
+        // the key of the current value inside the structure
+
+        // value is:
+        // the current value inside the structure
+
+        // root is:
+        // the root instance of your room state. you may use it to access other
+        // structures in the process of decision whether this value is going to be
+        // synched or not.
+    })
+    @type([Cards]) cards = new ArraySchema<Card>();
+}
+```
+
+```typescript fct_label="JavaScript"
+const schema = require('@colyseus/schema');
+class State extends schema.Schema {}
+
+schema.defineTypes(State, {
+    cards: [Card]
+});
+
+schema.filterChildren(function(client, key, value, root) {
+    // client is:
+    //
+    // the current client that's going to receive this data. you may use its
+    // client.sessionId, or other information to decide whether this value is
+    // going to be synched or not.
+
+    // key is:
+    // the key of the current value inside the structure
+
+    // value is:
+    // the current value inside the structure
+
+    // root is:
+    // the root instance of your room state. you may use it to access other
+    // structures in the process of decision whether this value is going to be
+    // synched or not.
+    return true;
+})(State.prototype, "cards");
+```
 
 **Example:** In a card game, the relevant data of each card should be available only for the owner of the card, or on certain conditions (e.g. card has been discarded)
 
 See `@filter()` callback signature:
 
-```typescript
+```typescript fct_label="TypeScript"
 import { Client } from "colyseus";
 
-/**
- * DO NOT USE ARROW FUNCTION INSIDE `@filter`, AS IT WILL FORCE A DIFFERENT `this` SCOPE
- */
-
 class Card extends Schema {
-  @type("string") owner: string; // contains the sessionId of Card owner
-  @type("boolean") discarded: boolean = false;
+    @type("string") owner: string; // contains the sessionId of Card owner
+    @type("boolean") discarded: boolean = false;
 
-  @filter(function(
-    this: Card, // the instance of the class `@filter` has been defined (instance of `Card`)
-    client: Client, // the Room's `client` instance which this data is going to be filtered to
-    value?: Card['number'], // the value of the field to be filtered. (value of `number` field)
-    root?: Schema // the root state Schema instance
-  ) {
-    return this.discarded || this.owner === client.sessionId;
-  })
-  @type("uint8") number: number;
+    /**
+     * DO NOT USE ARROW FUNCTION INSIDE `@filter`
+     * (IT WILL FORCE A DIFFERENT `this` SCOPE)
+     */
+    @filter(function(
+        this: Card, // the instance of the class `@filter` has been defined (instance of `Card`)
+        client: Client, // the Room's `client` instance which this data is going to be filtered to
+        value: Card['number'], // the value of the field to be filtered. (value of `number` field)
+        root: Schema // the root state Schema instance
+    ) {
+        return this.discarded || this.owner === client.sessionId;
+    })
+    @type("uint8") number: number;
 }
 ```
 
-### Primitive types
+```typescript fct_label="JavaScript"
+const schema = require('@colyseus/schema');
 
-These are the types you can provide for the `@type()` decorator, and their limitations.
+class Card extends schema.Schema {}
+schema.defineTypes(Card, {
+    owner: "string",
+    discarded: "boolean",
+    number: "uint8"
+});
 
-!!! tip
-    If you know exactly the range of your `number` properties, you can optimize the serialization by providing the right primitive type for it.
-
-    Otherwise, use `"number"`, which will adds an extra byte to identify itself during serialization.
-
-
-| Type | Description | Limitation |
-|------|-------------|------------|
-| `"string"` | utf8 strings | maximum byte size of `4294967295` |
-| `"number"` | auto-detects the `int` or `float` type to be used. (adds an extra byte on output) | `0` to `18446744073709551615` |
-| `"boolean"` | `true` or `false` | `0` or `1` |
-| `"int8"` | signed 8-bit integer | `-128` to `127` |
-| `"uint8"` | unsigned 8-bit integer | `0` to `255` |
-| `"int16"` | signed 16-bit integer | `-32768` to `32767` |
-| `"uint16"` | unsigned 16-bit integer | `0` to `65535` |
-| `"int32"` | signed 32-bit integer | `-2147483648` to `2147483647` |
-| `"uint32"` | unsigned 32-bit integer | `0` to `4294967295` |
-| `"int64"` | signed 64-bit integer | `-9223372036854775808` to `9223372036854775807` |
-| `"uint64"` | unsigned 64-bit integer | `0` to `18446744073709551615` |
-| `"float32"` | single-precision floating-point number | `-3.40282347e+38` to `3.40282347e+38`|
-| `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |
+/**
+ * DO NOT USE ARROW FUNCTION INSIDE `@filter`
+ * (IT WILL FORCE A DIFFERENT `this` SCOPE)
+ */
+schema.filter(function(client, value, root) {
+    return this.discarded || this.owner === client.sessionId;
+})(Card.prototype, "number");
+```
 
 ### Backwards/forwards compability
 
@@ -289,6 +769,7 @@ This is particularly useful for native-compiled targets, such as C#, C++, Haxe, 
 
 ### Limitations and best practices
 
+- Each `Schema` structure can hold up to `64` fields. If you need more fields, use nested `Schema` structures.
 - `NaN` or `null` numbers are encoded as `0`
 - `null` strings are encoded as `""`
 - `Infinity` numbers are encoded as `Number.MAX_SAFE_INTEGER`
@@ -297,8 +778,6 @@ This is particularly useful for native-compiled targets, such as C#, C++, Haxe, 
 - `@colyseus/schema` encodes only field values in the specified order.
   - Both encoder (server) and decoder (client) must have same schema definition.
   - The order of the fields must be the same.
-- Avoid manipulating indexes of an array. This result in at least `2` extra bytes for each index change. **Example:** If you have an array of 20 items, and remove the first item (through `shift()`) this means `38` extra bytes to be serialized.
-- Avoid moving keys of maps. As of arrays, it adds `2` extra bytes per key move.
 
 ## Client-side
 

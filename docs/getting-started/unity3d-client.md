@@ -13,7 +13,7 @@ npm install
 npm start
 ```
 
-The demo server is using [`@colyseus/social`](/authentication) for user authentication. Please download and install MongoDB locally: [https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installation-tutorials](https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installation-tutorials)
+The demo server is using [`@colyseus/social`](/tools/colyseus-social/) for user authentication. Please download and install MongoDB locally: [https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installation-tutorials](https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installation-tutorials)
 
 !!! Tip
     Ensure you have [Node v8+](http://nodejs.org/) installed locally to run the server.
@@ -106,4 +106,4 @@ const gameServer = new Server({
 });
 ```
 
-Make sure to have a `pingInterval` higher than `0` on production. The default `pingInterval` value is `1500`.
+Make sure to have a `pingInterval` higher than `0` on production. The default `pingInterval` value is `3000`.

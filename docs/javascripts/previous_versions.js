@@ -3,6 +3,7 @@ var header = document.querySelector('.md-header-nav__topic');
 var select = document.createElement('select');
 var versions = [
   'master',
+  '0.13.x',
   '0.12.x',
   '0.11.x',
   '0.10.x',
@@ -12,6 +13,8 @@ var option = document.createElement('option');
 option.text = "Versions";
 option.value = '';
 select.appendChild(option);
+
+console.log("VERSIONS:", versions);
 
 versions.forEach(function(version) {
   var option = document.createElement('option');

@@ -31,3 +31,8 @@
 #ethical_ad .ea-content {
   background: rgb(245, 245, 245) !important;
 }
+
+/* hide ads on mobile */
+@media screen and (max-width: 768px) {
+  #ethical_ad { display: none; }
+}

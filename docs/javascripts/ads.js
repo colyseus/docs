@@ -28,7 +28,7 @@ document.getElementsByTagName('head')[0].appendChild(embedScript);
 var patreonAd = '<center>' +
     '<p><em>Colyseus is fully open-source. Please consider <a href="https://www.patreon.com/endel">donating any amount to support the project</a></em> ❤️</p>' +
         '<a href="https://patreon.com/endel" title="Support Colyseus on Patreon">' +
-        '<img src="https://img.shields.io/badge/endpoint.svg?url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fendel%2Fpatrons&style=for-the-badge&label=donations" alt="Support Colyseus on Patreon"/>' +
+        '<img src="https://img.shields.io/badge/dynamic/json?logo=patreon&style=for-the-badge&color=%23e85b46&label=Patreon&query=data.attributes.patron_count&suffix=%20backers&url=https%3A%2F%2Fwww.patreon.com%2Fapi%2Fcampaigns%2F365642" alt="Support Colyseus on Patreon"/>' +
     '</a>' +
 '</center>';
 

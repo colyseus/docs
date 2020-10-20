@@ -22,7 +22,7 @@ Install `pm2` in your environment.
 npm install -g pm2
 ```
 
-Then start your game server using it:
+Then start your server using it:
 
 ```
 pm2 start your-server.js

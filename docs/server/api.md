@@ -64,7 +64,7 @@ gameServer.listen(port);
 
 #### `options.pingInterval`
 
-Number of milliseconds for the server to "ping" the clients. Default: `1500`
+Number of milliseconds for the server to "ping" the clients. Default: `3000`
 
 The clients are going to be forcibly disconnected if they can't respond after [pingMaxRetries](/server/api/#optionspingMaxRetries) retries.
 
@@ -297,6 +297,19 @@ gameServer
 
 !!! Warning
     It's completely discouraged to manipulate a room's state through these events. Use the [abstract methods](/server/room/#abstract-methods) in your room handler instead.
+
+### `simulateLatency (milliseconds: number)`
+
+This is a convenience method for when you would like to locally test how "laggy" clients will behave without having to deploy your server to a remote cloud.
+
+```typescript
+// Make sure to never call the `simulateLatency()` method in production.
+if (process.env.NODE_ENV !== "production") {
+
+  // simulate 200ms latency between server and client.
+  gameServer.simulateLatency(200);
+}
+```
 
 ### `attach (options: any)`
 
