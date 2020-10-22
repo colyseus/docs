@@ -120,6 +120,9 @@ Also removes all `.listen()` calls if you're using [Fossil Delta](/state/fossil-
 
 ### onStateChange
 
+!!! Tip "You may trigger callbacks for specific Schema structures"
+    Check out the [State Handling » Schema » Client-side](/state/schema/#client-side) section for more details.
+
 This event is triggered when the server updates its state.
 
 ```typescript fct_label="JavaScript"

@@ -781,6 +781,20 @@ This is particularly useful for native-compiled targets, such as C#, C++, Haxe, 
 
 ## Client-side
 
+### `.listen(prop, callback)`
+
+The `.listen()` method is only available in JavaScript/TypeScript at the moment.
+
+**Parameters:**
+- `property`: the property name you'd like to listen for changes.
+- `callback`: the callback that is going to be triggered when `property` changes.
+
+```typescript
+state.listen("currentTurn", (currentValue, previousValue) => {
+    console.log(`currentTurn is now ${currentValue} (previous value was: ${previousValue})`);
+});
+```
+
 ### Callbacks
 
 You can use the following callbacks within the schema structures in the client-side to handle changes coming from the server-side.
