@@ -34,7 +34,7 @@ Client client = new Colyseus.Client ("ws://localhost:2567");
 
 ```csharp
 try {
-    Room room = await client.Join<RoomState> ("room_name");
+    Room room = await client.JoinOrCreate<RoomState> ("room_name");
     Debug.Log("Joined successfully!");
 
 } catch (ex) {

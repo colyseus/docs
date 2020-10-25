@@ -44,7 +44,7 @@ var client = new Colyseus.Client('ws://localhost:2567');
 ### Joining to a room:
 
 ```ts
-client.join("room_name").then(room => {
+client.joinOrCreate("room_name").then(room => {
     console.log(room.sessionId, "joined", room.name);
 }).catch(e => {
     console.log("JOIN ERROR", e);
