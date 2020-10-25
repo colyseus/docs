@@ -87,7 +87,7 @@ room.onLeave((code) => {
 
 ## React Native compatibility
 
-This client works with React Native. You need to install some aditional
+This client works with React Native. You need to install some additional
 dependencies for compatibility and assign `window.localStorage` to
 `AsyncStorage`.
 
