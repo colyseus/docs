@@ -318,7 +318,7 @@ schema.defineTypes(Player, {
 });
 
 // Our custom game state, an ArraySchema of type Player only at the moment
-exports.State = class State extends Schema {
+exports.State = class State extends schema.Schema {
     constructor() {
         super();
         this.players = new schema.MapSchema();
@@ -328,7 +328,7 @@ defineTypes(State, {
     players: { map: Player }
 });
 
-exports.GameRoom = class GameRoom extends Room {
+exports.GameRoom = class GameRoom extends colyseus.Room {
   // Colyseus will invoke when creating the room instance
   onCreate(options) {
     // initialize empty room state
