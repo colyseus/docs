@@ -259,7 +259,7 @@ See [graceful shutdown](/server/graceful-shutdown).
 ### Example room
 This example demonstrates an entire room implementing the `onCreate`, `onJoin` and `onMessage` methods.
 
-```typescript
+```typescript fct_label="TypeScript"
 import { Room, Client } from "colyseus";
 import { Schema, MapSchema, type } from "@colyseus/schema";
 
@@ -286,7 +286,7 @@ export class GameRoom extends Room<State> {
 
     // Called every time this room receives a "move" message
     this.onMessage("move", (client, data) => {
-      const player: Player = this.state.players[client.sessionId];
+      const player = this.state.players.get(client.sessionId);
       player.x += data.x;
       player.y += data.y;
       console.log(client.sessionId + " at, x: " + player.x, "y: " + player.y);
@@ -295,7 +295,57 @@ export class GameRoom extends Room<State> {
 
   // Called every time a client joins
   onJoin(client: Client, options: any) {
-    this.state.players[client.sessionId] = new Player();
+    this.state.players.set(client.sessionId, new Player());
+  }
+}
+```
+
+```typescript fct_label="JavaScript"
+const colyseus = require('colyseus');
+const schema = require('@colyseus/schema');
+
+// An abstract player object, demonstrating a potential 2D world position
+exports.Player = class Player extends schema.Schema {
+    constructor() {
+        super();
+        this.x = 0.11;
+        this.y = 2.22;
+    }
+}
+schema.defineTypes(Player, {
+    x: "number",
+    y: "number",
+});
+
+// Our custom game state, an ArraySchema of type Player only at the moment
+exports.State = class State extends Schema {
+    constructor() {
+        super();
+        this.players = new schema.MapSchema();
+    }
+}
+defineTypes(State, {
+    players: { map: Player }
+});
+
+exports.GameRoom = class GameRoom extends Room {
+  // Colyseus will invoke when creating the room instance
+  onCreate(options) {
+    // initialize empty room state
+    this.setState(new State());
+
+    // Called every time this room receives a "move" message
+    this.onMessage("move", (client, data) => {
+      const player = this.state.players.get(client.sessionId);
+      player.x += data.x;
+      player.y += data.y;
+      console.log(client.sessionId + " at, x: " + player.x, "y: " + player.y);
+    });
+  }
+
+  // Called every time a client joins
+  onJoin(client, options) {
+    this.state.players.set(client.sessionId, new Player());
   }
 }
 ```
