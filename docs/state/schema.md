@@ -227,9 +227,9 @@ animals.splice(itemIndex, 1);
 Iterates over each element of the array.
 
 ```typescript fct_label="TypeScript"
-const array1 = new ArraySchema<string>('a', 'b', 'c');
+this.state.array1 = new ArraySchema<string>('a', 'b', 'c');
 
-array1.forEach(element => {
+this.state.array1.forEach(element => {
     console.log(element);
 });
 // output: "a"
@@ -238,20 +238,20 @@ array1.forEach(element => {
 ```
 
 ```csharp fct_label="C#"
-array1.ForEach((value) => {
+State.array1.ForEach((value) => {
     Debug.Log(value);
 })
 ```
 
 ```lua fct_label="LUA"
-array1:each(function(value, index)
+state.array1:each(function(value, index)
     print(index, "=>")
     pprint(value)
 end)
 ```
 
 ```lua fct_label="Haxe"
-for (index => value in array1) {
+for (index => value in state.array1) {
     trace(index + " => " + value);
 }
 ```
@@ -393,21 +393,21 @@ this.state.players.forEach((value, key) => {
 ```
 
 ```csharp fct_label="C#"
-array1.ForEach((key, value) => {
+State.players.ForEach((key, value) => {
     Debug.Log(key);
     Debug.Log(value);
 })
 ```
 
 ```lua fct_label="LUA"
-array1:each(function(value, index)
-    print(index, "=>")
+state.players:each(function(value, key)
+    print(key, "=>")
     pprint(value)
 end)
 ```
 
 ```lua fct_label="Haxe"
-for (index => value in array1) {
+for (key => value in state.players) {
     trace(index + " => " + value);
 }
 ```
