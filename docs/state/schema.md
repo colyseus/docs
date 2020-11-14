@@ -113,6 +113,9 @@ schema.defineTypes(MyState, {
 
 The `ArraySchema` is a synchronizeable version of the built-in JavaScript [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) type.
 
+!!! Note "More"
+    There are more methods you can use from Arrays. [Have a look at the MDN Documentation for Arrays](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/).
+
 ```typescript fct_label="TypeScript"
 import { Schema, ArraySchema, type } from "@colyseus/schema";
 
@@ -221,9 +224,9 @@ animals.splice(itemIndex, 1);
 
 #### `array.forEach()`
 
-Executes a provided function once for each array element.
+Iterates over each element of the array.
 
-```typescript
+```typescript fct_label="TypeScript"
 const array1 = new ArraySchema<string>('a', 'b', 'c');
 
 array1.forEach(element => {
@@ -234,14 +237,33 @@ array1.forEach(element => {
 // output: "c"
 ```
 
-!!! Note "More"
-    There are many more methods you can use from Arrays. [Have a look at the MDN Documentation for Arrays](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/).
+```csharp fct_label="C#"
+array1.ForEach((value) => {
+    Debug.Log(value);
+})
+```
+
+```lua fct_label="LUA"
+array1:each(function(value, index)
+    print(index, "=>")
+    pprint(value)
+end)
+```
+
+```lua fct_label="Haxe"
+for (index => value in array1) {
+    trace(index + " => " + value);
+}
+```
 
 ### MapSchema
 
 The `MapSchema` is a synchronizeable version of the built-in JavaScript [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) type.
 
 Maps are recommended to track your game entities by id, such as players, enemies, etc.
+
+!!! Note "More"
+    There are more methods you can use from Maps. [Have a look at the MDN Documentation for Maps](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/).
 
 ```typescript fct_label="TypeScript"
 import { Schema, MapSchema, type } from "@colyseus/schema";
@@ -361,17 +383,34 @@ console.log(map.size);
 
 #### `map.forEach()`
 
-The `forEach()` method executes a provided function once per each key/value pair in the `MapSchema` object, in insertion order.
+Iterates over each key/value pair of the map, in insertion order.
 
-```typescript
+```typescript fct_label="TypeScript"
 this.state.players.forEach((value, key) => {
     console.log("key =>", key)
     console.log("value =>", value)
 });
 ```
 
-!!! Note "More"
-    There are many more methods you can use from Maps. [Have a look at the MDN Documentation for Maps](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/).
+```csharp fct_label="C#"
+array1.ForEach((key, value) => {
+    Debug.Log(key);
+    Debug.Log(value);
+})
+```
+
+```lua fct_label="LUA"
+array1:each(function(value, index)
+    print(index, "=>")
+    pprint(value)
+end)
+```
+
+```lua fct_label="Haxe"
+for (index => value in array1) {
+    trace(index + " => " + value);
+}
+```
 
 
 ### CollectionSchema
@@ -495,6 +534,9 @@ collection.forEach((value, at) => {
 
 The `SetSchema` is a synchronizeable version of the built-in JavaScript [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) type.
 
+!!! Note "More"
+    There are more methods you can use from Sets. [Have a look at the MDN Documentation for Sets](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
+
 The usage of `SetSchema` is very similar to [`CollectionSchema`], the biggest difference is that Sets hold unique values. Sets do not have a way to access a value directly. (like [collection.at()](#collectionat))
 
 ```typescript fct_label="TypeScript"
@@ -592,9 +634,6 @@ set.add(30);
 console.log(set.size);
 // output: 3
 ```
-
-!!! Note "More"
-    There are many more methods you can use from Sets. [Have a look at the MDN Documentation for Sets](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
 
 ## Filtering data per client
 
@@ -799,52 +838,13 @@ state.listen("currentTurn", (currentValue, previousValue) => {
 
 You can use the following callbacks within the schema structures in the client-side to handle changes coming from the server-side.
 
-- [onChange (changes)](#onchange-changes-datachange)
 - [onAdd (instance, key)](#onadd-instance-key)
 - [onRemove (instance, key)](#onremove-instance-key)
-- [onChange (instance, key)](#onchange-instance-key)
+- [onChange (changes)](#onchange-changes-datachange) (on `Schema` instance)
+- [onChange (instance, key)](#onchange-instance-key) (on collections: `MapSchema`, `ArraySchema`, etc.)
 
 !!! Warning "C#, C++, Haxe"
     When using statically typed languages, you need to generate the client-side schema files based on your TypeScript schema definitions. [See generating schema on the client-side](#client-side-schema-generation).
-
-#### `onChange (changes: DataChange[])`
-
-You can register the `onChange` to track a single object's property changes. The `onChange` callback is called with an array of changed properties, along with their previous value.
-
-```javascript fct_label="JavaScript"
-room.state.onChange = (changes) => {
-    changes.forEach(change => {
-        console.log(change.field);
-        console.log(change.value);
-        console.log(change.previousValue);
-    });
-};
-```
-
-```lua fct_label="LUA"
-room.state['on_change'] = function (changes)
-    for i, change in ipairs(changes) do
-        print(change.field)
-        print(change.value)
-        print(change.previousValue)
-    end
-end
-```
-
-```csharp fct_label="C#"
-room.State.OnChange += (changes) =>
-{
-    changes.ForEach((obj) =>
-    {
-        Debug.Log(obj.Field);
-        Debug.Log(obj.Value);
-        Debug.Log(obj.PreviousValue);
-    });
-};
-```
-
-- You cannot register a `onChange` callback for objects that haven't been synchronized to the client-side yet.
-- [The `onChange` works differently if used directly in an `ArraySchema` or `MapSchema`](#onchange-instance-key)
 
 #### `onAdd (instance, key)`
 
@@ -942,9 +942,52 @@ room.State.players.OnRemove += (Player player, string key) =>
 };
 ```
 
+#### `onChange (changes: DataChange[])`
+
+> `onChange` works differently for direct `Schema` references and collection structures. For [`onChange` on collection structures (array, map, etc.), check here](#onchange-instance-key).
+
+You can register the `onChange` to track a `Schema` instance's property changes. The `onChange` callback is triggered with an array of changed properties, along with its previous values.
+
+```javascript fct_label="JavaScript"
+room.state.onChange = (changes) => {
+    changes.forEach(change => {
+        console.log(change.field);
+        console.log(change.value);
+        console.log(change.previousValue);
+    });
+};
+```
+
+```lua fct_label="LUA"
+room.state['on_change'] = function (changes)
+    for i, change in ipairs(changes) do
+        print(change.field)
+        print(change.value)
+        print(change.previousValue)
+    end
+end
+```
+
+```csharp fct_label="C#"
+room.State.OnChange += (changes) =>
+{
+    changes.ForEach((obj) =>
+    {
+        Debug.Log(obj.Field);
+        Debug.Log(obj.Value);
+        Debug.Log(obj.PreviousValue);
+    });
+};
+```
+
+You cannot register the `onChange` callback on objects that haven't been synchronized with the client-side yet.
+
+
 #### `onChange (instance, key)`
 
-When registering a `onChange` callback on a `MapSchema` or `ArraySchema` instance, you can detect whenever a object has been changed inside that container.
+> `onChange` works differently for direct `Schema` references and collection structures. For [`onChange` on `Schema` structures, check here](#onchange-changes-datachange).
+
+This callback is triggered whenever a collection of **primitive** types (`string`, `number`, `boolean`, etc.) updates some of its values.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onChange = (player, key) => {
@@ -965,12 +1008,13 @@ room.State.players.OnChange += (Player player, string key) =>
 };
 ```
 
-It's not possible to know exactly which properties have changed using this method. See [`onChange (changes)`](#onchange-changes-datachange) if you need to access the list of changes
+If you'd like to detect changes inside a collection of **non-primitive** types (holding `Schema` instances),use [`onAdd`](#onadd-instance-key) and register [`onChange`](#onchange-changes-datachange) on them.
 
-!!! Warning "Important"
+!!! Warning "`onChange`, `onAdd` and `onRemove` are **exclusive**"
     The `onChange` callback is not triggered during [`onAdd`](#onadd-instance-key) or [`onRemove`](#onremove-instance-key).
 
     Consider registering `onAdd` and `onRemove` if you need to detect changes during these steps too.
+
 
 ## Client-side schema generation
 
