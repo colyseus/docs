@@ -5,8 +5,8 @@
 
 The example project has a similar result as the [TypeScript (pixijs-boilerplate)](https://github.com/endel/colyseus-pixijs-boilerplate).
 
-- [Client-side (c3p project)](/_downloads/ColyAgarClient-0-13-1.c3p)
-- [Server-side on Glitch (source-code)](https://glitch.com/~held-quartz)
+- [Client-side (c3p project)](/_downloads/ColyAgarClient-0-14-0.c3p)
+- [Server-side on Glitch (source-code)](https://glitch.com/~colyseus-construct3)
 
 ## Important
 

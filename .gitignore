@@ -1,2 +1,4 @@
 site
 src
+.DS_Store
+.vscode
