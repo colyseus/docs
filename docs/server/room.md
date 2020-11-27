@@ -549,7 +549,7 @@ Allow the specified client to [`reconnect`](/client/client/#reconnect-roomid-str
 If **`seconds`** is provided, the reconnection is going to be cancelled after the provided amout of seconds.
 
 ```typescript
-async onLeave (client, consented: boolean) {
+async onLeave (client: Client, consented: boolean) {
   // flag client as inactive for other users
   this.state.players[client.sessionId].connected = false;
 
@@ -575,7 +575,7 @@ async onLeave (client, consented: boolean) {
 Alternatively, you may not provide the amount of **`seconds`** to automatically reject the reconnection, and reject it yourself using your own logic.
 
 ```typescript
-async onLeave (client, consented: boolean) {
+async onLeave (client: Client, consented: boolean) {
   // flag client as inactive for other users
   this.state.players[client.sessionId].connected = false;
 
