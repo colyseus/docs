@@ -116,6 +116,8 @@ The `ArraySchema` is a synchronizeable version of the built-in JavaScript [Array
 !!! Note "More"
     There are more methods you can use from Arrays. [Have a look at the MDN Documentation for Arrays](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/).
 
+#### Array of custom `Schema` type
+
 ```typescript fct_label="TypeScript"
 import { Schema, ArraySchema, type } from "@colyseus/schema";
 
@@ -154,6 +156,36 @@ class MyState extends Schema {
 }
 schema.defineTypes(MyState, {
   blocks: [ Block ],
+});
+```
+
+#### Array of a primitive type
+
+You can't mix types inside arrays.
+
+```typescript fct_label="TypeScript"
+import { Schema, ArraySchema, type } from "@colyseus/schema";
+
+class MyState extends Schema {
+    @type([ "string" ])
+    animals = new ArraySchema<string>();
+}
+```
+
+```typescript fct_label="JavaScript"
+const schema = require('@colyseus/schema');
+const Schema = schema.Schema;
+const ArraySchema = schema.ArraySchema;
+
+class MyState extends Schema {
+    constructor () {
+        super();
+
+        this.animals = new ArraySchema();
+    }
+}
+schema.defineTypes(MyState, {
+  animals: [ "string" ],
 });
 ```
 
