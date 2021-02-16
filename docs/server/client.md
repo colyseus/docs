@@ -35,12 +35,12 @@ The `type` can be either a `string` or a `number`.
 
 ```typescript
 //
-// sending message with string type
+// sending message with a string type ("powerup")
 //
 client.send("powerup", { kind: "ammo" });
 
 //
-// sending message with number identifier
+// sending message with a number type (1)
 //
 client.send(1, { kind: "ammo"});
 ```
