@@ -676,6 +676,9 @@ Filtering is meant to hide portions of your state for a particular client, to av
 
 The data filters are callbacks that are going to be triggered **per client** and **per field** (or per child structure, in case of `@filterChildren`). If the filter callback returns `true` the field data is going to be sent for that particular client, otherwise, the data is not going to be sent for that client.
 
+Note that the filter function does not re-run automatically if its dependencies change, but only if the filtered field (or its children) are updated.
+See [this issue](https://github.com/colyseus/schema/issues/102) for a workaround.
+
 ### `@filter()` property decorator
 
 The `@filter()` property decorator can be used to filter out entire Schema fields.
