@@ -1,7 +1,7 @@
 **Why?**
 
 - Models ([`@colyseus/schema`](https://github.com/colyseus/schema)) should contain only data, without game logic.
-- Rooms should have a little code as possible, and forward actions to other structures
+- Rooms should have as little code as possible, and forward actions to other structures
 
 **The command pattern has several advantages, such as:**
 
