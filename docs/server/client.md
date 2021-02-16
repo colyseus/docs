@@ -31,20 +31,21 @@ Send message a type of message to the client. Messages are encoded with MsgPack 
 
 The `type` can be either a `string` or a `number`.
 
-**Sending a msgpack-encoded message:**
+**Sending a message:**
 
 ```typescript
 //
 // sending message with string type
 //
-client.send("powerup", { type: "ammo" });
+client.send("powerup", { kind: "ammo" });
 
 //
-// sending message with number type
+// sending message with number identifier
 //
-client.send(1, { type: "ammo"});
+client.send(1, { kind: "ammo"});
 ```
 
+<!-- 
 **Sending a schema-encoded message:**
 
 Sending schema-encoded messages is particularly useful for statically-typed languages such as C#.
@@ -62,6 +63,7 @@ client.send(data);
 
 !!! Tip
     [See how to handle these messages on client-side.](/client/room/#onmessage)
+ -->
 
 ### `leave(code?: number)`
 

@@ -177,15 +177,18 @@ room.onMessage("powerup", (message) => {
 
 ```csharp fct_label="C#"
 class PowerUpMessage {
-  string type;
+  string kind;
 }
 
 room.OnMessage<PowerUpMessage>("powerup", (message) => {
   Debug.Log ("message received from server");
   Debug.Log(message);
 });
+```
 
+<!-- 
 /**
+ * (this block was removed from C# block above)
  * Handling schema-encoded messages:
  */
 room.OnMessage("powerup", (message) => {
@@ -197,8 +200,7 @@ room.OnMessage("powerup", (message) => {
   else if (message is AnotherMessage) {
     // ...
   }
-});
-```
+}); -->
 
 ```lua fct_label="lua"
 room:on_message("powerup", function(message)
