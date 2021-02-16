@@ -60,10 +60,10 @@ data.message = "Hello world!";
 
 client.send(data);
 ```
+ -->
 
 !!! Tip
     [See how to handle these messages on client-side.](/client/room/#onmessage)
- -->
 
 ### `leave(code?: number)`
 
