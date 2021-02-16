@@ -14,7 +14,7 @@ repo_name: 'colyseus/colyseus'
 repo_url: 'https://github.com/colyseus/colyseus'
 
 # Copyright
-copyright: 'Copyright &copy; 2020 Endel Dreyer'
+copyright: 'Copyright &copy; 2021 Endel Dreyer'
 google_analytics: ['UA-108278048-3', 'docs.colyseus.io']
 
 # Documentation and theme
@@ -44,8 +44,6 @@ extra:
   search:
     language: 'en'
   social:
-  - type: 'money'
-    link: 'https://www.patreon.com/endel'
   - type: 'comments'
     link: 'https://discuss.colyseus.io'
   - type: 'globe'
@@ -54,8 +52,6 @@ extra:
     link: 'https://github.com/colyseus'
   - type: 'twitter'
     link: 'https://twitter.com/colyseus'
-  - type: 'linkedin'
-    link: 'https://www.linkedin.com/company/game-std-io/'
 
 # Extensions
 markdown_extensions:
