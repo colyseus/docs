@@ -116,7 +116,7 @@ The `ArraySchema` is a synchronizeable version of the built-in JavaScript [Array
 !!! Note "More"
     There are more methods you can use from Arrays. [Have a look at the MDN Documentation for Arrays](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/).
 
-#### Array of custom `Schema` type
+**Example: Array of custom `Schema` type**
 
 ```typescript fct_label="TypeScript"
 import { Schema, ArraySchema, type } from "@colyseus/schema";
@@ -159,7 +159,7 @@ schema.defineTypes(MyState, {
 });
 ```
 
-#### Array of a primitive type
+**Example: Array of a primitive type**
 
 You can't mix types inside arrays.
 
