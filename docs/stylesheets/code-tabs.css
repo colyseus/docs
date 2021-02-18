@@ -4,6 +4,10 @@
 
 }
 
+article.md-content__inner img {
+  border-radius: 0.5em;
+}
+
 /* .md-fenced-code-tabs {
   background: #fff;
   border: 1px solid #ebebeb;
