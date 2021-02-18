@@ -2,8 +2,7 @@
 
 The purpose of this technical demo is to show how to create rooms, utilize customized game logic and handle a full, multiplayer game cycle. The demo is designed to work with Colyseus version 0.14 and [Unity version 2019.4.20f1](https://unity3d.com/unity/qa/lts-releases).
 
-- [Download the sources of this demo](#)
-- ([View source code](#))
+**[Download demo](#)** ([View source code](#))
 
 ## Getting Started
 
