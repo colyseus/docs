@@ -78,7 +78,7 @@ nav:
   - 'Construct3': 'getting-started/construct3-client.md'
 
 - "Tech Demo's":
-  - 'Shooting Gallery': 'getting-started/shooting-gallery.md'
+  - 'Shooting Gallery': 'demo/shooting-gallery.md'
 
 - 'Server API':
   - 'Server': 'server/api.md'
