@@ -77,9 +77,6 @@ nav:
   - 'Cocos2d-x': 'getting-started/cocos2dx-client.md'
   - 'Construct3': 'getting-started/construct3-client.md'
 
-- "Tech Demo's":
-  - 'Shooting Gallery': 'demo/shooting-gallery/index.md'
-
 - 'Server API':
   - 'Server': 'server/api.md'
   - 'Room': 'server/room.md'
@@ -129,5 +126,8 @@ nav:
   - '0.11': 'migrating/0.11.md'
   - '0.10': 'migrating/0.10.md'
   - '0.9': 'migrating/0.9.md'
+
+- "Tech Demos":
+  - 'Shooting Gallery': 'demo/shooting-gallery/index.md'
 
 - 'FAQ': 'faq.md'
