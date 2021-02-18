@@ -70,12 +70,15 @@ markdown_extensions:
 nav:
 - 'Home': 'index.md'
 - 'Getting started':
-  - 'JavaScript Client': 'getting-started/javascript-client.md'
-  - 'Defold Engine Client': 'getting-started/defold-client.md'
-  - 'Haxe Client': 'getting-started/haxe-client.md'
-  - 'Cocos2d-x Client': 'getting-started/cocos2dx-client.md'
-  - 'Unity3d Client': 'getting-started/unity3d-client.md'
-  - 'Construct3 Client': 'getting-started/construct3-client.md'
+  - 'Unity3d': 'getting-started/unity3d-client.md'
+  - 'JavaScript': 'getting-started/javascript-client.md'
+  - 'Defold Engine': 'getting-started/defold-client.md'
+  - 'Haxe': 'getting-started/haxe-client.md'
+  - 'Cocos2d-x': 'getting-started/cocos2dx-client.md'
+  - 'Construct3': 'getting-started/construct3-client.md'
+
+- "Tech Demo's":
+  - 'Shooting Gallery': 'getting-started/shooting-gallery.md'
 
 - 'Server API':
   - 'Server': 'server/api.md'
