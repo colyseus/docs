@@ -8,7 +8,7 @@ The purpose of this technical demo is to show how to create rooms, utilize custo
 
 ### Launching a local server
 
-Simply follow the instructions found underneath [“Running the demo server” in the Unity3d section of these docs](/getting-started/unity3d-client/#running-the-demo-server).
+You need to install and launch the server from the **provided Server directory** for this demo to function properly. Simply follow the instructions found underneath [“Running the demo server” in the Unity3d section of these docs](/getting-started/unity3d-client/#running-the-demo-server).
 
 ### ColyseusSettings ScriptableObject
 
