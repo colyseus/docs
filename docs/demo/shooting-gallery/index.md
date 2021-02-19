@@ -4,6 +4,8 @@ The purpose of this technical demo is to show how to create rooms, utilize custo
 
 **[Download demo](https://github.com/colyseus/unity-demo-shooting-gallery/archive/master.zip)** ([View source code](https://github.com/colyseus/unity-demo-shooting-gallery/))
 
+![Screenshot](https://github.com/colyseus/unity-demo-shooting-gallery/blob/master/screenshot.png?raw=1)
+
 ## Getting Started
 
 ### Launching a local server
