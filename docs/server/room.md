@@ -495,7 +495,7 @@ Broadcasting a message to all clients, except the sender.
 onCreate() {
     this.onMessage("fire", (client, message) => {
         // sends "fire" event to every client, except the one who triggered it.
-        this.broadcast("fire", { except: client });
+        this.broadcast("fire", message, { except: client });
     });
 }
 ```
