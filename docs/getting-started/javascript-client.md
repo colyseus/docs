@@ -1,21 +1,18 @@
 # JavaScript Client
 
-## Platforms
+The JavaScript/TypeScript client is compatible with mostly every platform:
 
-The JavaScript client is compatible with:
-
-- Major browsers environments ([Electron](https://github.com/electron/electron), Chrome, Firefox, Safari, Opera, etc)
-- [React Native](https://github.com/facebook/react-native) ([with some caveats](#react-native-compatibility))
-- [Cocos Creator](http://www.cocos2d-x.org/creator) ([instructions](#cocos-creator-instructions))
+- Browser (Google Chrome, Firefox, Safari, Opera, Brave, etc.)
 - [NodeJS](https://nodejs.org/)
-
-Don't know NodeJS build-systems like `webpack`? Just save and drop the [JavaScript distribution file](https://github.com/colyseus/colyseus.js/raw/master/dist/colyseus.js) into your project and ignore the `import` statements presented here in the documentation.
+- [Electron](https://github.com/electron/electron)
+- [React Native](https://github.com/facebook/react-native)
+- [Cocos Creator 3.0](http://www.cocos2d-x.org/creator) ([See instructions](#cocos-creator-3.0-instructions))
 
 ## Usage
 
-### Installing the module
+### Including the JavaScript SDK in your project
 
-Use this method if you're using a build tool (`webpack`, `rollup`, or similar)
+This is the preffered method if you're using a build tool (`webpack`, `rollup`, or similar)
 
 ```
 npm install --save colyseus.js
@@ -85,24 +82,10 @@ room.onLeave((code) => {
 });
 ```
 
-## React Native compatibility
+## Cocos Creator 3.0
 
-This client works with React Native. You need to install some additional
-dependencies for compatibility and assign `window.localStorage` to
-`AsyncStorage`.
-
-- `npm install buffer`
-
-```js
-// App.js
-import { AsyncStorage } from 'react-native';
-import { Buffer } from "buffer";
-window.localStorage = AsyncStorage;
-global.Buffer = Buffer;
-```
-
-## Cocos Creator Instructions
-
-- [Download the release binaries from GitHub Releases](https://github.com/colyseus/colyseus.js/releases).
-- Save it into your project's `scripts` folder.
-- Require it using `const Colyseus = require('colyseus.js')`
+- [Download the latest `colyseus-js-client.zip` release from GitHub](https://github.com/colyseus/colyseus.js/releases).
+- Unzip the `colyseus-js-client.zip` file.
+- Move both `colyseus.js` and `colyseus.js.d.ts` files into your Cocos Creator project's `scripts` folder.
+- (TypeScript) Require it using `import Colyseus from "./colyseus.js"`
+- (JavaScript) ...or require it using `const Colyseus = require("./colyseus.js")`
