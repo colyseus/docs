@@ -1,12 +1,12 @@
-# Defold Client
+# Defold SDK
 
 Defold Engine is a Free 2D Game Engine for Cross-Platform Publishing.
 
-The [colyseus-defold](https://github.com/colyseus/colyseus-defold) client has been tested on all major platforms supported by Defold, such as HTML5, iOS, Android, Mac and Windows.
+The [colyseus-defold](https://github.com/colyseus/colyseus-defold) SDK has been tested on all major platforms supported by Defold, such as HTML5, iOS, Android, Mac and Windows.
 
 ## Installation
 
-You will need to add [colyseus-defold](https://github.com/colyseus/colyseus-defold), as well as its dependencies into your `game.project` dependencies section in order to use the client.
+You will need to add [colyseus-defold](https://github.com/colyseus/colyseus-defold), as well as its dependencies into your `game.project` dependencies section in order to use the SDK.
 
 Open your `game.project` file, and add the following URLs to the `Dependencies` section (under `Project -> Dependencies`):
 
@@ -15,7 +15,7 @@ Open your `game.project` file, and add the following URLs to the `Dependencies` 
 
 Read more about [Defold library dependencies](http://www.defold.com/manuals/libraries/)
 
-You can also specify a [specific release](https://github.com/colyseus/colyseus-defold/releases) of the client, by copying its respective zip archive URL.
+You can also specify a [specific release](https://github.com/colyseus/colyseus-defold/releases) of the SDK, by copying its respective zip archive URL.
 
 ## Usage
 

@@ -1,5 +1,14 @@
-- [Construct 3](https://github.com/colyseus/colyseus-construct3) (compatible with C3 and C2 runtime from Construct3)
-- [Construct 2](https://github.com/colyseus/colyseus-construct2) (Not up-to-date - compatible with server 0.9.x)
+# Construct 3 SDK
+
+## Installation
+
+- [Download Construct 3 SDK](https://www.construct.net/en/make-games/addons/111/colyseus-multiplayer-client)
+
+!!! Warning "Attention! You need a server to use Colyseus!"
+    Construct has well-known existing features to "host" a multiplayer session from the client-side. This is not possible when using Colyseus. Colyseus is an authoritative **server**, written in Node.js. You can't let your client-side host the game sessions directly.
+
+!!! tip "Construct 3 SDK: Source code"
+    You can find the source code of the Construct SDK's here: [Construct 3](https://github.com/colyseus/colyseus-construct3) (compatible with C3 and C2 runtime from Construct3) / [Construct 2](https://github.com/colyseus/colyseus-construct2) (not up-to-date - compatible with server 0.9.x)
 
 ## Example project
 
@@ -8,9 +17,6 @@ The example project has a similar result as the [TypeScript (pixijs-boilerplate)
 - [Client-side (c3p project)](/_downloads/ColyAgarClient-0-14-0.c3p)
 - [Server-side on Glitch (source-code)](https://glitch.com/~colyseus-construct3)
 
-## Important
-
-Construct has well-known existing features to "host" a multiplayer session from the client. This is not possible via Colyseus. Colyseus is an authoritative SERVER, written in Node.js. You can't make your client be the host of the game sessions.
 
 ## Handling messages
 

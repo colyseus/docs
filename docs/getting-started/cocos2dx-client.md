@@ -1,3 +1,5 @@
+# Cocos2d-x SDK
+
 ## Installation
 
 - Download [Cocos2d-X](http://www.cocos2d-x.org/download) and follow their [installation instructions](https://github.com/cocos2d/cocos2d-x#download-stable-versions).

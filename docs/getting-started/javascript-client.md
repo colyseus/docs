@@ -1,6 +1,6 @@
-# JavaScript Client
+# JavaScript/TypeScript SDK
 
-The JavaScript/TypeScript client is compatible with mostly every platform:
+The JavaScript/TypeScript SDK is compatible with mostly every platform:
 
 - Browser (Google Chrome, Firefox, Safari, Opera, Brave, etc.)
 - [NodeJS](https://nodejs.org/)
