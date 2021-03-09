@@ -8,9 +8,11 @@ The current room's state. This variable is always synched with the latest
 `state` from the server-side. To listen for updates on the whole state, see
 [`onStateChange`](#onstatechange) event.
 
+You may attach callbacks to specific structures inside your state. [See schema callbacks](/state/schema/#client-side).
+
 ### `sessionId: string`
 
-Unique identifier for the player. This property matches the [`client.sessionId`](/server/client/#sessionid-string) from the server-side.
+Unique identifier for the current connected client. This property matches the [`client.sessionId`](/server/client/#sessionid-string) from the server-side.
 
 ### `id: string`
 
