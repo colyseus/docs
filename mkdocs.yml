@@ -14,7 +14,8 @@ repo_name: 'colyseus/colyseus'
 repo_url: 'https://github.com/colyseus/colyseus'
 
 # Copyright
-copyright: 'Copyright &copy; 2021 Endel Dreyer'
+
+copyright: 'Copyright &copy; 2021 Lucid Sight'
 google_analytics: ['UA-108278048-3', 'docs.colyseus.io']
 
 # Documentation and theme
