@@ -69,14 +69,18 @@ markdown_extensions:
 
 # Nav menu
 nav:
-- 'Home': 'index.md'
-- 'Getting started':
-  - 'Unity SDK': 'getting-started/unity3d-client.md'
-  - 'JavaScript SDK': 'getting-started/javascript-client.md'
-  - 'Defold Engine SDK': 'getting-started/defold-client.md'
-  - 'Haxe SDK': 'getting-started/haxe-client.md'
-  - 'Cocos2d-x SDK': 'getting-started/cocos2dx-client.md'
-  - 'Construct3 SDK': 'getting-started/construct3-client.md'
+- 'Getting started': 'index.md'
+- 'Client-side SDK':
+  - 'Installation':
+    - 'Unity': 'getting-started/unity3d-client.md'
+    - 'JavaScript': 'getting-started/javascript-client.md'
+    - 'Defold Engine': 'getting-started/defold-client.md'
+    - 'Haxe': 'getting-started/haxe-client.md'
+    - 'Cocos2d-x': 'getting-started/cocos2dx-client.md'
+    - 'Construct3': 'getting-started/construct3-client.md'
+  - 'API':
+    - 'Client': 'client/client.md'
+    - 'Room': 'client/room.md'
 
 - 'Server API':
   - 'Server': 'server/api.md'
@@ -88,10 +92,6 @@ nav:
   - 'Presence': 'server/presence.md'
   - 'Graceful shutdown': 'server/graceful-shutdown.md'
   # - 'Custom State Serialization': 'server/state-serialization.md'
-
-- 'Client API':
-  - 'Client': 'client/client.md'
-  - 'Room': 'client/room.md'
 
 - 'State Handling':
   - 'Overview': 'state/overview.md'
