@@ -1,19 +1,19 @@
 # Overview
 
-Colyseus currently have clients for the platforms:
+Colyseus currently have client-side SDK's available for the following platforms:
 
-- [HTML5](/getting-started/javascript-client) ([colyseus/colyseus.js](https://github.com/colyseus/colyseus.js))
-- [Unity3D](/getting-started/unity3d-client) ([colyseus/colyseus-unity3d](https://github.com/colyseus/colyseus-unity3d))
-- [Defold](/getting-started/defold-client) ([colyseus/colyseus-defold](https://github.com/colyseus/colyseus-defold))
-- [Haxe](/getting-started/haxe-client) ([colyseus/colyseus-hx](https://github.com/colyseus/colyseus-hx))
-- [Cocos2d-X](/getting-started/cocos2dx-client) ([colyseus/colyseus-cocos2d-x](https://github.com/colyseus/colyseus-cocos2d-x))
-- [Construct3](/getting-started/construct3-client) ([colyseus/colyseus-construct3](https://github.com/colyseus/colyseus-construct3))
+- [HTML5](/getting-started/javascript-client) ([source-code](https://github.com/colyseus/colyseus.js))
+- [Unity](/getting-started/unity3d-client) ([source-code](https://github.com/colyseus/colyseus-unity3d))
+- [Defold](/getting-started/defold-client) ([source-code](https://github.com/colyseus/colyseus-defold))
+- [Haxe](/getting-started/haxe-client) ([source-code](https://github.com/colyseus/colyseus-hx))
+- [Cocos2d-X](/getting-started/cocos2dx-client) ([source-code](https://github.com/colyseus/colyseus-cocos2d-x))
+- [Construct3](/getting-started/construct3-client) ([source-code](https://github.com/colyseus/colyseus-construct3))
 
 Need a client for another platform? Share your interest on the [discussion board](https://discuss.colyseus.io/)!
 
 ## Instantiate the Colyseus client
 
-The client is used to perform matchmaking calls, and later connect to one or many rooms.
+The Client instance is used to perform matchmaking calls, and later connect to one or many rooms.
 
 There is no actual server-side connection at this point.
 
