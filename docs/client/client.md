@@ -2,9 +2,9 @@
 
 Colyseus currently have client-side SDK's available for the following platforms:
 
-- [HTML5](/getting-started/javascript-client) ([source-code](https://github.com/colyseus/colyseus.js))
 - [Unity](/getting-started/unity3d-client) ([source-code](https://github.com/colyseus/colyseus-unity3d))
-- [Defold](/getting-started/defold-client) ([source-code](https://github.com/colyseus/colyseus-defold))
+- [JavaScript/TypeScript](/getting-started/javascript-client) ([source-code](https://github.com/colyseus/colyseus.js))
+- [Defold Engine](/getting-started/defold-client) ([source-code](https://github.com/colyseus/colyseus-defold))
 - [Haxe](/getting-started/haxe-client) ([source-code](https://github.com/colyseus/colyseus-hx))
 - [Cocos2d-X](/getting-started/cocos2dx-client) ([source-code](https://github.com/colyseus/colyseus-cocos2d-x))
 - [Construct3](/getting-started/construct3-client) ([source-code](https://github.com/colyseus/colyseus-construct3))
