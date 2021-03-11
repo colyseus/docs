@@ -39,10 +39,6 @@ function init(self)
       room = _room
     end)
 end
-
-function update(self, dt)
-   client:loop()
-end
 ```
 
 See [client-side documentation](/client/client/).
