@@ -6,6 +6,9 @@
 - Download [colyseus-cocos2d-x](https://github.com/colyseus/colyseus-cocos2d-x/archive/master.zip) and copy the `Source/` files into your project.
 - Add the `Source/` directory to your project's `Header Search Paths`.
 
+!!! tip "Looking for Cocos Creator?"
+    See [JavaScript » Cocos Creator](/getting-started/javascript-client/#cocos-creator-30).
+
 ## Usage
 
 Below you can see how to use the `Client`, matchmake into a `Room`, and send and
