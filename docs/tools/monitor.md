@@ -51,7 +51,7 @@ npm install --save express-basic-auth
 Create a user and password using `express-basic-auth`.
 
 ```typescript
-import * as basicAuth from "express-basic-auth";
+import basicAuth from "express-basic-auth";
 
 const basicAuthMiddleware = basicAuth({
     // list of users and passwords
