@@ -855,20 +855,6 @@ This is particularly useful for native-compiled targets, such as C#, C++, Haxe, 
 
 ## Client-side
 
-### `.listen(prop, callback)`
-
-The `.listen()` method is only available in JavaScript/TypeScript at the moment.
-
-**Parameters:**
-- `property`: the property name you'd like to listen for changes.
-- `callback`: the callback that is going to be triggered when `property` changes.
-
-```typescript
-state.listen("currentTurn", (currentValue, previousValue) => {
-    console.log(`currentTurn is now ${currentValue} (previous value was: ${previousValue})`);
-});
-```
-
 ### Callbacks
 
 You can use the following callbacks within the schema structures in the client-side to handle changes coming from the server-side.
@@ -877,6 +863,7 @@ You can use the following callbacks within the schema structures in the client-s
 - [onRemove (instance, key)](#onremove-instance-key)
 - [onChange (changes)](#onchange-changes-datachange) (on `Schema` instance)
 - [onChange (instance, key)](#onchange-instance-key) (on collections: `MapSchema`, `ArraySchema`, etc.)
+- [listen()](#listenprop-callback)
 
 !!! Warning "C#, C++, Haxe"
     When using statically typed languages, you need to generate the client-side schema files based on your TypeScript schema definitions. [See generating schema on the client-side](#client-side-schema-generation).
@@ -948,6 +935,8 @@ room.State.players.OnAdd += (Player player, string key) =>
 };
 ```
 
+---
+
 #### `onRemove (instance, key)`
 
 The `onRemove` callback can only be used in maps (`MapSchema`) and arrays (`ArraySchema`). The `onRemove` callback is called with the removed instance and its key on holder object as argument.
@@ -976,6 +965,8 @@ room.State.players.OnRemove += (Player player, string key) =>
     // remove your player entity from the game world!
 };
 ```
+
+---
 
 #### `onChange (changes: DataChange[])`
 
@@ -1017,6 +1008,7 @@ room.State.OnChange += (changes) =>
 
 You cannot register the `onChange` callback on objects that haven't been synchronized with the client-side yet.
 
+---
 
 #### `onChange (instance, key)`
 
@@ -1050,6 +1042,40 @@ If you'd like to detect changes inside a collection of **non-primitive** types (
 
     Consider registering `onAdd` and `onRemove` if you need to detect changes during these steps too.
 
+---
+
+#### `.listen(prop, callback)`
+
+Listens for a single property change. (`.listen()` is only available for JavaScript/TypeScript at the moment.)
+
+**Parameters:**
+
+- `property`: the property name you'd like to listen for changes.
+- `callback`: the callback that is going to be triggered when `property` changes.
+
+```typescript
+state.listen("currentTurn", (currentValue, previousValue) => {
+    console.log(`currentTurn is now ${currentValue}`);
+    console.log(`previous value was: ${previousValue}`);
+});
+```
+
+**What's the difference between `listen` and `onChange`?**
+
+The `.listen()` method is a shorthand for `onChange` on a single property. Below is 
+
+```typescript
+state.onChange = function(changes) {
+    changes.forEach((change) => {
+        if (change.field === "currentTurn") {
+            console.log(`currentTurn is now ${change.value}`);
+            console.log(`previous value was: ${change.previousValue}`);
+        }
+    })
+}
+```
+
+---
 
 ## Client-side schema generation
 
