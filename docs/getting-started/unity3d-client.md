@@ -7,7 +7,7 @@
 
 ## Running the demo server
 
-The [colyseus-unity3d](https://github.com/colyseus/colyseus-unity3d) comes with a [usage example](https://github.com/colyseus/colyseus-unity3d/blob/master/Assets/ColyseusClient.cs), and a simple [room handler](https://github.com/colyseus/colyseus-unity3d/blob/master/Server/DemoRoom.ts) for basic testing. You can test it locally by running these commands in your commandline:
+The [colyseus-unity3d](https://github.com/colyseus/colyseus-unity3d) comes with a [usage example](https://github.com/colyseus/colyseus-unity3d/blob/master/Assets/ColyseusClient.cs), and a simple [room handler](https://github.com/colyseus/colyseus-unity3d/blob/master/Server/rooms/DemoRoom.ts) for basic testing. You can test it locally by running these commands in your commandline:
 
 ```
 cd Server
