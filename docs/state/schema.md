@@ -1046,18 +1046,33 @@ If you'd like to detect changes inside a collection of **non-primitive** types (
 
 #### `.listen(prop, callback)`
 
-Listens for a single property change. (`.listen()` is only available for JavaScript/TypeScript at the moment.)
+Listens for a single property change. 
+
+> `.listen()` is currently only available for JavaScript/TypeScript.
 
 **Parameters:**
 
 - `property`: the property name you'd like to listen for changes.
 - `callback`: the callback that is going to be triggered when `property` changes.
 
+
 ```typescript
 state.listen("currentTurn", (currentValue, previousValue) => {
     console.log(`currentTurn is now ${currentValue}`);
     console.log(`previous value was: ${previousValue}`);
 });
+```
+
+The `.listen()` method returns a function that is meant to unregister the listener:
+
+
+```typescript
+const removeListener = state.listen("currentTurn", (currentValue, previousValue) => {
+    // ...
+});
+
+// later on, if you don't need the listener anymore, you can call `removeListener()` to stop listening for `"currentTurn"` changes.
+removeListener();
 ```
 
 **What's the difference between `listen` and `onChange`?**
