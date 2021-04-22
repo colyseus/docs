@@ -1,5 +1,7 @@
 # Setup
-You are welcome to use and modify the included example code to suit your needs.
+Here we'll be going over the steps to get your Unity client up and running and connected to a Colyseus server. Topics covered include server settings, connecting to a server, connecting to a room, communicating with a room, and the room's state. The topics should be enough for you to set up a basic client on your own, however, you are welcome to use and modify the included example code to suit your needs.
+
+To make sure you're getting the most up-to-date package, check the [Releases] (https://github.com/colyseus/colyseus-unity3d/releases) section of the repo. There will be a `.unitypackage` generated with each release that you can import into your project.
 
 ## Creating a Colyseus Settings Object:
 
@@ -65,9 +67,8 @@ You are welcome to use and modify the included example code to suit your needs.
     ```csharp
     Dictionary<string, object> roomOptions = new Dictionary<string, object>
     {
-        ["logic"] = "shootingGallery", //The name of our custom logic file
-        ["minReqPlayers"] = minRequiredPlayers.ToString(),
-        ["numberOfTargetRows"] = numberOfTargetRows.ToString()
+        ["YOUR_ROOM_OPTION_1"] = "option 1",
+        ["YOUR_ROOM_OPTION_2"] = "option 2"
     };
 
     ExampleRoomState room = await _client.JoinOrCreate<ExampleRoomState>(roomName, roomOptions);
@@ -104,7 +105,7 @@ You have the ability to listen for or to send custom messages from/to a room ins
 - To add a listener you call `OnMessage` passing in the type and the action to be taken when that message is received by the client.
 - Messages are useful for events that occur in the room on the server. (Take a look at our [tech demos](https://docs.colyseus.io/demo/shooting-gallery/) for use case examples of using `OnMessage`)
     ```csharp
-    room.OnMessage<ExampleNetworkedUser>("onJoin", currentNetworkedUser =>
+    room.OnMessage<ExampleNetworkedUser>("onUserJoin", currentNetworkedUser =>
     {
         _currentNetworkedUser = currentNetworkedUser;
     });
