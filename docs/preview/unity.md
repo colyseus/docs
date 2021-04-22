@@ -1,7 +1,7 @@
 # Setup
 Here we'll be going over the steps to get your Unity client up and running and connected to a Colyseus server. Topics covered include server settings, connecting to a server, connecting to a room, communicating with a room, and the room's state. The topics should be enough for you to set up a basic client on your own, however, you are welcome to use and modify the included example code to suit your needs.
 
-To make sure you're getting the most up-to-date package, check the [Releases] (https://github.com/colyseus/colyseus-unity3d/releases) section of the repo. There will be a `.unitypackage` generated with each release that you can import into your project.
+To make sure you're getting the most up-to-date package, check the [Releases](https://github.com/colyseus/colyseus-unity3d/releases) section of the repo. There will be a `.unitypackage` generated with each release that you can import into your project.
 
 ## Creating a Colyseus Settings Object:
 
