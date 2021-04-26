@@ -294,8 +294,8 @@ The `MapSchema` is a synchronizeable version of the built-in JavaScript [Map](ht
 
 Maps are recommended to track your game entities by id, such as players, enemies, etc.
 
-!!! Note "More"
-    There are more methods you can use from Maps. [Have a look at the MDN Documentation for Maps](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/).
+!!! Warning "Only string keys are supported at the moment"
+    Currently, the `MapSchema` only allows you to provide the value type. The key type is always `string`.
 
 ```typescript fct_label="TypeScript"
 import { Schema, MapSchema, type } from "@colyseus/schema";
@@ -443,6 +443,9 @@ for (key => value in state.players) {
     trace(index + " => " + value);
 }
 ```
+
+!!! Note "All Map methods"
+    There are more methods you can use from Maps. [Have a look at the MDN Documentation for Maps](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/).
 
 
 ### CollectionSchema
