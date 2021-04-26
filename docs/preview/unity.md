@@ -2,10 +2,20 @@
 
 # Installation
 
+## Using legacy `.unitypackage`:
+
 - Download the latest [Colyseus Unity SDK](https://github.com/colyseus/colyseus-unity3d/releases/latest/download/Plugins-0.14.4.zip)
 - Import the `Colyseus.unitypackage` contents into your project.
 
 The `Colyseus.unitypackage` contains an example project under `Assets/Colyseus/Example` you can use as a reference.
+
+## Using Unity Package Manager
+
+- Go to Window > Package Manager. Click "+" button, then select "Add package from git URL..."
+- Enter git URL: https://github.com/colyseus/colyseus-unity3d.git#upm
+- Click "ADD"
+
+TODO: describe how to import the Example
 
 # Setup
 
