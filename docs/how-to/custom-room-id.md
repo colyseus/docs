@@ -9,7 +9,8 @@ To ensure we don't accidentally use the same room ID twice, we use the presence 
 Step 2 here will most likely take only a single iteration, even with millions of rooms, with a 4 letter room ID. Using the Presence API in this way also has the advantage of getting you part of the way to running your server on multiple machines (by switching to the [RedisPresence](https://docs.colyseus.io/server/presence/#redispresence-clientopts)).
 
 See the code below:
-```
+
+```typescript
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export class MyRoom extends Room<MyRoomState> {
