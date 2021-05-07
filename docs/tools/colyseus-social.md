@@ -1,5 +1,8 @@
 # Authentication + Social (`@colyseus/social`)
 
+!!! Warning "Deprecation notice"
+    The `@colyseus/social` module is going to be fully deprecated soon. For now, we suggest using Firebase, Auth0, or other authentication provider of your choice.
+
 This section covers the configuration and usage of [`@colyseus/social`](http://github.com/colyseus/colyseus-social).
 
 `@colyseus/social` is an experimental module that provides general-purpose backend services to speed-up your multiplayer game development experience. The API is open for suggestions and improvement.
