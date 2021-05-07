@@ -4,6 +4,8 @@
 
 In an effort to better support future releases and updates, some fairly major changes were required to the existing Colyseus Unity plugin. Code has been organized and integrated in a more "Unity-friendly" way and some classes have been re-named to prevent naming overlaps.
 
+[Unity SDK 0.14.5 on GitHub](https://github.com/colyseus/colyseus-unity3d/releases/tag/0.14.5)
+
 ## Code Refactoring
 
 ### Plugins Folder
