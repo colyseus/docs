@@ -48,8 +48,8 @@ The built-in demonstration comes with a single [room handler](https://github.com
 
 ## Creating a Colyseus Settings Object:
 
-- Right click anywhere in the Project folder, select "Create", select "Colyseus", and click "Generate ColyseusSettings Scriptable Object"
-- Fill in the fields as necessary
+- Right-click anywhere in the Project folder, select "Create", select "Colyseus", and click "Generate ColyseusSettings Scriptable Object"
+- Fill in the fields as necessary.
   - **Server Address**
     - The address to your Colyseus server.
   - **Server Port**
@@ -123,10 +123,10 @@ ExampleRoomState room = await ExampleManager.Instance.JoinOrCreate<ExampleRoomSt
 `ColyseusRoom` has various events that you will want to subscribe to:
 
 ### OnJoin
-- Gets called after the client has successfully connected to the room
+- Gets called after the client has successfully connected to the room.
 
 ### OnLeave
-- Gets called after the client has been disconnected from the room
+- Gets called after the client has been disconnected from the room.
 - Has a `WebSocketCloseCode` parameter with the reason for the disconnection.
 ```csharp
 room.OnLeave += OnLeaveRoom;
