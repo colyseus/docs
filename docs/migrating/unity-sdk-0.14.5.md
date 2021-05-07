@@ -1,4 +1,4 @@
-# Upgrading to the new Colyseus Package
+# Upgrading to the new Unity Colyseus SDK 0.14.5 (May 10th, 2021)
 
 ## Introduction
 
