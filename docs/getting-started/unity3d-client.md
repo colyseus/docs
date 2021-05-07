@@ -44,7 +44,7 @@ npm install
 npm start
 ```
 
-The built-in demonstration comes with a single [room handler](https://github.com/colyseus/colyseus-unity3d/blob/master/Server/src/rooms/MyRoom.ts), containing a suggested way of handling entities and users. Feel free to change all of it to fit your needs!
+The built-in demonstration comes with a single [room handler](https://github.com/colyseus/colyseus-unity3d/blob/master/Server/src/rooms/MyRoom.ts), containing a suggested way of handling entities and players. Feel free to change all of it to fit your needs!
 
 ## Creating a Colyseus Settings Object:
 
