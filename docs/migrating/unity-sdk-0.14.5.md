@@ -8,7 +8,7 @@ In an effort to better support future releases and updates, some fairly major ch
 
 ### Plugins Folder
 
-The code no longer lives in the Plugins folder. If you're updating your project, you can simply remove all colyseus code from the Plugins folder (before or after the package is imported)
+The code no longer lives in the Plugins folder. If you're updating your project, you can simply remove all colyseus code from the Plugins folder (before or after the package is imported).
 
 ### Server Settings
 
@@ -16,7 +16,7 @@ The server settings have been moved into a more generalized ScriptableObject. Us
 
 ### ColyseusManager
 
-One of the bigger changes in this upgrade is that ColyseusManager is now a generic-typed class, so your project will need a class that inherits from ColyseusManager
+One of the bigger changes in this upgrade is that ColyseusManager is now a generic-typed class, so your project will need a class that inherits from ColyseusManager.
 
 ```csharp
 public class YOUR_MANAGER_CLASS : ColyseusManager<YOUR_MANAGER_CLASS>
@@ -28,7 +28,7 @@ This will allow you to inherit from and override manager functionality as needed
 
 ### Auth and `@colyseus/social`
 
-The `client.Auth` has been deprecated. If your project rely on that feature, feel free to [copy the Auth.cs file over into your project](https://github.com/colyseus/colyseus-unity3d/blob/2d54b25c1b8118191a627556d06aa14313f269f8/Assets/Plugins/Colyseus/Auth.cs).
+The `client.Auth` has been deprecated. If your project relies on that feature, feel free to [copy the Auth.cs file over into your project](https://github.com/colyseus/colyseus-unity3d/blob/2d54b25c1b8118191a627556d06aa14313f269f8/Assets/Plugins/Colyseus/Auth.cs).
 
 ### FossilDeltaSerializer
 
