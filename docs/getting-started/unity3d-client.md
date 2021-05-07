@@ -15,10 +15,10 @@ Click to import the example project in order to test the built-in demonstration.
 
 ## Using legacy `.unitypackage`:
 
-- Download the latest [Colyseus Unity SDK](https://github.com/colyseus/colyseus-unity3d/releases/latest/download/Plugins-0.14.4.zip)
-- Import the `Colyseus.unitypackage` contents into your project.
+- Download the latest [Colyseus Unity SDK](https://github.com/colyseus/colyseus-unity3d/releases/latest/download/Colyseus_Plugin.unitypackage)
+- Import the `Colyseus_Plugin.unitypackage` contents into your project.
 
-The `Colyseus.unitypackage` contains an example project under `Assets/Colyseus/Example` you can use as a reference.
+The `Colyseus_Plugin.unitypackage` contains an example project under `Assets/Colyseus/Example` you can use as a reference.
 
 # Setup
 
