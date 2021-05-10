@@ -72,10 +72,17 @@ public class ExampleManager : ColyseusManager<ExampleManager>
 ## Connecting to Your Colyseus Server:
 
 - In order to connect to your server you first need to provide your Manager a reference to your Colyseus Settings object in the scene inspector.
-- Call `ConnectToServer()` of your Manager to initiate a server connection:
+- Call `ConnectToServer()` of your Manager to initiate a server connection. If you need to expose this method outside of your manager class, you're welcome to do so:
 
 ```csharp
-ExampleManager.Instance.ConnectToServer();
+//In ExampleManager.cs
+public void BeginServerConnection()
+{
+    ConnectToServer();
+}
+
+//Elsewhere in the project
+ExampleManager.Instance.BeginServerConnection();
 ```
 
 ## Client:
