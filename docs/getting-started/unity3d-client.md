@@ -68,19 +68,24 @@ The built-in demonstration comes with a single [room handler](https://github.com
 public class ExampleManager : ColyseusManager<ExampleManager>
 ```
 - Make an in-scene manager object to host your custom Manager script.
-
-## Connecting to Your Colyseus Server:
-
-- In order to connect to your server you first need to provide your Manager a reference to your Colyseus Settings object in the scene inspector.
-- Call `ConnectToServer()` of your Manager to initiate a server connection:
-
-```csharp
-ExampleManager.Instance.ConnectToServer();
-```
+- Provide your Manager with a reference to your Colyseus Settings object in the scene inspector.
 
 ## Client:
 
-- When you connect to the server an instance of `ColyseusClient` is created and is stored in the `client` variable of `ColyseusManager`.
+- Call the `InitializeClient()` method of your Manager to create a `ColyseusClient` object which is stored in the `client` variable of `ColyseusManager`. This will be used to create/join rooms and form a connection with the server.
+```csharp
+ExampleManager.Instance.InitializeClient();
+```
+- If your Manager has additional classes that need reference to your `Client`, you can override `InitializeClient` and make those connections in there.
+```csharp
+//In ExampleManager.cs
+public override void InitializeClient()
+{
+    base.InitializeClient();
+    //Pass the newly created Client reference to our RoomController
+    _roomController.SetClient(client);
+}
+```
 - You can get available rooms on the server by calling `GetAvailableRooms` of `ColyseusClient`:
 ```csharp
 return await GetAvailableRooms<ColyseusRoomAvailable>(roomName, headers);
@@ -170,6 +175,7 @@ room.Send("createEntity", new EntityCreationMessage() { creationId = creationId,
 ```
 
 ### Room State:
+> See how to generate your `RoomState` from [State Handling](https://docs.colyseus.io/state/schema/#client-side-schema-generation)
 - Each room holds its own state. The mutations of the state are synchronized automatically to all connected clients.
 - In regards to room state synchronization:
   - When the user successfully joins the room, they receive the full state from the server.
