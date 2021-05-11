@@ -176,6 +176,7 @@ room.Send("createEntity", new EntityCreationMessage() { creationId = creationId,
 
 ### Room State:
 > See how to generate your `RoomState` from [State Handling](https://docs.colyseus.io/state/schema/#client-side-schema-generation)
+
 - Each room holds its own state. The mutations of the state are synchronized automatically to all connected clients.
 - In regards to room state synchronization:
   - When the user successfully joins the room, they receive the full state from the server.
