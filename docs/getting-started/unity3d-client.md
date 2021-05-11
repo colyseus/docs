@@ -68,19 +68,17 @@ The built-in demonstration comes with a single [room handler](https://github.com
 public class ExampleManager : ColyseusManager<ExampleManager>
 ```
 - Make an in-scene manager object to host your custom Manager script.
+- Provide your Manager with a reference to your Colyseus Settings object in the scene inspector.
 
-## Connecting to Your Colyseus Server:
+## Client:
 
-- In order to connect to your server you first need to provide your Manager a reference to your Colyseus Settings object in the scene inspector.
-- Call the `InitializeClient()` method of your Manager to create a `Client` object that will be used to form a connection with the server
-
+- Call the `InitializeClient()` method of your Manager to create a `ColyseusClient` object which is stored in the `client` variable of `ColyseusManager`. This will be used to create/join rooms and form a connection with the server.
 ```csharp
 ExampleManager.Instance.InitializeClient();
 ```
-
--If your Manager has additional classes that need reference to your `Client`, you can override `InitializeClient` and make those connections in there
-
+- If your Manager has additional classes that need reference to your `Client`, you can override `InitializeClient` and make those connections in there.
 ```csharp
+//In ExampleManager.cs
 public override void InitializeClient()
 {
     base.InitializeClient();
@@ -88,10 +86,6 @@ public override void InitializeClient()
     _roomController.SetClient(client);
 }
 ```
-
-## Client:
-
-- When you connect to the server an instance of `ColyseusClient` is created and is stored in the `client` variable of `ColyseusManager`.
 - You can get available rooms on the server by calling `GetAvailableRooms` of `ColyseusClient`:
 ```csharp
 return await GetAvailableRooms<ColyseusRoomAvailable>(roomName, headers);
