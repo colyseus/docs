@@ -657,7 +657,8 @@ room.send("move", { direction: "left" });
 room.send(0, { direction: "left" });
 ```
 
-Use [Room#onMessage()](/server/room/#onmessage-type-callback) from the server-side to read the message.
+!!! tip "Use `Room#onMessage()` from the server-side to receive the messages"
+    Check out [Server-side API &raquo; Room - onMessage()](/server/room/#onmessage-type-callback) section.
 
 ---
 

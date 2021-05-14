@@ -1,4 +1,4 @@
-# Room API (Server-side)
+# Server API &raquo; Room
 
 Considering that you already [set up your server](/server/api), now it's time to register room handlers and start accepting connections from your users.
 
@@ -401,6 +401,9 @@ onCreate () {
     });
 }
 ```
+
+!!! tip "Use `room.send()` from the client-side SDK to send messages"
+    Check out [`room.send()`](/client/client/#send-type-message) section.
 
 ---
 

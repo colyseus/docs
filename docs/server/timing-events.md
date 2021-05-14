@@ -1,3 +1,5 @@
+# Server API &raquo; Timing Events
+
 For [timing events](https://www.w3.org/TR/2011/WD-html5-20110525/timers.html),
 it's recommended to use the [`this.clock`](/server/room/#clock-clocktimer) methods,
 from your `Room` instance.
