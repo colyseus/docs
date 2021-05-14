@@ -78,9 +78,7 @@ nav:
     - 'Haxe': 'getting-started/haxe-client.md'
     - 'Cocos2d-x': 'getting-started/cocos2dx-client.md'
     - 'Construct3': 'getting-started/construct3-client.md'
-  - 'API':
-    - 'Client': 'client/client.md'
-    - 'Room': 'client/room.md'
+  - 'Usage': 'client/client.md'
 
 - 'Server API':
   - 'Server': 'server/api.md'

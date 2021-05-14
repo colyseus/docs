@@ -1,21 +1,17 @@
-# Overview
+# Colyseus SDK &raquo; Usage
 
 Colyseus currently have client-side SDK's available for the following platforms:
 
-- [Unity](/getting-started/unity3d-client) ([source-code](https://github.com/colyseus/colyseus-unity3d))
+- [Unity](/getting-started/unity3d-client) ([view repo](https://github.com/colyseus/colyseus-unity3d))
 - [JavaScript/TypeScript](/getting-started/javascript-client) ([source-code](https://github.com/colyseus/colyseus.js))
 - [Defold Engine](/getting-started/defold-client) ([source-code](https://github.com/colyseus/colyseus-defold))
 - [Haxe](/getting-started/haxe-client) ([source-code](https://github.com/colyseus/colyseus-hx))
 - [Cocos2d-X](/getting-started/cocos2dx-client) ([source-code](https://github.com/colyseus/colyseus-cocos2d-x))
 - [Construct3](/getting-started/construct3-client) ([source-code](https://github.com/colyseus/colyseus-construct3))
 
-Need a client for another platform? Share your interest on the [discussion board](https://discuss.colyseus.io/)!
+## The Client:
 
-## Instantiate the Colyseus client
-
-The Client instance is used to perform matchmaking calls, and later connect to one or many rooms.
-
-There is no actual server-side connection at this point.
+The `Client` instance is used to perform matchmaking calls, and later connect to one or many rooms. 
 
 ```typescript fct_label="JavaScript"
 import Colyseus from "colyseus.js";
@@ -45,9 +41,11 @@ import io.colyseus.Client;
 var client = new Client("ws://localhost:2567");
 ```
 
-## Methods
+No connection with the server is established yet by creating a `Client` instance.
 
-### `joinOrCreate (roomName: string, options: any)`
+### Methods
+
+#### `joinOrCreate (roomName: string, options: any)`
 
 Join an existing room or create a new one, by provided `roomName` and `options`.
 
@@ -115,7 +113,9 @@ client->joinOrCreate<YourStateClass>("battle", {/* options */}, [=](std::string 
 });
 ```
 
-### `create (roomName: string, options: any)`
+---
+
+#### `create (roomName: string, options: any)`
 
 Creates a new room by provided `roomName` and `options`.
 
@@ -181,7 +181,9 @@ client->create<YourStateClass>("battle", {/* options */}, [=](std::string err, R
 });
 ```
 
-### `join (roomName: string, options: any)`
+---
+
+#### `join (roomName: string, options: any)`
 
 Joins an existing room by provided `roomName` and `options`.
 
@@ -249,7 +251,9 @@ client->join<YourStateClass>("battle", {/* options */}, [=](std::string err, Roo
 });
 ```
 
-### `joinById (roomId: string, options: any)`
+---
+
+#### `joinById (roomId: string, options: any)`
 
 Joins an existing room by its `roomId`. Private rooms can be joined by id.
 
@@ -315,10 +319,12 @@ client->joinById<YourStateClass>("battle", {/* options */}, [=](std::string err,
 });
 ```
 
-!!! Tip
-    Use [`getAvailableRooms()`](#getavailablerooms-roomname-string) to retrieve a list of `roomId`'s available for joining.
+!!! Tip "Getting available `roomId`'s you can join"
+    See [`getAvailableRooms()`](#getavailablerooms-roomname-string) to retrieve a list of rooms with their respective `roomId`'s available for joining, along with their metadata.
+    
+---
 
-### `reconnect (roomId: string, sessionId: string)`
+#### `reconnect (roomId: string, sessionId: string)`
 
 Reconnects the client into a room he was previously connected with.
 
@@ -386,9 +392,14 @@ client->reconnect<YourStateClass>("wNHTX5qik", "SkNaHTazQ", [=](std::string err,
 });
 ```
 
-### `getAvailableRooms (roomName?: string)`
+---
 
-List all available rooms to connect. Locked and private rooms won't be listed. `roomName` is optional.
+#### `getAvailableRooms (roomName?: string)`
+
+Queries for all available rooms to connect.
+
+- Locked and private rooms won't be listed. 
+- If the `roomName` parameter is ommitted, all rooms are going to be queried.
 
 ```typescript fct_label="JavaScript"
 client.getAvailableRooms("battle").then(rooms => {
@@ -479,12 +490,11 @@ client.getAvailableRooms("battle", [=](std::string err, nlohmann::json rooms) {
 });
 ```
 
-### `consumeSeatReservation (reservation)`
+---
 
-Join a room by consuming a seat reservation.
+#### `consumeSeatReservation (reservation)`
 
-!!! Tip "Advanced usage"
-    See [Match-maker API](/server/matchmaker/#reserveseatforroom-options) to see how to retrieve the seat reservation data.
+Join a room by manually consuming a "seat reservation".
 
 ```typescript fct_label="TypeScript"
 try {
@@ -546,4 +556,316 @@ client->consumeSeatReservation<YourStateClass>(reservation, [=](std::string err,
 
   std::cout << "joined successfully" << std::endl;
 });
+```
+
+!!! Tip "Advanced usage"
+    See [Match-maker API](/server/matchmaker/#reserveseatforroom-options) to learn how to manually reserve a seat for a client within a room.
+
+## Room Instance
+
+### Properties
+
+#### `state: any`
+
+The current room's state. This variable is always synched with the latest
+`state` from the server-side. To listen for updates on the whole state, see
+[`onStateChange`](#onstatechange) event.
+
+You may attach callbacks to specific structures inside your state. [See schema callbacks](/state/schema/#client-side).
+
+---
+
+#### `sessionId: string`
+
+Unique identifier for the current connected client. This property matches the [`client.sessionId`](/server/client/#sessionid-string) from the server-side.
+
+---
+
+#### `id: string`
+
+The unique idenfitier of the room. You can share this id with other clients in
+order to allow them to connect directly to this room.
+
+```typescript fct_label="JavaScript"
+// get `roomId` from the query string
+let roomId = location.href.match(/roomId=([a-zA-Z0-9\-_]+)/)[1];
+
+// joining a room by its id
+client.joinById(roomId).then(room => {
+  // ...
+});
+```
+
+---
+
+#### `name: string`
+
+Name of the room handler. Ex: `"battle"`.
+
+---
+
+### Methods
+
+#### `send (type, message)`
+
+Send message a type of message to the room handler. Messages are encoded with MsgPack and can hold any JSON-seriazeable data structure.
+
+```typescript fct_label="JavaScript"
+//
+// sending message with string type
+//
+room.send("move", { direction: "left"});
+
+//
+// sending message with number type
+//
+room.send(0, { direction: "left"});
+```
+
+```csharp fct_label="C#"
+//
+// sending message with string type
+//
+await room.Send("move", new { direction = "left" });
+
+//
+// sending message with number type
+//
+await room.Send(0, new { direction = "left" });
+```
+
+```lua fct_label="lua"
+--
+-- sending message with string type
+--
+room:send("move", { direction = "left" })
+
+--
+-- sending message with number type
+--
+room:send(0, { direction = "left" })
+```
+
+```haxe fct_label="Haxe"
+//
+// sending message with string type
+//
+room.send("move", { direction: "left" });
+
+//
+// sending message with number type
+//
+room.send(0, { direction: "left" });
+```
+
+Use [Room#onMessage()](/server/room/#onmessage-type-callback) from the server-side to read the message.
+
+---
+
+#### `leave ()`
+
+Disconnect from the room.
+
+```typescript fct_label="JavaScript"
+room.leave();
+```
+
+```csharp fct_label="C#"
+room.Leave();
+```
+
+```lua fct_label="lua"
+room:leave()
+```
+
+```haxe fct_label="Haxe"
+room.leave();
+```
+
+!!! Tip
+    Use [Room#onLeave()](/server/room/#onleave-client-consented) to handle the disconnection from the server-side.
+
+---
+
+#### `removeAllListeners()`
+
+Removes `onMessage`, `onStateChange`, `onLeave` and `onError` listeners.
+
+### Events
+
+#### onStateChange
+
+!!! Tip "You may trigger callbacks for specific Schema structures"
+    Check out the [State Handling » Schema » Client-side](/state/schema/#client-side) section for more details.
+
+This event is triggered when the server updates its state.
+
+```typescript fct_label="JavaScript"
+room.onStateChange.once((state) => {
+  console.log("this is the first room state!", state);
+});
+
+room.onStateChange((state) => {
+  console.log("the room state has been updated:", state);
+});
+```
+
+```csharp fct_label="C#"
+room.OnStateChange += (state, isFirstState) => {
+  if (isFirstState) {
+    Debug.Log ("this is the first room state!");
+  }
+
+  Debug.Log ("the room state has been updated");
+}
+```
+
+```lua fct_label="lua"
+room:on("statechange", function(state)
+  print("new state:", state)
+end)
+```
+
+```haxe fct_label="Haxe"
+room.onStateChange += function(state) {
+  trace("new state:" + Std.string(state));
+};
+```
+
+```cpp fct_label="C++"
+room.onStateChange = [=](State>* state) {
+  std::cout << "new state" << std::endl;
+  // ...
+};
+```
+
+---
+
+#### onMessage
+
+This event is triggered when the server sends a message directly to the client, or via broadcast.
+
+```typescript fct_label="JavaScript"
+room.onMessage("powerup", (message) => {
+  console.log("message received from server");
+  console.log(message);
+});
+```
+
+```csharp fct_label="C#"
+class PowerUpMessage {
+  string kind;
+}
+
+room.OnMessage<PowerUpMessage>("powerup", (message) => {
+  Debug.Log ("message received from server");
+  Debug.Log(message);
+});
+```
+
+```lua fct_label="lua"
+room:on_message("powerup", function(message)
+  print("message received from server")
+  print(message)
+end)
+```
+
+```haxe fct_label="Haxe"
+room.onMessage("powerup", function(message) {
+  trace("message received from server");
+  trace(Std.string(message));
+});
+```
+
+```cpp fct_label="C++"
+room.onMessage("powerup", [=](msgpack::object message) -> void {
+    std::cout << "message received from server" << std::endl;
+    std::cout << message << std::endl;
+});
+```
+
+!!! Tip
+    To send a message from the server directly to the clients you'll need to use
+    either [client.send()](/server/client/#sendtype-message) or
+    [room.broadcast()](/server/room/#broadcast-type-message-options)
+
+---
+
+#### onLeave
+
+This event is triggered when the client leave the room.
+
+**Possible codes:**
+
+- `1000`: Regular Socket Shutdown
+- higher than `1000`: Abnormal Socket Shutdown ([more details](https://github.com/Luka967/websocket-close-codes#websocket-close-codes))
+
+```typescript fct_label="JavaScript"
+room.onLeave((code) => {
+  console.log("client left the room");
+});
+```
+
+```csharp fct_label="C#"
+room.OnLeave += (code) => {
+  Debug.Log ("client left the room");
+}
+```
+
+```lua fct_label="lua"
+room:on("leave", function()
+  print("client left the room")
+end)
+```
+
+```haxe fct_label="Haxe"
+room.onLeave += function () {
+  trace("client left the room");
+};
+```
+
+```haxe fct_label="Haxe"
+room.onLeave = [=]() -> void {
+  std::cout << "client left the room" << std::endl;
+};
+```
+
+---
+
+#### onError
+
+This event is triggered when some error occurs in the room handler.
+
+```typescript fct_label="JavaScript"
+room.onError((code, message) => {
+  console.log("oops, error ocurred:");
+  console.log(message);
+});
+```
+
+```csharp fct_label="C#"
+room.OnError += (code, message) => {
+  Debug.Log ("oops, error ocurred:");
+  Debug.Log(message);
+}
+```
+
+```lua fct_label="lua"
+room:on("error", function(code, message)
+  print("oops, error ocurred:")
+  print(message)
+end)
+```
+
+```haxe fct_label="Haxe"
+room.onError += function(code, message) {
+  trace("oops, error ocurred:");
+  trace(message);
+};
+```
+
+```cpp fct_label="C++"
+room.onError = [=] (int code, std::string message) => void {
+  std::cout << "oops, error ocurred: " << message << std::endl;
+};
 ```
