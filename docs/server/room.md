@@ -58,6 +58,7 @@ Is called once when the room is initialized. You may specify custom initializati
 !!! Tip
     The `options` will contain the merged values you specified on [Server#define()](/server/api/#define-name-string-handler-room-options-any) + the options provided by [`client.joinOrCreate()`](/client/client/#joinorcreate-roomname-string-options-any) or [`client.create()`](/client/client/#create-roomname-string-options-any)
 
+---
 
 ### `onAuth (client, options, request)`
 
@@ -213,6 +214,8 @@ client.joinOrCreate("world", {
 });
 ```
 
+---
+
 ### `onJoin (client, options, auth?)`
 
 **Parameters:**
@@ -222,6 +225,8 @@ client.joinOrCreate("world", {
 - `auth`: (optional) auth data returned by [`onAuth`](#onauth-client-options-request) method.
 
 Is called when the client successfully joins the room, after `requestJoin` and `onAuth` has succeeded.
+
+---
 
 ### `onLeave (client, consented)`
 
@@ -244,6 +249,8 @@ async onLeave(client, consented) {
 }
 ```
 
+---
+
 ### `onDispose ()`
 
 The `onDispose()` method is called before the room is destroyed, which happens when:
@@ -255,6 +262,7 @@ You may define `async onDispose()` an asynchronous method in order to persist so
 
 See [graceful shutdown](/server/graceful-shutdown).
 
+---
 
 ### Example room
 This example demonstrates an entire room implementing the `onCreate`, `onJoin` and `onMessage` methods.
@@ -350,6 +358,8 @@ exports.GameRoom = class GameRoom extends colyseus.Room {
 }
 ```
 
+---
+
 ## Public methods
 
 Room handlers have these methods available.
@@ -392,6 +402,8 @@ onCreate () {
 }
 ```
 
+---
+
 ### `setState (object)`
 
 Set the new room state instance. See [State Handling](/state/overview/) for more details on the state object. It's highly recommended to use the new [Schema Serializer](/state/schema/) to handle your state.
@@ -401,6 +413,8 @@ Set the new room state instance. See [State Handling](/state/overview/) for more
 
 !!! tip
     You usually will call this method only once during [`onCreate()`](#onCreate-options) in your room handler.
+
+---
 
 ### `setSimulationInterval (callback[, milliseconds=16.6])`
 
@@ -417,15 +431,22 @@ update (deltaTime) {
 }
 ```
 
+---
+
 ### `setPatchRate (milliseconds)`
 
 Set frequency the patched state should be sent to all clients. Default is `50ms` (20fps)
+
+---
+
 
 ### `setPrivate (bool)`
 
 Set the room listing as private (or revert to public, if `false` is provided).
 
 Private rooms are not listed in the [`getAvailableRooms()`](/client/client/#getavailablerooms-roomname-string) method.
+
+---
 
 ### `setMetadata (metadata)`
 
@@ -456,16 +477,24 @@ client.getAvailableRooms("battle").then(rooms => {
 !!! Tip
     [See how to call `getAvailableRooms()` in other languages.](/client/client/#getavailablerooms-roomname)
 
+---
+
 ### `setSeatReservationTime (seconds)`
 
 Set the number of seconds a room can wait for a client to effectively join the room. You should consider how long your [`onAuth()`](#onauth-client-options-request) will have to wait for setting a different seat reservation time. The default value is 15 seconds.
 
 You may set the `COLYSEUS_SEAT_RESERVATION_TIME` environment variable if you'd like to change the seat reservation time globally.
 
+---
+
+
 ### `send (client, message)`
 
 !!! Warning "Deprecated"
     `this.send()` has been deprecated. Please use [`client.send()` instead](/server/client/#sendtype-message).
+
+---
+
 
 ### `broadcast (type, message, options?)`
 
@@ -534,13 +563,19 @@ onCreate() {
 !!! Tip
     [See how to handle these onMessage() in the client-side.](/client/room/#onmessage)
 
+---
+
 ### `lock ()`
 
 Locking the room will remove it from the pool of available rooms for new clients to connect to.
 
+---
+
 ### `unlock ()`
 
 Unlocking the room returns it to the pool of available rooms for new clients to connect to.
+
+---
 
 ### `allowReconnection (client, seconds?)`
 
@@ -620,9 +655,13 @@ async onLeave (client: Client, consented: boolean) {
 }
 ```
 
+---
+
 ### `disconnect ()`
 
 Disconnect all clients, then dispose.
+
+---
 
 ### `broadcastPatch ()`
 
@@ -650,25 +689,38 @@ onCreate() {
 }
 ```
 
+---
+
 ## Public properties
 
 ### `roomId: string`
 
 A unique, auto-generated, 9-character-long id of the room.
 
-You may replace `this.roomId` during `onCreate()`. You need to make sure `roomId` is unique.
+You may replace `this.roomId` during `onCreate()`. 
+
+!!! Tip "Using a custom `roomId`"
+    Check out the guide [How-to &raquo; Customize room id](/how-to/custom-room-id/)
+
+---
 
 ### `roomName: string`
 
 The name of the room you provided as first argument for [`gameServer.define()`](/server/api/#define-name-string-handler-room-options-any).
 
+---
+
 ### `state: T`
 
 The state instance you provided to [`setState()`](#setstate-object).
 
+---
+
 ### `clients: Client[]`
 
 The array of connected clients. See [Web-Socket Client](/server/client).
+
+---
 
 ### `maxClients: number`
 
@@ -677,13 +729,19 @@ this limit, it is locked automatically. Unless the room was explicitly locked by
 you via [lock()](#lock) method, the room will be unlocked as soon as a client
 disconnects from it.
 
+---
+
 ### `patchRate: number`
 
 Frequency to send the room state to connected clients, in milliseconds. Default is `50`ms (20fps)
 
+---
+
 ### `autoDispose: boolean`
 
 Automatically dispose the room when last client disconnect. Default is `true`
+
+---
 
 ### `locked: boolean` (read-only)
 
@@ -692,10 +750,14 @@ This property will change on these situations:
 - The maximum number of allowed clients has been reached (`maxClients`)
 - You manually locked, or unlocked the room using [`lock()`](#lock) or [`unlock()`](#unlock).
 
+---
+
 ### `clock: ClockTimer`
 
 A [`ClockTimer`](https://github.com/gamestdio/timer#api) instance, used for
 [timing events](/server/timing-events).
+
+---
 
 ### `presence: Presence`
 
