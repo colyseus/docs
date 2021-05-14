@@ -131,5 +131,6 @@ nav:
 
 - "Tech Demos":
   - 'Shooting Gallery': 'demo/shooting-gallery/index.md'
+  - 'StarBoss': 'demo/starboss/index.md'
 
 - 'FAQ': 'faq.md'
