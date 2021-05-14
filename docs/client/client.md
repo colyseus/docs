@@ -9,7 +9,7 @@ Colyseus currently have client-side SDK's available for the following platforms:
 - [Cocos2d-X](/getting-started/cocos2dx-client) ([view source-code](https://github.com/colyseus/colyseus-cocos2d-x))
 - [Construct3](/getting-started/construct3-client) ([view source-code](https://github.com/colyseus/colyseus-construct3))
 
-## The Client:
+## The Client Instance:
 
 The `Client` instance is used to perform matchmaking calls, and later connect to one or many rooms. 
 
@@ -561,7 +561,7 @@ client->consumeSeatReservation<YourStateClass>(reservation, [=](std::string err,
 !!! Tip "Advanced usage"
     See [Match-maker API](/server/matchmaker/#reserveseatforroom-options) to learn how to manually reserve a seat for a client within a room.
 
-## Room Instance
+## The Room Instance:
 
 ### Properties
 
