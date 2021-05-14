@@ -1,23 +1,21 @@
-# Best practices with Colyseus
+# Best practices & recommendations
 
-This section provides general recommendations and best practices to keep your codebase healthy and readable for your team.
+!!! Note "Work-in-progress"
+    This documentation page is not complete
 
-General object-oriented principles such as [SOLID](https://en.wikipedia.org/wiki/SOLID) apply.
+This section provides general recommendations and best practices to keep your codebase healthy and readable for your team. They are all optional, but if followed are going to improve code readability and cleanliness.
 
-!!! Warning "Important"
-    This section needs improvement and more examples! Each paragraph needs it's own page with thorough examples and better explanation.
-
-- Keep your room classes as small as possible, without game logic.
+- Keep your room classes as small as possible, delegating game-specific functionality to other composable structures.
 - Keep your synchronizeable data structures as small as possible
     - Ideally, each class extending `Schema` should only have field definitions.
     - Custom getters and setters methods can be implemented, as long as you don't have game logic in them.
 - Your game logic should be handled by other structures, such as:
-    - See how to use the [Command Pattern](/best-practices/command-pattern/).
+    - The [Command Pattern](#the-command-pattern).
+    - An [Entity-Component System](#entity-component-system-ecs).
 
-## Testing
+## Unit Testing
 
-> TODO: we need to provide a `@colyseus/testing` package with some general recommendations on how to test a Colyseus application.
-
+> TODO: we need to provide a `@colyseus/testing` package to allow easily mocking the `Room` class and triggering its lifecycle events, as well as creating dummy clients.
 
 ## Design Patterns
 
