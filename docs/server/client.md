@@ -1,4 +1,4 @@
-# Web-Socket Client
+# Server API &raquo; Client
 
 The `client` instance present on:
 

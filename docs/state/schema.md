@@ -1,4 +1,4 @@
-# [State Handling](/state/overview) » Schema
+# State Synchronization
 
 The `SchemaSerializer` has been introduced since Colyseus 0.10, and it's the default serialization method.
 

@@ -1,4 +1,4 @@
-# Web-Socket Server
+# Server API &raquo; Server
 
 ## Server
 

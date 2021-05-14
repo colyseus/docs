@@ -1,4 +1,4 @@
-# Graceful Shutdown
+# Server API &raquo; Graceful Shutdown
 
 Colyseus provides graceful shutting down mechanism by default. These actions will be performed before the process kill itself:
 

@@ -86,23 +86,17 @@ nav:
   - 'Client': 'server/client.md'
   - 'Timing events': 'server/timing-events.md'
   - 'Match-maker API': 'server/matchmaker.md'
-  - 'Authentication API': 'server/authentication.md'
   - 'Presence': 'server/presence.md'
   - 'Graceful shutdown': 'server/graceful-shutdown.md'
   # - 'Custom State Serialization': 'server/state-serialization.md'
 
-- 'State Handling':
-  - 'Overview': 'state/overview.md'
-  - 'Schema': 'state/schema.md'
-  - 'Fossil Delta (deprecated)': 'state/fossil-delta.md'
+- 'State Synchornization': 'state/schema.md'
+
+- 'Best practices': 'best-practices/overview.md'
 
 - 'Built-in Rooms':
   - 'Lobby room': 'builtin-rooms/lobby.md'
   - 'Relay room': 'builtin-rooms/relay.md'
-
-- 'Best practices':
-  - 'Overview': 'best-practices/overview.md'
-  - 'The Command Pattern': 'best-practices/command-pattern.md'
 
 - "Tools":
   - "Monitoring Panel": 'tools/monitor.md'

@@ -1,3 +1,5 @@
+# Server API &raquo; Match-maker API
+
 !!! Warning "You may not need this!"
     This section is for advanced usage. You're usually good to go by using the [client-side methods](/client/client/#methods). If you think you can't achieve your goal with the client-side methods, you should consider using the ones described on this page.
 
