@@ -5,7 +5,7 @@ The purpose of this technical demo is to show how take an existing, single playe
 
 **[Download demo](https://github.com/colyseus/unity-demo-shooting-gallery/archive/master.zip)** ([View source code](https://github.com/colyseus/unity-demo-shooting-gallery/))
 
-![Screenshot](../common-images/screenshot.png)
+![Screenshot](screenshot.PNG)
 
 ## Getting Started
 
@@ -17,7 +17,7 @@ You need to install and launch the server from the **provided Server directory**
 
 All server settings can be changed via the ColyseusSetting ScriptableObject located here:
 
-![ScriptableObject](scriptable-object.png)
+![ScriptableObject](../common-images/scriptable-object.png)
 
 If you are running a local server, the default settings should be sufficient, however if you wish to host a server you’ll need to change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly.
 
@@ -105,4 +105,4 @@ else {
 }
 ```
 The final result gives us something like this:
-![RoomList](room-list.png)
+![RoomList](room-list.PNG)
