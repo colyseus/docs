@@ -47,13 +47,16 @@ export class MyRoom extends colyseus.Room {
 }
 ```
 
-## Room lifecycle
+## Room lifecycle events
 
-These methods correspond to the room lifecycle.
+- The room lifecycle events are called automatically. 
+- Optional [`async`/`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) is supported on every lifecycle event.
 
 ### `onCreate (options)`
 
 Is called once when the room is initialized. You may specify custom initialization options when registering the room handler.
+
+> TODO: example using `.define()` with custom options.
 
 !!! Tip
     The `options` will contain the merged values you specified on [Server#define()](/server/api/#define-name-string-handler-room-options-any) + the options provided by [`client.joinOrCreate()`](/client/client/#joinorcreate-roomname-string-options-any) or [`client.create()`](/client/client/#create-roomname-string-options-any)
