@@ -1,8 +1,17 @@
 # State Synchronization
 
-The `SchemaSerializer` has been introduced since Colyseus 0.10, and it's the default serialization method.
+Colyseus handles state synchronization automatically through its `Schema` structures.
 
-The `Schema` strutures are meant to be used **only for the room's state** (synchronizeable data). You do **not** need to use `Schema` and its other structures for data that's part of your algorithms that aren't synchronizeable.
+### How does it work?
+
+- When the user successfully joins the room, they receive the full state from the server.
+- At every [patchRate](/server/room/#patchrate-number), binary patches of the state are sent to every client (default is `50ms`)
+- [`onStateChange`](/client/room/#onstatechange) is called in the client-side after every patch received from the server.
+
+![State Synchronization Diagram](state-sync.png)
+
+!!! Note "Use `Schema` structures only for the room's state!"
+    The `Schema` strutures are meant to be used **only for the room's state**. You do **not** need to use `Schema` and its related structures for data that is part of your algorithms and data that are not synchronizeable.
 
 ## Server-side
 
