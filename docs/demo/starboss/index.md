@@ -25,25 +25,7 @@ If you are running a local server, the default settings should be sufficient, ho
 
 Start the player in the scene “StarBossLobby” located at `Assets\StarBoss\Scenes\StarBossLobby`. Input your username and create a room to begin. **If you cannot reach the room creation screen, confirm your local server is working properly and check the Unity Editor for error logs.** If you are successful, the client will load the “Scene_Dev_Environment” scene. When creating a room, you have the option to make a Co-op or a Team Deathmatch room. If you press the Enter key or click the “Start” button within a Co-op room, you’ll “ready up” and the game will begin. If you wait for more players to join on your local server, all players must “ready up” before the game will begin. If you made a Team Deathmatch room, you will need at least 1 more player to join on the other team before you can begin
 
-
-## Adjusting the Demo
-
-As you play around with this demo, you may want to make some adjustments to better familiarize yourself with what is happening. Below, you’ll learn how to make these minor adjustments.
-
-### Team Deathmatch Score to Win
-
-The maximum score to win in a Team Deathmatch is currently set to 3 on the client side in the overridden `CreateRoom` function in `StarBossLobbyController.cs`:
-```csharp
-roomOptions = new Dictionary<string, object> {{"logic", gameModeLogic }, { "scoreToWin", 3 } };
-LoadMainScene(() => { ExampleManager.Instance.CreateNewRoom(selectRoomMenu.RoomCreationName, roomOptions);
-```
->You'll also see this is where we set the `gameModeLogic` which will be explained below in "Areas of Note"
-
-On the server side, we receive these `roomOptions` and use them to initialize the game logic. Only if we're initializing a Team Deathmatch room, do we make use of the `scoreToWin` option as seen in `starBossTDM.js`:
-```javascript
-roomRef.tdmScoreToWin = options["scoreToWin"] ? Number(options["scoreToWin"]) : 10;
-```
-## Areas of Note
+## Demo Overview
 
 ### Creating and Listing Rooms with Different Game Modes
 In the overridden `CreateRoom` function in `StarBossLobbyController.cs` on the client side, you can see where we determine if we're launching a room of type Team Deathmatch or Co-op:
@@ -106,3 +88,20 @@ else {
 ```
 The final result gives us something like this:
 ![RoomList](room-list.PNG)
+
+## Adjusting the Demo
+
+As you play around with this demo, you may want to make some adjustments to better familiarize yourself with what is happening. Below, you’ll learn how to make these minor adjustments.
+
+### Team Deathmatch Score to Win
+
+The maximum score to win in a Team Deathmatch is currently set to 3 on the client side in the overridden `CreateRoom` function in `StarBossLobbyController.cs`:
+```csharp
+roomOptions = new Dictionary<string, object> {{"logic", gameModeLogic }, { "scoreToWin", 3 } };
+LoadMainScene(() => { ExampleManager.Instance.CreateNewRoom(selectRoomMenu.RoomCreationName, roomOptions);
+```
+
+On the server side, we receive these `roomOptions` and use them to initialize the game logic. Only if we're initializing a Team Deathmatch room, do we make use of the `scoreToWin` option as seen in `starBossTDM.js`:
+```javascript
+roomRef.tdmScoreToWin = options["scoreToWin"] ? Number(options["scoreToWin"]) : 10;
+```
