@@ -1,17 +1,19 @@
 # Turn Based Tanks Demo
 
-![Lobby](/demo/turn-based-tanks/WeaponFired.png)
-
 The goal of this demo is to serve as an example of one approach to an asynchronous, turn based game using Colyseus.
 This demo is designed to work with Colyseus version 0.14.5 and [Unity version 2019.4.20f1](https://unity3d.com/unity/qa/lts-releases).
 
-**[Download demo](https://github.com/colyseus/unity-demo-shooting-gallery/archive/master.zip)** ([View source code](https://github.com/colyseus/unity-demo-shooting-gallery/))
+**[Download demo](https://github.com/colyseus/unity-demo-tanks/archive/master.zip)** ([View source code](https://github.com/colyseus/unity-demo-tanks/))
+
+[Play the demo!](https://xcdazr.colyseus.dev/)
+
+![Lobby](/demo/turn-based-tanks/WeaponFired.png)
 
 ## Getting Started
 
 ### Launching a local server
 
-You need to install and launch the server from the provided Server directory for this demo to function properly. Simply follow the instructions found underneath [&quot;Running the demo server&quot; in the Unity3d section of these docs](https://docs.colyseus.io/getting-started/unity3d-client/#running-the-demo-server).
+You need to install and launch the server from the **provided Server directory** for this demo to function properly. Simply follow the instructions found underneath [&quot;Running the demo server&quot; in the Unity3d section of these docs](https://docs.colyseus.io/getting-started/unity3d-client/#running-the-demo-server).
 
 ### ColyseusSettings ScriptableObject
 
@@ -19,31 +21,91 @@ All server settings can be changed via the ColyseusSetting ScriptableObject loca
 
 ![ScriptableObject](../common-images/scriptable-object.png)
 
-If you are running a local server, the default settings should be sufficient, however if you wish to host a server you will need to change the Colyseus Server Address and Colyseus Server Port values accordingly.
+If you are running a local server, the default settings should be sufficient, however if you wish to host a server you will need to change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly.
 
 ## Demo Overview
 
 ### Room Metadata
 
-This demo makes use of the room&#39;s metadata to track the players in the game with their username. When a player joins or creates a room their username will be stored in a property called either &quot; **team0**&quot; or &quot; **team1**&quot; where &quot; **team0**&quot; represents the player that created the room and &quot; **team1**&quot; represents the player that has joined an available room to challenge the creator.
+This demo makes use of the room&#39;s metadata to track the players in the game with their username. When a player joins or creates a room their username will be stored in a property called either `team0` or `team1` where `team0` represents the player that created the room and `team1` represents the player that has joined an available room to challenge the creator.
+``` javascript
+this.metadata.team0
+this.metadata.team1
+
+this.setMetadata({"team0": options["creatorId"]});
+
+```
 
 The usernames set in the metadata are then used to filter the available rooms displayed in the lobby. Within the lobby users are able to see any rooms they have created or are available based on whether the room is waiting for a challenger to join the game. Rooms that you have not created and have two players will not be shown in the lobby.
+
+``` csharp
+private TanksRoomsAvailable[] TrimRooms(TanksRoomsAvailable[] originalRooms)
+{
+    List<TanksRoomsAvailable> trimmedRooms = new List<TanksRoomsAvailable>();
+    for (int i = 0; i < originalRooms.Length; ++i)
+    {
+        //Check a rooms metadata. If its one of our rooms OR waiting for a player, we show it
+        TanksRoomMetadata metadata = originalRooms[i].metadata;
+        if (metadata.team1 == null || (metadata.team1.Equals(ExampleManager.Instance.UserName) ||
+                                       metadata.team0.Equals(ExampleManager.Instance.UserName)))
+        {
+            trimmedRooms.Add(originalRooms[i]);
+        }
+    }
+
+    return trimmedRooms.ToArray();
+}
+```
 
 ![Lobby](/demo/turn-based-tanks/Rooms.png)
 
 ### Keeping the Room Alive
 
-In order to make this demo an asynchronous turn based game we need to keep the room alive even after both players have left the room. The room is kept alive by setting the &quot; **autoDispose**&quot; flag to false. (You can see this in the TanksRoom server code within the onCreate handler).
+In order to make this demo an asynchronous turn based game we need to keep the room alive even after both players have left the room. The room is kept alive by setting the `autoDispose` flag to false. (You can see this in the TanksRoom server code within the onCreate handler).
 
-We know to disconnect the room after the boolean flag &quot;inProcessOfQuitingGame&quot; has been set true and all users have been removed from the &quot;room.state.networkedUsers&quot; collection.
+``` javascript
+this.autoDispose = false;
+```
+
+We know to disconnect the room after the boolean flag `inProcessOfQuitingGame` has been set true after performing checks to determine if the room should be closed. These checks are performed when a user has quit the game.
+``` javascript
+
+// Check if creator has quit before anyone else has joined
+if(this.metadata.team0 && this.metadata.team1 == null) {
+    disconnectRoom = true;
+}
+
+// No other users are in the room so disconnect
+if(this.inProcessOfQuitingGame && this.state.networkedUsers.size <= 1 && this.connectedUsers <= 1) {
+    disconnectRoom = true;
+}
+	
+// Should the room disconnect?
+if(disconnectRoom) {
+    this.disconnect();
+}
+```
 
 ### Pausing the Room
 
-When a user connects to the room there is a counter called &quot;connectedUsers&quot; that gets incremented. Inversely it gets decremented when a user has disconnected from the room. When &quot;connectedUsers&quot; is zero the intervals to update the simulation and to send patch updates effectively get paused by setting the delays to a high value. In this case the value is a little more than 24 days.
+When a user connects to the room there is a counter called `connectedUsers` that gets incremented. Inversely it gets decremented when a user has disconnected from the room. When `connectedUsers` is zero the intervals to update the simulation and to send patch updates effectively get paused by setting the delays to a high value. In this case the value is a little more than 24 days.
+``` javascript
+
+this.connectedUsers--;
+
+if(this.connectedUsers <= 0) {
+    // Pause the server when there are no connected users
+    // Set the frequency of the patch rate
+    this.setPatchRate(this.pauseDelay);
+
+    this.setSimulationInterval(dt => { this.intervalSimulation(this, dt); }, this.pauseDelay);
+}
+
+```
 
 ### Playing the Demo
 
-Start the player in the scene &quot;TanksLobby&quot; located at `Assets\TurnBasedTanks\Scenes\TanksLobby`. Input your username and create a room to begin. If you cannot reach the room creation screen, confirm your local server is working properly and check the Unity Editor for error logs. If you are successful, the client will load the &quot;TankArena&quot; scene.
+Start the player in the scene &quot;TanksLobby&quot; located at `Assets\TurnBasedTanks\Scenes\TanksLobby`. Input your username and create a room to begin. **If you cannot reach the room creation screen, confirm your local server is working properly and check the Unity Editor for error logs.** If you are successful, the client will load the &quot;TankArena&quot; scene.
 
 - This demo is an asynchronous turn based game.
 
@@ -57,11 +119,11 @@ Start the player in the scene &quot;TanksLobby&quot; located at `Assets\TurnBase
 
 - When you create a room you can immediately take your turn without another player having joined yet.
 
-- All controls are displayed in the ESC menu.
+- All controls are displayed in the **ESC** menu.
 
 - You have the ability to leave the room at any time using the Exit option in the ESC menu, or you can Surrender the game to your opponent.
 
-- You have 3 Action Points for your turn. Moving left/right consumes one AP and firing consumes two AP.
+- You have 3 Action Points for your turn. Moving left/right consumes **one** AP and firing consumes **two** AP.
 
 - Movement can be blocked by terrain that is too tall.
 
@@ -73,12 +135,13 @@ Start the player in the scene &quot;TanksLobby&quot; located at `Assets\TurnBase
 
 - When a game ends due to a player&#39;s tank getting destroyed, or someone surrendering, a game over menu, showing a win/loss message, will be displayed with the options to either request a rematch or to quit the game. If the other player requests a rematch before you leave, a message will be displayed on the game over menu.
 
-- There is an &quot;online indicator&quot; next to your opponents name to signal whether they are in the room at the same time with you. Red = offline and Green = online.
+- There is an &quot;online indicator&quot; next to your opponents name to signal whether they are in the room at the same time with you. 
+	- **Red** = offline 
+	- **Green** = online.
 
 - You have the option to skip your remaining turn by pressing the SPACEBAR.
 
-![Lobby](/demo/turn-based-tanks/NewRoomWithLabels.png)
-![Lobby](/demo/turn-based-tanks/CannonChargeWithLabel.png)
+![Lobby](/demo/turn-based-tanks/GameplayWithLabels.png)
 ![Lobby](/demo/turn-based-tanks/GameOver.png)
 
 ## Adjusting the Demo
@@ -87,9 +150,43 @@ As you play around with this demo, you may want to make some adjustments to bett
 
 ### Game Rules and Weapon Data
 
-Both the Game Rules and Weapon Data values can be found in the server code at ArenaServer\src\rooms\customLogic\gameRules.ts. The **Game Rules** control movement and firing costs as well as how many action points players get. The **Weapon Data** specifies the max charge, charge time, impact radius, and impact damage of each weapon.
+Both the **Game Rules** and **Weapon Data** values can be found in the server code at `ArenaServer\src\rooms\customLogic\gameRules.ts`. The **Game Rules** control movement and firing costs as well as how many action points players get. The **Weapon Data** specifies the max charge, charge time, impact radius, and impact damage of each weapon.
 
-![Lobby](/demo/turn-based-tanks/GameRules-WeaponData.png)
+```javascript
+const GameRules = {
+    MovementAPCost : 1,
+    FiringAPCost :  2,
+    MaxAP : 3,
+    MaxMovement : 3,
+    MaxHitPoints: 3,
+    MovementTime: 2
+}
+
+const WeaponData = [
+    {
+        name: "Short Range",
+        maxCharge: 5,
+        chargeTime: 1,
+        radius: 1,
+        impactDamage: 1
+    },
+    {
+        name: "Mid Range",
+        maxCharge: 8,
+        chargeTime: 2,
+        radius: 1,
+        impactDamage: 1
+    },
+    {
+        name: "Long Range",
+        maxCharge: 10,
+        chargeTime: 5,
+        radius: 1,
+        impactDamage: 1
+    }
+]
+
+```
 
 ## Events the Client Utilizes
 
