@@ -71,7 +71,7 @@ Start the player in the scene &quot;TanksLobby&quot; located at `Assets\TurnBase
 
 - Between each movement or firing action there is a 2 second delay before another action can be taken.
 
-- When a game ends due to a player&#39;s tank getting destroyed, or someone surrendering, a game over menu, showing a win/loss message, will be displayed with the options to either request a rematch or to quit the game. If the other player requests a rematch before you a message will be displayed on the game over menu.
+- When a game ends due to a player&#39;s tank getting destroyed, or someone surrendering, a game over menu, showing a win/loss message, will be displayed with the options to either request a rematch or to quit the game. If the other player requests a rematch before you leave, a message will be displayed on the game over menu.
 
 - There is an &quot;online indicator&quot; next to your opponents name to signal whether they are in the room at the same time with you. Red = offline and Green = online.
 
