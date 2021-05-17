@@ -111,7 +111,7 @@ In this demo the general message is primarily used to just display whether a pla
 
 ### OnInitialSetup
 
-This is a custom callback that gets called when you join a room. Through it, data is provided to get your client situated and matching the state on the server. Your player turn Id is assigned, you get the current player turn, the current player&#39;s remaining Action Points, the player names, current player Hit Points, your currently selected weapon (which defaults to the short range when you connect), the map matrix for the terrain, and a bool flag for whether your opponent is currently in the room with you.
+This is a custom callback that gets called when you join a room. Through it, data is provided to get your client situated and matching the state on the server: Your player turn Id is assigned, you get the current player turn, the current player&#39;s remaining Action Points, the player names, current player Hit Points, your currently selected weapon (which defaults to the short range when you connect), the map matrix for the terrain, and a bool flag for whether your opponent is currently in the room with you.
 
 ### OnPlayerMove
 
@@ -131,7 +131,7 @@ This is a custom callback that gets called when a player&#39;s turn has complete
 
 ### OnPlayerJoined
 
-This is a custom callback that gets called when the other player has joined the room. Used to update the displayed player name and to toggle their online indicator.
+This is a custom callback that gets called when the other player has joined the room. This is used to update the displayed player name and to toggle their online indicator.
 
 ### OnPlayerQuit
 

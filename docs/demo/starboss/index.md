@@ -69,7 +69,7 @@ public async void GetAvailableRooms() {
     onRoomsReceived?.Invoke(rooms);
 }
 ```
-We also updated the `OnRoomsReceived` delegate call to use `StarBossRoomAvailable`. Finally, for every entry we receive, we Instantiate an object of with a `RoomListItem` component attached  and we pass it a reference to the room available. In the `DetermineMode` function in `RoomListItem.cs`:
+We also updated the `OnRoomsReceived` delegate call to use `StarBossRoomAvailable`. Finally, for every entry we receive, we Instantiate an object with a `RoomListItem` component attached  and we pass it a reference to the room available. In the `DetermineMode` function in `RoomListItem.cs`:
 ```csharp
 bool isCoop = roomRef.metadata.isCoop;
 
