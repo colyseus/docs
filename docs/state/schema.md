@@ -5,8 +5,6 @@
 
 ## How to define synchronizable structures
 
-> TODO: describe that mutations only happen in the server-side. The client is only meant to receive them
-
 - Synchronizable schema structures should be only used for data related to your state.
 - Only fields decorated with `@type()` are going to be considered for synchronization. 
 - `Schema` structures are defined in TypeScript for server-side usage. 
@@ -34,6 +32,7 @@ schema.defineTypes(MyState, {
 
 !!! Tip "What is this `@type()` keyword? I've never seen this before!"
     The `@type()` you see heavily used on this page uses an upcoming JavaScript feature that is yet to be formally established by TC39. `type` is actually just a function imported from `@colyseus/schema` module. By calling `type` with the `@` prefix at the property level means we're calling it as a property decorator. [See the decorators proposal here](https://github.com/tc39/proposal-decorators). 
+
 
 ### Primitive types
 
@@ -1109,9 +1108,16 @@ state.onChange = function(changes) {
 
 ## Client-side schema generation
 
-This is only applicable if you're using a statically typed language such as C#, C++, or Haxe.
+The `schema-codegen` is a tool that transpiles your server-side schema definition files to be used in the client-side:
 
-From your server project, you can run `npx schema-codegen` to automatically generate the client-side schema files.
+To be able to decode the state in the client-side, its local schema definitions must be compatible with the schema definitions in the server.
+
+!!! Warning "Not required when using [JavaScript SDK](/getting-started/javascript-client/)"
+    Using `schema-codegen` is only required when using statically typed languages in the client-side, such as C#, Haxe, etc.
+
+**Usage:**
+
+To see the usage, From your terminal, `cd` into your server's directory and run the following command:
 
 ```
 npx schema-codegen --help
@@ -1138,21 +1144,76 @@ Optional:
     --namespace: generate namespace on output code
 ```
 
-### C# / Unity3d
+### Example: Unity / C# 
 
-Below is a real example to generate the C# schema files from the [demo Unity3d project](https://github.com/colyseus/colyseus-unity3d/tree/master/Server).
+Below is a real example to generate the C# schema files from the [demo Unity project](https://github.com/colyseus/colyseus-unity3d/blob/aa9a722a50b2958ce01785969cd8ecb8aee24fd0/Server/package.json#L12).
 
 ```
-npx schema-codegen DemoRoom.ts --csharp --output ../Assets/
+npx schema-codegen src/rooms/schema/* --csharp --output ../Assets/Scripts/States/"
 generated: Player.cs
 generated: State.cs
 ```
 
-### Backwards/forwards compability
+**Using `npm` scripts:**
 
-Backwards/fowards compatibility is possible by declaring new fields at the end of existing structures, and earlier declarations to not be removed, but be marked `@deprecated()` when needed.
+It is recommended to have your `schema-codegen` arguments configured under a `npm` script in your `package.json`:
+    
+```json
+"scripts": {
+    "schema-codegen": "schema-codegen src/rooms/schema/* --csharp --output ../Assets/Scripts/States/"
+}
+```
+
+This way you can simply run `npm run schema-codegen` instead of running the command manually every time:
+
+```
+npm run schema-codegen
+generated: Player.cs
+generated: State.cs
+```
+
+### Versioning and backwards/forwards compability
+
+Backwards/fowards compatibility is possible by declaring new fields at the end of existing structures, and earlier declarations to not be removed, but be marked `@deprecated()` when needed. See a versioning example below.
+
+```typescript fct_label="Live version 1"
+import { Schema, type, deprecated } from "@colyseus/schema";
+
+class MyState extends Schema {
+    @type("string") myField: string;
+}
+```
+
+```typescript fct_label="Live version 2"
+import { Schema, type, deprecated } from "@colyseus/schema";
+
+class MyState extends Schema {
+    // Flag field as deprecated.
+    @deprecated() @type("string") myField: string;
+
+    // To allow your server to play nicely with multiple client-side versions.
+    @type("string") newField: string; 
+}
+```
+
+```typescript fct_label="Live version 3"
+import { Schema, type, deprecated } from "@colyseus/schema";
+
+class MyState extends Schema {
+    // Flag field as deprecated.
+    @deprecated() @type("string") myField: string;
+
+    // Flag field as deprecated again.
+    @deprecated() @type("string") newField: string; 
+
+    // New fields always at the end of the structure
+    @type("string") anotherNewField: string;
+}
+```
 
 This is particularly useful for native-compiled targets, such as C#, C++, Haxe, etc - where the client-side can potentially not have the most up-to-date version of the schema definitions.
+
+---
 
 ## Limitations and best practices
 
@@ -1167,7 +1228,7 @@ This is particularly useful for native-compiled targets, such as C#, C++, Haxe, 
 
 ### Collections
 
-Collections (`ArraySchema`, `MapSchema`, etc) must contain items of the same type or same inherited type.
+Collection types (`ArraySchema`, `MapSchema`, etc) must hold items of the same type, or share the same base type.
 
 **The following example is supported:**
 
