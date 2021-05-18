@@ -34,6 +34,11 @@ schema.defineTypes(MyState, {
     The `@type()` you see heavily used on this page uses an upcoming JavaScript feature that is yet to be formally established by TC39. `type` is actually just a function imported from `@colyseus/schema` module. By calling `type` with the `@` prefix at the property level means we're calling it as a property decorator. [See the decorators proposal here](https://github.com/tc39/proposal-decorators). 
 
 
+## Working with schemas
+
+- Only the server-side is responsible for mutating schema structures
+- The client-side should never perform mutations on schema - as they are going to be replaced as soon as the next change come from the server.
+
 ### Primitive types
 
 Primitive types are numbers, strings and boolean. 
@@ -1156,7 +1161,7 @@ generated: State.cs
 
 **Using `npm` scripts:**
 
-It is recommended to have your `schema-codegen` arguments configured under a `npm` script in your `package.json`:
+For short, it is recommended to have your `schema-codegen` arguments configured under a `npm` script in your `package.json`:
     
 ```json
 "scripts": {
@@ -1164,7 +1169,7 @@ It is recommended to have your `schema-codegen` arguments configured under a `np
 }
 ```
 
-This way you can simply run `npm run schema-codegen` instead of running the command manually every time:
+This way you can run `npm run schema-codegen` rather than the full command:
 
 ```
 npm run schema-codegen
