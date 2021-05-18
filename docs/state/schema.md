@@ -32,6 +32,9 @@ schema.defineTypes(MyState, {
 });
 ```
 
+!!! Tip "_"What is this `@type()` keyword? I've never seen this before!"_"
+    The `@type()` you see heavily used on this page is an upcoming JavaScript feature that is yet to be formally established by TC39. `type` is actually just a function imported from `@colyseus/schema` module. By calling `type` with the `@` prefix at the property level means we're calling it as a _property decorator_. [See the decorators proposal here](https://github.com/tc39/proposal-decorators). 
+
 ### Using the state within your `Room`
 
 ```typescript
@@ -45,9 +48,6 @@ export class MyRoom extends Room<MyState> {
     }
 }
 ```
-
-!!! Tip "What is this `@type()` keyword? I've never seen this before!"
-    The `@type()` you see heavily used on this page uses an upcoming JavaScript feature that is yet to be formally established by TC39. `type` is actually just a function imported from `@colyseus/schema` module. By calling `type` with the `@` prefix at the property level means we're calling it as a property decorator. [See the decorators proposal here](https://github.com/tc39/proposal-decorators). 
 
 
 ## Working with schemas
