@@ -1,6 +1,6 @@
 # Server API &raquo; Server
 
-The Colyseus `Server` instance holds the server configuration options, such as which transport, presence, matchmaking driver, etc. 
+The Colyseus `Server` instance holds the server configuration options, such as transport options, presence, matchmaking driver, etc. 
 
 - **Transport** is the layer for bidirectional communication between server and client. Currently, only WebSockets is supported, through the [`ws`](https://www.npmjs.com/package/ws) node module. ([uWebSockets.js](https://github.com/uNetworking/uWebSockets.js/) support is comming soon)
 - **Presence** is the implementation that enables communication between rooms and/or Node.js processes.
