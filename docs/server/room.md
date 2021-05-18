@@ -1,10 +1,9 @@
 # Server API &raquo; Room
 
-A Room class is meant to implement a game session. 
+A Room class is meant to implement a game session, and/or serve as the communication layer between a group of clients.
 
-- You can think of each room instance as a shared game session between multiple people.
-- Rooms are created **on demand** during matchmaking by default. 
-- Room classes must be exposed using [`.define()`](/server/api/#define-roomname-string-room-room-options-any).
+- Rooms are created **on demand** during matchmaking by default
+- Room classes must be exposed using [`.define()`](/server/api/#define-roomname-string-room-room-options-any)
 
 ```typescript fct_label="TypeScript"
 import http from "http";
