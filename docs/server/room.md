@@ -441,13 +441,13 @@ onCreate () {
 
 ### `setState (object)`
 
-Set the new room state instance. See [State Handling](/state/overview/) for more details on the state object. It's highly recommended to use the new [Schema Serializer](/state/schema/) to handle your state.
+Set the synchronizable room state. See [State Synchronization](/state/overview/) and [Schema](/state/schema/) for more details.
+
+!!! Tip
+    You usually call this method only once during [`onCreate()`](#onCreate-options)
 
 !!! Warning
-    Do not call this method for updates in the room state. The binary patch algorithm is re-set every time you call it.
-
-!!! tip
-    You usually will call this method only once during [`onCreate()`](#onCreate-options) in your room handler.
+    Do not call `.setState()` for every update in the room state. The binary patch algorithm is reset at every call.
 
 ---
 
