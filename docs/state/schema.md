@@ -5,21 +5,23 @@
 
 ## How to define synchronizable structures
 
-- Synchronizable schema structures should be only used for data related to your state.
+- `Schema` structures are defined the server-side to be used in the room state. 
 - Only fields decorated with `@type()` are going to be considered for synchronization. 
-- `Schema` structures are defined in TypeScript for server-side usage. 
-- The client-side must have the same `Schema` definitions generated through [`schema-codegen`](#client-side-schema-generation). _(Optional if you're using the [JavaScript SDK](/getting-started/javascript-client/))_
-- In order to get updates from the server, you need to [attach callbacks on schema instances in the client-side](#callbacks).
+- _(Synchronizable schema structures should only be used for data related to your state.)_
+
+### Defining a `Schema` structure
 
 ```typescript fct_label="TypeScript"
+// MyState.ts
 import { Schema, type } from "@colyseus/schema";
 
-class MyState extends Schema {
+export class MyState extends Schema {
     @type("string") currentTurn: string;
 }
 ```
 
 ```typescript fct_label="JavaScript"
+// MyState.ts
 const schema = require('@colyseus/schema');
 const Schema = schema.Schema;
 
@@ -30,6 +32,20 @@ schema.defineTypes(MyState, {
 });
 ```
 
+### Using the state within your `Room`
+
+```typescript
+// MyRoom.ts
+import { Room } from "colyseus";
+import { MyState } from "./MyState";
+
+export class MyRoom extends Room<MyState> {
+    onCreate() {
+        this.setState(new MyState());
+    }
+}
+```
+
 !!! Tip "What is this `@type()` keyword? I've never seen this before!"
     The `@type()` you see heavily used on this page uses an upcoming JavaScript feature that is yet to be formally established by TC39. `type` is actually just a function imported from `@colyseus/schema` module. By calling `type` with the `@` prefix at the property level means we're calling it as a property decorator. [See the decorators proposal here](https://github.com/tc39/proposal-decorators). 
 
@@ -37,6 +53,8 @@ schema.defineTypes(MyState, {
 ## Working with schemas
 
 - Only the server-side is responsible for mutating schema structures
+- The client-side must have the same `Schema` definitions generated through [`schema-codegen`](#client-side-schema-generation). _(Optional if you're using the [JavaScript SDK](/getting-started/javascript-client/))_
+- In order to get updates from the server, you need to [attach callbacks on schema instances in the client-side](#callbacks).
 - The client-side should never perform mutations on schema - as they are going to be replaced as soon as the next change come from the server.
 
 ### Primitive types
@@ -879,7 +897,9 @@ schema.filter(function(client, value, root) {
 
 ### Callbacks
 
-You can use the following callbacks within the schema structures in the client-side to handle changes coming from the server-side.
+When applying state changes coming from the server, the client-side is going to trigger callbacks on local instances according to the change being applied.
+
+The callbacks are triggered based on instance reference. Make sure to attach the callback on the instances that are actually changing on the server.
 
 - [onAdd (instance, key)](#onadd-instance-key)
 - [onRemove (instance, key)](#onremove-instance-key)
@@ -889,7 +909,7 @@ You can use the following callbacks within the schema structures in the client-s
 
 #### `onAdd (instance, key)`
 
-The `onAdd` callback can only be used in maps (`MapSchema`) and arrays (`ArraySchema`). The `onAdd` callback is called with the added instance and its key on holder object as argument.
+The `onAdd` callback can only be used in collection of items (`MapSchema`, `MapSchema`, etc.). The `onAdd` callback is called with the new instance and its key on holder object as argument.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onAdd = (player, key) => {
