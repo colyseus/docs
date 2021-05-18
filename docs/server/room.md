@@ -58,7 +58,7 @@ export class MyRoom extends colyseus.Room {
 
 Called once, when the room is created by the matchmaker. 
 
-**Below, the `options` argument is provided by the client upon room creation:**
+**The `options` argument is provided by the client upon room creation:**
 
 ```typescript
 // Client-side - JavaScript SDK
