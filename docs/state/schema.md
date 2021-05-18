@@ -85,7 +85,7 @@ Primitive types are numbers, strings and boolean.
 
 ### Complex types
 
-Complex types consist of `Schema` instances within other schema instances. They can also contain [collections of items](#collection-types) (array, map, etc.).
+Complex types consist of `Schema` instances within other schema instances. They can also contain [collections of items](#collections-of-items) (array, map, etc.).
 
 ```typescript fct_label="TypeScript"
 import { Schema, type } from "@colyseus/schema";
