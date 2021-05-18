@@ -102,7 +102,7 @@ schema.defineTypes(MyState, {
 });
 ```
 
-## Collection types
+## Collections of items
 
 ### ArraySchema
 
@@ -434,6 +434,112 @@ for (key => value in state.players) {
      Have a look at the [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/).
 
 
+### SetSchema
+
+!!! Warning "`SetSchema` is only implemented in JavaScript"
+    The `SetSchema` can only be used with JavaScript so far. Haxe, C#, LUA and C++ clients are not supported yet.
+
+The `SetSchema` is a synchronizeable version of the built-in JavaScript [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) type.
+
+!!! Note "More methods available for Set"
+     Have a look at the [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
+
+The usage of `SetSchema` is very similar to [`CollectionSchema`], the biggest difference is that Sets hold unique values. Sets do not have a way to access a value directly. (like [collection.at()](#collectionat))
+
+```typescript fct_label="TypeScript"
+import { Schema, SetSchema, type } from "@colyseus/schema";
+
+class Effect extends Schema {
+    @type("number") radius: number;
+}
+
+class Player extends Schema {
+    @type({ set: Effect }) effects = new SetSchema<Effect>();
+}
+```
+
+```typescript fct_label="JavaScript"
+const schema = require('@colyseus/schema');
+const Schema = schema.Schema;
+const SetSchema = schema.SetSchema;
+
+class Effect extends Schema {
+}
+schema.defineTypes(Effect, {
+  radius: "number",
+});
+
+class Player extends Schema {
+    constructor () {
+        super();
+
+        this.effects = new SetSchema();
+    }
+}
+schema.defineTypes(Player, {
+  effects: { set: Effect }
+});
+```
+
+#### `set.add()`
+
+Appends an item to the `SetSchema` object.
+
+```typescript
+const set = new CollectionSchema<number>();
+set.add(1);
+set.add(2);
+set.add(3);
+```
+
+#### `set.at()`
+
+Gets an item at the specified `index`.
+
+```typescript
+const set = new CollectionSchema<string>();
+set.add("one");
+set.add("two");
+set.add("three");
+
+set.at(1);
+// output: "two"
+```
+
+#### `set.delete()`
+
+Delete an item by its value.
+
+```typescript
+set.delete("three");
+```
+
+#### `set.has()`
+
+Returns a boolean value wheter an item exists in the Collection or not.
+
+```typescript
+if (set.has("two")) {
+    console.log("Exists!");
+} else {
+    console.log("Does not exist!");
+}
+```
+
+#### `set.size`
+
+Return the number of elements in a `SetSchema` object.
+
+```typescript
+const set = new SetSchema<number>();
+set.add(10);
+set.add(20);
+set.add(30);
+
+console.log(set.size);
+// output: 3
+```
+
 ### CollectionSchema
 
 !!! Warning "`CollectionSchema` is only implemented in JavaScript"
@@ -544,112 +650,6 @@ collection.forEach((value, at) => {
     console.log("at =>", at)
     console.log("value =>", value)
 });
-```
-
-### SetSchema
-
-!!! Warning "`SetSchema` is only implemented in JavaScript"
-    The `SetSchema` can only be used with JavaScript so far. Haxe, C#, LUA and C++ clients are not supported yet.
-
-The `SetSchema` is a synchronizeable version of the built-in JavaScript [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) type.
-
-!!! Note "More methods available for Set"
-     Have a look at the [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
-
-The usage of `SetSchema` is very similar to [`CollectionSchema`], the biggest difference is that Sets hold unique values. Sets do not have a way to access a value directly. (like [collection.at()](#collectionat))
-
-```typescript fct_label="TypeScript"
-import { Schema, SetSchema, type } from "@colyseus/schema";
-
-class Effect extends Schema {
-    @type("number") radius: number;
-}
-
-class Player extends Schema {
-    @type({ set: Effect }) effects = new SetSchema<Effect>();
-}
-```
-
-```typescript fct_label="JavaScript"
-const schema = require('@colyseus/schema');
-const Schema = schema.Schema;
-const SetSchema = schema.SetSchema;
-
-class Effect extends Schema {
-}
-schema.defineTypes(Effect, {
-  radius: "number",
-});
-
-class Player extends Schema {
-    constructor () {
-        super();
-
-        this.effects = new SetSchema();
-    }
-}
-schema.defineTypes(Player, {
-  effects: { set: Effect }
-});
-```
-
-#### `set.add()`
-
-Appends an item to the `SetSchema` object.
-
-```typescript
-const set = new CollectionSchema<number>();
-set.add(1);
-set.add(2);
-set.add(3);
-```
-
-#### `set.at()`
-
-Gets an item at the specified `index`.
-
-```typescript
-const set = new CollectionSchema<string>();
-set.add("one");
-set.add("two");
-set.add("three");
-
-set.at(1);
-// output: "two"
-```
-
-#### `set.delete()`
-
-Delete an item by its value.
-
-```typescript
-set.delete("three");
-```
-
-#### `set.has()`
-
-Returns a boolean value wheter an item exists in the Collection or not.
-
-```typescript
-if (set.has("two")) {
-    console.log("Exists!");
-} else {
-    console.log("Does not exist!");
-}
-```
-
-#### `set.size`
-
-Return the number of elements in a `SetSchema` object.
-
-```typescript
-const set = new SetSchema<number>();
-set.add(10);
-set.add(20);
-set.add(30);
-
-console.log(set.size);
-// output: 3
 ```
 
 ## Filtering data per client
