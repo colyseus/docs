@@ -1,8 +1,10 @@
 # Server API &raquo; Room
 
-Considering that you already [set up your server](/server/api), now it's time to register room handlers and start accepting connections from your users.
+A Room class is meant to implement a game session. 
 
-You'll define room handlers creating classes that extend from `Room`.
+- You can think of each room instance as a shared game session between multiple people.
+- Rooms are created **on demand** during matchmaking by default. 
+- Room classes must be exposed using [`.define()`](/server/api/#define-roomname-string-room-room-options-any).
 
 ```typescript fct_label="TypeScript"
 import http from "http";
@@ -59,7 +61,7 @@ Is called once when the room is initialized. You may specify custom initializati
 > TODO: example using `.define()` with custom options.
 
 !!! Tip
-    The `options` will contain the merged values you specified on [Server#define()](/server/api/#define-name-string-handler-room-options-any) + the options provided by [`client.joinOrCreate()`](/client/client/#joinorcreate-roomname-string-options-any) or [`client.create()`](/client/client/#create-roomname-string-options-any)
+    The `options` will contain the merged values you specified on [Server#define()](/server/api/#define-roomname-string-room-room-options-any) + the options provided by [`client.joinOrCreate()`](/client/client/#joinorcreate-roomname-string-options-any) or [`client.create()`](/client/client/#create-roomname-string-options-any)
 
 ---
 
@@ -224,7 +226,7 @@ client.joinOrCreate("world", {
 **Parameters:**
 
 - `client`: The [`client`](/server/client) instance.
-- `options`: merged values specified on [Server#define()](/server/api/#define-name-string-handler-room-options-any) with the options provided the client on [`client.join()`](/client/client/#join-roomname-string-options-any)
+- `options`: merged values specified on [Server#define()](/server/api/#define-roomname-string-room-room-options-any) with the options provided the client on [`client.join()`](/client/client/#join-roomname-string-options-any)
 - `auth`: (optional) auth data returned by [`onAuth`](#onauth-client-options-request) method.
 
 Is called when the client successfully joins the room, after `requestJoin` and `onAuth` has succeeded.
@@ -712,7 +714,7 @@ You may replace `this.roomId` during `onCreate()`.
 
 ### `roomName: string`
 
-The name of the room you provided as first argument for [`gameServer.define()`](/server/api/#define-name-string-handler-room-options-any).
+The name of the room you provided as first argument for [`gameServer.define()`](/server/api/#define-roomname-string-room-room-options-any).
 
 ---
 
