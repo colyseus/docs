@@ -5,12 +5,13 @@
 
 ## How to define synchronizable structures
 
+> TODO: describe that mutations only happen in the server-side. The client is only meant to receive them
+
 - Synchronizable schema structures should be only used for data related to your state.
 - Only fields decorated with `@type()` are going to be considered for synchronization. 
 - `Schema` structures are defined in TypeScript for server-side usage. 
-- The client-side must have the same `Schema` definitions through [`schema-codegen`](#client-side-schema-generation).
-    - _(The usage of `schema-codegen` is optional if you're using the [JavaScript SDK](/getting-started/javascript-client/))_
-- In order to get updates from the server, you need to [attach schema callbacks in the client-side](#callbacks).
+- The client-side must have the same `Schema` definitions generated through [`schema-codegen`](#client-side-schema-generation). _(Optional if you're using the [JavaScript SDK](/getting-started/javascript-client/))_
+- In order to get updates from the server, you need to [attach callbacks on schema instances in the client-side](#callbacks).
 
 ```typescript fct_label="TypeScript"
 import { Schema, type } from "@colyseus/schema";
