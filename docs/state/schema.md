@@ -1,6 +1,6 @@
 # [State Synchronization](/state/overview) &raquo; Schema
 
-!!! Warning "Hesitant to use TypeScript?"
+!!! Warning "Not using TypeScript yet?"
     It is highly recommended that you use TypeScript to have a better experience defining the schemas structures, and for your development experience in general. TypeScript supports the "experimental decorators" heavily used on this section.
 
 ## How to define synchronizable structures
