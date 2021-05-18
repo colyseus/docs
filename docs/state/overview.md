@@ -1,6 +1,6 @@
 # State Synchronization
 
-Colyseus handles state synchronization automatically through its strongly-typed `Schema` structures.
+Colyseus handles state synchronization automatically through its strongly-typed [`Schema` structures](/state/schema/).
 
 ### How does it work?
 
