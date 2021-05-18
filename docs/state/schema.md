@@ -176,6 +176,8 @@ schema.defineTypes(MyState, {
 });
 ```
 
+---
+
 #### `array.push()`
 
 Adds one or more elements to the end of an array and returns the new length of the array.
@@ -187,6 +189,8 @@ animals.push("sheeps");
 animals.push("cows");
 // output: 4
 ```
+
+---
 
 #### `array.pop()`
 
@@ -200,6 +204,8 @@ animals.length
 // output: 3
 ```
 
+---
+
 #### `array.shift()`
 
 Removes the first element from an array and returns that removed element. This method changes the length of the array.
@@ -212,6 +218,8 @@ animals.length
 // output: 2
 ```
 
+---
+
 #### `array.unshift()`
 
 Adds one or more elements to the beginning of an array and returns the new length of the array.
@@ -221,6 +229,8 @@ animals.unshift("pigeon");
 // output: 3
 ```
 
+---
+
 #### `array.indexOf()`
 
 Returns the first index at which a given element can be found in the array, or -1 if it is not present
@@ -228,6 +238,8 @@ Returns the first index at which a given element can be found in the array, or -
 ```typescript
 const itemIndex = animals.indexOf("sheeps");
 ```
+
+---
 
 #### `array.splice()`
 
@@ -240,6 +252,8 @@ const itemIndex = animals.findIndex((animal) => animal === "sheeps");
 // remove it!
 animals.splice(itemIndex, 1);
 ```
+
+---
 
 #### `array.forEach()`
 
@@ -324,6 +338,8 @@ schema.defineTypes(MyState, {
 });
 ```
 
+---
+
 #### `map.get()`
 
 Getting a map item by its key:
@@ -344,6 +360,8 @@ OR
 //
 const item = map["key"];
 ```
+
+---
 
 #### `map.set()`
 
@@ -366,6 +384,8 @@ OR
 map["key"] = "value";
 ```
 
+---
+
 #### `map.delete()`
 
 Removes a map item by key:
@@ -386,6 +406,8 @@ OR
 delete map["key"];
 ```
 
+---
+
 #### `map.size`
 
 Return the number of elements in a `MapSchema` object.
@@ -398,6 +420,8 @@ map.set("two", 2);
 console.log(map.size);
 // output: 2
 ```
+
+---
 
 #### `map.forEach()`
 
@@ -441,9 +465,6 @@ for (key => value in state.players) {
 
 The `SetSchema` is a synchronizeable version of the built-in JavaScript [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) type.
 
-!!! Note "More methods available for Set"
-     Have a look at the [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
-
 The usage of `SetSchema` is very similar to [`CollectionSchema`], the biggest difference is that Sets hold unique values. Sets do not have a way to access a value directly. (like [collection.at()](#collectionat))
 
 ```typescript fct_label="TypeScript"
@@ -481,6 +502,8 @@ schema.defineTypes(Player, {
 });
 ```
 
+---
+
 #### `set.add()`
 
 Appends an item to the `SetSchema` object.
@@ -491,6 +514,8 @@ set.add(1);
 set.add(2);
 set.add(3);
 ```
+
+---
 
 #### `set.at()`
 
@@ -506,6 +531,8 @@ set.at(1);
 // output: "two"
 ```
 
+---
+
 #### `set.delete()`
 
 Delete an item by its value.
@@ -513,6 +540,8 @@ Delete an item by its value.
 ```typescript
 set.delete("three");
 ```
+
+---
 
 #### `set.has()`
 
@@ -525,6 +554,8 @@ if (set.has("two")) {
     console.log("Does not exist!");
 }
 ```
+
+---
 
 #### `set.size`
 
@@ -539,6 +570,10 @@ set.add(30);
 console.log(set.size);
 // output: 3
 ```
+
+!!! Note "More methods available for Set"
+     Have a look at the [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
+
 
 ### CollectionSchema
 
@@ -582,6 +617,8 @@ schema.defineTypes(Player, {
 });
 ```
 
+---
+
 #### `collection.add()`
 
 Appends an item to the `CollectionSchema` object.
@@ -592,6 +629,8 @@ collection.add(1);
 collection.add(2);
 collection.add(3);
 ```
+
+---
 
 #### `collection.at()`
 
@@ -607,6 +646,8 @@ collection.at(1);
 // output: "two"
 ```
 
+---
+
 #### `collection.delete()`
 
 Delete an item by its value.
@@ -614,6 +655,8 @@ Delete an item by its value.
 ```typescript
 collection.delete("three");
 ```
+
+---
 
 #### `collection.has()`
 
@@ -626,6 +669,8 @@ if (collection.has("two")) {
     console.log("Does not exist!");
 }
 ```
+
+---
 
 #### `collection.size`
 
@@ -640,6 +685,8 @@ collection.add(30);
 console.log(collection.size);
 // output: 3
 ```
+
+---
 
 #### `collection.forEach()`
 
