@@ -56,12 +56,40 @@ export class MyRoom extends colyseus.Room {
 
 ### `onCreate (options)`
 
-Is called once when the room is initialized. You may specify custom initialization options when registering the room handler.
+Called once, when the room is created by the matchmaker. 
 
-> TODO: example using `.define()` with custom options.
+**Below, the `options` argument is provided by the client upon room creation:**
 
-!!! Tip
-    The `options` will contain the merged values you specified on [Server#define()](/server/api/#define-roomname-string-room-room-options-any) + the options provided by [`client.joinOrCreate()`](/client/client/#joinorcreate-roomname-string-options-any) or [`client.create()`](/client/client/#create-roomname-string-options-any)
+```typescript
+// Client-side - JavaScript SDK
+client.joinOrCreate("my_room", {
+  name: "Jake",
+  map: "de_dust2"
+})
+
+// onCreate() - options are:
+// {
+//   name: "Jake",
+//   map: "de_dust2"
+// }
+```
+
+**The server may overwrite options during [`.define()`](/server/api/#define-roomname-string-room-room-options-any) for authortity:**
+
+```typescript fct_label="Definition"
+// Server-side
+gameServer.define("my_room", MyRoom, {
+  map: "cs_assault" 
+})
+
+// onCreate() - options are:
+// {
+//   name: "Jake",
+//   map: "cs_assault"
+// }
+```
+
+On this example, the `map` option is `"cs_assault"` during `onCreate()`, and `"de_dust2"` during `onJoin()`.
 
 ---
 
