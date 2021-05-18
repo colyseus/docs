@@ -23,7 +23,7 @@ This section provides general recommendations and best practices to keep your co
 
 **Why?**
 
-- Models ([`@colyseus/schema`](https://github.com/colyseus/schema)) should contain only data, without game logic.
+- Models ([`@colyseus/schema`](https://github.com/colyseus/schema)) should contain mostly data, without heavy game logic.
 - Rooms should have as little code as possible, and forward actions to other structures
 
 **The command pattern has several advantages, such as:**
@@ -32,7 +32,7 @@ This section provides general recommendations and best practices to keep your co
 - It allows you to create a sequence of commands by providing a queue system.
 - Implementing extensions to add a new command is easy and can be done without changing the existing code.
 - Have strict control over how and when commands are invoked.
-- The code is easier to use, understand and test since the commands simplify the code.
+- Improves code readability and the possibility of unit testing.
 
 #### Usage
 
