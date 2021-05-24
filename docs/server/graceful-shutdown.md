@@ -1,6 +1,6 @@
 # Graceful Shutdown
 
-Colyseus provides graceful shutting down mechanism by default. These actions will be performed before the process kill itself:
+Colyseus provides graceful shutting down mechanism by default. These actions will be performed before the process kills itself:
 
 - Disconnect all connected clients asynchronously (`Room#onLeave`)
 - Dispose all spawned rooms asynchronously (`Room#onDispose`)
