@@ -96,8 +96,8 @@ On this example, the `map` option is `"cs_assault"` during `onCreate()`, and `"d
 
 The `onAuth()` method will be executed before `onJoin()`. It can be used to verify authenticity of a client joining the room.
 
-- If `onAuth()` returns a truthy value, `onJoin()` is going to be called with the returned value as the third argument.
-- If `onAuth()` returns a falsy value, the client is immediatelly rejected, causing the matchmaking function call from the client-side to fail.
+- If `onAuth()` returns a [truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) value, `onJoin()` is going to be called with the returned value as the third argument.
+- If `onAuth()` returns a [falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy) value, the client is immediatelly rejected, causing the matchmaking function call from the client-side to fail.
 - You may also throw a `ServerError` to expose a custom error to be handled in the client-side.
 
 If left non-implemented, it always returns `true` - allowing any client to connect.
@@ -774,7 +774,7 @@ Frequency to send the room state to connected clients, in milliseconds. Default 
 
 ### `autoDispose: boolean`
 
-Automatically dispose the room when last client disconnect. Default is `true`
+Automatically dispose the room when last client disconnects. Default is `true`
 
 ---
 

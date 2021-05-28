@@ -102,7 +102,7 @@ hooks.beforeAuthenticate((provider, $setOnInsert, $set) => {
 
 #### `hooks.beforeUserUpdate`
 
-The `beforeUserUpdate` hooks is triggered before a user update his own information [through the save() method](#update-user-data).
+The `beforeUserUpdate` hook is triggered before a user updates his own information [through the save() method](#update-user-data).
 
 ```typescript
 import Filter from "bad-words";

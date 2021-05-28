@@ -1,6 +1,6 @@
 # Colyseus SDK &raquo; Usage
 
-Colyseus currently have client-side SDK's available for the following platforms:
+Colyseus currently has client-side SDK's available for the following platforms:
 
 - [Unity](/getting-started/unity3d-client) ([view source-code](https://github.com/colyseus/colyseus-unity3d))
 - [JavaScript/TypeScript](/getting-started/javascript-client) ([view source-code](https://github.com/colyseus/colyseus.js))
@@ -607,7 +607,7 @@ Name of the room handler. Ex: `"battle"`.
 
 #### `send (type, message)`
 
-Send message a type of message to the room handler. Messages are encoded with MsgPack and can hold any JSON-seriazeable data structure.
+Send a type of message to the room handler. Messages are encoded with MsgPack and can hold any JSON-seriazeable data structure.
 
 ```typescript fct_label="JavaScript"
 //

@@ -1,6 +1,6 @@
 # Server API &raquo; Graceful Shutdown
 
-Colyseus provides graceful shutting down mechanism by default. These actions will be performed before the process kill itself:
+Colyseus provides a graceful shutting down mechanism by default. These actions will be performed before the process kill itself:
 
 - Disconnect all connected clients asynchronously (`Room#onLeave`)
 - Dispose all spawned rooms asynchronously (`Room#onDispose`)
@@ -45,7 +45,7 @@ class MyRoom extends Room {
 
 ## Using `async`
 
-The `async` keyword will makes your function return a `Promise` under the hood. [Read more about Async / Await](https://basarat.gitbooks.io/typescript/content/docs/async-await.html).
+The `async` keyword will make your function return a `Promise` under the hood. [Read more about Async / Await](https://basarat.gitbooks.io/typescript/content/docs/async-await.html).
 
 ```typescript
 import { Room } from "colyseus";

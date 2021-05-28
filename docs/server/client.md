@@ -27,7 +27,7 @@ Custom data you return during [`onAuth()`](/server/room/#onauth-client-options-r
 
 ### `send(type, message)`
 
-Send message a type of message to the client. Messages are encoded with MsgPack and can hold any JSON-seriazeable data structure.
+Send a type of message to the client. Messages are encoded with MsgPack and can hold any JSON-seriazeable data structure.
 
 The `type` can be either a `string` or a `number`.
 

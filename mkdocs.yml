@@ -112,7 +112,7 @@ nav:
 - "How-to":
   - 'Customize room id': 'how-to/custom-room-id.md'
   - 'Password-protect a room': 'how-to/password-protect-room.md'
-  - 'Deny a player to join a room': 'how-to/deny-player-join-a-room.md'
+  - 'Deny a player joining a room': 'how-to/deny-player-join-a-room.md'
   - 'Rate-limit': 'how-to/rate-limit.md'
 
 - 'Migrating':
