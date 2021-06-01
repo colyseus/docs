@@ -131,10 +131,21 @@ ExampleRoomState room = await ExampleManager.Instance.JoinOrCreate<ExampleRoomSt
 - Gets called after the client has successfully connected to the room.
 
 ### OnLeave
+!!! tip "Updated as of 0.14.7"
+    In order to handle custom websocket closure codes, the delegate functions now pass around the `int` closure code rather than the `WebSocketCloseCode` value.
+
 - Gets called after the client has been disconnected from the room.
-- Has a `WebSocketCloseCode` parameter with the reason for the disconnection.
+- Has an `int` parameter with the reason for the disconnection.
 ```csharp
 room.OnLeave += OnLeaveRoom;
+```
+where `OnLeaveRoom` functions as so:
+```csharp
+private void OnLeaveRoom(int code)
+  {
+      WebSocketCloseCode closeCode = WebSocketHelpers.ParseCloseCodeEnum(code);
+      LSLog.Log(string.Format("ROOM: ON LEAVE =- Reason: {0} ({1})", closeCode, code));
+  }
 ```
 
 ### OnStateChange
