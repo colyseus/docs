@@ -797,3 +797,128 @@ A [`ClockTimer`](https://github.com/gamestdio/timer#api) instance, used for
 ### `presence: Presence`
 
 The `presence` instance. Check [Presence API](/server/presence) for more details.
+
+---
+
+## Client 
+
+The `client` instance present on [`this.clients`](#clients-client), [`Room#onJoin()`](#onjoin-client-options-auth), [`Room#onLeave()`](#onleave-client-consented) and [`Room#onMessage()`](#onmessage-type-callback).
+
+!!! Note
+    This is the raw WebSocket connection coming from the [`ws`](https://www.npmjs.com/package/ws) package. There are more methods available which aren't encouraged to use along with Colyseus.
+
+### Properties
+
+#### `sessionId: string`
+
+Unique id per session.
+
+!!! Note
+    In the client-side, you can find the [`sessionId` in the `room` instance](/client/room/#sessionid-string).
+
+---
+
+#### `userData: any`
+
+Can be used to store custom data about the client's connection. `userData` is **not** synchronized with the client, and should be used only to keep player-specific with its connection.
+
+```typescript
+onJoin(client, options) {
+  client.userData = { playerNumber: this.clients.length };
+}
+
+onLeave(client)  {
+  console.log(client.userData.playerNumber);
+}
+```
+
+---
+
+#### `auth: any`
+
+Custom data you return during [`onAuth()`](/server/room/#onauth-client-options-request).
+
+---
+
+### Methods
+
+#### `send(type, message)`
+
+Send a type of message to the client. Messages are encoded with MsgPack and can hold any JSON-seriazeable data structure.
+
+The `type` can be either a `string` or a `number`.
+
+**Sending a message:**
+
+```typescript
+//
+// sending message with a string type ("powerup")
+//
+client.send("powerup", { kind: "ammo" });
+
+//
+// sending message with a number type (1)
+//
+client.send(1, { kind: "ammo"});
+```
+
+<!-- 
+**Sending a schema-encoded message:**
+
+Sending schema-encoded messages is particularly useful for statically-typed languages such as C#.
+
+```typescript
+class MyMessage extends Schema {
+  @type("string") message: string;
+}
+
+const data = new MyMessage();
+data.message = "Hello world!";
+
+client.send(data);
+```
+ -->
+
+!!! Tip
+    [See how to handle these messages on client-side.](/client/room/#onmessage)
+
+---
+
+#### `leave(code?: number)`
+
+Force disconnection of the `client` with the room. You may send a custom `code` when closing the connection, with values betweeen `4000` and `4999` (see [table of WebSocket close codes](#websocket-close-codes-table))
+
+!!! Tip
+    This will trigger [`room.onLeave`](/client/room/#onleave) event on the client-side.
+
+##### Table of WebSocket close codes 
+
+| Close code (uint16) | Codename               | Internal | Customizable | Description |
+|---------------------|------------------------|----------|--------------|-------------|
+| `0` - `999`             |                        | Yes      | No           | Unused |
+| `1000`                | `CLOSE_NORMAL`         | No       | No           | Successful operation / regular socket shutdown |
+| `1001`                | `CLOSE_GOING_AWAY`     | No       | No           | Client is leaving (browser tab closing) |
+| `1002`                | `CLOSE_PROTOCOL_ERROR` | Yes      | No           | Endpoint received a malformed frame |
+| `1003`                | `CLOSE_UNSUPPORTED`    | Yes      | No           | Endpoint received an unsupported frame (e.g. binary-only endpoint received text frame) |
+| `1004`                |                        | Yes      | No           | Reserved |
+| `1005`                | `CLOSED_NO_STATUS`     | Yes      | No           | Expected close status, received none |
+| `1006`                | `CLOSE_ABNORMAL`       | Yes      | No           | No close code frame has been receieved |
+| `1007`                | *Unsupported payload*  | Yes      | No           | Endpoint received inconsistent message (e.g. malformed UTF-8) |
+| `1008`                | *Policy violation*     | No       | No           | Generic code used for situations other than 1003 and 1009 |
+| `1009`                | `CLOSE_TOO_LARGE`      | No       | No           | Endpoint won't process large frame |
+| `1010`                | *Mandatory extension*  | No       | No           | Client wanted an extension which server did not negotiate |
+| `1011`                | *Server error*         | No       | No           | Internal server error while operating |
+| `1012`                | *Service restart*      | No       | No           | Server/service is restarting |
+| `1013`                | *Try again later*      | No       | No           | Temporary server condition forced blocking client's request |
+| `1014`                | *Bad gateway*          | No       | No           | Server acting as gateway received an invalid response |
+| `1015`                | *TLS handshake fail*   | Yes      | No           | Transport Layer Security handshake failure |
+| `1016` - `1999`         |                        | Yes      | No           | Reserved for future use by the WebSocket standard. |
+| `2000` - `2999`         |                        | Yes      | Yes          | Reserved for use by WebSocket extensions |
+| `3000` - `3999`         |                        | No       | Yes          | 	Available for use by libraries and frameworks. May not be used by applications. Available for registration at the IANA via first-come, first-serve. |
+| `4000` - `4999`         |                        | No       | Yes          | **Available for applications** |
+
+---
+
+#### `error(code, message)`
+
+Send an error with code and message to the client. The client can handle it on [`onError`](/client/room/#onerror)
