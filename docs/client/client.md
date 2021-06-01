@@ -795,11 +795,6 @@ room.onMessage("powerup", [=](msgpack::object message) -> void {
 
 This event is triggered when the client leave the room.
 
-**Possible codes:**
-
-- `1000`: Regular Socket Shutdown
-- higher than `1000`: Abnormal Socket Shutdown ([more details](https://github.com/Luka967/websocket-close-codes#websocket-close-codes))
-
 ```typescript fct_label="JavaScript"
 room.onLeave((code) => {
   console.log("client left the room");
@@ -829,6 +824,13 @@ room.onLeave = [=]() -> void {
   std::cout << "client left the room" << std::endl;
 };
 ```
+
+**Possible closing `code`s and their meaning:**
+
+- `1000` - Regular socket shutdown
+- Between `1001` and `1015` - Abnormal socket shutdown 
+- Between `4000` and `4999` - Custom socket close code (See [more details](/server/room/#table-of-websocket-close-codes))
+
 
 ---
 
