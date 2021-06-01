@@ -618,6 +618,14 @@ Allow the specified client to [`reconnect`](/client/client/#reconnect-roomid-str
 
 If **`seconds`** is provided, the reconnection is going to be cancelled after the provided amout of seconds.
 
+**Return type:**
+
+- `allowReconnection()` returns a `Deferred<Client>` instance.
+- The `Deferred` is a promise-like type 
+- `Deferred` type can forcibly reject the promise by calling `.reject()` (see second example)
+
+**Example:** Rejecting the reconnection after a 20 second timeout.
+
 ```typescript
 async onLeave (client: Client, consented: boolean) {
   // flag client as inactive for other users
@@ -642,7 +650,8 @@ async onLeave (client: Client, consented: boolean) {
 }
 ```
 
-Alternatively, you may not provide the amount of **`seconds`** to automatically reject the reconnection, and reject it yourself using your own logic.
+
+**Example:**  Manually rejecting the reconnection using custom logic.
 
 ```typescript
 async onLeave (client: Client, consented: boolean) {
