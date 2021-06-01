@@ -802,7 +802,7 @@ The `presence` instance. Check [Presence API](/server/presence) for more details
 
 ## Client 
 
-The `client` instance from the server-side is responsible for the **transport** layer between the server and the client. It should not be confused with the [`Client` from the client-side](/client/client/), as they have completely different purposes!
+The `client` instance from the server-side is responsible for the **transport** layer between the server and the client. It should not be confused with the [`Client` from the client-side SDK](/client/client/), as they have completely different purposes!
 
 You operate on `client` instances from [`this.clients`](#clients-client), [`Room#onJoin()`](#onjoin-client-options-auth), [`Room#onLeave()`](#onleave-client-consented) and [`Room#onMessage()`](#onmessage-type-callback).
 
