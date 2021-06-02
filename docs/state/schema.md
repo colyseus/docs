@@ -1,30 +1,27 @@
-# [State Handling](/state/overview) » Schema
+# [State Synchronization](/state/overview) &raquo; Schema
 
-The `SchemaSerializer` has been introduced since Colyseus 0.10, and it's the default serialization method.
+!!! Tip "Not using TypeScript yet?"
+    It is highly recommended that you use TypeScript to have a better experience defining the schemas structures, and for your development experience in general. TypeScript supports the "experimental decorators" that is heavily used on this section.
 
-The `Schema` strutures are meant to be used **only for the room's state** (synchronizeable data). You do **not** need to use `Schema` and its other structures for data that's part of your algorithms that aren't synchronizeable.
+## How to define synchronizable structures
 
-## Server-side
+- `Schema` structures are defined the server-side to be used in the room state. 
+- Only fields decorated with `@type()` are going to be considered for synchronization. 
+- _(Synchronizable schema structures should only be used for data related to your state.)_
 
-To use the `SchemaSerializer`, you must:
-
-- Have a state class extending the `Schema` class
-- Annotate all your synchonizable properties with the `@type()` decorator
-- Instantiate the state for your room (`this.setState(new MyState())`)
-
-!!! Warning "Are you not using TypeScript?"
-    Decorators [are not part of ECMAScript yet](https://github.com/tc39/proposal-decorators), so the `type` syntax on plain JavaScript is still a bit odd to use, which you can see in the "JavaScript" tab for each snippet.
+### Defining a `Schema` structure
 
 ```typescript fct_label="TypeScript"
+// MyState.ts
 import { Schema, type } from "@colyseus/schema";
 
-class MyState extends Schema {
-    @type("string")
-    currentTurn: string;
+export class MyState extends Schema {
+    @type("string") currentTurn: string;
 }
 ```
 
 ```typescript fct_label="JavaScript"
+// MyState.ts
 const schema = require('@colyseus/schema');
 const Schema = schema.Schema;
 
@@ -35,21 +32,45 @@ schema.defineTypes(MyState, {
 });
 ```
 
+!!! Tip "_"What is this `@type()` keyword? I've never seen this before!"_"
+    The `@type()` you see heavily used on this page is an upcoming JavaScript feature that is yet to be formally established by TC39. `type` is actually just a function imported from `@colyseus/schema` module. By calling `type` with the `@` prefix at the property level means we're calling it as a _property decorator_. [See the decorators proposal here](https://github.com/tc39/proposal-decorators). 
+
+### Using the state within your `Room`
+
+```typescript
+// MyRoom.ts
+import { Room } from "colyseus";
+import { MyState } from "./MyState";
+
+export class MyRoom extends Room<MyState> {
+    onCreate() {
+        this.setState(new MyState());
+    }
+}
+```
+
+
+## Working with schemas
+
+- Only the server-side is responsible for mutating schema structures
+- The client-side must have the same `Schema` definitions generated through [`schema-codegen`](#client-side-schema-generation). _(Optional if you're using the [JavaScript SDK](/getting-started/javascript-client/))_
+- In order to get updates from the server, you need to [attach callbacks on schema instances in the client-side](#callbacks).
+- The client-side should never perform mutations on schema - as they are going to be replaced as soon as the next change come from the server.
+
 ### Primitive types
 
-These are the types you can provide for the `@type()` decorator, and their limitations.
-
-!!! tip
-    If you know exactly the range of your `number` properties, you can optimize the serialization by providing the right primitive type for it.
-
-    Otherwise, use `"number"`, which will adds an extra byte to identify itself during serialization.
-
+Primitive types are numbers, strings and boolean. 
 
 | Type | Description | Limitation |
 |------|-------------|------------|
 | `"string"` | utf8 strings | maximum byte size of `4294967295` |
-| `"number"` | auto-detects the `int` or `float` type to be used. (adds an extra byte on output) | `0` to `18446744073709551615` |
+| `"number"` | also known as "varint". Auto-detects the number type to use. (may use one extra byte when encoding) | `0` to `18446744073709551615` |
 | `"boolean"` | `true` or `false` | `0` or `1` |
+
+**Specialized number types:**
+
+| Type | Description | Limitation |
+|------|-------------|------------|
 | `"int8"` | signed 8-bit integer | `-128` to `127` |
 | `"uint8"` | unsigned 8-bit integer | `0` to `255` |
 | `"int16"` | signed 16-bit integer | `-32768` to `32767` |
@@ -61,27 +82,22 @@ These are the types you can provide for the `@type()` decorator, and their limit
 | `"float32"` | single-precision floating-point number | `-3.40282347e+38` to `3.40282347e+38`|
 | `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |
 
-### Child schema properties
 
-You may define more custom data types inside your "root" state definition, as a direct reference, map, or array.
+### Complex types
+
+Complex types consist of `Schema` instances within other schema instances. They can also contain [collections of items](#collections-of-items) (array, map, etc.).
 
 ```typescript fct_label="TypeScript"
 import { Schema, type } from "@colyseus/schema";
 
 class World extends Schema {
-    @type("number")
-    width: number;
-
-    @type("number")
-    height: number;
-
-    @type("number")
-    items: number = 10;
+    @type("number") width: number;
+    @type("number") height: number;
+    @type("number") items: number = 10;
 }
 
 class MyState extends Schema {
-    @type(World)
-    world: World = new World();
+    @type(World) world: World = new World();
 }
 ```
 
@@ -109,12 +125,11 @@ schema.defineTypes(MyState, {
 });
 ```
 
+## Collections of items
+
 ### ArraySchema
 
 The `ArraySchema` is a synchronizeable version of the built-in JavaScript [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) type.
-
-!!! Note "More"
-    There are more methods you can use from Arrays. [Have a look at the MDN Documentation for Arrays](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/).
 
 **Example: Array of custom `Schema` type**
 
@@ -122,16 +137,12 @@ The `ArraySchema` is a synchronizeable version of the built-in JavaScript [Array
 import { Schema, ArraySchema, type } from "@colyseus/schema";
 
 class Block extends Schema {
-    @type("number")
-    x: number;
-
-    @type("number")
-    y: number;
+    @type("number") x: number;
+    @type("number") y: number;
 }
 
 class MyState extends Schema {
-    @type([ Block ])
-    blocks = new ArraySchema<Block>();
+    @type([ Block ]) blocks = new ArraySchema<Block>();
 }
 ```
 
@@ -167,8 +178,7 @@ You can't mix types inside arrays.
 import { Schema, ArraySchema, type } from "@colyseus/schema";
 
 class MyState extends Schema {
-    @type([ "string" ])
-    animals = new ArraySchema<string>();
+    @type([ "string" ]) animals = new ArraySchema<string>();
 }
 ```
 
@@ -189,6 +199,8 @@ schema.defineTypes(MyState, {
 });
 ```
 
+---
+
 #### `array.push()`
 
 Adds one or more elements to the end of an array and returns the new length of the array.
@@ -200,6 +212,8 @@ animals.push("sheeps");
 animals.push("cows");
 // output: 4
 ```
+
+---
 
 #### `array.pop()`
 
@@ -213,6 +227,8 @@ animals.length
 // output: 3
 ```
 
+---
+
 #### `array.shift()`
 
 Removes the first element from an array and returns that removed element. This method changes the length of the array.
@@ -225,6 +241,8 @@ animals.length
 // output: 2
 ```
 
+---
+
 #### `array.unshift()`
 
 Adds one or more elements to the beginning of an array and returns the new length of the array.
@@ -234,6 +252,8 @@ animals.unshift("pigeon");
 // output: 3
 ```
 
+---
+
 #### `array.indexOf()`
 
 Returns the first index at which a given element can be found in the array, or -1 if it is not present
@@ -241,6 +261,8 @@ Returns the first index at which a given element can be found in the array, or -
 ```typescript
 const itemIndex = animals.indexOf("sheeps");
 ```
+
+---
 
 #### `array.splice()`
 
@@ -253,6 +275,8 @@ const itemIndex = animals.findIndex((animal) => animal === "sheeps");
 // remove it!
 animals.splice(itemIndex, 1);
 ```
+
+---
 
 #### `array.forEach()`
 
@@ -288,6 +312,9 @@ for (index => value in state.array1) {
 }
 ```
 
+!!! Note "More methods available for Array"
+    Have a look at the [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/).
+
 ### MapSchema
 
 The `MapSchema` is a synchronizeable version of the built-in JavaScript [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) type.
@@ -295,22 +322,18 @@ The `MapSchema` is a synchronizeable version of the built-in JavaScript [Map](ht
 Maps are recommended to track your game entities by id, such as players, enemies, etc.
 
 !!! Warning "Only string keys are supported at the moment"
-    Currently, the `MapSchema` only allows you to provide the value type. The key type is always `string`.
+    Currently, the `MapSchema` only allows you to customize the value type. The key type is always `string`.
 
 ```typescript fct_label="TypeScript"
 import { Schema, MapSchema, type } from "@colyseus/schema";
 
 class Player extends Schema {
-    @type("number")
-    x: number;
-
-    @type("number")
-    y: number;
+    @type("number") x: number;
+    @type("number") y: number;
 }
 
 class MyState extends Schema {
-    @type({ map: Player })
-    players = new MapSchema<Player>();
+    @type({ map: Player }) players = new MapSchema<Player>();
 }
 ```
 
@@ -338,6 +361,8 @@ schema.defineTypes(MyState, {
 });
 ```
 
+---
+
 #### `map.get()`
 
 Getting a map item by its key:
@@ -358,6 +383,8 @@ OR
 //
 const item = map["key"];
 ```
+
+---
 
 #### `map.set()`
 
@@ -380,6 +407,8 @@ OR
 map["key"] = "value";
 ```
 
+---
+
 #### `map.delete()`
 
 Removes a map item by key:
@@ -400,6 +429,8 @@ OR
 delete map["key"];
 ```
 
+---
+
 #### `map.size`
 
 Return the number of elements in a `MapSchema` object.
@@ -412,6 +443,8 @@ map.set("two", 2);
 console.log(map.size);
 // output: 2
 ```
+
+---
 
 #### `map.forEach()`
 
@@ -444,123 +477,9 @@ for (key => value in state.players) {
 }
 ```
 
-!!! Note "All Map methods"
-    There are more methods you can use from Maps. [Have a look at the MDN Documentation for Maps](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/).
+!!! Note "More methods available for Map"
+     Have a look at the [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/).
 
-
-### CollectionSchema
-
-!!! Warning "`CollectionSchema` is only implemented in JavaScript"
-    The `CollectionSchema` can only be used with JavaScript so far. Haxe, C#, LUA and C++ clients are not supported yet.
-
-The `CollectionSchema` works similarly as the `ArraySchema`, with the caveat that you don't have control over its indexes.
-
-```typescript fct_label="TypeScript"
-import { Schema, CollectionSchema, type } from "@colyseus/schema";
-
-class Item extends Schema {
-    @type("number")
-    damage: number;
-}
-
-class Player extends Schema {
-    @type({ collection: Item })
-    items = new CollectionSchema<Item>();
-}
-```
-
-```typescript fct_label="JavaScript"
-const schema = require('@colyseus/schema');
-const Schema = schema.Schema;
-const CollectionSchema = schema.CollectionSchema;
-
-class Item extends Schema {
-}
-schema.defineTypes(Item, {
-  damage: "number",
-});
-
-class Player extends Schema {
-    constructor () {
-        super();
-
-        this.items = new CollectionSchema();
-    }
-}
-schema.defineTypes(Player, {
-  items: { collection: Item }
-});
-```
-
-#### `collection.add()`
-
-Appends an item to the `CollectionSchema` object.
-
-```typescript
-const collection = new CollectionSchema<number>();
-collection.add(1);
-collection.add(2);
-collection.add(3);
-```
-
-#### `collection.at()`
-
-Gets an item at the specified `index`.
-
-```typescript
-const collection = new CollectionSchema<string>();
-collection.add("one");
-collection.add("two");
-collection.add("three");
-
-collection.at(1);
-// output: "two"
-```
-
-#### `collection.delete()`
-
-Delete an item by its value.
-
-```typescript
-collection.delete("three");
-```
-
-#### `collection.has()`
-
-Returns a boolean value wheter an item exists in the Collection or not.
-
-```typescript
-if (collection.has("two")) {
-    console.log("Exists!");
-} else {
-    console.log("Does not exist!");
-}
-```
-
-#### `collection.size`
-
-Return the number of elements in a `CollectionSchema` object.
-
-```typescript
-const collection = new CollectionSchema<number>();
-collection.add(10);
-collection.add(20);
-collection.add(30);
-
-console.log(collection.size);
-// output: 3
-```
-
-#### `collection.forEach()`
-
-The `forEach()` method executes a provided function once per each index/value pair in the `CollectionSchema` object, in insertion order.
-
-```typescript
-collection.forEach((value, at) => {
-    console.log("at =>", at)
-    console.log("value =>", value)
-});
-```
 
 ### SetSchema
 
@@ -569,22 +488,17 @@ collection.forEach((value, at) => {
 
 The `SetSchema` is a synchronizeable version of the built-in JavaScript [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) type.
 
-!!! Note "More"
-    There are more methods you can use from Sets. [Have a look at the MDN Documentation for Sets](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
-
 The usage of `SetSchema` is very similar to [`CollectionSchema`], the biggest difference is that Sets hold unique values. Sets do not have a way to access a value directly. (like [collection.at()](#collectionat))
 
 ```typescript fct_label="TypeScript"
 import { Schema, SetSchema, type } from "@colyseus/schema";
 
 class Effect extends Schema {
-    @type("number")
-    radius: number;
+    @type("number") radius: number;
 }
 
 class Player extends Schema {
-    @type({ set: Effect })
-    effects = new SetSchema<Effect>();
+    @type({ set: Effect }) effects = new SetSchema<Effect>();
 }
 ```
 
@@ -611,6 +525,8 @@ schema.defineTypes(Player, {
 });
 ```
 
+---
+
 #### `set.add()`
 
 Appends an item to the `SetSchema` object.
@@ -621,6 +537,8 @@ set.add(1);
 set.add(2);
 set.add(3);
 ```
+
+---
 
 #### `set.at()`
 
@@ -636,6 +554,8 @@ set.at(1);
 // output: "two"
 ```
 
+---
+
 #### `set.delete()`
 
 Delete an item by its value.
@@ -643,6 +563,8 @@ Delete an item by its value.
 ```typescript
 set.delete("three");
 ```
+
+---
 
 #### `set.has()`
 
@@ -656,6 +578,8 @@ if (set.has("two")) {
 }
 ```
 
+---
+
 #### `set.size`
 
 Return the number of elements in a `SetSchema` object.
@@ -668,6 +592,134 @@ set.add(30);
 
 console.log(set.size);
 // output: 3
+```
+
+!!! Note "More methods available for Set"
+     Have a look at the [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
+
+
+### CollectionSchema
+
+!!! Warning "`CollectionSchema` is only implemented in JavaScript"
+    The `CollectionSchema` can only be used with JavaScript so far. Haxe, C#, LUA and C++ clients are not supported yet.
+
+The `CollectionSchema` works similarly as the `ArraySchema`, with the caveat that you don't have control over its indexes.
+
+```typescript fct_label="TypeScript"
+import { Schema, CollectionSchema, type } from "@colyseus/schema";
+
+class Item extends Schema {
+    @type("number") damage: number;
+}
+
+class Player extends Schema {
+    @type({ collection: Item }) items = new CollectionSchema<Item>();
+}
+```
+
+```typescript fct_label="JavaScript"
+const schema = require('@colyseus/schema');
+const Schema = schema.Schema;
+const CollectionSchema = schema.CollectionSchema;
+
+class Item extends Schema {
+}
+schema.defineTypes(Item, {
+  damage: "number",
+});
+
+class Player extends Schema {
+    constructor () {
+        super();
+
+        this.items = new CollectionSchema();
+    }
+}
+schema.defineTypes(Player, {
+  items: { collection: Item }
+});
+```
+
+---
+
+#### `collection.add()`
+
+Appends an item to the `CollectionSchema` object.
+
+```typescript
+const collection = new CollectionSchema<number>();
+collection.add(1);
+collection.add(2);
+collection.add(3);
+```
+
+---
+
+#### `collection.at()`
+
+Gets an item at the specified `index`.
+
+```typescript
+const collection = new CollectionSchema<string>();
+collection.add("one");
+collection.add("two");
+collection.add("three");
+
+collection.at(1);
+// output: "two"
+```
+
+---
+
+#### `collection.delete()`
+
+Delete an item by its value.
+
+```typescript
+collection.delete("three");
+```
+
+---
+
+#### `collection.has()`
+
+Returns a boolean value wheter an item exists in the Collection or not.
+
+```typescript
+if (collection.has("two")) {
+    console.log("Exists!");
+} else {
+    console.log("Does not exist!");
+}
+```
+
+---
+
+#### `collection.size`
+
+Return the number of elements in a `CollectionSchema` object.
+
+```typescript
+const collection = new CollectionSchema<number>();
+collection.add(10);
+collection.add(20);
+collection.add(30);
+
+console.log(collection.size);
+// output: 3
+```
+
+---
+
+#### `collection.forEach()`
+
+The `forEach()` method executes a provided function once per each index/value pair in the `CollectionSchema` object, in insertion order.
+
+```typescript
+collection.forEach((value, at) => {
+    console.log("at =>", at)
+    console.log("value =>", value)
+});
 ```
 
 ## Filtering data per client
@@ -838,29 +890,16 @@ schema.filter(function(client, value, root) {
 })(Card.prototype, "number");
 ```
 
-### Backwards/forwards compability
-
-Backwards/fowards compatibility is possible by declaring new fields at the end of existing structures, and earlier declarations to not be removed, but be marked `@deprecated()` when needed.
-
-This is particularly useful for native-compiled targets, such as C#, C++, Haxe, etc - where the client-side can potentially not have the most up-to-date version of the schema definitions.
-
-### Limitations and best practices
-
-- Each `Schema` structure can hold up to `64` fields. If you need more fields, use nested `Schema` structures.
-- `NaN` or `null` numbers are encoded as `0`
-- `null` strings are encoded as `""`
-- `Infinity` numbers are encoded as `Number.MAX_SAFE_INTEGER`
-- Multi-dimensional arrays are not supported. [See how to use 1D arrays as multi-dimensional](https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid/212813#212813)
-- Items inside Arrays and Maps must be all instance of the same type.
-- `@colyseus/schema` encodes only field values in the specified order.
-  - Both encoder (server) and decoder (client) must have same schema definition.
-  - The order of the fields must be the same.
-
 ## Client-side
+
+!!! Warning "C#, C++, Haxe"
+    When using statically typed languages, you need to generate the client-side schema files based on your TypeScript schema definitions. [See generating schema on the client-side](#client-side-schema-generation).
 
 ### Callbacks
 
-You can use the following callbacks within the schema structures in the client-side to handle changes coming from the server-side.
+When applying state changes coming from the server, the client-side is going to trigger callbacks on local instances according to the change being applied.
+
+The callbacks are triggered based on instance reference. Make sure to attach the callback on the instances that are actually changing on the server.
 
 - [onAdd (instance, key)](#onadd-instance-key)
 - [onRemove (instance, key)](#onremove-instance-key)
@@ -868,12 +907,9 @@ You can use the following callbacks within the schema structures in the client-s
 - [onChange (instance, key)](#onchange-instance-key) (on collections: `MapSchema`, `ArraySchema`, etc.)
 - [listen()](#listenprop-callback)
 
-!!! Warning "C#, C++, Haxe"
-    When using statically typed languages, you need to generate the client-side schema files based on your TypeScript schema definitions. [See generating schema on the client-side](#client-side-schema-generation).
-
 #### `onAdd (instance, key)`
 
-The `onAdd` callback can only be used in maps (`MapSchema`) and arrays (`ArraySchema`). The `onAdd` callback is called with the added instance and its key on holder object as argument.
+The `onAdd` callback can only be used in collection of items (`MapSchema`, `MapSchema`, etc.). The `onAdd` callback is called with the new instance and its key on holder object as argument.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onAdd = (player, key) => {
@@ -1097,9 +1133,16 @@ state.onChange = function(changes) {
 
 ## Client-side schema generation
 
-This is only applicable if you're using a statically typed language such as C#, C++, or Haxe.
+The `schema-codegen` is a tool that transpiles your server-side schema definition files to be used in the client-side:
 
-From your server project, you can run `npx schema-codegen` to automatically generate the client-side schema files.
+To be able to decode the state in the client-side, its local schema definitions must be compatible with the schema definitions in the server.
+
+!!! Warning "Not required when using [JavaScript SDK](/getting-started/javascript-client/)"
+    Using `schema-codegen` is only required when using statically typed languages in the client-side, such as C#, Haxe, etc.
+
+**Usage:**
+
+To see the usage, From your terminal, `cd` into your server's directory and run the following command:
 
 ```
 npx schema-codegen --help
@@ -1126,12 +1169,122 @@ Optional:
     --namespace: generate namespace on output code
 ```
 
-### C# / Unity3d
+### Example: Unity / C# 
 
-Below is a real example to generate the C# schema files from the [demo Unity3d project](https://github.com/colyseus/colyseus-unity3d/tree/master/Server).
+Below is a real example to generate the C# schema files from the [demo Unity project](https://github.com/colyseus/colyseus-unity3d/blob/aa9a722a50b2958ce01785969cd8ecb8aee24fd0/Server/package.json#L12).
 
 ```
-npx schema-codegen DemoRoom.ts --csharp --output ../Assets/
+npx schema-codegen src/rooms/schema/* --csharp --output ../Assets/Scripts/States/"
 generated: Player.cs
 generated: State.cs
 ```
+
+**Using `npm` scripts:**
+
+For short, it is recommended to have your `schema-codegen` arguments configured under a `npm` script in your `package.json`:
+    
+```json
+"scripts": {
+    "schema-codegen": "schema-codegen src/rooms/schema/* --csharp --output ../Assets/Scripts/States/"
+}
+```
+
+This way you can run `npm run schema-codegen` rather than the full command:
+
+```
+npm run schema-codegen
+generated: Player.cs
+generated: State.cs
+```
+
+### Versioning and backwards/forwards compability
+
+Backwards/fowards compatibility is possible by declaring new fields at the end of existing structures, and earlier declarations to not be removed, but be marked `@deprecated()` when needed. See a versioning example below.
+
+```typescript fct_label="Live version 1"
+import { Schema, type, deprecated } from "@colyseus/schema";
+
+class MyState extends Schema {
+    @type("string") myField: string;
+}
+```
+
+```typescript fct_label="Live version 2"
+import { Schema, type, deprecated } from "@colyseus/schema";
+
+class MyState extends Schema {
+    // Flag field as deprecated.
+    @deprecated() @type("string") myField: string;
+
+    // To allow your server to play nicely with multiple client-side versions.
+    @type("string") newField: string; 
+}
+```
+
+```typescript fct_label="Live version 3"
+import { Schema, type, deprecated } from "@colyseus/schema";
+
+class MyState extends Schema {
+    // Flag field as deprecated.
+    @deprecated() @type("string") myField: string;
+
+    // Flag field as deprecated again.
+    @deprecated() @type("string") newField: string; 
+
+    // New fields always at the end of the structure
+    @type("string") anotherNewField: string;
+}
+```
+
+This is particularly useful for native-compiled targets, such as C#, C++, Haxe, etc - where the client-side can potentially not have the most up-to-date version of the schema definitions.
+
+---
+
+## Limitations and best practices
+
+- Each `Schema` structure can hold up to `64` fields. If you need more fields, use nested `Schema` structures.
+- `NaN` or `null` numbers are encoded as `0`
+- `null` strings are encoded as `""`
+- `Infinity` numbers are encoded as `Number.MAX_SAFE_INTEGER`
+- Multi-dimensional arrays are not supported. [See how to use 1D arrays as multi-dimensional](https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid/212813#212813)
+- `@colyseus/schema` encoding order is based on field definition order.
+    - Both encoder (server) and decoder (client) must have same schema definition.
+    - The order of the fields must be the same.
+
+### Collections
+
+Collection types (`ArraySchema`, `MapSchema`, etc) must hold items of the same type, or share the same base type.
+
+**The following example is supported:**
+
+```typescript
+class Item extends Schema {/* base Item fields */}
+class Weapon extends Item {/* specialized Weapon fields */}
+class Shield extends Item {/* specialized Shield fields */}
+
+class Inventory extends Schema {
+    @type({ map: Item }) items = new MapSchema<Item>();
+}
+
+const inventory = new Inventory();
+inventory.set("left", new Weapon());
+inventory.set("right", new Shield());
+```
+
+### Primitive types
+
+| Type | Description | Limitation |
+|------|-------------|------------|
+| `"string"` | utf8 strings | maximum byte size of `4294967295` |
+| `"number"` | also known as "varint". Auto-detects the number type to use. (may use one extra byte when encoding) | `0` to `18446744073709551615` |
+| `"boolean"` | `true` or `false` | `0` or `1` |
+| `"int8"` | signed 8-bit integer | `-128` to `127` |
+| `"uint8"` | unsigned 8-bit integer | `0` to `255` |
+| `"int16"` | signed 16-bit integer | `-32768` to `32767` |
+| `"uint16"` | unsigned 16-bit integer | `0` to `65535` |
+| `"int32"` | signed 32-bit integer | `-2147483648` to `2147483647` |
+| `"uint32"` | unsigned 32-bit integer | `0` to `4294967295` |
+| `"int64"` | signed 64-bit integer | `-9223372036854775808` to `9223372036854775807` |
+| `"uint64"` | unsigned 64-bit integer | `0` to `18446744073709551615` |
+| `"float32"` | single-precision floating-point number | `-3.40282347e+38` to `3.40282347e+38`|
+| `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |

@@ -78,33 +78,26 @@ nav:
     - 'Haxe': 'getting-started/haxe-client.md'
     - 'Cocos2d-x': 'getting-started/cocos2dx-client.md'
     - 'Construct3': 'getting-started/construct3-client.md'
-  - 'API':
-    - 'Client': 'client/client.md'
-    - 'Room': 'client/room.md'
+  - 'Usage': 'client/client.md'
 
 - 'Server API':
   - 'Server': 'server/api.md'
   - 'Room': 'server/room.md'
-  - 'Client': 'server/client.md'
   - 'Timing events': 'server/timing-events.md'
   - 'Match-maker API': 'server/matchmaker.md'
-  - 'Authentication API': 'server/authentication.md'
   - 'Presence': 'server/presence.md'
   - 'Graceful shutdown': 'server/graceful-shutdown.md'
   # - 'Custom State Serialization': 'server/state-serialization.md'
 
-- 'State Handling':
+- 'State Synchronization':
   - 'Overview': 'state/overview.md'
   - 'Schema': 'state/schema.md'
-  - 'Fossil Delta (deprecated)': 'state/fossil-delta.md'
+
+- 'Best practices': 'best-practices/overview.md'
 
 - 'Built-in Rooms':
   - 'Lobby room': 'builtin-rooms/lobby.md'
   - 'Relay room': 'builtin-rooms/relay.md'
-
-- 'Best practices':
-  - 'Overview': 'best-practices/overview.md'
-  - 'The Command Pattern': 'best-practices/command-pattern.md'
 
 - "Tools":
   - "Monitoring Panel": 'tools/monitor.md'
@@ -118,7 +111,7 @@ nav:
 - "How-to":
   - 'Customize room id': 'how-to/custom-room-id.md'
   - 'Password-protect a room': 'how-to/password-protect-room.md'
-  - 'Deny a player to join a room': 'how-to/deny-player-join-a-room.md'
+  - 'Deny a player joining a room': 'how-to/deny-player-join-a-room.md'
   - 'Rate-limit': 'how-to/rate-limit.md'
 
 - 'Migrating':

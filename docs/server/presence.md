@@ -1,4 +1,4 @@
-# Presence
+# Server API &raquo; Presence
 
 When you need to scale your server on multiple processes and/or machines, you'd need to provide the [`Presence`](/server/api/#optionspresence) option to the `Server`. The purpose of `Presence` is to allow communicating and sharing data between different processes, specially during match-making.
 

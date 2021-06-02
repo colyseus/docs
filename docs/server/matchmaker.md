@@ -1,3 +1,5 @@
+# Server API &raquo; Match-maker API
+
 !!! Warning "You may not need this!"
     This section is for advanced usage. You're usually good to go by using the [client-side methods](/client/client/#methods). If you think you can't achieve your goal with the client-side methods, you should consider using the ones described on this page.
 
@@ -95,7 +97,7 @@ console.log(reservation);
     You can use [`consumeSeatReservation()` from the client-side](/client/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 
 ## `.joinById(roomId, options)`
-Join a room by id and return client seat reservation. An exception is thrown if room is not found for `roomId`.
+Join a room by id and return client seat reservation. An exception is thrown if a room is not found for `roomId`.
 
 **Parameters:**
 

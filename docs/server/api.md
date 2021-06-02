@@ -1,12 +1,14 @@
-# Web-Socket Server
+# Server API &raquo; Server
 
-## Server
+The Colyseus `Server` instance holds the server configuration options, such as transport options, presence, matchmaking driver, etc. 
 
-The [`Server`](#server) is responsible for providing the WebSocket server to enable communication between server and client.
+- **Transport** is the layer for bidirectional communication between server and client. Currently, only WebSockets is supported, through the [`ws`](https://www.npmjs.com/package/ws) node module. ([uWebSockets.js](https://github.com/uNetworking/uWebSockets.js/) support is comming soon)
+- **Presence** is the implementation that enables communication between rooms and/or Node.js processes.
+- **Driver** is the storage driver used for storing and querying rooms during matchmaking.
 
-### `constructor (options)`
+## `new Server (options)`
 
-#### `options.server`
+### `options.server`
 
 The HTTP server to bind the WebSocket Server into. You may use [`express`](https://www.npmjs.com/package/express) for your server too.
 
@@ -62,17 +64,23 @@ const gameServer = new colyseus.Server();
 gameServer.listen(port);
 ```
 
-#### `options.pingInterval`
+---
+
+### `options.pingInterval`
 
 Number of milliseconds for the server to "ping" the clients. Default: `3000`
 
 The clients are going to be forcibly disconnected if they can't respond after [pingMaxRetries](/server/api/#optionspingMaxRetries) retries.
 
-#### `options.pingMaxRetries`
+---
+
+### `options.pingMaxRetries`
 
 Maximum allowed number of pings without a response. Default: `2`.
 
-#### `options.verifyClient`
+---
+
+### `options.verifyClient`
 
 This method happens before WebSocket handshake. If `verifyClient` is not set
 then the handshake is automatically accepted.
@@ -117,7 +125,9 @@ const gameServer = new colyseus.Server({
 });
 ```
 
-#### `options.presence`
+---
+
+### `options.presence`
 
 When scaling Colyseus through multiple processes / machines, you need to provide a presence server. Read more about [scalability](/scalability/), and the [`Presence API`](/server/presence/#api).
 
@@ -143,21 +153,28 @@ The currently available Presence servers are currently:
 
 - `RedisPresence` (scales on a single server and multiple servers)
 
-#### `options.gracefullyShutdown`
+---
+
+### `options.gracefullyShutdown`
 
 Register shutdown routine automatically. Default is `true`. If disabled, you
 should call [`gracefullyShutdown()`](#gracefullyshutdown-exit-boolean) method
 manually in your shutdown process.
 
-### `define (name: string, handler: Room, options?: any)`
+---
 
-Define a new room handler.
+## `define (roomName: string, room: Room, options?: any)`
+
+Define a new type of room for the matchmaker. 
+
+- Rooms are **not created** during `.define()`
+- Rooms are created upon client request ([See client-side methods](/client/client/#methods))
 
 **Parameters:**
 
-- `name: string` - The public name of the room. You'll use this name when joining the room from the client-side.
-- `handler: Room` - Reference to the `Room` handler class.
-- `options?: any` - Custom options for room initialization.
+- `roomName: string` - The public name of the room. You'll use this name when joining the room from the client-side
+- `room: Room` - The `Room` class
+- `options?: any` - Custom options for room initialization
 
 ```typescript
 // Define "chat" room
@@ -171,17 +188,20 @@ gameServer.define("battle_woods", BattleRoom, { map: "woods" });
 ```
 
 !!! Tip "Defining the same room handler multiple times"
-    You may define the same room handler multiple times with different `options`. When [Room#onCreate()](/server/room/#oncreate-options) is called, the `options` will contain the merged values you specified on [Server#define()](/server/api/#define-name-string-handler-room-options-any) + the options provided when the room is created.
+    You may define the same room handler multiple times with different `options`. When [Room#onCreate()](/server/room/#oncreate-options) is called, the `options` will contain the merged values you specified on [Server#define()](/server/api/#define-roomname-string-room-room-options-any) + the options provided when the room is created.
 
 ---
 
-#### Matchmaking filters: `filterBy(options)`
+### Room definition options
+
+#### `filterBy(options)`
+
+Whenever a room is created by the `create()` or `joinOrCreate()` methods, only the `options` defined by the `filterBy()` method are going to be stored internally, and used to filter out rooms in further `join()` or `joinOrCreate()` calls.
 
 **Parameters**
 
 - `options: string[]` - a list of option names
 
-Whenever a room is created by the `create()` or `joinOrCreate()` methods, only the `options` defined by the `filterBy()` method are going to be stored internally, and used to filter out rooms in further `join()` or `joinOrCreate()` calls.
 
 **Example:** allowing different "game modes".
 
@@ -233,7 +253,7 @@ client.joinOrCreate("battle", { maxClients: 20 }).then(room => {/* ... */});
 
 ---
 
-#### Matchmaking priority: `sortBy(options)`
+#### `sortBy(options)`
 
 You can also give a different priority for joining rooms depending on their information upon creation.
 
@@ -259,7 +279,7 @@ gameServer
 
 ---
 
-#### Enable realtime room listing for Lobby
+#### Realtime listing for Lobby
 
 To allow the `LobbyRoom` to receive updates from a specific room type, you should define them with realtime listing enabled:
 
@@ -273,9 +293,9 @@ gameServer
 
 ---
 
-#### Listening to room instance events
+#### Public lifecycle events
 
-The `define` method will return the registered handler instance, which you can listen to match-making events from outside the room instance scope. Such as:
+You can listen for matchmaking events from outside the room instance scope, such as:
 
 - `"create"` - when a room has been created
 - `"dispose"` - when a room has been disposed
@@ -298,9 +318,9 @@ gameServer
 !!! Warning
     It's completely discouraged to manipulate a room's state through these events. Use the [abstract methods](/server/room/#abstract-methods) in your room handler instead.
 
-### `simulateLatency (milliseconds: number)`
+## `simulateLatency (milliseconds: number)`
 
-This is a convenience method for when you would like to locally test how "laggy" clients will behave without having to deploy your server to a remote cloud.
+This is a convenience method for simulating "lagged" clients during local development.
 
 ```typescript
 // Make sure to never call the `simulateLatency()` method in production.
@@ -311,7 +331,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 ```
 
-### `attach (options: any)`
+## `attach (options: any)`
 
 > You usually do not need to call this. Use it only if you have a very specific reason to do so.
 
@@ -357,15 +377,15 @@ gameServer.attach({ ws: wss });
 ```
 
 
-### `listen (port: number)`
+## `listen (port: number)`
 
 Binds the WebSocket server into the specified port.
 
-### `onShutdown (callback: Function)`
+## `onShutdown (callback: Function)`
 
 Register a callback that should be called before the process shut down. See [graceful shutdown](/server/graceful-shutdown/) for more details.
 
-### `gracefullyShutdown (exit: boolean)`
+## `gracefullyShutdown (exit: boolean)`
 
 Shutdown all rooms and clean-up its cached data. Returns a promise that fulfils
 whenever the clean-up has been complete.

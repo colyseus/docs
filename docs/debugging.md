@@ -40,15 +40,13 @@ Your production server should now appear on [`chrome://inspect`](`chrome://inspe
 
 ## Debug messages
 
-The server provides some debug messages that you can enable individually per category, by setting the `DEBUG` environment variable.
-
-To enable all logs, you can run your server using:
+To enable all debug logs, run your server using the `DEBUG=colyseus:*` environment variable:
 
 ```
-DEBUG=colyseus:* node server.js
+DEBUG=colyseus:* npm start
 ```
 
-See below all available debug categories with sample outputs.
+Alternatively, you can only enable to printing debug logs per category. 
 
 ### `colyseus:patch`
 
