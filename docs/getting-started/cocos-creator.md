@@ -91,7 +91,7 @@ Because we're using the `@property` decorator above, you can edit the `hostname`
 
 ---
 
-## Alternatively: How to manually add the `colyseus.js` file into your project (without the extension)
+## Alternative: How to manually add the `colyseus.js` file into your project (without the extension)
 
 - [Download the latest `colyseus-js-client.zip` release from GitHub](https://github.com/colyseus/colyseus.js/releases).
 - Unzip the `colyseus-js-client.zip` file into the `assets/` folder.
