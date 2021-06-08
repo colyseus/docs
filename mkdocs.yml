@@ -76,7 +76,8 @@ nav:
     - 'JavaScript': 'getting-started/javascript-client.md'
     - 'Defold Engine': 'getting-started/defold-client.md'
     - 'Haxe': 'getting-started/haxe-client.md'
-    - 'Cocos2d-x': 'getting-started/cocos2dx-client.md'
+    - 'Cocos Creator': 'getting-started/cocos-creator.md'
+    # - 'Cocos2d-x': 'getting-started/cocos2dx-client.md'
     - 'Construct3': 'getting-started/construct3-client.md'
   - 'Usage': 'client/client.md'
 
