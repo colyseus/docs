@@ -4,6 +4,9 @@
 
 The Colyseus SDK for Cocos Creator works in the same way as the [JavaScript SDK](/getting-started/javascript-client/). The major difference is how to [import it from a TypeScript Component](#importing-from-the-extension) asset from Cocos Creator.
 
+!!! tip "Looking for an example?"
+    Take a look at this [Tic Tac Toe Example](https://github.com/colyseus/cocos-demo-tictactoe) implementation.
+
 ## 1. Install the extension
 
 - [Open the Cocos Store](https://store.cocos.com/app/en/detail/2937/) (Menu: "Extension" &raquo; "Store")
@@ -26,7 +29,7 @@ Make sure you have `"esModuleInterop": true` under `"compilerOptions"`:
   // ...
 ```
 
-## Importing from the extension
+## 3. Importing from the extension
 
 You must import Colyseus from its extension path:
 
@@ -34,7 +37,9 @@ You must import Colyseus from its extension path:
 import Colyseus from 'db://colyseus-sdk/colyseus.js';
 ```
 
-Below is a more elaborate example you can copy and paste into your project. Save the contents below as `NetworkManager.ts` under your `assets` folder.
+Below is a more elaborate example you can copy and paste into your project.
+
+Save the contents below as `NetworkManager.ts` under your `assets` folder.
 
 ```typescript
 import { _decorator, Component, Node } from 'cc';
