@@ -6,7 +6,7 @@ The JavaScript/TypeScript SDK is compatible with mostly every platform:
 - [Node.js](https://nodejs.org/)
 - [Electron](https://github.com/electron/electron)
 - [React Native](https://github.com/facebook/react-native)
-- [Cocos Creator 3.0](http://www.cocos2d-x.org/creator) ([See instructions](cocos-creator))
+- [Cocos Creator 3.0](https://cocos.com/creator) ([See instructions](/getting-started/cocos-creator))
 
 ## Usage
 
