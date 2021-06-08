@@ -34,7 +34,7 @@ You must import Colyseus from its extension path:
 import Colyseus from 'db://colyseus-sdk/colyseus.js';
 ```
 
-Below is a more elaborate example you can copy and paste into your project:
+Below is a more elaborate example you can copy and paste into your project. Save the contents below as `NetworkManager.ts` under your `assets` folder.
 
 ```typescript
 import { _decorator, Component, Node } from 'cc';
@@ -82,7 +82,7 @@ export class NetworkManager extends Component {
 }
 ```
 
-Because we're using the `@property` decorator above, you can edit the `hostname`, `port` and `useSSL` from Cocos Creator editor:
+You can now attach `NetworkManager` as a Component on any Node from Cocos Creator. Because we're using the `@property` decorator above, you can edit the `hostname`, `port` and `useSSL` from Cocos Creator editor:
 
 ![Colyseus SDK on TypeScript Component](cocos-creator-component.png)
 
