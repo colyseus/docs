@@ -82,7 +82,9 @@ export class NetworkManager extends Component {
 }
 ```
 
-You can now attach `NetworkManager` as a Component on any Node from Cocos Creator. Because we're using the `@property` decorator above, you can edit the `hostname`, `port` and `useSSL` from Cocos Creator editor:
+You can now attach `NetworkManager` as a Component on any Node from Cocos Creator. 
+
+Because we're using the `@property` decorator above, you can edit the `hostname`, `port` and `useSSL` from Cocos Creator editor:
 
 ![Colyseus SDK on TypeScript Component](cocos-creator-component.png)
 
