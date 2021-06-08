@@ -2,7 +2,7 @@
 
 [Cocos Creator](https://cocos.com/creator) is a Cross-Platform 2D/3D Game Creation Tool.
 
-The Colyseus SDK for Cocos Creator works in the same way as the [JavaScript SDK](/getting-started/javascript-client/). The major difference is how to [import it from a TypeScript Component](importing-from-the-extension) asset from Cocos Creator.
+The Colyseus SDK for Cocos Creator works in the same way as the [JavaScript SDK](/getting-started/javascript-client/). The major difference is how to [import it from a TypeScript Component](#importing-from-the-extension) asset from Cocos Creator.
 
 ## 1. Install the extension
 
