@@ -76,7 +76,7 @@ public class ExampleManager : ColyseusManager<ExampleManager>
 ```csharp
 ExampleManager.Instance.InitializeClient();
 ```
-- If your Manager has additional classes that need reference to your `Client`, you can override `InitializeClient` and make those connections in there.
+- If your Manager has additional classes that need reference to your `ColyseusClient`, you can override `InitializeClient` and make those connections in there.
 ```csharp
 //In ExampleManager.cs
 public override void InitializeClient()
@@ -86,11 +86,20 @@ public override void InitializeClient()
     _roomController.SetClient(client);
 }
 ```
+- If you wish to have multiple `ColyseusClient` references in your manager, or if you want to provide an alternate `endpoint`/`ColyseusSettings` object for your `ColyseusClient` you can skip the call to `base.InitializeClient()`.
+    - Within your overridden `InitializeClient()` function, you can now either pass an endpoint to any additional new `ColyseusClient`s that you create or you can create a new `ColyseusClient` with a `ColyseusSettings` object and a `bool` to indicate if it should use websocket protocol rather than http when creating a connection. If you create a new `Client` with a `string` endpoint, it'll create a `ColyseusSettings` object in it's constructor and infer the protocol from the endpoint.
+```csharp
+public override void InitializeClient()
+{
+    chatClient = new ColyseusClient(chatSettings, true);                //Endpoint will be chatClient.WebSocketEndpoint
+    deathmatchClient = new ColyseusClient(deathmatchSettings, false);   //Endpoint will be deathmatchSettings.WebRequestEndpoint
+    guildClient = new ColyseusClient(guildHostURLEndpoint);             //Create the guildClient with only a string endpoint
+}
+```
 - You can get available rooms on the server by calling `GetAvailableRooms` of `ColyseusClient`:
 ```csharp
 return await GetAvailableRooms<ColyseusRoomAvailable>(roomName, headers);
 ```
-
 ## Connecting to a Room:
 
 - There are several ways to create and/or join a room.
