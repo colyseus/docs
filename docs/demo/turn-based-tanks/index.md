@@ -88,19 +88,49 @@ if(disconnectRoom) {
 
 ### Pausing the Room
 
-When a user connects to the room there is a counter called `connectedUsers` that gets incremented. Inversely it gets decremented when a user has disconnected from the room. When `connectedUsers` is zero the intervals to update the simulation and to send patch updates effectively get paused by setting the delays to a high value. In this case the value is a little more than 24 days.
+Since this is an example of an asynchronous game, our room could have no users connected to it for any amount of time. When there are no users connected to the room the server doesn't need to update the simulation loop. 
+When users disconnect from the room a check is performed to look if there are no more users connected to the room. When no more users are connected to the room the simulation interval effectively gets paused by setting the delay to a high value. In this case the value is a little more than 24 days.
 ``` javascript
 
-this.connectedUsers--;
+// Within the room's `onLeave` handler
+// Check if the server should pause the simulation loop because
+// there are no users connected to the room
+let anyConnected: boolean = false;
+this.state.players.forEach((player, index) => {
+    if(player.connected) {
+        anyConnected = true;
+    }
+});
 
-if(this.connectedUsers <= 0) {
-    // Pause the server when there are no connected users
-    // Set the frequency of the patch rate
-    this.setPatchRate(this.pauseDelay);
-
-    this.setSimulationInterval(dt => { this.intervalSimulation(this, dt); }, this.pauseDelay);
+if(anyConnected == false) {
+    // There are no users connected so pause the server updates
+    this.setServerPause(true);
 }
 
+
+private setServerPause(pause: boolean) {
+
+    if(pause) {
+        this.setSimulationInterval(dt => this.gameLoop(dt), this.pauseDelay);
+    }
+    else {
+        // Set the Simulation Interval callback
+        this.setSimulationInterval(dt => this.gameLoop(dt));
+    }
+
+    this.serverPaused = pause;
+}
+```
+
+When users rejoin a room that has been paused, the simulation interval is restored.
+``` javascript
+
+// Within the room's `onJoin` handler
+// Check if the server needs to be unpaused
+if(this.serverPaused) {
+    // The server is currently paused so unpause it since a player has connected
+    this.setServerPause(false);
+}
 ```
 
 ### Playing the Demo
@@ -150,90 +180,44 @@ As you play around with this demo, you may want to make some adjustments to bett
 
 ### Game Rules and Weapon Data
 
-Both the **Game Rules** and **Weapon Data** values can be found in the server code at `ArenaServer\src\rooms\customLogic\gameRules.ts`. The **Game Rules** control movement and firing costs as well as how many action points players get. The **Weapon Data** specifies the max charge, charge time, impact radius, and impact damage of each weapon.
+Both the **Game Rules** and **Weapon Data** values can be found in the server code at `ArenaServer\src\rooms\tanks\rules.ts`. The **Game Rules** control movement and firing costs as well as how many action points players get. The data in `weaponList` specifies the max charge, charge time, impact radius, and impact damage of each weapon.
 
 ```javascript
 const GameRules = {
-    MovementAPCost : 1,
-    FiringAPCost :  2,
-    MaxAP : 3,
-    MaxMovement : 3,
+    MaxActionPoints: 3,
+    MovementActionPointCost: 1,
+    FiringActionPointCost: 2,
+    ProjectileSpeed: 30,
+    MaxMovement: 3,
     MaxHitPoints: 3,
-    MovementTime: 2
+    MovementTime: 2,
 }
 
-const WeaponData = [
+const weaponList = [
     {
         name: "Short Range",
         maxCharge: 5,
         chargeTime: 1,
         radius: 1,
-        impactDamage: 1
+        impactDamage: 1,
+        index: 0
     },
     {
         name: "Mid Range",
         maxCharge: 8,
         chargeTime: 2,
         radius: 1,
-        impactDamage: 1
+        impactDamage: 1,
+        index: 1
     },
     {
         name: "Long Range",
         maxCharge: 10,
         chargeTime: 5,
         radius: 1,
-        impactDamage: 1
+        impactDamage: 1,
+        index: 2
     }
 ]
 
 ```
-
-## Events the Client Utilizes
-
-- OnRoomStateChanged
-- OnInitialSetup
-- OnPlayerMove
-- OnReceivedFirePath
-- OnSelectedWeaponUpdated
-- OnTurnCompleted
-- OnPlayerJoined
-- OnPlayerQuit
-- OnPlayerLeave
-
-### OnRoomStateChanged
-
-We subscribe to this event so we can update the aim angle of the tank belonging to our opponent and get the general message updated in the room on the server.
-
-In this demo the general message is primarily used to just display whether a player would like to challenge you to a rematch.
-
-### OnInitialSetup
-
-This is a custom callback that gets called when you join a room. Through it, data is provided to get your client situated and matching the state on the server: Your player turn Id is assigned, you get the current player turn, the current player&#39;s remaining Action Points, the player names, current player Hit Points, your currently selected weapon (which defaults to the short range when you connect), the map matrix for the terrain, and a bool flag for whether your opponent is currently in the room with you.
-
-### OnPlayerMove
-
-This is a custom callback that gets called any time you or your opponent has moved. When you want to move your tank your input is sent to the server as a move request and if your tank is able to be moved this callback is fired. Data passed to the callback includes the Id of the player that moved, their remaining Action Points, and the position to which they have moved to.
-
-### OnReceivedFirePath
-
-This is a custom callback that gets called when the server sends a new fire path. When you fire your weapon a request is sent to the server including barrel position and direction, along with the cannon charge value. The server then calculates the path the projectile should take using that data. The server then sends data back to both clients to this callback. Data in the callback includes the Id of the player that fired, their remaining Action Points, the path of the projectile, and damage data for terrain that gets destroyed by the projectile or any players that have been affected such as position change and remaining Hit Points after being damaged.
-
-### OnSelectedWeaponUpdated
-
-This is a custom callback that gets called when you have changed your selected weapon. When you want to change your weapon a request is made to the server, and if your weapon is changed successfully this callback will get fired along with the data of your selected weapon.
-
-### OnTurnCompleted
-
-This is a custom callback that gets called when a player&#39;s turn has completed whether they have run out of Action Points or they have skipped their remaining turn.
-
-### OnPlayerJoined
-
-This is a custom callback that gets called when the other player has joined the room. This is used to update the displayed player name and to toggle their online indicator.
-
-### OnPlayerQuit
-
-This is a custom callback that gets fired when the other player has surrendered in an incomplete game. Through this callback we get the player name so we can display it in the game over menu.
-
-### OnPlayerLeave
-
-This is a custom callback that gets fired when a player has exited the room and not when they have surrendered the game. We simply use this to toggle the online indicator off.
