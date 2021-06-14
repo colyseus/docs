@@ -23,7 +23,7 @@ let client = new Colyseus.Client("ws://localhost:2567");
 using Colyseus;
 // ...
 
-Client client = new Client("ws://localhost:2567");
+ColyseusClient client = new ColyseusClient("ws://localhost:2567");
 ```
 
 ```lua fct_label="lua"
