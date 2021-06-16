@@ -124,5 +124,7 @@ nav:
 
 - "Tech Demos":
   - 'Shooting Gallery': 'demo/shooting-gallery/index.md'
+  - 'StarBoss': 'demo/starboss/index.md'
+  - 'Tanks': 'demo/turn-based-tanks/index.md'
 
 - 'FAQ': 'faq.md'

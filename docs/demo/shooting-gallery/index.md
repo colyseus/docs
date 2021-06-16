@@ -16,7 +16,7 @@ You need to install and launch the server from the **provided Server directory**
 
 All server settings can be changed via the ColyseusSetting ScriptableObject located here:
 
-![ScriptableObject](/demo/shooting-gallery/scriptable-object.png)
+![ScriptableObject](../common-images/scriptable-object.png)
 
 If you are running a local server, the default settings should be sufficient, however if you wish to host a server you’ll need to change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly.
 

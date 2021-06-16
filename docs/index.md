@@ -2,7 +2,7 @@
 
 ## Getting started
 
-Before we start, let's make sure we have the necessary system requirements instaled in your local machine.
+Before we start, let's make sure we have the necessary system requirements installed in your local machine.
 
 **Requirements**:
 
@@ -12,7 +12,7 @@ Before we start, let's make sure we have the necessary system requirements insta
 
 ### Creating a barebones Colyseus server
 
-Use the `npm init colyseus-app` command to generate a barebones Colyseus server. You may select between TypeScript (recommended), JavaScript and Haxe as your language of choice for the server.
+Use the `npm init colyseus-app` command to generate a barebones Colyseus server. You may select between TypeScript (recommended), JavaScript or Haxe as your language of choice for the server.
 
 ```
 npm init colyseus-app ./my-colyseus-app
