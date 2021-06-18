@@ -2,11 +2,11 @@
 
 The JavaScript/TypeScript SDK is compatible with mostly every platform:
 
-- Browser (Google Chrome, Firefox, Safari, Opera, Brave, etc.)
+- Browsers (Google Chrome, Firefox, Safari, Opera, Brave, etc.)
 - [Node.js](https://nodejs.org/)
 - [Electron](https://github.com/electron/electron)
 - [React Native](https://github.com/facebook/react-native)
-- [Cocos Creator 3.0](http://www.cocos2d-x.org/creator) ([See instructions](#cocos-creator-30))
+- [Cocos Creator 3.0](https://cocos.com/creator) ([See instructions](/getting-started/cocos-creator))
 
 ## Usage
 
@@ -81,14 +81,3 @@ room.onLeave((code) => {
   console.log(client.id, "left", room.name);
 });
 ```
-
-## Cocos Creator 3.0
-
-- [Download the latest `colyseus-js-client.zip` release from GitHub](https://github.com/colyseus/colyseus.js/releases).
-- Unzip the `colyseus-js-client.zip` file.
-- Move both `colyseus.js` and `colyseus.d.ts` files into your Cocos Creator project's `scripts` folder.
-- Click on the `colyseus.js` file from the Assets panel, and enable to "Import As Plugin" (see image below)
-- **TypeScript**: require it using `import Colyseus from "./colyseus.js";`
-- **JavaScript**: require it using `const Colyseus = require("./colyseus.js");`
-
-![Import as plugin](cocos-creator-import-as-plugin.png)
