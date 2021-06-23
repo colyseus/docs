@@ -114,6 +114,7 @@ nav:
   - 'Password-protect a room': 'how-to/password-protect-room.md'
   - 'Deny a player joining a room': 'how-to/deny-player-join-a-room.md'
   - 'Rate-limit': 'how-to/rate-limit.md'
+  - 'Setup server from scratch (TS)': 'how-to/setup-server-from-scratch-typescript.md'
 
 - 'Migrating':
   - '0.14': 'migrating/0.14.md'
