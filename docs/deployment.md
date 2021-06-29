@@ -10,6 +10,8 @@ Heroku is recommended just for prototyping. You can deploy the [colyseus-example
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/colyseus/colyseus-examples)
 
+**Important:** Make sure to set the environment variable `NPM_CONFIG_PRODUCTION=false` in order to use dev-dependencies in your deployment, such as `ts-node`, `ts-node-dev`, etc.
+
 ## Nginx (recommended)
 
 It's recommended to use `pm2` and `nginx` in your production environment.
