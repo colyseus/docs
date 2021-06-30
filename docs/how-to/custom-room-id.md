@@ -20,7 +20,7 @@ export class MyRoom extends Room<MyRoomState> {
 
     // Generate a single 4 capital letter room ID.
     generateRoomIdSingle(): string {
-        var result = '';
+        let result = '';
         for (var i = 0; i < 4; i++) {
             result += LETTERS.charAt(Math.floor(Math.random() * LETTERS.length));
         }
@@ -32,13 +32,11 @@ export class MyRoom extends Room<MyRoomState> {
     // 3. Register the new room ID with the Presence API.
     async generateRoomId(): Promise<string> {
         const currentIds = await this.presence.smembers(this.LOBBY_CHANNEL);
-        var id;
-        while (true) {
+        let id;
+        do {
             id = this.generateRoomIdSingle();
-            if (!currentIds.includes(id)) {
-                break;
-            }
-        }
+        } while (currentIds.includes(id));
+        
         await this.presence.sadd(this.LOBBY_CHANNEL, this.roomId);
         return id;
     }
