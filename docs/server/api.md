@@ -50,8 +50,8 @@ manually in your shutdown process.
 
 ### `options.server`
 
-!!! Warning
-    **DEPRECATED OPTION**: See [WebSocket Transport Options](/server/transport/#optionsserver)
+!!! Warning "This option is going to be deprecated"
+    See [WebSocket Transport Options](/server/transport/#optionsserver)
 
 The HTTP server to bind the WebSocket Server into. You may use [`express`](https://www.npmjs.com/package/express) for your server too.
 
@@ -111,8 +111,8 @@ gameServer.listen(port);
 
 ### `options.pingInterval`
 
-!!! Warning
-    **DEPRECATED OPTION**: See [WebSocket Transport Options](/server/transport/#optionspinginterval)
+!!! Warning "This option is going to be deprecated"
+    See [WebSocket Transport Options](/server/transport/#optionspinginterval)
 
 Number of milliseconds for the server to "ping" the clients. Default: `3000`
 
@@ -122,8 +122,8 @@ The clients are going to be forcibly disconnected if they can't respond after [p
 
 ### `options.pingMaxRetries`
 
-!!! Warning
-    **DEPRECATED OPTION**: See [WebSocket Transport Options](/server/transport/#optionspingmaxretries)
+!!! Warning "This option is going to be deprecated"
+    See [WebSocket Transport Options](/server/transport/#optionspingmaxretries)
 
 Maximum allowed number of pings without a response. Default: `2`.
 
@@ -131,8 +131,8 @@ Maximum allowed number of pings without a response. Default: `2`.
 
 ### `options.verifyClient`
 
-!!! Warning
-    **DEPRECATED OPTION**: See [WebSocket Transport Options](/server/transport/#optionsverifyclient)
+!!! Warning "This option is going to be deprecated"
+    See [WebSocket Transport Options](/server/transport/#optionsverifyclient)
 
 This method happens before WebSocket handshake. If `verifyClient` is not set
 then the handshake is automatically accepted.

@@ -36,9 +36,21 @@ const gameServer = new Server({
 
 A Node.js http server instance to re-use for the WebSocket server. Useful when you'd like to use Express along with Colyseus.
 
-By not providing this option, an http server is going to be created automatically for you.
+```typescript fct_label="Example"
+import { createServer } from "http";
+import { Server } from "@colyseus/core";
+import { WebSocketTransport } from "@colyseus/ws-transport"
 
-```typescript fct_label="TypeScript"
+const server = createServer(app); // create the http server manually
+
+const gameServer = new Server({
+  transport: new WebSocketTransport({
+      server // provide the custom server for `WebSocketTransport`
+  })
+});
+```
+
+```typescript fct_label="Example + express"
 import express from "express";
 import { createServer } from "http";
 import { Server } from "@colyseus/core";
@@ -54,13 +66,15 @@ const gameServer = new Server({
 });
 ```
 
+By not providing this option, an http server is going to be created automatically for you.
+
 ---
 
 #### `options.pingInterval`
 
 Number of milliseconds for the server to "ping" the clients. Default: `3000`
 
-The clients are going to be forcibly disconnected if they can't respond after [pingMaxRetries](/server/api/#optionspingMaxRetries) retries.
+The clients are going to be forcibly disconnected if they can't respond after [pingMaxRetries](#optionspingmaxretries) retries.
 
 ---
 
@@ -91,6 +105,9 @@ then the handshake is automatically accepted.
 
 The [`uWebSockets.js`](https://github.com/uNetworking/uWebSockets.js) implementation generally performs better than the default, in terms of number of CCU it can hold, and memory consumption.
 
+!!! Warning "HTTP Routing works differently with `uWebSockets.js`"
+    The major disadvantage of using `uWebSockets.js` is that their HTTP/routing system works completely different than regular Node.js/express routes. See more about this on [Custom HTTP routes with `uWebSockets.js`](#custom-http-routes-with-uwebsocketsjs)
+
 **Installation**
 
 ```
@@ -104,7 +121,9 @@ import { Server } from "@colyseus/core";
 import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
 
 const gameServer = new Server({
-    transport: new uWebSocketsTransport({ /* transport options */ })
+    transport: new uWebSocketsTransport({
+        /* options */
+    })
 })
 ```
 
@@ -133,3 +152,79 @@ What permessage-deflate compression to use. `uWS.DISABLED`, `uWS.SHARED_COMPRESS
 #### `options.maxBackpressure`
 
 Maximum length of allowed backpressure per socket when publishing or sending messages. Slow receivers with too high backpressure will be skipped until they catch up or timeout. Defaults to `1024 * 1024`.
+
+---
+
+#### `options.key_file_name`
+
+Path to the SSL key file. (for SSL termination through the Node.js application.)
+
+---
+
+#### `options.cert_file_name`
+
+Path to the SSL certificate file. (for SSL termination through the Node.js application.)
+
+---
+
+#### `options.passphrase`
+
+Password for the SSL file. (for SSL termination through the Node.js application.)
+
+---
+
+### Custom HTTP routes with `uWebSockets.js`
+
+#### Native `uWebSockets.js` routing:
+
+The `uWebSocketsTransport` exposes the variable `app` as a reference to the raw `uws.App` or `uws.SSLApp` from `uWebSockets.js` library.
+
+You can use `transport.app` directly to bind http routes using the `uWebSockets.js` API, see below:
+
+```typescript
+import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
+
+const transport = new uWebSocketsTransport({
+    /* ...options */
+});
+
+transport.app.get("/*", (res, req) => {
+    res.writeStatus('200 OK').writeHeader('IsExample', 'Yes').end('Hello there!');
+});
+```
+
+See [`uWebSockets.js` examples](https://github.com/uNetworking/uWebSockets.js/tree/master/examples) for more information.
+
+#### Alternative: express compatibility layer
+Alternatively, we've built a thin express compatibility layer that aims to provide the same functionality from Express, but using `uWebSockets.js` under the hood.
+
+!!! tip "This feature is experimental"
+    The Express compatibility layer is experimental and may not work with complex code
+
+**Installation**
+
+```
+npm install --save uwebsockets-express
+```
+
+**Usage**
+
+```typescript fct_label="Example"
+import expressify from "uwebsockets-express"
+import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
+
+const transport = new uWebSocketsTransport({
+    /* ...options */
+});
+const app = expressify(transport.app);
+
+// use existing middleware implementations!
+app.use(express.json());
+app.use('/', serveIndex(path.join(__dirname, ".."), { icons: true, hidden: true }))
+app.use('/', express.static(path.join(__dirname, "..")));
+
+// register routes
+app.get("/hello", (req, res) => {
+  res.json({ hello: "world!" });
+});
+```
