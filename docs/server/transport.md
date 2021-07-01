@@ -131,7 +131,9 @@ const gameServer = new Server({
 
 #### `options.maxPayloadLength`
 
-Maximum length of received message. If a client tries to send you a message larger than this, the connection is immediately closed. Defaults to `16 * 1024`.
+Maximum length of received message. If a client tries to send you a message larger than this, the connection is immediately closed.
+
+Defaults to `1024 * 1024`.
 
 ---
 
@@ -139,19 +141,25 @@ Maximum length of received message. If a client tries to send you a message larg
 
 Maximum amount of seconds that may pass without sending or getting a message. Connection is closed if this timeout passes. Resolution (granularity) for timeouts are typically 4 seconds, rounded to closest.
 
-Disable by using `0`. Defaults to `120`.
+Disable by using `0`.
+
+Defaults to `120`.
 
 ---
 
 #### `options.compression`
 
-What permessage-deflate compression to use. `uWS.DISABLED`, `uWS.SHARED_COMPRESSOR` or any of the `uWS.DEDICATED_COMPRESSOR_xxxKB`. Defaults to `uWS.DISABLED`
+What permessage-deflate compression to use. `uWS.DISABLED`, `uWS.SHARED_COMPRESSOR` or any of the `uWS.DEDICATED_COMPRESSOR_xxxKB`.
+
+Defaults to `uWS.DISABLED`
 
 ---
 
 #### `options.maxBackpressure`
 
-Maximum length of allowed backpressure per socket when publishing or sending messages. Slow receivers with too high backpressure will be skipped until they catch up or timeout. Defaults to `1024 * 1024`.
+Maximum length of allowed backpressure per socket when publishing or sending messages. Slow receivers with too high backpressure will be skipped until they catch up or timeout.
+
+Defaults to `1024 * 1024`.
 
 ---
 
