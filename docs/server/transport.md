@@ -13,21 +13,44 @@ Each Transport has its own set of options for customization.
 
 The default WebSocket transport uses the [`websockets/ws`](https://github.com/websockets/ws) implementation.
 
+A `WebSocketTransport` with its default options is going to be used automatically if no `transport` is provided for [`Server`](/server/api/#new-server-options)'s constructor.
+
+<!--
+
 **Installation**
 
 ```
 npm install --save @colyseus/ws-transport
 ```
 
+-->
+
 **Usage**
 
-```typescript
+```typescript fct_label="Example"
 import { Server } from "@colyseus/core";
 import { WebSocketTransport } from "@colyseus/ws-transport"
 
 const gameServer = new Server({
     transport: new WebSocketTransport({ /* transport options */ })
 })
+```
+
+```typescript fct_label="@colyseus/arena"
+import Arena from "@colyseus/arena";
+import { WebSocketTransport } from "@colyseus/ws-transport"
+
+export default Arena({
+  // ...
+
+  initializeTransport: function() {
+    return new WebSocketTransport({
+      /* ...options */
+    });
+  },
+
+  // ...
+});
 ```
 
 ### Available options:
@@ -72,15 +95,19 @@ By not providing this option, an http server is going to be created automaticall
 
 #### `options.pingInterval`
 
-Number of milliseconds for the server to "ping" the clients. Default: `3000`
+Number of milliseconds for the server to "ping" the clients.
 
 The clients are going to be forcibly disconnected if they can't respond after [pingMaxRetries](#optionspingmaxretries) retries.
+
+Default: `3000`
 
 ---
 
 #### `options.pingMaxRetries`
 
-Maximum allowed number of pings without a response. Default: `2`.
+Maximum allowed number of pings without a response.
+
+Default: `2`
 
 ---
 
