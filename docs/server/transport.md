@@ -218,6 +218,7 @@ npm install --save uwebsockets-express
 **Usage**
 
 ```typescript fct_label="Example"
+import express from "express";
 import expressify from "uwebsockets-express"
 import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
 
@@ -235,4 +236,41 @@ app.use('/', express.static(path.join(__dirname, "..")));
 app.get("/hello", (req, res) => {
   res.json({ hello: "world!" });
 });
+```
+
+```typescript fct_label="@colyseus/arena"
+import express from "express";
+import expressify from "uwebsockets-express";
+import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
+import Arena from "@colyseus/arena";
+
+export default Arena({
+  // ...
+  initializeTransport: function() {
+    const transport = new uWebSocketsTransport({
+      /* ...options */
+    });
+
+    const app = expressify(transport.app);
+    this.initializeExpress(app);
+
+    return transport;
+  },
+
+  initializeExpress: (app) => {
+    // use existing middleware implementations!
+    app.use(express.json());
+
+    app.use('/', serveIndex(path.join(__dirname, ".."), { icons: true, hidden: true }))
+    app.use('/', express.static(path.join(__dirname, "..")));
+
+    // register routes
+    app.get("/hello", (req, res) => {
+      res.json({ hello: "world!" });
+    });
+
+  },
+  // ...
+})
+
 ```
