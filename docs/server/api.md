@@ -1,14 +1,57 @@
 # Server API &raquo; Server
 
-The Colyseus `Server` instance holds the server configuration options, such as transport options, presence, matchmaking driver, etc. 
+The Colyseus `Server` instance holds the server configuration options, such as transport options, presence, matchmaking driver, etc.
 
-- **Transport** is the layer for bidirectional communication between server and client. Currently, only WebSockets is supported, through the [`ws`](https://www.npmjs.com/package/ws) node module. ([uWebSockets.js](https://github.com/uNetworking/uWebSockets.js/) support is comming soon)
+- **Transport** is the layer for bidirectional communication between server and client. Currently, only WebSockets is supported, through the [`ws`](https://www.npmjs.com/package/ws) node module.
 - **Presence** is the implementation that enables communication between rooms and/or Node.js processes.
 - **Driver** is the storage driver used for storing and querying rooms during matchmaking.
 
 ## `new Server (options)`
 
+### `options.transport`
+
+Colyseus uses its built-in WebSocket transport by default. See how to [customize the transport layer here](/server/transport/).
+
+### `options.presence`
+
+When scaling Colyseus through multiple processes / machines, you need to provide a presence server. Read more about [scalability](/scalability/), and the [`Presence API`](/server/presence/#api).
+
+```typescript fct_label="TypeScript"
+import { Server, RedisPresence } from "colyseus";
+
+const gameServer = new Server({
+  // ...
+  presence: new RedisPresence()
+});
+```
+
+```typescript fct_label="JavaScript"
+const colyseus = require("colyseus");
+
+const gameServer = new colyseus.Server({
+  // ...
+  presence: new colyseus.RedisPresence()
+});
+```
+
+The currently available Presence servers are currently:
+
+- `RedisPresence` (scales on a single server and multiple servers)
+
+---
+
+### `options.gracefullyShutdown`
+
+Register shutdown routine automatically. Default is `true`. If disabled, you
+should call [`gracefullyShutdown()`](#gracefullyshutdown-exit-boolean) method
+manually in your shutdown process.
+
+---
+
 ### `options.server`
+
+!!! Warning
+    **DEPRECATED OPTION**: See [WebSocket Transport Options](/server/transport/#optionsserver)
 
 The HTTP server to bind the WebSocket Server into. You may use [`express`](https://www.npmjs.com/package/express) for your server too.
 
@@ -68,6 +111,9 @@ gameServer.listen(port);
 
 ### `options.pingInterval`
 
+!!! Warning
+    **DEPRECATED OPTION**: See [WebSocket Transport Options](/server/transport/#optionspinginterval)
+
 Number of milliseconds for the server to "ping" the clients. Default: `3000`
 
 The clients are going to be forcibly disconnected if they can't respond after [pingMaxRetries](/server/api/#optionspingMaxRetries) retries.
@@ -76,11 +122,17 @@ The clients are going to be forcibly disconnected if they can't respond after [p
 
 ### `options.pingMaxRetries`
 
+!!! Warning
+    **DEPRECATED OPTION**: See [WebSocket Transport Options](/server/transport/#optionspingmaxretries)
+
 Maximum allowed number of pings without a response. Default: `2`.
 
 ---
 
 ### `options.verifyClient`
+
+!!! Warning
+    **DEPRECATED OPTION**: See [WebSocket Transport Options](/server/transport/#optionsverifyclient)
 
 This method happens before WebSocket handshake. If `verifyClient` is not set
 then the handshake is automatically accepted.
@@ -127,45 +179,9 @@ const gameServer = new colyseus.Server({
 
 ---
 
-### `options.presence`
-
-When scaling Colyseus through multiple processes / machines, you need to provide a presence server. Read more about [scalability](/scalability/), and the [`Presence API`](/server/presence/#api).
-
-```typescript fct_label="TypeScript"
-import { Server, RedisPresence } from "colyseus";
-
-const gameServer = new Server({
-  // ...
-  presence: new RedisPresence()
-});
-```
-
-```typescript fct_label="JavaScript"
-const colyseus = require("colyseus");
-
-const gameServer = new colyseus.Server({
-  // ...
-  presence: new colyseus.RedisPresence()
-});
-```
-
-The currently available Presence servers are currently:
-
-- `RedisPresence` (scales on a single server and multiple servers)
-
----
-
-### `options.gracefullyShutdown`
-
-Register shutdown routine automatically. Default is `true`. If disabled, you
-should call [`gracefullyShutdown()`](#gracefullyshutdown-exit-boolean) method
-manually in your shutdown process.
-
----
-
 ## `define (roomName: string, room: Room, options?: any)`
 
-Define a new type of room for the matchmaker. 
+Define a new type of room for the matchmaker.
 
 - Rooms are **not created** during `.define()`
 - Rooms are created upon client request ([See client-side methods](/client/client/#methods))
