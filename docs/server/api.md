@@ -2,7 +2,7 @@
 
 The Colyseus `Server` instance holds the server configuration options, such as transport options, presence, matchmaking driver, etc.
 
-- **Transport** is the layer for bidirectional communication between server and client. Currently, only WebSockets is supported, through the [`ws`](https://www.npmjs.com/package/ws) node module.
+- **Transport** is the layer for bidirectional communication between server and client.
 - **Presence** is the implementation that enables communication between rooms and/or Node.js processes.
 - **Driver** is the storage driver used for storing and querying rooms during matchmaking.
 
