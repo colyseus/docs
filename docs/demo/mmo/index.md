@@ -9,7 +9,7 @@ The purpose of this technical demo is to show one method of how to make a basic 
 
   
 
-[Play the demo!](https://sac-dt.colyseus.dev/)
+[Play the demo!](https://xey3jn.us-west-1.colyseus.dev/)
 
   
 
