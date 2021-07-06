@@ -5,7 +5,7 @@ The purpose of this technical demo is to show one method of how to make a basic 
 
   
 
-**[Download demo](https://github.com/colyseus/unity-demo-mmo/archive/main.zip)** ([View source code](https://github.com/colyseus/unity-demo-mmo/))
+**[Download demo](https://github.com/colyseus/unity-demo-mmo/archive/master.zip)** ([View source code](https://github.com/colyseus/unity-demo-mmo/))
 
   
 
