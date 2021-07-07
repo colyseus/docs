@@ -62,11 +62,11 @@ gameServer.define('lobby_room', MMORoom).filterBy(["progress"]); // Filter room 
 As players move throughout the world, they join/leave rooms based off of their position in the world grid. A message is sent from the client to the server stating that the player is trying to update their progress, which we then catch in `MMORoom.ts`:
 ```javascript
 this.onMessage("transitionArea", (client: Client, transitionData: Vector[]) => {
-if (transitionData == null || transitionData.length < 2) {
-	logger.error(`*** Grid Change Error! Missing data for grid change! ***`);
-	return;
-}
-this.onGridUpdate(client, transitionData[0] as  Vector2, transitionData[1] as  Vector3);
+    if (transitionData == null || transitionData.length < 2) {
+        logger.error(`*** Grid Change Error! Missing data for grid change! ***`);
+        return;
+    }
+    this.onGridUpdate(client, transitionData[0] as  Vector2, transitionData[1] as  Vector3);
 });
 ```
 After determining what the new grid position is, the client is given a new SeatReservation to consume, thus joining the correct ColyseusRoom for their new grid position. A similar flow also occurs when Logging in/Signing up (see <b>Player Persistence</b> section).
