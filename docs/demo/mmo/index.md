@@ -23,11 +23,11 @@ The purpose of this technical demo is to show one method of how to make a basic 
 
 ### Launching a local server
 
-  
-
 You need to install and launch the server from the **provided Server directory** for this demo to function properly. Simply follow the instructions found underneath [“Running the demo server” in the Unity3d section of these docs](/getting-started/unity3d-client/#running-the-demo-server).
 
-  
+Additionally, this demo uses MongoDB for player persistence. If you wish to run it locally, you'll have to set up your own local DB or provide your own (see the "Adjusting the Demo" section)
+
+[See the MongoDB website for details on how to set up a local instance](https://docs.mongodb.com/guides/server/install/)
 
 ### ColyseusSettings ScriptableObject
 
@@ -100,6 +100,12 @@ This demo comes with 4 different types of interactables that you can find in the
 ## Adjusting the Demo
 
 As you play around with this demo, you may want to make some adjustments to better familiarize yourself with what is happening. Below, you’ll learn how to make these minor adjustments.
+
+### Using your own DB
+If you wish to point this demo at your own database, you'll need to provide a different Mongo connection string in the `arena.env` file located in the `Server` directory, which is currently expecting you to be hosting a local mongo db:
+``` javascript
+DEMO_DATABASE=mongodb://localhost:27017/demo?retryWrites=true&w=majority
+```
 
 ### Chat Message Life Time
 On the client side, you can change the length of time a message shows for by changing the public `messageShowTime` variable on `ChatManager.cs` which will then be sent to the server when Joining/Creating a room in `MMOManager.cs`:
