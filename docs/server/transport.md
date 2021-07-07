@@ -267,27 +267,23 @@ app.get("/hello", (req, res) => {
 
 ```typescript fct_label="@colyseus/arena"
 import express from "express";
-import expressify from "uwebsockets-express";
 import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
 import Arena from "@colyseus/arena";
 
 export default Arena({
   // ...
   initializeTransport: function() {
-    const transport = new uWebSocketsTransport({
+    return new uWebSocketsTransport({
       /* ...options */
     });
-
-    const app = expressify(transport.app);
-    this.initializeExpress(app);
-
-    return transport;
   },
 
+  //
+  // when using `@colyseus/arena`, the `uwebsockets-express` is loaded automatically.
+  // you get the expressify(transport.app) as argument here.
+  //
   initializeExpress: (app) => {
     // use existing middleware implementations!
-    app.use(express.json());
-
     app.use('/', serveIndex(path.join(__dirname, ".."), { icons: true, hidden: true }))
     app.use('/', express.static(path.join(__dirname, "..")));
 
