@@ -1,7 +1,7 @@
-﻿
+﻿﻿
 # MMO Tech Demo
 
-The purpose of this technical demo is to show one method of how to make a basic MMO. Including a chat system, player persistence, multiple flowing ColyseusRooms and networked interactable objects. The demo is designed to work with Colyseus version 0.14.7 and [Unity version 2020.3.1f1](https://unity3d.com/unity/qa/lts-releases).
+The purpose of this technical demo is to show one method of how to make a **basic** MMO. Including a chat system, player persistence, multiple flowing ColyseusRooms and networked interactable objects. It is important to note that this demo **does not** include sharding or any other methods of load balancing that one would need for a production scale MMO. This demo is designed to work with Colyseus version 0.14.7 and [Unity version 2020.3.1f1](https://unity3d.com/unity/qa/lts-releases).
 
   
 
@@ -11,11 +11,7 @@ The purpose of this technical demo is to show one method of how to make a basic 
 
 [Play the demo!](https://xey3jn.us-west-1.colyseus.dev/)
 
-  
-
 ![Screenshot](screenshot.PNG)
-
-  
 
 ## Getting Started
 
@@ -41,16 +37,22 @@ All server settings can be changed via the ColyseusSetting ScriptableObject loca
 
   
 
-If you are running a local server, the default settings should be sufficient, however if you wish to host a server you’ll need to change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly.
-
-  
+If you are running a local server, the default settings should be sufficient, however if you wish to host a server you’ll need to change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly.  
 
 ### Playing the Demo
 
-  
-
 Start the player in the scene “MMOLoginScene” located at `ColyseusTechDemo-MMO\Assets\Scenes\MMOLoginScene`. If this is your first time, you'll need to create  an account. Input your e-mail, password and then login to begin. If you are successful, the client will load the “TowerScene” scene and place a NetworkedEntity in it. At any point you can press the escape key to view the controls, customize your avatar or exit to the main menu. You will be transferred into a different room by walking into the grey cubes that are located on sides of rooms.
-  
+
+## Controls
+The controls for this demo are visible in the Escape menu at any time and are as follows:
+| Input                            | Description        |
+|----------------------------------|--------------------|
+| W,A,S,M                          | Movement           |
+| Hold Shift                       | Sprint             |
+| Q,E                              | Rotate Avatar      |
+| Scroll Up/Down                   | Zoom In/Out        |
+| Hold and Drag Right Mouse Button | Camera Pivot       |
+| `                                | Toggle Chat Window |
 
 ## Demo Overview
 This demo was designed to show how a user could potentially design and implement an MMO style game using Colyseus. It highlights the following features:
@@ -70,6 +72,11 @@ this.onMessage("transitionArea", (client: Client, transitionData: Vector[]) => {
 });
 ```
 After determining what the new grid position is, the client is given a new SeatReservation to consume, thus joining the correct ColyseusRoom for their new grid position. A similar flow also occurs when Logging in/Signing up (see <b>Player Persistence</b> section).
+
+![MapScreenshop](map.PNG)
+
+This is the implemented grid map for this demo. The non-green grid spaces contain exits that will wrap around to each other, allowing you to travel from one to the other. For example in grid space `-3x3`, you can take the North West exit and you will be placed into grid space `3x-3`. All other contiguous grid spaces will have exits to each other. The grid spaces that are only touching corners will have exits in those corners to traverse the grid diagonally.
+
 ### Chat System
 ![ChatScreenshot](chatScreenshot.PNG)
 An additional ColyseusRoom is used to handle the Chat system: `ChatRoom.ts`. In both the client and the server, anywhere we join or leave an MMORoom we also join or leave a ChatRoom. These ChatRooms are filtered by `roomId` which is the ID of the MMORoom it is connected to.
