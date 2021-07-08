@@ -45,6 +45,7 @@ Start the player in the scene “MMOLoginScene” located at `ColyseusTechDemo-M
 
 ## Controls
 The controls for this demo are visible in the Escape menu at any time and are as follows:
+
 | Input                            | Description        |
 |----------------------------------|--------------------|
 | W,A,S,M                          | Movement           |
