@@ -231,6 +231,7 @@ transport.app.get("/*", (res, req) => {
 See [`uWebSockets.js` examples](https://github.com/uNetworking/uWebSockets.js/tree/master/examples) for more information.
 
 #### Alternative: express compatibility layer
+
 Alternatively, we've built a thin express compatibility layer that aims to provide the same functionality from Express, but using `uWebSockets.js` under the hood.
 
 !!! tip "This feature is experimental"
