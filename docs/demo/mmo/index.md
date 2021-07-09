@@ -39,11 +39,11 @@ All server settings can be changed via the ColyseusSetting ScriptableObject loca
 
 If you are running a local server, the default settings should be sufficient, however if you wish to host a server you’ll need to change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly.  
 
-### Playing the Demo
+## Playing the Demo
 
 Start the player in the scene “MMOLoginScene” located at `ColyseusTechDemo-MMO\Assets\Scenes\MMOLoginScene`. If this is your first time, you'll need to create  an account. Input your e-mail, password and then login to begin. If you are successful, the client will load the “TowerScene” scene and place a NetworkedEntity in it. At any point you can press the escape key to view the controls, customize your avatar or exit to the main menu. You will be transferred into a different room by walking into the grey cubes that are located on sides of rooms.
 
-## Controls
+### Controls
 The controls for this demo are visible in the Escape menu at any time and are as follows:
 
 | Input                            | Description        |
