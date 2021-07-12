@@ -87,6 +87,7 @@ nav:
   - 'Timing events': 'server/timing-events.md'
   - 'Match-maker API': 'server/matchmaker.md'
   - 'Presence': 'server/presence.md'
+  - 'Transport': 'server/transport.md'
   - 'Graceful shutdown': 'server/graceful-shutdown.md'
   # - 'Custom State Serialization': 'server/state-serialization.md'
 
@@ -117,6 +118,7 @@ nav:
   - 'Setup server from scratch (TS)': 'how-to/setup-server-from-scratch-typescript.md'
 
 - 'Migrating':
+  - '0.14.18': 'migrating/0.14.18.md'
   - '0.14': 'migrating/0.14.md'
   - '0.13': 'migrating/0.13.md'
   - '0.12': 'migrating/0.12.md'

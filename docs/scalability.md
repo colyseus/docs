@@ -40,7 +40,7 @@ Use the `MongooseDriver`:
 
 ```typescript fct_label="TypeScript"
 import { Server, RedisPresence } from "colyseus";
-import { MongooseDriver } from "colyseus/lib/matchmaker/drivers/MongooseDriver"
+import { MongooseDriver } from "@colyseus/mongoose-driver"
 
 const gameServer = new Server({
   // ...
@@ -50,7 +50,7 @@ const gameServer = new Server({
 
 ```typescript fct_label="JavaScript"
 const colyseus = require("colyseus");
-const MongooseDriver = require("colyseus/lib/matchmaker/drivers/MongooseDriver").MongooseDriver;
+const MongooseDriver = require("@colyseus/mongoose-driver").MongooseDriver;
 
 const gameServer = new colyseus.Server({
   // ...
