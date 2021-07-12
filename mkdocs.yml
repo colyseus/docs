@@ -45,13 +45,13 @@ extra:
   search:
     language: 'en'
   social:
-  - type: 'comments'
+  - icon: 'fontawesome/brands/discord'
     link: 'https://discuss.colyseus.io'
-  - type: 'globe'
+  - icon: 'fontawesome/brands/discord'
     link: 'http://colyseus.io'
-  - type: 'github'
+  - icon: 'fontawesome/brands/github-alt'
     link: 'https://github.com/colyseus'
-  - type: 'twitter'
+  - icon: 'fontawesome/brands/discord'
     link: 'https://twitter.com/colyseus'
 
 # Extensions
