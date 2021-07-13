@@ -1,5 +1,5 @@
 # Project information
-site_name: 'Colyseus 0.14'
+site_name: 'Colyseus & Arena Cloud Documentation'
 site_description: 'Documentation for Colyseus Multiplayer Framework for Node.js'
 site_author: 'Endel Dreyer'
 site_url: 'https://colyseus.io/'
@@ -30,6 +30,73 @@ theme:
   font:
     text: 'Roboto'
     code: 'Roboto Mono'
+  features:
+    - navigation.indexes
+    - navigation.sections
+    - navigation.top
+    - navigation.tabs
+
+plugins:
+  - search
+  - i18n:
+      languages:
+        en: "English"
+        zh_CN: "简体中文" #Simplified Chinese 
+        zh_HK: "繁體中文" #Traditional Chinese
+        pt_BR: "Português" #Portuguese 
+        de: "Deutsch" #German
+        hi: "हिंदी" #Hindi 
+        fr: "Français" #French
+        
+      default_language: 'en'
+      no_translation:
+        en: "This page isn't translated to English."
+        zh_CN: "此頁面未翻譯成簡體中文" 
+        zh_HK: "此頁面未翻譯為繁體中文"
+        pt_BR: "Esta página não está traduzida para o português."
+        de: "Esta página não foi traduzida para o alemão."
+        hi: "इस पेज का हिंदी में अनुवाद नहीं है" #Hindi 
+        fr: "Cette page n'est pas traduite en français" #French
+      translate_nav:
+        en:
+          getting started: 'Getting started'
+          Client-side SDK: "Client-side SDK"
+          Installation: "Installation"
+          Unity: "Unity"
+          Deployment: "Deployment"
+        zh_CN:
+          getting started: "TBD"
+          Client-side SDK: "TBD"
+          Installation: "TBD"
+          Unity: "TBD"
+          Deployment: "TBD"
+        zh_HK:
+          getting started: "TBD"
+          Client-side SDK: "TBD"
+          Installation: "TBD"
+          Unity: "TBD"
+        pt_BR:
+          getting started: "TBD"
+          Client-side SDK: "TBD"
+          Installation: "TBD"
+          Unity: "TBD"
+        de:
+          getting started: 'Einstieg'
+          Client-side SDK: "Clientseitiges SDK"
+          Installation: "Installation"
+          Unity: "Unity"
+          Deployment: "Einsatz"
+        hi:
+          getting started: "TBD"
+          Client-side SDK: "TBD"
+          Installation: "TBD"
+          Unity: "TBD"
+        fr:
+          getting started: "TBD"
+          Client-side SDK: "TBD"
+          Installation: "TBD"
+          Unity: "TBD"
+
 
 extra_css:
   - 'stylesheets/code-tabs.css'
@@ -42,6 +109,35 @@ extra_javascript:
 
 # Options
 extra:
+  alternate:
+    # Switch to English
+    - name: English
+      link: ""
+      lang: en
+    # Switch to German
+    - name: 简体中文
+      link: index.zh_CN/
+      lang: zh_CN
+    # Switch to German
+    - name: 繁體中文
+      link: index.zh_HK/
+      lang: zh_HK
+    # Switch to German
+    - name: Português
+      link: index.pt_BR/
+      lang: pt_BR
+    # Switch to German
+    - name: Deutsch
+      link: index.de/
+      lang: de
+    # Switch to Hindi
+    - name: हिंदी
+      link: index.hi/
+      lang: hi
+    # Switch to French
+    - name: Français
+      link: index.fr/
+      lang: fr
   search:
     language: 'en'
   social:
@@ -69,67 +165,78 @@ markdown_extensions:
 
 # Nav menu
 nav:
-- 'Getting started': 'index.md'
-- 'Client-side SDK':
-  - 'Installation':
-    - 'Unity': 'getting-started/unity3d-client.md'
-    - 'JavaScript': 'getting-started/javascript-client.md'
-    - 'Defold Engine': 'getting-started/defold-client.md'
-    - 'Haxe': 'getting-started/haxe-client.md'
-    - 'Cocos Creator': 'getting-started/cocos-creator.md'
-    # - 'Cocos2d-x': 'getting-started/cocos2dx-client.md'
-    - 'Construct3': 'getting-started/construct3-client.md'
-  - 'Usage': 'client/client.md'
+- Colyseus (Game Server):
+  - getting started: 
+    - 'colyseus/index.md'
+    - 'colyseus/index.de.md'
+  - Client-side SDK:
+    - Installation:
+      - 'colyseus/getting-started/unity3d-client.md'
+      - 'colyseus/getting-started/unity3d-client.de.md'
+      - 'JavaScript': 'colyseus/getting-started/javascript-client.md'
+      - 'Defold Engine': 'colyseus/getting-started/defold-client.md'
+      - 'Haxe': 'colyseus/getting-started/haxe-client.md'
+      - 'Cocos Creator': 'colyseus/getting-started/cocos-creator.md'
+      # - 'Cocos2d-x': 'getting-started/cocos2dx-client.md'
+      - 'Construct3': 'colyseus/getting-started/construct3-client.md'
+    - 'Usage': 'colyseus/client/client.md'
 
-- 'Server API':
-  - 'Server': 'server/api.md'
-  - 'Room': 'server/room.md'
-  - 'Timing events': 'server/timing-events.md'
-  - 'Match-maker API': 'server/matchmaker.md'
-  - 'Presence': 'server/presence.md'
-  - 'Transport': 'server/transport.md'
-  - 'Graceful shutdown': 'server/graceful-shutdown.md'
-  # - 'Custom State Serialization': 'server/state-serialization.md'
+  - 'Server API':
+    - 'Server': 'colyseus/server/api.md'
+    - 'Room': 'colyseus/server/room.md'
+    - 'Timing events': 'colyseus/server/timing-events.md'
+    - 'Match-maker API': 'colyseus/server/matchmaker.md'
+    - 'Presence': 'colyseus/server/presence.md'
+    - 'Transport': 'colyseus/server/transport.md'
+    - 'Graceful shutdown': 'colyseus/server/graceful-shutdown.md'
+    # - 'Custom State Serialization': 'server/state-serialization.md'
 
-- 'State Synchronization':
-  - 'Overview': 'state/overview.md'
-  - 'Schema': 'state/schema.md'
+  - 'State Synchronization':
+    - 'Overview': 'colyseus/state/overview.md'
+    - 'Schema': 'colyseus/state/schema.md'
 
-- 'Best practices': 'best-practices/overview.md'
+  - 'Best practices': 'colyseus/best-practices/overview.md'
 
-- 'Built-in Rooms':
-  - 'Lobby room': 'builtin-rooms/lobby.md'
-  - 'Relay room': 'builtin-rooms/relay.md'
+  - 'Built-in Rooms':
+    - 'Lobby room': 'colyseus/builtin-rooms/lobby.md'
+    - 'Relay room': 'colyseus/builtin-rooms/relay.md'
 
-- "Tools":
-  - "Monitoring Panel": 'tools/monitor.md'
-  - "Load Testing": 'tools/loadtest.md'
-  - "Authentication + Social": 'tools/colyseus-social.md'
+  - "Tools":
+    - "Monitoring Panel": 'colyseus/tools/monitor.md'
+    - "Load Testing": 'colyseus/tools/loadtest.md'
+    - "Authentication + Social": 'colyseus/tools/colyseus-social.md'
 
-- 'Debugging': 'debugging.md'
-- 'Deployment': 'deployment.md'
-- 'Scalability': 'scalability.md'
+  - 'Debugging': 'colyseus/debugging.md'
+  - 'Deployment': 'colyseus/deployment.md'
+  - 'Scalability': 'colyseus/scalability.md'
 
-- "How-to":
-  - 'Customize room id': 'how-to/custom-room-id.md'
-  - 'Password-protect a room': 'how-to/password-protect-room.md'
-  - 'Deny a player joining a room': 'how-to/deny-player-join-a-room.md'
-  - 'Rate-limit': 'how-to/rate-limit.md'
-  - 'Setup server from scratch (TS)': 'how-to/setup-server-from-scratch-typescript.md'
+  - "How-to":
+    - 'Customize room id': 'colyseus/how-to/custom-room-id.md'
+    - 'Password-protect a room': 'colyseus/how-to/password-protect-room.md'
+    - 'Deny a player joining a room': 'colyseus/how-to/deny-player-join-a-room.md'
+    - 'Rate-limit': 'colyseus/how-to/rate-limit.md'
+    - 'Setup server from scratch (TS)': 'colyseus/how-to/setup-server-from-scratch-typescript.md'
 
-- 'Migrating':
-  - '0.14.18': 'migrating/0.14.18.md'
-  - '0.14': 'migrating/0.14.md'
-  - '0.13': 'migrating/0.13.md'
-  - '0.12': 'migrating/0.12.md'
-  - '0.11': 'migrating/0.11.md'
-  - '0.10': 'migrating/0.10.md'
-  - '0.9': 'migrating/0.9.md'
+  - 'Migrating':
+    - '0.14.18': 'colyseus/migrating/0.14.18.md'
+    - '0.14': 'colyseus/migrating/0.14.md'
+    - '0.13': 'colyseus/migrating/0.13.md'
+    - '0.12': 'colyseus/migrating/0.12.md'
+    - '0.11': 'colyseus/migrating/0.11.md'
+    - '0.10': 'colyseus/migrating/0.10.md'
+    - '0.9': 'colyseus/migrating/0.9.md'
 
-- "Tech Demos":
-  - 'Shooting Gallery': 'demo/shooting-gallery/index.md'
-  - 'StarBoss': 'demo/starboss/index.md'
-  - 'Tanks': 'demo/turn-based-tanks/index.md'
-  - 'MMO': 'demo/mmo/index.md'
+  - "Tech Demos":
+    - 'Shooting Gallery': 'colyseus/demo/shooting-gallery/index.md'
+    - 'StarBoss': 'colyseus/demo/starboss/index.md'
+    - 'Tanks': 'colyseus/demo/turn-based-tanks/index.md'
+    - 'MMO': 'colyseus/demo/mmo/index.md'
 
-- 'FAQ': 'faq.md'
+  - 'FAQ': 'colyseus/faq.md'
+- Arena Cloud (Hosted Colyseus):
+  - getting started: 
+    - 'arena/index.md'
+    - 'arena/index.de.md'
+  - Deployment:
+    - 'arena/getting-started/get-started.md'    
+    - 'arena/getting-started/get-started.de.md'
