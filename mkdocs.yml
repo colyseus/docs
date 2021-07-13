@@ -21,7 +21,6 @@ google_analytics: ['UA-108278048-3', 'docs.colyseus.io']
 # Documentation and theme
 theme:
   name: 'material'
-  custom_dir: theme_overrides
   language: 'en'
   logo: 'images/logo-white.png'
   favicon: 'images/favicon.png'
@@ -38,27 +37,25 @@ theme:
     - navigation.tabs
 
 plugins:
-  - search
+  - search:
+      lang:
+        - en
+        - de
+        - pt
+
   - i18n:
+      default_language: 'en'
+
       languages:
         en: "English"
         zh_CN: "简体中文" #Simplified Chinese
         zh_HK: "繁體中文" #Traditional Chinese
-        pt_BR: "Português" #Portuguese
-        de: "Deutsch" #German
-        hi: "हिंदी" #Hindi
-        fr: "Français" #French
+        pt: "Português" # Portuguese
+        de: "Deutsch" # German
+        hi: "हिंदी" # Hindi
+        fr: "Français" # French
 
-      default_language: 'en'
-      no_translation:
-        en: "This page isn't translated to English."
-        zh_CN: "此頁面未翻譯成簡體中文"
-        zh_HK: "此頁面未翻譯為繁體中文"
-        pt_BR: "Esta página não está traduzida para o português."
-        de: "Diese Seite wurde nicht ins Deutsche übersetzt"
-        hi: "इस पेज का हिंदी में अनुवाद नहीं है" #Hindi
-        fr: "Cette page n'est pas traduite en français" #French
-      translate_nav:
+      nav_translations:
         en:
           getting started: 'Getting started'
           Client-side SDK: "Client-side SDK"
@@ -69,18 +66,17 @@ plugins:
           getting started: "TBD"
           Client-side SDK: "TBD"
           Installation: "TBD"
-          Unity: "TBD"
+          Unity: "Unity"
           Deployment: "TBD"
         zh_HK:
           getting started: "TBD"
           Client-side SDK: "TBD"
           Installation: "TBD"
-          Unity: "TBD"
-        pt_BR:
-          getting started: "TBD"
-          Client-side SDK: "TBD"
-          Installation: "TBD"
-          Unity: "TBD"
+        pt:
+          getting started: "Introdução"
+          Client-side SDK: "Client-side SDK"
+          Installation: "Instalação"
+          Unity: "Unity"
         de:
           getting started: 'Einstieg'
           Client-side SDK: "Clientseitiges SDK"
@@ -91,17 +87,17 @@ plugins:
           getting started: "TBD"
           Client-side SDK: "TBD"
           Installation: "TBD"
-          Unity: "TBD"
+          Unity: "Unity"
         fr:
           getting started: "TBD"
           Client-side SDK: "TBD"
           Installation: "TBD"
-          Unity: "TBD"
+          Unity: "Unity"
 
 
 extra_css:
-  - 'stylesheets/code-tabs.css'
-  - 'stylesheets/ads.css'
+  - 'stylesheets/custom.css'
+#   - 'stylesheets/ads.css'
 #   - 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/styles/github.min.css' # syntax highlight
   - 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/styles/github-dark.min.css' # syntax highlight
 
@@ -118,37 +114,8 @@ extra_javascript:
 
 # Options
 extra:
-  alternate:
-    # Switch to English
-    - name: English
-      link: ""
-      lang: en
-    # Switch to German
-    - name: 简体中文
-      link: index.zh_CN/
-      lang: zh_CN
-    # Switch to German
-    - name: 繁體中文
-      link: index.zh_HK/
-      lang: zh_HK
-    # Switch to German
-    - name: Português
-      link: index.pt_BR/
-      lang: pt_BR
-    # Switch to German
-    - name: Deutsch
-      link: index.de/
-      lang: de
-    # Switch to Hindi
-    - name: हिंदी
-      link: index.hi/
-      lang: hi
-    # Switch to French
-    - name: Français
-      link: index.fr/
-      lang: fr
-  search:
-    language: 'en'
+#   search:
+#     language: 'en'
   social:
   - icon: 'fontawesome/solid/globe'
     link: 'http://colyseus.io'
@@ -181,11 +148,9 @@ nav:
 - 'Colyseus | Framework':
   - getting started:
     - 'colyseus/index.md'
-    - 'colyseus/index.de.md'
   - Client-side SDK:
     - Installation:
-      - 'colyseus/getting-started/unity3d-client.md'
-      - 'colyseus/getting-started/unity3d-client.de.md'
+      - 'Unity': 'colyseus/getting-started/unity3d-client.md'
       - 'JavaScript': 'colyseus/getting-started/javascript-client.md'
       - 'Defold Engine': 'colyseus/getting-started/defold-client.md'
       - 'Haxe': 'colyseus/getting-started/haxe-client.md'
@@ -250,7 +215,5 @@ nav:
 - 'Arena | Cloud Hosting':
   - getting started:
     - 'arena/index.md'
-    - 'arena/index.de.md'
   - Deployment:
     - 'arena/getting-started/get-started.md'
-    - 'arena/getting-started/get-started.de.md'

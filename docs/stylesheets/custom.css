@@ -22,8 +22,15 @@
 }
 
 /*
- * custom header background
+ * general customizations
  */
+
+/* first page title on navigation bar */
+div.md-sidebar.md-sidebar--primary > div > div > nav > ul > li.md-nav__item.md-nav__item--active.md-nav__item--nested > nav > label {
+    color: #999 !important;
+    font-weight: normal !important;
+    font-size: 1.1em !important;
+}
 
 article.md-content__inner img {
   border-radius: 0.5em;
