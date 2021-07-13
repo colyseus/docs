@@ -248,9 +248,11 @@ nav:
   - 'FAQ': 'colyseus/faq.md'
 
 - 'Arena | Cloud Hosting':
+  - 'arena/index.md'
+  - 'arena/index.de.md'
   - getting started:
-    - 'arena/index.md'
-    - 'arena/index.de.md'
-  - Deployment:
     - 'arena/getting-started/get-started.md'
     - 'arena/getting-started/get-started.de.md'
+  # - Deployment:
+  #   - 'arena/getting-started/get-started.md'
+  #   - 'arena/getting-started/get-started.de.md'

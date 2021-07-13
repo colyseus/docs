@@ -1,8 +1,7 @@
-# Welcome to Arena
+# Overview
 
-## Getting started
-
-Before we start, let's make sure we have the necessary system requirements installed in your local machine.
+## Welcome to Colyseus Arena
+This simplest solution to deploy your Colyseus Server allowing you to **Get To Fun Faster™**
 
 **Requirements**:
 
