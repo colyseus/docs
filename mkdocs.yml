@@ -21,6 +21,7 @@ google_analytics: ['UA-108278048-3', 'docs.colyseus.io']
 # Documentation and theme
 theme:
   name: 'material'
+  custom_dir: theme_overrides
   language: 'en'
   logo: 'images/logo-white.png'
   favicon: 'images/favicon.png'
@@ -41,21 +42,21 @@ plugins:
   - i18n:
       languages:
         en: "English"
-        zh_CN: "简体中文" #Simplified Chinese 
+        zh_CN: "简体中文" #Simplified Chinese
         zh_HK: "繁體中文" #Traditional Chinese
-        pt_BR: "Português" #Portuguese 
+        pt_BR: "Português" #Portuguese
         de: "Deutsch" #German
-        hi: "हिंदी" #Hindi 
+        hi: "हिंदी" #Hindi
         fr: "Français" #French
-        
+
       default_language: 'en'
       no_translation:
         en: "This page isn't translated to English."
-        zh_CN: "此頁面未翻譯成簡體中文" 
+        zh_CN: "此頁面未翻譯成簡體中文"
         zh_HK: "此頁面未翻譯為繁體中文"
         pt_BR: "Esta página não está traduzida para o português."
-        de: "Esta página não foi traduzida para o alemão."
-        hi: "इस पेज का हिंदी में अनुवाद नहीं है" #Hindi 
+        de: "Diese Seite wurde nicht ins Deutsche übersetzt"
+        hi: "इस पेज का हिंदी में अनुवाद नहीं है" #Hindi
         fr: "Cette page n'est pas traduite en français" #French
       translate_nav:
         en:
@@ -101,11 +102,19 @@ plugins:
 extra_css:
   - 'stylesheets/code-tabs.css'
   - 'stylesheets/ads.css'
+#   - 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/styles/github.min.css' # syntax highlight
+  - 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/styles/github-dark.min.css' # syntax highlight
+
 
 extra_javascript:
-  - 'javascripts/main.js'
-  - 'https://docs.colyseus.io/javascripts/previous_versions.js'
   # - 'javascripts/ads.js'
+  - 'javascripts/main.js'
+#   - 'https://docs.colyseus.io/javascripts/previous_versions.js'
+  # syntax highlight
+  - 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js'
+  - 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/javascript.min.js'
+  - 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/typescript.min.js'
+  - 'javascripts/config.js'
 
 # Options
 extra:
@@ -141,18 +150,22 @@ extra:
   search:
     language: 'en'
   social:
-  - icon: 'fontawesome/brands/discord'
-    link: 'https://discuss.colyseus.io'
-  - icon: 'fontawesome/brands/discord'
+  - icon: 'fontawesome/solid/globe'
     link: 'http://colyseus.io'
-  - icon: 'fontawesome/brands/github-alt'
+  - icon: 'fontawesome/solid/comment-alt'
+    link: 'https://discuss.colyseus.io'
+  - icon: 'fontawesome/brands/github'
     link: 'https://github.com/colyseus'
-  - icon: 'fontawesome/brands/discord'
+  - icon: 'fontawesome/brands/twitter'
     link: 'https://twitter.com/colyseus'
+  - icon: 'fontawesome/brands/discord'
+    link: 'https://discord.gg/RY8rRS7'
 
 # Extensions
 markdown_extensions:
   - admonition
+  - pymdownx.highlight:
+      use_pygments: false
   - codehilite:
       linenums: False
       guess_lang: False
@@ -165,8 +178,8 @@ markdown_extensions:
 
 # Nav menu
 nav:
-- Colyseus (Game Server):
-  - getting started: 
+- 'Colyseus | Framework':
+  - getting started:
     - 'colyseus/index.md'
     - 'colyseus/index.de.md'
   - Client-side SDK:
@@ -233,10 +246,11 @@ nav:
     - 'MMO': 'colyseus/demo/mmo/index.md'
 
   - 'FAQ': 'colyseus/faq.md'
-- Arena Cloud (Hosted Colyseus):
-  - getting started: 
+
+- 'Arena | Cloud Hosting':
+  - getting started:
     - 'arena/index.md'
     - 'arena/index.de.md'
   - Deployment:
-    - 'arena/getting-started/get-started.md'    
+    - 'arena/getting-started/get-started.md'
     - 'arena/getting-started/get-started.de.md'
