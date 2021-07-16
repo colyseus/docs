@@ -48,8 +48,7 @@ plugins:
 
       languages:
         en: "English"
-        zh_CN: "简体中文" #Simplified Chinese
-        zh_HK: "繁體中文" #Traditional Chinese
+        zh: "简体中文" #Simplified Chinese
         pt: "Português" # Portuguese
         de: "Deutsch" # German
         hi: "हिंदी" # Hindi
@@ -62,38 +61,48 @@ plugins:
           Installation: "Installation"
           Unity: "Unity"
           Deployment: "Deployment"
-        zh_CN:
+          Production Deployments: "Production Deployments"
+          Managing Deployments: "Managing Deployments"
+        zh:
           getting started: "TBD"
           Client-side SDK: "TBD"
           Installation: "TBD"
           Unity: "Unity"
           Deployment: "TBD"
-        zh_HK:
-          getting started: "TBD"
-          Client-side SDK: "TBD"
-          Installation: "TBD"
-          Unity: "Unity"
+          Production Deployments: "TBD"
+          Managing Deployments: "TBD"
         pt:
           getting started: "Introdução"
           Client-side SDK: "Client-side SDK"
           Installation: "Instalação"
           Unity: "Unity"
+          Deployment: "TBD"
+          Production Deployments: "TBD"
+          Managing Deployments: "TBD"
         de:
           getting started: 'Einstieg'
           Client-side SDK: "Clientseitiges SDK"
           Installation: "Installation"
           Unity: "Unity"
           Deployment: "Einsatz"
+          Production Deployments: "TBD"
+          Managing Deployments: "TBD"
         hi:
           getting started: "TBD"
           Client-side SDK: "TBD"
           Installation: "TBD"
           Unity: "Unity"
+          Deployment: "TBD"
+          Production Deployments: "TBD"
+          Managing Deployments: "TBD"
         fr:
           getting started: "TBD"
           Client-side SDK: "TBD"
           Installation: "TBD"
           Unity: "Unity"
+          Deployment: "TBD"
+          Production Deployments: "TBD"
+          Managing Deployments: "TBD"
 
 
 extra_css:
@@ -217,4 +226,14 @@ nav:
   - 'arena/index.md'
   - getting started:
     - 'arena/getting-started/create-application.md'
+    - 'arena/getting-started/managing-application.md'
+    - Uploading Server Code:
+      - 'arena/getting-started/upload-application.md'
+      - 'arena/getting-started/upload-application-via-gitsync.md'
+    - 'arena/getting-started/deploy-application.md'
+    - Managing Deployments:
+      - 'arena/getting-started/managing-deployments.md'
+      - 'arena/getting-started/deployment-logs.md'
+  - Production Deployments:
+    - 'arena/production/deploy-prod-application.md'
 

@@ -1,13 +1,11 @@
-# Your First Application
+# Creating a Application Deployment
 
-## Requirements
+### Requirements
 
 * [Sign-up](https://https://console.colyseus.io/register) for a Arena Cloud Account 
-* Have a Colyseus server implemented using the latest npm template [Create A Colyseus Server](../colyseus/#creating-a-barebones-colyseus-server)
+* Have a Colyseus server implemented using the latest npm template [Create A Colyseus Server](../../colyseus/#creating-a-barebones-colyseus-server)
 
-## Creating an Arena Application
-
-### Create a new deployment
+## Create a App
 
 Your game or application can have many app deployments which are used to separate your environments (Dev, Staging, Prod) and/or regions (US East, EU West, AP South). Each app deployment has its own dedicated resources pool and works independently for all other deployments managed by your account. 
 
@@ -28,9 +26,9 @@ To get started create your first app deployment...
 !!! NOTE
     New Application deployments can take up to 2 mins depending on region
 
-### Your Application Dashboard
+## Application Dashboard
 
-Select **Manage** on your newly created application to see your application overview console. From here you can see a snapshot of your application activity.
+Select **Manage** on your newly created application to see your application dashboard. From here you can see a snapshot of your activity and access tools to update code, view active server, restart your application and view logs.
 
 ![Arena Application Management View](../../images/app-manage-details.jpg)
 
@@ -43,17 +41,3 @@ Select **Manage** on your newly created application to see your application over
 - ***GIT Hash:*** Hash for the most recent update.
 !!! NOTE
     Only ***GIT*** details are ***ONLY*** visible when using CI/CD GitSync Service (Provide for Powered Ascent and Up Arena Plans)
-
-### Uploading your Application code
-
-At the bottom left side of the Application dashboard select **Server Code** to access the integrated web IDE and Uploader. 
-
-![Arena Application Management View](../../images/edit-server-code.jpg)
-
-From this screen you can **CREATE**, **DELETE**, **UPLOAD** and **DEPLOY** code to your deployments game server fleet. Select **Upload** to open up the dialog, from here you can choose to upload a single file or upload a folder. 
-
-![Arena Application Management View](../../images/upload-dialog.jpg)
-
-!!! NOTE
-    - Arena Applications **ONLY SUPPORTS** compiled Javascript code, if you are using TypeScript be sure to BUILD your code first and upload the content of the build folder.
-    - If you used the ***NPM*** template to create your Colyseus server the ``` npm run build ``` command will compile and copy all required files into your output folder.
