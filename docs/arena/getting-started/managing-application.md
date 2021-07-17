@@ -1,9 +1,13 @@
 # Managing Application
 
 ## Overview
-Your Arena Cloud application can be manage from this dashboard. You can edit your app title and description at anytime by clicking on the text. Your fill API Key becomes visible when you click on the characters shown.
+Your Arena Cloud application can be manage from this dashboard.
 
 ![App Button](../../images/manage-app-titles.jpg)
+
+- You can edit your app title and description at anytime by clicking on the text.
+
+- To view your full API key, click on the characters shown.
 
 ## App Config Interface
 

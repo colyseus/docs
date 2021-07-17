@@ -1,5 +1,12 @@
 # Welcome to Colyseus
 
+!!! tip "Important Notices"
+    - Documentation is currently being updated and improved.
+    - Translation of the documentation is in progress.
+    - [0.13 & Older Docs can be found here](https://0-13-x.docs.colyseus.io/)
+
+
+
 ## Getting started
 
 Before we start, let's make sure we have the necessary system requirements installed in your local machine.

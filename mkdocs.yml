@@ -1,7 +1,7 @@
 # Project information
 site_name: 'Colyseus & Arena Cloud Documentation'
 site_description: 'Documentation for Colyseus Multiplayer Framework for Node.js'
-site_author: 'Endel Dreyer'
+site_author: 'Endel Dreyer & Fazri Zubair'
 site_url: 'https://colyseus.io/'
 edit_uri: 'https://github.com/colyseus/docs/edit/master/docs/'
 
@@ -63,46 +63,52 @@ plugins:
           Deployment: "Deployment"
           Production Deployments: "Production Deployments"
           Managing Deployments: "Managing Deployments"
+          Reference: "Reference"
         zh:
           getting started: "TBD"
           Client-side SDK: "TBD"
           Installation: "TBD"
-          Unity: "Unity"
+          Unity: "TBD"
           Deployment: "TBD"
           Production Deployments: "TBD"
           Managing Deployments: "TBD"
+          Reference: "TBD"
         pt:
           getting started: "Introdução"
           Client-side SDK: "Client-side SDK"
           Installation: "Instalação"
-          Unity: "Unity"
+          Unity: "TBD"
           Deployment: "TBD"
           Production Deployments: "TBD"
           Managing Deployments: "TBD"
+          Reference: "TBD"
         de:
           getting started: 'Einstieg'
           Client-side SDK: "Clientseitiges SDK"
           Installation: "Installation"
-          Unity: "Unity"
+          Unity: "TBD"
           Deployment: "Einsatz"
           Production Deployments: "TBD"
           Managing Deployments: "TBD"
+          Reference: "TBD"
         hi:
           getting started: "TBD"
           Client-side SDK: "TBD"
           Installation: "TBD"
-          Unity: "Unity"
+          Unity: "TBD"
           Deployment: "TBD"
           Production Deployments: "TBD"
           Managing Deployments: "TBD"
+          Reference: "TBD"
         fr:
           getting started: "TBD"
           Client-side SDK: "TBD"
           Installation: "TBD"
-          Unity: "Unity"
+          Unity: "TBD"
           Deployment: "TBD"
           Production Deployments: "TBD"
           Managing Deployments: "TBD"
+          Reference: "TBD"
 
 
 extra_css:
@@ -225,6 +231,9 @@ nav:
 - 'Arena | Cloud Hosting':
   - 'arena/index.md'
   - getting started:
+    - Colyseus for Arena Cloud: 
+      - 'arena/getting-started/create-colyseus-server.md'
+      - 'arena/getting-started/modify-colyseus-server.md'
     - 'arena/getting-started/create-application.md'
     - 'arena/getting-started/managing-application.md'
     - Uploading Server Code:
@@ -234,6 +243,9 @@ nav:
     - Managing Deployments:
       - 'arena/getting-started/managing-deployments.md'
       - 'arena/getting-started/deployment-logs.md'
+  - Reference:
+    - 'arena/reference/npmrc-custom.md'
+    - 'arena/reference/root-folder.md'
   - Production Deployments:
     - 'arena/production/deploy-prod-application.md'
 

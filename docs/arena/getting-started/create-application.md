@@ -1,11 +1,11 @@
-# Creating a Application Deployment
+# Application Deployment
 
 ### Requirements
 
 * [Sign-up](https://https://console.colyseus.io/register) for a Arena Cloud Account 
-* Have a Colyseus server implemented using the latest npm template [Create A Colyseus Server](../../colyseus/#creating-a-barebones-colyseus-server)
+* [Arena Cloud](../create-colyseus-server/) compatible Colyseus server
 
-## Create a App
+## Creating a Application Deployment
 
 Your game or application can have many app deployments which are used to separate your environments (Dev, Staging, Prod) and/or regions (US East, EU West, AP South). Each app deployment has its own dedicated resources pool and works independently for all other deployments managed by your account. 
 

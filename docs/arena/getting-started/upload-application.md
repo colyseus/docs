@@ -16,12 +16,13 @@ From this screen you can **CREATE**, **DELETE**, **UPLOAD** and **DEPLOY** code 
 !!! NOTE
     - Arena Applications **ONLY SUPPORTS** compiled Javascript code, if you are using TypeScript be sure to BUILD your code first and upload the content of the build folder.
     - If you used the ***NPM*** template to create your Colyseus server the ``` npm run build ``` command will compile and copy all required files into your output folder.
+    - Build Output folder for TypeScript: ``` lib ``` / JavaScript: ``` upload ```
 
 ## Server Code Overview
 
 After completing your upload you should see the following files and folder structure if you used the ``` npm run build ``` template. 
 
-![Arena Code Template(../../images/code-template.jpg)
+![Arena Code Template](../../images/code-template.jpg)
 
 - **arena.config.js:** This file is where you should add your room declarations, express add-ons and any other functions you need called before server launch. Consider this as your ***index.js*** when deploying your application to Arena Cloud.
 
@@ -81,30 +82,4 @@ ABC_GAME_MODE=dev
 
  - **package.json** The build command on the **NPM** template copies your existing package.json into the distribution folder. This file is used to install user defined modules at the launch of the game server.
 
-- **.npmrc** *(optional)*: If you are using a non-public NPM module and need Arena to access a private NPM repo this can be done by adding the below file to the root directory of your server code. 
-
-*File ```.npmrc``` Example:*
-```
-<PROJECT/REPO NAME>:registry=https://npm.pkg.github.com/
-//npm.pkg.github.com/:_authToken=<PRIVATE TOKEN / KEY>
-```
-
-!!! NOTE   
-    - You MUST include `//` before the npm.pkg.git.com entry on the second line
-    - If you are using a registry other than github update the `registry` url
-    - Replace `<PROJECT/REPO NAME>` and `<PRIVATE TOKEN / KEY>` with your project values.
-
-
-<!-- ### Deploy your server code
-
-To deploy your code you will need to select the ***Deploy*** button at the top right of the Server Code page. This button will bring up the follow dialog to confirm your deployment action. Clicking deploy will copy the update server code to your game servers, without deploying you will not see your updated code reflected on the active servers even though it shows here in the Server Code section.
-
-![Deploy Code](../../images/deploy-code.jpg)
-
-- **Reload Deployment:** Checking this will force the game servers to restart upon deployment. This is useful when developing to quickly update an App Deployment to test changes made to your server code. Note that this action will also boot any current player out of their current game.
-
-!!! NOTE   
-    ***Production:*** See our section on [Production Deployments](blank) on our recommended deployment patterns for handling hot patches / updates without interrupting current game sessions. -->
-
-
-
+- **.npmrc** *(optional)*: See [Using a Private NPM Repository](../../reference/npmrc-custom/)

@@ -18,7 +18,7 @@ In this deployment pattern you will be required to create TWO application deploy
 
 
 ### Dynamic Server Deployment (Only available on To Mars (TM) and above)
-This deployment pattern can be used with a single application deployment but does have some limitation. This system also requires a custom parameter be set by our Support Team to ensure it works as expected, reach out to [support@lucidsight.com](mailto:support@lucidsight.com) to learn more and deploy this deployment patter. We will call this deployment ***MOBA SINGLE*** in the following examples.
+This deployment pattern can be used with a single application deployment but does have some limitation. This system also requires a custom parameter be set by our Support Team to ensure it works as expected, reach out to [support@lucidsight.com](mailto:support@lucidsight.com) to learn more and deploy this service. For the following examples we will call this deployment ***MOBA SINGLE*** in the following examples.
 
 - **Maintenance Window Update:** Your game servers are empty as you are in a scheduled maintenance window for your game. In this scenario you would update your game server code on ***MOBA SINGLE*** and restart the deployment for changes to take effect. Since no players are connected no game sessions are interrupted.  
 
