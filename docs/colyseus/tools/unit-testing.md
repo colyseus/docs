@@ -218,3 +218,29 @@ it("should do xyz after receiving message 'x'", async () => {
     // perform assertions after client has received a message
 });
 ```
+
+---
+
+## Testing HTTP Routes
+
+The `@colyseus/testing` also offers an HTTP client for requesting your custom http routes:
+
+- `colyseus.http.get(url, opts)`
+- `colyseus.http.post(url, opts)`
+- `colyseus.http.patch(url, opts)`
+- `colyseus.http.delete(url, opts)`
+- `colyseus.http.put(url, opts)`
+
+**Example**
+
+```typescript
+it("should get json data", async () => {
+    const response = await colyseus.http.get("/");
+
+    // "data" is the response body
+    assert.deepStrictEqual({ success: true }, response.data);
+
+    // access to response headers.
+    assert.strictEqual('header value', response.headers['some-header']);
+});
+```
