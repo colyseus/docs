@@ -21,6 +21,7 @@ google_analytics: ['UA-108278048-3', 'docs.colyseus.io']
 # Documentation and theme
 theme:
   name: 'material'
+  custom_dir: theme_overrides
   language: 'en'
   logo: 'images/logo-white.png'
   favicon: 'images/favicon.png'
@@ -122,6 +123,7 @@ extra_javascript:
   # - 'javascripts/ads.js'
   - 'javascripts/main.js'
 #   - 'https://docs.colyseus.io/javascripts/previous_versions.js'
+  - 'javascripts/previous_versions.js'
   # syntax highlight
   - 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js'
   - 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/javascript.min.js'
@@ -211,6 +213,14 @@ nav:
     - 'Rate-limit': 'colyseus/how-to/rate-limit.md'
     - 'Setup server from scratch (TS)': 'colyseus/how-to/setup-server-from-scratch-typescript.md'
 
+  - "Tech Demos":
+    - 'Shooting Gallery': 'colyseus/demo/shooting-gallery/index.md'
+    - 'StarBoss': 'colyseus/demo/starboss/index.md'
+    - 'Tanks': 'colyseus/demo/turn-based-tanks/index.md'
+    - 'MMO': 'colyseus/demo/mmo/index.md'
+
+  - 'FAQ': 'colyseus/faq.md'
+
   - 'Migrating':
     - '0.14.18': 'colyseus/migrating/0.14.18.md'
     - '0.14': 'colyseus/migrating/0.14.md'
@@ -220,18 +230,11 @@ nav:
     - '0.10': 'colyseus/migrating/0.10.md'
     - '0.9': 'colyseus/migrating/0.9.md'
 
-  - "Tech Demos":
-    - 'Shooting Gallery': 'colyseus/demo/shooting-gallery/index.md'
-    - 'StarBoss': 'colyseus/demo/starboss/index.md'
-    - 'Tanks': 'colyseus/demo/turn-based-tanks/index.md'
-    - 'MMO': 'colyseus/demo/mmo/index.md'
-
-  - 'FAQ': 'colyseus/faq.md'
 
 - 'Arena | Cloud Hosting':
   - 'arena/index.md'
   - getting started:
-    - Colyseus for Arena Cloud: 
+    - Colyseus for Arena Cloud:
       - 'arena/getting-started/create-colyseus-server.md'
       - 'arena/getting-started/modify-colyseus-server.md'
     - 'arena/getting-started/create-application.md'
