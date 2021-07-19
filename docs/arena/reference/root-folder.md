@@ -2,7 +2,7 @@
 
 ## Package.json Usage
 
-When deployed on Arena Cloud your package.json file is not fully used by your deployment. Arena Cloud copies the custom dependencies into a manage Arena package.json which is then installed at the launch your server. 
+When deployed on Arena Cloud your package.json file is not fully used by your deployment. Arena Cloud copies the custom dependencies into a managed Arena package.json which is then installed at the launch your server. 
 
 ## Relative & Absolute Folder Locations
 
