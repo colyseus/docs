@@ -198,6 +198,7 @@ nav:
     - 'Relay room': 'colyseus/builtin-rooms/relay.md'
 
   - "Tools":
+    - "Unit Testing": 'colyseus/tools/unit-testing.md'
     - "Monitoring Panel": 'colyseus/tools/monitor.md'
     - "Load Testing": 'colyseus/tools/loadtest.md'
     - "Authentication + Social": 'colyseus/tools/colyseus-social.md'
