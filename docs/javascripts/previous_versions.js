@@ -3,10 +3,10 @@ var header = (document.querySelector('.md-header-nav__topic') || document.queryS
 var select = document.createElement('select');
 var versions = [
   'latest',
-  '0.13',
-  '0.12',
-  '0.11',
-  '0.10',
+  '0.13.x',
+  '0.12.x',
+  '0.11.x',
+  '0.10.x',
 ]
 
 var option = document.createElement('option');
@@ -18,7 +18,7 @@ versions.forEach(function(version) {
   if (version === "latest") { version = "master"; }
 
   var option = document.createElement('option');
-  option.text = version;
+  option.text = version.replace(".x", "");
   option.value = 'https://' + (version.replace(/\./g, "-")) + '.docs.colyseus.io/';
   select.appendChild(option);
 });
