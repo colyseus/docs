@@ -219,8 +219,6 @@ nav:
     - 'Tanks': 'colyseus/demo/turn-based-tanks/index.md'
     - 'MMO': 'colyseus/demo/mmo/index.md'
 
-  - 'FAQ': 'colyseus/faq.md'
-
   - 'Migrating':
     - '0.14.18': 'colyseus/migrating/0.14.18.md'
     - '0.14': 'colyseus/migrating/0.14.md'
@@ -229,6 +227,8 @@ nav:
     - '0.11': 'colyseus/migrating/0.11.md'
     - '0.10': 'colyseus/migrating/0.10.md'
     - '0.9': 'colyseus/migrating/0.9.md'
+
+  - 'FAQ': 'colyseus/faq.md'
 
 
 - 'Arena | Cloud Hosting':
