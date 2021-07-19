@@ -122,8 +122,8 @@ extra_css:
 extra_javascript:
   # - 'javascripts/ads.js'
   - 'javascripts/main.js'
-#   - 'https://docs.colyseus.io/javascripts/previous_versions.js'
-  - 'javascripts/previous_versions.js'
+  - 'https://docs.colyseus.io/javascripts/previous_versions.js'
+#   - 'javascripts/previous_versions.js'
   # syntax highlight
   - 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js'
   - 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/javascript.min.js'
