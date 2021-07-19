@@ -25,6 +25,13 @@
  * general customizations
  */
 
+/* version dropdown */
+.md-header__title select {
+    height: 2em;
+    margin: auto;
+    margin-left: 1em;
+}
+
 /* first page title on navigation bar */
 div.md-sidebar.md-sidebar--primary > div > div > nav > ul > li.md-nav__item.md-nav__item--active.md-nav__item--nested > nav > label {
     color: #999 !important;
