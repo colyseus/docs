@@ -5,7 +5,7 @@ This simplest solution to deploy your Colyseus Server allowing you to **Get To F
 
 Arena Cloud  is a fully managed solution that enables you to focus on your multiplayer game development. It provides developers with enterprise grade hosting leaving server management, infrastructure, DevOps and scaling to us. With Arena, you can setup, manage and update your Colyseus servers with a few clicks from an intuitive administration dashboard.
 
-**[Sign-up](https://https://console.colyseus.io/register) for a Arena Cloud Account (Currently By Invite Only [Request Access](https://www.colyseus.io/arena))**
+**[Sign-up](https://console.colyseus.io/register) for a Arena Cloud Account (Currently By Invite Only [Request Access](https://www.colyseus.io/arena))**
 
 ![Arena Dashboard View](../../images/dashboard-view.jpg)
 
