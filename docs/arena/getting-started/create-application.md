@@ -13,7 +13,7 @@ To get started create your first app deployment...
 
 ![New Application Button](../../images/create-new-app.jpg)
 
-- After logging select **Create A New App** on the top right side of the dashboard.
+- After logging in select **Create A New App** on the top right side of the dashboard.
 
 - Fill in the application detail fields and select your *Plan* and *Region*
 
@@ -24,7 +24,7 @@ To get started create your first app deployment...
 - Submit and wait for your application to be created
 
 !!! NOTE
-    New Application deployments can take up to 2 mins depending on region
+    New Application deployments can take up to 2 mins depending on region selected
 
 ## Application Dashboard
 
@@ -40,4 +40,4 @@ Select **Manage** on your newly created application to see your application dash
 - ***GIT Msg:*** The check-in message for the most recent update.
 - ***GIT Hash:*** Hash for the most recent update.
 !!! NOTE
-    Only ***GIT*** details are ***ONLY*** visible when using CI/CD GitSync Service (Provide for Powered Ascent and Up Arena Plans)
+    ***GIT*** details are ***ONLY*** visible when using CI/CD GitSync Service (Provided for Powered Ascent and Up Arena Plans)

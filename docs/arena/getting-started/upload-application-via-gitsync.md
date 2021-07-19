@@ -8,7 +8,7 @@
 
 To configure git sync you will need to add the following ```arena.gitsync.json``` JSON file to the root folder of your Server Code and Deploy it to your application. 
 
-The syncing service will poll your Git repository for new check-in in the requested branch approximately every 2 minutes. 
+The syncing service will pull your Git repository for a new check-in in the requested branch approximately every 2 minutes. 
 
 ## Example of arena.gitsync.json
 ```
@@ -37,13 +37,13 @@ The syncing service will poll your Git repository for new check-in in the reques
 
 - **gitUser:** A user account that has at least read access to your repo.
 
-- **gitPassword** Password ***(Password MUST BE URL encoded if it has any special characters)***
+- **gitPassword:** Password ***(Password MUST BE URL encoded if it has any special characters)***
 
 - **branch:** The branch name to pull from.
 
-- **redeployOnChange:** If true, your new code will be immediately deployed to your game servers and they will be restarted, ending any existing games on those servers. (Graceful rolling updating will be implemented in the next few weeks).
+- **redeployOnChange:** If true, your new code will be immediately deployed to your game servers and they will be restarted, ending any existing games on those servers (Graceful rolling updating will be implemented in the next few weeks).
 
-- **overrideGitURL: ** For any non-standard / non-https URLs for your repo. (we don't recommend using this option)
+- **overrideGitURL: ** For any non-standard / non-https URLs for your repo (We do not recommend using this option).
 
 - **repoReset:** This will force delete the local copy of your repo on your git sync server. This is useful if you are changing the REPO to point to a new location. You will need to keep it on for one update cycle, then it can be turned off.
 
@@ -54,4 +54,4 @@ You can check on the status of your sync or look for any errors using the ***Dep
 ![Arena Application Management View](../../images/git-sync-logs.jpg)
 
 ## Troubleshooting
-If you have a merge conflict or other unknown / critical error in the sync process we recommend you selected **Restart** from the deployments screen for the **Git Sync Service**. Restarting the GitSync service will clear the local repo and pull a fresh copy upon restart.
+If you have a merge conflict or other unknown / critical error in the sync process we recommend you select **Restart** from the deployments screen for the **Git Sync Service**. Restarting the GitSync service will clear the local repo and pull a fresh copy upon restart.
