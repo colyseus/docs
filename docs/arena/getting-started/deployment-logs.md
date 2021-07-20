@@ -5,7 +5,7 @@ The logs interface shown below provides you with insights and tools for debuggin
 
 ![Deployments Button](../../images/logs-view.jpg)
 
-- **Invert Order:** By default logs are displayed with the latest logs at the top of the screen. If you would like latests logs to be show at the bottom you can toggle on this option.
+- **Invert Order:** By default logs are displayed with the latest logs at the top of the screen. If you would like latests logs to be shown at the bottom you can toggle this option On.
 
 - **Timestamps:** Shows the the timestamp entry for a log line.
 

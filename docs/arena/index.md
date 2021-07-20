@@ -1,7 +1,7 @@
 # Overview
 
 ## Welcome to Colyseus Arena
-This simplest solution to deploy your Colyseus Server allowing you to **Get To Fun Faster™**
+The simplest solution to deploy your Colyseus Server allowing you to **Get To Fun Faster™**
 
 Arena Cloud  is a fully managed solution that enables you to focus on your multiplayer game development. It provides developers with enterprise grade hosting leaving server management, infrastructure, DevOps and scaling to us. With Arena, you can setup, manage and update your Colyseus servers with a few clicks from an intuitive administration dashboard.
 
@@ -28,7 +28,7 @@ Managing your application deployments and viewing real-time stats can be done si
 
 
 ## Colyseus Arena Enterprise
-Our Enterprise service team can provide developers large and small a fully customized solution that is typically more cost effective and reliable than self-hosting. Leveraging our Global Arena infrastructure you get the advantages of our economies of scale allowing us to provide the best in class service with per unit pricing. From per CCU to per CPU pricing we can customize a plan to meet your game or application needs that works within your budget. 
+Our Enterprise service team can provide developers, large and small, a fully customized solution that is typically more cost effective and reliable than self-hosting. Leveraging our Global Arena infrastructure you get the advantages of our 'economies of scale' which allow us to provide the best in class service with per unit pricing. From per CCU to per CPU pricing we can customize a plan to meet your game or application needs that works within your budget. 
 
 ### Common Enterprise Use Case 
 - Marketing or Limited Time Virtual Event
