@@ -73,7 +73,7 @@ Wait for a particular message `type` to arrive in the server.
 
 ```typescript
 it("should receive message", async() => {
-    const room = colyseus.createRoom("my_room");
+    const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
 
     client1.send("foo", "payload");
@@ -99,7 +99,7 @@ Wait for any next message to arrive in the server.
 
 ```typescript
 it("should receive message", async() => {
-    const room = colyseus.createRoom("my_room");
+    const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
 
     let received = false;
@@ -122,7 +122,7 @@ Wait for the server to send the latest patched state to all clients.
 
 ```typescript
 it("client state must match server's after patch is received", async() => {
-    const room = colyseus.createRoom("my_room");
+    const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
 
     await room.waitForNextPatch();
@@ -140,7 +140,7 @@ Wait for the next simulation tick to complete.
 
 ```typescript
 it("should assert something after room's simulation tick", async() => {
-    const room = colyseus.createRoom("my_room");
+    const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
 
     await room.waitForNextSimulationTick();
