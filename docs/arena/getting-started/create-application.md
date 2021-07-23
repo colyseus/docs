@@ -25,6 +25,7 @@ To get started create your first app deployment...
 
 !!! NOTE
     New Application deployments can take up to 2 mins depending on region selected
+    For Early Access users you *MUST* use the provided Arena **CODE** to create a new app
 
 ## Application Dashboard
 
