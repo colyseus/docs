@@ -629,7 +629,7 @@ If **`seconds`** is provided, the reconnection is going to be cancelled after th
 ```typescript
 async onLeave (client: Client, consented: boolean) {
   // flag client as inactive for other users
-  this.state.players[client.sessionId].connected = false;
+  this.state.players.get(client.sessionId).connected = false;
 
   try {
     if (consented) {
@@ -640,12 +640,12 @@ async onLeave (client: Client, consented: boolean) {
     await this.allowReconnection(client, 20);
 
     // client returned! let's re-activate it.
-    this.state.players[client.sessionId].connected = true;
+    this.state.players.get(client.sessionId).connected = true;
 
   } catch (e) {
 
     // 20 seconds expired. let's remove the client.
-    delete this.state.players[client.sessionId];
+    this.state.players.delete(client.sessionId);
   }
 }
 ```
@@ -656,7 +656,7 @@ async onLeave (client: Client, consented: boolean) {
 ```typescript
 async onLeave (client: Client, consented: boolean) {
   // flag client as inactive for other users
-  this.state.players[client.sessionId].connected = false;
+  this.state.players.get(client.sessionId).connected = false;
 
   try {
     if (consented) {
@@ -689,12 +689,12 @@ async onLeave (client: Client, consented: boolean) {
     await reconnection;
 
     // client returned! let's re-activate it.
-    this.state.players[client.sessionId].connected = true;
+    this.state.players.get(client.sessionId).connected = true;
 
   } catch (e) {
 
     // 20 seconds expired. let's remove the client.
-    delete this.state.players[client.sessionId];
+    this.state.players.delete(client.sessionId);
   }
 }
 ```
