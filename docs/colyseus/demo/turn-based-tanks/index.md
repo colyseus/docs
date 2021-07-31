@@ -7,7 +7,7 @@ This demo is designed to work with Colyseus version 0.14.7 and [Unity version 20
 
 [Play the demo!](https://xcdazr.colyseus.dev/)
 
-![Lobby](/demo/turn-based-tanks/WeaponFired.png)
+![Lobby](WeaponFired.PNG)
 
 ## Getting Started
 
@@ -57,7 +57,7 @@ private TanksRoomsAvailable[] TrimRooms(TanksRoomsAvailable[] originalRooms)
 }
 ```
 
-![Lobby](/demo/turn-based-tanks/Rooms.png)
+![Lobby](Rooms.PNG)
 
 ### Keeping the Room Alive
 
@@ -171,8 +171,8 @@ Start the player in the scene &quot;TanksLobby&quot; located at `Assets\TurnBase
 
 - You have the option to skip your remaining turn by pressing the SPACEBAR.
 
-![Lobby](/demo/turn-based-tanks/GameplayWithLabels.png)
-![Lobby](/demo/turn-based-tanks/GameOver.png)
+![Lobby](GameplayWithLabels.png)
+![Lobby](GameOver.PNG)
 
 ## Adjusting the Demo
 
