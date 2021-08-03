@@ -662,24 +662,44 @@ room.send(0, { direction: "left" });
 
 ---
 
-#### `leave ()`
+#### `leave (consented: boolean)`
 
-Disconnect from the room.
+Disconnect client from the room.
+
+**Parameters**
+
+- `consented`: Whether the act of leaving has been "consented" or not (Default is `true`)
 
 ```typescript fct_label="JavaScript"
+// consented leave
 room.leave();
+
+// unconsented leave
+room.leave(false);
 ```
 
 ```csharp fct_label="C#"
+// consented leave
 room.Leave();
+
+// unconsented leave
+room.Leave(false);
 ```
 
 ```lua fct_label="lua"
+-- consented leave
 room:leave()
+
+-- unconsented leave
+room:leave(false)
 ```
 
 ```haxe fct_label="Haxe"
+// consented leave
 room.leave();
+
+// unconsented leave
+room.leave(false);
 ```
 
 !!! Tip
