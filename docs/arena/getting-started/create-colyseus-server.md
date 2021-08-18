@@ -13,6 +13,9 @@ Use the `npm init colyseus-app` command to generate a barebones Colyseus server.
 ```
 npm init colyseus-app ./my-colyseus-app
 ```
+![NPM Selection](../../images/arena-app-support.jpg)
+
+- ONLY Complied **TypeScript** and **JavaScript (CommonJS)** are currently supported. *ESM support is coming soon.*
 
 The following is the expected folder structure and files that are created in the *my-colyseus-app* directory for a TypeScript server.
 
