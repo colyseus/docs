@@ -11,7 +11,14 @@ The Colyseus SDK for Cocos Creator works in the same way as the [JavaScript SDK]
 
 - [Open the Cocos Store](https://store.cocos.com/app/en/detail/2937/) (Menu: "Extension" &raquo; "Store")
 - Search for "Colyseus SDK"
-- Get the extension
+- Download the extension
+- Decompress the zip file to <path_to_your_project>/extensions/
+![image](https://user-images.githubusercontent.com/42052366/130320623-9b1e556b-4fe1-44a6-b0d7-1e44cc231555.png)
+- Start up Cocos Creator, open extention manager (Menu: "Extension" &raquo; "Extension Manager")
+- Click "search for plugins" button on the "Project" tab
+- Enable the "colyseus-sdk" plugin
+![image](https://user-images.githubusercontent.com/42052366/130320703-74e6ea85-e217-462a-ac77-01e933475257.png)
+
 
 ## 2. Update your `tsconfig.json` file
 
