@@ -73,7 +73,7 @@ class MyRoom extends Room<YourState> {
 const colyseus = require("colyseus");
 const command = require("@colyseus/command");
 
-const OnJoinCommand = require("./OnJoinCommand");
+const { OnJoinCommand } = require("./OnJoinCommand");
 
 class MyRoom extends colyseus.Room {
 
