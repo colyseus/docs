@@ -6,26 +6,26 @@
 
 - 您的房间应尽可能保持低等级，而将特定于游戏的功能委托给其他可组合结构。
 - 可同步的数据结构应尽可能较小
-    - 理想情况下，每个扩展 {1>Schema<1} 的类应该只有字段定义。
+    - 理想情况下，每个扩展 `Schema` 的类应该只有字段定义。
     - 可以实现自定义 getter 和 setter 方法，只要其中没有游戏逻辑即可。
 - 应该由其他结构处理游戏逻辑，例如：
-    - 命令模式
-    - 这是一种{1>实体-组件系统<1}。
+    - [命令模式](#the-command-pattern)
+    - 这是一种[实体-组件系统](#entity-component-system-ecs)。
 
 ## 单元测试
 
-> TODO：我们需要提供一个 {1>@colyseus/testing<1} 包，以轻松模拟 {2>Room<2} 类，并触发其生命周期事件，以及创建虚拟客户端。
+> TODO：我们需要提供一个 `@colyseus/testing` 包，以轻松模拟 `Room` 类，并触发其生命周期事件，以及创建虚拟客户端。
 
 ## 设计模式
 
 ### 命令模式
 
-{1>Why?<1}
+**為什麼？**
 
-- 模型 ({1>{2>@colyseus/schema<2}<1}) 应主要包含数据，而不包含复杂的游戏逻辑。
+- 模型 ([`@colyseus/schema`](https://github.com/colyseus/schema)) 应主要包含数据，而不包含复杂的游戏逻辑。
 - 房间代码应尽可能少，并将动作转移到其他结构
 
-{1>命令模式具有多项优势，例如：<1}
+**命令模式具有多项优势，例如：**
 
 - 它将调用操作的类与知道如何执行操作的对象进行分离。
 - 它允许通过提供队列系统来创建命令序列。
@@ -37,15 +37,15 @@
 
 安装
 
-{1> npm install --save @colyseus/command <1}
+``` npm install --save @colyseus/command ```
 
-在房间实现中初始化{1>调度程序<1}：
+在房间实现中初始化\\`调度程序`：
 
 \`\`\`typescript fct\_label="TypeScript" import { Room } from "colyseus"; import { Dispatcher } from "@colyseus/command";
 
 import { OnJoinCommand } from "./OnJoinCommand";
 
-class MyRoom extends Room{1} { dispatcher = new Dispatcher(this);
+class MyRoom extends Room<YourState> { dispatcher = new Dispatcher(this);
 
   onCreate() { this.setState(new YourState()); }
 
@@ -85,12 +85,12 @@ exports.OnJoinCommand = class OnJoinCommand extends command.Command {
 
 #### 参阅更多
 
-- 参见 {1>command definitions<1}
-- {1>用法：<1}
-- 参见 {1>implementation<1}
+- 参见 [command definitions](https://github.com/colyseus/command/blob/master/test/scenarios/CardGameScenario.ts)
+- [用法：](https://github.com/colyseus/command/blob/master/test/Test.ts)
+- 参见 [implementation](https://github.com/colyseus/command/blob/master/src/index.ts)
 
 ### 实体组件系统 (ECS)
 
 目前我们没有正式的 ECS（实体组件系统），尽管我们已经看到社区成员实现了他们自己的解决方案。
 
-!!!警告“待测试性非常高” 某些作品{1>已经开始尝试将 ECSY 与 @colyseus/schema 相结合<1}。
+!!!警告“待测试性非常高” 某些作品[已经开始尝试将 ECSY 与 @colyseus/schema 相结合](http://github.com/endel/ecs)。

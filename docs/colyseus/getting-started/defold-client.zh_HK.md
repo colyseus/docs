@@ -2,20 +2,20 @@
 
 Defold Engine 是用于跨平台发布的免费2D游戏引擎。
 
-{1>colyseus-defold<1} SDK已在 Defold 支持的所有主要平台进行过测试，比如 HTML5、iOS、 Android、Mac 和 Windows。
+[colyseus-defold](https://github.com/colyseus/colyseus-defold) SDK已在 Defold 支持的所有主要平台进行过测试，比如 HTML5、iOS、 Android、Mac 和 Windows。
 
 ## 安装
 
-想要使用该 SDK，你需要将 {1>colyseus-defold<1} 以及其依赖关系添加至你的 {2>game.project<2} 依赖项部分。
+想要使用该 SDK，你需要将 [colyseus-defold](https://github.com/colyseus/colyseus-defold) 以及其依赖关系添加至你的 `game.project` 依赖项部分。
 
-打开你的 {1>game.project<1} 文件，添加以下 URL 至{2>Dependencies<2}部分（在 {3>Project -> Dependencies<3} 下）：
+打开你的 `game.project` 文件，添加以下 URL 至`Dependencies`部分（在 `Project -> Dependencies` 下）：
 
     https://github.com/colyseus/colyseus-defold/archive/0.14.zip
     https://github.com/defold/extension-websocket/archive/refs/tags/2.2.3.zip
 
-阅读更多关于 {1>Defold 库依赖<1}的信息
+阅读更多关于 [Defold 库依赖](http://www.defold.com/manuals/libraries/)的信息
 
-你也可以通过复制其各自的 zip 存档 URL，来指定该 SDK 的{1>具体版本<1}。
+你也可以通过复制其各自的 zip 存档 URL，来指定该 SDK 的[具体版本](https://github.com/colyseus/colyseus-defold/releases)。
 
 ## 用法
 
@@ -36,7 +36,7 @@ function init(self) -- Add initialization code here client = ColyseusClient.new(
     end)
 end \`\`\`
 
-参阅{1>客户端<1}。
+参阅[>客户端](/client/client/)。
 
 ## 常见问题
 
@@ -46,9 +46,9 @@ end \`\`\`
 
 或者，你也可以将 Colyseus 服务器绑定至端口80。
 
-### “{1>reconnect()<1} 在 iOS 上无效！”
+### “`reconnect()` 在 iOS 上无效！”
 
-如果你的手机锁屏，所有 WebSocket 连接都将关闭。你可以调用 {1>reconnect()<1} 来重新建立进程，这需要对 iOS 采取以下解决办法：
+如果你的手机锁屏，所有 WebSocket 连接都将关闭。你可以调用 `reconnect()` 来重新建立进程，这需要对 iOS 采取以下解决办法：
 
 \`\`\`lua function window\_callback(self, event, data) if event == window.WINDOW\_EVENT\_FOCUS\_GAINED then -- iOS workaround to re-active WebSocket connection after phone is unlocked room:send("whatever") end end
 

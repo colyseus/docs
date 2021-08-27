@@ -2,31 +2,31 @@
 
 ## 安装
 
-- {1>下载 Construct 3 SDK<1}
+- [下载 Construct 3 SDK](https://www.construct.net/en/make-games/addons/111/colyseus-multiplayer-client)
 
-!!!警告“注意！你需要一个服务器来使用 Colyseus！” 众所周知 Construct 的现有功能可以从客户端“托管”一个多人进程。这在使用 Colyseus 时是不可能的。Colyseus 是一个权威性{1>服务器<1}，由 Node.js 编写。你无法使你的客户端直接托管游戏进程。
+!!!警告“注意！你需要一个服务器来使用 Colyseus！” 众所周知 Construct 的现有功能可以从客户端“托管”一个多人进程。这在使用 Colyseus 时是不可能的。Colyseus 是一个权威性**服务器**，由 Node.js 编写。你无法使你的客户端直接托管游戏进程。
 
-!!! 提示 "Construct 3 SDK:Source code" 你可以在此找到 Construct SDK 的源代码：{1>Construct 3<1} （与 Construct3 的 C3 和 C2 运行时间兼容 / {2>Construct 2<2} （非最新版 - 与 0.9.x 服务器兼容）
+!!! 提示 "Construct 3 SDK:Source code" 你可以在此找到 Construct SDK 的源代码：[Construct 3](https://github.com/colyseus/colyseus-construct3) （与 Construct3 的 C3 和 C2 运行时间兼容 / [Construct 2](https://github.com/colyseus/colyseus-construct2) （非最新版 - 与 0.9.x 服务器兼容）
 
 ## 示例项目
 
-示例项目与 {1>TypeScript (pixijs-boilerplate)<1}有相同的结果。
+示例项目与 [TypeScript (pixijs-boilerplate)](https://github.com/endel/colyseus-pixijs-boilerplate)有相同的结果。
 
-- {1>客户端（c3p 项目）<1}
-- {1>Glitch 上的服务器端（源代码）<1}
+- [客户端（c3p 项目）](/_downloads/ColyAgarClient-0-14-0.c3p)
+- [Glitch 上的服务器端（源代码）](https://glitch.com/~colyseus-construct3)
 
 
 ## 处理消息
 
-从服务器向客户端发送消息时的一个重要注意事项：你需要提供一个拥有{1>"type"<1}字段的对象，以便客户端能够进行解析。
+从服务器向客户端发送消息时的一个重要注意事项：你需要提供一个拥有`"type"`字段的对象，以便客户端能够进行解析。
 
 **服务器端**
 
-{1>typescript this.broadcast("foo", "bar"); <1}
+```typescript this.broadcast("foo", "bar"); ```
 
 **客户端**
 
-使用 {1>On Message<1} 条件，以{2>"foo"<2}作为自变数。表达式 {3>CurrentValue<3} 将拥有一个数值{4>"栏"<4}。
+使用 `On Message` 条件，以`"foo"`作为自变数。表达式 `CurrentValue` 将拥有一个数值`"栏"`。
 
 
 ## 属性
@@ -39,22 +39,22 @@
 ### 设置端点为{0}
 格式：wss://example.com
 
-### 以\\{1\\}选项加入房间{0}。
+### 以{1}选项加入房间{0}。
 以名称加入房间
 
-### 以\\{1\\}选项加入房间{0}。
+### 以{1}选项加入房间{0}。
 以名称加入房间
 
-### 以\\{1\\}选项创建房间{0}。
+### 以{1}选项创建房间{0}。
 以名称创建房间
 
-### 以\\{1\\}选项加入房间{0}。
+### 以{1}选项加入房间{0}。
 以 ID 加入现有房间
 
-### 以 sessionId \\{1\\} 重新连接至房间{0}。
+### 以 sessionId {1} 重新连接至房间{0}。
 使用之前连接过的房间重新连接
 
-### 以\\{1\\}发送{0}
+### 以{1}发送{0}
 向一个房间发送消息
 
 ### 从房间离开

@@ -4,7 +4,7 @@
 
 為了更好地支持未來的版本和更新，現有的 Colyseus Unity 插件需要進行一些相當大的更改。代碼已以更 “Unity 友好” 的方式組織和整合，並且某些類別已重新命名以防止命名重疊。
 
-{1>GitHub 上的 Unity SDK 0.14.5<1}
+[GitHub 上的 Unity SDK 0.14.5](https://github.com/colyseus/colyseus-unity3d/releases/tag/0.14.5)
 
 ## 代碼重構
 
@@ -20,11 +20,11 @@
 
 這次升級的一個較大變化是 ColyseusManager 現在是一個泛型類型的類別，因此您的專案將需要一個繼承自 ColyseusManager 的類別。
 
-{1}csharp public class YOUR\_MANAGER\_CLASS :ColyseusManager<YOUR\_MANAGER\_CLASS> { //您需要的任何覆蓋或附加功能} {2} 這將允許您根據需要繼承和覆蓋管理器功能，但如果不需要，上面的示例就足夠了（或隨意使用我們的 ExampleManager ，隨套件提供）。所有 ColyseusClient 處理（以前稱為“Client”）都應該在這個類別中發生，但是如果這對您的代碼庫來說是一個太大的重構，歡迎您根據需要公開 ColyseusClient。此外，之前調用 ColyseusManager.Instance 會實例化 ColyseusManager 物件（如果它目前為 null）。由於這些更改，您現在必須在場景中建立一個遊戲物件並將{3>您的<3}管理員腳本附加到它。
+```csharp public class YOUR_MANAGER_CLASS :ColyseusManager<YOUR\_MANAGER\_CLASS> { //您需要的任何覆蓋或附加功能} ``` 這將允許您根據需要繼承和覆蓋管理器功能，但如果不需要，上面的示例就足夠了（或隨意使用我們的 ExampleManager ，隨套件提供）。所有 ColyseusClient 處理（以前稱為“Client”）都應該在這個類別中發生，但是如果這對您的代碼庫來說是一個太大的重構，歡迎您根據需要公開 ColyseusClient。此外，之前調用 ColyseusManager.Instance 會實例化 ColyseusManager 物件（如果它目前為 null）。由於這些更改，您現在必須在場景中建立一個遊戲物件並將**您的**管理員腳本附加到它。
 
-### 身分驗證和 {1>@colyseus/social<1}
+### 身分驗證和 `@colyseus/social`
 
-{1>client.Auth<1} 已棄用。如果您的專案依賴於該功能，請隨時{2>將 Auth.cs 文件複製到您的專案之中<2}。
+`client.Auth` 已棄用。如果您的專案依賴於該功能，請隨時[將 Auth.cs 文件複製到您的專案之中](https://github.com/colyseus/colyseus-unity3d/blob/2d54b25c1b8118191a627556d06aa14313f269f8/Assets/Plugins/Colyseus/Auth.cs)。
 
 ### FossilDeltaSerializer
 
@@ -32,7 +32,7 @@ FossilDeltaSerializer 已從外掛程式中完全刪除。
 
 ### 重命名的類別
 
-| {1>舊名稱<1} | {2>新名稱<2} | {3>備註<3} | | --- | --- | --- | | MessageHandler | ColyseusMessageHandler | | MatchMakeResponse | ColyseusMatchMakeResponse | Broken out of Client.cs | | Room | ColyseusRoom | | Room Available | ColyseusRoomAvailable | Broken out of Client.cs | | RoomAvailableCollection | CSARoomAvailableCollection | Broken out of Client.cs | | NoneSerializer | ColyseusNoneSerializer | | SchemaSerializer | ColyseusSchemaSerializer | | Serializer | ColyseusSerializer | | Context | ColyseusContext | | Decoder | ColyseusDecoder | | Encoder | ColyseusEncoder | | ReferenceTracker | ColyseusReferenceTracker | | ArraySchema | ColyseusArraySchema | | CustomType | ColyseusCustomType | | Reflection | ColyseusReflection | | ArrayUtils | ColyseusArrayUtils | | Exceptions | ColyseusExceptions | | ExtensionMethods | ColyseusExtensionMethods | | HttpQSCollection | ColyseusHttpQSCollection | Broken out of HttpUtility.cs | | HttpUtility | ColyseusHttpUtility | | ObjectExtensions | ColyseusObjectExtensions | | UnityWebRequestAwaiter | ColyseusUnityWebRequestAwaiter | Broken out of ExtensionMethods.cs | | Client | ColyseusClient | | Connection | ColyseusConnection | | Protocol | ColyseusProtocol |
+| **舊名稱**} | **新名稱** | **備註** | | --- | --- | --- | | MessageHandler | ColyseusMessageHandler | | MatchMakeResponse | ColyseusMatchMakeResponse | Broken out of Client.cs | | Room | ColyseusRoom | | Room Available | ColyseusRoomAvailable | Broken out of Client.cs | | RoomAvailableCollection | CSARoomAvailableCollection | Broken out of Client.cs | | NoneSerializer | ColyseusNoneSerializer | | SchemaSerializer | ColyseusSchemaSerializer | | Serializer | ColyseusSerializer | | Context | ColyseusContext | | Decoder | ColyseusDecoder | | Encoder | ColyseusEncoder | | ReferenceTracker | ColyseusReferenceTracker | | ArraySchema | ColyseusArraySchema | | CustomType | ColyseusCustomType | | Reflection | ColyseusReflection | | ArrayUtils | ColyseusArrayUtils | | Exceptions | ColyseusExceptions | | ExtensionMethods | ColyseusExtensionMethods | | HttpQSCollection | ColyseusHttpQSCollection | Broken out of HttpUtility.cs | | HttpUtility | ColyseusHttpUtility | | ObjectExtensions | ColyseusObjectExtensions | | UnityWebRequestAwaiter | ColyseusUnityWebRequestAwaiter | Broken out of ExtensionMethods.cs | | Client | ColyseusClient | | Connection | ColyseusConnection | | Protocol | ColyseusProtocol |
 
 ## 示例整合
 
@@ -43,9 +43,9 @@ FossilDeltaSerializer 已從外掛程式中完全刪除。
     - FossilDelta
     - 序列化
     - Websocket
-- 建立一個繼承自 {1>ColyseusManager<1} 的管理員類別
+- 建立一個繼承自 `ColyseusManager` 的管理員類別
   - 在場景中放置一個空的遊戲物件並附加此腳本（或將其附加到現有的管理員類別）
-  - 如果您已經有一個管理員類別來處理大多數 Colyseus 功能，請考慮讓 {1>that<1} 類別繼承自 {2>ColyseusManager<2}
+  - 如果您已經有一個管理員類別來處理大多數 Colyseus 功能，請考慮讓 **that** 類別繼承自 `ColyseusManager`
 - 建立伺服器設定物件
   - 右鍵點擊 > 建立 > Colyseus > 生成 ColyseusSettings ScriptableObject
   - 在您的管理員的 “ColyseusSettings” 欄位中分配該物件

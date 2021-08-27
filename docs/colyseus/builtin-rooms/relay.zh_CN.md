@@ -1,10 +1,10 @@
 # 內建房間 » 轉送房間
 
-內建 {1>RelayRoom<1} 對於簡易使用的案例相當實用，除了連接其中的用戶端外，你不需要在伺服器端保持任何狀態。
+內建 `RelayRoom` 對於簡易使用的案例相當實用，除了連接其中的用戶端外，你不需要在伺服器端保持任何狀態。
 
 只要透過轉送訊息（將其自用戶端轉寄給其他所有人）－伺服器端無法驗證任何訊息－伺服器端為執行驗證者。
 
-!!! 提示 {1>{2>RelayRoom<2} 的原始程式碼<1} 非常簡單。一般建議是在你看到時，便使用伺服器端驗證來建置你自己的版本。
+!!! 提示 [`RelayRoom` 的原始程式碼](https://github.com/colyseus/colyseus/blob/master/src/rooms/RelayRoom.ts) 非常簡單。一般建議是在你看到時，便使用伺服器端驗證來建置你自己的版本。
 
 ## 伺服器端
 
@@ -33,7 +33,7 @@ const client = new Client("ws://localhost:2567");
 
 // // 當玩家離開房間時進行偵測 // relay.state.players.onRemove = (player, sessionId) => { console.log("Opponent left!", player, sessionId); }
 
-// // 當玩家的連線狀態變更時進行偵測 // （僅在伺服器端提供 {1>allowReconnection: true<1} 時才能使用） // relay.state.players.onChange = (player, sessionId) => { if (player.connected) { console.log("Opponent has reconnected!", player, sessionId);
+// // 當玩家的連線狀態變更時進行偵測 // （僅在伺服器端提供 `allowReconnection: true` 時才能使用） // relay.state.players.onChange = (player, sessionId) => { if (player.connected) { console.log("Opponent has reconnected!", player, sessionId);
 
   } else { console.log("Opponent has disconnected!", player, sessionId); } } \`\`\`
 
@@ -44,6 +44,6 @@ const client = new Client("ws://localhost:2567");
 
 // // 對你感興趣的其他用戶端的訊息登錄回呼。 // relay.onMessage("fire", (\[sessionId, message]) => {
 
-  // // 傳送訊息者的 {1>sessionId<1} // console.log(sessionId, "sent a message!");
+  // // 傳送訊息者的 `sessionId` // console.log(sessionId, "sent a message!");
 
   // // 其他用戶端傳送的實際訊息 // console.log("fire at", message); }); \`\`\`

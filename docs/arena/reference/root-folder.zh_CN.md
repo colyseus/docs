@@ -8,6 +8,6 @@
 
 需要注意的是，這個 json 檔案位於您 Arena Cloud 伺服器的根目錄，而不是您伺服器代碼的根目錄。如果您從 package.json 中引用自定義模組，則需要根據 Arena Cloud 伺服器根目錄放置其相對路徑。
 
-您上傳的伺服器代碼的相對路徑是 {1>./app/server/arena/<1}。
+您上傳的伺服器代碼的相對路徑是 ```./app/server/arena/```。
 
-您上傳的伺服器代碼的絕對路徑是 {1>./colyseus/app/server/arena/<1}
+您上傳的伺服器代碼的絕對路徑是 ```./colyseus/app/server/arena/```

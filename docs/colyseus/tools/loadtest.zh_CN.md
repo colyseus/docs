@@ -1,23 +1,23 @@
-# 負載測試 / 壓力測試 ({1>@colyseus/loadtest<1})
+# 負載測試 / 壓力測試 (`@colyseus/loadtest`)
 
-{1>@colyseus/loadtest<1} 工具在您要對伺服器進行競技測試時相當實用，並查看其即時環境下執行的效能。
+`@colyseus/loadtest` 工具在您要對伺服器進行競技測試時相當實用，並查看其即時環境下執行的效能。
 
-{1>{2>asciicast<2}<1}
+[![asciicast](https://asciinema.org/a/229378.svg)](https://asciinema.org/a/229378)
 
 ## 安裝
 
-安裝 {1>@colyseus/loadtest<1} 模組：
+安裝 `@colyseus/loadtest` 模組：
 
-{1> npm install --save-dev @colyseus/loadtest <1}
+``` npm install --save-dev @colyseus/loadtest ```
 
 ## 使用方式
 
-{1>colyseus-loadtest<1} 命令需要數個引數以執行：
+`colyseus-loadtest` 命令需要數個引數以執行：
 
-- {1>指令碼<1}：要使用的自訂指令碼工具
-- {1>--endpoint<1}：您的伺服器端點（預設使用 {2>ws://localhost:2567<2}）
-- {1>--room<1}：您要連接的房間名稱
-- {1>--numClients<1}：您要連接至房間的用戶端數。
+- `指令碼`：要使用的自訂指令碼工具
+- `--endpoint`:您的伺服器端點（預設使用 `ws://localhost:2567`）
+- `--room`:您要連接的房間名稱
+- `--numClients`:您要連接至房間的用戶端數。
 
 ### 範例
 
@@ -55,6 +55,6 @@ exports.onError = function (err) { console.log(this.sessionId, "!!ERROR !!", err
 
 exports.onStateChange = function (state) { } \`\`\`
 
-### 將 50 個用戶端連接至{1>「競技」<1}房間
+### 將 50 個用戶端連接至`「競技」`房間
 
-{1> npx colyseus-loadtest script.ts --room battle --numClients 50 --endpoint ws://localhost:2567 <1}
+``` npx colyseus-loadtest script.ts --room battle --numClients 50 --endpoint ws://localhost:2567 ```

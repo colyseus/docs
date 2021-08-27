@@ -1,13 +1,13 @@
 # 概述
 
 ## 欢迎来到 Colyseus Arena
-部署 Colyseus 服务器的最简单解决方案，让您可以  {1>Get To Fun Faster™<1}
+部署 Colyseus 服务器的最简单解决方案，让您可以  **Get To Fun Faster™**
 
 Arena Cloud 是一种完全托管的解决方案，可让您专注于多人游戏开发。它为开发人员提供企业级托管，我们将完成服务器管理、基础设施、DevOps 和扩展等工作。使用 Arena，只需在直观的管理仪表板上点击几下，即可设置、管理和更新您的 Colyseus 服务器。
 
-{1>{2>注册<2} Arena Cloud 帐户（目前仅接受被邀请的用户{3>请求访问<3})<1}
+**[注册](https://https://console.colyseus.io/register) Arena Cloud 帐户（目前仅接受被邀请的用户[请求访问](https://www.colyseus.io/arena))**
 
-{1>Arena 仪表板视图<1}
+![Arena 仪表板视图](../../images/dashboard-view.jpg)
 
 ## Arena Cloud 地区
 可以在多个地区使用 Arena Cloud ，并可应要求提供自定义区域部署。
@@ -19,12 +19,12 @@ Arena Cloud 是一种完全托管的解决方案，可让您专注于多人游�
 - 爱尔兰（欧洲 - 西部）
 - 法兰克福（欧洲 - 中部）
 - 首尔（亚太地区 - 东北部）——即将推出
-- {1>圣保罗（南美 - 东部）-- 根据请求提供<1}
+- *圣保罗（南美 - 东部）-- 根据请求提供*
 
 ## 应用管理 
 只需通过直观的仪表板即可管理应用程序部署和查看实时统计数据。在此控制台上，可以上传和编辑代码、触发构建、使用 Git 存储库设置 CI/CD 流、查看日志以及重新启动特定服务器或您的完整部署。
 
-{1>Arena 应用管理视图<1}
+![Arena 应用管理视图](../../images/app-manage-view.jpg)
 
 
 ## Colyseus Arena 企业版
@@ -37,14 +37,14 @@ Arena Cloud 是一种完全托管的解决方案，可让您专注于多人游�
 - 复杂设置部署，多个服务器版本并行运行
 - MMO / 大型皇室战争
 
-{1>探讨企业解决方案<1}
+[探讨企业解决方案](mailto:contact@lucidsight.com)
 
 ## Arena Enterprise 托管自定义服务器
 有基于 Linux 的游戏服务器或无头模式 Unity / Unreal 游戏服务器？您是否在寻找可以处理 DevOps、维护并且可以扩展基础架构的灵活服务器主机，让您的团队可以自由地专注于游戏开发？如果是这样，请立即联系我们的团队，了解我们如何为服务器托管提供现代、可扩展而且具有成本效益的解决方案。
 
-{1>自定义服务器托管<1}
+[自定义服务器托管](mailto:support@lucidsight.com)
 
 ## Colyseus Arena 旧资产支持 < 0.14
 Arena Cloud 运行最新的 Colyseus 开源版本，而且 Arena 能够大规模托管和支持任何以前的 Colyseus 版本。 
 
-通过 {1>Legacy Support<1} 联系我们的支持团队，将较旧的 Colyseus 版本添加到您的应用。 
+通过 [Legacy Support](mailto:support@lucidsight.com) 联系我们的支持团队，将较旧的 Colyseus 版本添加到您的应用。 

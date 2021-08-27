@@ -2,8 +2,8 @@
 
 ### 要求
 
-* {1>注册<1} Arena Cloud 账户 
-* 兼容 {1>Arena Cloud<1} 的 Colyseus 服务器
+* [注册](https://https://console.colyseus.io/register) Arena Cloud 账户 
+* 兼容 [Arena Cloud](../create-colyseus-server/) 的 Colyseus 服务器
 
 ## 创建应用部署
 
@@ -11,15 +11,15 @@
 
 开始创建您的第一个应用部署...
 
-{1>新建应用按钮<1}
+![新建应用按钮](../../images/create-new-app.jpg)
 
-- 登录后，选择仪表板右上角的 {1>Create A New App（创建新应用）<1}。
+- 登录后，选择仪表板右上角的 **Create A New App（创建新应用）**。
 
-- 填写应用详细信息字段，并选择您的 {1>Plan（计划）<1} 和 {2>Region（地区）<2}
+- 填写应用详细信息字段，并选择您的 *Plan（计划）* 和 *Region（地区）*
 
-- 如果您的抢先体验电子邮件中提供了 {1>Arena 代码<1}，请在 {2>Code（代码）<2} 字段中输入该代码。
+- 如果您的抢先体验电子邮件中提供了 **Arena 代码**，请在 *Code（代码）* 字段中输入该代码。
 
-{1>注册流程<1}
+![注册流程](../../images/create-app.jpg)
 
 - 提交并等待创建您的应用
 
@@ -27,14 +27,14 @@
 
 ## 应用仪表板
 
-在您新创建的应用上选择 {1>Manage（管理）<1}，可以查看应用仪表板。在这里，可以看到您的活动快照和访问工具，以更新代码、查看活动服务器、重新启动您的应用和查看日志。
+在您新创建的应用上选择 **Manage（管理）**，可以查看应用仪表板。在这里，可以看到您的活动快照和访问工具，以更新代码、查看活动服务器、重新启动您的应用和查看日志。
 
-{1>Arena 应用管理视图<1}
+![Arena 应用管理视图](../../images/app-manage-details.jpg)
 
-- {1>Current Usage（当前使用情况）：<1}显示超过您当前的 Arena 计划限制的当前 CCU （如果有）
-- {1>Connection（连接）：<1} 用于访问您的应用的 URL 和端口
-- {1>API Key（API 秘钥）：<1}应用的唯一参考标识符，可用于通过 Arena Public API 访问应用部署
-- {1>Arena Plan（Arena 计划）：<1}您的应用注册的当前托管计划。
-- {1>{2>GIT Updated（GIT 更新）：<2}<1}来自最近 GIT 更新的信息。
-- {1>{2>GIT Msg（GIT 消息）：<2}<1}最近更新的签入消息。
-- {1>{2>GIT Hash（GIT 哈希）：<2}<1}最近更新版本的哈希。 ！！！注意： 仅当使用 CI/CD GitSync 服务时，{5>{6>才能<6}<5}看到 {3>{4>GIT<4}<3} 详细信息（用于 Powered Ascent 和 Up Arena 计划）
+- **Current Usage（当前使用情况）：**显示超过您当前的 Arena 计划限制的当前 CCU （如果有）
+- **Connection（连接）：** 用于访问您的应用的 URL 和端口
+- **API Key（API 秘钥）：**应用的唯一参考标识符，可用于通过 Arena Public API 访问应用部署
+- **Arena Plan（Arena 计划）：**您的应用注册的当前托管计划。
+- ***GIT Updated（GIT 更新）：***来自最近 GIT 更新的信息。
+- ***GIT Msg（GIT 消息）：***最近更新的签入消息。
+- ***GIT Hash（GIT 哈希）：***最近更新版本的哈希。 ！！！注意： 仅当使用 CI/CD GitSync 服务时，***才能***看到 ***GIT*** 详细信息（用于 Powered Ascent 和 Up Arena 计划）

@@ -1,23 +1,23 @@
-# 加载测试 / 压力测试 ({1>@colyseus/loadtest<1})
+# 加载测试 / 压力测试 (`@colyseus/loadtest`)
 
-当您想要实战测试服务器，以了解其在实时环境下的表现时，{1>@colyseus/loadtest<1} 工具很有用。
+当您想要实战测试服务器，以了解其在实时环境下的表现时，`@colyseus/loadtest` 工具很有用。
 
-{1>{2>asciicast<2}<1}
+[![asciicast](https://asciinema.org/a/229378.svg)](https://asciinema.org/a/229378)
 
 ## 安装
 
-安装 {1>@colyseus/loadtest<1} 模块：
+安装 `@colyseus/loadtest` 模块：
 
-{1> npm install --save-dev @colyseus/loadtest <1}
+``` npm install --save-dev @colyseus/loadtest ```
 
 ## 用法
 
-{1>colyseus-loadtest<1} 命令需要一些参数才能工作：
+`colyseus-loadtest` 命令需要一些参数才能工作：
 
-- {1>脚本<1}：自定义脚本工具将使用
-- {1>--endpoint<1}:您的服务器终端（默认使用 {2>ws://localhost:2567<2})
-- {1>--room<1}:想要连接的房间名称
-- {1>--numClients<1}:想要连接进入房间的客户端数量。
+- `脚本`：自定义脚本工具将使用
+- `--endpoint`:您的服务器终端（默认使用 `ws://localhost:2567`)
+- `--room`:想要连接的房间名称
+- `--numClients`:想要连接进入房间的客户端数量。
 
 ### 示例
 
@@ -55,6 +55,6 @@ exports.onError = function (err) { console.log(this.sessionId, "!!ERROR !!", err
 
 exports.onStateChange = function (state) { } \`\`\`
 
-### 50 个客户端连接进入 {1>"battle"<1} 房间
+### 50 个客户端连接进入 `"battle"` 房间
 
-{1> npx colyseus-loadtest script.ts --room battle --numClients 50 --endpoint ws://localhost:2567 <1}
+``` npx colyseus-loadtest script.ts --room battle --numClients 50 --endpoint ws://localhost:2567 ```

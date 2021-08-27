@@ -4,9 +4,9 @@
 
 ## 安裝
 
-從 haxelib 安裝 {1>colyseus<1}：
+從 haxelib 安裝 `colyseus`：
 
-{1> haxelib 安裝 colyseus <1}
+``` haxelib 安裝 colyseus ```
 
 ## 使用方式
 
@@ -18,7 +18,7 @@ var client = new Client('ws://localhost:2567'); \`\`\`
 
 ### 加入房間：
 
-> 了解如何從 {2>State Handling<2} 生成您的 {1>RoomState<1}
+> 了解如何從 [State Handling](/state/schema/#client-side-schema-generation) 生成您的 `RoomState`
 
 \`\`\`haxe client.joinOrCreate("room\_name", \[], RoomState, function(err, room) { if (err != null) { trace("JOIN ERROR: " + err); return; }
 
@@ -43,35 +43,35 @@ var client = new Client('ws://localhost:2567'); \`\`\`
 
 房間狀態已更新：
 
-{1>haxe room.onStateChange += function(state) { // 'state' 變數上可用的全新狀態 } <1}
+```haxe room.onStateChange += function(state) { // 'state' 變數上可用的全新狀態 } ```
 
 從伺服器或直接向此用戶端廣播的訊息：
 
-{1>haxe room.onMessage("type", function (message) { trace(client.id + " received on " + room.name + ": " + message); }); <1}
+```haxe room.onMessage("type", function (message) { trace(client.id + " received on " + room.name + ": " + message); }); ```
 
 發生伺服器錯誤：
 
-{1>haxe room.onError += function() { trace(client.id + " couldn't join " + room.name); } <1}
+```haxe room.onError += function() { trace(client.id + " couldn't join " + room.name); } ```
 
 客戶離開房間：
 
-{1>haxe room.onLeave += function() { trace(client.id + " left " + room.name); } <1}
+```haxe room.onLeave += function() { trace(client.id + " left " + room.name); } ```
 
 ## 執行演示專案
 
 [`示例`](https://github.com/colyseus/colyseus-hx/blob/master/example/openfl)專案可以編譯為 `html5`、`neko`、`cpp`、`ios` ， 等等。
 
-其使用 {2>colyseus-examples<2} 專案中的 {1>state\_handler<1} 空間，您可以在{3>此處<3}找到該空間。
+其使用 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 專案中的 `state_handler` 空間，您可以在[此處](https://github.com/colyseus/colyseus-examples/blob/master/rooms/02-state-handler.ts)找到該空間。
 
-### 將演示項目編譯為 {1>html5<1}
+### 將演示項目編譯為 `html5`
 
-{1> git clone https://github.com/colyseus/colyseus-hx.git cd colyseus-hx/example/openfllime build project.xml html5 <1}
+``` git clone https://github.com/colyseus/colyseus-hx.git cd colyseus-hx/example/openfllime build project.xml html5 ```
 
-您可以{1>在此處查看演示專案<1}。
+您可以[在此處查看演示專案](http://colyseus.io/colyseus-hx/)。
 
 
-## {1>ios<1} 目標警告
+## `ios` 目標警告
 
-您可能需要手動套用此修補程式才能為 iOS 進行編譯：{1>HaxeFoundation/hxcpp@5f63d23<1}
+您可能需要手動套用此修補程式才能為 iOS 進行編譯：[HaxeFoundation/hxcpp@5f63d23](https://github.com/HaxeFoundation/hxcpp/commit/5f63d23768988ba2a4d4488843afab70d279a593)
 
 > 更多資訊：http://community.openfl.org/t/solved-system-not-available-on-ios-with-xcode-9-0/9683?source\_topic\_id=10046

@@ -6,26 +6,26 @@
 
 - 將您的房間等級盡可能縮小，將遊戲的特定功能委託給其他可組合結構。
 - 使同步化的資料結構盡可能縮小
-    - 理想情況下，各個擴展{1>架構<1}的類別應該只有欄位定義。
+    - 理想情況下，各個擴展`架構`的類別應該只有欄位定義。
     - 可實作自定義的 getter 和 setter 方法，只要其中沒有遊戲邏輯即可。
 - 您的遊戲邏輯應由其他結構處理，例如：
-    - 命令模式
-    - {1>實體-組件系統<1}。
+    - [命令模式](#the-command-pattern)
+    - [實體-組件系統](#entity-component-system-ecs)。
 
 ## 單元測試
 
-> TODO：我們需要提供一個 {1>@colyseus/測試<1} 套件，以輕鬆模擬{2>房間<2}類別並觸發其生命週期事件，以及建立虛擬客戶端。
+> TODO：我們需要提供一個 `@colyseus/測試` 套件，以輕鬆模擬`房間`類別並觸發其生命週期事件，以及建立虛擬客戶端。
 
 ## 設計模式
 
 ### 命令模式
 
-{1>為什麼？<1}
+**為什麼？**
 
-- 模型 ({1>{2>@colyseus/架構<2}<1})主要應包含資料，沒有繁重的遊戲邏輯。
+- 模型 ([`@colyseus/架構`](https://github.com/colyseus/schema))主要應包含資料，沒有繁重的遊戲邏輯。
 - 房間應該有盡可能少的代碼，並將動作轉發到其他結構
 
-{1>命令模式有幾個優點，例如：<1}
+**命令模式有幾個優點，例如：**
 
 - 其將調用操作的類別與知道如何執行操作的物件分離。
 - 它能讓您透過提供隊列系統來建立命令序列。
@@ -37,15 +37,15 @@
 
 安裝
 
-{1> npm install --save @colyseus/command <1}
+``` npm install --save @colyseus/command ```
 
-在您的房間實現中初始化{1>調派程式<1}：
+在您的房間實現中初始化`調派程式`：
 
 \`\`\`typescript fct\_label="TypeScript" import { Room } from "colyseus"; import { Dispatcher } from "@colyseus/command";
 
 import { OnJoinCommand } from "./OnJoinCommand";
 
-class MyRoom extends Room{1} { dispatcher = new Dispatcher(this);
+class MyRoom extends Room<YourState> { dispatcher = new Dispatcher(this);
 
   onCreate() { this.setState(new YourState()); }
 
@@ -85,12 +85,12 @@ exports.OnJoinCommand = class OnJoinCommand extends command.Command {
 
 #### 深入瞭解
 
-- 請參閱{1>命令定義<1}
-- 使用方式
-- 請參閱{1>實作<1}
+- 請參閱[命令定義](https://github.com/colyseus/command/blob/master/test/scenarios/CardGameScenario.ts)
+- [使用方式](https://github.com/colyseus/command/blob/master/test/Test.ts)
+- 請參閱[實作](https://github.com/colyseus/command/blob/master/src/index.ts)
 
 ### 實體組件系統 (ECS)
 
 我們目前沒有正式的 ECS（實體組件系統），儘管我們已經看到社群成員實作其自己專屬的解決方案。
 
-!!!警告「非常實驗性」一些工作{1>已開始嘗試將 ECSY 與 @colyseus/架構<1} 結合起來。
+!!!警告「非常實驗性」一些工作[已開始嘗試將 ECSY 與 @colyseus/架構](http://github.com/endel/ecs) 結合起來。

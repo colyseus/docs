@@ -2,31 +2,31 @@
 
 ## 安裝
 
-- {1>下載 Construct 3 SDK<1}
+- [下載 Construct 3 SDK](https://www.construct.net/en/make-games/addons/111/colyseus-multiplayer-client)
 
-!!!警告「注意！您需要一個伺服器來使用 Colyseus！」 Construct 具有眾所周知的現有功能，可以從用戶端「託管」多人會話。這在使用 Colyseus 時是不可能的。Colyseus 是一個權威的 {1>伺服器<1}，其是用 Node.js 編寫而成。您不能讓您的用戶端直接託管遊戲會話。
+!!!警告「注意！您需要一個伺服器來使用 Colyseus！」 Construct 具有眾所周知的現有功能，可以從用戶端「託管」多人會話。這在使用 Colyseus 時是不可能的。Colyseus 是一個權威的 **伺服器**，其是用 Node.js 編寫而成。您不能讓您的用戶端直接託管遊戲會話。
 
-!!! 提示「Construct 3 SDK:原始碼」您可以在此處找到 Construct SDK 的原始碼：{1>Construct 3<1}（與 Construct3 的 C3 和 C2 執行時間相容）/{2>Construct 2<2}（非最新 - 與伺服器 0.9.x 相容）
+!!! 提示「Construct 3 SDK:原始碼」您可以在此處找到 Construct SDK 的原始碼：[Construct 3](https://github.com/colyseus/colyseus-construct3)（與 Construct3 的 C3 和 C2 執行時間相容）/[Construct 2\\](https://github.com/colyseus/colyseus-construct2)（非最新 - 與伺服器 0.9.x 相容）
 
 ## 示例專案
 
-示例專案的結果與 {1>TypeScript (pixijs-boilerplate)<1} 類似。
+示例專案的結果與 [TypeScript (pixijs-boilerplate)](https://github.com/endel/colyseus-pixijs-boilerplate) 類似。
 
-- {1>用戶端（c3p 專案）<1}
-- {1>Glitch 上的伺服器端（原始碼）<1}
+- [用戶端（c3p 專案）](/_downloads/ColyAgarClient-0-14-0.c3p)
+- [Glitch 上的伺服器端（原始碼）](https://glitch.com/~colyseus-construct3)
 
 
 ## 處理訊息
 
-從伺服器向用戶端發送訊息時的一個重要注意事項：您需要提供一個帶有 {1>"type"<1} 欄位的物件，以便用戶端對其進行解析。
+從伺服器向用戶端發送訊息時的一個重要注意事項：您需要提供一個帶有 `"type"` 欄位的物件，以便用戶端對其進行解析。
 
 **伺服器端**
 
-{1>typescript this.broadcast("foo", "bar"); <1}
+```typescript this.broadcast("foo", "bar"); ```
 
 **用戶端**
 
-使用 {1>On Message<1} 條件，以 {2>"foo"<2} 作為參數。表達式 {3>CurrentValue<3} 的值為 {4>"bar"<4}。
+使用 `On Message` 條件，以 `"foo"` 作為參數。表達式 `CurrentValue` 的值為 `"bar"`。
 
 
 ## 屬性
@@ -39,22 +39,22 @@
 ### 將端點設為 {0}
 格式：wss://example.com
 
-### 加入帶有選項 \\{1\\} 的房間 {0}。
+### 加入帶有選項 {1} 的房間 {0}。
 按名稱加入房間
 
-### 加入帶有選項 \\{1\\} 的房間 {0}。
+### 加入帶有選項 {1} 的房間 {0}。
 按名稱加入房間
 
-### 使用選項 \\{1\\} 建立房間 {0}。
+### 使用選項 {1} 建立房間 {0}。
 按名稱建立房間
 
-### 加入帶有選項 \\{1\\} 的房間 {0}。
+### 加入帶有選項 {1} 的房間 {0}。
 透過 ID 加入現有房間
 
-### 使用 sessionId \\{1\\} 重新連接到房間 {0}。
+### 使用 sessionId {1} 重新連接到房間 {0}。
 使用之前連接的房間重新連接
 
-### 使用 \\{1\\} 發送 {0}
+### 使用 {1} 發送 {0}
 向房間發送訊息
 
 ### 離開房間
