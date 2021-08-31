@@ -5,7 +5,7 @@
 - 預設會在配對時**視需要**建立房間
 - 房間類別必須使用 [`.define()`](/server/api/#define-roomname-string-room-room-options-any) 來公開
 
-\`\`\`typescript fct\_label="TypeScript" import http from "http"; import { Room, Client } from "colyseus";
+```typescript fct\_label="TypeScript" import http from "http"; import { Room, Client } from "colyseus";
 
 export class MyRoom extends Room { // When room is initialized onCreate (options: any) { }
 
@@ -20,9 +20,9 @@ export class MyRoom extends Room { // When room is initialized onCreate (options
 
     // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
     onDispose () { }
-} \`\`\`
+} ```
 
-\`\`\`typescript fct\_label="JavaScript" const colyseus = require('colyseus');
+```typescript fct\_label="JavaScript" const colyseus = require('colyseus');
 
 export class MyRoom extends colyseus.Room { // When room is initialized onCreate (options) { }
 
@@ -37,7 +37,7 @@ export class MyRoom extends colyseus.Room { // When room is initialized onCreate
 
     // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
     onDispose () { }
-} \`\`\`
+} ```
 
 ## 房間生命週期事件
 
@@ -50,15 +50,15 @@ export class MyRoom extends colyseus.Room { // When room is initialized onCreate
 
 **`選項`引數會在建立時由用戶端提供：**
 
-\`\`\`typescript // Client-side - JavaScript SDK client.joinOrCreate("my\_room", { name:"Jake", map: "de\_dust2" })
+```typescript // Client-side - JavaScript SDK client.joinOrCreate("my\_room", { name:"Jake", map: "de\_dust2" })
 
-// onCreate() - options are: // { // name:"Jake", // map: "de\_dust2" // } \`\`\`
+// onCreate() - options are: // { // name:"Jake", // map: "de\_dust2" // } ```
 
 **伺服器可能會在 [`.define()`](/server/api/#define-roomname-string-room-room-options-any) 時覆寫選項以用於授權：**
 
-\`\`\`typescript fct\_label="Definition" // Server-side gameServer.define("my\_room", MyRoom, { map: "cs\_assault" })
+```typescript fct\_label="Definition" // Server-side gameServer.define("my\_room", MyRoom, { map: "cs\_assault" })
 
-// onCreate() - options are: // { // name:"Jake", // map: "cs\_assault" // } \`\`\`
+// onCreate() - options are: // { // name:"Jake", // map: "cs\_assault" // } ```
 
 在此範例中，`地圖` 選項在 `onCreate()` 時是 `"cs_assault"`，而在 `onJoin()` 時是 `"de_dust2"`。
 
@@ -68,7 +68,7 @@ export class MyRoom extends colyseus.Room { // When room is initialized onCreate
 
 `onAuth()` 方法會在 `onJoin()` 之前執行。其可用於驗證加入房間之用戶端的真確性。
 
-- 如果 `onAuth()` 傳回 [truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) 值，則會使用傳回的值作為第三個引數來呼叫 \\`onJoin()`。
+- 如果 `onAuth()` 傳回 [truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) 值，則會使用傳回的值作為第三個引數來呼叫 \`onJoin()`。
 - 如果 `onAuth()` 傳回 [falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy) 值，則用戶端會被立即拒絕，造成用戶端的配對函式呼叫失敗。
 - 你也可以擲出 `ServerError` 來公開要在用戶端進行處理的自訂錯誤。
 
@@ -78,59 +78,59 @@ export class MyRoom extends colyseus.Room { // When room is initialized onCreate
 
 **實作範例**
 
-\`\`\`typescript fct\_label="async / await" import { Room, ServerError } from "colyseus";
+```typescript fct\_label="async / await" import { Room, ServerError } from "colyseus";
 
 class MyRoom extends Room { async onAuth (client, options, request) { /\** * 或是你可以使用`非同步`/ `等候`，* 這會傳回基礎`承諾`。 \*/ const userData = await validateToken(options.accessToken); if (userData) { return userData;
 
     } else {
         throw new ServerError(400, "bad access token");
     }
-  } } \`\`\`
+  } } ```
 
-\`\`\`typescript fct\_label="Synchronous" import { Room } from "colyseus";
+```typescript fct\_label="Synchronous" import { Room } from "colyseus";
 
 class MyRoom extends Room { onAuth (client, options, request): boolean { /\** * 你可以立即傳回`布林`值。\*/ if (options.password === "secret") { return true;
 
      } else {
        throw new ServerError(400, "bad access token");
      }
-  } } \`\`\`
+  } } ```
 
-\`\`\`typescript fct\_label="Promises" import { Room } from "colyseus";
+```typescript fct\_label="Promises" import { Room } from "colyseus";
 
-class MyRoom extends Room { onAuth (client, options, request):Promise<any> { /\** * 你可以傳回`承諾`，並執行部分非同步工作以驗證用戶端。\*/ return new Promise((resolve, reject) => { validateToken(options.accessToken, (err, userData) => { if (!err) { resolve(userData); } else { reject(new ServerError(400, "bad access token")); } }); }); } } \`\`\`
+class MyRoom extends Room { onAuth (client, options, request):Promise<any> { /\** * 你可以傳回`承諾`，並執行部分非同步工作以驗證用戶端。\*/ return new Promise((resolve, reject) => { validateToken(options.accessToken, (err, userData) => { if (!err) { resolve(userData); } else { reject(new ServerError(400, "bad access token")); } }); }); } } ```
 
 **用戶端範例**
 
 在用戶端，你可以使用選擇的某個驗證服務（即 Facebook）的權杖，來呼叫配對方法`加入`、`joinOrCreate` 等等）：
 
-\`\`\`javascript fct\_label="JavaScript" client.joinOrCreate("world", { accessToken: yourFacebookAccessToken
+```javascript fct\_label="JavaScript" client.joinOrCreate("world", { accessToken: yourFacebookAccessToken
 
 }).then((room) => { // success
 
-}).catch((err) => { // handle error... err.code // 400 err.message // "bad access token" }); \`\`\`
+}).catch((err) => { // handle error... err.code // 400 err.message // "bad access token" }); ```
 
-\`\`\`csharp fct\_label="C#" try { var room = await client.JoinOrCreate<YourStateClass>"world", new { accessToken = yourFacebookAccessToken }); // success
+```csharp fct\_label="C#" try { var room = await client.JoinOrCreate<YourStateClass>"world", new { accessToken = yourFacebookAccessToken }); // success
 
-} catch (err) { // handle error... err.code // 400 err.message // "bad access token" } \`\`\`
+} catch (err) { // handle error... err.code // 400 err.message // "bad access token" } ```
 
-\`\`\`lua fct\_label="Lua" client:join\_or\_create("world", { accessToken = yourFacebookAccessToken
+```lua fct\_label="Lua" client:join\_or\_create("world", { accessToken = yourFacebookAccessToken
 
 }, function(err, room) if err then -- handle error... err.code -- 400 err.message -- "bad access token" return end
 
-  -- success end) \`\`\`
+  -- success end) ```
 
-\`\`\`haxe fct\_label="Haxe" client.joinOrCreate("world", { accessToken: yourFacebookAccessToken
+```haxe fct\_label="Haxe" client.joinOrCreate("world", { accessToken: yourFacebookAccessToken
 
 }, YourStateClass, function (err, room) { if (err != null) { // handle error... err.code // 400 err.message // "bad access token" return; }
 
-  // success }) \`\`\`
+  // success }) ```
 
-\`\`\`cpp fct\_label="C++" client.joinOrCreate("world", { { "accessToken", yourFacebookAccessToken }
+```cpp fct\_label="C++" client.joinOrCreate("world", { { "accessToken", yourFacebookAccessToken }
 
 }, \[=\](MatchMakeError *err, Room<YourStateClass>* room) { if (err != "") { // handle error... err.code // 400 err.message // "bad access token" return; }
 
-  // success }); \`\`\`
+  // success }); ```
 
 ---
 
@@ -174,13 +174,13 @@ class MyRoom extends Room { onAuth (client, options, request):Promise<any> { /\*
 ### 範例房間
 此範例示範了實作 `onCreate`、`onJoin` 和 `onMessage` 方法的整個房間。
 
-\`\`\`typescript fct\_label="TypeScript" import { Room, Client } from "colyseus"; import { Schema, MapSchema, type } from "@colyseus/schema";
+```typescript fct\_label="TypeScript" import { Room, Client } from "colyseus"; import { Schema, MapSchema, type } from "@colyseus/schema";
 
 // An abstract player object, demonstrating a potential 2D world position export class Player extends Schema { @type("number") x: number = 0.11;
 
   @type("number") y: number = 2.22; }
 
-// Our custom game state, an ArraySchema of type Player only at the moment export class State extends Schema { @type({ map:Player }) players = new MapSchema<Player>(); } \`\`\`
+// Our custom game state, an ArraySchema of type Player only at the moment export class State extends Schema { @type({ map:Player }) players = new MapSchema<Player>(); } ```
 
 export class GameRoom extends Room<State> { // Colyseus will invoke when creating the room instance onCreate(options: any) { // initialize empty room state this.setState(new State());
 
@@ -193,9 +193,9 @@ export class GameRoom extends Room<State> { // Colyseus will invoke when creatin
     });
   }
 
-  // Called every time a client joins onJoin(client:Client, options: any) { this.state.players.set(client.sessionId, new Player()); } } \`\`\`
+  // Called every time a client joins onJoin(client:Client, options: any) { this.state.players.set(client.sessionId, new Player()); } } ```
 
-\`\`\`typescript fct\_label="JavaScript" const colyseus = require('colyseus'); const schema = require('@colyseus/schema');
+```typescript fct\_label="JavaScript" const colyseus = require('colyseus'); const schema = require('@colyseus/schema');
 
 // An abstract player object, demonstrating a potential 2D world position exports.Player = class Player extends schema.Schema { constructor() { super(); this.x = 0.11; this.y = 2.22; } } schema.defineTypes(Player, { x: "number", y: "number", });
 
@@ -212,7 +212,7 @@ exports.GameRoom = class GameRoom extends colyseus.Room { // Colyseus will invok
     });
   }
 
-  // Called every time a client joins onJoin(client, options) { this.state.players.set(client.sessionId, new Player()); } } \`\`\`
+  // Called every time a client joins onJoin(client, options) { this.state.players.set(client.sessionId, new Player()); } } ```
 
 ---
 
@@ -234,7 +234,7 @@ exports.GameRoom = class GameRoom extends colyseus.Room { // Colyseus will invok
 
 你可以登錄單一回調以處理其他所有類型的訊息。
 
-\`\`\`typescript onCreate () { this.onMessage("action", (client, message) => { // // Triggers when 'action' message is sent. // });
+```typescript onCreate () { this.onMessage("action", (client, message) => { // // Triggers when 'action' message is sent. // });
 
     this.onMessage("*", (client, type, message) => {
         //
@@ -243,7 +243,7 @@ exports.GameRoom = class GameRoom extends colyseus.Room { // Colyseus will invok
         //
         console.log(client.sessionId, "sent", type, message);
     });
-} \`\`\`
+} ```
 
 !!! 提示「使用用戶端 SDK 的 `room.send()` 以傳送訊息」查看 [`room.send()`](/client/client/#send-type-message) 章節。
 
@@ -263,9 +263,9 @@ exports.GameRoom = class GameRoom extends colyseus.Room { // Colyseus will invok
 
 （選擇性）設定能變更遊戲狀態的模擬間隔。該模擬間隔是你的遊戲迴圈。預設模擬間隔：16.6ms (60fps)
 
-\`\`\`typescript onCreate () { this.setSimulationInterval((deltaTime) => this.update(deltaTime)); }
+```typescript onCreate () { this.setSimulationInterval((deltaTime) => this.update(deltaTime)); }
 
-update (deltaTime) { // 在這裡實作你的物理或世界更新！ // 這是個更新房間狀態 } \`\`\`
+update (deltaTime) { // 在這裡實作你的物理或世界更新！ // 這是個更新房間狀態 } ```
 
 ---
 
@@ -335,18 +335,18 @@ update (deltaTime) { // 在這裡實作你的物理或世界更新！ // 這是�
 
 只在變更套用至狀態後，才會向所有用戶端廣播訊息：
 
-\`\`\`typescript onCreate() { this.onMessage("destroy", (client, message) => { // perform changes in your state! this.state.destroySomething();
+```typescript onCreate() { this.onMessage("destroy", (client, message) => { // perform changes in your state! this.state.destroySomething();
 
         // this message will arrive only after new state has been applied
         this.broadcast("destroy", "something has been destroyed", { afterNextPatch: true });
     });
-} \`\`\`
+} ```
 
 廣播結構描述編碼訊息：
 
-\`\`\`typescript class MyMessage extends Schema { @type("string") message: string; }
+```typescript class MyMessage extends Schema { @type("string") message: string; }
 
-// ... onCreate() { this.onMessage("action", (client, message) => { const data = new MyMessage(); data.message = "an action has been taken!"; this.broadcast(data); }); } \`\`\`
+// ... onCreate() { this.onMessage("action", (client, message) => { const data = new MyMessage(); data.message = "an action has been taken!"; this.broadcast(data); }); } ```
 
 !!!提示[查看如何處理這些用戶端內的 onMessage()。](/client/room/#onmessage)
 
@@ -378,7 +378,7 @@ update (deltaTime) { // 在這裡實作你的物理或世界更新！ // 這是�
 
 **範例：**在 20 秒逾時後拒絕重新連接。
 
-\`\`\`typescript async onLeave (client:Client, consented: boolean) { // flag client as inactive for other users this.state.players\[client.sessionId].connected = false;
+```typescript async onLeave (client:Client, consented: boolean) { // flag client as inactive for other users this.state.players\[client.sessionId].connected = false;
 
   try { if (consented) { throw new Error("consented leave"); }
 
@@ -392,12 +392,12 @@ update (deltaTime) { // 在這裡實作你的物理或世界更新！ // 這是�
 
     // 20 seconds expired. let's remove the client.
     delete this.state.players[client.sessionId];
-  } } \`\`\`
+  } } ```
 
 
 **範例：**使用自訂邏輯手動拒絕重新連接。
 
-\`\`\`typescript async onLeave (client:Client, consented: boolean) { // flag client as inactive for other users this.state.players\[client.sessionId].connected = false;
+```typescript async onLeave (client:Client, consented: boolean) { // flag client as inactive for other users this.state.players\[client.sessionId].connected = false;
 
   try { if (consented) { throw new Error("consented leave"); }
 
@@ -433,7 +433,7 @@ update (deltaTime) { // 在這裡實作你的物理或世界更新！ // 這是�
 
     // 20 seconds expired. let's remove the client.
     delete this.state.players[client.sessionId];
-  } } \`\`\`
+  } } ```
 
 ---
 
@@ -451,7 +451,7 @@ update (deltaTime) { // 在這裡實作你的物理或世界更新！ // 這是�
 
 如果您想控制廣播修補程式的時間，您可以透過停用預設修補程式間隔來進行：
 
-\`\`\`typescript onCreate() { // disable automatic patches this.setPatchRate(null);
+```typescript onCreate() { // disable automatic patches this.setPatchRate(null);
 
     // ensure clock timers are enabled
     this.setSimulationInterval(() => {/* */});
@@ -462,7 +462,7 @@ update (deltaTime) { // 在這裡實作你的物理或世界更新！ // 這是�
             this.broadcastPatch();
         }
     }, 2000);
-} \`\`\`
+} ```
 
 ---
 
@@ -549,7 +549,7 @@ update (deltaTime) { // 在這裡實作你的物理或世界更新！ // 這是�
 
 每個工作階段的唯一 ID。
 
-!!!請注意，在用戶端中，您可以\\[在\\`房間`執行個體中找到 `sessionId`](/client/room/#sessionid-string)。
+!!!請注意，在用戶端中，您可以\\[在\`房間`執行個體中找到 `sessionId`](/client/room/#sessionid-string)。
 
 ---
 
@@ -557,9 +557,9 @@ update (deltaTime) { // 在這裡實作你的物理或世界更新！ // 這是�
 
 可以用於儲存關於用戶端連接的自訂資料。`userData` **不**與用戶端同步，且應只用於保持特定玩家與其的連接。
 
-\`\`\`typescript onJoin(client, options) { client.userData = { playerNumber: this.clients.length }; }
+```typescript onJoin(client, options) { client.userData = { playerNumber: this.clients.length }; }
 
-onLeave(client) { console.log(client.userData.playerNumber); } \`\`\`
+onLeave(client) { console.log(client.userData.playerNumber); } ```
 
 ---
 
@@ -579,9 +579,9 @@ onLeave(client) { console.log(client.userData.playerNumber); } \`\`\`
 
 **傳送訊息：**
 
-\`\`\`typescript // // 正在傳送字串類型為「powerup」的訊息 // client.send("powerup", { kind: "ammo" });
+```typescript // // 正在傳送字串類型為「powerup」的訊息 // client.send("powerup", { kind: "ammo" });
 
-// // 正在傳送數字類型為 1 的訊息 // client.send(1, { kind: "ammo"}); \`\`\`
+// // 正在傳送數字類型為 1 的訊息 // client.send(1, { kind: "ammo"}); ```
 
 <!-- 
 **Sending a schema-encoded message:**

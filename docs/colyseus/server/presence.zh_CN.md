@@ -19,17 +19,17 @@
 
 - `clientOpts`：Redis 用戶端選項（主機/認證）。[查看選項的完整清單](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/redis/index.d.ts#L28-L52)。
 
-\`\`\`typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus";
+```typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus";
 
 // 這會在從屬處理序中發生。 const gameServer = new Server({ // ... presence: new RedisPresence() });
 
-gameServer.listen(2567); \`\`\`
+gameServer.listen(2567); ```
 
-\`\`\`typescript fct\_label="JavaScript" const colyseus = require('colyseus');
+```typescript fct\_label="JavaScript" const colyseus = require('colyseus');
 
 // 這會在從屬處理序中發生。 const gameServer = new colyseus.Server({ // ... presence: new colyseus.RedisPresence() });
 
-gameServer.listen(2567); \`\`\`
+gameServer.listen(2567); ```
 
 ## API
 
@@ -75,7 +75,7 @@ gameServer.listen(2567); \`\`\`
 
 ### `sismember(member: string)`
 
-如果\\`成員`是儲存在索引鍵的集合成員，則進行傳回。
+如果\`成員`是儲存在索引鍵的集合成員，則進行傳回。
 
 **傳回值**
 

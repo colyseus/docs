@@ -10,7 +10,7 @@
 
 請參閱下方代碼：
 
-\`\`\`typescript const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+```typescript const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export class MyRoom extends Room<MyRoomState> { // 我們註冊房間 ID 的頻道。 // 這可以是你想要的任何東西，不一定是 `$mylobby`。LOBBY\_CHANNEL = "$mylobby"
 
@@ -46,6 +46,6 @@ export class MyRoom extends Room<MyRoomState> { // 我們註冊房間 ID 的頻�
     async onDispose(options: any) {
         this.presence.srem(this.LOBBY_CHANNEL, this.roomId);
     }
-} \`\`\`
+} ```
 
 **警告**：這段代碼中有一個小問題，其中兩個 onCreate 調用可以在其中的任何一個註冊之前隨機生成相同的代碼。這將導致兩個房間具有相同的 ID。然而，這場比賽是極不可能的（有 100 萬個活躍房間和真正的隨機性，可能性仍然是 15 萬億分之一）。

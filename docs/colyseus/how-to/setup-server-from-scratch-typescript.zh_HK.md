@@ -20,9 +20,9 @@
 
 新建一个 `src` 目录 ```cmd mkdir src ```
 
-在 `src` 目录下新建一个名为 `main.ts` 的文件夹。 \`\`\`ts import { Server } from "colyseus" const port = parseInt(process.env.port, 10) || 3000
+在 `src` 目录下新建一个名为 `main.ts` 的文件夹。 ```ts import { Server } from "colyseus" const port = parseInt(process.env.port, 10) || 3000
 
-const gameServer = new Server() gameServer.listen(port) console.log(`[GameServer] Listening on Port: ${port}` \`\`\`
+const gameServer = new Server() gameServer.listen(port) console.log(`[GameServer] Listening on Port: ${port}` ```
 
 恭喜！您已完成 colyseus 服务器的安装。
 

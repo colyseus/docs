@@ -16,9 +16,9 @@ Colyseus SDK for Cocos Creator 的運作方式與 [JavaScript SDK](/getting-star
 
 確保在 `"compilerOptions"` 下有 `"esModuleInterop": true`：
 
-\`\`\`json // ...
+```json // ...
 
-  /* 在此處新增您的自訂配置。\*/ "compilerOptions": { // ... "esModuleInterop": true // ... } // ... \`\`\`
+  /* 在此處新增您的自訂配置。\*/ "compilerOptions": { // ... "esModuleInterop": true // ... } // ... ```
 
 ## 3\.從擴充功能匯入
 
@@ -30,7 +30,7 @@ Colyseus SDK for Cocos Creator 的運作方式與 [JavaScript SDK](/getting-star
 
 將以下內容另存為 `assets` 資料夾下的 `NetworkManager.ts`。
 
-\`\`\`typescript import { \_decorator, Component, Node } from 'cc'; const { ccclass, property } = \_decorator;
+```typescript import { \_decorator, Component, Node } from 'cc'; const { ccclass, property } = \_decorator;
 
 import Colyseus from 'db://colyseus-sdk/colyseus.js';
 
@@ -67,7 +67,7 @@ import Colyseus from 'db://colyseus-sdk/colyseus.js';
             console.error(e);
         }
     }
-} \`\`\`
+} ```
 
 您現在可以從 Cocos Creator 將 `NetworkManager` 作為組件附加到任何節點上。 
 

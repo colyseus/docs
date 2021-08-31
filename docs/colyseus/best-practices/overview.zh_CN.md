@@ -41,7 +41,7 @@
 
 在您的房間實現中初始化`調派程式`：
 
-\`\`\`typescript fct\_label="TypeScript" import { Room } from "colyseus"; import { Dispatcher } from "@colyseus/command";
+```typescript fct\_label="TypeScript" import { Room } from "colyseus"; import { Dispatcher } from "@colyseus/command";
 
 import { OnJoinCommand } from "./OnJoinCommand";
 
@@ -51,9 +51,9 @@ class MyRoom extends Room<YourState> { dispatcher = new Dispatcher(this);
 
   onJoin(client, options) { this.dispatcher.dispatch(new OnJoinCommand(), { sessionId: client.sessionId }); }
 
-  onDispose() { this.dispatcher.stop(); } } \`\`\`
+  onDispose() { this.dispatcher.stop(); } } ```
 
-\`\`\`typescript fct\_label="JavaScript" const colyseus = require("colyseus"); const command = require("@colyseus/command");
+```typescript fct\_label="JavaScript" const colyseus = require("colyseus"); const command = require("@colyseus/command");
 
 const OnJoinCommand = require("./OnJoinCommand");
 
@@ -63,25 +63,25 @@ class MyRoom extends colyseus.Room {
 
   onJoin(client, options) { this.dispatcher.dispatch(new OnJoinCommand(), { sessionId: client.sessionId }); }
 
-  onDispose() { this.dispatcher.stop(); } } \`\`\`
+  onDispose() { this.dispatcher.stop(); } } ```
 
 命令實作看起來像這樣：
 
-\`\`\`typescript fct\_label="TypeScript" // OnJoinCommand.ts import { Command } from "@colyseus/command";
+```typescript fct\_label="TypeScript" // OnJoinCommand.ts import { Command } from "@colyseus/command";
 
 export class OnJoinCommand extends Command<YourState, { sessionId: string }> {
 
   execute({ sessionId }) { this.state.players\[sessionId] = new Player(); }
 
-} \`\`\`
+} ```
 
-\`\`\`typescript fct\_label="JavaScript" // OnJoinCommand.js const command = require("@colyseus/command");
+```typescript fct\_label="JavaScript" // OnJoinCommand.js const command = require("@colyseus/command");
 
 exports.OnJoinCommand = class OnJoinCommand extends command.Command {
 
   execute({ sessionId }) { this.state.players\[sessionId] = new Player(); }
 
-} \`\`\`
+} ```
 
 #### 深入瞭解
 

@@ -26,18 +26,18 @@
 
 ### 房间元数据
 
-本演示使用房间的元数据，通过用户名来追踪游戏内的玩家。当一名玩家加入或创建一个房间时，其用户名将被存储在一个名为 `team0` 或 `team1` 的属性中，`team0` 代表这名玩家创建了房间，`team1` 代表这名玩家加入了可用房间来挑战其创建者。\`\`\` javascript this.metadata.team0 this.metadata.team1
+本演示使用房间的元数据，通过用户名来追踪游戏内的玩家。当一名玩家加入或创建一个房间时，其用户名将被存储在一个名为 `team0` 或 `team1` 的属性中，`team0` 代表这名玩家创建了房间，`team1` 代表这名玩家加入了可用房间来挑战其创建者。``` javascript this.metadata.team0 this.metadata.team1
 
 this.setMetadata({"team0": options\["creatorId"]});
 
-\`\`\`
+```
 
 之后，元数据中设置的用户名将用于筛选大厅中显示的可用房间。在大厅里，用户能够看到他们所创建的任何房间，或者根据房间是否在等待挑战者加入游戏，可以看到可用的房间。非由你创建的房间以及已有两名玩家的房间不会显示在大厅内。
 
-\`\`\` csharp private TanksRoomsAvailable\[] TrimRooms(TanksRoomsAvailable\[] originalRooms) { List<TanksRoomsAvailable> trimmedRooms = new List<TanksRoomsAvailable>(); for (int i = 0; i < originalRooms.Length; ++i) { //Check a rooms metadata.如果是我们自己创建的房间，或者该房间正在等待一名玩家加入，则显示为 TanksRoomMetadata metadata = originalRooms\[i].metadata; if (metadata.team1 == null || (metadata.team1.Equals(ExampleManager.Instance.UserName) || metadata.team0.Equals(ExampleManager.Instance.UserName))) { trimmedRooms.Add(originalRooms\[i]); } }
+``` csharp private TanksRoomsAvailable\[] TrimRooms(TanksRoomsAvailable\[] originalRooms) { List<TanksRoomsAvailable> trimmedRooms = new List<TanksRoomsAvailable>(); for (int i = 0; i < originalRooms.Length; ++i) { //Check a rooms metadata.如果是我们自己创建的房间，或者该房间正在等待一名玩家加入，则显示为 TanksRoomMetadata metadata = originalRooms\[i].metadata; if (metadata.team1 == null || (metadata.team1.Equals(ExampleManager.Instance.UserName) || metadata.team0.Equals(ExampleManager.Instance.UserName))) { trimmedRooms.Add(originalRooms\[i]); } }
 
     return trimmedRooms.ToArray();
-} \`\`\`
+} ```
 
 ![大厅](/demo/turn-based-tanks/Rooms.png)
 
@@ -47,17 +47,17 @@ this.setMetadata({"team0": options\["creatorId"]});
 
 ``` javascript this.autoDispose = false; ```
 
-我们知道，在执行检查确定房间是否应该关闭后，在布尔标志 \\`inProcessOfQuitingGame` 被设置为 true 后断开房间。这些检查会在一名用户离开游戏时执行。\`\`\` javascript
+我们知道，在执行检查确定房间是否应该关闭后，在布尔标志 \`inProcessOfQuitingGame` 被设置为 true 后断开房间。这些检查会在一名用户离开游戏时执行。``` javascript
 
 // 检查创作者是否在其他人加入之前就已经退出了 if(this.metadata.team0 && this.metadata.team1 == null) { disconnectRoom = true; }
 
 // 房间里没有其他用户，所以断开连接 if(this.inProcessOfQuitingGame && this.state.networkedUsers.size <= 1 && this.connectedUsers <= 1) { disconnectRoom = true; }
 	
-// 房间是否应该断开连接？ if(disconnectRoom) { this.disconnect(); } \`\`\`
+// 房间是否应该断开连接？ if(disconnectRoom) { this.disconnect(); } ```
 
 ### 暂停房间
 
-由于这是一个异步游戏的示例，我们的房间可能在任何时间都没有用户连接进来。当没有用户连接至房间时，服务器不需要更新模拟循环。当用户断开与房间的连接时，将执行检查以查看是否不再有用户连接到房间。当没有更多用户连接到房间时，通过将延迟设置为高值，可以有效地暂停模拟间隔。在本示例中，该值略大于 24 天。 \`\`\` javascript
+由于这是一个异步游戏的示例，我们的房间可能在任何时间都没有用户连接进来。当没有用户连接至房间时，服务器不需要更新模拟循环。当用户断开与房间的连接时，将执行检查以查看是否不再有用户连接到房间。当没有更多用户连接到房间时，通过将延迟设置为高值，可以有效地暂停模拟间隔。在本示例中，该值略大于 24 天。 ``` javascript
 
 // 在房间的 `onLeave` 处理程序中// 检查服务器是否应该暂停模拟循环，因为//没有用户连接到房间 let anyConnected: boolean = false; this.state.players.forEach((player, index) => { if(player.connected) { anyConnected = true; } });
 
@@ -75,15 +75,15 @@ private setServerPause(pause: boolean) {
     }
 
     this.serverPaused = pause;
-} \`\`\`
+} ```
 
-当用户重新加入被暂停的房间时，模拟间隔恢复。\`\`\` javascript
+当用户重新加入被暂停的房间时，模拟间隔恢复。``` javascript
 
-// 在房间的 `onJoin` 处理程序中// 检查服务器是否需要解除暂停状态 if(this.serverPaused) { // 服务器目前处于暂停状态，由于有玩家加入连接，因此取消暂停状态 this.setServerPause(false); } \`\`\`
+// 在房间的 `onJoin` 处理程序中// 检查服务器是否需要解除暂停状态 if(this.serverPaused) { // 服务器目前处于暂停状态，由于有玩家加入连接，因此取消暂停状态 this.setServerPause(false); } ```
 
 ### 播放演示
 
-让玩家出生在"TanksLobby"场景，位置是 \\`Assets\TurnBasedTanks\Scenes\TanksLobby`。输入你的用户名并创建房间以开始。**如果你无法进入房间制作界面，请确认你的本地服务器工作正常，并检查 Unity 编辑器的错误日志。**如果你成功了，客户端将加载 "TankArena" 场景。
+让玩家出生在"TanksLobby"场景，位置是 \`Assets\TurnBasedTanks\Scenes\TanksLobby`。输入你的用户名并创建房间以开始。**如果你无法进入房间制作界面，请确认你的本地服务器工作正常，并检查 Unity 编辑器的错误日志。**如果你成功了，客户端将加载 "TankArena" 场景。
 
 - 本演示为异步回合制游戏。
 
@@ -129,8 +129,8 @@ private setServerPause(pause: boolean) {
 
 **Game Rules** 和 **Weapon Data** 的值都可以在游戏代码的`ArenaServer\src\rooms\tanks\rules.ts`中找到。**Game Rules** 控制移动、开火消耗以及玩家拥有多少行动点数。`weaponList` 的数据详细规定了每种武器的最大充能、充能时间、冲击范围以及冲击伤害。
 
-\`\`\`javascript const GameRules = { MaxActionPoints:3, MovementActionPointCost:1, FiringActionPointCost:2, ProjectileSpeed:30, MaxMovement:3, MaxHitPoints:3, MovementTime:2, }
+```javascript const GameRules = { MaxActionPoints:3, MovementActionPointCost:1, FiringActionPointCost:2, ProjectileSpeed:30, MaxMovement:3, MaxHitPoints:3, MovementTime:2, }
 
 const weaponList = \[ { name:"Short Range", maxCharge:5, chargeTime:1, radius:1, impactDamage:1, index:0 }, { name:"Mid Range", maxCharge:8, chargeTime:2, radius:1, impactDamage:1, index:1 }, { name:"Long Range", maxCharge:10, chargeTime:5, radius:1, impactDamage:1, index:2 } ]
 
-\`\`\`
+```

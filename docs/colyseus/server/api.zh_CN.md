@@ -16,13 +16,13 @@ Colyseus 預設使用其內建的 WebSocket 傳輸。查看如何[在此處自�
 
 當透過多個處理序/機器擴展 Colyseus 時，您需要提供一個在線伺服器。詳細了解[可擴縮性](/scalability/)和 \\[`Presence API`](/server/presence/#api)。
 
-\`\`\`typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus";
+```typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus";
 
-const gameServer = new Server({ // ... presence: new RedisPresence() }); \`\`\`
+const gameServer = new Server({ // ... presence: new RedisPresence() }); ```
 
-\`\`\`typescript fct\_label="JavaScript" const colyseus = require("colyseus");
+```typescript fct\_label="JavaScript" const colyseus = require("colyseus");
 
-const gameServer = new colyseus.Server({ // ... presence: new colyseus.RedisPresence() }); \`\`\`
+const gameServer = new colyseus.Server({ // ... presence: new colyseus.RedisPresence() }); ```
 
 目前可用的 Presence 伺服器包括：
 
@@ -42,29 +42,29 @@ const gameServer = new colyseus.Server({ // ... presence: new colyseus.RedisPres
 
 要將 WebSocket 伺服器綁定到的 HTTP 伺服器。您也可以將 [`express`](https://www.npmjs.com/package/express) 用於您的伺服器。
 
-\`\`\`typescript fct\_label="TypeScript" // Colyseus + Express import { Server } from "colyseus"; import { createServer } from "http"; import express from "express"; const port = Number(process.env.port) || 3000;
+```typescript fct\_label="TypeScript" // Colyseus + Express import { Server } from "colyseus"; import { createServer } from "http"; import express from "express"; const port = Number(process.env.port) || 3000;
 
 const app = express(); app.use(express.json());
 
 const gameServer = new Server({ server: createServer(app) });
 
-gameServer.listen(port); \`\`\`
+gameServer.listen(port); ```
 
-\`\`\`typescript fct\_label="JavaScript" // Colyseus + Express const colyseus = require("colyseus"); const http = require("http"); const express = require("express"); const port = process.env.port || 3000;
+```typescript fct\_label="JavaScript" // Colyseus + Express const colyseus = require("colyseus"); const http = require("http"); const express = require("express"); const port = process.env.port || 3000;
 
 const app = express(); app.use(express.json());
 
 const gameServer = new colyseus.Server({ server: http.createServer(app) });
 
-gameServer.listen(port); \`\`\`
+gameServer.listen(port); ```
 
-\`\`\`typescript fct\_label="TypeScript (barebones)" // Colyseus (barebones) import { Server } from "colyseus"; const port = process.env.port || 3000;
+```typescript fct\_label="TypeScript (barebones)" // Colyseus (barebones) import { Server } from "colyseus"; const port = process.env.port || 3000;
 
-const gameServer = new Server(); gameServer.listen(port); \`\`\`
+const gameServer = new Server(); gameServer.listen(port); ```
 
-\`\`\`typescript fct\_label="JavaScript (barebones)" // Colyseus (barebones) const colyseus = require("colyseus"); const port = process.env.port || 3000;
+```typescript fct\_label="JavaScript (barebones)" // Colyseus (barebones) const colyseus = require("colyseus"); const port = process.env.port || 3000;
 
-const gameServer = new colyseus.Server(); gameServer.listen(port); \`\`\`
+const gameServer = new colyseus.Server(); gameServer.listen(port); ```
 
 ---
 
@@ -102,17 +102,17 @@ WebSocket 交換信號前會發生此方法。如果 `verifyClient` 未設定，
     - `code`（數字）當 `result` 為 `false` 時，此欄位會決定要傳送給用戶端的 HTTP 錯誤狀態代碼。
     - `name`（字串）當 `result` 為 `false` 時，此欄位會決定 HTTP 原因說明。
 
-\`\`\`typescript fct\_label="TypeScript" import { Server } from "colyseus";
+```typescript fct\_label="TypeScript" import { Server } from "colyseus";
 
 const gameServer = new Server({ // ...
 
-  verifyClient: function (info, next) { // 驗證 'info' // // - next(false) 將拒絕 websocket 握手 // - next(true) 將接受 websocket 握手 } }); \`\`\`
+  verifyClient: function (info, next) { // 驗證 'info' // // - next(false) 將拒絕 websocket 握手 // - next(true) 將接受 websocket 握手 } }); ```
 
-\`\`\`typescript fct\_label="JavaScript" const colyseus = require("colyseus");
+```typescript fct\_label="JavaScript" const colyseus = require("colyseus");
 
 const gameServer = new colyseus.Server({ // ...
 
-  verifyClient: function (info, next) { // 驗證 'info' // // - next(false) 將拒絕 websocket 握手 // - next(true) 將接受 websocket 握手 } }); \`\`\`
+  verifyClient: function (info, next) { // 驗證 'info' // // - next(false) 將拒絕 websocket 握手 // - next(true) 將接受 websocket 握手 } }); ```
 
 ---
 
@@ -129,11 +129,11 @@ const gameServer = new colyseus.Server({ // ...
 - `--room`:Room` - `Room` 類別
 - `options?: any` \- 房間初始化的自訂選項
 
-\`\`\`typescript // 定義「聊天」房間 gameServer.define("chat", ChatRoom);
+```typescript // 定義「聊天」房間 gameServer.define("chat", ChatRoom);
 
 // 定義「戰鬥」房間 gameServer.define("battle", BattleRoom);
 
-// 使用自訂選項定義「戰鬥」房間 gameServer.define("battle\_woods", BattleRoom, { map: "woods" }); \`\`
+// 使用自訂選項定義「戰鬥」房間 gameServer.define("battle\_woods", BattleRoom, { map: "woods" }); ``
 
 !!!提示「多次定義同一個房間處理程序」 您可以使用不同的 `options` 多次定義同一個房間處理程序。當調用 [Room#onCreate()](/server/room/#oncreate-options) 時，`options` 將包含您在 [Server#define()](/server/api/#define-roomname-string-room-room-options-any) 上指定的合併值 + 房間建立時提供的選項。
 
@@ -223,9 +223,9 @@ const gameServer = new colyseus.Server({ // ...
 
 這是一種在本機開發過程中模擬「滯後」用戶端的便捷方法。
 
-\`\`\`typescript // 確保永遠不要在生產中調用 `simulateLatency()` 方法。if (process.env.NODE\_ENV !== "production") {
+```typescript // 確保永遠不要在生產中調用 `simulateLatency()` 方法。if (process.env.NODE\_ENV !== "production") {
 
-  // 模擬伺服器和用戶端之間的 200 毫秒延遲。 gameServer.simulateLatency(200); }\`\`\`
+  // 模擬伺服器和用戶端之間的 200 毫秒延遲。 gameServer.simulateLatency(200); }```
 
 ## `attach (options: any)`
 
@@ -236,23 +236,23 @@ const gameServer = new colyseus.Server({ // ...
 - `options.server`:要附加 WebSocket 伺服器的 HTTP 伺服器。
 - `options.ws`:要重用的現有 WebSocket 伺服器。
 
-\`\`\`javascript fct\_label="Express" import express from "express"; import { Server } from "colyseus";
+```javascript fct\_label="Express" import express from "express"; import { Server } from "colyseus";
 
 const app = new express(); const gameServer = new Server();
 
-gameServer.attach({ server: app }); \`\`\`
+gameServer.attach({ server: app }); ```
 
-\`\`\`javascript fct\_label="http.createServer" import http from "http"; import { Server } from "colyseus";
+```javascript fct\_label="http.createServer" import http from "http"; import { Server } from "colyseus";
 
 const httpServer = http.createServer(); const gameServer = new Server();
 
-gameServer.attach({ server: httpServer }); \`\`\`
+gameServer.attach({ server: httpServer }); ```
 
-\`\`\`javascript fct\_label="WebSocket.Server" import http from "http"; import express from "express"; import ws from "ws"; import { Server } from "colyseus";
+```javascript fct\_label="WebSocket.Server" import http from "http"; import express from "express"; import ws from "ws"; import { Server } from "colyseus";
 
 const app = express(); const server = http.createServer(app); const wss = new WebSocket.Server({ // your custom WebSocket.Server setup. });
 
-const gameServer = new Server(); gameServer.attach({ ws: wss }); \`\`\`
+const gameServer = new Server(); gameServer.attach({ ws: wss }); ```
 
 
 ## `listen (port: number)`

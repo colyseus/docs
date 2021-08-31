@@ -28,7 +28,7 @@
 
 這個最佳範例示範了具有 `setInterval()`、`setTimeout` 並清除了先前儲存的 `Delayed` 類型執行個體的房間；以及示範了房間時鐘執行個體的 currentTime。在 1 秒後 'Time now ' + `this.clock.currentTime` 是 `console.log`'d，然後在 10 秒後我們會清除間隔：`this.delayedInterval.clear();`。
 
-\`\`\`typescript fct\_label="TypeScript" // Import Delayed import { Room, Client, Delayed } from "colyseus";
+```typescript fct\_label="TypeScript" // Import Delayed import { Room, Client, Delayed } from "colyseus";
 
 export class MyRoom extends Room { // For this example public delayedInterval!:Delayed;
 
@@ -49,7 +49,7 @@ export class MyRoom extends Room { // For this example public delayedInterval!:D
             this.delayedInterval.clear();
         }, 10_000);
     }
-} \`\`\`
+} ```
 
 #### `clock.clear()`
 

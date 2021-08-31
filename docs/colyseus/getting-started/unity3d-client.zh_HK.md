@@ -81,9 +81,9 @@
 ## 房间选项：
 
 - 创建新房间时您可以传入一个房间选项字典，比如开始游戏的最少人数要求，或者要在您服务器上运行的自定义逻辑文件的名称。
-- 选项所属类型为`对象`，并由`字符串`类型进行键控：\`\`csharp Dictionary<string, object> roomOptions = new Dictionary<string, object> { \["YOUR\_ROOM\_OPTION\_1"] = "option 1", \["YOUR\_ROOM\_OPTION\_2"] = "option 2" };
+- 选项所属类型为`对象`，并由`字符串`类型进行键控：``csharp Dictionary<string, object> roomOptions = new Dictionary<string, object> { \["YOUR\_ROOM\_OPTION\_1"] = "option 1", \["YOUR\_ROOM\_OPTION\_2"] = "option 2" };
 
-ExampleRoomState room = await ExampleManager.Instance.JoinOrCreate<ExampleRoomState>(roomName, roomOptions); \`\`\`
+ExampleRoomState room = await ExampleManager.Instance.JoinOrCreate<ExampleRoomState>(roomName, roomOptions); ```
 
 ## 房间事件：
 
@@ -135,21 +135,21 @@ ExampleRoomState room = await ExampleManager.Instance.JoinOrCreate<ExampleRoomSt
 - `ColyseusRoomState`是基本的房间状态，您的房间状态将在该状态的基础上变化。
 - 查看我们的技术示例，了解房间状态数据同步的实现案例，如联网游戏人物，联网用户或房间属性等。[Shooting Gallery  技术演示](https://docs.colyseus.io/demo/shooting-gallery/)
 
-\`\`\`csharp public class ExampleRoomState :Schema { \[Type(0, "map", typeof(MapSchema<ExampleNetworkedEntity>))] public MapSchema<ExampleNetworkedEntity> networkedEntities = new MapSchema<ExampleNetworkedEntity>();
+```csharp public class ExampleRoomState :Schema { \[Type(0, "map", typeof(MapSchema<ExampleNetworkedEntity>))] public MapSchema<ExampleNetworkedEntity> networkedEntities = new MapSchema<ExampleNetworkedEntity>();
     
     [Type(1, "map", typeof(MapSchema<ExampleNetworkedUser>))]
     public MapSchema<ExampleNetworkedUser> networkedUsers = new MapSchema<ExampleNetworkedUser>();
     
     [Type(2, "map", typeof(MapSchema<string>), "string")]
     public MapSchema<string> attributes = new MapSchema<string>();
-} \`\`\`
+} ```
 
 ## 调试
 
 若您在 WebSocket 连接打开时在您的应用程序中设置了断点，则连接将在客户端失活3秒后自动断开。为防止 Websocket 断连，您可使用在开发过程中使用`pingInterval:0` during development:
 
-\`\`\`typescript import { Server, RedisPresence } from "colyseus";
+```typescript import { Server, RedisPresence } from "colyseus";
 
-const gameServer = new Server({ // ... pingInterval:0 // HERE }); \`\`\`
+const gameServer = new Server({ // ... pingInterval:0 // HERE }); ```
 
 请确保生产环境中 `pingInterval` 值高于 `0`。默认的 `pingInterval` 值为 `3000`。

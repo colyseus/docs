@@ -4,7 +4,7 @@
 
 下方是验证 [@colyseus/social](/tools/colyseus-social/#server-side-api) 身份认证令牌，以及检索与用户 id 关联的 `Hero` 记录。
 
-\`\`typescript export class BattleRoom extends Room {
+``typescript export class BattleRoom extends Room {
 
   onCreate(options) { this.levelRequired = 10; }
 
@@ -21,7 +21,7 @@
     return hero;
   }
 
-} \`\`\`
+} ```
 
 客户端在尝试加入房间时会收错误提示：
 

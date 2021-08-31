@@ -19,17 +19,17 @@
 
 - `clientOpts`:redis 客户端选项（主机/凭证）。[查看完整选项列表](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/redis/index.d.ts#L28-L52)。
 
-\`\`\`typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus";
+```typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus";
 
 // This happens on the slave processes. const gameServer = new Server({ // ... presence: new RedisPresence() });
 
-gameServer.listen(2567); \`\`\`
+gameServer.listen(2567); ```
 
-\`\`\`typescript fct\_label="JavaScript" const colyseus = require('colyseus');
+```typescript fct\_label="JavaScript" const colyseus = require('colyseus');
 
 // This happens on the slave processes. const gameServer = new colyseus.Server({ // ... presence: new colyseus.RedisPresence() });
 
-gameServer.listen(2567); \`\`\`
+gameServer.listen(2567); ```
 
 ## API
 

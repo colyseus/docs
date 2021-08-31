@@ -18,21 +18,21 @@ JavaScript/TypeScript SDK 几乎与所有平台兼容：
 
 若您不使用生成工具，推荐从 [GitHub Releases](https://github.com/colyseus/colyseus.js/releases) 下载发布的二进制文件。
 
-\`\`\`html
+```html
 <script src="colyseus.js"></script>
 ```
 
 或者您也可以直接使用 unpkg 加载分布式文件。记得将其中的 `@x.x.x` 内容替换为与您服务器兼容的版本。
 
-\`\`\`html
+```html
 <script src="https://unpkg.com/colyseus.js@^0.14.0/dist/colyseus.js"></script>
 ```
 
 ### 连接至服务器：
 
-\`\`\`ts import * as Colyseus from "colyseus.js"; // not necessary if included via <script> tag.
+```ts import * as Colyseus from "colyseus.js"; // not necessary if included via <script> tag.
 
-var client = new Colyseus.Client('ws://localhost:2567'); \`\`\`
+var client = new Colyseus.Client('ws://localhost:2567'); ```
 
 ### 加入房间：
 

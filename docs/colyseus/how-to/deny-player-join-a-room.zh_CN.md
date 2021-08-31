@@ -4,7 +4,7 @@
 
 您可以在下方看到驗證 [@colyseus/social](/tools/colyseus-social/#server-side-api) 身分驗證令牌並檢索與使用者 ID 關聯的 `Hero` 記錄示例。
 
-\`\`\`typescript export class BattleRoom extends Room {
+```typescript export class BattleRoom extends Room {
 
   onCreate(options) { this.levelRequired = 10; }
 
@@ -21,7 +21,7 @@
     return hero;
   }
 
-} \`\`\`
+} ```
 
 然後用戶端在嘗試加入房間時會收到錯誤：
 

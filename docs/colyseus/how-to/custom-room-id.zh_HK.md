@@ -10,7 +10,7 @@
 
 参见下方代码：
 
-\`\`\`typescript const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+```typescript const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export class MyRoom extends Room<MyRoomState> { // The channel where we register the room IDs. // This can be anything you want, it doesn't have to be `$mylobby`.LOBBY\_CHANNEL = "$mylobby"
 
@@ -46,6 +46,6 @@ export class MyRoom extends Room<MyRoomState> { // The channel where we register
     async onDispose(options: any) {
         this.presence.srem(this.LOBBY_CHANNEL, this.roomId);
     }
-} \`\`\`
+} ```
 
 **警告**：这段代码中存在一个小竞争机制，即调用两个 onCreate 时，其中任一个调用注册前会随机生成相同的代码。这将导致两个不同房间拥有同一个 ID。然而这种竞争是完全不可能发生的（即使有 100 万个活跃的房间且存在随机性，发生的概率仍为 15 万亿分之一）。

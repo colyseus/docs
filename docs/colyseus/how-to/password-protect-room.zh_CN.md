@@ -9,8 +9,8 @@
 
 如果為 `create()` 或 `joinOrCreate()` 提供了密碼，請將房間列表設定為私人：
 
-\`\`\`typescript export class BattleRoom extends Room {
+```typescript export class BattleRoom extends Room {
 
   onCreate(options) { if (options.password) { this.setPrivate(); } }
 
-} \`\`\`
+} ```

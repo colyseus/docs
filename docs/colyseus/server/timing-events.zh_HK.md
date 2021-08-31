@@ -26,7 +26,7 @@
 
 此 MVP 示例展示的房间拥有：`setInterval()`、`setTimeout` 并清理了之前存储的 `Delayed` 类型实例；同时显示房间时钟实例的当前时间。1 秒后'Time now ' + `this.clock.currentTime` 被 `console.log`，之后再过 10 秒我们清理了间隔：`this.delayedInterval.clear();`。
 
-\`\`\`typescript fct\_label="TypeScript" // Import Delayed import { Room, Client, Delayed } from "colyseus";
+```typescript fct\_label="TypeScript" // Import Delayed import { Room, Client, Delayed } from "colyseus";
 
 export class MyRoom extends Room { // For this example public delayedInterval!:Delayed;
 
@@ -47,7 +47,7 @@ export class MyRoom extends Room { // For this example public delayedInterval!:D
             this.delayedInterval.clear();
         }, 10_000);
     }
-} \`\`\`
+} ```
 
 #### `clock.clear()`
 

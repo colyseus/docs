@@ -14,7 +14,7 @@
 
 > 了解如何從 [State Handling](/state/schema/#client-side-schema-generation) 生成您的 `RoomState`
 
-\`\`\`cpp #include "Colyseus/Client.h";
+```cpp #include "Colyseus/Client.h";
 
 Client* client = new Client("ws://localhost:2567"); Room* room;
 
@@ -67,7 +67,7 @@ bool HelloWorld::init() { client = new Client("ws://localhost:2667"); client->jo
 
         std::cout << "Done!" << std::endl;
     });
-} \`\`\`
+} ```
 
 ## 示例
 

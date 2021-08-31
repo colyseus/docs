@@ -6,13 +6,13 @@
 
 下载并安装 [Redis](https://redis.io/topics/quickstart)。使用 `RedisPresence`：
 
-\`\`\`typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus";
+```typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus";
 
-const gameServer = new Server({ // ... presence: new RedisPresence(), }); \`\`\`
+const gameServer = new Server({ // ... presence: new RedisPresence(), }); ```
 
-\`\`\`typescript fct\_label="JavaScript" const colyseus = require("colyseus");
+```typescript fct\_label="JavaScript" const colyseus = require("colyseus");
 
-const gameServer = new colyseus.Server({ // ... presence: new colyseus.RedisPresence(), }); \`\`\`
+const gameServer = new colyseus.Server({ // ... presence: new colyseus.RedisPresence(), }); ```
 
 `presence` 用于从一个进程至另一个进程调用房间"seat reservation"功能，使开发者可以在房间之间利用一些同类数据分享功能。参阅 [Presence API](/server/presence/#api)。
 
@@ -26,13 +26,13 @@ const gameServer = new colyseus.Server({ // ... presence: new colyseus.RedisPres
 
 使用 `MongooseDriver`：
 
-\`\`\`typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus"; import { MongooseDriver } from "@colyseus/mongoose-driver"
+```typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus"; import { MongooseDriver } from "@colyseus/mongoose-driver"
 
-const gameServer = new Server({ // ... driver: new MongooseDriver(), }); \`\`\`
+const gameServer = new Server({ // ... driver: new MongooseDriver(), }); ```
 
-\`\`\`typescript fct\_label="JavaScript" const colyseus = require("colyseus"); const MongooseDriver = require("@colyseus/mongoose-driver").MongooseDriver;
+```typescript fct\_label="JavaScript" const colyseus = require("colyseus"); const MongooseDriver = require("@colyseus/mongoose-driver").MongooseDriver;
 
-const gameServer = new colyseus.Server({ // ... driver: new MongooseDriver(), }); \`\`\`
+const gameServer = new colyseus.Server({ // ... driver: new MongooseDriver(), }); ```
 
 
 您可以将 MongoDB 连接 URI 传输至 `new MongooseDriver(uri)` 构造函数，或设置一个 `MONGO_URI` 环境变量。
@@ -47,17 +47,17 @@ const gameServer = new colyseus.Server({ // ... driver: new MongooseDriver(), })
 
 PM2 提供一个 `NODE_APP_INSTANCE` 环境变量，其中每个进程包含一个不同数字。用其界定您的端口号。
 
-\`\`\`typescript import { Server } from "colyseus";
+```typescript import { Server } from "colyseus";
 
 // binds each instance of the server on a different port. const PORT = Number(process.env.PORT) + Number(process.env.NODE\_APP\_INSTANCE);
 
 const gameServer = new Server({ /* ... \*/ })
 
-gameServer.listen(PORT); console.log("Listening on", PORT); \`\`\`
+gameServer.listen(PORT); console.log("Listening on", PORT); ```
 
 ``` npm install -g pm2 ```
 
-使用如下 `ecosystem.config.js\` 配置：
+使用如下 `ecosystem.config.js` 配置：
 
 ```javascript // ecosystem.config.js const os = require('os'); module.exports = { apps: [{ port :3000, name : "colyseus", script : "lib/index.js", // your entrypoint file watch : true, // optional instances : os.cpus().length, exec\_mode : 'fork', // IMPORTANT: do not use cluster mode. env: { DEBUG: "colyseus:errors", NODE\_ENV: "production", } }] } ```
 
@@ -85,6 +85,6 @@ gameServer.listen(PORT); console.log("Listening on", PORT); \`\`\`
 
 ### 运行代理
 
-\`\`\` colyseus-proxy
+``` colyseus-proxy
 
-> {"name":"redbird","hostname":"Endels-MacBook-Air.local","pid":33390,"level":30,"msg":"Started a Redbird reverse proxy server on port 80","time":"2019-08-20T15:26:19.605Z","v":0} \`\`\`
+> {"name":"redbird","hostname":"Endels-MacBook-Air.local","pid":33390,"level":30,"msg":"Started a Redbird reverse proxy server on port 80","time":"2019-08-20T15:26:19.605Z","v":0} ```

@@ -28,7 +28,7 @@ Heroku 只推薦用於原型設計。您可以透過點擊此按鈕在其上部�
 
 ### Nginx configuration
 
-\`\`\` server { listen 80; server\_name yourdomain.com;
+``` server { listen 80; server\_name yourdomain.com;
 
     location / {
         proxy_pass http://localhost:2567;
@@ -40,13 +40,13 @@ Heroku 只推薦用於原型設計。您可以透過點擊此按鈕在其上部�
         proxy_read_timeout 86400s;
         proxy_send_timeout 86400s;
     }
-} \`\`\`
+} ```
 
 ### 用SSL进行Nginx配置
 
 建议从[LetsEncrypt](https://letsencrypt.org)获取证书。
 
-\`\`\` server { listen 80; listen 443 ssl; server\_name yourdomain.com;
+``` server { listen 80; listen 443 ssl; server\_name yourdomain.com;
 
     ssl_certificate /path/to/your/cert.crt;
     ssl_certificate_key /path/to/your/cert.key;
@@ -61,7 +61,7 @@ Heroku 只推薦用於原型設計。您可以透過點擊此按鈕在其上部�
         proxy_read_timeout 86400s;
         proxy_send_timeout 86400s;
     }
-} \`\`\`
+} ```
 
 ## Apache
 
@@ -73,7 +73,7 @@ Heroku 只推薦用於原型設計。您可以透過點擊此按鈕在其上部�
 
 Virtual host configuration:
 
-\`\`\` <VirtualHost \*:80> ServerName servername.xyz
+``` <VirtualHost \*:80> ServerName servername.xyz
 
     # Redirect all requests received from port 80 to the HTTPS variant (force ssl)
     RewriteEngine On
@@ -106,7 +106,7 @@ Virtual host configuration:
     ProxyPass "/" "http://localhost:APP-PORT-HERE/"
     ProxyPassReverse "/" "http://localhost:APP-PORT-HERE/"
 
-</VirtualHost> \`\`\`
+</VirtualHost> ```
 
 ## greenlock-express
 
@@ -120,7 +120,7 @@ Virtual host configuration:
 
 下面是处理开发及生产环境的推荐方法：
 
-\`\`\`typescript import http from "http"; import express from "express"; import { Server } from "colyseus";
+```typescript import http from "http"; import express from "express"; import { Server } from "colyseus";
 
 function setup(app: express.Application, server: http.Server) { const gameServer = new Server({ server });
 
@@ -141,7 +141,7 @@ if (process.env.NODE\_ENV === "production") { require('greenlock-express') .init
 
   setup(app, server); server.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`)); }
 
-\`\`\`
+```
 
 ## Docker
 
@@ -155,7 +155,7 @@ if (process.env.NODE\_ENV === "production") { require('greenlock-express') .init
 
 **Step 1**安装[Docker](https://www.docker.com/)
 
-**Step 2**在colyseus项目根目录中创建`Dockerfile`\`\`\`dockerfile FROM node:12
+**Step 2**在colyseus项目根目录中创建`Dockerfile````dockerfile FROM node:12
 
 ENV 端口 8080
 
@@ -172,7 +172,7 @@ COPY package\*.json ./
 
 公开 8080
 
-CMD \[ "npm", "start" ] ``` **Step 3** Create `.dockerignore` file in the same directory ``` node\_modules npm-debug.log \`\`\` 这将防止你的本地模块和调试日志被复制到Docker映像上，并可能覆盖安装在映像中的模块。
+CMD \[ "npm", "start" ] ``` **Step 3** Create `.dockerignore` file in the same directory ``` node\_modules npm-debug.log ``` 这将防止你的本地模块和调试日志被复制到Docker映像上，并可能覆盖安装在映像中的模块。
 
 **Step 4**进入存放Dockerfile的目录，运行以下命令构建Docker映像。这个-t标志允许您标记映像，以便稍后使用docker images命令更容易找到：
 
@@ -182,7 +182,7 @@ CMD \[ "npm", "start" ] ``` **Step 3** Create `.dockerignore` file in the same d
 
 ```Output:```
 # 示例
-REPOSITORY TAG ID CREATED node 12 1934b0b038d1 About a minute ago <your username>/colseus-server latest d64d3505b0d2 About a minute ago \`\`\`
+REPOSITORY TAG ID CREATED node 12 1934b0b038d1 About a minute ago <your username>/colseus-server latest d64d3505b0d2 About a minute ago ```
 
 **Step 6**使用下列命令运行Docker Image：``` docker run -p 8080:8080 -d <your username>/colyseus-server ```使用-d运行映像会使容器以分离模式运行，让容器在后台运行。而-p标志将公共端口重定向到容器内的私有端口。
 

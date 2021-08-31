@@ -21,13 +21,13 @@
 
 將其包含至您的專案：
 
-\`\`\`typescript fct\_label="TypeScript" // ... import { monitor } from "@colyseus/monitor";
+```typescript fct\_label="TypeScript" // ... import { monitor } from "@colyseus/monitor";
 
-// ... app.use("/colyseus", monitor()); \`\`\`
+// ... app.use("/colyseus", monitor()); ```
 
-\`\`\`javascript fct\_label="JavaScript" // ... const monitor = require("@colyseus/monitor").monitor;
+```javascript fct\_label="JavaScript" // ... const monitor = require("@colyseus/monitor").monitor;
 
-// ... app.use("/colyseus", monitor()); \`\`\`
+// ... app.use("/colyseus", monitor()); ```
 
 
 ## 使用密碼限制對面板的存取
@@ -38,11 +38,11 @@
 
 使用 `express-basic-auth` 建立使用者和密碼。
 
-\`\`\`typescript import basicAuth from "express-basic-auth";
+```typescript import basicAuth from "express-basic-auth";
 
 const basicAuthMiddleware = basicAuth({ // list of users and passwords users: { "admin": "admin", }, // 傳送 WWW-Authenticate 標頭，其會提示使用者填滿 // challenge: true 中的認證 });
 
-app.use("/colyseus", basicAuthMiddleware, monitor()); \`\`\`
+app.use("/colyseus", basicAuthMiddleware, monitor()); ```
 
 ## 設定自訂房間清單欄
 

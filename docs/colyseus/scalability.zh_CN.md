@@ -6,13 +6,13 @@
 
 下載並安裝 [Redis](https://redis.io/topics/quickstart)。使用 `RedisPresence`：
 
-\`\`\`typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus";
+```typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus";
 
-const gameServer = new Server({ // ... presence: new RedisPresence(), }); \`\`\`
+const gameServer = new Server({ // ... presence: new RedisPresence(), }); ```
 
-\`\`\`typescript fct\_label="JavaScript" const colyseus = require("colyseus");
+```typescript fct\_label="JavaScript" const colyseus = require("colyseus");
 
-const gameServer = new colyseus.Server({ // ... presence: new colyseus.RedisPresence(), }); \`\`\`
+const gameServer = new colyseus.Server({ // ... presence: new colyseus.RedisPresence(), }); ```
 
 `presence` 用於將房間「座位保留」功能從一個處理序調用到另一個處理序，並允許開發人員利用一些跨房間的資料共享功能。請參閱 [Presence API](/server/presence/#api)。
 
@@ -26,13 +26,13 @@ const gameServer = new colyseus.Server({ // ... presence: new colyseus.RedisPres
 
 使用 `MongooseDriver`：
 
-\`\`\`typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus"; import { MongooseDriver } from "@colyseus/mongoose-driver"
+```typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus"; import { MongooseDriver } from "@colyseus/mongoose-driver"
 
-const gameServer = new Server({ // ... driver: new MongooseDriver(), }); \`\`\`
+const gameServer = new Server({ // ... driver: new MongooseDriver(), }); ```
 
-\`\`\`typescript fct\_label="JavaScript" const colyseus = require("colyseus"); const MongooseDriver = require("@colyseus/mongoose-driver").MongooseDriver;
+```typescript fct\_label="JavaScript" const colyseus = require("colyseus"); const MongooseDriver = require("@colyseus/mongoose-driver").MongooseDriver;
 
-const gameServer = new colyseus.Server({ // ... driver: new MongooseDriver(), }); \`\`\`
+const gameServer = new colyseus.Server({ // ... driver: new MongooseDriver(), }); ```
 
 
 您可以將 MongoDB 連接 URI 傳遞給 `new MongooseDriver(uri)` 建構函式，或設定`MONGO_URI` 環境變數。
@@ -47,13 +47,13 @@ const gameServer = new colyseus.Server({ // ... driver: new MongooseDriver(), })
 
 PM2 提供了一個 `NODE_APP_INSTANCE` 環境變數，包含每個處理序的不同編號。用它來定義您的埠口編號。
 
-\`\`\`typescript import { Server } from "colyseus";
+```typescript import { Server } from "colyseus";
 
 // 將伺服器的每個實例綁定到不同的埠口。 const PORT = Number(process.env.PORT) + Number(process.env.NODE\_APP\_INSTANCE);
 
 const gameServer = new Server({ /* ... \*/ })
 
-gameServer.listen(PORT); console.log("Listening on", PORT); \`\`\`
+gameServer.listen(PORT); console.log("Listening on", PORT); ```
 
 ``` npm install -g pm2 ```
 
@@ -85,6 +85,6 @@ gameServer.listen(PORT); console.log("Listening on", PORT); \`\`\`
 
 ### 執行代理
 
-\`\`\` colyseus-proxy
+``` colyseus-proxy
 
-> {"name":"redbird","hostname":"Endels-MacBook-Air.local","pid":33390,"level":30,"msg":"Started a Redbird reverse proxy server on port 80","time":"2019-08-20T15:26:19.605Z","v":0} \`\`\`
+> {"name":"redbird","hostname":"Endels-MacBook-Air.local","pid":33390,"level":30,"msg":"Started a Redbird reverse proxy server on port 80","time":"2019-08-20T15:26:19.605Z","v":0} ```

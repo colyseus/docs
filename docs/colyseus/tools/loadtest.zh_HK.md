@@ -23,7 +23,7 @@
 
 这是一个示例脚本文件。在每个已连接客户端的房间生命周期事件基础上，可以实现一个“bot”，与房间互动。
 
-\`\`\`typescript fct\_label="TypeScript" // script.ts import { Room, Client } from "colyseus.js";
+```typescript fct\_label="TypeScript" // script.ts import { Room, Client } from "colyseus.js";
 
 export function requestJoinOptions (this:Client, i: number) { return { requestNumber: i }; }
 
@@ -38,9 +38,9 @@ export function onLeave(this:Room) { console.log(this.sessionId, "left."); }
 
 export function onError(this:Room, err) { console.error(this.sessionId, "!!ERROR !!", err.message); }
 
-export function onStateChange(this:Room, state) { } \`\`\`
+export function onStateChange(this:Room, state) { } ```
 
-\`\`\`typescript fct\_label="JavaScript" // script.js exports.requestJoinOptions = function (i) { return { requestNumber: i }; }
+```typescript fct\_label="JavaScript" // script.js exports.requestJoinOptions = function (i) { return { requestNumber: i }; }
 
 exports.onJoin = function () { console.log(this.sessionId, "joined.");
 
@@ -53,7 +53,7 @@ exports.onLeave = function () { console.log(this.sessionId, "left."); }
 
 exports.onError = function (err) { console.log(this.sessionId, "!!ERROR !!", err.message); }
 
-exports.onStateChange = function (state) { } \`\`\`
+exports.onStateChange = function (state) { } ```
 
 ### 50 个客户端连接进入 `"battle"` 房间
 

@@ -16,9 +16,9 @@
 
 确保你在 `"compilerOptions"` 下拥有`"esModuleInterop": true`：
 
-\`\`\`json // ...
+```json // ...
 
-  /* 在这里添加你的自定义配置。 \*/ "compilerOptions": { // ... "esModuleInterop": true // ... } // ... \`\`\`
+  /* 在这里添加你的自定义配置。 \*/ "compilerOptions": { // ... "esModuleInterop": true // ... } // ... ```
 
 ## 3\.从扩展中导入
 
@@ -30,7 +30,7 @@
 
 将下方内容以 `NetworkManager.ts` 保存在你的 `assets` 文件夹下。
 
-\`\`\`typescript import { \_decorator, Component, Node } from 'cc'; const { ccclass, property } = \_decorator;
+```typescript import { \_decorator, Component, Node } from 'cc'; const { ccclass, property } = \_decorator;
 
 import Colyseus from 'db://colyseus-sdk/colyseus.js';
 
@@ -67,7 +67,7 @@ import Colyseus from 'db://colyseus-sdk/colyseus.js';
             console.error(e);
         }
     }
-} \`\`\`
+} ```
 
 你现在可以将 `NetworkManager` 作为附件附加到任何来自 Cocos Creator 的节点。 
 

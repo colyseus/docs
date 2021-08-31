@@ -19,17 +19,17 @@
 
 3. 导入和显示 `@colyseus/social` 提供的 Express 路径。
 
-\`\`\`typescript fct\_label="TypeScript" import express from "express"; import socialRoutes from "@colyseus/social/express"
+```typescript fct\_label="TypeScript" import express from "express"; import socialRoutes from "@colyseus/social/express"
 
 const app = express(); app.use("/", socialRoutes);
 
-app.listen(8080); \`\`\`
+app.listen(8080); ```
 
-\`\`\`typescript fct\_label="JavaScript" const express = require("express"); const socialRoutes = require("@colyseus/social/express").default;
+```typescript fct\_label="JavaScript" const express = require("express"); const socialRoutes = require("@colyseus/social/express").default;
 
 const app = express(); app.use("/", socialRoutes);
 
-app.listen(8080); \`\`\`
+app.listen(8080); ```
 
 ## 服务器端配置
 
@@ -47,7 +47,7 @@ app.listen(8080); \`\`\`
 
 ### 实现 `onAuth` 以检索当前用户
 
-\`\`\`typescript import { User, verifyToken } from "@colyseus/social";
+```typescript import { User, verifyToken } from "@colyseus/social";
 
 class MyRoom extends Room {
 
@@ -59,7 +59,7 @@ class MyRoom extends Room {
 
   onJoin(client, options, user) { console.log(user.username, "has joined the room!"); }
 
-} \`\`\`
+} ```
 
 ### 挂钩
 
@@ -67,17 +67,17 @@ class MyRoom extends Room {
 
 在用户登录或注册之前，触发 `beforeAuthenticate` 挂钩。
 
-\`\`\`typescript import { hooks } from "@colyseus/social";
+```typescript import { hooks } from "@colyseus/social";
 
-hooks.beforeAuthenticate((provider, $setOnInsert, $set) => { // assign default metadata upon registration $setOnInsert.metadata = { coins:100, trophies:0 }; }); \`\`\`
+hooks.beforeAuthenticate((provider, $setOnInsert, $set) => { // assign default metadata upon registration $setOnInsert.metadata = { coins:100, trophies:0 }; }); ```
 
 #### `hooks.beforeUserUpdate`
 
 在用户 [通过 save() 方法](#update-user-data) 更新自己的信息之前，触发 `beforeUserUpdate` 挂钩。
 
-\`\`\`typescript import Filter from "bad-words"; const filter = new Filter();
+```typescript import Filter from "bad-words"; const filter = new Filter();
 
-hooks.beforeUserUpdate((\_id, fields) => { if (fields\['username'] && filter.isProfane(fields\['username'])) { throw new Error("no\_swearing\_allowed"); } }) \`\`\`
+hooks.beforeUserUpdate((\_id, fields) => { if (fields\['username'] && filter.isProfane(fields\['username'])) { throw new Error("no\_swearing\_allowed"); } }) ```
 
 ## 客户端 API
 
@@ -105,15 +105,15 @@ hooks.beforeUserUpdate((\_id, fields) => { if (fields\['username'] && filter.isP
 
 #### Facebook
 
-\`\`\`javascript fct\_label="JavaScript" // // Make sure you have the Facebook SDK installed and configured first // - https://developers.facebook.com/docs/javascript/quickstart // - https://developers.facebook.com/docs/facebook-login/web //
+```javascript fct\_label="JavaScript" // // Make sure you have the Facebook SDK installed and configured first // - https://developers.facebook.com/docs/javascript/quickstart // - https://developers.facebook.com/docs/facebook-login/web //
 
 FB.login(function(response) { if (response.authResponse) { client.auth.login({ accessToken: response.authResponse.accessToken }); } }, { scope: 'public\_profile,email,user\_friends' });
 
-\`\`\`
+```
 
-\`\`\`csharp fct\_label="C#" // // Make sure you have the Facebook SDK installed and configured first // - https://developers.facebook.com/docs/unity/gettingstarted // - https://developers.facebook.com/docs/unity/examples#login // var perms = new List<string>(){"public\_profile", "email", "user\_friends"}; FB.LogInWithReadPermissions(perms, AuthCallback);
+```csharp fct\_label="C#" // // Make sure you have the Facebook SDK installed and configured first // - https://developers.facebook.com/docs/unity/gettingstarted // - https://developers.facebook.com/docs/unity/examples#login // var perms = new List<string>(){"public\_profile", "email", "user\_friends"}; FB.LogInWithReadPermissions(perms, AuthCallback);
 
-private void AuthCallback (ILoginResult result) { if (FB.IsLoggedIn) { client.Auth.Login(Facebook.Unity.AccessToken.CurrentAccessToken); } } \`\`\`
+private void AuthCallback (ILoginResult result) { if (FB.IsLoggedIn) { client.Auth.Login(Facebook.Unity.AccessToken.CurrentAccessToken); } } ```
 
 ```lua fct_label="lua" client.auth:facebook_login(function(err, auth) pprint(auth) end) ```
 

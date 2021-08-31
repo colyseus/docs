@@ -10,21 +10,21 @@
 
 ### 正在定義`結構描述`結構
 
-\`\`\`typescript fct\_label="TypeScript" // MyState.ts import { Schema, type } from "@colyseus/schema";
+```typescript fct\_label="TypeScript" // MyState.ts import { Schema, type } from "@colyseus/schema";
 
-export class MyState extends Schema { @type("string") currentTurn: string; } \`\`\`
+export class MyState extends Schema { @type("string") currentTurn: string; } ```
 
-\`\`\`typescript fct\_label="JavaScript" // MyState.ts const schema = require('@colyseus/schema'); const Schema = schema.Schema;
+```typescript fct\_label="JavaScript" // MyState.ts const schema = require('@colyseus/schema'); const Schema = schema.Schema;
 
-class MyState extends Schema { } schema.defineTypes(MyState, { currentTurn: "string" }); \`\`\`
+class MyState extends Schema { } schema.defineTypes(MyState, { currentTurn: "string" }); ```
 
 !!!提示「_」`@type()` 關鍵字是什麼？我從沒看過這種東西！「_」 您在此頁看到大量使用的 `@type()`，是即將推出 的JavaScript 功能，其尚未由 TC39 正式建立。`type` 其實只是個從 `@colyseus/schema` 模組匯入的函式。透過使用在屬性層級的 `@` 前置詞來調用 `type`，表示我們正在將其調用作為_屬性裝飾項目_。[在這裡查看裝飾項目提案](https://github.com/tc39/proposal-decorators)。 
 
 ### 使用您`房間`內的狀態
 
-\`\`\`typescript // MyRoom.ts import { Room } from "colyseus"; import { MyState } from "./MyState";
+```typescript // MyRoom.ts import { Room } from "colyseus"; import { MyState } from "./MyState";
 
-export class MyRoom extends Room<MyState> { onCreate() { this.setState(new MyState()); } } \`\`\`
+export class MyRoom extends Room<MyState> { onCreate() { this.setState(new MyState()); } } ```
 
 
 ## 使用結構描述
@@ -49,13 +49,13 @@ export class MyRoom extends Room<MyState> { onCreate() { this.setState(new MySta
 
 複雜類型由其他結構描述執行個體內的`結構描述`執行個體所組成。其也包含[項目集合](#collections-of-items)（陣列、對應等等）
 
-\`\`\`typescript fct\_label="TypeScript" import { Schema, type } from "@colyseus/schema";
+```typescript fct\_label="TypeScript" import { Schema, type } from "@colyseus/schema";
 
 class World extends Schema { @type("number") width: number; @type("number") height: number; @type("number") items: number = 10; }
 
-class MyState extends Schema { @type(World) world:World = new World(); } \`\`\`
+class MyState extends Schema { @type(World) world:World = new World(); } ```
 
-\`\`\`typescript fct\_label="JavaScript" const schema = require('@colyseus/schema'); const Schema = schema.Schema;
+```typescript fct\_label="JavaScript" const schema = require('@colyseus/schema'); const Schema = schema.Schema;
 
 class World extends Schema { } schema.defineTypes(World, { width: "number", height: "number", items: "number" });
 
@@ -63,7 +63,7 @@ class MyState extends Schema { constructor () { super();
 
         this.world = new World();
     }
-} schema.defineTypes(MyState, { world:World }); \`\`\`
+} schema.defineTypes(MyState, { world:World }); ```
 
 ## 項目集合
 
@@ -73,13 +73,13 @@ class MyState extends Schema { constructor () { super();
 
 **範例自訂`結構描述`類型的陣列**
 
-\`\`\`typescript fct\_label="TypeScript" import { Schema, ArraySchema, type } from "@colyseus/schema";
+```typescript fct\_label="TypeScript" import { Schema, ArraySchema, type } from "@colyseus/schema";
 
 class Block extends Schema { @type("number") x: number; @type("number") y: number; }
 
-class MyState extends Schema { @type(\[ Block ]) blocks = new ArraySchema<Block>(); } \`\`\`
+class MyState extends Schema { @type(\[ Block ]) blocks = new ArraySchema<Block>(); } ```
 
-\`\`\`typescript fct\_label="JavaScript" const schema = require('@colyseus/schema'); const Schema = schema.Schema; const ArraySchema = schema.ArraySchema;
+```typescript fct\_label="JavaScript" const schema = require('@colyseus/schema'); const Schema = schema.Schema; const ArraySchema = schema.ArraySchema;
 
 class Block extends Schema { } schema.defineTypes(Block, { x: "number", y: "number" });
 
@@ -87,23 +87,23 @@ class MyState extends Schema { constructor () { super();
 
         this.blocks = new ArraySchema();
     }
-} schema.defineTypes(MyState, { blocks: \[ Block ], }); \`\`\`
+} schema.defineTypes(MyState, { blocks: \[ Block ], }); ```
 
 **範例基本類型的陣列**
 
 您無法在陣列內混合類型。
 
-\`\`\`typescript fct\_label="TypeScript" import { Schema, ArraySchema, type } from "@colyseus/schema";
+```typescript fct\_label="TypeScript" import { Schema, ArraySchema, type } from "@colyseus/schema";
 
-class MyState extends Schema { @type(\[ "string" ]) animals = new ArraySchema<string>(); } \`\`\`
+class MyState extends Schema { @type(\[ "string" ]) animals = new ArraySchema<string>(); } ```
 
-\`\`\`typescript fct\_label="JavaScript" const schema = require('@colyseus/schema'); const Schema = schema.Schema; const ArraySchema = schema.ArraySchema;
+```typescript fct\_label="JavaScript" const schema = require('@colyseus/schema'); const Schema = schema.Schema; const ArraySchema = schema.ArraySchema;
 
 class MyState extends Schema { constructor () { super();
 
         this.animals = new ArraySchema();
     }
-} schema.defineTypes(MyState, { animals: \[ "string" ], }); \`\`\`
+} schema.defineTypes(MyState, { animals: \[ "string" ], }); ```
 
 ---
 
@@ -119,9 +119,9 @@ class MyState extends Schema { constructor () { super();
 
 自陣列移除最後的元素，並傳回該元素。此方法會變更陣列的長度。
 
-\`\`\`typescript animals.pop(); // output: "cows"
+```typescript animals.pop(); // output: "cows"
 
-animals.length // output:3 \`\`\`
+animals.length // output:3 ```
 
 ---
 
@@ -129,9 +129,9 @@ animals.length // output:3 \`\`\`
 
 自陣列移除首個元素，並傳回該移除的元素。此方法會變更陣列的長度。
 
-\`\`\`typescript animals.shift(); // output: "pigs"
+```typescript animals.shift(); // output: "pigs"
 
-animals.length // output:2 \`\`\`
+animals.length // output:2 ```
 
 ---
 
@@ -155,9 +155,9 @@ animals.length // output:2 \`\`\`
 
 透過移除或取代現有元素和/或[就地](https://en.wikipedia.org/wiki/In-place_algorithm)新增元素，變更陣列的內容。
 
-\`\`\`typescript // find the index of the item you'd like to remove const itemIndex = animals.findIndex((animal) => animal === "sheeps");
+```typescript // find the index of the item you'd like to remove const itemIndex = animals.findIndex((animal) => animal === "sheeps");
 
-// remove it! animals.splice(itemIndex, 1); \`\`\`
+// remove it! animals.splice(itemIndex, 1); ```
 
 ---
 
@@ -165,9 +165,9 @@ animals.length // output:2 \`\`\`
 
 逐一查看陣列的各個元素。
 
-\`\`\`typescript fct\_label="TypeScript" this.state.array1 = new ArraySchema<string>('a', 'b', 'c');
+```typescript fct\_label="TypeScript" this.state.array1 = new ArraySchema<string>('a', 'b', 'c');
 
-this.state.array1.forEach(element => { console.log(element); }); // output: "a" // output: "b" // output: "c" \`\`\`
+this.state.array1.forEach(element => { console.log(element); }); // output: "a" // output: "b" // output: "c" ```
 
 ```csharp fct_label="C#" State.array1.ForEach((value) => { Debug.Log(value); }) ```
 
@@ -185,13 +185,13 @@ this.state.array1.forEach(element => { console.log(element); }); // output: "a" 
 
 !!!警告「目前僅支援字串索引鍵」目前 `MapSchema` 只允許您自訂值類型。索引鍵類型一律為`字串`。
 
-\`\`\`typescript fct\_label="TypeScript" import { Schema, MapSchema, type } from "@colyseus/schema";
+```typescript fct\_label="TypeScript" import { Schema, MapSchema, type } from "@colyseus/schema";
 
 class Player extends Schema { @type("number") x: number; @type("number") y: number; }
 
-class MyState extends Schema { @type({ map:Player }) players = new MapSchema<Player>(); } \`\`\`
+class MyState extends Schema { @type({ map:Player }) players = new MapSchema<Player>(); } ```
 
-\`\`\`typescript fct\_label="JavaScript" const schema = require('@colyseus/schema'); const Schema = schema.Schema; const MapSchema = schema.MapSchema;
+```typescript fct\_label="JavaScript" const schema = require('@colyseus/schema'); const Schema = schema.Schema; const MapSchema = schema.MapSchema;
 
 class Player extends Schema { } schema.defineTypes(Player, { x: "number", y: "number" });
 
@@ -199,7 +199,7 @@ class MyState extends Schema { constructor () { super();
 
         this.players = new MapSchema();
     }
-} schema.defineTypes(MyState, { players: { map:Player } }); \`\`\`
+} schema.defineTypes(MyState, { players: { map:Player } }); ```
 
 ---
 
@@ -243,9 +243,9 @@ OR
 
 傳回 `MapSchema` 物件中的元素數。
 
-\`\`\`typescript const map = new MapSchema<number>(); map.set("one", 1); map.set("two", 2);
+```typescript const map = new MapSchema<number>(); map.set("one", 1); map.set("two", 2);
 
-console.log(map.size); // output:2 \`\`\`
+console.log(map.size); // output:2 ```
 
 ---
 
@@ -270,15 +270,15 @@ console.log(map.size); // output:2 \`\`\`
 
 `SetSchema` 是內建 JavaScript [集合](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set)類型的可同步版本。
 
-`SetSchema` 的使用方式與 \[\`CollectionSchema\`] 非常相似，最大的差異在於集合保留唯一的值。集合並沒有直接存取值的方式。（如 [collection.at()](#collectionat)）
+`SetSchema` 的使用方式與 \[`CollectionSchema`] 非常相似，最大的差異在於集合保留唯一的值。集合並沒有直接存取值的方式。（如 [collection.at()](#collectionat)）
 
-\`\`\`typescript fct\_label="TypeScript" import { Schema, SetSchema, type } from "@colyseus/schema";
+```typescript fct\_label="TypeScript" import { Schema, SetSchema, type } from "@colyseus/schema";
 
 class Effect extends Schema { @type("number") radius: number; }
 
-class Player extends Schema { @type({ set:Effect }) effects = new SetSchema<Effect>(); } \`\`\`
+class Player extends Schema { @type({ set:Effect }) effects = new SetSchema<Effect>(); } ```
 
-\`\`\`typescript fct\_label="JavaScript" const schema = require('@colyseus/schema'); const Schema = schema.Schema; const SetSchema = schema.SetSchema;
+```typescript fct\_label="JavaScript" const schema = require('@colyseus/schema'); const Schema = schema.Schema; const SetSchema = schema.SetSchema;
 
 class Effect extends Schema { } schema.defineTypes(Effect, { radius: "number", });
 
@@ -286,7 +286,7 @@ class Player extends Schema { constructor () { super();
 
         this.effects = new SetSchema();
     }
-} schema.defineTypes(Player, { effects: { set:Effect } }); \`\`\`
+} schema.defineTypes(Player, { effects: { set:Effect } }); ```
 
 ---
 
@@ -302,9 +302,9 @@ class Player extends Schema { constructor () { super();
 
 在指定的`索引`取得項目。
 
-\`\`\`typescript const set = new CollectionSchema<string>(); set.add("one"); set.add("two"); set.add("three");
+```typescript const set = new CollectionSchema<string>(); set.add("one"); set.add("two"); set.add("three");
 
-set.at(1); // output: "two" \`\`\`
+set.at(1); // output: "two" ```
 
 ---
 
@@ -328,9 +328,9 @@ set.at(1); // output: "two" \`\`\`
 
 傳回 `SetSchema` 物件中的元素數。
 
-\`\`\`typescript const set = new SetSchema<number>(); set.add(10); set.add(20); set.add(30);
+```typescript const set = new SetSchema<number>(); set.add(10); set.add(20); set.add(30);
 
-console.log(set.size); // output:3 \`\`\`
+console.log(set.size); // output:3 ```
 
 !!!注意「集合的更多可用方法」請查看 [MDN 文件](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/)。
 
@@ -341,13 +341,13 @@ console.log(set.size); // output:3 \`\`\`
 
 `CollectionSchema` 的運作方式與 `ArraySchema` 相似，請警惕，你無法控制其索引。
 
-\`\`\`typescript fct\_label="TypeScript" import { Schema, CollectionSchema, type } from "@colyseus/schema";
+```typescript fct\_label="TypeScript" import { Schema, CollectionSchema, type } from "@colyseus/schema";
 
 class Item extends Schema { @type("number") damage: number; }
 
-class Player extends Schema { @type({ collection:Item }) items = new CollectionSchema<Item>(); } \`\`\`
+class Player extends Schema { @type({ collection:Item }) items = new CollectionSchema<Item>(); } ```
 
-\`\`\`typescript fct\_label="JavaScript" const schema = require('@colyseus/schema'); const Schema = schema.Schema; const CollectionSchema = schema.CollectionSchema;
+```typescript fct\_label="JavaScript" const schema = require('@colyseus/schema'); const Schema = schema.Schema; const CollectionSchema = schema.CollectionSchema;
 
 class Item extends Schema { } schema.defineTypes(Item, { damage: "number", });
 
@@ -355,7 +355,7 @@ class Player extends Schema { constructor () { super();
 
         this.items = new CollectionSchema();
     }
-} schema.defineTypes(Player, { items: { collection:Item } }); \`\`\`
+} schema.defineTypes(Player, { items: { collection:Item } }); ```
 
 ---
 
@@ -371,9 +371,9 @@ class Player extends Schema { constructor () { super();
 
 在指定的`索引`取得項目。
 
-\`\`\`typescript const collection = new CollectionSchema<string>(); collection.add("one"); collection.add("two"); collection.add("three");
+```typescript const collection = new CollectionSchema<string>(); collection.add("one"); collection.add("two"); collection.add("three");
 
-collection.at(1); // output: "two" \`\`\`
+collection.at(1); // output: "two" ```
 
 ---
 
@@ -397,9 +397,9 @@ collection.at(1); // output: "two" \`\`\`
 
 在 `CollectionSchema` 物件內傳回元素數。
 
-\`\`\`typescript const collection = new CollectionSchema<number>(); collection.add(10); collection.add(20); collection.add(30);
+```typescript const collection = new CollectionSchema<number>(); collection.add(10); collection.add(20); collection.add(30);
 
-console.log(collection.size); // output:3 \`\`\`
+console.log(collection.size); // output:3 ```
 
 ---
 
@@ -425,7 +425,7 @@ console.log(collection.size); // output:3 \`\`\`
 
 以下為 `@filter()` 簽署的形式：
 
-\`\`\`typescript fct\_label="TypeScript" class State extends Schema { @filter(function(client, value, root) { // client is: // // the current client that's going to receive this data. you may use its // client.sessionId, or other information to decide whether this value is // going to be synched or not.
+```typescript fct\_label="TypeScript" class State extends Schema { @filter(function(client, value, root) { // client is: // // the current client that's going to receive this data. you may use its // client.sessionId, or other information to decide whether this value is // going to be synched or not.
 
         // value is:
         // the value of the field @filter() is being applied to
@@ -436,9 +436,9 @@ console.log(collection.size); // output:3 \`\`\`
         // synched or not.
     })
     @type("string") field: string;
-} \`\`\`
+} ```
 
-\`\`\`typescript fct\_label="JavaScript" const schema = require('@colyseus/schema'); class State extends schema.Schema {}
+```typescript fct\_label="JavaScript" const schema = require('@colyseus/schema'); class State extends schema.Schema {}
 
 schema.defineTypes(State, { field: "string" });
 
@@ -452,13 +452,13 @@ schema.filter(function(client, value, root) { // client is: // // the current cl
     // structures in the process of decision whether this value is going to be
     // synched or not.
     return true;
-})(State.prototype, "field"); \`\`\`
+})(State.prototype, "field"); ```
 
 ### `@filterChildren()` property decorator
 
 `@filterChildren()` 屬性裝飾項目可用於篩選陣列、地圖、集合等內的項目。其簽署與 `@filter()` 非常相似，只是在代表 [ArraySchema](#arrayschema)、[MapSchema](#mapschema)、{7>CollectionSchema<7} 等內每個項目的`值`前多了`索引鍵`參數。
 
-\`\`\`typescript fct\_label="TypeScript" class State extends Schema { @filterChildren(function(client, key, value, root) { // 用戶端為：// // 要接收此資料的目前用戶端。你可以使用其 // client.sessionId 或其他資訊以決定此值是否 // 要進行同步。
+```typescript fct\_label="TypeScript" class State extends Schema { @filterChildren(function(client, key, value, root) { // 用戶端為：// // 要接收此資料的目前用戶端。你可以使用其 // client.sessionId 或其他資訊以決定此值是否 // 要進行同步。
 
         // key is:
         // the key of the current value inside the structure
@@ -472,9 +472,9 @@ schema.filter(function(client, value, root) { // client is: // // the current cl
         // synched or not.
     })
     @type([Cards]) cards = new ArraySchema<Card>();
-} \`\`\`
+} ```
 
-\`\`\`typescript fct\_label="JavaScript" const schema = require('@colyseus/schema'); class State extends schema.Schema {}
+```typescript fct\_label="JavaScript" const schema = require('@colyseus/schema'); class State extends schema.Schema {}
 
 schema.defineTypes(State, { cards: \[Card] });
 
@@ -491,13 +491,13 @@ schema.filterChildren(function(client, key, value, root) { // 用戶端為：// 
     // structures in the process of decision whether this value is going to be
     // synched or not.
     return true;
-})(State.prototype, "cards"); \`\`\`
+})(State.prototype, "cards"); ```
 
 **範例：**在卡牌遊戲中，每張牌的相關資料應僅供該卡片所有人存取，或在特定情況存取（例如：卡牌已丟棄）
 
 查看 `@filter()` 回呼簽署：
 
-\`\`\`typescript fct\_label="TypeScript" import { Client } from "colyseus";
+```typescript fct\_label="TypeScript" import { Client } from "colyseus";
 
 class Card extends Schema { @type("string") owner: string; // contains the sessionId of Card owner @type("boolean") discarded: boolean = false;
 
@@ -514,13 +514,13 @@ class Card extends Schema { @type("string") owner: string; // contains the sessi
         return this.discarded || this.owner === client.sessionId;
     })
     @type("uint8") number: number;
-} \`\`\`
+} ```
 
-\`\`\`typescript fct\_label="JavaScript" const schema = require('@colyseus/schema');
+```typescript fct\_label="JavaScript" const schema = require('@colyseus/schema');
 
 class Card extends schema.Schema {} schema.defineTypes(Card, { owner: "string", discarded: "boolean", number: "uint8" });
 
-/\** * 請勿在 `@filter` 內使用箭號函式 * （這會強制產生`這種`的不同範圍） \*/ schema.filter(function(client, value, root) { return this.discarded || this.owner === client.sessionId; })(Card.prototype, "number"); \`\`\`
+/\** * 請勿在 `@filter` 內使用箭號函式 * （這會強制產生`這種`的不同範圍） \*/ schema.filter(function(client, value, root) { return this.discarded || this.owner === client.sessionId; })(Card.prototype, "number"); ```
 
 ## 用戶端
 
@@ -542,7 +542,7 @@ class Card extends schema.Schema {} schema.defineTypes(Card, { owner: "string", 
 
 `onAdd` 回呼只能用於項目集合（`MapSchema`、`MapSchema` 等等）。`onAdd` 回呼會使用新執行個體以及其在預留位置物件作為引數的索引鍵進行呼叫。
 
-\`\`\`javascript fct\_label="JavaScript" room.state.players.onAdd = (player, key) => { console.log(player, "has been added at", key);
+```javascript fct\_label="JavaScript" room.state.players.onAdd = (player, key) => { console.log(player, "has been added at", key);
 
     // add your player entity to the game world!
 
@@ -557,9 +557,9 @@ class Card extends schema.Schema {} schema.defineTypes(Card, { owner: "string", 
 
     // force "onChange" to be called immediatelly
     player.triggerAll();
-}; \`\`\`
+}; ```
 
-\`\`\`lua fct\_label="LUA" room.state.players\['on\_add'] = function (player, key) print("player has been added at", key);
+```lua fct\_label="LUA" room.state.players\['on\_add'] = function (player, key) print("player has been added at", key);
 
     -- add your player entity to the game world!
 
@@ -574,9 +574,9 @@ class Card extends schema.Schema {} schema.defineTypes(Card, { owner: "string", 
 
     -- force "on_change" to be called immediatelly
     player.trigger_all()
-end \`\`\`
+end ```
 
-\`\`\`csharp fct\_label="C#" room.State.players.OnAdd += (Player player, string key) => { Debug.Log("player has been added at " + key);
+```csharp fct\_label="C#" room.State.players.OnAdd += (Player player, string key) => { Debug.Log("player has been added at " + key);
 
     // add your player entity to the game world!
 
@@ -593,7 +593,7 @@ end \`\`\`
 
     // force "OnChange" to be called immediatelly
     e.Value.TriggerAll();
-}; \`\`\`
+}; ```
 
 ---
 
@@ -601,20 +601,20 @@ end \`\`\`
 
 `onRemove` 回呼只能用於 (`MapSchema`) 和陣列 (`ArraySchema`)。`onRemove` 回呼會使用移除的執行個體以及其在預留位置物件作為引數的索引鍵進行呼叫。
 
-\`\`\`javascript fct\_label="JavaScript" room.state.players.onRemove = (player, key) => { console.log(player, "has been removed at", key);
+```javascript fct\_label="JavaScript" room.state.players.onRemove = (player, key) => { console.log(player, "has been removed at", key);
 
     // remove your player entity from the game world!
-}; \`\`\`
+}; ```
 
-\`\`\`lua fct\_label="LUA" room.state.players\['on\_remove'] = function (player, key) print("player has been removed at " .. key);
+```lua fct\_label="LUA" room.state.players\['on\_remove'] = function (player, key) print("player has been removed at " .. key);
 
     -- remove your player entity from the game world!
-end \`\`\`
+end ```
 
-\`\`\`csharp fct\_label="C#" room.State.players.OnRemove += (Player player, string key) => { Debug.Log("player has been removed at " + key);
+```csharp fct\_label="C#" room.State.players.OnRemove += (Player player, string key) => { Debug.Log("player has been removed at " + key);
 
     // remove your player entity from the game world!
-}; \`\`\`
+}; ```
 
 ---
 
@@ -671,9 +671,9 @@ end \`\`\`
 `.listen()` 方法傳回代表取消登錄接聽程式的函式。
 
 
-\`\`\`typescript const removeListener = state.listen("currentTurn", (currentValue, previousValue) => { // ... });
+```typescript const removeListener = state.listen("currentTurn", (currentValue, previousValue) => { // ... });
 
-// 如果您稍後不再需要接聽程式，您可以呼叫 `removeListener()` 以停止接聽 `"currentTurn"` 變更。removeListener(); \`\`\`
+// 如果您稍後不再需要接聽程式，您可以呼叫 `removeListener()` 以停止接聽 `"currentTurn"` 變更。removeListener(); ```
 
 **`接聽`和 `onChange` 間有甚麼差異？**
 
@@ -699,13 +699,13 @@ end \`\`\`
 
 **Output:**
 
-\`\`\` schema-codegen \[path/to/Schema.ts]
+``` schema-codegen \[path/to/Schema.ts]
 
 Usage (C#/Unity) schema-codegen src/Schema.ts --output client-side/ --csharp --namespace MyGame.Schema
 
 Valid options: --output: fhe output directory for generated client-side schema files --csharp: generate for C#/Unity --cpp: generate for C++ --haxe: generate for Haxe --ts: generate for TypeScript --js: generate for JavaScript --java: generate for Java
 
-Optional: --namespace: generate namespace on output code \`\`\`
+Optional: --namespace: generate namespace on output code ```
 
 ### 範例：Unity / C# 
 
@@ -727,19 +727,19 @@ Optional: --namespace: generate namespace on output code \`\`\`
 
 透過在現有結構末端宣告新欄位，可能實現向前/向後傳遞相容性，且不會移除早期宣告，但在有需要時會標記 `@deprecated()`。查看以下的版本管理範例。
 
-\`\`\`typescript fct\_label="Live version 1" import { Schema, type, deprecated } from "@colyseus/schema";
+```typescript fct\_label="Live version 1" import { Schema, type, deprecated } from "@colyseus/schema";
 
-class MyState extends Schema { @type("string") myField: string; } \`\`\`
+class MyState extends Schema { @type("string") myField: string; } ```
 
-\`\`\`typescript fct\_label="Live version 2" import { Schema, type, deprecated } from "@colyseus/schema";
+```typescript fct\_label="Live version 2" import { Schema, type, deprecated } from "@colyseus/schema";
 
 class MyState extends Schema { // Flag field as deprecated. @deprecated() @type("string") myField: string;
 
     // To allow your server to play nicely with multiple client-side versions.
     @type("string") newField: string; 
-} \`\`\`
+} ```
 
-\`\`\`typescript fct\_label="Live version 3" import { Schema, type, deprecated } from "@colyseus/schema";
+```typescript fct\_label="Live version 3" import { Schema, type, deprecated } from "@colyseus/schema";
 
 class MyState extends Schema { // Flag field as deprecated. @deprecated() @type("string") myField: string;
 
@@ -748,7 +748,7 @@ class MyState extends Schema { // Flag field as deprecated. @deprecated() @type(
 
     // New fields always at the end of the structure
     @type("string") anotherNewField: string;
-} \`\`\`
+} ```
 
 這對原生編譯目標特別實用，像是用戶端可能沒有結構描述定義最新版本的 C#、C++、Haxe 等等。
 
@@ -771,11 +771,11 @@ class MyState extends Schema { // Flag field as deprecated. @deprecated() @type(
 
 **以下範例受支援：**
 
-\`\`\`typescript class Item extends Schema {/* base Item fields */} class Weapon extends Item {/* specialized Weapon fields */} class Shield extends Item {/* specialized Shield fields \*/}
+```typescript class Item extends Schema {/* base Item fields */} class Weapon extends Item {/* specialized Weapon fields */} class Shield extends Item {/* specialized Shield fields \*/}
 
 class Inventory extends Schema { @type({ map:Item }) items = new MapSchema<Item>(); }
 
-const inventory = new Inventory(); inventory.set("left", new Weapon()); inventory.set("right", new Shield()); \`\`\`
+const inventory = new Inventory(); inventory.set("left", new Weapon()); inventory.set("right", new Shield()); ```
 
 ### 基本類型
 

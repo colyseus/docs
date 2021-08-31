@@ -9,8 +9,8 @@
 
 若 `create()` 或 `joinOrCreate()` 已获取密码，则将房间列为私人房间：
 
-\`\`typescript export class BattleRoom extends Room {
+``typescript export class BattleRoom extends Room {
 
   onCreate(options) { if (options.password) { this.setPrivate(); } }
 
-} \`\`\`
+} ```

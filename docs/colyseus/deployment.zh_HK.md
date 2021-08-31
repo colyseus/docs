@@ -28,7 +28,7 @@
 
 ### Nginx配置
 
-\`\`\` server { listen 80; server\_name yourdomain.com;
+``` server { listen 80; server\_name yourdomain.com;
 
     location / {
         proxy_pass http://localhost:2567;
@@ -40,13 +40,13 @@
         proxy_read_timeout 86400s;
         proxy_send_timeout 86400s;
     }
-} \`\`\`
+} ```
 
 ### 帶SSL的Nginx配置
 
 建議從[LetsEncrypt](https://letsencrypt.org)獲取您的證書。
 
-\`\`\` server { listen 80; listen 443 ssl; server\_name yourdomain.com;
+``` server { listen 80; listen 443 ssl; server\_name yourdomain.com;
 
     ssl_certificate /path/to/your/cert.crt;
     ssl_certificate_key /path/to/your/cert.key;
@@ -61,7 +61,7 @@
         proxy_read_timeout 86400s;
         proxy_send_timeout 86400s;
     }
-} \`\`\`
+} ```
 
 ## Apache
 
@@ -73,7 +73,7 @@
 
 Virtual host configuration:
 
-\`\`\` <VirtualHost \*:80> ServerName servername.xyz
+``` <VirtualHost \*:80> ServerName servername.xyz
 
     # Redirect all requests received from port 80 to the HTTPS variant (force ssl)
     RewriteEngine On
@@ -106,7 +106,7 @@ Virtual host configuration:
     ProxyPass "/" "http://localhost:APP-PORT-HERE/"
     ProxyPassReverse "/" "http://localhost:APP-PORT-HERE/"
 
-</VirtualHost> \`\`\`
+</VirtualHost> ```
 
 ## greenlock-express
 
@@ -120,7 +120,7 @@ Virtual host configuration:
 
 以下是處理開發和生產環境的推薦方法：
 
-\`\`\`typescript import http from "http"; import express from "express"; import { Server } from "colyseus";
+```typescript import http from "http"; import express from "express"; import { Server } from "colyseus";
 
 function setup(app: express.Application, server: http.Server) { const gameServer = new Server({ server });
 
@@ -141,7 +141,7 @@ if (process.env.NODE\_ENV === "production") { require('greenlock-express') .init
 
   setup(app, server); server.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`)); }
 
-\`\`\`
+```
 
 ## Docker
 
@@ -155,7 +155,7 @@ if (process.env.NODE\_ENV === "production") { require('greenlock-express') .init
 
 **第1步**安裝[Docker](https://www.docker.com/)
 
-**第2步** 在colyseus專案的根部建立`Dockerfile` \`\`\`dockerfile FROM node:12
+**第2步** 在colyseus專案的根部建立`Dockerfile` ```dockerfile FROM node:12
 
 ENV PORT 8080
 
@@ -172,17 +172,17 @@ COPY ..
 
 EXPOSE 8080
 
-CMD \[ "npm", "start" ] ``` **第3步** 在同一目錄下建立`.dockerignore`文件 ``` node\_modules npm-debug.log \`\` 這將防止您的本機模組和除錯日誌被複製到您的Docker鏡像上，並可能覆蓋您鏡像中安裝的模組。
+CMD \[ "npm", "start" ] ``` **第3步** 在同一目錄下建立`.dockerignore`文件 ``` node\_modules npm-debug.log `` 這將防止您的本機模組和除錯日誌被複製到您的Docker鏡像上，並可能覆蓋您鏡像中安裝的模組。
 
 **第4步**進入存放Docker檔案的目錄，執行以下指令來組建Docker鏡像。-t標誌可以讓您標記您的鏡像，以便日後使用docker images指令來更輕易地找到它：
 
 ``` docker build -t <your username>/colyseus-server .```
 
-**第5步** 您的鏡像現在將被Docker用以下指令列出。\`\`\` docker images
+**第5步** 您的鏡像現在將被Docker用以下指令列出。``` docker images
 
 ``` Output: ```
 # 範例
-REPOSITORY TAG ID CREATED node 12 1934b0b038d1 About a minute ago <your username>/colseus-server latest d64d3505b0d2 About a minute ago \`\`\`
+REPOSITORY TAG ID CREATED node 12 1934b0b038d1 About a minute ago <your username>/colseus-server latest d64d3505b0d2 About a minute ago ```
 
 **第6步**用以下指令執行Docker鏡像。``` docker run -p 8080:8080 -d <your username>/colyseus-server ``` 用-d執行您的鏡像，以分離模式執行容器，讓容器在後台執行。-p標誌將一個公共埠口重新定向到容器內的一個私有埠口。
 

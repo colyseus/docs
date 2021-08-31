@@ -19,7 +19,7 @@ Defold Engine 是用于跨平台发布的免费2D游戏引擎。
 
 ## 用法
 
-\`\`\`lua local ColyseusClient = require "colyseus.client"
+```lua local ColyseusClient = require "colyseus.client"
 
 local client local room
 
@@ -34,7 +34,7 @@ function init(self) -- Add initialization code here client = ColyseusClient.new(
 
       room = _room
     end)
-end \`\`\`
+end ```
 
 参阅[>客户端](/client/client/)。
 
@@ -50,6 +50,6 @@ end \`\`\`
 
 如果你的手机锁屏，所有 WebSocket 连接都将关闭。你可以调用 `reconnect()` 来重新建立进程，这需要对 iOS 采取以下解决办法：
 
-\`\`\`lua function window\_callback(self, event, data) if event == window.WINDOW\_EVENT\_FOCUS\_GAINED then -- iOS workaround to re-active WebSocket connection after phone is unlocked room:send("whatever") end end
+```lua function window\_callback(self, event, data) if event == window.WINDOW\_EVENT\_FOCUS\_GAINED then -- iOS workaround to re-active WebSocket connection after phone is unlocked room:send("whatever") end end
 
-window.set\_listener(window\_callback) \`\`\`
+window.set\_listener(window\_callback) ```

@@ -13,7 +13,7 @@ Colyseus 預設提供了順利關機機制。這些動作會在處理序自行�
 
 透過傳回`承諾`，伺服器不會在終止背景工作處理序前等待其完成。
 
-\`\`\`typescript import { Room } from "colyseus";
+```typescript import { Room } from "colyseus";
 
 class MyRoom extends Room { onLeave (client) { return new Promise((resolve, reject) => { doDatabaseOperation((err, data) => { if (err) { reject(err); } else { resolve(data); } }); }); }
 
@@ -28,27 +28,27 @@ class MyRoom extends Room { onLeave (client) { return new Promise((resolve, reje
             });
         });
     }
-} \`\`\`
+} ```
 
 ## 正在使用`非同步`
 
 `非同步`關鍵字能讓您的函式傳回基礎`承諾`。[閱讀有關非同步 / 等候的更多資訊](https://basarat.gitbooks.io/typescript/content/docs/async-await.html)。
 
-\`\`\`typescript import { Room } from "colyseus";
+```typescript import { Room } from "colyseus";
 
 class MyRoom extends Room { async onLeave (client) { await doDatabaseOperation(client); }
 
     async onDispose () {
         await removeRoomFromDatabase();
     }
-} \`\`\`
+} ```
 
 ## 處理序關閉回調
 
 您也可以透過設定 `onShutdown` 回調來接聽處理序關機。
 
-\`\`\`typescript fct\_label="Server" import { Server } from "colyseus";
+```typescript fct\_label="Server" import { Server } from "colyseus";
 
 let server = new Server();
 
-server.onShutdown(function () { console.log("master process is being shut down!"); }); \`\`\`
+server.onShutdown(function () { console.log("master process is being shut down!"); }); ```

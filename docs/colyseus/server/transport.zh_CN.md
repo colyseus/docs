@@ -27,17 +27,17 @@ npm install --save @colyseus/ws-transport
 
 **使用方式**
 
-\`\`\`typescript fct\_label="Example" import { Server } from "@colyseus/core"; import { WebSocketTransport } from "@colyseus/ws-transport"
+```typescript fct\_label="Example" import { Server } from "@colyseus/core"; import { WebSocketTransport } from "@colyseus/ws-transport"
 
-const gameServer = new Server({ transport: new WebSocketTransport({ /* transport options \*/ }) }) \`\`\`
+const gameServer = new Server({ transport: new WebSocketTransport({ /* transport options \*/ }) }) ```
 
-\`\`\`typescript fct\_label="@colyseus/arena" import Arena from "@colyseus/arena"; import { WebSocketTransport } from "@colyseus/ws-transport"
+```typescript fct\_label="@colyseus/arena" import Arena from "@colyseus/arena"; import { WebSocketTransport } from "@colyseus/ws-transport"
 
 export default Arena({ // ...
 
   initializeTransport: function() { return new WebSocketTransport({ /* ...options \*/ }); },
 
-  // ... }); \`\`\`
+  // ... }); ```
 
 ### 可用選項：
 
@@ -45,17 +45,17 @@ export default Arena({ // ...
 
 要為 WebSocket 伺服器重新使用的 Node.js http 伺服器執行個體。在您要使用 Express 搭配 Colyseus 時會很實用。
 
-\`\`\`typescript fct\_label="Example" import { createServer } from "http"; import { Server } from "@colyseus/core"; import { WebSocketTransport } from "@colyseus/ws-transport"
+```typescript fct\_label="Example" import { createServer } from "http"; import { Server } from "@colyseus/core"; import { WebSocketTransport } from "@colyseus/ws-transport"
 
 const server = createServer(app); // create the http server manually
 
-const gameServer = new Server({ transport: new WebSocketTransport({ server // provide the custom server for `WebSocketTransport` }) }); \`\`\`
+const gameServer = new Server({ transport: new WebSocketTransport({ server // provide the custom server for `WebSocketTransport` }) }); ```
 
-\`\`\`typescript fct\_label="Example + express" import express from "express"; import { createServer } from "http"; import { Server } from "@colyseus/core"; import { WebSocketTransport } from "@colyseus/ws-transport"
+```typescript fct\_label="Example + express" import express from "express"; import { createServer } from "http"; import { Server } from "@colyseus/core"; import { WebSocketTransport } from "@colyseus/ws-transport"
 
 const app = express(); const server = createServer(app); // create the http server manually
 
-const gameServer = new Server({ transport: new WebSocketTransport({ server // provide the custom server for `WebSocketTransport` }) }); \`\`\`
+const gameServer = new Server({ transport: new WebSocketTransport({ server // provide the custom server for `WebSocketTransport` }) }); ```
 
 透過不提供此選項，http 伺服器會為您自動建立。
 
@@ -107,9 +107,9 @@ WebSocket 交換信號前會發生此方法。如果 `verifyClient` 未設定，
 
 **使用方式**
 
-\`\`\`typescript import { Server } from "@colyseus/core"; import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
+```typescript import { Server } from "@colyseus/core"; import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
 
-const gameServer = new Server({ transport: new uWebSocketsTransport({ /* options \*/ }) }) \`\`\`
+const gameServer = new Server({ transport: new uWebSocketsTransport({ /* options \*/ }) }) ```
 
 ### 可用選項：
 
@@ -173,11 +173,11 @@ SSL 檔案的密碼。（用於透過 Node.js 應用程式的 SSL 終止。）
 
 您可以直接使用 `transport.app` 以使用 `uWebSockets.js` API 繫結 http 路由，請看以下：
 
-\`\`\`typescript import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
+```typescript import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
 
 const transport = new uWebSocketsTransport({ /* ...options \*/ });
 
-transport.app.get("/\*", (res, req) => { res.writeStatus('200 OK').writeHeader('IsExample', 'Yes').end('Hello there!'); }); \`\`\`
+transport.app.get("/\*", (res, req) => { res.writeStatus('200 OK').writeHeader('IsExample', 'Yes').end('Hello there!'); }); ```
 
 查看 [`uWebSockets.js` 範例](https://github.com/uNetworking/uWebSockets.js/tree/master/examples)以瞭解更多資訊。
 
@@ -193,15 +193,15 @@ transport.app.get("/\*", (res, req) => { res.writeStatus('200 OK').writeHeader('
 
 **使用方式**
 
-\`\`\`typescript fct\_label="Example" import express from "express"; import expressify from "uwebsockets-express" import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
+```typescript fct\_label="Example" import express from "express"; import expressify from "uwebsockets-express" import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
 
 const transport = new uWebSocketsTransport({ /* ...options \*/ }); const app = expressify(transport.app);
 
 // use existing middleware implementations! app.use(express.json()); app.use('/', serveIndex(path.join(\_\_dirname, ".."), { icons: true, hidden: true })) app.use('/', express.static(path.join(\_\_dirname, "..")));
 
-// register routes app.get("/hello", (req, res) => { res.json({ hello: "world!" }); }); \`\`\`
+// register routes app.get("/hello", (req, res) => { res.json({ hello: "world!" }); }); ```
 
-\`\`\`typescript fct\_label="@colyseus/arena" import express from "express"; import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport" import Arena from "@colyseus/arena";
+```typescript fct\_label="@colyseus/arena" import express from "express"; import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport" import Arena from "@colyseus/arena";
 
 export default Arena({ // ... initializeTransport: function() { return new uWebSocketsTransport({ /* ...options \*/ }); },
 
@@ -214,4 +214,4 @@ export default Arena({ // ... initializeTransport: function() { return new uWebS
 
   }, // ... })
 
-\`\`\`
+```

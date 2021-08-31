@@ -26,18 +26,18 @@
 
 ### 房間中繼資料
 
-這個演示利用房間的中繼資料來追蹤遊戲中玩家的使用者名稱。當玩家加入或建立房間時，其使用者名稱將儲存在名為 `team0` 或 `team1` 的屬性中，其中 `team0` 代表建立房間的玩家和 `team1` 代表已加入可用房間挑戰建立者的玩家。 \`\`\` javascript this.metadata.team0 this.metadata.team1
+這個演示利用房間的中繼資料來追蹤遊戲中玩家的使用者名稱。當玩家加入或建立房間時，其使用者名稱將儲存在名為 `team0` 或 `team1` 的屬性中，其中 `team0` 代表建立房間的玩家和 `team1` 代表已加入可用房間挑戰建立者的玩家。 ``` javascript this.metadata.team0 this.metadata.team1
 
 this.setMetadata({"team0": options\["creatorId"]});
 
-\`\`\`
+```
 
 然後使用中繼資料中設定的使用者名稱來過濾大廳中顯示的可用房間。在大廳內，使用者可根據房間是否正在等待挑戰者加入遊戲來查看其建立或可用的任何房間。您尚未建立且有兩名玩家的房間將不會顯示在大廳中。
 
-\`\`\` csharp private TanksRoomsAvailable\[] TrimRooms(TanksRoomsAvailable\[] originalRooms) { List<TanksRoomsAvailable> trimmedRooms = new List<TanksRoomsAvailable>(); for (int i = 0; i < originalRooms.Length; ++i) { //檢查房間中繼資料。如果它是我們的房間之一或正在等待玩家，我們將顯示它 TanksRoomMetadata metadata = originalRooms\[i].metadata; if (metadata.team1 == null || (metadata.team1.Equals(ExampleManager.Instance.UserName) || metadata.team0.Equals(ExampleManager.Instance.UserName))) { trimmedRooms.Add(originalRooms\[i]); } }
+``` csharp private TanksRoomsAvailable\[] TrimRooms(TanksRoomsAvailable\[] originalRooms) { List<TanksRoomsAvailable> trimmedRooms = new List<TanksRoomsAvailable>(); for (int i = 0; i < originalRooms.Length; ++i) { //檢查房間中繼資料。如果它是我們的房間之一或正在等待玩家，我們將顯示它 TanksRoomMetadata metadata = originalRooms\[i].metadata; if (metadata.team1 == null || (metadata.team1.Equals(ExampleManager.Instance.UserName) || metadata.team0.Equals(ExampleManager.Instance.UserName))) { trimmedRooms.Add(originalRooms\[i]); } }
 
     return trimmedRooms.ToArray();
-} \`\`\`
+} ```
 
 ![大廳](/demo/turn-based-tanks/Rooms.png)
 
@@ -47,17 +47,17 @@ this.setMetadata({"team0": options\["creatorId"]});
 
 ``` javascript this.autoDispose = false; ```
 
-我們知道在執行檢查以確定是否應該關閉房間後，在布爾標誌 `inProcessOfQuitingGame` 設定為 true 後斷開房間。當使用者退出遊戲時執行這些檢查。 \`\`\` javascript
+我們知道在執行檢查以確定是否應該關閉房間後，在布爾標誌 `inProcessOfQuitingGame` 設定為 true 後斷開房間。當使用者退出遊戲時執行這些檢查。 ``` javascript
 
 // 檢查建立者是否在其他人加入之前退出 if(this.metadata.team0 && this.metadata.team1 == null) { disconnectRoom = true; }
 
 // 房間裡沒有其他使用者，所以斷開連接 if(this.inProcessOfQuitingGame && this.state.networkedUsers.size <= 1 && this.connectedUsers <= 1) { disconnectRoom = true; }
 	
-// 房間應該斷開連接嗎？ if(disconnectRoom) { this.disconnect(); }\`\`\`
+// 房間應該斷開連接嗎？ if(disconnectRoom) { this.disconnect(); }```
 
 ### 暫停房間
 
-由於這是一個異步遊戲的例子，我們的房間在任何時間內都可能沒有使用者連接到它。當沒有使用者連接到房間時，伺服器不需要更新模擬循環。當使用者與房間斷開連接時，會執行檢查以查看是否沒有更多使用者連接到房間。當沒有更多使用者連接到房間時，將延遲設定為高值能有效地暫停模擬間隔。在此情況下，該值比 24 天多一點。 \`\`\` javascript
+由於這是一個異步遊戲的例子，我們的房間在任何時間內都可能沒有使用者連接到它。當沒有使用者連接到房間時，伺服器不需要更新模擬循環。當使用者與房間斷開連接時，會執行檢查以查看是否沒有更多使用者連接到房間。當沒有更多使用者連接到房間時，將延遲設定為高值能有效地暫停模擬間隔。在此情況下，該值比 24 天多一點。 ``` javascript
 
 // 在房間的 `onLeave` 處理常式中 // 檢查伺服器是否應該暫停模擬循環，因為 // 沒有使用者連接到房間 let anyConnected: boolean = false; this.state.players.forEach((player, index) => { if(player.connected) { anyConnected = true; } });
 
@@ -75,11 +75,11 @@ private setServerPause(pause: boolean) {
     }
 
     this.serverPaused = pause;
-} \`\`\`
+} ```
 
-當使用者重新加入已暫停的房間時，將恢復模擬間隔。 \`\`\` javascript
+當使用者重新加入已暫停的房間時，將恢復模擬間隔。 ``` javascript
 
-// 在房間的 `onJoin` 處理程序中 // 檢查伺服器是否需要取消暫停 if(this.serverPaused) { // 伺服器目前已暫停，因此取消暫停，因為玩家已連接 this.setServerPause(false ); }\`\`\`
+// 在房間的 `onJoin` 處理程序中 // 檢查伺服器是否需要取消暫停 if(this.serverPaused) { // 伺服器目前已暫停，因此取消暫停，因為玩家已連接 this.setServerPause(false ); }```
 
 ### 遊玩試玩版
 
@@ -129,8 +129,8 @@ private setServerPause(pause: boolean) {
 
 **Game Rules** 和 **Weapon Data** 值都可以在 `ArenaServer\src\rooms\tanks\rules.ts` 的伺服器代碼中找到。**遊戲規則**控制移動和射擊成本以及玩家獲得的行動點數。`weaponList` 中的資料指定了每種武器的最大蓄力、蓄力時間、撞擊半徑和撞擊傷害。
 
-\`\`\`javascript const GameRules = { MaxActionPoints:3, MovementActionPointCost:1, FiringActionPointCost:2, ProjectileSpeed:30, MaxMovement:3, MaxHitPoints:3, MovementTime:2, }
+```javascript const GameRules = { MaxActionPoints:3, MovementActionPointCost:1, FiringActionPointCost:2, ProjectileSpeed:30, MaxMovement:3, MaxHitPoints:3, MovementTime:2, }
 
 const weaponList = \[ { name:"Short Range", maxCharge:5, chargeTime:1, radius:1, impactDamage:1, index:0 }, { name:"Mid Range", maxCharge:8, chargeTime:2, radius:1, impactDamage:1, index:1 }, { name:"Long Range", maxCharge:10, chargeTime:5, radius:1, impactDamage:1, index:2 } ]
 
-\`\`\`
+```

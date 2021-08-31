@@ -8,9 +8,9 @@
 
 ## 服务器端
 
-\`\`\`typescript import { RelayRoom } from "colyseus";
+```typescript import { RelayRoom } from "colyseus";
 
-// Expose your relayed room gameServer.define("your\_relayed\_room", RelayRoom, { maxClients:4, allowReconnectionTime:120 }); \`\`\`
+// Expose your relayed room gameServer.define("your\_relayed\_room", RelayRoom, { maxClients:4, allowReconnectionTime:120 }); ```
 
 ## 客户端
 
@@ -18,16 +18,16 @@
 
 ### 接入房间
 
-\`\`\`typescript import { Client } from "colyseus.js";
+```typescript import { Client } from "colyseus.js";
 
 const client = new Client("ws://localhost:2567");
 
-// // 加入中继室 // const relay = await client.joinOrCreate("your\_relayed\_room", { name:"This is my name!" }); \`\`\`
+// // 加入中继室 // const relay = await client.joinOrCreate("your\_relayed\_room", { name:"This is my name!" }); ```
 
 ### 在玩家加入和离开时注册回调
 
 
-\`\`\`typescript // // 玩家加入房间时执行检测 // relay.state.players.onAdd = (player, sessionId) => { if (relay.sessionId === sessionId) { console.log("It's me!", player.name);
+```typescript // // 玩家加入房间时执行检测 // relay.state.players.onAdd = (player, sessionId) => { if (relay.sessionId === sessionId) { console.log("It's me!", player.name);
 
   } else { console.log("It's an opponent", player.name, sessionId); } }
 
@@ -35,14 +35,14 @@ const client = new Client("ws://localhost:2567");
 
 // // 玩家的连接性发生变化时执行检测 // （）仅当您在服务器端提供了 `allowReconnection: true` 的前提下才可用） // relay.state.players.onChange = (player, sessionId) => { if (player.connected) { console.log("Opponent has reconnected!", player, sessionId);
 
-  } else { console.log("Opponent has disconnected!", player, sessionId); } } \`\`\`
+  } else { console.log("Opponent has disconnected!", player, sessionId); } } ```
 
 ### 发送接收消息
 
-\`\`\`typescript // // 发送一条消息，其他所有客户端都将接收到同名消息 // 消息只发送给其他已连接的客户端，当前客户端不包括在内。// relay.send("fire", { x:100, y:200 });
+```typescript // // 发送一条消息，其他所有客户端都将接收到同名消息 // 消息只发送给其他已连接的客户端，当前客户端不包括在内。// relay.send("fire", { x:100, y:200 });
 
 // //  为您感兴趣的其他客户端的消息注册回调。 // relay.onMessage("fire", (\[sessionId, message]) => {
 
   // // 消息发送者的 `sessionId` // console.log(sessionId, "sent a message!");
 
-  // // 另一个客户端发送的实际消息 // console.log("fire at", message); }); \`\`\`
+  // // 另一个客户端发送的实际消息 // console.log("fire at", message); }); ```

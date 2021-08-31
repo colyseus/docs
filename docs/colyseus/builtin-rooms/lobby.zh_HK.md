@@ -6,17 +6,17 @@
 
 在具有“实时列表”的房间有更新时，内置的 `LobbyRoom` 会自动通知其连接的客户端。
 
-\`\`\`typescript import { LobbyRoom } from "colyseus";
+```typescript import { LobbyRoom } from "colyseus";
 
 // Expose the "lobby" room. gameServer .define("lobby", LobbyRoom);
 
-// Expose your game room with realtime listing enabled. gameServer .define("your\_game", YourGameRoom) .enableRealtimeListing(); \`\`\`
+// Expose your game room with realtime listing enabled. gameServer .define("your\_game", YourGameRoom) .enableRealtimeListing(); ```
 
 在 `onCreate()`, `onJoin()`, `onLeave()` 和 `onDispose()` 期间，将自动通知 `LobbyRoom`。
 
 如果您已经[更新了您的房间的`元数据`](/server/room/#setmetadata-metadata)，并且还需要更新游戏大厅，那么您可以在元数据更新后马上调用 `updateLobby()`：
 
-\`\`\`typescript import { Client, RoomAvailable } from "colyseus.js";
+```typescript import { Client, RoomAvailable } from "colyseus.js";
 
 class YourGameRoom extends Room {
 
@@ -36,13 +36,13 @@ class YourGameRoom extends Room {
 
   }
 
-} \`\`\`
+} ```
 
 ## 客户端
 
 您需要根据`LobbyRoom`发送到客户端的信息来游戏房间的添加、删除和更新等状态。
 
-\`\`\`typescript import { Client, RoomAvailable } from "colyseus.js";
+```typescript import { Client, RoomAvailable } from "colyseus.js";
 
 const client = new Client("ws://localhost:2567"); const lobby = await client.joinOrCreate("lobby");
 
@@ -54,4 +54,4 @@ lobby.onMessage("+", (\[roomId, room]) => { const roomIndex = allRooms.findIndex
 
   } else { allRooms.push(room); } });
 
-lobby.onMessage("-", (roomId) => { allRooms = allRooms.filter((room) => room.roomId !== roomId); }); \`\`\`
+lobby.onMessage("-", (roomId) => { allRooms = allRooms.filter((room) => room.roomId !== roomId); }); ```

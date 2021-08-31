@@ -46,12 +46,12 @@
 ### 控件
 本演示的控件可随时在 Escape 菜单查看，内容如下：
 
-| 输入 | 描述 | |----------------------------------|--------------------| | W,A,S,M | 移动 | | 按住Shift键 | 冲刺 | | Q,E | 旋转人物 | | 上滑/下滑 | 放大/缩小| | 按住并拖动鼠标右键 | 摄像头轴转 | | \` | 切换聊天窗口 |
+| 输入 | 描述 | |----------------------------------|--------------------| | W,A,S,M | 移动 | | 按住Shift键 | 冲刺 | | Q,E | 旋转人物 | | 上滑/下滑 | 放大/缩小| | 按住并拖动鼠标右键 | 摄像头轴转 | | ` | 切换聊天窗口 |
 
 ## 演示概览
 本演示旨在向用户展示如何使用 Colyseus 来设计并实现一款 MMO 游戏。它强调了以下特性：
 ### 动态房间
-可按需创建并配置 MMORooms。当玩家进入一个网格空间时，我们就加入一个房间，并将其`progress`值设为网格值，如  `arena.config.ts`: ```javascript gameServer.define('lobby_room', MMORoom).filterBy(["progress"]); // Filter room by "progress" (which grid we're wanting to join EX: -1x2) ```中所示；当玩家在地图中移动时，可以基于他们所在的网格位置加入/离开房间。玩家尝试更新游戏进度时，客户端会向服务器端发送一条消息，然后服务器端会在MMORoom.ts中捕捉这条信息：`MMORoom.ts`: ```javascript this.onMessage("transitionArea", (client:Client, transitionData:Vector\[]) => { if (transitionData == null || transitionData.length < 2) { logger.error(\`\*\** Grid Change Error!Missing data for grid change! \*\*\*\`); return; } this.onGridUpdate(client, transitionData\[0] as Vector2, transitionData\[1] as Vector3); }); ``` 在确定新的网格位置后，客户端会获得一个新的可用SeatReservation，用以加入正确的ColyseusRoom来获取新的网格位置。登录/注册的时候也会有相似的流程（参见<b>玩家持久性</b>章节）。
+可按需创建并配置 MMORooms。当玩家进入一个网格空间时，我们就加入一个房间，并将其`progress`值设为网格值，如  `arena.config.ts`: ```javascript gameServer.define('lobby_room', MMORoom).filterBy(["progress"]); // Filter room by "progress" (which grid we're wanting to join EX: -1x2) ```中所示；当玩家在地图中移动时，可以基于他们所在的网格位置加入/离开房间。玩家尝试更新游戏进度时，客户端会向服务器端发送一条消息，然后服务器端会在MMORoom.ts中捕捉这条信息：`MMORoom.ts`: ```javascript this.onMessage("transitionArea", (client:Client, transitionData:Vector\[]) => { if (transitionData == null || transitionData.length < 2) { logger.error(`\*\** Grid Change Error!Missing data for grid change! \*\*\*`); return; } this.onGridUpdate(client, transitionData\[0] as Vector2, transitionData\[1] as Vector3); }); ``` 在确定新的网格位置后，客户端会获得一个新的可用SeatReservation，用以加入正确的ColyseusRoom来获取新的网格位置。登录/注册的时候也会有相似的流程（参见<b>玩家持久性</b>章节）。
 
 ![MapScreenshop](map.PNG)
 
@@ -78,7 +78,7 @@
 ### 聊天消息显示时间
 在客户端，你可以通过更改 `ChatManager.cs` 上的公共 `messageShowTime` 变量来更改消息显示的时长，然后在 `MMOManager.cs`: ```csharp private async void JoinChatRoom() { ColyseusRoom<ChatRoomState> chatRoom = await client.JoinOrCreate<ChatRoomState>("chat_room", new Dictionary<string, object>() { { "roomID", Room.Id }, {"messageLifetime", ChatManager.Instance.messageShowTime} }); ChatManager.Instance.SetRoom(chatRoom); } ``` 加入/创建房间时被发送给服务器
 ### 添加你自己的交互对象
-如果你想向客户端添加一个新的交互对象，其必须继承自 `Interactable.cs`。查看其他交互对象，想想你可以做什么。如果你想重写你的交互对象的 `serverType` 值，你也应当为你在服务器上的新 `serverType`  添加一个案例： `interactableObjectFactory.ts`: \`\`\`javascript export function getStateForType(type: string) :InteractableState { let state :InteractableState = new InteractableState(); //任何新类型都需要一个适当的构造函数，否则它们将返回空的 switch(type){ case("DEFAULT"): { state.assign({ coinChange :{ case("DEFAULT"): { state.assign({ coinChange :5100.0 }); break; }
+如果你想向客户端添加一个新的交互对象，其必须继承自 `Interactable.cs`。查看其他交互对象，想想你可以做什么。如果你想重写你的交互对象的 `serverType` 值，你也应当为你在服务器上的新 `serverType`  添加一个案例： `interactableObjectFactory.ts`: ```javascript export function getStateForType(type: string) :InteractableState { let state :InteractableState = new InteractableState(); //任何新类型都需要一个适当的构造函数，否则它们将返回空的 switch(type){ case("DEFAULT"): { state.assign({ coinChange :{ case("DEFAULT"): { state.assign({ coinChange :5100.0 }); break; }
 
 		case("BUTTON_PODIUM"):
 		{
@@ -109,7 +109,7 @@
 		}
 	}
 	return  state;
-} ``` 变量 `coinChange` 是在使用金币时用户的金币数量应该改变的数值。如果该值为负（金币使用的交互成本）服务器将在成功响应之前确认用户拥有足够金币，如函数中所示 \`handleObjectCost\` in \`MMORoom.ts\`: ``` javascript handleObjectCost(object:InteractableState, user:NetworkedEntityState): boolean { let cost: number = object.coinChange; let worked: boolean = false;
+} ``` 变量 `coinChange` 是在使用金币时用户的金币数量应该改变的数值。如果该值为负（金币使用的交互成本）服务器将在成功响应之前确认用户拥有足够金币，如函数中所示 `handleObjectCost` in `MMORoom.ts`: ``` javascript handleObjectCost(object:InteractableState, user:NetworkedEntityState): boolean { let cost: number = object.coinChange; let worked: boolean = false;
 
     //Its a gain, no need to check
     if (cost >= 0) {
@@ -128,4 +128,4 @@
     }
 
     return worked;
-  } ``` 如果该检查成功，目标交互将正常继续进行。变量 \`useDuration\` 是用来考虑交互对象在于用户交互后能够保持 \`inUse\` 多久的因素。当一个交互对象被使用后，其 \`availableTimestamp\` 将被设定为：``` javascript interactableObject.inUse = true; interactableObject.availableTimestamp = this.state.serverTime + interactableObject.useDuration; ``` 服务器之后将检查每个 \`simulationInterval\`: ``` javascript checkObjectReset() { this.state.interactableItems.forEach((state:InteractableState) => { if (state.inUse && state.availableTimestamp <= this.state.serverTime) { state.inUse = false; state.availableTimestamp = 0.0; } }); } \`\`\` 如果 `serverTime` 显示时机已到，这将重置  MMORoom 中任何交互对象的 `inUse` 值。
+  } ``` 如果该检查成功，目标交互将正常继续进行。变量 `useDuration` 是用来考虑交互对象在于用户交互后能够保持 `inUse` 多久的因素。当一个交互对象被使用后，其 `availableTimestamp` 将被设定为：``` javascript interactableObject.inUse = true; interactableObject.availableTimestamp = this.state.serverTime + interactableObject.useDuration; ``` 服务器之后将检查每个 `simulationInterval`: ``` javascript checkObjectReset() { this.state.interactableItems.forEach((state:InteractableState) => { if (state.inUse && state.availableTimestamp <= this.state.serverTime) { state.inUse = false; state.availableTimestamp = 0.0; } }); } ``` 如果 `serverTime` 显示时机已到，这将重置  MMORoom 中任何交互对象的 `inUse` 值。

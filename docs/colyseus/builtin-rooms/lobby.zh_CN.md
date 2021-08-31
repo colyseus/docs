@@ -6,17 +6,17 @@
 
 內建`大廳房間`會在具有「即時列表」的房間有更新時自動通知其連接的用戶端。
 
-\`\`\`typescript import { LobbyRoom } from "colyseus";
+```typescript import { LobbyRoom } from "colyseus";
 
 // Expose the "lobby" room. gameServer .define("lobby", LobbyRoom);
 
-// Expose your game room with realtime listing enabled. gameServer .define("your\_game", YourGameRoom) .enableRealtimeListing(); \`\`\`
+// Expose your game room with realtime listing enabled. gameServer .define("your\_game", YourGameRoom) .enableRealtimeListing(); ```
 
 `LobbyRoom` 會在 `onCreate()`、`onJoin()`、`onLeave()` 和 `onDispose()` 期間自動收到通知。
 
 如果你 [已更新了房間的 `中繼資料` ](/server/room/#setmetadata-metadata)，且必須觸發大廳的更新，可以在中繼資料更新完後立即呼叫 `updateLobby()`：
 
-\`\`\`typescript import { Room, updateLobby } from "colyseus";
+```typescript import { Room, updateLobby } from "colyseus";
 
 class YourGameRoom extends Room {
 
@@ -36,13 +36,13 @@ class YourGameRoom extends Room {
 
   }
 
-} \`\`\`
+} ```
 
 ## 用戶端
 
 您必須透過傳送到 `LobbyRoom` 用戶端的訊息，來追蹤新增、移除和更新的房間。
 
-\`\`\`typescript import { Client, RoomAvailable } from "colyseus.js";
+```typescript import { Client, RoomAvailable } from "colyseus.js";
 
 const client = new Client("ws://localhost:2567"); const lobby = await client.joinOrCreate("lobby");
 
@@ -54,4 +54,4 @@ lobby.onMessage("+", (\[roomId, room]) => { const roomIndex = allRooms.findIndex
 
   } else { allRooms.push(room); } });
 
-lobby.onMessage("-", (roomId) => { allRooms = allRooms.filter((room) => room.roomId !== roomId); }); \`\`\`
+lobby.onMessage("-", (roomId) => { allRooms = allRooms.filter((room) => room.roomId !== roomId); }); ```

@@ -23,7 +23,7 @@
 
 - **arena.config.js:**应该在此文件中添加房间声明、快速加载项以及在服务器启动之前需要调用的任何其他函数。将应用部署到 Arena Cloud 时，应将此文件视为您的 ***index.js***。
 
-*File ```arena.config.js``` Example:* \`\`\` const Arena = require("@colyseus/arena").default; const { monitor } = require("@colyseus/monitor");
+*File ```arena.config.js``` Example:* ``` const Arena = require("@colyseus/arena").default; const { monitor } = require("@colyseus/monitor");
 
 /\** * Import your Room files \*/ const { ShootingGalleryRoom } = require("./rooms/ShootingGalleryRoom");
 
@@ -58,7 +58,7 @@ module.exports = Arena({ getId: () => "Your Colyseus App",
          */
     }
 
-}); \`\`\` - **arena.env:**在此文件中，您将定义应用所需的任何自定义环境变量。此文件可用于存储分离的开发和生产环境的密钥。
+}); ``` - **arena.env:**在此文件中，您将定义应用所需的任何自定义环境变量。此文件可用于存储分离的开发和生产环境的密钥。
 
 *File ```arena.env``` Example:*``` NODE_ENV=production ABC_GAME_MODE=dev ```
 

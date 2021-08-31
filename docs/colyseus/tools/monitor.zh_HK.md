@@ -21,13 +21,13 @@
 
 包括在你的项目之中：
 
-\`\`\`typescript fct\_label="TypeScript" // ... import { monitor } from "@colyseus/monitor";
+```typescript fct\_label="TypeScript" // ... import { monitor } from "@colyseus/monitor";
 
-// ... app.use("/colyseus", monitor()); \`\`\`
+// ... app.use("/colyseus", monitor()); ```
 
-\`\`\`javascript fct\_label="JavaScript" // ... const monitor = require("@colyseus/monitor").monitor;
+```javascript fct\_label="JavaScript" // ... const monitor = require("@colyseus/monitor").monitor;
 
-// ... app.use("/colyseus", monitor()); \`\`\`
+// ... app.use("/colyseus", monitor()); ```
 
 
 ## 使用密码限制面板访问
@@ -38,11 +38,11 @@
 
 使用 `express-basic-auth` 创建用户和密码。
 
-\`\`\`typescript import basicAuth from "express-basic-auth";
+```typescript import basicAuth from "express-basic-auth";
 
 const basicAuthMiddleware = basicAuth({ // list of users and passwords users: { "admin": "admin", }, // sends WWW-Authenticate header, which will prompt the user to fill // credentials in challenge: true });
 
-app.use("/colyseus", basicAuthMiddleware, monitor()); \`\`\`
+app.use("/colyseus", basicAuthMiddleware, monitor()); ```
 
 ## 设置自定义房间列表栏
 

@@ -5,7 +5,7 @@ Room 类的作用是实现游戏会话，并且/或作为一组客户端之间�
 - 默认情况下，在匹配期间  **on demand** 创建房间
 - 必须使用 [`.define()`](/server/api/#define-roomname-string-room-room-options-any) 发布 Room 类
 
-\`\`\`typescript fct\_label="TypeScript" import http from "http"; import { Room, Client } from "colyseus";
+```typescript fct\_label="TypeScript" import http from "http"; import { Room, Client } from "colyseus";
 
 export class MyRoom extends Room { // When room is initialized onCreate (options: any) { }
 
@@ -20,9 +20,9 @@ export class MyRoom extends Room { // When room is initialized onCreate (options
 
     // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
     onDispose () { }
-} \`\`\`
+} ```
 
-\`\`\`typescript fct\_label="JavaScript" const colyseus = require('colyseus');
+```typescript fct\_label="JavaScript" const colyseus = require('colyseus');
 
 export class MyRoom extends colyseus.Room { // When room is initialized onCreate (options) { }
 
@@ -37,7 +37,7 @@ export class MyRoom extends colyseus.Room { // When room is initialized onCreate
 
     // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
     onDispose () { }
-} \`\`\`
+} ```
 
 ## 房间生命周期事件
 
@@ -50,15 +50,15 @@ export class MyRoom extends colyseus.Room { // When room is initialized onCreate
 
 **The `options` argument is provided by the client upon room creation:**
 
-\`\`\`typescript // Client-side - JavaScript SDK client.joinOrCreate("my\_room", { name:"Jake", map: "de\_dust2" })
+```typescript // Client-side - JavaScript SDK client.joinOrCreate("my\_room", { name:"Jake", map: "de\_dust2" })
 
-// onCreate() - options are: // { // name:"Jake", // map: "de\_dust2" // } \`\`\`
+// onCreate() - options are: // { // name:"Jake", // map: "de\_dust2" // } ```
 
 **The server may overwrite options during [`.define()`](/server/api/#define-roomname-string-room-room-options-any) for authortity:**
 
-\`\`\`typescript fct\_label="Definition" // Server-side gameServer.define("my\_room", MyRoom, { map: "cs\_assault" })
+```typescript fct\_label="Definition" // Server-side gameServer.define("my\_room", MyRoom, { map: "cs\_assault" })
 
-// onCreate() - options are: // { // name:"Jake", // map: "cs\_assault" // } \`\`\`
+// onCreate() - options are: // { // name:"Jake", // map: "cs\_assault" // } ```
 
 在本例中，在 `onCreate()` 期间, `map` 选项是 `"cs_assault"` , 在 `onJoin()` 期间是选项是 `"de_dust2"`。
 
@@ -78,59 +78,59 @@ export class MyRoom extends colyseus.Room { // When room is initialized onCreate
 
 **Implementations examples**
 
-\`\`\`typescript fct\_label="async / await" import { Room, ServerError } from "colyseus";
+```typescript fct\_label="async / await" import { Room, ServerError } from "colyseus";
 
 class MyRoom extends Room { async onAuth (client, options, request) { /\** * Alternatively, you can use `async` / `await`, * which will return a `Promise` under the hood. \*/ const userData = await validateToken(options.accessToken); if (userData) { return userData;
 
     } else {
         throw new ServerError(400, "bad access token");
     }
-  } } \`\`\`
+  } } ```
 
-\`\`\`typescript fct\_label="Synchronous" import { Room } from "colyseus";
+```typescript fct\_label="Synchronous" import { Room } from "colyseus";
 
 class MyRoom extends Room { onAuth (client, options, request): boolean { /\** * You can immediatelly return a `boolean` value. \*/ if (options.password === "secret") { return true;
 
      } else {
        throw new ServerError(400, "bad access token");
      }
-  } } \`\`\`
+  } } ```
 
-\`\`\`typescript fct\_label="Promises" import { Room } from "colyseus";
+```typescript fct\_label="Promises" import { Room } from "colyseus";
 
-class MyRoom extends Room { onAuth (client, options, request):Promise<any> { /\** * You can return a `Promise`, and perform some asynchronous task to validate the client. \*/ return new Promise((resolve, reject) => { validateToken(options.accessToken, (err, userData) => { if (!err) { resolve(userData); } else { reject(new ServerError(400, "bad access token")); } }); }); } } \`\`\`
+class MyRoom extends Room { onAuth (client, options, request):Promise<any> { /\** * You can return a `Promise`, and perform some asynchronous task to validate the client. \*/ return new Promise((resolve, reject) => { validateToken(options.accessToken, (err, userData) => { if (!err) { resolve(userData); } else { reject(new ServerError(400, "bad access token")); } }); }); } } ```
 
 **Client-side examples**
 
 在客户端，可以使用来自于您选择的身份验证服务（例如Facebook）的令牌调用匹配方法(`join`, `>joinOrCreate`等 ）：
 
-\`\`\`javascript fct\_label="JavaScript" client.joinOrCreate("world", { accessToken: yourFacebookAccessToken
+```javascript fct\_label="JavaScript" client.joinOrCreate("world", { accessToken: yourFacebookAccessToken
 
 }).then((room) => { // success
 
-}).catch((err) => { // handle error... err.code // 400 err.message // "bad access token" }); \`\`\`
+}).catch((err) => { // handle error... err.code // 400 err.message // "bad access token" }); ```
 
-\`\`\`csharp fct\_label="C#" try { var room = await client.JoinOrCreate<YourStateClass>"world", new { accessToken = yourFacebookAccessToken }); // success
+```csharp fct\_label="C#" try { var room = await client.JoinOrCreate<YourStateClass>"world", new { accessToken = yourFacebookAccessToken }); // success
 
-} catch (err) { // handle error... err.code // 400 err.message // "bad access token" } \`\`\`
+} catch (err) { // handle error... err.code // 400 err.message // "bad access token" } ```
 
-\`\`\`lua fct\_label="Lua" client:join\_or\_create("world", { accessToken = yourFacebookAccessToken
+```lua fct\_label="Lua" client:join\_or\_create("world", { accessToken = yourFacebookAccessToken
 
 }, function(err, room) if err then -- handle error... err.code -- 400 err.message -- "bad access token" return end
 
-  -- success end) \`\`\`
+  -- success end) ```
 
-\`\`\`haxe fct\_label="Haxe" client.joinOrCreate("world", { accessToken: yourFacebookAccessToken
+```haxe fct\_label="Haxe" client.joinOrCreate("world", { accessToken: yourFacebookAccessToken
 
 }, YourStateClass, function (err, room) { if (err != null) { // handle error... err.code // 400 err.message // "bad access token" return; }
 
-  // success }) \`\`\`
+  // success }) ```
 
-\`\`\`cpp fct\_label="C++" client.joinOrCreate("world", { { "accessToken", yourFacebookAccessToken }
+```cpp fct\_label="C++" client.joinOrCreate("world", { { "accessToken", yourFacebookAccessToken }
 
 }, \[=\](MatchMakeError *err, Room<YourStateClass>* room) { if (err != "") { // handle error... err.code // 400 err.message // "bad access token" return; }
 
-  // success }); \`\`\`
+  // success }); ```
 
 ---
 
@@ -174,13 +174,13 @@ class MyRoom extends Room { onAuth (client, options, request):Promise<any> { /\*
 ### 示例房间
 此示例演示实现 `onCreate`, `onJoin` 和 `onMessage` 方法的完整房间。
 
-\`\`\`typescript fct\_label="TypeScript" import { Room, Client } from "colyseus"; import { Schema, MapSchema, type } from "@colyseus/schema";
+```typescript fct\_label="TypeScript" import { Room, Client } from "colyseus"; import { Schema, MapSchema, type } from "@colyseus/schema";
 
 // An abstract player object, demonstrating a potential 2D world position export class Player extends Schema { @type("number") x: number = 0.11;
 
   @type("number") y: number = 2.22; }
 
-// Our custom game state, an ArraySchema of type Player only at the moment export class State extends Schema { @type({ map:Player }) players = new MapSchema<Player>(); } \`\`\`
+// Our custom game state, an ArraySchema of type Player only at the moment export class State extends Schema { @type({ map:Player }) players = new MapSchema<Player>(); } ```
 
 export class GameRoom extends Room<State> { // Colyseus will invoke when creating the room instance onCreate(options: any) { // initialize empty room state this.setState(new State());
 
@@ -193,9 +193,9 @@ export class GameRoom extends Room<State> { // Colyseus will invoke when creatin
     });
   }
 
-  // Called every time a client joins onJoin(client:Client, options: any) { this.state.players.set(client.sessionId, new Player()); } } \`\`\`
+  // Called every time a client joins onJoin(client:Client, options: any) { this.state.players.set(client.sessionId, new Player()); } } ```
 
-\`\`\`typescript fct\_label="JavaScript" const colyseus = require('colyseus'); const schema = require('@colyseus/schema');
+```typescript fct\_label="JavaScript" const colyseus = require('colyseus'); const schema = require('@colyseus/schema');
 
 // An abstract player object, demonstrating a potential 2D world position exports.Player = class Player extends schema.Schema { constructor() { super(); this.x = 0.11; this.y = 2.22; } } schema.defineTypes(Player, { x: "number", y: "number", });
 
@@ -212,7 +212,7 @@ exports.GameRoom = class GameRoom extends colyseus.Room { // Colyseus will invok
     });
   }
 
-  // Called every time a client joins onJoin(client, options) { this.state.players.set(client.sessionId, new Player()); } } \`\`\`
+  // Called every time a client joins onJoin(client, options) { this.state.players.set(client.sessionId, new Player()); } } ```
 
 ---
 
@@ -234,7 +234,7 @@ exports.GameRoom = class GameRoom extends colyseus.Room { // Colyseus will invok
 
 可以注册单个回调，以处理所有其它类型的消息。
 
-\`\`\`typescript onCreate () { this.onMessage("action", (client, message) => { // // Triggers when 'action' message is sent. // });
+```typescript onCreate () { this.onMessage("action", (client, message) => { // // Triggers when 'action' message is sent. // });
 
     this.onMessage("*", (client, type, message) => {
         //
@@ -243,7 +243,7 @@ exports.GameRoom = class GameRoom extends colyseus.Room { // Colyseus will invok
         //
         console.log(client.sessionId, "sent", type, message);
     });
-} \`\`\`
+} ```
 
 !!! tip "Use `room.send()` from the client-side SDK to send messages" Check out [`room.send()`](/client/client/#send-type-message)} section.
 
@@ -263,9 +263,9 @@ exports.GameRoom = class GameRoom extends colyseus.Room { // Colyseus will invok
 
 (可选)设置一个可以更改游戏状态的模拟间隔期。此模拟间隔期间是您的游戏循环周期。默认模拟间隔期：16.6ms (60fps)
 
-\`\`\`typescript onCreate () { this.setSimulationInterval((deltaTime) => this.update(deltaTime)); }
+```typescript onCreate () { this.setSimulationInterval((deltaTime) => this.update(deltaTime)); }
 
-update (deltaTime) { // implement your physics or world updates here! // this is a good place to update the room state } \`\`\`
+update (deltaTime) { // implement your physics or world updates here! // this is a good place to update the room state } ```
 
 ---
 
@@ -336,18 +336,18 @@ update (deltaTime) { // implement your physics or world updates here! // this is
 
 仅在应用状态变更之后，向所有客户端广播一条消息：
 
-\`\`\`typescript onCreate() { this.onMessage("destroy", (client, message) => { // perform changes in your state! this.state.destroySomething();
+```typescript onCreate() { this.onMessage("destroy", (client, message) => { // perform changes in your state! this.state.destroySomething();
 
         // this message will arrive only after new state has been applied
         this.broadcast("destroy", "something has been destroyed", { afterNextPatch: true });
     });
-} \`\`\`
+} ```
 
 广播一条架构编码消息：
 
-\`\`\`typescript class MyMessage extends Schema { @type("string") message: string; }
+```typescript class MyMessage extends Schema { @type("string") message: string; }
 
-// ... onCreate() { this.onMessage("action", (client, message) => { const data = new MyMessage(); data.message = "an action has been taken!"; this.broadcast(data); }); } \`\`\`
+// ... onCreate() { this.onMessage("action", (client, message) => { const data = new MyMessage(); data.message = "an action has been taken!"; this.broadcast(data); }); } ```
 
 !!!提示 [参见如何在客户端处理这些 onMessage()。](/client/room/#onmessage)
 
@@ -379,7 +379,7 @@ update (deltaTime) { // implement your physics or world updates here! // this is
 
 **示例**在 20 秒超时后拒绝重新连接。
 
-\`\`\`typescript async onLeave (client:Client, consented: boolean) { // flag client as inactive for other users this.state.players\[client.sessionId].connected = false;
+```typescript async onLeave (client:Client, consented: boolean) { // flag client as inactive for other users this.state.players\[client.sessionId].connected = false;
 
   try { if (consented) { throw new Error("consented leave"); }
 
@@ -393,12 +393,12 @@ update (deltaTime) { // implement your physics or world updates here! // this is
 
     // 20 seconds expired. let's remove the client.
     delete this.state.players[client.sessionId];
-  } } \`\`\`
+  } } ```
 
 
 **示例**使用自定义逻辑拒绝重新连接。
 
-\`\`\`typescript async onLeave (client:Client, consented: boolean) { // flag client as inactive for other users this.state.players\[client.sessionId].connected = false;
+```typescript async onLeave (client:Client, consented: boolean) { // flag client as inactive for other users this.state.players\[client.sessionId].connected = false;
 
   try { if (consented) { throw new Error("consented leave"); }
 
@@ -434,7 +434,7 @@ update (deltaTime) { // implement your physics or world updates here! // this is
 
     // 20 seconds expired. let's remove the client.
     delete this.state.players[client.sessionId];
-  } } \`\`\`
+  } } ```
 
 ---
 
@@ -452,7 +452,7 @@ update (deltaTime) { // implement your physics or world updates here! // this is
 
 如果想要控制何时广播补丁，可以禁用默认的补丁间隔时间来实现：
 
-\`\`\`typescript onCreate() { // disable automatic patches this.setPatchRate(null);
+```typescript onCreate() { // disable automatic patches this.setPatchRate(null);
 
     // ensure clock timers are enabled
     this.setSimulationInterval(() => {/* */});
@@ -463,7 +463,7 @@ update (deltaTime) { // implement your physics or world updates here! // this is
             this.broadcastPatch();
         }
     }, 2000);
-} \`\`\`
+} ```
 
 ---
 
@@ -520,7 +520,7 @@ update (deltaTime) { // implement your physics or world updates here! // this is
 对于以下情况，此属性将发生改变：
 
 - 允许的客户端数量已经达到 (`maxClients`)
-- 可以使用 [`lock()\`](#lock) 或 [`unlock()`](#unlock) 手动锁定或解锁房间。
+- 可以使用 [`lock()`](#lock) 或 [`unlock()`](#unlock) 手动锁定或解锁房间。
 
 ---
 
@@ -558,9 +558,9 @@ update (deltaTime) { // implement your physics or world updates here! // this is
 
 可用于存储关于客户端连接的自定义数据。`userData` 并不同步于 **not** 客户端，仅用于保留与其连接相关的用户数据。
 
-\`\`\`typescript onJoin(client, options) { client.userData = { playerNumber: this.clients.length }; }
+```typescript onJoin(client, options) { client.userData = { playerNumber: this.clients.length }; }
 
-onLeave(client) { console.log(client.userData.playerNumber); } \`\`\`
+onLeave(client) { console.log(client.userData.playerNumber); } ```
 
 ---
 
@@ -580,9 +580,9 @@ onLeave(client) { console.log(client.userData.playerNumber); } \`\`\`
 
 **Sending a message:**
 
-\`\`\`typescript // // sending message with a string type ("powerup") // client.send("powerup", { kind: "ammo" });
+```typescript // // sending message with a string type ("powerup") // client.send("powerup", { kind: "ammo" });
 
-// // sending message with a number type (1) // client.send(1, { kind: "ammo"}); \`\`\`
+// // sending message with a number type (1) // client.send(1, { kind: "ammo"}); ```
 
 <!-- 
 **Sending a schema-encoded message:**
@@ -607,7 +607,7 @@ client.send(data);
 
 #### `leave(code?: number)`
 
-`客户端`与房间强制断开连接。您可以在关闭连接时发送一个数值介于 `4000` 和 `4999` 之间的自定义\\`代码`（见 [WebSocket 关闭代码表](#websocket-close-codes-table) 
+`客户端`与房间强制断开连接。您可以在关闭连接时发送一个数值介于 `4000` 和 `4999` 之间的自定义\`代码`（见 [WebSocket 关闭代码表](#websocket-close-codes-table) 
 
 !!!提示：这将在客户端触发 [`room.onLeave`](/client/room/#onleave) 事件。
 

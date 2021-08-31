@@ -16,7 +16,7 @@
 
 ### Modified arena.config.ts
 
-\`\`\` import Arena from "@colyseus/arena"; import { monitor } from "@colyseus/monitor"; import { ShootingGalleryRoom } from "./rooms/ShootingGalleryRoom";
+``` import Arena from "@colyseus/arena"; import { monitor } from "@colyseus/monitor"; import { ShootingGalleryRoom } from "./rooms/ShootingGalleryRoom";
 
 const port = Number(process.env.PORT);
 
@@ -41,7 +41,7 @@ export default Arena({ getId: () => "Your Colyseus App",
     beforeListen: () => {
         console.log(`Listening on ws://localhost:${ port }`)
     }
-}); \`\`\`
+}); ```
 
 ### 修改后的文件夹结构
 

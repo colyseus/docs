@@ -6,13 +6,13 @@
 
 ## 使用方式
 
-\`\`\`typescript fct\_label="TypeScript" import rateLimit from "express-rate-limit";
+```typescript fct\_label="TypeScript" import rateLimit from "express-rate-limit";
 
-const apiLimiter = rateLimit({ windowMs:15 * 60 * 1000, // 最長 15 分鐘：100 }); app.use("/matchmake/", apiLimiter); \`\`\`
+const apiLimiter = rateLimit({ windowMs:15 * 60 * 1000, // 最長 15 分鐘：100 }); app.use("/matchmake/", apiLimiter); ```
 
-\`\`\`javascript fct\_label="JavaScript" const rateLimit = require("express-rate-limit");
+```javascript fct\_label="JavaScript" const rateLimit = require("express-rate-limit");
 
-const apiLimiter = rateLimit({ windowMs:15 * 60 * 1000, // 最長 15 分鐘：100 }); app.use("/matchmake/", apiLimiter); \`\`\`
+const apiLimiter = rateLimit({ windowMs:15 * 60 * 1000, // 最長 15 分鐘：100 }); app.use("/matchmake/", apiLimiter); ```
 
 
 如果您使用反向代理（如 Heroku、Bluemix、AWS ELB、Nginx 等），您還必須啟用 `"trust proxy"`

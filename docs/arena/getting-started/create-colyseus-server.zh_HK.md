@@ -20,7 +20,7 @@
 
 - **arena.config.ts / js:**可以在此文件中进行添加和修改，以支持您的游戏。请注意，在游戏服务器初始化期间，将调用三个核心函数。 
 
-\`\`\` getId: () => "Your Colyseus App",
+``` getId: () => "Your Colyseus App",
 
     initializeGameServer: (gameServer) => {
         /**
@@ -52,7 +52,7 @@
          * Before before gameServer.listen() is called.
          */
     }
-\`\`\`
+```
 
 - **arena.env / development.env:**这些文件用于管理 Colyseus 服务器环境变量，在 Arena Cloud 上托管时，将默认加载arena.env。
 

@@ -12,15 +12,15 @@
 
 ### 连接至服务器：
 
-\`\`\`haxe import io.colyseus.Client; import io.colyseus.Room;
+```haxe import io.colyseus.Client; import io.colyseus.Room;
 
-var client = new Client('ws://localhost:2567'); \`\`\`
+var client = new Client('ws://localhost:2567'); ```
 
 ### 加入房间：
 
 > 看看如何从 [State Handling](/state/schema/#client-side-schema-generation) 生成你的`RoomState`
 
-\`\`\`haxe client.joinOrCreate("room\_name", \[], RoomState, function(err, room) { if (err != null) { trace("JOIN ERROR: " + err); return; }
+```haxe client.joinOrCreate("room\_name", \[], RoomState, function(err, room) { if (err != null) { trace("JOIN ERROR: " + err); return; }
 
     room.state.entities.onAdd = function(entity, key) {
         trace("entity added at " + key + " => " + entity);
@@ -37,7 +37,7 @@ var client = new Client('ws://localhost:2567'); \`\`\`
     room.state.entities.onRemove = function(entity, key) {
         trace("entity removed at " + key + " => " + entity);
     }
-}); \`\`\`
+}); ```
 
 ### 其他房间事件
 
