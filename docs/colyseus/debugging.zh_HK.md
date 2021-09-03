@@ -1,54 +1,70 @@
-- [Inspector (`--inspect` flag)](#inspector)
-- [调试消息](#debug-messages)
+- [偵測器 (`--inspect` 參數)](#偵測器)
+- [偵錯訊息](#偵錯訊息)
 
-## 检测器
+## 偵測器
 
-您可使用Node.js的内置检测器来调试您的应用程序。
+您可以使用 Node.js 的內建偵測器來對你的應用程式進行偵錯.
 
-!!!提示 查阅更多有关[调试 Node.js 应用](https://nodejs.org/en/docs/inspector/)的内容。
+!!! Tip
+    請閱讀 [Node.js 程式偵錯](https://nodejs.org/en/docs/inspector/) 來獲取更多資訊.
 
-### 在生产环境中使用检测器
+### 在實際執行環境中使用偵測器
 
-生产过程中需谨慎使用检测器。使用内存快照和断点会直接影响您的用户体验。
+在實際執行中使用偵測器時請謹慎. 使用記憶體快照和中斷點會直接影響你的使用者體驗.
 
-*1\.*连接到远程服务器：
+*1.* 連接至遠端伺服器
 
-``` ssh root@remote.example.com ```
+```
+ssh root@remote.example.com
+```
 
-*2\.*检查节点进程的 PID
+*2.* 查看 Node 應用程式的 PID
 
-``` ps aux | grep node ```
+```
+ps aux | grep node
+```
 
-*3\.*将检测器附到进程中
+*3.* 將偵測器附加至應用程式
 
-``` kill -usr1 PID ```
+```
+kill -usr1 PID
+```
 
-*4\.*在您的本地机器中创建 SSH 通道以移除检测器
+*4.* 建立本機電腦到遠距偵測器之間的 SSH 通道
 
-``` ssh -L 9229:localhost:9229 root@remote.example.com ```
+```
+ssh -L 9229:localhost:9229 root@remote.example.com
+```
 
-您的生产服务器当前应显示在 [`chrome://inspect`](`chrome://inspect`) 中。
+此時你的實際執行伺服器應該可以展現在 [`chrome://inspect`](`chrome://inspect`) 中.
 
-## 调试消息
+## 偵錯訊息
 
-使用 `DEBUG=colyseus:*` 环境变量运行您的服务器以启用全部调试日志
+如需啟用所有偵錯日誌, 請使用 `DEBUG=colyseus:*` 環境變數來執行你的伺服器.
 
-``` DEBUG=colyseus:* npm start ```
+```
+DEBUG=colyseus:* npm start
+```
 
-您也可以按类别启用调试日志打印功能。 
+或者, 您還可以按類別啟用偵錯日誌.
 
 ### `colyseus:patch`
 
-记录广播到所有客户端的字节数和补丁下发的时间间隔。
+紀錄廣播給用戶端的補丁位元數和補丁間隔時間.
 
-``` colyseus:patch "chat" (roomId: "ryWiL5rLTZ") is sending 28 bytes: +57ms ```
+```
+colyseus:patch "chat" (roomId: "ryWiL5rLTZ") is sending 28 bytes: +57ms
+```
 
 ### `colyseus:errors`
 
-记录服务器端在任何时间出现的意外（或预知，内部）错误。
+每當伺服器端發生異常（可預見的或內部的）錯誤時, 進行紀錄.
 
 ### `colyseus:matchmaking`
 
-记录任何时间下的房间创建或配置行为。
+每當房間啟用或釋放時, 進行紀錄.
 
-``` colyseus:matchmaking spawning 'chat' on worker 77218 +52s colyseus:matchmaking disposing 'chat' on worker 77218 +2s ```
+```
+colyseus:matchmaking spawning 'chat' on worker 77218 +52s
+colyseus:matchmaking disposing 'chat' on worker 77218 +2s
+```
