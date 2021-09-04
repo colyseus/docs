@@ -3,14 +3,14 @@
 
 ## 偵測器
 
-您可以使用 Node.js 的內建偵測器來對你的應用程式進行偵錯.
+您可以使用 Node.js 的內建偵測器來對您的應用程式進行偵錯.
 
 !!! Tip
     請閱讀 [Node.js 程式偵錯](https://nodejs.org/en/docs/inspector/) 來獲取更多資訊.
 
-### 在實際執行環境中使用偵測器
+### 在生產環境中使用偵測器
 
-在實際執行中使用偵測器時請謹慎. 使用記憶體快照和中斷點會直接影響你的使用者體驗.
+在生產環境中使用偵測器時請謹慎. 使用記憶體快照和中斷點會直接影響您的使用者體驗.
 
 *1.* 連接至遠端伺服器
 
@@ -36,11 +36,11 @@ kill -usr1 PID
 ssh -L 9229:localhost:9229 root@remote.example.com
 ```
 
-此時你的實際執行伺服器應該可以展現在 [`chrome://inspect`](`chrome://inspect`) 中.
+此時您的實際執行伺服器應該可以展現在 [`chrome://inspect`](`chrome://inspect`) 中.
 
 ## 偵錯訊息
 
-如需啟用所有偵錯日誌, 請使用 `DEBUG=colyseus:*` 環境變數來執行你的伺服器.
+如需啟用所有偵錯日誌, 請使用 `DEBUG=colyseus:*` 環境變數來執行您的伺服器.
 
 ```
 DEBUG=colyseus:* npm start
