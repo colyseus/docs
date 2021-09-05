@@ -115,7 +115,7 @@ pm2 start
 ```
 
 !!! Tip "PM2 和 TypeScript"
-建議在運行 `pm2 start` 之前, 應用 `npx tsc` 編譯 .ts 文件. 或者您可以為 PM2 安裝 TypeScript 解釋器 (`pm2 install typescript`) 並設置 `exec_interpreter: "ts-node"` ([更多參考](http://pm2.keymetrics.io/docs/tutorials/using-transpilers-with-pm2)).
+    建議在運行 `pm2 start` 之前, 應用 `npx tsc` 編譯 .ts 文件. 或者您可以為 PM2 安裝 TypeScript 解釋器 (`pm2 install typescript`) 並設置 `exec_interpreter: "ts-node"` ([更多參考](http://pm2.keymetrics.io/docs/tutorials/using-transpilers-with-pm2)).
 
 
 ## 動態代理
