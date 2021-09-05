@@ -1,90 +1,145 @@
-> 该文件属于半成品。
+> 該文檔可能隨時更新.
 
-要想将 Colyseus 扩展至多进程或多服务器，您需要拥有 Redis、MongoDB和一个动态代理。
+要想將 Colyseus 擴展至多處理序或多伺服器，您需要擁有 Redis, MongoDB 以及一個動態代理.
 
 ## Redis
 
-下载并安装 [Redis](https://redis.io/topics/quickstart)。使用 `RedisPresence`：
+下載並安裝 [Redis](https://redis.io/topics/quickstart). 然後創建 `RedisPresence`：
 
-```typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus";
+```typescript fct_label="TypeScript"
+import { Server, RedisPresence } from "colyseus";
 
-const gameServer = new Server({ // ... presence: new RedisPresence(), }); ```
+const gameServer = new Server({
+  // ...
+  presence: new RedisPresence(),
+});
+```
 
-```typescript fct\_label="JavaScript" const colyseus = require("colyseus");
+```typescript fct_label="JavaScript"
+const colyseus = require("colyseus");
 
-const gameServer = new colyseus.Server({ // ... presence: new colyseus.RedisPresence(), }); ```
+const gameServer = new colyseus.Server({
+  // ...
+  presence: new colyseus.RedisPresence(),
+});
+```
 
-`presence` 用于从一个进程至另一个进程调用房间"seat reservation"功能，使开发者可以在房间之间利用一些同类数据分享功能。参阅 [Presence API](/server/presence/#api)。
+其中 `presence` 用於處理序間調用房間的 "預留席位" 功能, 還用於讓開發者可以在房間之間共享數據. 詳情請參閱 [Presence API](/server/presence/#api).
 
-每个 Colyseus 进程还会在 `presence` API 上注册自身的 `processId` 和网络位置，之后将用于 [>动态](#dynamic-proxy) 服务。在平稳关闭期间，进程将自我注销。
+每個 Colyseus 處理序還會用 `presence` API 註冊自身的 `processId` 和網絡位置, 以便應用 [動態代理](#dynamic-proxy) 服務. 優雅關閉時, 處理序會自我註銷.
 
 ## MongoDB
 
-[下载和安装 MongoDB](https://docs.mongodb.com/manual/administration/install-community/)并安装 `mongoose`包：
+下載安裝 [MongoDB](https://docs.mongodb.com/manual/administration/install-community/) 並安裝 `mongoose` 包：
 
-``` npm install --save mongoose ```
+```
+npm install --save mongoose
+```
 
-使用 `MongooseDriver`：
+應用 `MongooseDriver`:
 
-```typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus"; import { MongooseDriver } from "@colyseus/mongoose-driver"
+```typescript fct_label="TypeScript"
+import { Server, RedisPresence } from "colyseus";
+import { MongooseDriver } from "@colyseus/mongoose-driver"
 
-const gameServer = new Server({ // ... driver: new MongooseDriver(), }); ```
+const gameServer = new Server({
+  // ...
+  driver: new MongooseDriver(),
+});
+```
 
-```typescript fct\_label="JavaScript" const colyseus = require("colyseus"); const MongooseDriver = require("@colyseus/mongoose-driver").MongooseDriver;
+```typescript fct_label="JavaScript"
+const colyseus = require("colyseus");
+const MongooseDriver = require("@colyseus/mongoose-driver").MongooseDriver;
 
-const gameServer = new colyseus.Server({ // ... driver: new MongooseDriver(), }); ```
-
-
-您可以将 MongoDB 连接 URI 传输至 `new MongooseDriver(uri)` 构造函数，或设置一个 `MONGO_URI` 环境变量。
-
-`driver` 用于为比赛匹配存储并查询可用房间。
-
-## 运行多个 Colyseus 进程
-
-想要在同一个服务器中运行多个 Colyseus 实例，您需要让每个实例监听不同的端口号。推荐使用 `3001`、 `3002`、`3003`，以此类推。Colyseus 进程**不**应公开。只需公开[动态代理](#dynamic-proxy)。
-
-强烈推荐使用[PM2 process manager](http://pm2.keymetrics.io/)管理多Node.js app实例。
-
-PM2 提供一个 `NODE_APP_INSTANCE` 环境变量，其中每个进程包含一个不同数字。用其界定您的端口号。
-
-```typescript import { Server } from "colyseus";
-
-// binds each instance of the server on a different port. const PORT = Number(process.env.PORT) + Number(process.env.NODE\_APP\_INSTANCE);
-
-const gameServer = new Server({ /* ... \*/ })
-
-gameServer.listen(PORT); console.log("Listening on", PORT); ```
-
-``` npm install -g pm2 ```
-
-使用如下 `ecosystem.config.js` 配置：
-
-```javascript // ecosystem.config.js const os = require('os'); module.exports = { apps: [{ port :3000, name : "colyseus", script : "lib/index.js", // your entrypoint file watch : true, // optional instances : os.cpus().length, exec\_mode : 'fork', // IMPORTANT: do not use cluster mode. env: { DEBUG: "colyseus:errors", NODE\_ENV: "production", } }] } ```
-
-现在您可以开始多个 Colyseus 进程了。
-
-``` pm2 start ```
-
-!!!提示 推荐在经由 `npx tsc` 运行 `pm2 start` 之前，使用"PM2 and TypeScript"编译您的 .ts 文件。或者您可以为 PM2 (`pm2 install typescript`) 安装 TypeScript 解译器并设置 `exec_interpreter: "ts-node"` ([阅读更多](http://pm2.keymetrics.io/docs/tutorials/using-transpilers-with-pm2))。
+const gameServer = new colyseus.Server({
+  // ...
+  driver: new MongooseDriver(),
+});
+```
 
 
-## 动态代理
+您可以將 MongoDB 的連接 URI 傳遞給 `new MongooseDriver(uri)` 構造函數, 或者設置並賦值一個名為 `MONGO_URI` 的環境變量.
 
-[@colyseus/proxy](https://github.com/colyseus/proxy) 是一个动态代理，会自动监听 Colyseus 的上下波动，使 WebSocket 连接可以前往所创建房间的正确进程和服务器。
+這裏的 `driver` 用於在房間匹配時存儲和查詢可用的房間.
 
-动态代理应绑定至端口 `80`/`443`，这是您的应用中唯一的公共端点。所有请求必须经过代理。
+## 運行多個 Colyseus 處理序
 
-```npm install -g @colyseus/proxy ```
+想要在一個伺服器中運行多個 Colyseus 實例, 您需要讓每個實例監聽不同的埠口號. 推薦應用 `3001`, `3002`, `3003` 這樣的埠口. Colyseus 處理序 **不應** 對外公開, 而應該只公開 [動態代理](#dynamic-proxy).
 
-### 环境变量
+強烈推薦應用 [PM2 process manager](http://pm2.keymetrics.io/) 管理多個 Node.js 應用實例.
 
-配置下列环境变量来满足您的需求：
+PM2 提供名為 `NODE_APP_INSTANCE` 的環境變量, 對於每個處理序這個變量數字是唯一的, 可以用其界定埠口號.
 
-- `PORT` 是代理运行的端口。
-- `REDIS_URL` 是您在 Colyseus 进程上使用的同一个 Redis 实例的路径。
+```typescript
+import { Server } from "colyseus";
 
-### 运行代理
+// 給每個實例綁定各不相同的埠口號.
+const PORT = Number(process.env.PORT) + Number(process.env.NODE_APP_INSTANCE);
 
-``` colyseus-proxy
+const gameServer = new Server({ /* ... */ })
 
-> {"name":"redbird","hostname":"Endels-MacBook-Air.local","pid":33390,"level":30,"msg":"Started a Redbird reverse proxy server on port 80","time":"2019-08-20T15:26:19.605Z","v":0} ```
+gameServer.listen(PORT);
+console.log("Listening on", PORT);
+```
+
+```
+npm install -g pm2
+```
+
+應用如下 `ecosystem.config.js` 配置：
+
+```javascript
+// ecosystem.config.js
+const os = require('os');
+module.exports = {
+    apps: [{
+        port        : 3000,
+        name        : "colyseus",
+        script      : "lib/index.js", // 主入口頁面
+        watch       : true,           // 可選
+        instances   : os.cpus().length,
+        exec_mode   : 'fork',         // 註意: 不要應用 cluster 模式.
+        env: {
+            DEBUG: "colyseus:errors",
+            NODE_ENV: "production",
+        }
+    }]
+}
+```
+
+現在您就可以開啟多個 Colyseus 處理序了.
+
+```
+pm2 start
+```
+
+!!! Tip "PM2 和 TypeScript"
+建議在運行 `pm2 start` 之前, 應用 `npx tsc` 編譯 .ts 文件. 或者您可以為 PM2 安裝 TypeScript 解釋器 (`pm2 install typescript`) 並設置 `exec_interpreter: "ts-node"` ([更多參考](http://pm2.keymetrics.io/docs/tutorials/using-transpilers-with-pm2)).
+
+
+## 動態代理
+
+[@colyseus/proxy](https://github.com/colyseus/proxy) 作為動態代理, 自動監控 Colyseus 處理序的創建和釋放, 以確保 WebSocket 連接通向正確的伺服器上正確處理序的正確房間.
+
+動態代理應該作為唯一公開門戶綁定至 `80` / `443` 埠口. 所有請求必須透過這個代理.
+
+```
+npm install -g @colyseus/proxy
+```
+
+### 環境變量
+
+配置下列環境變量來滿足您的需求：
+
+- `PORT` 是代理運行的埠口.
+- `REDIS_URL` 是各個 Colyseus 處理序裏應用的同一個 Redis 實例的路徑.
+
+### 運行代理
+
+```
+colyseus-proxy
+
+> {"name":"redbird","hostname":"Endels-MacBook-Air.local","pid":33390,"level":30,"msg":"Started a Redbird reverse proxy server on port 80","time":"2019-08-20T15:26:19.605Z","v":0}
+```
+

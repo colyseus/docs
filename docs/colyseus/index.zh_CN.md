@@ -18,7 +18,7 @@
 
 ### 创建一个简单的 Colyseus 服务器
 
-使用 `npm init colyseus-app` 命令可以创建简单的 Colyseus 服务器. 您可以选择 TypeScript（推荐）、JavaScript 或 Haxe 作为服务器语言.
+使用 `npm init colyseus-app` 命令可以创建简单的 Colyseus 服务器. 您可以选择 TypeScript（推荐）, JavaScript 或 Haxe 作为服务器语言.
 
 ```
 npm init colyseus-app ./my-colyseus-app
