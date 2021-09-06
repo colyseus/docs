@@ -69,7 +69,7 @@ describe("testing your Colyseus app", () => {
 
 ### `room.waitForMessage(type)`
 
-等待某个想要的信息 `type` 发送至服务器.
+等待某个 `type` 信息发送至服务器.
 
 ```typescript
 it("should receive message", async() => {
@@ -91,11 +91,11 @@ it("should receive message", async() => {
 
 ### `room.waitForNextMessage()`
 
-Wait for any next message to arrive in the server.
+等待下一个信息发送至服务器.
 
-**Parameters**
+**参数**
 
-- `additionalDelay: number` - additional delay after `onMessage` has been called in the server-side, in milliseconds (optional)
+- `additionalDelay: number` - 在服务器 `onMessage` 触发之后额外再多等待的毫秒数 (可选参数)
 
 ```typescript
 it("should receive message", async() => {
@@ -118,7 +118,7 @@ it("should receive message", async() => {
 
 ### `room.waitForNextPatch()`
 
-Wait for the server to send the latest patched state to all clients.
+等待服务器对客户端发送最新补丁数据.
 
 ```typescript
 it("client state must match server's after patch is received", async() => {
@@ -127,7 +127,7 @@ it("client state must match server's after patch is received", async() => {
 
     await room.waitForNextPatch();
 
-    // server and client's state must match after the patch
+    // 接到补丁数据后客户端与服务器端状态应保持一致
     assert.deepStrictEqual(client1.state.toJSON(), room.state.toJSON());
 });
 ```
@@ -136,7 +136,7 @@ it("client state must match server's after patch is received", async() => {
 
 ### `room.waitForNextSimulationTick()`
 
-Wait for the next simulation tick to complete.
+等待模拟心跳数据.
 
 ```typescript
 it("should assert something after room's simulation tick", async() => {
@@ -145,24 +145,24 @@ it("should assert something after room's simulation tick", async() => {
 
     await room.waitForNextSimulationTick();
 
-    // (this is just an illustration scenario)
-    // (assuming the room's state has a "tick" property that updates during setSimulationInterval())
+    // (这里只作说明之用)
+    // (假设房间状态里有一个叫做 "tick" 的属性随 setSimulationInterval() 而更新)
     assert.strictEqual(room.state.tick, 1);
 });
 ```
 
 ---
 
-## Client-side SDK methods & utilities
+## 客户端 SDK 功能与工具
 
-From your test-cases, you may call any of the client-side SDK methods through `colyseus.sdk`
+在测试当中, 可以通过客户端 SDK 的 `colyseus.sdk` 来调用客户端的各种功能.
 
 - [`colyseus.sdk.joinOrCreate()`](/colyseus/client/client/#joinorcreate-roomname-string-options-any)
 - [`colyseus.sdk.create()`](/colyseus/client/client/#create-roomname-string-options-any)
 - [`colyseus.sdk.join()`](/colyseus/client/client/#join-roomname-string-options-any)
 - [`colyseus.sdk.joinById()`](/colyseus/client/client/#joinbyid-roomid-string-options-any)
 
-**Example**
+**举例**
 
 ```typescript
 it("should connect into battle_room with options x, y, z", async () => {
@@ -177,13 +177,13 @@ it("should connect into battle_room with options x, y, z", async () => {
 
 ### `client.waitForNextPatch()`
 
-Wait for client state to be in sync with the server.
+等待客户端状态与服务器同步.
 
 ```typescript
 it("should do xyz after receiving message 'x'", async () => {
     const client = await colyseus.sdk.joinOrCreate("battle_room");
     await client.waitForNextPatch();
-    // perform assertions after client has received a message
+    // 客户端收到信息后在这里设置断言
 });
 ```
 
@@ -191,7 +191,7 @@ it("should do xyz after receiving message 'x'", async () => {
 
 ### `client.waitForMessage(type)`
 
-Wait for a particular message `type` to arrive in the client-side.
+等待某个 `type` 信息发送至客户端.
 
 ```typescript
 it("should do xyz after receiving message 'x'", async () => {
@@ -199,7 +199,7 @@ it("should do xyz after receiving message 'x'", async () => {
     client.send("ask-for-x");
 
     await client.waitForMessage("received-x");
-    // perform assertions after client has received "received-x" message type.
+    // 客户端收到 "received-x" 信息后在这里设置断言.
 });
 ```
 
@@ -207,7 +207,7 @@ it("should do xyz after receiving message 'x'", async () => {
 
 ### `client.waitForNextMessage()`
 
-Wait for any next message to arrive in the client.
+等待下一个信息发送至客户端.
 
 ```typescript
 it("should do xyz after receiving message 'x'", async () => {
@@ -215,15 +215,15 @@ it("should do xyz after receiving message 'x'", async () => {
     client.send("ask-for-x");
 
     await client.waitForNextMessage();
-    // perform assertions after client has received a message
+    // 客户端收到下一个信息后在这里设置断言
 });
 ```
 
 ---
 
-## Testing HTTP Routes
+## 测试 HTTP 请求
 
-The `@colyseus/testing` also offers an HTTP client for requesting your custom http routes:
+在 `@colyseus/testing` 里还提供了一个 HTTP 客户端用于发送自定义的 http 请求:
 
 - `colyseus.http.get(url, opts)`
 - `colyseus.http.post(url, opts)`
@@ -231,16 +231,16 @@ The `@colyseus/testing` also offers an HTTP client for requesting your custom ht
 - `colyseus.http.delete(url, opts)`
 - `colyseus.http.put(url, opts)`
 
-**Example**
+**举例**
 
 ```typescript
 it("should get json data", async () => {
     const response = await colyseus.http.get("/");
 
-    // "data" is the response body
+    // "data" 是响应体
     assert.deepStrictEqual({ success: true }, response.data);
 
-    // access to response headers.
+    // 查看响应头部
     assert.strictEqual('header value', response.headers['some-header']);
 });
 ```
