@@ -1,51 +1,85 @@
-# 監視面板 (`@colyseus/monitor`)
+# 监控面板  (`@colyseus/monitor`)
 
-`@colyseus/monitor` 是讓您檢視並檢查由伺服器產生的目前房間清單的實用工具。
+`@colyseus/monitor` 是一个方便易用的工具，可以实时监察服务器生成的房间列表.
 
 **功能**
 
-- 所有使用中房間的清單
-    - 強制處置特定房間
-- 檢查特定房間
-    - 檢視房間狀態
-    - 為用戶端傳送/廣播訊息
-    - 強制中斷用戶端的連接。
+- 所有活动房间列表
+    - 强制释放指定房间
+- 检查特定房间
+    - 查看房间状态
+    - 向客户端发送 / 广播信息
+    - 强制断开客户端
 
 <img src="https://github.com/colyseus/colyseus-monitor/raw/master/media/demo.gif?raw=true" />
 
-## 安裝
+## 安装
 
-安裝模組：
+安装模块:
 
-``` npm install --save @colyseus/monitor ```
+```
+npm install --save @colyseus/monitor
+```
 
-將其包含至您的專案：
+在项目中引入:
 
-```typescript fct\_label="TypeScript" // ... import { monitor } from "@colyseus/monitor";
+```typescript fct_label="TypeScript"
+// ...
+import { monitor } from "@colyseus/monitor";
 
-// ... app.use("/colyseus", monitor()); ```
+// ...
+app.use("/colyseus", monitor());
+```
 
-```javascript fct\_label="JavaScript" // ... const monitor = require("@colyseus/monitor").monitor;
+```javascript fct_label="JavaScript"
+// ...
+const monitor = require("@colyseus/monitor").monitor;
 
-// ... app.use("/colyseus", monitor()); ```
+// ...
+app.use("/colyseus", monitor());
+```
 
 
-## 使用密碼限制對面板的存取
+## 使用密码限制面板访问
 
-您可以使用快速中介軟體以啟用監視器路由的驗證，例如 `express-basic-middleware`：
+可以使用 express 的中间件, 在监控面板设置身份验证, 例如 `express-basic-middleware`:
 
-``` npm install --save express-basic-auth ```
+```
+npm install --save express-basic-auth
+```
 
-使用 `express-basic-auth` 建立使用者和密碼。
+使用 `express-basic-auth` 创建用户和密码.
 
-```typescript import basicAuth from "express-basic-auth";
+```typescript
+import basicAuth from "express-basic-auth";
 
-const basicAuthMiddleware = basicAuth({ // list of users and passwords users: { "admin": "admin", }, // 傳送 WWW-Authenticate 標頭，其會提示使用者填滿 // challenge: true 中的認證 });
+const basicAuthMiddleware = basicAuth({
+    // 用户名/密码列表
+    users: {
+        "admin": "admin",
+    },
+    // 发送 WWW-Authenticate 响应头, 提示用户
+    // 填写用户名和密码
+    challenge: true
+});
 
-app.use("/colyseus", basicAuthMiddleware, monitor()); ```
+app.use("/colyseus", basicAuthMiddleware, monitor());
+```
 
-## 設定自訂房間清單欄
+## 自定义房间属性列
 
-```typescript app.use("/colyseus", basicAuthMiddleware, monitor({ columns: [ 'roomId', 'name', 'clients', { metadata: "spectators" }, // display 'spectators' from metadata 'locked', 'elapsedTime' ] })); ```
+```typescript
+app.use("/colyseus", basicAuthMiddleware, monitor({
+  columns: [
+    'roomId',
+    'name',
+    'clients',
+    { metadata: "spectators" }, // 显示元数据里的 'spectators'
+    'locked',
+    'elapsedTime'
+  ]
+}));
+```
 
-如果未指定，則預設房間清單欄為：`['roomId', 'name', 'clients', 'maxClients', 'locked', 'elapsedTime']`。
+如果未指定, 默认房间属性列是: `['roomId', 'name', 'clients', 'maxClients', 'locked', 'elapsedTime']`.
+
