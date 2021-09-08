@@ -1,60 +1,86 @@
-# 加载测试 / 压力测试 (`@colyseus/loadtest`)
+# 加載測試 / 壓力測試 (`@colyseus/loadtest`)
 
-当您想要实战测试服务器，以了解其在实时环境下的表现时，`@colyseus/loadtest` 工具很有用。
+當您想對伺服器進行壓力測試時，以了解其在上線時的表現時，`@colyseus/loadtest` 裏的工具會很有用.
 
 [![asciicast](https://asciinema.org/a/229378.svg)](https://asciinema.org/a/229378)
 
-## 安装
+## 安裝
 
-安装 `@colyseus/loadtest` 模块：
+安裝 `@colyseus/loadtest` 模組:
 
-``` npm install --save-dev @colyseus/loadtest ```
+```
+npm install --save-dev @colyseus/loadtest
+```
 
 ## 用法
 
-`colyseus-loadtest` 命令需要一些参数才能工作：
+`colyseus-loadtest` 命令需要的參數有:
 
-- `脚本`：自定义脚本工具将使用
-- `--endpoint`:您的服务器终端（默认使用 `ws://localhost:2567`)
-- `--room`:想要连接的房间名称
-- `--numClients`:想要连接进入房间的客户端数量。
+- `script`: 要使用的自定義腳本
+- `--endpoint`: 您的伺服器入口（默認使用 `ws://localhost:2567`)
+- `--room`: 要連接的房間名
+- `--numClients`: 進入房間的客戶端數量
 
-### 示例
+### 範例
 
-这是一个示例脚本文件。在每个已连接客户端的房间生命周期事件基础上，可以实现一个“bot”，与房间互动。
+這是一個範例腳本文件. 基於每個已連接客戶端上 room 的生命周期, 可以實現一個 "bot", 與房間進行交互.
 
-```typescript fct\_label="TypeScript" // script.ts import { Room, Client } from "colyseus.js";
+```typescript fct_label="TypeScript"
+// script.ts
+import { Room, Client } from "colyseus.js";
 
-export function requestJoinOptions (this:Client, i: number) { return { requestNumber: i }; }
+export function requestJoinOptions (this: Client, i: number) {
+    return { requestNumber: i };
+}
 
-export function onJoin(this:Room) { console.log(this.sessionId, "joined.");
+export function onJoin(this: Room) {
+    console.log(this.sessionId, "joined.");
 
     this.onMessage("*", (type, message) => {
         console.log("onMessage:", type, message);
     });
 }
 
-export function onLeave(this:Room) { console.log(this.sessionId, "left."); }
+export function onLeave(this: Room) {
+    console.log(this.sessionId, "left.");
+}
 
-export function onError(this:Room, err) { console.error(this.sessionId, "!!ERROR !!", err.message); }
+export function onError(this: Room, err) {
+    console.error(this.sessionId, "!! ERROR !!", err.message);
+}
 
-export function onStateChange(this:Room, state) { } ```
+export function onStateChange(this: Room, state) {
+}
+```
 
-```typescript fct\_label="JavaScript" // script.js exports.requestJoinOptions = function (i) { return { requestNumber: i }; }
+```typescript fct_label="JavaScript"
+// script.js
+exports.requestJoinOptions = function (i) {
+    return { requestNumber: i };
+}
 
-exports.onJoin = function () { console.log(this.sessionId, "joined.");
+exports.onJoin = function () {
+    console.log(this.sessionId, "joined.");
 
     this.onMessage("*", (type, message) => {
         console.log("onMessage:", type, message);
     });
 }
 
-exports.onLeave = function () { console.log(this.sessionId, "left."); }
+exports.onLeave = function () {
+    console.log(this.sessionId, "left.");
+}
 
-exports.onError = function (err) { console.log(this.sessionId, "!!ERROR !!", err.message); }
+exports.onError = function (err) {
+    console.log(this.sessionId, "!! ERROR !!", err.message);
+}
 
-exports.onStateChange = function (state) { } ```
+exports.onStateChange = function (state) {
+}
+```
 
-### 50 个客户端连接进入 `"battle"` 房间
+### 測試 50 個客戶端連接進入 `"battle"` 房間
 
-``` npx colyseus-loadtest script.ts --room battle --numClients 50 --endpoint ws://localhost:2567 ```
+```
+npx colyseus-loadtest script.ts --room battle --numClients 50 --endpoint ws://localhost:2567
+```
