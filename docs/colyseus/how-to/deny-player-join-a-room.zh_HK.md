@@ -1,8 +1,8 @@
-您可以在调用 `onAuth()` 或 `onJoin()` 方法时展示一个错误提示来拒绝玩家接入。
+您可以在调用 `onAuth()` 或 `onJoin()` 方法时展示一个错误提示来拒绝玩家接入.
 
-至于何时执行拒绝操作则取决于您的用例。
+至于何时执行拒绝操作则取决于您的用例.
 
-下方是验证 [@colyseus/social](/tools/colyseus-social/#server-side-api) 身份认证令牌，以及检索与用户 id 关联的 `Hero` 记录。
+下方是验证 [@colyseus/social](/tools/colyseus-social/#server-side-api) 身份认证令牌,以及检索与用户 id 关联的 `Hero` 记录.
 
 ``typescript export class BattleRoom extends Room {
 

@@ -1,6 +1,6 @@
 # 监控面板  (`@colyseus/monitor`)
 
-`@colyseus/monitor` 是一个方便易用的工具，可以实时监察服务器生成的房间列表.
+`@colyseus/monitor` 是一个方便易用的工具,可以实时监察服务器生成的房间列表.
 
 **功能**
 

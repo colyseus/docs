@@ -1,7 +1,7 @@
 # 身份驗證 + 社交 (`@colyseus/social`)
 
 !!! Warning "棄用通知"
-`@colyseus/social` 模塊即將被完全棄用. 目前我們建議使用 Firebase、Auth0 或其他身份證驗服務.
+`@colyseus/social` 模塊即將被完全棄用. 目前我們建議使用 Firebase, Auth0 或其他身份證驗服務.
 
 在此介紹 [`@colyseus/social`](http://github.com/colyseus/colyseus-social) 的配置和用法.
 
@@ -9,7 +9,7 @@
 
 
 !!! Tip
-如果想要實現自己的身份驗證方法，請參考 [Room » onAuth()](/server/room/#onauth-client-options-request).
+如果想要實現自己的身份驗證方法,請參考 [Room » onAuth()](/server/room/#onauth-client-options-request).
 
 ## 安裝
 
@@ -54,7 +54,7 @@ app.listen(8080);
 
 ## 服務器端 API
 
-`@colyseus/social` 裏提供了 MongoDB 模塊，以及令牌驗證功能.
+`@colyseus/social` 裏提供了 MongoDB 模塊,以及令牌驗證功能.
 
 ```
 typescript import { User, FriendRequest, verifyToken } from "@colyseus/social";
@@ -202,7 +202,7 @@ end)
 
 ### 更新用戶數據
 
-您可以在客戶端修改 `username`, `displayName`, `avatarUrl`, `lang`, `location` 和 `timezone`，然後調用 `save()` 方法保存.
+您可以在客戶端修改 `username`, `displayName`, `avatarUrl`, `lang`, `location` 和 `timezone`,然後調用 `save()` 方法保存.
 
 ```javascript fct_label="JavaScript"
 client.auth.username = "Hello world!"

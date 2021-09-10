@@ -1,66 +1,66 @@
-# 射擊場技術演示
+# Shooting Gallery  技术演示
 
-此技術演示旨在展示如何建立房間、利用自訂遊戲邏輯以及處理完整的多人遊戲週期。該演示旨在與 Colyseus 0.14 版和 [Unity 2019.4.20f1](https://unity3d.com/unity/qa/lts-releases) 版搭配使用。
+该技术演示的目的是展示如何制作房间, 利用客制化游戏逻辑并处理完整的多人游戏周期.该演示旨在搭配  Colyseus 0.14 版本以及 [Unity version 2019.4.20f1](https://unity3d.com/unity/qa/lts-releases) 使用.
 
-**[下載試玩版](https://github.com/colyseus/unity-demo-shooting-gallery/archive/master.zip)**（[檢視原始程式碼](https://github.com/colyseus/unity-demo-shooting-gallery/)）
+**[下载演示](https://github.com/colyseus/unity-demo-shooting-gallery/archive/master.zip)** ([查看源代码](https://github.com/colyseus/unity-demo-shooting-gallery/))
 
-![螢幕擷取畫面](screenshot.png)
+![屏幕截图](screenshot.png)
 
-## 開始使用
+## 开始
 
-### 啟動本機伺服器
+### 启用本地服务器
 
-你必須在**提供的伺服器目錄**中的伺服器裡安裝並啟動本試玩版，才能夠正常運作。只需按照這些文件的 Unity3d 部分中的[「執行演示伺服器」下的說明進行操作](/getting-started/unity3d-client/#running-the-demo-server)。
+您需要从 **提供的服务器目录** 中选择安装并启用服务器,以正常操作本演示. 按照 [这些文档中 Unity3d 部分之"运行演示服务器"](/getting-started/unity3d-client/#running-the-demo-server) 中的说明操作即可.
 
 ### ColyseusSettings ScriptableObject
 
-全部伺服器設定都可以透過位於這裡的 ColyseusSetting ScriptableObject 來進行變更：
+服务器的所有设置都可通过此处的 ColyseusSetting ScriptableObject 进行更改：
 
 ![ScriptableObject](../common-images/scriptable-object.png)
 
-如果你執行的是本機伺服器，預設的設定應該很充足，然而如果你希望提供主機伺服器服務，會需要變更**Colyseus 伺服器位址**和對應的**Colyseus 伺服器連接埠** 值。
+如果您运行的是本地服务器,默认的设置就能够满足需求；但若您希望托管服务器,则需要按需更改 **Colyseus 服务器地址** 和 **Colyseus 服务器端口**.
 
-### 遊玩試玩版
+### 播放演示
 
-在位於 `Assets\GalleryShooter\Scenes\Lobby` 的場景「Lobby」中啟動播放器。輸入您的使用者名稱並建立一個房間，以便開始。**如果您無法進入房間建立畫面，請確認您的本機伺服器運作正常並檢查 Unity 編輯器中的錯誤日誌。**如果成功，用戶端將加載「GalleryShooter」場景。如果您按 Enter 鍵或單擊「開始」按鈕，您將「準備就緒」並開始遊戲。如果您在本機伺服器上等待更多玩家加入，則所有玩家都必須在遊戲開始前「準備就緒」。
+让玩家出生在"大厅"场景,位置是 `Assets\GalleryShooter\Scenes\Lobby`. 输入你的用户名并创建房间以开始. **如果你无法进入房间制作界面,请确认你的本地服务器工作正常,并检查 Unity 编辑器的错误日志.** 如果你成功了,客户端将加载 "GalleryShooter" 场景. 如果你按下 Enter 键,你将"准备就绪",同时游戏将会开始.如果你在你的本地服务器上等待更多玩家加入,必须在所有玩家都"准备就绪"后游戏才会开始.
 
 
-## 調整演示
+## 调整演示
 
-當您使用這個演示時，您可能需要進行一些調整，以更好地熟悉正在發生的事情。以下，您將學習如何進行這些細微的調整。
+当你播放此演示的时候,你可能希望进行一些调整,帮你更好地了解当前发生的情况.下面你将学习如何进行微调整.
 
-### 目標
+### 目标
 
-用於遊戲中目標的值可以在 `Server\src\rooms\customLogic\targets.ts` 的伺服器代碼中找到。在這裡，您可以調整分數值、重新命名目標和新增/刪除目標選項。如果您新增一個新的目標，確保也給它一個新的「id」值，否則 Unity 用戶端將不知道要顯示什麼目標模型。
+游戏内目标的值可以在服务器代码 `Server\src\rooms\customLogic\targets.ts` 中找到. 在此处, 你可以调整分值, 重命名目标并添加/移除目标选项.如果你添加了一个新目标,请务必给它一个新的 "id" 值,否则 Unity 客户端将不知道该展示何种目标模型.
 
-用戶端上的這些目標選項可以在位於 `Assets\GalleryShooter\Prefabs\Targets\Controls\TargetController.prefab` 的「TargetController」預製件中進行調整。如果您希望調整模型或新增目標，您可以在此處為用戶端做好準備
+客户端上的这些目标选项可以在 "TargetController" 预设中调整,位置是 `Assets\GalleryShooter\Prefabs\Targets\Controls\TargetController.prefab`. 如果你希望调整模型或添加新目标,你可以在这里为客户端做准备
 
-### 目標移動
+### 目标移动
 
-目標，當從伺服器提供時，將根據其行數傳遞給相應的 TargetTreadmill。「Row」在伺服器上 `target.ts` 中的第 52 行隨機設定。如果您在 GalleryShooter 場景中新增或刪除行，則必須透過 `LobbyController.numberOfTargetRows` 使伺服器意識到它：
+服务器提供的目标将根据其所在行的位置移交给相应的 TargetTreadmill."行"会在服务器 52 列 `target.ts` 随机设置.如果你在 GalleryShooter 场景中添加或移除行,服务器必须通过此处对其进行了解：`LobbyController.numberOfTargetRows`:
 
-![numberOfTargetRows](/demo/shooting-gallery/number-of-target-rows.png)
+![LobbyController.numberOfTargetRows](/demo/shooting-gallery/number-of-target-rows.png):
 
-該數字將在房間初始化時提供給伺服器，並且在隨機選擇目標行時將使用該值。
+这个数字将在房间初始化时提供给服务器,并在随机选择目标所在的行时使用该值.
 
-跑步機單獨控制其發出目標的頻率：
+treadmills 单独控制发送目标的频率：
 
-![目標之間的時間](/demo/shooting-gallery/time-between-targets.png)
+![Time between targets](/demo/shooting-gallery/time-between-targets.png)
 
-TargetBase 物件在此控制其速度：
+TargetBase 对象在这里控制其自身速度：
 
-![移動速度](/demo/shooting-gallery/move-speed.png)
+![Move speed](/demo/shooting-gallery/move-speed.png)
 
-### 調整槍械
+### 调整枪支
 
-可在此處的槍械預製件上更改槍械的重要值：
+枪支的重要值可以在枪预设这里进行更改：
 
-![槍械](/demo/shooting-gallery/guns.png)
+![Guns](/demo/shooting-gallery/guns.png)
 
-### 最大玩家人數
+### 最大玩家数
 
-最大玩家人數預設為 `25`。您可以在 `Server\src\rooms\ShootingGalleryRoom.ts` 中的第 `94` 行進行調整。或者，如果您希望沒有限制，只需刪除此行即可。
+默认最大玩家数设置为 `25`. 你可以在 `Server\src\rooms\ShootingGalleryRoom.ts` 的 `94` 列更改. 或者, 如果你不希望设置限制, 移除此列即可.
 
-### 調整玩家移動
+### 调整玩家移动
 
-您可以在位於 `Assets\GalleryShooter\Prefabs\GalleryShootPlayer.prefab` 的預製件上調整玩家的移動值。在這裡，您還可以調整遠端玩家移動的插值率以及其他限制。
+你可以在位于 `Assets\GalleryShooter\Prefabs\GalleryShootPlayer.prefab` 的预设中调整玩家的移动值.在这里,你也可以调整远程玩家的插值率以及其他限制.

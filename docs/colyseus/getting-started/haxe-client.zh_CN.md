@@ -1,6 +1,6 @@
 # Haxe SDK
 
-我們鼓勵您將此 SDK 與任何 Haxe 遊戲引擎一起使用，例如：[OpenFL](https://www.openfl.org/)、[Kha](http://kha.tech/)、[HaxeFlixel](http://haxeflixel.com/)、[Heaps](https://heaps.io/)、[HaxePunk](http://haxepunk.com/) 等。
+我們鼓勵您將此 SDK 與任何 Haxe 遊戲引擎一起使用,例如：[OpenFL](https://www.openfl.org/), [Kha](http://kha.tech/), [HaxeFlixel](http://haxeflixel.com/), [Heaps](https://heaps.io/), [HaxePunk](http://haxepunk.com/) 等.
 
 ## 安裝
 
@@ -59,15 +59,15 @@ var client = new Client('ws://localhost:2567'); ```
 
 ## 執行演示專案
 
-[`示例`](https://github.com/colyseus/colyseus-hx/blob/master/example/openfl)專案可以編譯為 `html5`、`neko`、`cpp`、`ios` ， 等等。
+[`示例`](https://github.com/colyseus/colyseus-hx/blob/master/example/openfl)專案可以編譯為 `html5`, `neko`, `cpp`, `ios` , 等等.
 
-其使用 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 專案中的 `state_handler` 空間，您可以在[此處](https://github.com/colyseus/colyseus-examples/blob/master/rooms/02-state-handler.ts)找到該空間。
+其使用 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 專案中的 `state_handler` 空間,您可以在[此處](https://github.com/colyseus/colyseus-examples/blob/master/rooms/02-state-handler.ts)找到該空間.
 
 ### 將演示項目編譯為 `html5`
 
 ``` git clone https://github.com/colyseus/colyseus-hx.git cd colyseus-hx/example/openfllime build project.xml html5 ```
 
-您可以[在此處查看演示專案](http://colyseus.io/colyseus-hx/)。
+您可以[在此處查看演示專案](http://colyseus.io/colyseus-hx/).
 
 
 ## `ios` 目標警告

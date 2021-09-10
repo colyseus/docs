@@ -1,22 +1,31 @@
-# 内置房间 » 大厅房间
+# 內建房間 » 大廳房間
 
-!!!警告“在 Colyseus 1.0.0 中，将更改大厅房间客户端 API” 。目前，内置大厅房间依赖于发送消息，向客户端通知有关可用房间的信息。当 `@filter()` 变得稳定时，LobbyRoom 将改为使用该状态。
+!!! Warning "大廳房間的用戶端 API 將在 Colyseus 1.0.0 上更改"
+    內建大廳房間目前依賴於發送訊息來通知用戶端有關可用房間的資訊.當 `@filter()` 變得穩定時, LobbyRoom 將改為使用該狀態.
 
-## 服务器端
+## 伺服器端
 
-在具有“实时列表”的房间有更新时，内置的 `LobbyRoom` 会自动通知其连接的客户端。
+內建 `大廳房間` 會在具有(即時列表)的房間有更新時自動通知其連接的用戶端.
 
-```typescript import { LobbyRoom } from "colyseus";
+```typescript
+import { LobbyRoom } from "colyseus";
 
-// Expose the "lobby" room. gameServer .define("lobby", LobbyRoom);
+// Expose the "lobby" room.
+gameServer
+  .define("lobby", LobbyRoom);
 
-// Expose your game room with realtime listing enabled. gameServer .define("your\_game", YourGameRoom) .enableRealtimeListing(); ```
+// Expose your game room with realtime listing enabled.
+gameServer
+  .define("your_game", YourGameRoom)
+  .enableRealtimeListing();
+```
 
-在 `onCreate()`, `onJoin()`, `onLeave()` 和 `onDispose()` 期间，将自动通知 `LobbyRoom`。
+`LobbyRoom` 會在 `onCreate()`, `onJoin()`, `onLeave()` 和 `onDispose()` 期間自動收到通知.
 
-如果您已经[更新了您的房间的`元数据`](/server/room/#setmetadata-metadata)，并且还需要更新游戏大厅，那么您可以在元数据更新后马上调用 `updateLobby()`：
+如果你 [已更新了房間的 `中繼資料` ](/server/room/#setmetadata-metadata) , 且必須觸發大廳的更新, 可以在中繼資料更新完後立即呼叫 `updateLobby()`：
 
-```typescript import { Client, RoomAvailable } from "colyseus.js";
+```typescript
+import { Room, updateLobby } from "colyseus";
 
 class YourGameRoom extends Room {
 
@@ -36,22 +45,36 @@ class YourGameRoom extends Room {
 
   }
 
-} ```
+}
+```
 
-## 客户端
+## 用戶端
 
-您需要根据`LobbyRoom`发送到客户端的信息来游戏房间的添加、删除和更新等状态。
+您必須透過傳送到 `LobbyRoom` 用戶端的訊息,來追蹤新增, 移除和更新的房間.
 
-```typescript import { Client, RoomAvailable } from "colyseus.js";
+```typescript
+import { Client, RoomAvailable } from "colyseus.js";
 
-const client = new Client("ws://localhost:2567"); const lobby = await client.joinOrCreate("lobby");
+const client = new Client("ws://localhost:2567");
+const lobby = await client.joinOrCreate("lobby");
 
-let allRooms:RoomAvailable\[] = \[];
+let allRooms: RoomAvailable[] = [];
 
-lobby.onMessage("rooms", (rooms) => { allRooms = rooms; });
+lobby.onMessage("rooms", (rooms) => {
+  allRooms = rooms;
+});
 
-lobby.onMessage("+", (\[roomId, room]) => { const roomIndex = allRooms.findIndex((room) => room.roomId === roomId); if (roomIndex !== -1) { allRooms\[roomIndex] = room;
+lobby.onMessage("+", ([roomId, room]) => {
+  const roomIndex = allRooms.findIndex((room) => room.roomId === roomId);
+  if (roomIndex !== -1) {
+    allRooms[roomIndex] = room;
 
-  } else { allRooms.push(room); } });
+  } else {
+    allRooms.push(room);
+  }
+});
 
-lobby.onMessage("-", (roomId) => { allRooms = allRooms.filter((room) => room.roomId !== roomId); }); ```
+lobby.onMessage("-", (roomId) => {
+  allRooms = allRooms.filter((room) => room.roomId !== roomId);
+});
+```

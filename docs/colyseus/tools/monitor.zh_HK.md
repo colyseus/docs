@@ -42,7 +42,7 @@ app.use("/colyseus", monitor());
 
 ## 使用密碼限制對面板的訪問
 
-您可以使用 express 中間件軟體以啟用監視器路由的驗證，例如 `express-basic-middleware`:
+您可以使用 express 中間件軟體以啟用監視器路由的驗證,例如 `express-basic-middleware`:
 
 ```
 npm install --save express-basic-auth

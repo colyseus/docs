@@ -1,84 +1,145 @@
 ﻿﻿
-# MMO 技術試玩版
+# MMO 技术演示
 
-此技術試玩版的目的，是展示製作**基本** MMO 的一種方法。包含聊天室系統、玩家持續性、多個流動 ColyseusRoom 和網路可互動物件。請注意，本試玩版**不**包含分區或其他任何能用於實際執行等級 MMO 的負載平衡方法。本試玩版是設計用於 Colyseus 0.14.7 版和 [Unity 2020.3.1f1 版](https://unity3d.com/unity/qa/lts-releases)。
+本技术演示旨在展示一种制作 **基础的** 大型多人游戏(MMO)的方法. 包括聊天系统, 玩家持久性, 多个流动 ColyseusRooms 以及联网的可交互对象. 需注意的是,本演示包含生产大规模 MMO 所需的数据分区或其他任何负载平衡方式.本演示使用 Colyseus 0.14.7 版本以及 [Unity version 2020.3.1f1](https://unity3d.com/unity/qa/lts-releases).
 
-  
 
-**[下載試玩版](https://github.com/colyseus/unity-demo-mmo/archive/master.zip)**（[檢視原始程式碼](https://github.com/colyseus/unity-demo-mmo/)）
 
-  
+**[下载演示](https://github.com/colyseus/unity-demo-mmo/archive/master.zip)** ([查看源代码](https://github.com/colyseus/unity-demo-mmo/))
 
-[遊玩試玩版！](https://xey3jn.us-west-1.colyseus.dev/)
 
-![螢幕擷取畫面](screenshot.PNG)
 
-## 開始使用
+[玩下看看！](https://xey3jn.us-west-1.colyseus.dev/)
 
-  
+![屏幕截图](screenshot.PNG)
 
-### 啟動本機伺服器
+## 开始
 
-你必須在**提供的伺服器目錄**中的伺服器裡安裝並啟動本試玩版，才能夠正常運作。只需按照這些文件的 Unity3d 部分中的[「執行演示伺服器」下的說明進行操作](/getting-started/unity3d-client/#running-the-demo-server)。
 
-此外，本試玩版將使用 MongoDB 用於玩家持續性。如果你希望在本機執行，你必須設定或提供自己的本機 DB（請參照「調整試玩版」區段）
 
-[請至 MongoDB 網站查看如何設定本機執行個體的詳細資料](https://docs.mongodb.com/guides/server/install/)
+### 启用本地服务器
+
+您需要从 **提供的服务器目录** 中选择安装并启用服务器,以正常操作本演示. 按照[这些文档中 Unity3d 部分之"运行演示服务器"](/getting-started/unity3d-client/#running-the-demo-server)中的说明操作即可.
+
+此外,本演示使用 MongoDB 来实现玩家信息持久性.若您希望在本地运行此示例,则需要安装自己的本地数据库或提供自己的(参见"演示调整"章节)
+
+[关于如何设置本地示例的详情,可前往 MongoDB 网站查看](https://docs.mongodb.com/guides/server/install/)
 
 ### ColyseusSettings ScriptableObject
 
-  
 
-全部伺服器設定都可以透過位於這裡的 ColyseusSetting ScriptableObject 來進行變更：
 
-  
+服务器的所有设置都可通过此处的 ColyseusSetting ScriptableObject 进行更改：
+
+
 
 ![ScriptableObject](../common-images/scriptable-object.png)
 
-  
 
-如果你執行的是本機伺服器，預設的設定應該很充足，然而如果你希望提供主機伺服器服務，會需要變更**Colyseus 伺服器位址**和對應的**Colyseus 伺服器連接埠** 值。  
 
-## 遊玩試玩版
+如果您运行的是本地服务器,默认的设置就能够满足需求；但若您希望托管服务器,则需要按需更改 **Colyseus 服务器地址** 和 **Colyseus 服务器端口**.
 
-啟動位在 `ColyseusTechDemo-MMO\Assets\Scenes\MMOLoginScene` 的場景「MMOLoginScene」中的玩家。如果你是第一次遊玩，就必須建立帳號。輸入你的電子郵件、密碼，然後登入以開始遊玩。如果你成功登入，用戶端會載入「TowerScene」場景，並在其中放置 NetworkedEntity。你可以隨時按下 ESC 鍵來檢視控制項、自訂你的角色或離開至主選單。走進位於房間邊的灰色立方體，你會被轉至不同的房間。
+## 播放演示
 
-### 控制項
-本試玩版的控制項會隨時顯示在 ESC 選單上，如以下所示：
+在位于 `ColyseusTechDemo-MMO\Assets\Scenes\MMOLoginScene` 的场景"MMOLoginScene"中登录玩家账号. 若您是初次操作,则需要创建一个账号. 输入您的邮箱地址和密码,登录后即可开始操作. 登录成功后,客户端会加载"TowerScene"场景并将 NetworkedEntity放入其中. 您可以随时按下空格键查看控件,自定义游戏人物或退出主菜单. 走进位于房间两侧的灰色方块时, 您就会被传送至另一间房.
 
-| 輸入 | 說明 | |----------------------------------|--------------------| | W,A,S,M | 移動 | | 按住 Shift | 衝刺 | | Q,E | 旋轉角色 | | 向上/向下捲動 | 放大/縮小 | | 按住並拖曳滑鼠右鍵 | 視角樞紐 | | ` | 切換聊天室視窗 |
+### 控件
+本演示的控件可随时在 Escape 菜单查看, 内容如下：
 
-## 試玩版概觀
-本試玩版是設計來展示使用者使用 Colyseus 設計和建置 MMO 風格遊的潛力。Colyseus 以下列功能為特色：
-### 動態房間
-MMORoom 會在需要時進行建立與處置。當玩家進入方格空間時， 我們會加入`進度`值設為方格值的房間，就像 `arena.config.ts`: ```javascript gameServer.define('lobby_room', MMORoom).filterBy(["progress"]); // 透過「進度」（我們想加入的方格，例如：-1x2）來篩選房間 ``` 當玩家在世界四處移動時，會根據其在世界方格的位置來加入/離開房間。訊息會自用戶端向伺服器傳送，表示玩家正嘗試更新其進度，我們會在以下擷取到該進度 `MMORoom.ts`: ```javascript this.onMessage("transitionArea", (client:Client, transitionData:Vector\[]) => { if (transitionData == null || transitionData.length < 2) { logger.error(`\*\** Grid Change Error!Missing data for grid change! \*\*\*`); return; } this.onGridUpdate(client, transitionData\[0] as Vector2, transitionData\[1] as Vector3); }); ``` 在決定新方格的位置後，用戶端提供了新 SeatReservation 以供取用，因此會加入其新方格位置的正確 ColyseusRoom。在登入/註冊時也會有相似的流程（請參照<b>玩家持續性</b>區段）。
+| Input                            | Description        |
+|----------------------------------|--------------------|
+| W,A,S,M                          | 移动                |
+| 按住Shift键                       | 冲刺                |
+| Q,E                              | 旋转人物            |
+| 上滑/下滑                         | 放大/缩小           |
+| 按住并拖动鼠标右键                 | 摄像头轴转           |
+| `                                | 切换聊天窗口         |
+
+## 演示概览
+本演示旨在向用户展示如何使用 Colyseus 来设计并实现一款 MMO 游戏.它强调了以下特性：
+### 动态房间
+可按需创建并配置 MMORooms.当玩家进入一个网格空间时,我们就加入一个房间,并将其`progress`值设为网格值,如  `arena.config.ts`:
+```
+javascript gameServer.define('lobby_room', MMORoom).filterBy(["progress"]); // Filter room by "progress" (which grid we're wanting to join EX: -1x2)
+```
+当玩家在地图中移动时,可以基于他们所在的网格位置加入/离开房间.玩家尝试更新游戏进度时,客户端会向服务器端发送一条消息,然后服务器端会在MMORoom.ts中捕捉这条信息：`MMORoom.ts`:
+```javascript
+this.onMessage("transitionArea", (client: Client, transitionData: Vector[]) => {
+    if (transitionData == null || transitionData.length < 2) {
+        logger.error(`*** Grid Change Error! Missing data for grid change! ***`);
+        return;
+    }
+    this.onGridUpdate(client, transitionData[0] as  Vector2, transitionData[1] as  Vector3);
+});
+```
+After determining what the new grid position is, the client is given a new SeatReservation to consume, thus joining the correct ColyseusRoom for their new grid position. A similar flow also occurs when Logging in/Signing up (see <b>Player Persistence</b> section).
 
 ![MapScreenshop](map.PNG)
 
-這是本示範建置的方格地圖。非綠色的方格空間包含相連的出口，讓你能在其中四處旅行。例如你可以前往方格空間 `-3x3` 西北方的出口，然後你就會被放置在方格空間 `3x-3` 中。其他所有相鄰的方格空間都會連接彼此的出口。只有邊角接觸的方格空間，在這些邊角會有能以對角線穿過方格的出口。
+这是本演示中使用的网格地图.除绿色网格之外,其他网格都带有互通出口,您可以在这些网格之间进出.比如在 `-3x3` 网格空间中,您可以通过西北方向的出口进入到 `3x-3` 网格空间.所有其他相连的网格之间都有互通出口.仅与角落有接触的网格空间,其出口在角落上,玩家可以在对角线上穿梭.
 
-### 聊天室系統
-![ChatScreenshot](chatScreenshot.PNG) 額外的 ColyseusRoom 會用於處理聊天室系統：`ChatRoom.ts`.不論是在用戶端或是伺服器，我們在任何地方加入或離開 MMORoom 時，也會加入或離開 ChatRoom。這些 ChatRoom 是由 `roomId`（連接到的 MMORoom ID）所篩選。當用戶端傳送訊息時， 會新增至 ChatRoomState 的 ChatQueue，對所有連接的用戶端觸發狀態變更。每個傳入的新訊息會收到 `timeStamp` 值，其隨後會從佇列中刪除。
-### 玩家持續性
-!!! 提示「使用者驗證備註」本示範使用非常基礎的使用者驗證系統， 目的是取得唯一使用者帳戶的玩家持續性，且不能作為建置整個使用者驗證的實際範例。不要使用你在任何地方實際使用的任何電子郵件和密碼組合。
-		
-在本試玩版中，唯一使用者帳戶會保存在資料庫，以追蹤玩家的進度（玩家目前所處的房間和最後待在的房間）、位置、錢幣餘額等等。    
-需要玩家帳戶才能遊玩本試玩版。使用者驗證成功後，房間的座位保留會傳回到用戶端。該座位保留的工作階段 ID，會在資料庫的玩家帳戶項目中儲存為「pendingSessionId」。當用戶端嘗試取用作物保留時，玩家帳戶為了加入房間，會使用該房間「onAuth」處理常式執行的「pendingSessionId」來查詢作業。如果不存在任何符合「pendingSessionId」的玩家帳戶，用戶端就不會獲准加入房間。然而，如果玩家帳戶成功進行查詢，「pendingSessionId」會變成「activeSessionId」而用戶端會加入房間。  
-玩家的進度會在配對處理序時用於篩選房間。舉例來說，具有進度值為 "1,1"（代表方格區域座標為 1x1）會配對至具有相同進度值（如果已存在）的房間，如果不存在任何具有該進度值的房間，就會建立一個具有該值的房間。這樣一來，每個方格座標的房間只會在玩家在裡面時存在。玩家的進度會在透過其中一個出口門離開一個方格區域移動至另一個區域時進行更新。
-### 互動元素
-![可互動物](coinOp.PNG) 方格空間中可能會散落有`可互動物`。這些是 `InteractableState` 結構描述物件的用戶端呈現，會在我們建立方格空間預製時放置在編輯器內。當玩家使用這些其中一個物件執行互動時，用戶端會傳送 `objectInteracted` 訊息至伺服器。如果伺服器尚未得知已提供的可互動物 ID，則伺服器會建立新的結構描述參考，其會新增至房間的結構描述地圖並傳回用戶端。然後伺服器會檢查用戶端是否符合執行互動的需求。如果能成功執行，所有的用戶端都會收到 `objectUsed` 訊息廣播，附帶可互動物的 ID 以及進行互動的使用者的資訊。而在用戶端，合適的 `NetworkedEntity` 和 {7>可互動<7}物件會受告知要同時執行。本試玩版具有 4 種不同類型的可互動物，你可以在各種方格空間中找到：- 按鈕頒獎台 - 每按一次會給進行互動的玩家 1 枚錢幣 - 錢幣行動 - 會暫時停用你的控制項並將你的 NetworkedEntity 彈來彈去的小旅程。每次使用花費 1 個硬幣 - Teleporter - 一個小型平台，可以將使用者傳送到其「退出平台」。使用 2 個硬幣 - FX Swirl - Button Podium 的替代品，無需任何費用，也無需提供任何東西，但按下時會顯示很酷的效果（使用 DEFAULT 伺服器類型）
+### 聊天系统
+![ChatScreenshot](chatScreenshot.PNG) 我们有另一个 ColyseusRoom 来处理聊天系统：`ChatRoom.ts`.不论是从哪里(服务器端或客户端)进入或离开 MMORoom,我们都会同时进入或离开 ChatRoom.这些聊天室均经过 `roomId` 筛选,后者与接入 MMORoom 的 ID 是一致的.客户端发送的消息会被添加到 ChatRoomState's ChatQueue,触发所有已连接的客户端状态变更.每一条新进消息都会收到一个 `timeStamp` 值,接收到后该信息就会被移出队列.
+### 玩家持久性
+!!! tip "用户身份认证说明"
+    本演示使用的是很基础的用户认证体系, 目的是为了让玩家能够持续使用唯一的用户账号, 该方式不可用于真实场景去实现整体用户身份认证.
+    请勿使用任何您在其他地方真实使用的邮箱和密码组合.
 
-## 調整演示
+在本演示中,为记录玩家的游戏进度(玩家目前所在的房间以及离开游戏前所在的房间), 所在位置, 游戏币余额等信息,玩家的唯一账号会保留在数据库中.
+需要注册玩家账号才能播放本演示.成功认证用户身份后,房间席位预定将回传至客户端.席位预定的会话 id 会作为"pendingSessionId"被保存至数据库中玩家账号条目中.客户端尝试使用席位预定时,房间的"onAuth"处理程序会执行玩家账号查找操作,来让玩家顺利进入房间.若查找不到与"pendingSessionId"匹配的玩家账号,客户端则无法加入房间.但是在成功查找到玩家账号后,"pendingSessionId"变为"activeSessionId",则玩家可加入房间.
+匹配过程中玩家的游戏进度将被用来过滤房间.比如,游戏进度值为"1,1"(代表其在网格区域中坐标为 1x1)的玩家将被匹配进具有相同进度值的房间(若房间已存在).若不存在具有相同进度值的房间,则系统会自动创建一个.因此,只有当玩家在时才存在与其网格坐标匹配的房间.玩家通过任一网格出口离开网格区域,进入另一个网格时,其游戏进度将会更新.
+### 可交互元素
+![Interactables](coinOp.PNG)网格周围可能会散落`Interactables`. 这些是 `InteractableState` 架构对象在客户端的展示.我们制作新网格空间预制件时会将它们放入编辑器中.玩家与其中一个对象互动时,客户端会向服务器端发送一条 `objectInteracted` 消息.若服务器端还未获取到已提供的对象交互 ID,则会创建一个新的架构引用,将其添加至房间的架构映射中,并回传给客户端.然后服务器会客户端是否具备执行互动的条件.若成功,所有客户端将会收到一条 `objectUsed`广播消息,包含交互对象的 ID 以及与之互动的用户.客户端上,适当的 `NetworkedEntity` 和 {7>Interactable<7} 对象则会被告知一起执行.本演示中有 4 种不同类型的交互元素,您可在不同的网格空间中找到：
+-按键台
+    - 用户每按一次可获得一枚硬币
+-投币骑乘机
+    - 一个小骑乘机,可暂时禁用您的控件并来回弹跳晃动您的 NetworkedEntity.每次使用消耗 1 枚金币
+- 传送器
+    - 一个能够将使用者传送至其"退出平台"的小平台.使用时消耗 2 枚金币
+- 特效旋涡
+    - 按钮台的替代品,没有消耗也没有作用,只在按下时显示一个酷炫的特效(使用默认服务器类型)
 
-當您使用這個演示時，您可能需要進行一些調整，以更好地熟悉正在發生的事情。以下，您將學習如何進行這些細微的調整。
+## 调整演示
 
-### 使用您自己專屬的資料庫
-如果您希望將此演示指向您自己專屬的資料庫，您需要在位於`伺服器`目錄中的 `arena.env` 檔案中提供不同的 Mongo 連接字串，而該目錄目前希望您託管本機 mongo 資料庫：``` javascript DEMO_DATABASE=mongodb://localhost:27017/demo?retryWrites=true&w=majority ```
+当你播放此演示的时候,你可能希望进行一些调整,帮你更好地了解当前发生的情况.下面你将学习如何进行微调整.
 
-### 聊天訊息生命週期
-在用戶端，您可以透過更改 `ChatManager.cs` 上的公共 `messageShowTime` 變數來更改訊息顯示的時間長度，然後在加入/建立時將其發送到伺服器 `MMOManager.cs` 中的一個房間：```csharp private async void JoinChatRoom() { ColyseusRoom<ChatRoomState> chatRoom = await client.JoinOrCreate<ChatRoomState>("chat_room", new Dictionary<string, object>( ) { { "roomID", Room.Id }, {"messageLifetime", ChatManager.Instance.messageShowTime} }); ChatManager.Instance.SetRoom(chatRoom); } ```
-### 新增您自己專屬的可互動物
-如果要向用戶端新增新的可互動物，其必須繼承自 `Interactable.cs`。查看其他可互動物，以了解您可以做些什麼。如果您想覆蓋可互動物上的 `serverType` 值，您還應該在 `interactableObjectFactory.ts` 中為伺服器上的新 `serverType` 新增一個案例：```javascript export function getStateForType(type: string) :InteractableState { let state :InteractableState = new InteractableState(); //任何新類型都需要一個合適的建構函數，否則其將返回空值 switch(type){ case("DEFAULT"): { state.assign({ coinChange :0, interactableType : type, useDuration :5100.0 }); break; }
+## Adjusting the Demo
+
+As you play around with this demo, you may want to make some adjustments to better familiarize yourself with what is happening. Below, you’ll learn how to make these minor adjustments.
+
+### 使用你自己的数据库
+
+如果你希望将此演示指向你自己的数据库,你需要在 `Server` 目录下的 `arena.env` 中提供一个不同的 Mongo 连接字符串,它当前期望你托管一个本地的 Mongo 数据库：
+``` javascript
+DEMO_DATABASE=mongodb://localhost:27017/demo?retryWrites=true&w=majority
+```
+
+### 聊天消息显示时间
+在客户端,你可以通过更改 `ChatManager.cs` 上的公共 `messageShowTime` 变量来更改消息显示的时长,然后在 `MMOManager.cs`:
+```csharp
+private async void JoinChatRoom()
+{
+    ColyseusRoom<ChatRoomState> chatRoom = await client.JoinOrCreate<ChatRoomState>("chat_room", new Dictionary<string, object>() { { "roomID", Room.Id }, {"messageLifetime", ChatManager.Instance.messageShowTime} });
+    ChatManager.Instance.SetRoom(chatRoom);
+}
+```
+
+### 添加你自己的交互对象
+如果你想向客户端添加一个新的交互对象,其必须继承自 `Interactable.cs`.查看其他交互对象,想想你可以做什么.如果你想重写你的交互对象的 `serverType` 值,你也应当为你在服务器上的新 `serverType`  添加一个案例： `interactableObjectFactory.ts`:
+```javascript
+export  function  getStateForType(type: string) : InteractableState {
+	let  state : InteractableState = new  InteractableState();
+	//Any new types need an appropriate constructor in here or they will return empty
+	switch(type){
+		case("DEFAULT"):
+		{
+			state.assign({
+				coinChange :  0,
+				interactableType :  type,
+				useDuration :  5100.0
+			});
+			break;
+		}
 
 		case("BUTTON_PODIUM"):
 		{
@@ -109,7 +170,13 @@ MMORoom 會在需要時進行建立與處置。當玩家進入方格空間時，
 		}
 	}
 	return  state;
-} ``` 變數 `coinChange` 是使用者的硬幣計數在使用時應該改變的數量。如果該值為負數（要使用的可互動 COSTS 硬幣），伺服器將在成功反應之前確認使用者有足夠的硬幣來使用它，如函數中所示：`MMORoom.ts` 中的 `handleObjectCost`：``` javascript handleObjectCost(object:InteractableState, user:NetworkedEntityState): boolean { let cost: number = object.coinChange; let worked: boolean = false;
+}
+```
+变量 `coinChange` 是在使用金币时用户的金币数量应该改变的数值.如果该值为负(金币使用的交互成本)服务器将在成功响应之前确认用户拥有足够金币,如函数中所示 `handleObjectCost` in `MMORoom.ts`:
+``` javascript
+handleObjectCost(object: InteractableState, user: NetworkedEntityState): boolean {
+    let cost: number = object.coinChange;
+    let worked: boolean = false;
 
     //Its a gain, no need to check
     if (cost >= 0) {
@@ -128,4 +195,23 @@ MMORoom 會在需要時進行建立與處置。當玩家進入方格空間時，
     }
 
     return worked;
-  } ``` 如果此檢查成功，則物件互動將正常進行。變數 `useDuration` 用於計算使用者與其互動後可互動物將保持 `inUse` 的時間。當一個可互動物被使用時，其 `availableTimestamp` 被設定為：``` javascript interactableObject.inUse = true; interactableObject.availableTimestamp = this.state.serverTime + interactableObject.useDuration; ``` 然後伺服器將在每個 `simulationInterval` 期間檢查，其中 `simulationInterval`: ``` javascript checkObjectReset() { this.state.interactableItems.forEach((state:InteractableState) => { if (state.inUse && state.availableTimestamp <= this.state.serverTime) { state.inUse = false; state.availableTimestamp = 0.0; } }); } ``` 如果 `serverTime` 表示是時候執行此操作，則會重設 MMORoom 中任何可互動物的 `inUse` 值。
+  }
+```
+如果该检查成功, 目标交互将正常继续进行.
+变量 `useDuration` 是用来考虑交互对象在于用户交互后能够保持 `inUse` 多久的因素. 当一个交互对象被使用后,其 `availableTimestamp` 将被设定为：
+``` javascript
+interactableObject.inUse = true;
+interactableObject.availableTimestamp = this.state.serverTime + interactableObject.useDuration;
+```
+服务器之后将检查每个 `simulationInterval`:
+``` javascript
+checkObjectReset() {
+    this.state.interactableItems.forEach((state: InteractableState) => {
+      if (state.inUse && state.availableTimestamp <= this.state.serverTime) {
+        state.inUse = false;
+        state.availableTimestamp = 0.0;
+      }
+    });
+  }
+```
+如果 `serverTime` 显示时机已到, 这将重置  MMORoom 中任何交互对象的 `inUse` 值.

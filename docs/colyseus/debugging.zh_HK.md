@@ -58,7 +58,7 @@ colyseus:patch "chat" (roomId: "ryWiL5rLTZ") is sending 28 bytes: +57ms
 
 ### `colyseus:errors`
 
-每當伺服器端發生異常（可預見的或內部的）錯誤時, 進行紀錄.
+每當伺服器端發生異常(可預見的或內部的)錯誤時, 進行紀錄.
 
 ### `colyseus:matchmaking`
 

@@ -14,7 +14,7 @@
 
 ## Nginx (recommended)
 
-建议您在商用环境中使用 `pm2`和 `nginx`.
+建议您在商用环境中使用 `pm2` 和 `nginx`.
 
 ### PM2
 

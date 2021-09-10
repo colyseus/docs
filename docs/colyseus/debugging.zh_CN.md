@@ -58,7 +58,7 @@ colyseus:patch "chat" (roomId: "ryWiL5rLTZ") is sending 28 bytes: +57ms
 
 ### `colyseus:errors`
 
-记录服务器端发生的意外（或者是意料之中的, 亦或是内部的）错误.
+记录服务器端发生的意外(或者是意料之中的, 亦或是内部的)错误.
 
 ### `colyseus:matchmaking`
 

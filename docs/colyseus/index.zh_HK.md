@@ -8,7 +8,7 @@
 
 ## 開始使用
 
-在開始之前，讓我們確保在您的本機上安裝了必要的系統要求。
+在開始之前,讓我們確保在您的本機上安裝了必要的系統要求.
 
 **要求**
 
@@ -18,7 +18,7 @@
 
 ### 建立準系統 Colyseus 伺服器
 
-使用 `npm init colyseus-app` 命令生成準系統 Colyseus 伺服器. 您可以選擇 TypeScript（推薦）、JavaScript 或 Haxe 作為伺服器的首選語言.
+使用 `npm init colyseus-app` 命令生成準系統 Colyseus 伺服器. 您可以選擇 TypeScript(推薦), JavaScript 或 Haxe 作為伺服器的首選語言.
 
 ```
 npm init colyseus-app ./my-colyseus-app
@@ -26,7 +26,7 @@ npm init colyseus-app ./my-colyseus-app
 
 ### 來自官方示例
 
-或者，您可以透過複製 [examples project](https://github.com/colyseus/colyseus-examples) 並在本機執行來檢查一些示例.
+或者,您可以透過複製 [examples project](https://github.com/colyseus/colyseus-examples) 並在本機執行來檢查一些示例.
 
 ```
 git clone https://github.com/colyseus/colyseus-examples.git
@@ -34,7 +34,7 @@ cd colyseus-examples
 npm install
 ```
 
-若要在本機執行伺服器，請執行 `npm start`，然後打開 [http://localhost:2567](http://localhost:2567) 以探索每個示例.
+若要在本機執行伺服器,請執行 `npm start`,然後打開 [http://localhost:2567](http://localhost:2567) 以探索每個示例.
 
 ### 介紹：Colyseus 工作原理概述
 

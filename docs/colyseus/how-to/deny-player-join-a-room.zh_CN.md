@@ -1,8 +1,8 @@
-您可以透過在 `onAuth()` 或 `onJoin()` 方法中拋出錯誤來拒絕玩家連接。
+您可以透過在 `onAuth()` 或 `onJoin()` 方法中拋出錯誤來拒絕玩家連接.
 
-何時拒絕玩家連接的實現將取決於您的用例。
+何時拒絕玩家連接的實現將取決於您的用例.
 
-您可以在下方看到驗證 [@colyseus/social](/tools/colyseus-social/#server-side-api) 身分驗證令牌並檢索與使用者 ID 關聯的 `Hero` 記錄示例。
+您可以在下方看到驗證 [@colyseus/social](/tools/colyseus-social/#server-side-api) 身分驗證令牌並檢索與使用者 ID 關聯的 `Hero` 記錄示例.
 
 ```typescript export class BattleRoom extends Room {
 

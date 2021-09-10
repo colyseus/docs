@@ -1,6 +1,6 @@
 # 加载测试 / 压力测试 (`@colyseus/loadtest`)
 
-当您想对服务器进行压力测试时，以了解其在上线时的表现时，`@colyseus/loadtest` 里的工具会很有用.
+当您想对服务器进行压力测试时,以了解其在上线时的表现时,`@colyseus/loadtest` 里的工具会很有用.
 
 [![asciicast](https://asciinema.org/a/229378.svg)](https://asciinema.org/a/229378)
 
@@ -17,7 +17,7 @@ npm install --save-dev @colyseus/loadtest
 `colyseus-loadtest` 命令需要的参数有:
 
 - `script`: 要使用的自定义脚本
-- `--endpoint`: 您的服务器入口（默认使用 `ws://localhost:2567`)
+- `--endpoint`: 您的服务器入口(默认使用 `ws://localhost:2567`)
 - `--room`: 要连接的房间名
 - `--numClients`: 进入房间的客户端数量
 

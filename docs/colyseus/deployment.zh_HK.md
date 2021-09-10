@@ -1,5 +1,5 @@
 - [在 Heroku 上部署](#heroku)
-- [在 Nginx 上部署（推薦）](#nginx-recommended)
+- [在 Nginx 上部署(推薦)](#nginx-recommended)
 - [在 Apache 上部署](#apache)
 - [使用 greenlock-express](#greenlock-express)
 - [Docker](#docker)
@@ -10,7 +10,7 @@ Heroku 只推薦用於原型設計. 您可以透過點擊此按鈕在上面部�
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/colyseus/colyseus-examples)
 
-**註意:** 一定要将环境变量设为 `NPM_CONFIG_PRODUCTION=false` 以便在部署中使用開發依赖项，比如 `ts-node`, `ts-node-dev` 等.
+**註意:** 一定要将环境变量设为 `NPM_CONFIG_PRODUCTION=false` 以便在部署中使用開發依赖项,比如 `ts-node`, `ts-node-dev` 等.
 
 ## Nginx (recommended)
 
@@ -77,7 +77,7 @@ server {
 
 ## Apache
 
-下面是如果使用 Apache 作為您的 Node.js Colyseus 應用代理。(感謝 [tomkleine](https://github.com/tomkleine) !)
+下面是如果使用 Apache 作為您的 Node.js Colyseus 應用代理.(感謝 [tomkleine](https://github.com/tomkleine) !)
 
 安裝所需 Apache 模組：
 
@@ -131,9 +131,9 @@ sudo a2enmod proxy_wstunnel
 
 ## greenlock-express
 
-如果你想在服務器上快速配置SSL，Greenlock是個不錯的工具，不需要配置反向代理.
+如果你想在服務器上快速配置SSL,Greenlock是個不錯的工具,不需要配置反向代理.
 
-在使用 [`greenlock-express`](https://www.npmjs.com/package/greenlock-express) 時，你 **不應該** 在其後面配置任何反向代理，比如 [Nginx](#nginx-recommended) 或 [Apache](#apache).
+在使用 [`greenlock-express`](https://www.npmjs.com/package/greenlock-express) 時,你 **不應該** 在其後面配置任何反向代理,比如 [Nginx](#nginx-recommended) 或 [Apache](#apache).
 
 ```
 npm install --save greenlock-express
@@ -220,9 +220,9 @@ CMD [ "npm", "start" ]
 ```
 node\_modules npm-debug.log
 ```
-這將防止本機模組和調試日誌被復製到 Docker 映像上，並可能覆蓋安裝在映像中的模塊.
+這將防止本機模組和調試日誌被復製到 Docker 映像上,並可能覆蓋安裝在映像中的模塊.
 
-**步驟 4** 進入存放 Dockerfile 的目錄，執行以下指令構建Docker映像. -t 標誌允許您標記映像，以便稍後使用中更容易找到：
+**步驟 4** 進入存放 Dockerfile 的目錄,執行以下指令構建Docker映像. -t 標誌允許您標記映像,以便稍後使用中更容易找到：
 
 ```
 docker build -t <your username>/colyseus-server .
@@ -245,10 +245,10 @@ node                            12      1934b0b038d1    About a minute ago
 ```
 docker run -p 8080:8080 -d <your username>/colyseus-server
 ```
-使用 -d 執行映像會使容器以分離模式執行，讓容器在後臺執行. 而 -p 標誌將公共端口重定向到容器內的私有端口.
+使用 -d 執行映像會使容器以分離模式執行,讓容器在後臺執行. 而 -p 標誌將公共端口重定向到容器內的私有端口.
 
 
-**步驟 7** 完成，現在你可以通過 `localhost:8080` 連接至伺服器
+**步驟 7** 完成,現在你可以通過 `localhost:8080` 連接至伺服器
 
 更多資訊：
 
