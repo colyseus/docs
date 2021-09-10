@@ -1,40 +1,44 @@
-# 应用部署
+# 應用程式部署
 
-### 要求
+### 相關要求
 
-* [注册](https://https://console.colyseus.io/register) Arena Cloud 账户 
-* 兼容 [Arena Cloud](../create-colyseus-server/) 的 Colyseus 服务器
+* [註冊](https://https://console.colyseus.io/register) 一個 Arena Cloud 帳戶
+* 相容於 [Arena Cloud](../create-colyseus-server/) 的 Colyseus 伺服器
 
-## 创建应用部署
+## 建立一個應用程式部署
 
-您的游戏或应用可以有许多应用部署，用于分隔您的不同环境（开发、模拟、生产）和/或区域（美国东部、欧盟西部、亚太南部）。每个应用部署都有自己的专用资源池，并独立于您帐户管理的所有其他部署工作。 
+您的遊戲或應用程式可以有諸多應用程式部署, 其可用於分隔您的環境（Dev、Staging、Prod）和/或區域（美國東部、歐盟西部、亞太地區南部）. 每個應用程式部署都有自身專屬的資源池, 並可在您帳戶管理的其他部署中獨立運作.
 
-开始创建您的第一个应用部署...
+若要開始建立您的第一個應用程式部署...
 
-![新建应用按钮](../../images/create-new-app.jpg)
+![新建應用程式按鈕](../../images/create-new-app.jpg)
 
-- 登录后，选择仪表板右上角的 **Create A New App（创建新应用）**。
+- 登入後, 選擇儀錶板右上角的 **建立一個新的應用程式** .
 
-- 填写应用详细信息字段，并选择您的 *Plan（计划）* 和 *Region（地区）*
+- 填寫申請詳情欄位並選擇您的 *計劃* 和 *地區*
 
-- 如果您的抢先体验电子邮件中提供了 **Arena 代码**，请在 *Code（代码）* 字段中输入该代码。
+- 若您的搶先體驗電子郵件中提供了 **Arena 代碼**, 請在 *代碼* 欄位中輸入該代碼.
 
-![注册流程](../../images/create-app.jpg)
+![註冊流程](../../images/create-app.jpg)
 
-- 提交并等待创建您的应用
+- 提交並等待您的應用程式建立
 
-!!!注意，新应用部署最多可能需要 2 分钟的时间，具体取决于选定的区域
+!!! NOTE
+    新應用程式部署最多可能需要 2 分鐘, 具體取決於所選區域
+    For Early Access users you *MUST* use the provided Arena **CODE** to create a new app
 
-## 应用仪表板
+## 應用程式儀錶板
 
-在您新创建的应用上选择 **Manage（管理）**，可以查看应用仪表板。在这里，可以看到您的活动快照和访问工具，以更新代码、查看活动服务器、重新启动您的应用和查看日志。
+在您新建立的應用程式上選擇 **管理** , 即可查看您的應用程式儀錶板. 從這裡, 您可以看到您的活動快照和存取工具；透過各項工具, 您可以更新代碼、查看活動伺服器、重新啟動您的應用程式和查看日誌.
 
-![Arena 应用管理视图](../../images/app-manage-details.jpg)
+![Arena 應用程式管理視圖](../../images/app-manage-details.jpg)
 
-- **Current Usage（当前使用情况）：**显示超过您当前的 Arena 计划限制的当前 CCU （如果有）
-- **Connection（连接）：** 用于访问您的应用的 URL 和端口
-- **API Key（API 秘钥）：**应用的唯一参考标识符，可用于通过 Arena Public API 访问应用部署
-- **Arena Plan（Arena 计划）：**您的应用注册的当前托管计划。
-- ***GIT Updated（GIT 更新）：***来自最近 GIT 更新的信息。
-- ***GIT Msg（GIT 消息）：***最近更新的签入消息。
-- ***GIT Hash（GIT 哈希）：***最近更新版本的哈希。 ！！！注意： 仅当使用 CI/CD GitSync 服务时，***才能***看到 ***GIT*** 详细信息（用于 Powered Ascent 和 Up Arena 计划）
+- **目前的使用情況:** 顯示目前 CCU 以及您目前的 Arena 計劃限制（如果有）
+- **連結:** 可存取您應用程式的 URL 和埠口
+- **API 密鑰:** 應用程式的唯一參考識別碼, 可用於透過 Arena Public API 存取應用程式部署
+- **Arena 計劃:** 您應用程式目前註冊的託管計劃.
+- ***GIT 更新:*** GIT 近期更新的資訊.
+- ***GIT 訊息:*** 近期更新的簽入訊息.
+- ***GIT 哈希:*** 近期更新的哈希值.
+!!! NOTE
+    ***GIT*** 詳情 ***僅*** 在使用 CI/CD GitSync 服務（為 Powered Ascent 和 Up Arena 計劃提供）時可見

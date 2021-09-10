@@ -1,13 +1,13 @@
-# Package.json / 文件夹位置
+# Package.json / 資料夾位置
 
 ## Package.json 用法
 
-在 Arena Cloud 上部署时，您的部署并未完全使用 package.json 文件。Arena Cloud 将自定义依赖项复制到托管的 Arena package.json 中，然后在您的服务器启动时安装此文件。 
+在 Arena Cloud 上部署時，您的部署並未完全使用 package.json 檔案. Arena Cloud 將自定義依賴項複製到託管的 Arena package.json 中，然後在您的伺服器啟動時安裝.
 
-## 相对和绝对文件夹位置
+## 相對和絕對資料夾位置
 
-需要注意的是，这个 json 文件位于 Arena Cloud 服务器的根目录，而不是服务器代码的根目录。如果从 package.json 中引用自定义模块，则需要根据 Arena Cloud 服务器根目录放置其相对路径。
+需要注意的是，這個 json 檔案位於您 Arena Cloud 伺服器的根目錄，而不是您伺服器代碼的根目錄. 如果您從 package.json 中引用自定義模組，則需要根據 Arena Cloud 伺服器根目錄放置其相對路徑.
 
-您上传的服务器代码的相对路径是 ```./app/server/arena/```。
+您上傳的伺服器代碼的相對路徑是 ```./app/server/arena/```.
 
-您上传的服务器代码的绝对路径是 ```./colyseus/app/server/arena/```
+您上傳的伺服器代碼的絕對路徑是 ```./colyseus/app/server/arena/```.

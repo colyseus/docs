@@ -1,9 +1,15 @@
-# 使用私有 NPM 儲存庫 (.npmrc)
+# 使用私有 NPM 存储库 (.npmrc)
 
-如果您使用的是非公共 NPM 模組並且需要 Arena 存取私有 NPM 儲存庫，則可透過將以下檔案新增到伺服器代碼的根目錄來完成。 
+如果使用的是非公共 NPM 模块，并且需要 Arena 访问私有 NPM 存储库，则可以通过将以下文件添加到服务器代码的根目录来完成.
 
-*File ```.npmrc``` Example:* ``` <PROJECT/REPO NAME>:registry=https://npm.pkg.github.com/ //npm.pkg.github.com/:_authToken=<PRIVATE TOKEN / KEY> ```
+*File ```.npmrc``` Example:*
+```
+<PROJECT/REPO NAME>:registry=https://npm.pkg.github.com/
+//npm.pkg.github.com/:_authToken=<PRIVATE TOKEN / KEY>
+```
 
-!!!注意事項   
-    \- 您必須在第二行的 npm.pkg.git.com 條目之前包含 `//` \- 如果您使用的是 github 以外的註冊表，請更新 `registry` url - 替換`<PROJECT/REPO NAME>` 和 `<PRIVATE TOKEN / KEY>` 以及您的專案價值。
+!!! NOTE
+    - 在第二行，npm.pkg.git.com 之前必须包括 `//`
+    - 如果使用非 github 存储库，应更新 `注册表` url
+    - 使用您的项目值替换 `<项目/存储库名称>` 和 `<私有 TOKEN / 秘钥>`.
 
