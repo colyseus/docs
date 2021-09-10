@@ -13,7 +13,10 @@
 
 ![Arena 应用管理视图](../../images/upload-dialog.jpg)
 
-!!!注意 - Arena 应用**仅支持**已编译的 Javascript 代码，如果您使用 TypeScript，请务必先构建您的代码并上传构建文件夹的内容。 - 如果您使用 ***NPM*** 模板创建 Colyseus 服务器，则 ``` npm run build ``` 命令将编译所有需要的文件，并将其复制到输出文件夹。 - TypeScript 的构建输出文件夹：``` lib ``` / JavaScript：``` upload ```
+!!! NOTE
+    - Arena 应用**仅支持**已编译的 Javascript 代码，如果您使用 TypeScript，请务必先构建您的代码并上传构建文件夹的内容。 
+    - 如果您使用 ***NPM*** 模板创建 Colyseus 服务器，则 ``` npm run build ``` 命令将编译所有需要的文件，并将其复制到输出文件夹。 
+    - TypeScript 的构建输出文件夹：``` lib ``` / JavaScript：``` upload ```
 
 ## 服务器代码概述
 
@@ -23,11 +26,18 @@
 
 - **arena.config.js:**应该在此文件中添加房间声明、快速加载项以及在服务器启动之前需要调用的任何其他函数。将应用部署到 Arena Cloud 时，应将此文件视为您的 ***index.js***。
 
-*File ```arena.config.js``` Example:* ``` const Arena = require("@colyseus/arena").default; const { monitor } = require("@colyseus/monitor");
+*File ```arena.config.js``` Example:*
+```
+const Arena = require("@colyseus/arena").default;
+const { monitor } = require("@colyseus/monitor");
 
-/\** * Import your Room files \*/ const { ShootingGalleryRoom } = require("./rooms/ShootingGalleryRoom");
+/**
+ * Import your Room files
+ */
+const { ShootingGalleryRoom } = require("./rooms/ShootingGalleryRoom");
 
-module.exports = Arena({ getId: () => "Your Colyseus App",
+module.exports = Arena({
+    getId: () => "Your Colyseus App",
 
     initializeGameServer: (gameServer) => {
         /**
@@ -58,9 +68,15 @@ module.exports = Arena({ getId: () => "Your Colyseus App",
          */
     }
 
-}); ``` - **arena.env:**在此文件中，您将定义应用所需的任何自定义环境变量。此文件可用于存储分离的开发和生产环境的密钥。
+});
+```
+- **arena.env:**在此文件中，您将定义应用所需的任何自定义环境变量。此文件可用于存储分离的开发和生产环境的密钥。
 
-*File ```arena.env``` Example:*``` NODE_ENV=production ABC_GAME_MODE=dev ```
+*File ```arena.env``` Example:*
+```
+NODE_ENV=production
+ABC_GAME_MODE=dev
+```
 
  - **index.js** 在 Arena Cloud 上托管时，不使用此文件。此文件可用于本地开发托管或自托管。使用 Arena Cloud 时，您的 *arena.config.js* 将由专门为了企业级可扩展性和稳定性而设计的 Colyseus 开源修改版本初始化。
 

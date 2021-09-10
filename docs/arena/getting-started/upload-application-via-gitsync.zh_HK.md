@@ -11,7 +11,19 @@
 同步服务大约每 2 分钟拉取一次 Git 存储库，以在请求的分支中进行新签入。 
 
 ## Example of arena.gitsync.json 示例
-``` { "serverDir": "upload", "buildType": "arena", "gitServer": "github.com/Lucid-Sight-Inc/testsyncrepo.git", "gitUser":"USER", "gitPassword":"PASS", "branch" : "testbranch", "redeployOnChange": true, "overrideGitURL": "", "repoReset" : false } ```
+```
+{
+    "serverDir": "upload",
+    "buildType": "arena",
+    "gitServer": "github.com/Lucid-Sight-Inc/testsyncrepo.git",
+    "gitUser": "USER",
+    "gitPassword": "PASS",
+    "branch" : "testbranch",
+    "redeployOnChange": true,
+    "overrideGitURL": "",
+    "repoReset" : false
+}
+```
 
 **JSON Attributes:**
 
@@ -31,7 +43,7 @@
 
 - **redeployOnChange:**如果为 true，新代码将立即部署到游戏服务器并重新启动，从而结束这些服务器上的所有现有游戏（将在接下来的几周内实施合理的滚动更新）。
 
-- \*\*overrideGitURL: \** 针对您的存储库的任何非标准/非 https URL（我们不建议使用此选项）。
+- **overrideGitURL: ** 针对您的存储库的任何非标准/非 https URL（我们不建议使用此选项）。
 
 - **repoReset:**这将在 git 同步服务器上强制删除存储库的本地副本。如果要将存储库更改为指向新位置，这将非常有用。您需要保存它并持续一个更新周期，然后才能将其关闭。
 

@@ -10,17 +10,21 @@
 
 使用 `npm init colyseus-app` 命令生成準系統 Colyseus 伺服器。您可以選擇 TypeScript（推薦）和 JavaScript 作為伺服器語言。**Arena Cloud** 目前僅支持這兩種語言。
 
-``` npm init colyseus-app ./my-colyseus-app ```
+```
+npm init colyseus-app ./my-colyseus-app
+```
+![NPM Selection](../../images/arena-app-support.jpg)
 
 以下是在 *my-colyseus-app* 目錄中為 TypeScript 伺服器建立的預期資料夾結構和檔案。
 
-![NPM 代碼](../../images/new-arena-server-code.jpg)
+![NPM Code](../../images/new-arena-server-code.jpg)
 
 - **index.ts / js:**此檔案用於本機測試或自託管。為確保 Arena Cloud 的相容性，我們**建議*您*不**直接對索引檔案進行更改。當您的伺服器託管在 Arena Cloud 上時，此處新增的更改或功能將不會反映出來。對於本機測試，您可以修改此檔案以更改 Colyseus 伺服器埠口。
 
 - **arena.config.ts / js:**您可以在此檔案中進行新增和修改以支援您的遊戲。請注意將在遊戲伺服器初始化期間調用的三個核心函數。 
 
-``` getId: () => "Your Colyseus App",
+```
+    getId: () => "Your Colyseus App",
 
     initializeGameServer: (gameServer) => {
         /**

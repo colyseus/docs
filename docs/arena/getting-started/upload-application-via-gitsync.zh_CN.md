@@ -11,7 +11,19 @@
 同步服務大約每 2 分鐘將拉取您的 Git 儲存庫，以在請求的分支中進行新的簽入。 
 
 ## arena.gitsync.json 示例
-``` { "serverDir": "upload", "buildType": "arena", "gitServer": "github.com/Lucid-Sight-Inc/testsyncrepo.git", "gitUser":"USER", "gitPassword":"PASS", "branch" : "testbranch", "redeployOnChange": true, "overrideGitURL": "", "repoReset" : false } ```
+```
+{
+    "serverDir": "upload",
+    "buildType": "arena",
+    "gitServer": "github.com/Lucid-Sight-Inc/testsyncrepo.git",
+    "gitUser": "USER",
+    "gitPassword": "PASS",
+    "branch" : "testbranch",
+    "redeployOnChange": true,
+    "overrideGitURL": "",
+    "repoReset" : false
+}
+```
 
 **JSON 屬性：**
 
@@ -31,7 +43,7 @@
 
 - **redeployOnChange:**如果為 true，您的新代碼將立即部署到您的遊戲伺服器並重新啟動，從而結束相關伺服器上的所有現有遊戲（將在接下來的幾週內實施正常滾動更新）。
 
-- \*\*overrideGitURL: \** 對於您的儲存庫的任何非標準/非 https URL（我們不建議使用此選項）。
+- **overrideGitURL: ** 對於您的儲存庫的任何非標準/非 https URL（我們不建議使用此選項）。
 
 - **repoReset:**這將強制刪除 git 同步伺服器上儲存庫的本機副本。如果您要將 REPO 更改為指向新位置，這將非常有用。您需要將其保持開啟一個更新周期，然後才能將其關閉。
 

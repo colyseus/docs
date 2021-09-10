@@ -23,7 +23,8 @@
 
 - 提交并等待创建您的应用
 
-!!!注意，新应用部署最多可能需要 2 分钟的时间，具体取决于选定的区域
+!!! NOTE
+    新应用部署最多可能需要 2 分钟的时间，具体取决于选定的区域
 
 ## 应用仪表板
 
@@ -37,4 +38,6 @@
 - **Arena Plan（Arena 计划）：**您的应用注册的当前托管计划。
 - ***GIT Updated（GIT 更新）：***来自最近 GIT 更新的信息。
 - ***GIT Msg（GIT 消息）：***最近更新的签入消息。
-- ***GIT Hash（GIT 哈希）：***最近更新版本的哈希。 ！！！注意： 仅当使用 CI/CD GitSync 服务时，***才能***看到 ***GIT*** 详细信息（用于 Powered Ascent 和 Up Arena 计划）
+- ***GIT Hash（GIT 哈希）：***最近更新版本的哈希。 
+!!! NOTE
+    仅当使用 CI/CD GitSync 服务时，***才能***看到 ***GIT*** 详细信息（用于 Powered Ascent 和 Up Arena 计划）
