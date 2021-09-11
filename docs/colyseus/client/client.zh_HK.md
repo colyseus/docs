@@ -319,7 +319,7 @@ client->joinById<YourStateClass>("battle", {/* options */}, [=](std::string err,
 ```
 
 !!! Tip "獲取您可加入的房間的 `roomId`"
-參見 [`getAvailableRooms()`](#getavailablerooms-roomname-string) 來檢索可加入房間的列表和各房間的 `roomId`,以及其元數據.
+    參見 [`getAvailableRooms()`](#getavailablerooms-roomname-string) 來檢索可加入房間的列表和各房間的 `roomId`,以及其元數據.
 
 ---
 
@@ -558,7 +558,7 @@ client->consumeSeatReservation<YourStateClass>(reservation, [=](std::string err,
 ```
 
 !!! Tip "高級用法"
-參見 [Match-maker API](/server/matchmaker/#reserveseatforroom-options) 了解如何在房間內為某個客戶端預留席位.
+    參見 [Match-maker API](/server/matchmaker/#reserveseatforroom-options) 了解如何在房間內為某個客戶端預留席位.
 
 ## 房間實例：
 
@@ -655,7 +655,7 @@ room.send(0, { direction: "left" });
 ```
 
 !!! tip "使用服務器端的 `Room#onMessage()` 進行信息檢索"
-查看[Server-side API » Room - onMessage()](/server/room/#onmessage-type-callback)章節
+    查看 [Server-side API » Room - onMessage()](/server/room/#onmessage-type-callback) 章節
 
 ---
 
@@ -700,7 +700,7 @@ room.leave(false);
 ```
 
 !!! Tip
-使用 [Room#onLeave()](/server/room/#onleave-client-consented) 來處理與服務器端的斷連.
+    使用 [Room#onLeave()](/server/room/#onleave-client-consented) 來處理與服務器端的斷連.
 
 ---
 
@@ -713,7 +713,7 @@ room.leave(false);
 #### onStateChange
 
 !!! Tip "您可為特定的 Schema 架構設置觸發回調"
-更多詳情可查看 [狀態處理» Schema »客戶端](/state/schema/#client-side) 章節.
+    更多詳情可查看 [狀態處理» Schema »客戶端](/state/schema/#client-side) 章節.
 
 服務器狀態更新時觸發該事件.
 
@@ -802,7 +802,7 @@ room.onMessage("powerup", [=](msgpack::object message) -> void {
 ```
 
 !!! Tip
-若要從服務器直接發送消息至客戶端,您需要使用 [client.send()](/server/client/#sendtype-message) 或 [room.broadcast()](/server/room/#broadcast-type-message-options) 進行操作.
+    若要從服務器直接發送消息至客戶端,您需要使用 [client.send()](/server/client/#sendtype-message) 或 [room.broadcast()](/server/room/#broadcast-type-message-options) 進行操作.
 
 ---
 

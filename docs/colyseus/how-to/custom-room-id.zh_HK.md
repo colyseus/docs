@@ -1,18 +1,22 @@
-您可以重写新房间的房间 ID 设置方式.
+您可以重寫新房間的房間 ID 設置方式.
 
-为确保我们不会在无意中重复使用相同的房间 ID,我们用 Presence API,操作如下：
+為確保我們不會在無意中重復使用相同的房間 ID,我們用 Presence API,操作如下：
 
-1. 用 Presence API 获取已注册的房间 ID.
-2. 生成房间 ID(直到生成一个未被占用的 ID 为止).
-3. 用 Presence API 注册新房间 ID.
+1. 用 Presence API 獲取已註冊的房間 ID.
+2. 生成房間 ID(直到生成一個未被占用的 ID 為止).
+3. 用 Presence API 註冊新房間 ID.
 
-步骤 2 即使有数百万个房间,这里也很可能只需要使用 4 个字母长度的房间 ID 进行一次迭代.以该方式使用 Presence API 还能让您在多台机器上运行您的服务器(通过切换到[RedisPresence](https://docs.colyseus.io/server/presence/#redispresence-clientopts)).
+步驟 2 即使有數百萬個房間,這裏也很可能只需要使用 4 個字母長度的房間 ID 進行一次叠代.以該方式使用 Presence API 還能讓您在多臺機器上運行您的服務器(通過切換到 [RedisPresence](https://docs.colyseus.io/server/presence/#redispresence-clientopts)).
 
-参见下方代码：
+參見下方代碼：
 
-```typescript const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+```typescript
+const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-export class MyRoom extends Room<MyRoomState> { // The channel where we register the room IDs. // This can be anything you want, it doesn't have to be `$mylobby`.LOBBY\_CHANNEL = "$mylobby"
+export class MyRoom extends Room<MyRoomState> {
+    // The channel where we register the room IDs.
+    // This can be anything you want, it doesn't have to be `$mylobby`.
+    LOBBY_CHANNEL = "$mylobby"
 
     // Generate a single 4 capital letter room ID.
     generateRoomIdSingle(): string {
@@ -46,6 +50,7 @@ export class MyRoom extends Room<MyRoomState> { // The channel where we register
     async onDispose(options: any) {
         this.presence.srem(this.LOBBY_CHANNEL, this.roomId);
     }
-} ```
+}
+```
 
-**警告**：这段代码中存在一个小竞争机制,即调用两个 onCreate 时,其中任一个调用注册前会随机生成相同的代码.这将导致两个不同房间拥有同一个 ID.然而这种竞争是完全不可能发生的(即使有 100 万个活跃的房间且存在随机性,发生的概率仍为 15 万亿分之一).
+**警告**：這段代碼中存在一個小競爭機製,即調用兩個 onCreate 時, 其中任一個調用註冊前會隨機生成相同的代碼. 這將導致兩個不同房間擁有同一個 ID. 然而這種競爭是完全不可能發生的(即使有 100 萬個活躍的房間且存在隨機性,發生的概率仍為 15 萬億分之一).

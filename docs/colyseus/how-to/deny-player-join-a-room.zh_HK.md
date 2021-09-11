@@ -1,14 +1,19 @@
-您可以在调用 `onAuth()` 或 `onJoin()` 方法时展示一个错误提示来拒绝玩家接入.
+您可以在調用 `onAuth()` 或 `onJoin()` 方法時展示一個錯誤提示來拒絕玩家接入.
 
-至于何时执行拒绝操作则取决于您的用例.
+至於何時執行拒絕操作則取決於您的用例.
 
-下方是验证 [@colyseus/social](/tools/colyseus-social/#server-side-api) 身份认证令牌,以及检索与用户 id 关联的 `Hero` 记录.
+下方是驗證 [@colyseus/social](/tools/colyseus-social/#server-side-api) 身份認證令牌,以及檢索與用戶 id 關聯的 `Hero` 記錄.
 
-``typescript export class BattleRoom extends Room {
+```typescript
+export class BattleRoom extends Room {
 
-  onCreate(options) { this.levelRequired = 10; }
+  onCreate(options) {
+    this.levelRequired = 10;
+  }
 
-  async onAuth(client, options) { const userId = verifyToken(options.token).\_id; const hero = await Hero.findOne({ userId });
+  async onAuth(client, options) {
+    const userId = verifyToken(options.token)._id;
+    const hero = await Hero.findOne({ userId });
 
     if (!hero) {
       throw new Error("'Hero' not found in the database!");
@@ -21,8 +26,15 @@
     return hero;
   }
 
-} ```
+}
+```
 
-客户端在尝试加入房间时会收错误提示：
+客戶端在嘗試加入房間時會收錯誤提示：
 
-```typescript client.joinOrCreate("battle", {}).then(room => { // ... }).catch(e => { console.log(e) // "'Hero' not found in the database!" }) ```
+```typescript
+client.joinOrCreate("battle", {}).then(room => {
+  // ...
+}).catch(e => {
+  console.log(e) // "'Hero' not found in the database!"
+})
+```

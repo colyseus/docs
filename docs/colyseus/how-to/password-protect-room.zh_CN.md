@@ -1,16 +1,26 @@
-## 第 1 步：讓配對者識別 `"password"` 欄位.
+## 步骤1：允许匹配程序识别 `"password"` 字段.
 
-在 `filterBy()` 方法中定義 `"password"` 欄位.
+在 `filterBy()` 中定义`"password"`字段.
 
-```typescript gameServer .define("battle", BattleRoom) .filterBy(['password']) ```
+```typescript
+gameServer
+  .define("battle", BattleRoom)
+  .filterBy(['password'])
+```
 
 
-## 第 2 步：使房間不公開
+## 步骤2：不列出房间
 
-如果為 `create()` 或 `joinOrCreate()` 提供了密碼,請將房間列表設定為私人：
+若 `create()` 或 `joinOrCreate()` 已获取密码, 则将房间列为私人房间：
 
-```typescript export class BattleRoom extends Room {
+```typescript
+export class BattleRoom extends Room {
 
-  onCreate(options) { if (options.password) { this.setPrivate(); } }
+  onCreate(options) {
+    if (options.password) {
+      this.setPrivate();
+    }
+  }
 
-} ```
+}
+```
