@@ -1,21 +1,33 @@
-# 伺服器 API » 順利關機
+# 服务器 API &raquo; 优雅关闭
 
-Colyseus 預設提供了順利關機機制.這些動作會在處理序自行終止前執行：
+Colyseus 默认提供合理的关闭机制. 将在进程终止之前执行这些操作：
 
-- 非同步中斷連接所有連接的用戶端 (`Room#onLeave`)
-- 非同步處置或有產生的房間 (`Room#onDispose`)
-- 在關閉處理序 `Server#onShutdown` 前執行選擇性非同步回調
+- 异步断开所有连接的客户端 (`Room#onLeave`)
+- 异步处理所有生成的房间 (`Room#onDispose`)
+- 在关闭进程之前执行可选的异步回调 `Server#onShutdown`
 
-如果您正在 `onLeave` / `onDispose` 執行非同步工作,您應傳回 `Promise`,並在工作就緒前加以解析.同樣情況也會套用在 `onShutdown(回調)`.
+如果在 `onLeave` / `onDispose` 时执行异步任务,您应该返回一个 `Promise`,并在任务准备好时完成它. 对于 `onShutdown(callback)`, 也是如此.
 
 
-## 傳回`承諾`
+## 返回一个 `Promise`
 
-透過傳回`承諾`,伺服器不會在終止背景工作處理序前等待其完成.
+通过返回 `Promise`, 服务器将等待它们完成,然后终止工作进程.
 
-```typescript import { Room } from "colyseus";
+```typescript
+import { Room } from "colyseus";
 
-class MyRoom extends Room { onLeave (client) { return new Promise((resolve, reject) => { doDatabaseOperation((err, data) => { if (err) { reject(err); } else { resolve(data); } }); }); }
+class MyRoom extends Room {
+    onLeave (client) {
+        return new Promise((resolve, reject) => {
+            doDatabaseOperation((err, data) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(data);
+                }
+            });
+        });
+    }
 
     onDispose () {
         return new Promise((resolve, reject) => {
@@ -28,27 +40,37 @@ class MyRoom extends Room { onLeave (client) { return new Promise((resolve, reje
             });
         });
     }
-} ```
+}
+```
 
-## 正在使用`非同步`
+## 使用 `异步`
 
-`非同步`關鍵字能讓您的函式傳回基礎`承諾`.[閱讀有關非同步 / 等候的更多資訊](https://basarat.gitbooks.io/typescript/content/docs/async-await.html).
+`async` 关键字将使函数在后台返回一个 `Promise`. [阅读更多有关异步/等待的信息](https://basarat.gitbooks.io/typescript/content/docs/async-await.html).
 
-```typescript import { Room } from "colyseus";
+```typescript
+import { Room } from "colyseus";
 
-class MyRoom extends Room { async onLeave (client) { await doDatabaseOperation(client); }
+class MyRoom extends Room {
+    async onLeave (client) {
+        await doDatabaseOperation(client);
+    }
 
     async onDispose () {
         await removeRoomFromDatabase();
     }
-} ```
+}
+```
 
-## 處理序關閉回調
+## 进程关闭回调
 
-您也可以透過設定 `onShutdown` 回調來接聽處理序關機.
+还可以通过设置 `onShutdown` 回调来监听进程关闭.
 
-```typescript fct\_label="Server" import { Server } from "colyseus";
+```typescript fct_label="Server"
+import { Server } from "colyseus";
 
 let server = new Server();
 
-server.onShutdown(function () { console.log("master process is being shut down!"); }); ```
+server.onShutdown(function () {
+    console.log("master process is being shut down!");
+});
+```

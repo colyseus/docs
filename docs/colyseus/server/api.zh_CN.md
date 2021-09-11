@@ -1,270 +1,406 @@
-# Server API » Server
+# 服务器 API &raquo; 服务器
 
-Colyseus `Server` 執行個體包含伺服器配置選項,例如傳輸選項, 在線狀態, 匹配驅動程式等.
+Colyseus `Server` 实例会保存服务器配置选项, 比如传输选项, 状态, 比赛匹配驱动程序等.
 
-- **Transport** 是伺服器和用戶端之間的雙向通信層.
-- **Presence** 是支持聊天室和/或 Node.js 處理序之間通信的實作.
-- **Driver** 是匹配時用於儲存和查詢房間的儲存驅動程式.
+- **Transport** 是服务器和客户端之间双向通信的一个分层.
+- **Presence** 是使房间和/或 Node.js 进程之间实现通信的执行.
+- **Driver** 是用于在比赛匹配期间存储并查询房间的存储驱动程序.
 
 ## `new Server (options)`
 
 ### `options.transport`
 
-Colyseus 預設使用其內建的 WebSocket 傳輸.查看如何[在此處自訂傳輸層](/server/transport/).
+Colyseus 默认使用其内置 WebSocket 传输. [点此查看如何自定义传输层](/server/transport/).
 
 ### `options.presence`
 
-當透過多個處理序/機器擴展 Colyseus 時,您需要提供一個在線伺服器.詳細了解[可擴縮性](/scalability/)和 \\[`Presence API`](/server/presence/#api).
+在多个进程/机器中扩展 Colyseus 时,您需要提供一个状态服务器.了解更多关于[扩展性](/scalability/)和 [`Presence API`](/server/presence/#api) 的信息.
 
-```typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus";
+```typescript fct_label="TypeScript"
+import { Server, RedisPresence } from "colyseus";
 
-const gameServer = new Server({ // ... presence: new RedisPresence() }); ```
+const gameServer = new Server({
+  // ...
+  presence: new RedisPresence()
+});
+```
 
-```typescript fct\_label="JavaScript" const colyseus = require("colyseus");
+```typescript fct_label="JavaScript"
+const colyseus = require("colyseus");
 
-const gameServer = new colyseus.Server({ // ... presence: new colyseus.RedisPresence() }); ```
+const gameServer = new colyseus.Server({
+  // ...
+  presence: new colyseus.RedisPresence()
+});
+```
 
-目前可用的 Presence 伺服器包括：
+当前可用的状态服务器为：
 
-- `RedisPresence`(在單台伺服器和多台伺服器上擴展)
+- `RedisPresence` (在单一服务器或多个服务器上扩展)
 
 ---
 
 ### `options.gracefullyShutdown`
 
-自動註冊關機程式.預設為 `true`如果停用,您應該在關閉過程中手動調用 [`gracefullyShutdown()`](#gracefullyshutdown-exit-boolean) 方法.
+注册关闭例行程序自动生效.默认值是 `true` 如果被禁用,您需要从关闭进程中手动调用 [`gracefullyShutdown()`](#gracefullyshutdown-exit-boolean) 方法.
 
 ---
 
-### `options.server`:
+### `options.server`
 
-!!!警告(此選項將被棄用)請參閱 [WebSocket 傳輸選項](/server/transport/#optionsserver)
+!!! Warning "该选项将被弃用"
+    详见 [WebSocket 传输选项](/server/transport/#optionsserver)
 
-要將 WebSocket 伺服器綁定到的 HTTP 伺服器.您也可以將 [`express`](https://www.npmjs.com/package/express) 用於您的伺服器.
+要绑定 WebSocket Server 的 HTTP 服务器.您也可以将 [`express`](https://www.npmjs.com/package/express) 用于您的服务器.
 
-```typescript fct\_label="TypeScript" // Colyseus + Express import { Server } from "colyseus"; import { createServer } from "http"; import express from "express"; const port = Number(process.env.port) || 3000;
+```typescript fct_label="TypeScript"
+// Colyseus + Express
+import { Server } from "colyseus";
+import { createServer } from "http";
+import express from "express";
+const port = Number(process.env.port) || 3000;
 
-const app = express(); app.use(express.json());
+const app = express();
+app.use(express.json());
 
-const gameServer = new Server({ server: createServer(app) });
+const gameServer = new Server({
+  server: createServer(app)
+});
 
-gameServer.listen(port); ```
+gameServer.listen(port);
+```
 
-```typescript fct\_label="JavaScript" // Colyseus + Express const colyseus = require("colyseus"); const http = require("http"); const express = require("express"); const port = process.env.port || 3000;
+```typescript fct_label="JavaScript"
+// Colyseus + Express
+const colyseus = require("colyseus");
+const http = require("http");
+const express = require("express");
+const port = process.env.port || 3000;
 
-const app = express(); app.use(express.json());
+const app = express();
+app.use(express.json());
 
-const gameServer = new colyseus.Server({ server: http.createServer(app) });
+const gameServer = new colyseus.Server({
+  server: http.createServer(app)
+});
 
-gameServer.listen(port); ```
+gameServer.listen(port);
+```
 
-```typescript fct\_label="TypeScript (barebones)" // Colyseus (barebones) import { Server } from "colyseus"; const port = process.env.port || 3000;
+```typescript fct_label="TypeScript (barebones)"
+// Colyseus (barebones)
+import { Server } from "colyseus";
+const port = process.env.port || 3000;
 
-const gameServer = new Server(); gameServer.listen(port); ```
+const gameServer = new Server();
+gameServer.listen(port);
+```
 
-```typescript fct\_label="JavaScript (barebones)" // Colyseus (barebones) const colyseus = require("colyseus"); const port = process.env.port || 3000;
+```typescript fct_label="JavaScript (barebones)"
+// Colyseus (barebones)
+const colyseus = require("colyseus");
+const port = process.env.port || 3000;
 
-const gameServer = new colyseus.Server(); gameServer.listen(port); ```
+const gameServer = new colyseus.Server();
+gameServer.listen(port);
+```
 
 ---
 
 ### `options.pingInterval`
 
-!!!警告(此選項將被棄用)請參閱 [WebSocket 傳輸選項](/server/transport/#optionspinginterval)
+!!! Warning "该选项将被弃用"
+    详见 [WebSocket 传输选项](/server/transport/#optionspinginterval)
 
-伺服器(偵測)用戶端的毫秒數.預設：`3000`
+服务器"ping"客户端的毫秒数. 默认： `3000`
 
-如果用戶端在[pingMaxRetries](/server/api/#optionspingMaxRetries) 重試後無法回應,則會強制中斷連接.
+如果客户端在 [pingMaxRetries](/server/api/#optionspingMaxRetries) 次重试后未能响应, 将被强制断开连接.
 
 ---
 
 ### `options.pingMaxRetries`
 
-!!!警告(此選項將被棄用)請參閱 [WebSocket 傳輸選項](/server/transport/#optionspingmaxretries)
+!!! Warning "该选项将被弃用"
+    详见[WebSocket 传输选项](/server/transport/#optionspingmaxretries)
 
-無回應下允許的最大偵測數.預設：`2`.
+ping 无响应的最大允许数.默认：`2`.
 
 ---
 
 ### `options.verifyClient`
 
-!!!警告(此選項將被棄用)請參閱 [WebSocket 傳輸選項](/server/transport/#optionsverifyclient)
+!!! Warning "该选项将被弃用"
+    详见[WebSocket 传输选项](/server/transport/#optionsverifyclient)
 
-WebSocket 交換信號前會發生此方法.如果 `verifyClient` 未設定,則會自動接受信號交換.
+该方法会在 WebSocket 握手之前发生.如果 `verifyClient` 未设置, 则握手会被自动接受.
 
-- `info`(物件)
-    - `origin`(字串)用戶端指示的原始標頭中的值.
-    - `req` (http.IncomingMessage) 用戶端 HTTP GET 請求.
-    - `secure`(布林值)`true` 如果 `req.connection.authorized` 或 `req.connection.encrypted` 已設定.
+- `info` (Object)
+    - `origin` (String) 客户端指定的 Origin 标头的值.
+    - `req` (http.IncomingMessage) 客户端 HTTP GET 请求.
+    - `secure` (Boolean) `true` 如果 `req.connection.authorized` 或 `req.connection.encrypted` 已设置.
 
-- `next`(函式)使用者在檢查 `info` 欄位時必須調用的回調.此回調的引數為：
-    - `result`(布林值)接受或不接受信號交換.
-    - `code`(數字)當 `result` 為 `false` 時,此欄位會決定要傳送給用戶端的 HTTP 錯誤狀態代碼.
-    - `name`(字串)當 `result` 為 `false` 時,此欄位會決定 HTTP 原因說明.
+- `next` (Function) 用户在 `info`字段检查时必须调用的回调.此回调中的参数为：
+    - `result` (Boolean) 是否接受握手.
+    - `code`(Number) When `result` is `false` 此字段决定要发给客户端的 HTTP 错误状态代码.
+    - `name` (String) When `result` is `false` 此字段决定 HTTP 动作原因.
 
-```typescript fct\_label="TypeScript" import { Server } from "colyseus";
+```typescript fct_label="TypeScript"
+import { Server } from "colyseus";
 
-const gameServer = new Server({ // ...
+const gameServer = new Server({
+  // ...
 
-  verifyClient: function (info, next) { // 驗證 'info' // // - next(false) 將拒絕 websocket 握手 // - next(true) 將接受 websocket 握手 } }); ```
+  verifyClient: function (info, next) {
+    // validate 'info'
+    //
+    // - next(false) will reject the websocket handshake
+    // - next(true) will accept the websocket handshake
+  }
+});
+```
 
-```typescript fct\_label="JavaScript" const colyseus = require("colyseus");
+```typescript fct_label="JavaScript"
+const colyseus = require("colyseus");
 
-const gameServer = new colyseus.Server({ // ...
+const gameServer = new colyseus.Server({
+  // ...
 
-  verifyClient: function (info, next) { // 驗證 'info' // // - next(false) 將拒絕 websocket 握手 // - next(true) 將接受 websocket 握手 } }); ```
+  verifyClient: function (info, next) {
+    // validate 'info'
+    //
+    // - next(false) will reject the websocket handshake
+    // - next(true) will accept the websocket handshake
+  }
+});
+```
 
 ---
 
 ## `define (roomName: string, room:Room, options?: any)`
 
-為媒人定義新的房間類型.
+为匹配器定义一种新类型的房间.
 
-- 在 `.define()` 期間**未建立**房間
-- 房間是根據用戶端請求建立的([請參閱用戶端方法](/client/client/#methods))
+- `.define()` 期间房间 **未创建**
+- 客户端请求时创建房间 ([参阅客户端方法](/client/client/#methods))
 
-**參數：**
+**Parameters:**
 
-- `roomName: string` \- 房間的公共名稱.從用戶端加入房間時,您將使用此名稱
-- `--room`:Room` - `Room` 類別
-- `options?: any` \- 房間初始化的自訂選項
+- `roomName: string` - 房间的公开名称.从客户端加入房间时,您需要使用该名称
+- `--room: Room` - `Room` 类
+- `options?: any` - 房间初始化自定义选项
 
-```typescript // 定義(聊天)房間 gameServer.define("chat", ChatRoom);
+```typescript
+// Define "chat" room
+gameServer.define("chat", ChatRoom);
 
-// 定義(戰鬥)房間 gameServer.define("battle", BattleRoom);
+// Define "battle" room
+gameServer.define("battle", BattleRoom);
 
-// 使用自訂選項定義(戰鬥)房間 gameServer.define("battle\_woods", BattleRoom, { map: "woods" }); ``
+// Define "battle" room with custom options
+gameServer.define("battle_woods", BattleRoom, { map: "woods" });
+```
 
-!!!提示(多次定義同一個房間處理程序) 您可以使用不同的 `options` 多次定義同一個房間處理程序.當調用 [Room#onCreate()](/server/room/#oncreate-options) 時,`options` 將包含您在 [Server#define()](/server/api/#define-roomname-string-room-room-options-any) 上指定的合併值 + 房間建立時提供的選項.
+!!! Tip "多次定义同一个房间处理程序"
+    您可能用不同的`选项`多次定义了同一个房间处理程序.当调用 [Room#onCreate()](/server/room/#oncreate-options) 时,`选项` 将包含您在 [Server#define()](/server/api/#define-roomname-string-room-room-options-any) 上指定的合并值+房间创建时提供的选项.
 
 ---
 
-### 房間定義選項
+### 房间定义选项
 
 #### `filterBy(options)`
 
-每當透過 `create()` 或 `joinOrCreate()` 方法建立房間時,只有 `filterBy()` 方法定義的 `options` 將儲存在內部,並用於在進一步的 `join()` 或 `joinOrCreate()` 調用中過濾掉房間.
+用 `create()` 或 `joinOrCreate()` 方法创建房间时, 只有通过 `filterBy()` 方法定义的 `选项` 将存储在内部,并在之后的 `join()` 或 `joinOrCreate()` 调用中用于筛选房间.
 
-**參數：**
+**Parameters:**
 
-- `options: string[]` \- 選項名稱列表
+- `options: string[]` - 选项名称列表
 
 
-**Example:**允許不同的(遊戲模式).
+**示例：** 允许不同的 "游戏模式".
 
-```typescript gameServer .define("battle", BattleRoom) .filterBy(['mode']); ```
+```typescript
+gameServer
+  .define("battle", BattleRoom)
+  .filterBy(['mode']);
+```
 
-無論何時建立房間,`mode` 選項都將在內部儲存.
+无论何时创建房间, `模式` 选项都将被存储在内部.
 
-```typescript client.joinOrCreate("battle", { mode: "duo" }).then(room => {/* ... */}); ```
+```typescript
+client.joinOrCreate("battle", { mode: "duo" }).then(room => {/* ... */});
+```
 
-您可以處理 `onCreate()` 和/或 `onJoin()` 中提供的選項,以在您的房間實作中實現請求的功能.
+您可以在 `onCreate()` 和/或 `onJoin()` 中处理提供的选项,在房间实现中执行所需的特性.
 
-```typescript class BattleRoom extends Room { onCreate(options) { if (options.mode === "duo") { // do something! } } onJoin(client, options) { if (options.mode === "duo") { // put this player into a team! } } } ```
+```typescript
+class BattleRoom extends Room {
+  onCreate(options) {
+    if (options.mode === "duo") {
+      // do something!
+    }
+  }
+  onJoin(client, options) {
+    if (options.mode === "duo") {
+      // put this player into a team!
+    }
+  }
+}
+```
 
-**>示例：** 透過內建 `maxClients` 篩選
+**示例：** 由内置 `maxClients` 筛选
 
-`maxClients` 是為匹配而儲存的內部變數,也可用於篩選.
+`maxClients` 是一个存储的内置变量,用于匹配比赛,也可用于过滤.
 
-```typescript gameServer .define("battle", BattleRoom) .filterBy(['maxClients']); ```
+```typescript
+gameServer
+  .define("battle", BattleRoom)
+  .filterBy(['maxClients']);
+```
 
-然後用戶端可以要求加入一個能夠處理一定數量玩家的房間.
+客户端可以要求加入一个能够处理一定数量玩家的房间.
 
-```typescript client.joinOrCreate("battle", { maxClients:10 }).then(room => {/* ... \*/}); client.joinOrCreate("battle", { maxClients:20 }).then(room => {/* ... \*/}); ```
+```typescript
+client.joinOrCreate("battle", { maxClients: 10 }).then(room => {/* ... */});
+client.joinOrCreate("battle", { maxClients: 20 }).then(room => {/* ... */});
+```
 
 ---
 
 #### `sortBy(options)`
 
-您還可以根據建立時的資訊為加入房間提供不同的優先級.
+根据房间创建时的信息,您可以为加入房间设置一个不同的优先级.
 
-`options` 參數是一個鍵值物件,左邊是欄位名稱,右邊是排序方向.排序方向可以是以下值之一：`-1`, `"desc"`, `"descending"`, `1`, `"asc"` 或 `"ascending"`.
+`options` 参数是一个键值对象, 左边是字段名称, 右边是排序方向. 排序方向可能为下列值之一：`-1`, `"desc"`, `"descending"`, `1`, `"asc"` 或 `"ascending"`.
 
-**>示例：** 按內建 `clients` 排序
+**示例：** 由内置`客户端`筛选
 
-`clients` 是為匹配儲存的內部變數,其中包含目前連接的用戶端數量.在下面的示例中,連接的用戶端數量最多的房間將具有優先權.使用 ` -1 `, ` "desc" ` 或 ` "descending" ` 進行降序：
+`clients` 是一个存储的内置变量, 用于匹配比赛, 其包含已连接客户端的当前数量. 在下面的示例中, 拥有最高数量已连接客户端的房间将获得优先权. 使用 `-1`, `"desc"` 或 `"descending"` 进行降序排列：
+an internal variable stored for matchmaking, which contains the current number of connected clients. On the example below, the rooms with the highest amount of clients connected will have priority. Use `-1`, `"desc"` or `"descending"` for descending order:
 
-```typescript gameServer .define("battle", BattleRoom) .sortBy({ clients: -1 }); ```
+```typescript
+gameServer
+  .define("battle", BattleRoom)
+  .sortBy({ clients: -1 });
+```
 
-要按最少的玩家數量排序,您可以執行相反的操作.使用`1`, `"asc"` 或 `"ascending"` 進行升序：
+如想要以最少数量玩家排序,您可以反向操作.使用 `1`, `"asc"` 或 `"ascending"` 进行升序排列：
 
-```typescript gameServer .define("battle", BattleRoom) .sortBy({ clients:1 }); ```
+```typescript
+gameServer
+  .define("battle", BattleRoom)
+  .sortBy({ clients: 1 });
+```
 
 ---
 
-#### 大廳即時列表
+#### 大厅实时列表
 
-要允許 `LobbyRoom` 接收來自特定房間類型的更新,您應該在啟用即時列表的情況下定義它們：
+想要允许 `LobbyRoom` 从某种特定类型的房间接收更新,您应该启用实时列表并对房间进行定义：
 
-```typescript gameServer .define("battle", BattleRoom) .enableRealtimeListing(); ```
+```typescript
+gameServer
+  .define("battle", BattleRoom)
+  .enableRealtimeListing();
+```
 
-[查看有關 `LobbyRoom`](/builtin-rooms/lobby/) 的更多資訊
+[查看有关 `LobbyRoom` 的更多内容](/builtin-rooms/lobby/)
 
 ---
 
-#### 公共生命週期事件
+#### 公共生命周期事件
 
-您可以從房間執行個體範圍之外接聽匹配事件,例如：
+您可以从房间实例范围外监听匹配比赛事件,例如：
 
-- `"create"` \- 建立房間時
-- `"dispose"` \- 當房間已被處置時
-- `"join"` \- 當客戶加入房間時
-- `"leave"` \- 當客戶離開房間時
-- `"lock"` \- 當房間被鎖定時
-- `"unlock" ` \- 當房間被解鎖時
+- `"create"` - 当一个房间被创建时
+- `"dispose"` - 当一个房间被配置时
+- `"join"` - 当一个客户端加入房间时
+- `"leave"` - 当一个客户端离开房间时
+- `"lock"` - 当一个房间被锁定时
+- `"unlock"` - 当一个房间被解锁时
 
-**使用方式**
+**用法：**
 
-```typescript gameServer .define("chat", ChatRoom) .on("create", (room) => console.log("room created:", room.roomId)) .on("dispose", (room) => console.log("room disposed:", room.roomId)) .on("join", (room, client) => console.log(client.id, "joined", room.roomId)) .on("leave", (room, client) => console.log(client.id, "left", room.roomId)); ```
+```typescript
+gameServer
+  .define("chat", ChatRoom)
+  .on("create", (room) => console.log("room created:", room.roomId))
+  .on("dispose", (room) => console.log("room disposed:", room.roomId))
+  .on("join", (room, client) => console.log(client.id, "joined", room.roomId))
+  .on("leave", (room, client) => console.log(client.id, "left", room.roomId));
+```
 
-!!!警告 完全不鼓勵透過這些事件來操縱房間的狀態.請改用房間處理常式中的 [abstract methods](/server/room/#abstract-methods).
+!!! Warning
+    我们完全不鼓励使用这些事件来操纵房间的状态. 使用房间处理程序中的 [abstract methods](/server/room/#abstract-methods) 作为替代.
 
 ## `simulateLatency (milliseconds: number)`
 
-這是一種在本機開發過程中模擬(滯後)用戶端的便捷方法.
+这是一种在本地开发中模拟 "延迟" 客户端的便捷方式.
 
-```typescript // 確保永遠不要在生產中調用 `simulateLatency()` 方法.if (process.env.NODE\_ENV !== "production") {
+```typescript
+// Make sure to never call the `simulateLatency()` method in production.
+if (process.env.NODE_ENV !== "production") {
 
-  // 模擬伺服器和用戶端之間的 200 毫秒延遲. gameServer.simulateLatency(200); }```
+  // simulate 200ms latency between server and client.
+  gameServer.simulateLatency(200);
+}
+```
 
 ## `attach (options: any)`
 
-> 您通常不需要調用它.僅當您有非常具體的理由時才使用它.
+> 您通常不需要调用它. 只有在您有非常具体的理由时使用.
 
-附加或建立 WebSocket 伺服器.
+附加或创建 WebSocket 服务器.
 
-- `options.server`:要附加 WebSocket 伺服器的 HTTP 伺服器.
-- `options.ws`:要重用的現有 WebSocket 伺服器.
+- `options.server`: 用于附加 WebSocket 服务器的 HTTP 服务器.
+- `options.ws`: 要进行重复使用的现有 WebSocket 服务器.
 
-```javascript fct\_label="Express" import express from "express"; import { Server } from "colyseus";
+```javascript fct_label="Express"
+import express from "express";
+import { Server } from "colyseus";
 
-const app = new express(); const gameServer = new Server();
+const app = new express();
+const gameServer = new Server();
 
-gameServer.attach({ server: app }); ```
+gameServer.attach({ server: app });
+```
 
-```javascript fct\_label="http.createServer" import http from "http"; import { Server } from "colyseus";
+```javascript fct_label="http.createServer"
+import http from "http";
+import { Server } from "colyseus";
 
-const httpServer = http.createServer(); const gameServer = new Server();
+const httpServer = http.createServer();
+const gameServer = new Server();
 
-gameServer.attach({ server: httpServer }); ```
+gameServer.attach({ server: httpServer });
+```
 
-```javascript fct\_label="WebSocket.Server" import http from "http"; import express from "express"; import ws from "ws"; import { Server } from "colyseus";
+```javascript fct_label="WebSocket.Server"
+import http from "http";
+import express from "express";
+import ws from "ws";
+import { Server } from "colyseus";
 
-const app = express(); const server = http.createServer(app); const wss = new WebSocket.Server({ // your custom WebSocket.Server setup. });
+const app = express();
+const server = http.createServer(app);
+const wss = new WebSocket.Server({
+    // your custom WebSocket.Server setup.
+});
 
-const gameServer = new Server(); gameServer.attach({ ws: wss }); ```
+const gameServer = new Server();
+gameServer.attach({ ws: wss });
+```
 
 
 ## `listen (port: number)`
 
-將 WebSocket 伺服器綁定到指定埠口.
+将 WebSocket 服务器绑定至特定端口.
 
 ## `onShutdown (callback:Function)`
 
-註冊一個應該在處理序關閉之前調用的回調.有關詳情,請參閱[順利關機](/server/graceful-shutdown/).
+注册一个回调, 其应该在进程关闭前被调用. 查看 [优雅关闭](/server/graceful-shutdown/) 了解更多详细信息.
 
 ## `gracefullyShutdown (exit: boolean)`
 
-關閉所有房間並清理其快取資料.傳回會在檢查完成時滿足的承諾.
+关闭所有房间并清理其缓存数据. 每当清理完成时, 都会返回一个表示任务完成的承诺.
 
-此方法會自動呼叫,除非已在`伺服器`建構函式提供了 `gracefullyShutdown: false`.
+除非已在 `Server` 构造函数中提供 `gracefullyShutdown: false`, 否则会自动调用此方法.

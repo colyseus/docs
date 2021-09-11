@@ -1,107 +1,187 @@
-# 伺服器 API » 配對器 API
+# Server API &raquo; Match-maker API
 
-!!!警告(您可能會需要這個項目！) 本章節用於進階使用.您通常可以使用 [client-side methods](/client/client/#methods) 應對大部分情況.如果您認為您無法透過用戶端方法達到目標,您應考慮使用本頁中說明的方法.
+!!! Warning "您可能不需要这样做！"
+    本部分介绍高级用法.您通常可以使用 [客户端方法](/client/client/#methods).如果不能使用客户端方法来实现目上标,可以考虑使用本页介绍的方法.
 
-以下說明的方法由 `matchMaker` singleton 提供,可以從`(colyseus)` 包中匯入：
+下面介绍的方法由 `matchMaker` 单一实例提供,可以从 `"colyseus"` 包导入:
 
-```typescript fct_label="TypeScript" import { matchMaker } from "colyseus"; ```
+```typescript fct_label="TypeScript"
+import { matchMaker } from "colyseus";
+```
 
-```javascript fct_label="JavaScript" const matchMaker = require("colyseus").matchMaker; ```
+```javascript fct_label="JavaScript"
+const matchMaker = require("colyseus").matchMaker;
+```
 
 ## `.createRoom(roomName, options)`
-建立新房間
+创建新房间
 
-**參數：**
+**Parameters:**
 
-- **`roomName`**：您在 `gameServer.define()` 中定義的識別項.
-- **`選項`**：`onCreate` 的選項
+- **`roomName`**：您在 `gameServer.define()` 上定义的标识符.
+- **`options`**：`onCreate` 的选项
 
-```typescript const room = await matchMaker.createRoom("battle", { mode: "duo" }); console.log(room); /* { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false } */ ```
+```typescript
+const room = await matchMaker.createRoom("battle", { mode: "duo" });
+console.log(room);
+/*
+  { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+*/
+```
 
 ## `.joinOrCreate(roomName, options)`
 
-加入或建立房間,並傳回用戶端座位保留.
+加入或创建房间,并返回客户端座位保留量.
 
-**參數：**
+**Parameters:**
 
-- **`roomName`**：您在 `gameServer.define()` 中定義的識別項.
-- **`選項`**：用戶端座位保留的選項(用於 `onJoin`/`onAuth`)
+- **`roomName`**：您在 `gameServer.define()` 上定义的标识符.
+- **`options`**：客户端的座位保留选项(用于 `onJoin` / `onAuth`)
 
-```typescript const reservation = await matchMaker.joinOrCreate("battle", { mode: "duo" }); console.log(reservation); /* { "sessionId": "zzzzzzzzz", "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false } } */ ```
+```typescript
+const reservation = await matchMaker.joinOrCreate("battle", { mode: "duo" });
+console.log(reservation);
+/*
+  {
+    "sessionId": "zzzzzzzzz",
+    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+  }
+*/
+```
 
-!!!提示(取用座位保留)您可以使用[用戶端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation) 以依其保留的座位加入房間.
+!!! Tip "耗用座位保留量"
+    您可以使用 [客户端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation), 通过预留座位加入房间.
 
 ## `.reserveSeatFor(room, options)`
-為房間內的用戶端保留座位.
+为客户端保留房间座位.
 
-!!!提示(取用座位保留)您可以使用[用戶端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation) 以依其保留的座位加入房間.
+!!! Tip "耗用座位保留量"
+    您可以使用 [客户端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation), 通过预留座位加入房间.
 
-**參數：**
+**Parameters:**
 
-- **`房間`**：房間資料(來自 `createRoom()` 之類的結果)
-- **`選項`**：`onCreate` 的選項
+- **`room`**：房间数据(`createRoom()` 等函数的结果)
+- **`options`**：`onCreate` 的选项
 
-```typescript const reservation = await matchMaker.reserveSeatFor("battle", { mode: "duo" }); console.log(reservation); /* { "sessionId": "zzzzzzzzz", "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false } } */ ```
+```typescript
+const reservation = await matchMaker.reserveSeatFor("battle", { mode: "duo" });
+console.log(reservation);
+/*
+  {
+    "sessionId": "zzzzzzzzz",
+    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+  }
+*/
+```
 
 ## `.join(roomName, options)`
-加入房間並傳回座位保留.如果沒有 `roomName` 可用的房間,則會擲回例外.
+加入房间,并返回座位保留量. 如果 `roomName` 没有房间, 则抛出异常.
 
-**參數：**
+**参数:**
 
-- **`roomName`**：您在 `gameServer.define()` 中定義的識別項.
-- **`選項`**：用戶端座位保留的選項(用於 `onJoin`/`onAuth`)
+- **`roomName`**：您在 `gameServer.define()` 上定义的标识符.
+- **`options`**：客户端的座位保留选项(用于 `onJoin`/`onAuth`)
 
-```typescript const reservation = await matchMaker.join("battle", { mode: "duo" }); console.log(reservation); /* { "sessionId": "zzzzzzzzz", "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false } } */ ```
+```typescript
+const reservation = await matchMaker.join("battle", { mode: "duo" });
+console.log(reservation);
+/*
+  {
+    "sessionId": "zzzzzzzzz",
+    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+  }
+*/
+```
 
-!!!提示(取用座位保留)您可以使用[用戶端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation) 以依其保留的座位加入房間.
+!!! Tip "耗用座位保留量"
+    您可以使用 [客户端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation), 通过预留座位加入房间.
 
 ## `.joinById(roomId, options)`
-依 ID 加入房間,並傳回用戶端座位保留.如果找不到 `roomId`,則擲回例外.
+按  id 加入房间,并返回座位保留量.如果 `roomName` 没有房间,则抛出异常.
 
-**參數：**
+**参数:**
 
-- **`roomId`**：特定房間執行個體的 ID.
-- **`選項`**：用戶端座位保留的選項(用於 `onJoin`/`onAuth`)
+- **`roomId`**：一个特定房间实例的 ID.
+- **`options`**：客户端的座位保留选项(用于 `onJoin`/`onAuth`)
 
-```typescript const reservation = await matchMaker.joinById("xxxxxxxxx", {}); console.log(reservation); /* { "sessionId": "zzzzzzzzz", "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false } } */ ```
+```typescript
+const reservation = await matchMaker.joinById("xxxxxxxxx", {});
+console.log(reservation);
+/*
+  {
+    "sessionId": "zzzzzzzzz",
+    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+  }
+*/
+```
 
-!!!提示(取用座位保留)您可以使用[用戶端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation) 以依其保留的座位加入房間.
+!!! Tip "耗用座位保留量"
+    您可以使用 [客户端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation), 通过预留座位加入房间.
 
 ## `.create(roomName, options)`
-建立新房間,並傳回用戶端座位保留.
+创建房间,并返回客户座位保留量.
 
-**參數：**
+**参数:**
 
-- **`roomName`**：您在 `gameServer.define()` 中定義的識別項.
-- **`選項`**：用戶端座位保留的選項(用於 `onJoin`/`onAuth`)
+- **`roomName`**：您在 `gameServer.define()` 上定义的标识符.
+- **`options`**：客户端的座位保留选项(用于 `onJoin`/`onAuth`)
 
-```typescript const reservation = await matchMaker.create("battle", { mode: "duo" }); console.log(reservation); /* { "sessionId": "zzzzzzzzz", "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false } } */ ```
+```typescript
+const reservation = await matchMaker.create("battle", { mode: "duo" });
+console.log(reservation);
+/*
+  {
+    "sessionId": "zzzzzzzzz",
+    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+  }
+*/
+```
 
-!!!提示(取用座位保留)您可以使用[用戶端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation) 以依其保留的座位加入房間.
+!!! Tip "耗用座位保留量"
+    您可以使用 [客户端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation), 通过预留座位加入房间.
 
 ## `.query(conditions)`
-對快取的房間執行查詢.
+执行预存房间查询.
 
-```typescript const rooms = await matchMaker.query({ name: "battle", mode: "duo" }); console.log(rooms); /* [ { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }, { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }, { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false } ] */ ```
+```typescript
+const rooms = await matchMaker.query({ name: "battle", mode: "duo" });
+console.log(rooms);
+/*
+  [
+    { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false },
+    { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false },
+    { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+  ]
+*/
+```
 
 ## `.findOneRoomAvailable(roomName, options)`
-尋找可用的公開且已解除鎖定的房間
+查找公用和已解锁的
 
-**參數：**
+**参数:**
 
-- **`roomId`**：特定房間執行個體的 ID.
-- **`選項`**：用戶端座位保留的選項(用於 `onJoin`/`onAuth`)
+- **`roomId`**：一个特定房间实例的 ID.
+- **`options`**：客户端的座位保留选项(用于 `onJoin`/`onAuth`)
 
-```typescript const room = await matchMaker.findOneRoomAvailable("battle", { mode: "duo" }); console.log(room); /* { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false } */ ```
+```typescript
+const room = await matchMaker.findOneRoomAvailable("battle", { mode: "duo" });
+console.log(room);
+/*
+  { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+*/
+```
 
 ## `.remoteRoomCall(roomId, method, args)`
-在遠端房間呼叫方法或傳回屬性.
+调用一个方法或返回一个远程房间的属性.
 
-**參數：**
+**参数:**
 
-- **`roomId`**：特定房間執行個體的 ID.
-- **`方法`**：要呼叫或擷取的方法或屬性
-- **`args`**：引數的陣列
+- **`roomId`**：一个特定房间实例的 ID.
+- **`method`**: 方法或属性,用于调用或检索
+- **`args`**: 参数数组
 
-```typescript // call lock() on a remote room by id await matchMaker.remoteRoomCall("xxxxxxxxx", "lock"); ```
+```typescript
+// call lock() on a remote room by id
+await matchMaker.remoteRoomCall("xxxxxxxxx", "lock");
+```
 

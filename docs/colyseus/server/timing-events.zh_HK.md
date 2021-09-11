@@ -1,34 +1,40 @@
-# 服务器 API » 定时事件
+# 服務器 API  &raquo; 定時事件
 
-对于 [定时事件](https://www.w3.org/TR/2011/WD-html5-20110525/timers.html),建议在您的 `Room](/server/room/#clock-clocktimer) 实例中使用 [this.clock`方法.
+對於 [定時事件](https://www.w3.org/TR/2011/WD-html5-20110525/timers.html), 建議在您的 `Room` 實例中使用 [`this.clock`](/server/room/#clock-clocktimer) 方法.
 
-!!!提示：当 `Room` 被释放时,注册在 [`this.clock`](/server/room/#clock-clocktimer) 上的全部间隔和超时都会被自动清除.
+!!! Tip
+    當 `Room` 被釋放時,註冊在 [`this.clock`](/server/room/#clock-clocktimer) 上的全部間隔和超時都會被自動清除.
 
-!!!警告 "重要"：内置 [`setTimeout`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout) 和 [`setInterval`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setInterval) 方法依赖 CPU 负载,这可能导致意外的执行延迟时间.
+!!! Warning "重要"
+    內置 [`setTimeout`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout) 和 [`setInterval`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setInterval) 方法依賴 CPU 負載,這可能導致意外的執行延遲時間.
 
-## 时钟
+## 時鐘
 
-提供了有用的时钟机制,用于为状态性模拟之外的事件计时.举一个使用案例：当一名玩家收集一件物品时,您可能 `clock.setTimeout` 以创建一个新的可收集物.使用 `clock.` 的一个好处在于您无须担心房间更新和增量,相反,您可以专注于为房间状态的每个事件单独计时.
+提供了有用的時鐘機製,用於為狀態性模擬之外的事件計時.舉一個使用案例：當一名玩家收集一件物品時,您可能 `clock.setTimeout` 以創建一個新的可收集物.使用 `clock.` 的一個好處在於您無須擔心房間更新和增量,相反,您可以專註於為房間狀態的每個事件單獨計時.
 
 ### 公用方法
 
-*备注： `time` 参数以毫秒为单位*
+*備註： `time` 參數以毫秒為單位*
 
 #### `clock.setInterval(callback, time, ...args):Delayed`
 
-`setInterval()` 方法会反复调用一个函数或执行一个代码段,每次调用之间有固定的时间延迟.它将返回识别间隔的 [`Delayed`](#delayed) 实例,以便您之后进行操控.
+`setInterval()` 方法會反復調用一個函數或執行一個代碼段,每次調用之間有固定的時間延遲.它將返回識別間隔的 [`Delayed`](#delayed) 實例, 以便您之後進行操控.
 
 #### `clock.setTimeout(callback, time, ...args):Delayed`
 
-`setTimeout()` 方法会设置一个定时器,定时器到期时会执行一个函数或特定代码段.它将返回识别间隔的 [`Delayed`](#delayed) 实例,以便您之后进行操控.
+`setTimeout()` 方法會設置一個定時器,定時器到期時會執行一個函數或特定代碼段.它將返回識別間隔的 [`Delayed`](#delayed) 實例, 以便您之後進行操控.
 
 **示例**
 
-此 MVP 示例展示的房间拥有：`setInterval()`, `setTimeout` 并清理了之前存储的 `Delayed` 类型实例；同时显示房间时钟实例的当前时间.1 秒后'Time now ' + `this.clock.currentTime` 被 `console.log`,之后再过 10 秒我们清理了间隔：`this.delayedInterval.clear();`.
+此 MVP 示例展示的房間擁有：`setInterval()`, `setTimeout` 並清理了之前存儲的 `Delayed` 類型實例；同時顯示房間時鐘實例的當前時間.1 秒後'Time now ' + `this.clock.currentTime` 被 `console.log`,之後再過 10 秒我們清理了間隔：`this.delayedInterval.clear();`.
 
-```typescript fct\_label="TypeScript" // Import Delayed import { Room, Client, Delayed } from "colyseus";
+```typescript fct_label="TypeScript"
+// Import Delayed
+import { Room, Client, Delayed } from "colyseus";
 
-export class MyRoom extends Room { // For this example public delayedInterval!:Delayed;
+export class MyRoom extends Room {
+    // For this example
+    public delayedInterval!: Delayed;
 
     // When room is initialized
     onCreate(options: any) {
@@ -47,74 +53,76 @@ export class MyRoom extends Room { // For this example public delayedInterval!:D
             this.delayedInterval.clear();
         }, 10_000);
     }
-} ```
+}
+```
 
 #### `clock.clear()`
 
-使用 `clock.setInterval()` 和 `clock.setTimeout()` 清除所有已注册的间隔和超时.
+使用 `clock.setInterval()` 和 `clock.setTimeout()` 清除所有已註冊的間隔和超時.
 
 #### `clock.start()`
 
-开始计算时间.
+開始計算時間.
 
 #### `clock.stop()`
 
-停止计算时间.
+停止計算時間.
 
 #### `clock.tick()`
 
-这个方法会在模拟间隔的每一步被自动调用.所有 `Delayed` 实例会在 `tick` 期间接受检查.
+這個方法會在模擬間隔的每一步被自動調用.所有 `Delayed` 實例會在 `tick` 期間接受檢查.
 
-!!!提示：查看 [Room#setSimiulationInterval()](/server/room/#setsimulationinterval-callback-milliseconds166) 了解更多细节.
+!!! tip
+    查看 [Room#setSimiulationInterval()](/server/room/#setsimulationinterval-callback-milliseconds166) 了解更多細節.
 
-### 公用属性
+### 公用屬性
 
 #### `clock.elapsedTime`
 
-在 [`clock.start()`](#clockstart) 方法被调用后的运行时间,以毫秒计.只读.
+在 [`clock.start()`](#clockstart) 方法被調用後的運行時間,以毫秒計.只讀.
 
 #### `clock.currentTime`
 
-当前时间,以毫秒计.只读.
+當前時間,以毫秒計.只讀.
 
 #### `clock.deltaTime`
 
-上次调用与当前`clock.tick()`调用之间的区别,以毫秒计.只读.
+上次調用與當前`clock.tick()`調用之間的區別,以毫秒計.只讀.
 
-## 延迟
+## 延遲
 
-延迟实例由 [`clock.setInterval()`](#clocksetintervalcallback-time-args-delayed) 或 [`clock.setTimeout()`](#clocksettimeoutcallback-time-args-delayed) 方法创建.
+延遲實例由 [`clock.setInterval()`](#clocksetintervalcallback-time-args-delayed) 或 [`clock.setTimeout()`](#clocksettimeoutcallback-time-args-delayed) 方法創建.
 
 ### 公用方法
 
 #### `delayed.pause()`
 
-在一个特定 `Delayed` 实例中暂停时间.(`elapsedTime` 不会增加,除非调用 `.resume()`.)
+在一個特定 `Delayed` 實例中暫停時間.(`elapsedTime` 不會增加,除非調用 `.resume()`.)
 
 #### `delayed.resume()`
 
-在一个特定 `Delayed` 实例中恢复时间.(`elapsedTime` 将会继续正常增加)
+在一個特定 `Delayed` 實例中恢復時間.(`elapsedTime` 將會繼續正常增加)
 
 #### `delayed.clear()`
 
-清除超时或间隔
+清除超時或間隔
 
 #### `delayed.reset()`
 
-重设运行时间
+重設運行時間
 
-### 公用属性
+### 公用屬性
 
 #### `delayed.elapsedTime: number`
 
-`Delayed` 实例的运行时间,自开始起以毫秒计.
+`Delayed` 實例的運行時間,自開始起以毫秒計.
 
 #### `delayed.active: boolean`
 
-如果计时器仍在运行,返回 `true`.
+如果計時器仍在運行,返回 `true`.
 
 #### `delayed.paused: boolean`
 
-如果计时器已通过 `.pause()` 暂停,返回 `true`.
+如果計時器已通過 `.pause()` 暫停,返回 `true`.
 
 
