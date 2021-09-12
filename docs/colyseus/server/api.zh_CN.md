@@ -14,7 +14,7 @@ Colyseus 默认使用其内置 WebSocket 传输. [点此查看如何自定义传
 
 ### `options.presence`
 
-在多个进程/机器中扩展 Colyseus 时,您需要提供一个状态服务器.了解更多关于[扩展性](/scalability/)和 [`Presence API`](/server/presence/#api) 的資訊.
+在多个进程/机器中扩展 Colyseus 时,您需要提供一个状态服务器. 了解更多关于 [扩展性](/scalability/) 和 [`Presence API`](/server/presence/#api) 的信息.
 
 ```typescript fct_label="TypeScript"
 import { Server, RedisPresence } from "colyseus";
@@ -42,7 +42,7 @@ const gameServer = new colyseus.Server({
 
 ### `options.gracefullyShutdown`
 
-注册关闭例行程序自动生效.默认值是 `true` 如果被禁用,您需要从关闭进程中手动调用 [`gracefullyShutdown()`](#gracefullyshutdown-exit-boolean) 方法.
+注册关闭例行程序自动生效. 默认值是 `true` 如果被禁用, 您需要从关闭进程中手动调用 [`gracefullyShutdown()`](#gracefullyshutdown-exit-boolean) 方法.
 
 ---
 
@@ -51,7 +51,7 @@ const gameServer = new colyseus.Server({
 !!! Warning "该选项将被弃用"
     详见 [WebSocket 传输选项](/server/transport/#optionsserver)
 
-要绑定 WebSocket Server 的 HTTP 服务器.您也可以将 [`express`](https://www.npmjs.com/package/express) 用于您的服务器.
+要绑定 WebSocket Server 的 HTTP 服务器. 您也可以将 [`express`](https://www.npmjs.com/package/express) 用于您的服务器.
 
 ```typescript fct_label="TypeScript"
 // Colyseus + Express
@@ -112,7 +112,7 @@ gameServer.listen(port);
 !!! Warning "该选项将被弃用"
     详见 [WebSocket 传输选项](/server/transport/#optionspinginterval)
 
-服务器"ping"客户端的毫秒数. 默认:  `3000`
+服务器 "ping" 客户端的毫秒数. 默认: `3000`
 
 如果客户端在 [pingMaxRetries](/server/api/#optionspingMaxRetries) 次重试后未能响应, 将被强制断开连接.
 
@@ -123,7 +123,7 @@ gameServer.listen(port);
 !!! Warning "该选项将被弃用"
     详见[WebSocket 传输选项](/server/transport/#optionspingmaxretries)
 
-ping 无响应的最大允许数.默认: `2`.
+ping 无响应的最大允许数. 默认: `2`.
 
 ---
 
@@ -132,14 +132,14 @@ ping 无响应的最大允许数.默认: `2`.
 !!! Warning "该选项将被弃用"
     详见[WebSocket 传输选项](/server/transport/#optionsverifyclient)
 
-该方法会在 WebSocket 握手之前发生.如果 `verifyClient` 未设置, 则握手会被自动接受.
+该方法会在 WebSocket 握手之前发生. 如果 `verifyClient` 未设置, 则握手会被自动接受.
 
 - `info` (Object)
     - `origin` (String) 客户端指定的 Origin 标头的值.
     - `req` (http.IncomingMessage) 客户端 HTTP GET 请求.
     - `secure` (Boolean) `true` 如果 `req.connection.authorized` 或 `req.connection.encrypted` 已设置.
 
-- `next` (Function) 用户在 `info`字段检查时必须调用的回调.此回调中的参数为:
+- `next` (Function) 用户在 `info` 字段检查时必须调用的回调.此回调中的参数为:
     - `result` (Boolean) 是否接受握手.
     - `code`(Number) When `result` is `false` 此字段决定要发给客户端的 HTTP 错误状态代码.
     - `name` (String) When `result` is `false` 此字段决定 HTTP 动作原因.
@@ -185,7 +185,7 @@ const gameServer = new colyseus.Server({
 
 **Parameters:**
 
-- `roomName: string` - 房间的公开名称.从客户端加入房间时,您需要使用该名称
+- `roomName: string` - 房间的公开名称. 从客户端加入房间时, 您需要使用该名称
 - `--room: Room` - `Room` 类
 - `options?: any` - 房间初始化自定义选项
 
@@ -201,7 +201,7 @@ gameServer.define("battle_woods", BattleRoom, { map: "woods" });
 ```
 
 !!! Tip "多次定义同一个房间处理程序"
-    您可能用不同的`选项`多次定义了同一个房间处理程序.当调用 [Room#onCreate()](/server/room/#oncreate-options) 时,`选项` 将包含您在 [Server#define()](/server/api/#define-roomname-string-room-room-options-any) 上指定的合并值+房间创建时提供的选项.
+    您可能用不同的 `选项` 多次定义了同一个房间处理程序. 当调用 [Room#onCreate()](/server/room/#oncreate-options) 时, `选项` 将包含您在 [Server#define()](/server/api/#define-roomname-string-room-room-options-any) 上指定的合并值 + 房间创建时提供的选项.
 
 ---
 
@@ -209,14 +209,14 @@ gameServer.define("battle_woods", BattleRoom, { map: "woods" });
 
 #### `filterBy(options)`
 
-用 `create()` 或 `joinOrCreate()` 方法创建房间时, 只有通过 `filterBy()` 方法定义的 `选项` 将存储在内部,并在之后的 `join()` 或 `joinOrCreate()` 调用中用于筛选房间.
+用 `create()` 或 `joinOrCreate()` 方法创建房间时, 只有通过 `filterBy()` 方法定义的 `选项` 将存储在内部, 并在之后的 `join()` 或 `joinOrCreate()` 调用中用于筛选房间.
 
 **Parameters:**
 
 - `options: string[]` - 选项名称列表
 
 
-**示例: ** 允许不同的 "游戏模式".
+**示例:** 允许不同的 "游戏模式".
 
 ```typescript
 gameServer
@@ -247,9 +247,9 @@ class BattleRoom extends Room {
 }
 ```
 
-**示例: ** 由内置 `maxClients` 筛选
+**示例:** 由内置 `maxClients` 筛选
 
-`maxClients` 是一个存储的内置变量,用于匹配比赛,也可用于过滤.
+`maxClients` 是一个存储的内置变量, 用于匹配比赛,也可用于过滤.
 
 ```typescript
 gameServer
@@ -268,11 +268,11 @@ client.joinOrCreate("battle", { maxClients: 20 }).then(room => {/* ... */});
 
 #### `sortBy(options)`
 
-根据房间创建时的資訊,您可以为加入房间设置一个不同的优先级.
+根据房间创建时的資訊, 您可以为加入房间设置一个不同的优先级.
 
 `options` 参数是一个键值对象, 左边是字段名称, 右边是排序方向. 排序方向可能为下列值之一: `-1`, `"desc"`, `"descending"`, `1`, `"asc"` 或 `"ascending"`.
 
-**示例: ** 由内置`客户端`筛选
+**示例:** 由内置`客户端`筛选
 
 `clients` 是一个存储的内置变量, 用于匹配比赛, 其包含已连接客户端的当前数量. 在下面的示例中, 拥有最高数量已连接客户端的房间将获得优先权. 使用 `-1`, `"desc"` 或 `"descending"` 进行降序排列:
 an internal variable stored for matchmaking, which contains the current number of connected clients. On the example below, the rooms with the highest amount of clients connected will have priority. Use `-1`, `"desc"` or `"descending"` for descending order:
@@ -283,7 +283,7 @@ gameServer
   .sortBy({ clients: -1 });
 ```
 
-如想要以最少数量玩家排序,您可以反向操作.使用 `1`, `"asc"` 或 `"ascending"` 进行升序排列:
+如想要以最少数量玩家排序,您可以反向操作. 使用 `1`, `"asc"` 或 `"ascending"` 进行升序排列:
 
 ```typescript
 gameServer
@@ -295,7 +295,7 @@ gameServer
 
 #### 大厅实时列表
 
-想要允许 `LobbyRoom` 从某种特定类型的房间接收更新,您应该启用实时列表并对房间进行定义:
+想要允许 `LobbyRoom` 从某种特定类型的房间接收更新, 您应该启用实时列表并对房间进行定义:
 
 ```typescript
 gameServer
@@ -309,7 +309,7 @@ gameServer
 
 #### 公共生命周期事件
 
-您可以从房间实例范围外监听匹配比赛事件,例如:
+您可以从房间实例范围外监听匹配比赛事件, 例如:
 
 - `"create"` - 当一个房间被创建时
 - `"dispose"` - 当一个房间被配置时
@@ -318,7 +318,7 @@ gameServer
 - `"lock"` - 当一个房间被锁定时
 - `"unlock"` - 当一个房间被解锁时
 
-**用法: **
+**用法:**
 
 ```typescript
 gameServer

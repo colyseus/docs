@@ -1,6 +1,6 @@
 > 該文檔可能隨時更新.
 
-要想將 Colyseus 擴展至多處理序或多伺服器,您需要擁有 Redis, MongoDB 以及一個動態代理.
+要想將 Colyseus 擴展至多處理序或多伺服器, 您需要擁有 Redis, MongoDB 以及一個動態代理.
 
 ## Redis
 

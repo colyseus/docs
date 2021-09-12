@@ -34,7 +34,7 @@ cd colyseus-examples
 npm install
 ```
 
-若要在本機執行伺服器,請執行 `npm start`,然後打開 [http://localhost:2567](http://localhost:2567) 以探索每個示例.
+若要在本機執行伺服器,請執行 `npm start`, 然後打開 [http://localhost:2567](http://localhost:2567) 以探索每個示例.
 
 ### 介紹: Colyseus 工作原理概述
 

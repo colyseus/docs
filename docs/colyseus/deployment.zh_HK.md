@@ -77,7 +77,7 @@ server {
 
 ## Apache
 
-下面是如果使用 Apache 作為您的 Node.js Colyseus 應用代理.(感謝 [tomkleine](https://github.com/tomkleine) !)
+下面是如果使用 Apache 作為您的 Node.js Colyseus 應用代理. (感謝 [tomkleine](https://github.com/tomkleine) !)
 
 安裝所需 Apache 模組:
 
@@ -131,9 +131,9 @@ sudo a2enmod proxy_wstunnel
 
 ## greenlock-express
 
-如果您想在伺服器上快速配置SSL,Greenlock是個不錯的工具,不需要配置反向代理.
+如果您想在伺服器上快速配置 SSL, Greenlock 是個不錯的工具, 不需要配置反向代理.
 
-在使用 [`greenlock-express`](https://www.npmjs.com/package/greenlock-express) 時,您 **不應該** 在其後面配置任何反向代理,比如 [Nginx](#nginx-recommended) 或 [Apache](#apache).
+在使用 [`greenlock-express`](https://www.npmjs.com/package/greenlock-express) 時, 您 **不應該** 在其後面配置任何反向代理, 比如 [Nginx](#nginx-recommended) 或 [Apache](#apache).
 
 ```
 npm install --save greenlock-express
@@ -245,10 +245,10 @@ node                            12      1934b0b038d1    About a minute ago
 ```
 docker run -p 8080:8080 -d <your username>/colyseus-server
 ```
-使用 -d 執行映像會使容器以分離模式執行,讓容器在後臺執行. 而 -p 標誌將公共端口重定向到容器內的私有端口.
+使用 -d 執行映像會使容器以分離模式執行, 讓容器在後臺執行. 而 -p 標誌將公共端口重定向到容器內的私有端口.
 
 
-**步驟 7** 完成,現在您可以通過 `localhost:8080` 連線至伺服器
+**步驟 7** 完成, 現在您可以通過 `localhost:8080` 連線至伺服器
 
 更多資訊:
 

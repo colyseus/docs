@@ -93,7 +93,7 @@ console.log(`[GameServer] Listening on Port: ${port}`)
 npm start
 ```
 
-您可使用 `start:dev` 指令進行開發.伺服器會在您修改文件後自動重啟.
+您可使用 `start:dev` 指令進行開發. 伺服器會在您修改文件後自動重啟.
 ```cmd
 npm run start:dev
 ```
@@ -103,7 +103,7 @@ npm run start:dev
 npm run build
 ```
 
-然後您就可以使用 `start:prod` 指令來啟動伺服器了.該指令使用的是 `dist` 文件夾中 `build` 指令創建的文件.
+然後您就可以使用 `start:prod` 指令來啟動伺服器了. 該指令使用的是 `dist` 文件夾中 `build` 指令創建的文件.
 ```cmd
 npm run start:prod
 ```

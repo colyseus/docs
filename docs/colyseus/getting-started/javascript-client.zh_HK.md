@@ -12,7 +12,7 @@ JavaScript/TypeScript SDK 幾乎與所有平臺兼容:
 
 ### 將 JavaScript SDK 包括在您的專案中
 
-如果您在使用構建工具(`webpack`,  `rollup` 或類似工具), 這是最佳方式
+如果您在使用構建工具(`webpack`, `rollup` 或類似工具), 這是最佳方式
 
 ```
 npm install --save colyseus.js
@@ -24,7 +24,7 @@ npm install --save colyseus.js
 <script src="colyseus.js"></script>
 ```
 
-或者您也可以直接使用 unpkg 加載分布式文件.記得將其中的 `@x.x.x` 內容替換為與您伺服器兼容的版本.
+或者您也可以直接使用 unpkg 加載分布式文件. 記得將其中的 `@x.x.x` 內容替換為與您伺服器兼容的版本.
 
 ```html
 <script src="https://unpkg.com/colyseus.js@^0.14.0/dist/colyseus.js"></script>

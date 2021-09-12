@@ -3,30 +3,30 @@
 對於 [定時事件](https://www.w3.org/TR/2011/WD-html5-20110525/timers.html), 建議在您的 `Room` 實例中使用 [`this.clock`](/server/room/#clock-clocktimer) 方法.
 
 !!! Tip
-    當 `Room` 被釋放時,註冊在 [`this.clock`](/server/room/#clock-clocktimer) 上的全部間隔和超時都會被自動清除.
+    當 `Room` 被釋放時, 註冊在 [`this.clock`](/server/room/#clock-clocktimer) 上的全部間隔和超時都會被自動清除.
 
 !!! Warning "重要"
-    內置 [`setTimeout`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout) 和 [`setInterval`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setInterval) 方法依賴 CPU 負載,這可能導致意外的執行延遲時間.
+    內置 [`setTimeout`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout) 和 [`setInterval`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setInterval) 方法依賴 CPU 負載, 這可能導致意外的執行延遲時間.
 
 ## 時鐘
 
-提供了有用的時鐘機製,用於為狀態性模擬之外的事件計時.舉一個使用案例: 當一名玩家收集一件物品時,您可能 `clock.setTimeout` 以創建一個新的可收集物.使用 `clock.` 的一個好處在於您無須擔心房間更新和增量,相反,您可以專註於為房間狀態的每個事件單獨計時.
+提供了有用的時鐘機製, 用於為狀態性模擬之外的事件計時. 舉一個使用案例: 當一名玩家收集一件物品時, 您可能 `clock.setTimeout` 以創建一個新的可收集物. 使用 `clock.` 的一個好處在於您無須擔心房間更新和增量, 相反, 您可以專註於為房間狀態的每個事件單獨計時.
 
 ### 公用方法
 
-*備註:  `time` 參數以毫秒為單位*
+*備註: `time` 參數以毫秒為單位*
 
 #### `clock.setInterval(callback, time, ...args):Delayed`
 
-`setInterval()` 方法會反復調用一個函數或執行一個代碼段,每次調用之間有固定的時間延遲.它將返回識別間隔的 [`Delayed`](#delayed) 實例, 以便您之後進行操控.
+`setInterval()` 方法會反復調用一個函數或執行一個代碼段, 每次調用之間有固定的時間延遲. 它將返回識別間隔的 [`Delayed`](#delayed) 實例, 以便您之後進行操控.
 
 #### `clock.setTimeout(callback, time, ...args):Delayed`
 
-`setTimeout()` 方法會設置一個定時器,定時器到期時會執行一個函數或特定代碼段.它將返回識別間隔的 [`Delayed`](#delayed) 實例, 以便您之後進行操控.
+`setTimeout()` 方法會設置一個定時器, 定時器到期時會執行一個函數或特定代碼段. 它將返回識別間隔的 [`Delayed`](#delayed) 實例, 以便您之後進行操控.
 
 **示例**
 
-此 MVP 示例展示的房間擁有: `setInterval()`, `setTimeout` 並清理了之前存儲的 `Delayed` 類型實例; 同時顯示房間時鐘實例的當前時間.1 秒後'Time now ' + `this.clock.currentTime` 被 `console.log`,之後再過 10 秒我們清理了間隔: `this.delayedInterval.clear();`.
+此 MVP 示例展示的房間擁有: `setInterval()`, `setTimeout` 並清理了之前存儲的 `Delayed` 類型實例; 同時顯示房間時鐘實例的當前時間 1 秒後 'Time now ' + `this.clock.currentTime` 被 `console.log`, 之後再過 10 秒我們清理了間隔: `this.delayedInterval.clear();`.
 
 ```typescript fct_label="TypeScript"
 // Import Delayed
@@ -70,7 +70,7 @@ export class MyRoom extends Room {
 
 #### `clock.tick()`
 
-這個方法會在模擬間隔的每一步被自動調用.所有 `Delayed` 實例會在 `tick` 期間接受檢查.
+這個方法會在模擬間隔的每一步被自動調用. 所有 `Delayed` 實例會在 `tick` 期間接受檢查.
 
 !!! tip
     查看 [Room#setSimiulationInterval()](/server/room/#setsimulationinterval-callback-milliseconds166) 了解更多細節.
@@ -79,15 +79,15 @@ export class MyRoom extends Room {
 
 #### `clock.elapsedTime`
 
-在 [`clock.start()`](#clockstart) 方法被調用後的執行時間,以毫秒計.只讀.
+在 [`clock.start()`](#clockstart) 方法被調用後的執行時間, 以毫秒計. 只讀.
 
 #### `clock.currentTime`
 
-當前時間,以毫秒計.只讀.
+當前時間, 以毫秒計. 只讀.
 
 #### `clock.deltaTime`
 
-上次調用與當前`clock.tick()`調用之間的區別,以毫秒計.只讀.
+上次調用與當前`clock.tick()`調用之間的區別, 以毫秒計. 只讀.
 
 ## 延遲
 
@@ -97,11 +97,11 @@ export class MyRoom extends Room {
 
 #### `delayed.pause()`
 
-在一個特定 `Delayed` 實例中暫停時間.(`elapsedTime` 不會增加,除非調用 `.resume()`.)
+在一個特定 `Delayed` 實例中暫停時間. (`elapsedTime` 不會增加, 除非調用 `.resume()`.)
 
 #### `delayed.resume()`
 
-在一個特定 `Delayed` 實例中恢復時間.(`elapsedTime` 將會繼續正常增加)
+在一個特定 `Delayed` 實例中恢復時間. (`elapsedTime` 將會繼續正常增加)
 
 #### `delayed.clear()`
 
@@ -115,14 +115,14 @@ export class MyRoom extends Room {
 
 #### `delayed.elapsedTime: number`
 
-`Delayed` 實例的執行時間,自開始起以毫秒計.
+`Delayed` 實例的執行時間, 自開始起以毫秒計.
 
 #### `delayed.active: boolean`
 
-如果計時器仍在執行,返回 `true`.
+如果計時器仍在執行, 返回 `true`.
 
 #### `delayed.paused: boolean`
 
-如果計時器已通過 `.pause()` 暫停,返回 `true`.
+如果計時器已通過 `.pause()` 暫停, 返回 `true`.
 
 

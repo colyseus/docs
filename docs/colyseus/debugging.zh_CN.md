@@ -6,7 +6,7 @@
 您可使用 Node.js 的内置监测器来调试您的应用程序.
 
 !!! Tip
-    详情请参考[调试 Node.js 应用](https://nodejs.org/en/docs/inspector/).
+    详情请参考 [调试 Node.js 应用](https://nodejs.org/en/docs/inspector/).
 
 ### 在商用环境下使用监测器
 

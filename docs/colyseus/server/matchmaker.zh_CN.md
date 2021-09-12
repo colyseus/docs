@@ -1,9 +1,9 @@
 # Server API &raquo; Match-maker API
 
 !!! Warning "您可能不需要这样做!"
-    本部分介绍高级用法.您通常可以使用 [客户端方法](/client/client/#methods).如果不能使用客户端方法来实现目上标,可以考虑使用本页介绍的方法.
+    本部分介绍高级用法. 您通常可以使用 [客户端方法](/client/client/#methods). 如果不能使用客户端方法来实现目上标, 可以考虑使用本页介绍的方法.
 
-下面介绍的方法由 `matchMaker` 单一实例提供,可以从 `"colyseus"` 包导入:
+下面介绍的方法由 `matchMaker` 单一实例提供, 可以从 `"colyseus"` 包导入:
 
 ```typescript fct_label="TypeScript"
 import { matchMaker } from "colyseus";
@@ -31,7 +31,7 @@ console.log(room);
 
 ## `.joinOrCreate(roomName, options)`
 
-加入或创建房间,并返回客户端座位保留量.
+加入或创建房间, 并返回客户端座位保留量.
 
 **Parameters:**
 
@@ -75,7 +75,7 @@ console.log(reservation);
 ```
 
 ## `.join(roomName, options)`
-加入房间,并返回座位保留量. 如果 `roomName` 没有房间, 则抛出异常.
+加入房间, 并返回座位保留量. 如果 `roomName` 没有房间, 则抛出异常.
 
 **参数:**
 
@@ -97,7 +97,7 @@ console.log(reservation);
     您可以使用 [客户端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation), 通过预留座位加入房间.
 
 ## `.joinById(roomId, options)`
-按  id 加入房间,并返回座位保留量.如果 `roomName` 没有房间,则抛出异常.
+按 id 加入房间, 并返回座位保留量. 如果 `roomName` 没有房间,则抛出异常.
 
 **参数:**
 
@@ -119,7 +119,7 @@ console.log(reservation);
     您可以使用 [客户端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation), 通过预留座位加入房间.
 
 ## `.create(roomName, options)`
-创建房间,并返回客户座位保留量.
+创建房间, 并返回客户座位保留量.
 
 **参数:**
 
@@ -177,7 +177,7 @@ console.log(room);
 **参数:**
 
 - **`roomId`**: 一个特定房间实例的 ID.
-- **`method`**: 方法或属性,用于调用或检索
+- **`method`**: 方法或属性, 用于调用或检索
 - **`args`**: 参数数组
 
 ```typescript

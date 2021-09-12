@@ -9,18 +9,18 @@
 
 ![Arena 應用程式管理視圖](../../images/edit-server-code.jpg)
 
-在此畫面中, 您可以將代碼 **建立** ,  **刪除** ,  **上傳** 和 **部署** 到您的部署遊戲伺服器隊列. 選擇 **上傳** 可開啟對話框, 您可以從這裡選擇上傳單一檔案或上傳資料夾.
+在此畫面中, 您可以將代碼 **建立**, **刪除**, **上傳** 和 **部署** 到您的部署遊戲伺服器隊列. 選擇 **上傳** 可開啟對話框, 您可以從這裡選擇上傳單一檔案或上傳資料夾.
 
 ![Arena 應用程式管理視圖](../../images/upload-dialog.jpg)
 
 !!! NOTE
     - Arena 應用程式 **僅支援** 編譯後的 Javascript 代碼. 如果您使用 TypeScript, 請務必先建置您的代碼並上傳建置資料夾的內容.
-    - 如果您使用 ***NPM*** 樣板建立 Colyseus 伺服器, 則 ``` npm run build ``` 指令將編譯所有必要的檔案並將其複製到您的輸出資料夾中.
-    - 為 TypeScript 建置輸出資料夾: ``` lib ``` / JavaScript: ``` upload ```
+    - 如果您使用 ***NPM*** 樣板建立 Colyseus 伺服器, 則 ```npm run build``` 指令將編譯所有必要的檔案並將其複製到您的輸出資料夾中.
+    - 為 TypeScript 建置輸出資料夾: ```lib``` / JavaScript: ```upload```
 
 ## 伺服器代碼概覽
 
-完成上傳後, 如果您使用 ``` npm run build ``` 模板, 您應該會看到以下檔案和資料夾結構.
+完成上傳後, 如果您使用 ```npm run build``` 模板, 您應該會看到以下檔案和資料夾結構.
 
 ![Arena 代碼樣板](../../images/code-template.jpg)
 
@@ -70,7 +70,7 @@ module.exports = Arena({
 
 });
 ```
-- **arena.env:**在此檔案中, 您將定義應用程式所需的任何自定義環境變數. 這將是一個很好的檔案, 因為它可用於儲存分隔開發和生產環境的密鑰.
+- **arena.env:** 在此檔案中, 您將定義應用程式所需的任何自定義環境變數. 這將是一個很好的檔案, 因為它可用於儲存分隔開發和生產環境的密鑰.
 
 *File ```arena.env``` Example:*
 ```
@@ -82,4 +82,4 @@ ABC_GAME_MODE=dev
 
 - **package.json** **NPM** 樣板上的建置指令將您現有的 package.json 複製到分發資料夾中. 此檔案用於在遊戲伺服器啟動時安裝使用者定義的模組.
 
-- **.npmrc** * (可選)* : 請參閱[使用私有 NPM 儲存庫](../../reference/npmrc-custom/)
+- **.npmrc** *(可選)*: 請參閱 [使用私有 NPM 儲存庫](../../reference/npmrc-custom/)

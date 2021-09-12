@@ -6,12 +6,12 @@ Colyseus 預設提供合理的關閉機製. 將在進程終止之前執行這些
 - 異步處理所有生成的房間 (`Room#onDispose`)
 - 在關閉進程之前執行可選的異步回呼 `Server#onShutdown`
 
-如果在 `onLeave` / `onDispose` 時執行異步任務,您應該返回一個 `Promise`,並在任務準備好時完成它. 對於 `onShutdown(callback)`, 也是如此.
+如果在 `onLeave` / `onDispose` 時執行異步任務, 您應該返回一個 `Promise`, 並在任務準備好時完成它. 對於 `onShutdown(callback)`, 也是如此.
 
 
 ## 返回一個 `Promise`
 
-通過返回 `Promise`, 伺服器將等待它們完成,然後終止工作進程.
+通過返回 `Promise`, 伺服器將等待它們完成, 然後終止工作進程.
 
 ```typescript
 import { Room } from "colyseus";

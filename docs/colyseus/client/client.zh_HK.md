@@ -10,7 +10,7 @@
 
 ## 客戶端實例:
 
-`客戶端` 實例用於執行匹配調用,而後連線到一個或多個房間.
+`客戶端` 實例用於執行匹配調用, 而後連線到一個或多個房間.
 
 ```typescript fct_label="JavaScript"
 import Colyseus from "colyseus.js";
@@ -319,7 +319,7 @@ client->joinById<YourStateClass>("battle", {/* options */}, [=](std::string err,
 ```
 
 !!! Tip "獲取您可加入的房間的 `roomId`"
-    參見 [`getAvailableRooms()`](#getavailablerooms-roomname-string) 來檢索可加入房間的列表和各房間的 `roomId`,以及其元數據.
+    參見 [`getAvailableRooms()`](#getavailablerooms-roomname-string) 來檢索可加入房間的列表和各房間的 `roomId`, 以及其元數據.
 
 ---
 
@@ -566,7 +566,7 @@ client->consumeSeatReservation<YourStateClass>(reservation, [=](std::string err,
 
 #### `state: any`
 
-當前房間狀態.該變數始終與伺服器端的最新 `狀態` 同步.要想偵聽整體狀態的更新情況,參見 [`onStateChange`](#onstatechange) 事件.
+當前房間狀態.該變數始終與伺服器端的最新 `狀態` 同步. 要想偵聽整體狀態的更新情況, 參見 [`onStateChange`](#onstatechange) 事件.
 
 您可將回呼附加到您狀態內的特定架構上. [參見架構回呼](/state/schema/#client-side).
 
@@ -596,7 +596,7 @@ client.joinById(roomId).then(room => {
 
 #### `name: string`
 
-房間處理程序的名稱.示例: `"battle"`.
+房間處理程序的名稱. 示例: `"battle"`.
 
 ---
 
@@ -840,7 +840,7 @@ room.onLeave = [=]() -> void {
 };
 ```
 
-**可能出現的關閉 `代碼` 及其含義: **
+**可能出現的關閉 `代碼` 及其含義:**
 
 - `1000` - 定期關閉套接字
 - `1001` 到 `1015` 之間 - 套接字異常關閉

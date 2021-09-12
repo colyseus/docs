@@ -4,11 +4,11 @@
 
 - [下載 Construct 3 SDK](https://www.construct.net/en/make-games/addons/111/colyseus-multiplayer-client)
 
-!!! Warning "註意!您需要一個伺服器來使用 Colyseus!"
-    眾所周知 Construct 的現有功能可以從客戶端"托管"一個多人進程. 這在使用 Colyseus 時是不可能的.Colyseus 是一個權威性 **伺服器**,由 Node.js 編寫. 您無法使您的客戶端直接托管遊戲進程.
+!!! Warning "註意! 您需要一個伺服器來使用 Colyseus!"
+    眾所周知 Construct 的現有功能可以從客戶端 "托管" 一個多人進程. 這在使用 Colyseus 時是不可能的.Colyseus 是一個權威性 **伺服器**, 由 Node.js 編寫. 您無法使您的客戶端直接托管遊戲進程.
 
 !!! tip "Construct 3 SDK:Source code"
-    您可以在此找到 Construct SDK 的源代碼: [Construct 3](https://github.com/colyseus/colyseus-construct3) (與 Construct3 的 C3 和 C2 執行時間兼容 / [Construct 2](https://github.com/colyseus/colyseus-construct2) (非最新版 - 與 0.9.x 伺服器兼容)
+    您可以在此找到 Construct SDK 的源代碼: [Construct 3](https://github.com/colyseus/colyseus-construct3) (與 Construct3 的 C3 和 C2 執行時間兼容) / [Construct 2](https://github.com/colyseus/colyseus-construct2) (非最新版 - 與 0.9.x 伺服器兼容)
 
 ## 示例專案
 
@@ -30,13 +30,13 @@ typescript this.broadcast("foo", "bar");
 
 **客戶端**
 
-使用 `On Message` 條件,以 `"foo"` 作為自變數. 表達式 `CurrentValue` 將擁有一個數值 `"欄"`.
+使用 `On Message` 條件, 以 `"foo"` 作為自變數. 表達式 `CurrentValue` 將擁有一個數值 `"欄"`.
 
 
 ## 屬性
 
 ### 預設端點
-使用"Connect"行動的預設端點.
+使用 "Connect" 行動的預設端點.
 
 ## 行動
 
@@ -65,7 +65,7 @@ typescript this.broadcast("foo", "bar");
 從房間斷開客戶端連線.
 
 ### 獲得可用的{0}房間.
-以名稱獲得可用房間,當數據可用時 OnGetAvailableRooms 觸發.數據以 JSON 字符串 CurrentValue 表達式返回
+以名稱獲得可用房間, 當數據可用時 OnGetAvailableRooms 觸發. 數據以 JSON 字符串 CurrentValue 表達式返回
 
 ## 條件
 
@@ -79,31 +79,31 @@ typescript this.broadcast("foo", "bar");
 伺服器發生錯誤時觸發.
 
 ### On Message ({0})
-當房間廣播一條消息,或直接向本客戶端發送消息時觸發.
+當房間廣播一條消息, 或直接向本客戶端發送消息時觸發.
 
 ### 狀態改變時
 當房間狀態改變時觸發.
 
 ### 獲得可用房間時
-當可用的房間數據在CurrentValue表達式中準備好時觸發.
+當可用的房間數據在 CurrentValue 表達式中準備好時觸發.
 
 ### 添加時{0}
-當一個項添加至ArraySchema或MapSchema時觸發.
+當一個項添加至 ArraySchema 或 MapSchema 時觸發.
 
 ### 字段改變時{0}
-當Schema實例中字段改變時觸發.需要使用
+當 Schema 實例中字段改變時觸發. 需要使用
 
 ### 改變時{0}
-當ArraySchema或MapSchema中的一個項發生改變時觸發.
+當 ArraySchema 或 MapSchema 中的一個項發生改變時觸發.
 
 ### 移除時{0}
-當一個項從ArraySchema或MapSchema移除時觸發.
+當一個項從 ArraySchema 或 MapSchema 移除時觸發.
 
 ### 作為索引{0}
-僅對Arrays和Maps可用.檢查當前項的索引是否與提供的值相等.
+僅對 Arrays和Maps 可用. 檢查當前項的索引是否與提供的值相等.
 
 ### 作為字段{0}
-只有在直接對象"改變"時可用.檢查一個字段名是否被更改.
+只有在直接對象 "改變" 時可用. 檢查一個字段名是否被更改.
 
 ## 表達式
 
@@ -114,16 +114,16 @@ typescript this.broadcast("foo", "bar");
 從當前項獲取值
 
 ### PreviousValue
-從當前項獲取之前的值.只有在實例變數"改變"時可用.arrays和maps不可用.
+從當前項獲取之前的值. 只有在實例變數 "改變" 時可用. arrays 和 maps 不可用.
 
 ### CurrentValueAt
 從當前項獲取嵌套值
 
 ### CurrentIndex
-從當前項獲取索引."添加", "改變"或"移除"時可用
+從當前項獲取索引. "添加", "改變" 或 "移除" 時可用
 
 ### CurrentField
-獲取被更改的當前字段."字段更改"時可用
+獲取被更改的當前字段. "字段更改" 時可用
 
 ### 狀態
 獲取房間狀態的值

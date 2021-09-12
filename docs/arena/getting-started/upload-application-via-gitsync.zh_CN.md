@@ -27,7 +27,7 @@
 
 **JSON Attributes:**
 
-- **serverDir:** 这是上传代码所在的存储库根目录的位置. 如果使用"npm run build"创建部署代码, 应该列出此命令将文件所输出到的目录.
+- **serverDir:** 这是上传代码所在的存储库根目录的位置. 如果使用 "npm run build" 创建部署代码, 应该列出此命令将文件所输出到的目录.
 
 - **buildType:** 此属性有两个选项.
     - `arena` - 在尝试从 serverDir 复制文件之前运行 ```npm install && npm run build```.

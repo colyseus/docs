@@ -1,6 +1,6 @@
 > 该文档可能随时更新.
 
-要想将 Colyseus 扩展至多进程或多服务器,您需要拥有 Redis, MongoDB 以及一个动态代理.
+要想将 Colyseus 扩展至多进程或多服务器, 您需要拥有 Redis, MongoDB 以及一个动态代理.
 
 ## Redis
 

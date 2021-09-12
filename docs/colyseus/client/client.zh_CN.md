@@ -10,7 +10,7 @@
 
 ## 客户端实例:
 
-`客户端` 实例用于执行匹配调用,而后连接到一个或多个房间.
+`客户端` 实例用于执行匹配调用, 而后连接到一个或多个房间.
 
 ```typescript fct_label="JavaScript"
 import Colyseus from "colyseus.js";
@@ -566,7 +566,7 @@ client->consumeSeatReservation<YourStateClass>(reservation, [=](std::string err,
 
 #### `state: any`
 
-当前房间状态.该变量始终与服务器端的最新 `状态` 同步.要想侦听整体状态的更新情况,参见 [`onStateChange`](#onstatechange) 事件.
+当前房间状态.该变量始终与服务器端的最新 `状态` 同步. 要想侦听整体状态的更新情况,参见 [`onStateChange`](#onstatechange) 事件.
 
 您可将回调附加到您状态内的特定架构上. [参见架构回调](/state/schema/#client-side).
 
@@ -840,7 +840,7 @@ room.onLeave = [=]() -> void {
 };
 ```
 
-**可能出现的关闭 `代码` 及其含义: **
+**可能出现的关闭 `代码` 及其含义:**
 
 - `1000` - 定期关闭套接字
 - `1001` 到 `1015` 之间 - 套接字异常关闭

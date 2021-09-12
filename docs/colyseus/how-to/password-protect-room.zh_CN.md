@@ -1,6 +1,6 @@
 ## 步骤1: 允许匹配程序识别 `"password"` 字段.
 
-在 `filterBy()` 中定义`"password"`字段.
+在 `filterBy()` 中定义 `"password"` 字段.
 
 ```typescript
 gameServer

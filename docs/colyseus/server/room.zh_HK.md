@@ -1,8 +1,8 @@
 # 伺服器 API &raquo; 房間
 
-Room 類的作用是實現遊戲會話,並且/或作為一組客戶端之間的通信通道.
+Room 類的作用是實現遊戲會話, 並且/或作為一組客戶端之間的通信通道.
 
-- 預設情況下,在匹配期間  **on demand** 創建房間
+- 預設情況下,在匹配期間 **on demand** 創建房間
 - 必須使用 [`.define()`](/server/api/#define-roomname-string-room-room-options-any) 發布 Room 類
 
 ```typescript fct_label="TypeScript"
@@ -55,7 +55,7 @@ export class MyRoom extends colyseus.Room {
 
 ### `onCreate (options)`
 
-在匹配器創建房間之後,進行一次調用.
+在匹配器創建房間之後, 進行一次調用.
 
 **The `options` argument is provided by the client upon room creation:**
 
@@ -88,22 +88,22 @@ gameServer.define("my_room", MyRoom, {
 // }
 ```
 
-在本例中,在 `onCreate()` 期間, `map` 選項是 `"cs_assault"` , 在 `onJoin()` 期間是選項是 `"de_dust2"`.
+在本例中, 在 `onCreate()` 期間, `map` 選項是 `"cs_assault"` ,在 `onJoin()` 期間的選項是 `"de_dust2"`.
 
 ---
 
 ### `onAuth (client, options, request)`
 
-在 `onJoin()` 之前,將執行 `onAuth()` 方法.在客戶進入房間時,可以使用此方法驗證身份.
+在 `onJoin()` 之前, 將執行 `onAuth()` 方法. 在客戶進入房間時, 可以使用此方法驗證身份.
 
 - 如果 `onAuth()` 返回一個 [truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) 值, 將調用 `onJoin()`, 並將返回值作為第三個參數.
-- 如果 `onAuth()` 返回 [falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy) 值, 將立即拒絕客戶,導致在客戶端調用匹配函數失敗.
+- 如果 `onAuth()` 返回 [falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy) 值, 將立即拒絕客戶, 導致在客戶端調用匹配函數失敗.
 - 也可以拋出一個 `ServerError`, 以便在客戶端處理自定義錯誤.
 
-如果此方法未被實現,將始終返回  `true`,從而允許任何客戶連線.
+如果此方法未被實現, 將始終返回 `true`, 從而允許任何客戶連線.
 
 !!! Tip "正在獲取玩家的 IP 地址"
-    可以使用 `request` 變數檢索用戶的 IP 地址, http 標頭和更多資訊.例如:  `request.headers['x-forwarded-for'] || request.connection.remoteAddress`
+    可以使用 `request` 變數檢索用戶的 IP 地址, http 標頭和更多資訊. 例如: `request.headers['x-forwarded-for'] || request.connection.remoteAddress`
 
 **Implementations examples**
 
@@ -168,7 +168,7 @@ class MyRoom extends Room {
 
 **Client-side examples**
 
-在客戶端,可以使用來自於您選擇的身份驗證服務(例如Facebook)的令牌調用匹配方法(`join`, `joinOrCreate` 等):
+在客戶端, 可以使用來自於您選擇的身份驗證服務(例如Facebook)的令牌調用匹配方法(`join`, `joinOrCreate` 等):
 
 ```javascript fct_label="JavaScript"
 client.joinOrCreate("world", {
@@ -253,7 +253,7 @@ client.joinOrCreate("world", {
 **Parameters:**
 
 - `客戶端` [`客戶端實例`](/server/client).
-- `options`:  在 [Server#define()](/server/api/#define-roomname-string-room-room-options-any) 中指定的合並值,帶有客戶 [`client.join()`](/client/client/#join-roomname-string-options-any) 時提供的選項
+- `options`:  在 [Server#define()](/server/api/#define-roomname-string-room-room-options-any) 中指定的合並值, 帶有客戶 [`client.join()`](/client/client/#join-roomname-string-options-any) 時提供的選項
 - `auth`: (可選) 返回的身份驗證方法數據 [`onAuth`](#onauth-client-options-request)
 
 在 `requestJoin` 和 `onAuth` 完成後, 客戶成功進入房間時調用.
@@ -262,9 +262,9 @@ client.joinOrCreate("world", {
 
 ### `onLeave (client, consented)`
 
-當客戶離開房間時調用.如果由 [initiated by the client](/client/room/#leave) 發起斷開,`consented` 參數將是 `true`,否則將是 `false`.
+當客戶離開房間時調用. 如果由 [initiated by the client](/client/room/#leave) 發起斷開, `consented` 參數將是 `true`, 否則將是 `false`.
 
-可以將此函數定義為 `async`.參見 [graceful shutdown](/server/graceful-shutdown).
+可以將此函數定義為 `async`. 參見 [graceful shutdown](/server/graceful-shutdown).
 
 ```typescript fct_label="Synchronous"
 onLeave(client, consented) {
@@ -285,12 +285,12 @@ async onLeave(client, consented) {
 
 ### `onDispose ()`
 
-在銷毀房間之前調用 `onDispose()` 方法,在發生以下情況時調用:
+在銷毀房間之前調用 `onDispose()` 方法, 在發生以下情況時調用:
 
-- 房間裏沒有客戶,而且 `autoDispose` 被設置為 `true`(預設值)
+- 房間裏沒有客戶, 而且 `autoDispose` 被設置為 `true`(預設值)
 - 可以手動調用 [`.disconnect()`](#disconnect).
 
-可以將 `async onDispose()` 定義為異步方法, 以便在數據庫中保留一些數據.事實上,在遊戲結束後,很適合使用此方法在數據庫中保留玩家的數據.
+可以將 `async onDispose()` 定義為異步方法, 以便在數據庫中保留一些數據. 事實上, 在遊戲結束後, 很適合使用此方法在數據庫中保留玩家的數據.
 
 參見 [graceful shutdown](/server/graceful-shutdown).
 
@@ -398,7 +398,7 @@ exports.GameRoom = class GameRoom extends colyseus.Room {
 
 ### `onMessage (type, callback)`
 
-註冊一個回呼,以處理客戶端發送的某種類型的資訊.
+註冊一個回呼, 以處理客戶端發送的某種類型的資訊.
 
 `type` 參數可以是 `string` 或 `number`
 
@@ -414,7 +414,7 @@ onCreate () {
 
 **Callback for ALL messages**
 
-可以註冊單個回呼,以處理所有其它類型的消息.
+可以註冊單個回呼, 以處理所有其它類型的消息.
 
 ```typescript
 onCreate () {
@@ -441,19 +441,19 @@ onCreate () {
 
 ### `setState (object)`
 
-設置同步房間狀態.參見 [State Synchronization](/state/overview/) 和 [Schema](/state/schema/) 了解更多資訊.
+設置同步房間狀態. 參見 [State Synchronization](/state/overview/) 和 [Schema](/state/schema/) 了解更多資訊.
 
 !!! Tip
     通常,可以在 [`onCreate()`](#onCreate-options) 期間調用此方法一次
 
 !!! Warning
-    不要調用 `.setState()` 來進行每次房間更新.每次調用時,將會重置二叉樹路徑算法.
+    不要調用 `.setState()` 來進行每次房間更新. 每次調用時, 將會重置二叉樹路徑算法.
 
 ---
 
 ### `setSimulationInterval (callback[, milliseconds=16.6])`
 
-(可選)設置一個可以更改遊戲狀態的模擬間隔期.此模擬間隔期間是您的遊戲循環周期.預設模擬間隔期: 16.6ms (60fps)
+(可選)設置一個可以更改遊戲狀態的模擬間隔期. 此模擬間隔期間是您的遊戲循環周期. 預設模擬間隔期: 16.6ms (60fps)
 
 ```typescript
 onCreate () {
@@ -470,14 +470,14 @@ update (deltaTime) {
 
 ### `setPatchRate (milliseconds)`
 
-設置將補丁狀態發送至所有客戶端的頻率.預設值為 `50`ms (20fps)
+設置將補丁狀態發送至所有客戶端的頻率. 預設值為 `50`ms (20fps)
 
 ---
 
 
 ### `setPrivate (bool)`
 
-將房間列表設置為私有(或轉換為公有,如果提供 `false`).
+將房間列表設置為私有(或轉換為公有, 如果提供 `false`).
 
 在 [`>getAvailableRooms()`](/client/client/#getavailablerooms-roomname-string) 方法中未列出私有房間.
 
@@ -485,14 +485,14 @@ update (deltaTime) {
 
 ### `setMetadata (metadata)`
 
-為此房間設置元數據.每個房間實例都可能附加了元數據 - 附加元數據的唯一目的是在從客戶端獲取可用房間列表時,將一個房間與另一個房間區分開來,通過 `roomId` 連線到房間,並使用 [`client.getAvailableRooms()`](/client/client/#getavailablerooms-roomname).
+為此房間設置元數據. 每個房間實例都可能附加了元數據 - 附加元數據的唯一目的是在從客戶端獲取可用房間列表時, 將一個房間與另一個房間區分開來, 通過 `roomId` 連線到房間, 並使用 [`client.getAvailableRooms()`](/client/client/#getavailablerooms-roomname).
 
 ```typescript
 // server-side
 this.setMetadata({ friendlyFire: true });
 ```
 
-現在,房間已經有附加的元數據,舉例來說,客戶端可以檢查哪個房間有 `friendlyFire`,並且可以通過其 `roomId` 直接連線到房間:
+現在, 房間已經有附加的元數據, 舉例來說, 客戶端可以檢查哪個房間有 `friendlyFire`, 並且可以通過其 `roomId` 直接連線到房間:
 
 ```javascript
 // client-side
@@ -516,9 +516,9 @@ client.getAvailableRooms("battle").then(rooms => {
 
 ### `setSeatReservationTime (seconds)`
 
-設置房間可以等待客戶端有效加入的秒數.應該考慮 [`onAuth()`](#onauth-client-options-request) 需要等待多長時間,以設置不同的座位預訂時間.預設值為 15 秒.
+設置房間可以等待客戶端有效加入的秒數 .應該考慮 [`onAuth()`](#onauth-client-options-request) 需要等待多長時間, 以設置不同的座位預訂時間. 預設值為 15 秒.
 
-如果想要全局更改座位預訂時間,可以設置 `COLYSEUS_SEAT_RESERVATION_TIME` 環境變數.
+如果想要全局更改座位預訂時間, 可以設置 `COLYSEUS_SEAT_RESERVATION_TIME` 環境變數.
 
 ---
 
@@ -538,7 +538,7 @@ client.getAvailableRooms("battle").then(rooms => {
 可用的選項為:
 
 - **`except`**: a [`Client`](/server/client/) 不會發送消息至
-- **`afterNextPatch`**: 等待,直到下一補丁廣播消息
+- **`afterNextPatch`**: 等待, 直到下一補丁廣播消息
 
 #### 廣播示例
 
@@ -553,7 +553,7 @@ onCreate() {
 }
 ```
 
-向所有客戶端廣播一條消息,發送者除外:
+向所有客戶端廣播一條消息, 發送者除外:
 
 ```typescript
 onCreate() {
@@ -564,7 +564,7 @@ onCreate() {
 }
 ```
 
-僅在應用狀態變更之後,向所有客戶端廣播一條消息:
+僅在應用狀態變更之後, 向所有客戶端廣播一條消息:
 
 ```typescript
 onCreate() {
@@ -616,13 +616,13 @@ onCreate() {
 
 允許指定的客戶 [`reconnect`](/client/client/#reconnect-roomid-string-sessionid-string) 房間. 必須在 [`onLeave()`](#onleave-client) 方法中使用.
 
-如果提供 **`seconds`**,將在提供的秒數之後取消重新連線.
+如果提供 **`seconds`**, 將在提供的秒數之後取消重新連線.
 
 **Return type:**
 
 - `allowReconnection()` 返回一個 `Deferred<Client>` 實例.
 - `Deferred` 是一個類似於 pormise 的類型
-- `Deferred` 類型可以通過調用 `.reject()` 強製拒絕 promise(參見第二個示例)
+- `Deferred` 類型可以通過調用 `.reject()` 強製拒絕 promise (參見第二個示例)
 
 **示例** 在 20 秒超時後拒絕重新連線.
 
@@ -703,7 +703,7 @@ async onLeave (client: Client, consented: boolean) {
 
 ### `disconnect ()`
 
-斷開所有客戶斷,然後銷毀房間.
+斷開所有客戶斷, 然後銷毀房間.
 
 ---
 
@@ -714,7 +714,7 @@ async onLeave (client: Client, consented: boolean) {
 
 此方法會檢查是否已經在 `state` 中發生變化(mutation), 並將變化廣播給所有已連線的客戶端.
 
-如果想要控製何時廣播補丁,可以禁用預設的補丁間隔時間來實現:
+如果想要控製何時廣播補丁, 可以禁用預設的補丁間隔時間來實現:
 
 ```typescript
 onCreate() {
@@ -741,9 +741,10 @@ onCreate() {
 
 一個唯一, 自動生成的 8 字符長度的房間 id.
 
-在 `onCreate()` 期間,可以更換 `this.roomId`.
+在 `onCreate()` 期間, 可以更換 `this.roomId`.
 
-!!!提示 "使用自定義 `roomId`".查閱指南 Check out the guide [How-to » Customize room id](/how-to/custom-room-id/)
+!!!提示 "使用自定義 `roomId`"
+    查閱指南 Check out the guide [How-to » Customize room id](/how-to/custom-room-id/)
 
 ---
 
@@ -761,31 +762,31 @@ onCreate() {
 
 ### `clients:客戶端`
 
-已連線的客戶端數組.參見 [Web-Socket Client](/server/client).
+已連線的客戶端數組. 參見 [Web-Socket Client](/server/client).
 
 ---
 
 ### `maxClients: number`
 
-允許連線進入房間的最大客戶端數量.當房間數量達到此限值時,將自動鎖定.除非通過 [lock()](#lock) 方法顯式鎖定,否則,將在客戶端自動斷開房間時立即解鎖房間.
+允許連線進入房間的最大客戶端數量. 當房間數量達到此限值時, 將自動鎖定. 除非通過 [lock()](#lock) 方法顯式鎖定, 否則, 將在客戶端自動斷開房間時立即解鎖房間.
 
 ---
 
 ### `patchRate: number`
 
-將房間狀態發送至客戶端的頻率,單位為毫秒.預設值為 `50`ms (20fps)
+將房間狀態發送至客戶端的頻率, 單位為毫秒. 預設值為 `50`ms (20fps)
 
 ---
 
 ### `autoDispose: boolean`
 
-最近一次客戶斷開連線後,自動銷毀房間.預設值是 `true`
+最近一次客戶斷開連線後, 自動銷毀房間. 預設值是 `true`
 
 ---
 
 ### `locked: boolean`(只讀)
 
-對於以下情況,此屬性將發生改變:
+對於以下情況, 此屬性將發生改變:
 
 - 允許的客戶端數量已經達到 (`maxClients`)
 - 可以使用 [`lock()`](#lock) 或 [`unlock()`](#unlock) 手動鎖定或解鎖房間.
@@ -794,24 +795,24 @@ onCreate() {
 
 ### `時鐘ClockTimer`
 
-一個 [`ClockTimer`](https://github.com/gamestdio/timer#api) 實例,用於 [timing events](/server/timing-events).
+一個 [`ClockTimer`](https://github.com/gamestdio/timer#api) 實例, 用於 [timing events](/server/timing-events).
 
 ---
 
 ### Presence`Presence`
 
-`presence` 實例.查閱 [Presence API](/server/presence) 了解更多詳細資訊.
+`presence` 實例. 查閱 [Presence API](/server/presence) 了解更多詳細資訊.
 
 ---
 
 ## 客戶端
 
-伺服器端的 `client` 實例負責伺服器與客戶端之間的 **transport** 層.不應該與 [`Client` from the client-side SDK](/client/client/) 混淆,因為它們具有完全不同的目的!
+伺服器端的 `client` 實例負責伺服器與客戶端之間的 **transport** 層. 不應該與 [`Client` from the client-side SDK](/client/client/) 混淆, 因為它們具有完全不同的目的!
 
 可以通過 [`this.clients`](#clients-client), [`Room#onJoin()`](#onjoin-client-options-auth), [`Room#onLeave()`](#onleave-client-consented) 和 [`Room#onMessage()`](#onmessage-type-callback) 操作 `client` 實例.
 
 !!! Note
-    這是來自於 [`ws`](https://www.npmjs.com/package/ws) 包的原始 WebSocket 連線.還有更多的方法可用,但是不建議用於 Colyseus.
+    這是來自於 [`ws`](https://www.npmjs.com/package/ws) 包的原始 WebSocket 連線. 還有更多的方法可用, 但是不建議用於 Colyseus.
 
 ### 屬性
 
@@ -820,13 +821,13 @@ onCreate() {
 每個會話的唯一 id.
 
 !!! Note
-    在客戶端,可以在 [`room` 實例中找到 `sessionId`](/client/room/#sessionid-string).
+    在客戶端, 可以在 [`room` 實例中找到 `sessionId`](/client/room/#sessionid-string).
 
 ---
 
 #### `userData: any`
 
-可用於存儲關於客戶端連線的自定義數據.`userData` 並不同步於 **not** 客戶端,僅用於保留與其連線相關的用戶數據.
+可用於存儲關於客戶端連線的自定義數據. `userData` 並不同步於 **not** 客戶端, 僅用於保留與其連線相關的用戶數據.
 
 ```typescript
 onJoin(client, options) {
@@ -850,7 +851,7 @@ onLeave(client)  {
 
 #### `send(type, message)`
 
-發送消息類型至客戶端.消息使用 MsgPack 編碼,僅含有可序列化 JSON 數據結構.
+發送消息類型至客戶端. 消息使用 MsgPack 編碼, 僅含有可序列化 JSON 數據結構.
 
 `type` 可以是 `string` 或 `number`.
 
@@ -892,7 +893,7 @@ client.send(data);
 
 #### `leave(code?: number)`
 
-`客戶端` 與房間強製斷開連線.您可以在關閉連線時發送一個數值介於 `4000` 和 `4999` 之間的自定義 `code` (見 [WebSocket 關閉代碼表](#websocket-close-codes-table)
+`客戶端` 與房間強製斷開連線. 您可以在關閉連線時發送一個數值介於 `4000` 和 `4999` 之間的自定義 `code` (見 [WebSocket 關閉代碼表](#websocket-close-codes-table))
 
 !!! Tip
     這將在客戶端觸發 [`room.onLeave`](/client/room/#onleave) 事件.

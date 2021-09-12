@@ -27,7 +27,7 @@
 
 **JSON 屬性:**
 
-- **serverDir:** 這是上傳代碼所在的儲存庫根目錄的位置. 如果您將使用 'npm run build' 來建立您的部署代碼, 則將此指令輸出檔案的目錄放在此處.
+- **serverDir:** 這是上傳代碼所在的儲存庫根目錄的位置. 如果您將使用 "npm run build" 來建立您的部署代碼, 則將此指令輸出檔案的目錄放在此處.
 
 - **buildType:** 此屬性有兩個選項.
     - `arena` - 此選項將在嘗試從 serverDir 複製文件之前執行 ```npm install && npm run build```.

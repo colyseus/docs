@@ -5,10 +5,10 @@
 - [下载 Construct 3 SDK](https://www.construct.net/en/make-games/addons/111/colyseus-multiplayer-client)
 
 !!! Warning "注意!您需要一个服务器来使用 Colyseus!"
-    众所周知 Construct 的现有功能可以从客户端"托管"一个多人进程. 这在使用 Colyseus 时是不可能的.Colyseus 是一个权威性 **服务器**,由 Node.js 编写. 您无法使您的客户端直接托管游戏进程.
+    众所周知 Construct 的现有功能可以从客户端 "托管" 一个多人进程. 这在使用 Colyseus 时是不可能的. Colyseus 是一个权威性 **服务器**, 由 Node.js 编写. 您无法使您的客户端直接托管游戏进程.
 
 !!! tip "Construct 3 SDK:Source code"
-    您可以在此找到 Construct SDK 的源代码: [Construct 3](https://github.com/colyseus/colyseus-construct3) (与 Construct3 的 C3 和 C2 运行时间兼容 / [Construct 2](https://github.com/colyseus/colyseus-construct2) (非最新版 - 与 0.9.x 服务器兼容)
+    您可以在此找到 Construct SDK 的源代码: [Construct 3](https://github.com/colyseus/colyseus-construct3) (与 Construct3 的 C3 和 C2 运行时间兼容) / [Construct 2](https://github.com/colyseus/colyseus-construct2) (非最新版 - 与 0.9.x 服务器兼容)
 
 ## 示例项目
 
@@ -36,7 +36,7 @@ typescript this.broadcast("foo", "bar");
 ## 属性
 
 ### 默认端点
-使用"Connect"行动的默认端点.
+使用 "Connect" 行动的默认端点.
 
 ## 行动
 
@@ -65,7 +65,7 @@ typescript this.broadcast("foo", "bar");
 从房间断开客户端连接.
 
 ### 获得可用的{0}房间.
-以名称获得可用房间,当数据可用时 OnGetAvailableRooms 触发.数据以 JSON 字符串 CurrentValue 表达式返回
+以名称获得可用房间,当数据可用时 OnGetAvailableRooms 触发. 数据以 JSON 字符串 CurrentValue 表达式返回
 
 ## 条件
 
@@ -79,31 +79,31 @@ typescript this.broadcast("foo", "bar");
 服务器发生错误时触发.
 
 ### On Message ({0})
-当房间广播一条消息,或直接向本客户端发送消息时触发.
+当房间广播一条消息, 或直接向本客户端发送消息时触发.
 
 ### 状态改变时
 当房间状态改变时触发.
 
 ### 获得可用房间时
-当可用的房间数据在CurrentValue表达式中准备好时触发.
+当可用的房间数据在 CurrentValue 表达式中准备好时触发.
 
 ### 添加时{0}
-当一个项添加至ArraySchema或MapSchema时触发.
+当一个项添加至 ArraySchema 或 MapSchema 时触发.
 
 ### 字段改变时{0}
-当Schema实例中字段改变时触发.需要使用
+当Schema实例中字段改变时触发. 需要使用
 
 ### 改变时{0}
-当ArraySchema或MapSchema中的一个项发生改变时触发.
+当 ArraySchema 或 MapSchema 中的一个项发生改变时触发.
 
 ### 移除时{0}
-当一个项从ArraySchema或MapSchema移除时触发.
+当一个项从 ArraySchema 或 MapSchema 移除时触发.
 
 ### 作为索引{0}
-仅对Arrays和Maps可用.检查当前项的索引是否与提供的值相等.
+仅对 Arrays 和 Maps 可用. 检查当前项的索引是否与提供的值相等.
 
 ### 作为字段{0}
-只有在直接对象"改变"时可用.检查一个字段名是否被更改.
+只有在直接对象 "改变" 时可用. 检查一个字段名是否被更改.
 
 ## 表达式
 
@@ -114,16 +114,16 @@ typescript this.broadcast("foo", "bar");
 从当前项获取值
 
 ### PreviousValue
-从当前项获取之前的值.只有在实例变量"改变"时可用.arrays和maps不可用.
+从当前项获取之前的值. 只有在实例变量 "改变" 时可用. arrays 和 maps 不可用.
 
 ### CurrentValueAt
 从当前项获取嵌套值
 
 ### CurrentIndex
-从当前项获取索引."添加", "改变"或"移除"时可用
+从当前项获取索引. "添加", "改变" 或 "移除" 时可用
 
 ### CurrentField
-获取被更改的当前字段."字段更改"时可用
+获取被更改的当前字段. "字段更改" 时可用
 
 ### 状态
 获取房间状态的值

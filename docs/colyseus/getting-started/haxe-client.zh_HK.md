@@ -1,6 +1,6 @@
 # Haxe SDK
 
-我們歡迎您將 SDK 與任何 Haxe 遊戲引擎一同使用,比如: [OpenFL](https://www.openfl.org/), [Kha](http://kha.tech/), [HaxeFlixel](http://haxeflixel.com/), [Heaps](https://heaps.io/), [HaxePunk](http://haxepunk.com/) 等.
+我們歡迎您將 SDK 與任何 Haxe 遊戲引擎一同使用, 比如: [OpenFL](https://www.openfl.org/), [Kha](http://kha.tech/), [HaxeFlixel](http://haxeflixel.com/), [Heaps](https://heaps.io/), [HaxePunk](http://haxepunk.com/) 等.
 
 ## 安裝
 
@@ -88,7 +88,7 @@ room.onLeave += function() {
 
 [`example`](https://github.com/colyseus/colyseus-hx/blob/master/example/openfl) 專案可以被編譯為 `html5`, `neko`, `cpp`, `ios` 等.
 
-它使用來自 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 專案的 `state_handler` 房間,您可以在 [這裏](https://github.com/colyseus/colyseus-examples/blob/master/rooms/02-state-handler.ts) 找到.
+它使用來自 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 專案的 `state_handler` 房間, 您可以在 [這裏](https://github.com/colyseus/colyseus-examples/blob/master/rooms/02-state-handler.ts) 找到.
 
 ### 編譯演示專案為 `html5`
 
@@ -103,6 +103,6 @@ lime build project.xml html5
 
 ## `ios` 目標警告
 
-如果想在 iOS 上編譯,您可能需要手動應用該補丁: [HaxeFoundation/hxcpp@5f63d23](https://github.com/HaxeFoundation/hxcpp/commit/5f63d23768988ba2a4d4488843afab70d279a593)
+如果想在 iOS 上編譯, 您可能需要手動應用該補丁: [HaxeFoundation/hxcpp@5f63d23](https://github.com/HaxeFoundation/hxcpp/commit/5f63d23768988ba2a4d4488843afab70d279a593)
 
 > 詳情請見: http://community.openfl.org/t/solved-system-not-available-on-ios-with-xcode-9-0/9683?source\_topic\_id=10046

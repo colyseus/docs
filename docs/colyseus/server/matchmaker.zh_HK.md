@@ -1,7 +1,7 @@
 # Server API &raquo; Match-maker API
 
 !!! Warning "您可能不需要這樣做!"
-    本部分介紹高級用法.您通常可以使用 [客戶端方法](/client/client/#methods).如果不能使用客戶端方法來實現目上標,可以考慮使用本頁介紹的方法.
+    本部分介紹高級用法. 您通常可以使用 [客戶端方法](/client/client/#methods). 如果不能使用客戶端方法來實現目上標, 可以考慮使用本頁介紹的方法.
 
 下面介紹的方法由 `matchMaker` 單一實例提供,可以從 `"colyseus"` 包匯入:
 
@@ -31,7 +31,7 @@ console.log(room);
 
 ## `.joinOrCreate(roomName, options)`
 
-加入或創建房間,並返回客戶端座位保留量.
+加入或創建房間, 並返回客戶端座位保留量.
 
 **Parameters:**
 
@@ -75,7 +75,7 @@ console.log(reservation);
 ```
 
 ## `.join(roomName, options)`
-加入房間,並返回座位保留量. 如果 `roomName` 沒有房間, 則拋出異常.
+加入房間, 並返回座位保留量. 如果 `roomName` 沒有房間, 則拋出異常.
 
 **參數:**
 
@@ -97,7 +97,7 @@ console.log(reservation);
     您可以使用 [客戶端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation), 通過預留座位加入房間.
 
 ## `.joinById(roomId, options)`
-按  id 加入房間,並返回座位保留量.如果 `roomName` 沒有房間,則拋出異常.
+按  id 加入房間, 並返回座位保留量. 如果 `roomName` 沒有房間, 則拋出異常.
 
 **參數:**
 
@@ -119,7 +119,7 @@ console.log(reservation);
     您可以使用 [客戶端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation), 通過預留座位加入房間.
 
 ## `.create(roomName, options)`
-創建房間,並返回客戶座位保留量.
+創建房間, 並返回客戶座位保留量.
 
 **參數:**
 
@@ -177,7 +177,7 @@ console.log(room);
 **參數:**
 
 - **`roomId`**: 一個特定房間實例的 ID.
-- **`method`**: 方法或屬性,用於調用或檢索
+- **`method`**: 方法或屬性, 用於調用或檢索
 - **`args`**: 參數數組
 
 ```typescript

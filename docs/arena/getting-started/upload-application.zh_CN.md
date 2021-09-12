@@ -15,12 +15,12 @@
 
 !!! NOTE
     - Arena 应用 **仅支持** 已编译的 Javascript 代码, 如果您使用 TypeScript, 请务必先构建您的代码并上传构建文件夹的内容.
-    - 如果您使用 ***NPM*** 模板创建 Colyseus 服务器, 则 ``` npm run build ``` 命令将编译所有需要的文件, 并将其复制到输出文件夹.
-    - TypeScript 的构建输出文件夹: ``` lib ``` / JavaScript: ``` upload ```
+    - 如果您使用 ***NPM*** 模板创建 Colyseus 服务器, 则 ```npm run build``` 命令将编译所有需要的文件, 并将其复制到输出文件夹.
+    - TypeScript 的构建输出文件夹: ```lib``` / JavaScript: ```upload```
 
 ## 服务器代码概述
 
-完成上传后, 如果使用 ``` npm run build ``` 模板, 应该会看到以下文件和文件夹结构.
+完成上传后, 如果使用 ```npm run build``` 模板, 应该会看到以下文件和文件夹结构.
 
 ![Arena 代码模板](../../images/code-template.jpg)
 
@@ -82,4 +82,4 @@ ABC_GAME_MODE=dev
 
 - **package.json** **NPM** 模板上的构建命令将现有的 package.json 复制到分发文件夹中. 此文件用于在游戏服务器启动时安装用户定义的模块.
 
-- **.npmrc** * (可选)* :参见 [Using a Private NPM Repository (使用私有 NPM 存储库)](../../reference/npmrc-custom/)
+- **.npmrc** *(可选)*: 参见 [Using a Private NPM Repository (使用私有 NPM 存储库)](../../reference/npmrc-custom/)

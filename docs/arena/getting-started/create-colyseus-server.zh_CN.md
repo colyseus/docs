@@ -4,15 +4,16 @@
 
 - [下载并安装 Node.js](https://nodejs.org/) V12.0 或更高版本
 - [下载并安装 Git SCM](https://git-scm.com/downloads)
-- [下载并安装 Visual Studio Code](https://code.visualstudio.com/)  (或您选择的其它编辑器)
+- [下载并安装 Visual Studio Code](https://code.visualstudio.com/) (或您选择的其它编辑器)
 
 ## 创建 Colyseus 服务器表单 NPM 模板
 
-使用 `npm init colyseus-app` 命令生成准系统 Colyseus 服务器. 您可以选择 TypeScript (推荐)和 JavaScript 作为服务器语言. **Arena Cloud** 目前仅支持两种语言.
+使用 `npm init colyseus-app` 命令生成准系统 Colyseus 服务器. 您可以选择 TypeScript (推荐) 和 JavaScript 作为服务器语言. **Arena Cloud** 目前仅支持两种语言.
 
 ```
 npm init colyseus-app ./my-colyseus-app
 ```
+
 ![NPM Selection](../../images/arena-app-support.jpg)
 
 - ONLY Complied **TypeScript** and **JavaScript (CommonJS)** are currently supported. *ESM support is coming soon.*

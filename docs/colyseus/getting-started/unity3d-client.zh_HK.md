@@ -7,9 +7,9 @@
 
 ## 使用 Unity Package Manager
 
-- 前往 Window > Package Manager點擊按鈕 "+", 選擇"Add package from git URL..."
-- 進入Git URL: `https://github.com/colyseus/colyseus-unity3d.git#upm`
-- 點擊"ADD"
+- 前往 Window > Package Manager 點擊按鈕 "+", 選擇 "Add package from git URL..."
+- 進入 Git URL: `https://github.com/colyseus/colyseus-unity3d.git#upm`
+- 點擊 "ADD"
 
 點擊匯入示例專案以測試內置的演示文件.
 
@@ -18,7 +18,7 @@
 - 下載最新的 [Colyseus Unity SDK](https://github.com/colyseus/colyseus-unity3d/releases/latest/download/Colyseus_Plugin.unitypackage)
 - 將 `Colyseus_Plugin.unitypackage` 內容匯入到您的專案中.
 
-`Colyseus_Plugin.unitypackage` 內含一個示例專案,位於 `Assets/Colyseus/Example`,您可以用作參考.
+`Colyseus_Plugin.unitypackage` 內含一個示例專案, 位於 `Assets/Colyseus/Example`, 您可以用作參考.
 
 # 安裝
 
@@ -32,11 +32,11 @@
 - 連線到房間
 - 與房間之間的通信以及房間的狀態.
 
-這些主題內容應足以滿足您自行安裝客戶端的需要了,當然,您也可以使用和修改所提供的示例代碼來滿足自身需求.
+這些主題內容應足以滿足您自行安裝客戶端的需要了, 當然, 您也可以使用和修改所提供的示例代碼來滿足自身需求.
 
 ## 在本地執行伺服器
 
-要想在本地執行演示伺服器,請在您的終端設備上執行以下指令:
+要想在本地執行演示伺服器, 請在您的終端設備上執行以下指令:
 
 ```
 cd Server
@@ -48,7 +48,7 @@ npm start
 
 ## 創建 Colyseus 設置對象:
 
-- 在專案文件夾中任意位置點擊鼠標右鍵,選擇"Create",選擇"Colyseus",然後點擊"Generate ColyseusSettings Scriptable Object"
+- 在專案文件夾中任意位置點擊鼠標右鍵, 選擇 "Create", 選擇 "Colyseus", 然後點擊 "Generate ColyseusSettings Scriptable Object"
 - 根據需要填寫字段.
     - **伺服器地址**
         - 您的 Colyseus 伺服器地址
@@ -59,11 +59,11 @@ npm start
     - **預設標頭**
         - 您可以為您的伺服器的非 web 套接字請求添加預設標頭,數量不受限製.
         - `ColyseusRequest` 類使用預設標頭.
-        - 示例標頭可包含`"Content-Type"` 的 `"名稱"`以及`"application/json"` 的 `"值"`.
+        - 示例標頭可包含`"Content-Type"` 的 `"名稱"` 以及 `"application/json"` 的 `"值"`.
 
 ## Colyseus 管理器:
 
-- 您需要創建自己的管理器腳本,可以從 `ColyseusManager` 中獲取,也可以使用並修改所提供的 `ExampleManager`.
+- 您需要創建自己的管理器腳本, 可以從 `ColyseusManager` 中獲取, 也可以使用並修改所提供的 `ExampleManager`.
 ```csharp
 public class ExampleManager : ColyseusManager<ExampleManager>
 ```
@@ -72,7 +72,7 @@ public class ExampleManager : ColyseusManager<ExampleManager>
 
 ## 客戶端:
 
-- 調用您管理器中的 `InitializeClient()` 來創建一個 `ColyseusClient` 對象,該對象將儲存在 `ColyseusManager` 的變數 `client` 中.它將被用來創建/加入房間以及建立與伺服器的連線.
+- 調用您管理器中的 `InitializeClient()` 來創建一個 `ColyseusClient` 對象, 該對象將儲存在 `ColyseusManager` 的變數 `client` 中. 它將被用來創建/加入房間以及建立與伺服器的連線.
 ```csharp
 ExampleManager.Instance.InitializeClient();
 ```
@@ -86,8 +86,8 @@ public override void InitializeClient()
     _roomController.SetClient(client);
 }
 ```
-- 如果您希望管理器中有多個參考 `ColyseusClient`,或者如果您想為您的 `ColyseusClient` 提供一個備用 `endpoint`/`ColyseusSettings` 對象, 那麽您可以直接調用 `base.InitializeClient()`.
-    - 在重寫的 `InitializeClient()` 函數中,您可以將一個終結點傳遞給任何您創建的其他新的 `ColyseusClient`, 或者您也可以用 `ColyseusSettings` 對象和`布爾值`來創建一個新的 `ColyseusClient`, 以表明在建立連線時應使用 websocket 協議而不是 http 協議.如果您用`字符串`終結點創建一個新的 `客戶端`, 那麽它將在其構造函數中創建一個 `ColyseusSettings` 對象並從終結點推斷協議.
+- 如果您希望管理器中有多個參考 `ColyseusClient`, 或者如果您想為您的 `ColyseusClient` 提供一個備用 `endpoint` / `ColyseusSettings` 對象, 那麽您可以直接調用 `base.InitializeClient()`.
+    - 在重寫的 `InitializeClient()` 函數中, 您可以將一個終結點傳遞給任何您創建的其他新的 `ColyseusClient`, 或者您也可以用 `ColyseusSettings` 對象和 `布爾值` 來創建一個新的 `ColyseusClient`, 以表明在建立連線時應使用 websocket 協議而不是 http 協議. 如果您用 `字符串` 終結點創建一個新的 `客戶端`, 那麽它將在其構造函數中創建一個 `ColyseusSettings` 對象並從終結點推斷協議.
 ```csharp
 public override void InitializeClient()
 {
@@ -103,7 +103,7 @@ return await GetAvailableRooms<ColyseusRoomAvailable>(roomName, headers);
 ## 接入房間
 
 - 有多種創建或加入房間的方式.
-- 您可以調用 `ColyseusClient` 的 `創建`方法來創建房間,{2>ColyseusClient<2}將自動在服務端上創建房間實例並加入其中:
+- 您可以調用 `ColyseusClient` 的 `創建` 方法來創建房間, `ColyseusClient` 將自動在服務端上創建房間實例並加入其中:
 ```csharp
 ExampleRoomState room = await client.Create<ExampleRoomState>(roomName);
 ```
@@ -113,15 +113,15 @@ ExampleRoomState room = await client.Create<ExampleRoomState>(roomName);
 ExampleRoomState room = await client.JoinById<ExampleRoomState>(roomId);
 ```
 
-- 您可以調用 `ColyseusClient` 的 `JoinOrCreate`,它會為您匹配並接入空閑房間; 在可行的情況下,也會在服務端上創建一個新房間並加入其中:
+- 您可以調用 `ColyseusClient` 的 `JoinOrCreate`, 它會為您匹配並接入空閑房間; 在可行的情況下, 也會在服務端上創建一個新房間並加入其中:
 ```csharp
 ExampleRoomState room = await client.JoinOrCreate<ExampleRoomState>(roomName);
 ```
 
 ## 房間選項:
 
-- 創建新房間時您可以傳入一個房間選項字典,比如開始遊戲的最少人數要求,或者要在您伺服器上執行的自定義邏輯文件的名稱.
-- 選項所屬類型為`對象`, 並由 `字符串` 類型進行鍵控:
+- 創建新房間時您可以傳入一個房間選項字典, 比如開始遊戲的最少人數要求, 或者要在您伺服器上執行的自定義邏輯文件的名稱.
+- 選項所屬類型為 `對象`, 並由 `字符串` 類型進行鍵控:
 ```csharp
 Dictionary<string, object> roomOptions = new Dictionary<string, object>
 {
@@ -141,7 +141,7 @@ ExampleRoomState room = await ExampleManager.Instance.JoinOrCreate<ExampleRoomSt
 
 ### onLeave
 !!! tip "更新至 0.14.7 版本"
-    為處理 websocket 自定義閉包代碼,委托函數現在從傳遞 `WebSocketCloseCode` 值改為傳遞 `int` 閉包代碼.
+    為處理 websocket 自定義閉包代碼, 委托函數現在從傳遞 `WebSocketCloseCode` 值改為傳遞 `int` 閉包代碼.
 
 - 客戶端與房間斷連後調用.
 - 有解釋斷連原因的 `int` 參數.
@@ -169,11 +169,11 @@ private static void OnStateChangeHandler(ExampleRoomState state, bool isFirstSta
 ```
 
 ### onError
-- 伺服器上發生與房間相關的錯誤時,該事件會一並上報.
+- 伺服器上發生與房間相關的錯誤時, 該事件會一並上報.
 - 有錯誤代碼和錯誤資訊的參數
 
 ## 房間資訊:
-您可以監聽來自伺服器上房間實例的自定義資訊,或發送自定義資訊至伺服器上的房間實例.
+您可以監聽來自伺服器上房間實例的自定義資訊, 或發送自定義資訊至伺服器上的房間實例.
 
 ### onMessage
 - 您可以調用 `OnMessage` 傳入類型函數來添加監聽器,客戶端收到該資訊後執行該動作.
@@ -197,14 +197,14 @@ room.Send("createEntity", new EntityCreationMessage() { creationId = creationId,
 ### 房間狀態:
 > 看看如何從 [State Handling](https://docs.colyseus.io/state/schema/#client-side-schema-generation) 生成您的 `RoomState`
 
-- 每個房間都有自己的狀態.房間的狀態變化會自動同步給所有連線的客戶端.
+- 每個房間都有自己的狀態. 房間的狀態變化會自動同步給所有連線的客戶端.
 - 房間狀態同步相關資訊:
-    - 當用戶成功加入房間時,將從伺服器接收到全部狀態.
-    - 每個`patchRate`中,狀態的二進製補丁都會被發送給各個客戶端(預設50ms)
+    - 當用戶成功加入房間時, 將從伺服器接收到全部狀態.
+    - 每個 `patchRate` 中, 狀態的二進製補丁都會被發送給各個客戶端(預設50ms)
     - 客戶端接收到伺服器發來的補丁後即調用 `onStateChange`.
     - 每個序列化方法都會以其特殊的方式來處理接收到的補丁狀態.
-- `ColyseusRoomState`是基本的房間狀態,您的房間狀態將在該狀態的基礎上變化.
-- 查看我們的技術示例,了解房間狀態數據同步的實現案例,如聯網遊戲人物,聯網用戶或房間屬性等. [Shooting Gallery 技術演示](https://docs.colyseus.io/demo/shooting-gallery/)
+- `ColyseusRoomState` 是基本的房間狀態, 您的房間狀態將在該狀態的基礎上變化.
+- 查看我們的技術示例, 了解房間狀態數據同步的實現案例, 如聯網遊戲人物, 聯網用戶或房間屬性等. [Shooting Gallery 技術演示](https://docs.colyseus.io/demo/shooting-gallery/)
 
 ```csharp
 public class ExampleRoomState : Schema
@@ -222,7 +222,7 @@ public class ExampleRoomState : Schema
 
 ## 除錯
 
-若您在 WebSocket 連線打開時在您的應用程序中設置了斷點,則連線將在客戶端失活3秒後自動斷開.為防止 Websocket 斷連,您可使用在開發過程中使用 `pingInterval:0` during development:
+若您在 WebSocket 連線打開時在您的應用程序中設置了斷點, 則連線將在客戶端失活3秒後自動斷開. 為防止 Websocket 斷連,您可使用在開發過程中使用 `pingInterval:0` during development:
 
 ```typescript
 import { Server, RedisPresence } from "colyseus";
@@ -233,4 +233,4 @@ const gameServer = new Server({
 });
 ```
 
-請確保生產環境中 `pingInterval` 值高於 `0`.預設的 `pingInterval` 值為 `3000`.
+請確保生產環境中 `pingInterval` 值高於 `0`. 預設的 `pingInterval` 值為 `3000`.

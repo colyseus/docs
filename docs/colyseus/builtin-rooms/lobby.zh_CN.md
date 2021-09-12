@@ -1,11 +1,11 @@
 # 内置房间 » 大厅房间
 
 !!! Warning "在 Colyseus 1.0.0 中,将更改大厅房间客户端 API"
-    目前,内置大厅房间依赖于发送消息,向客户端通知有关可用房间的信息. 当 `@filter()` 变得稳定时, LobbyRoom 将改为使用该状态.
+    目前, 内置大厅房间依赖于发送消息, 向客户端通知有关可用房间的信息. 当 `@filter()` 变得稳定时, LobbyRoom 将改为使用该状态.
 
 ## 服务器端
 
-在具有"实时列表"的房间有更新时, 内置的 `LobbyRoom` 会自动通知其连接的客户端.
+在具有 "实时列表" 的房间有更新时, 内置的 `LobbyRoom` 会自动通知其连接的客户端.
 
 ```typescript
 import { LobbyRoom } from "colyseus";
@@ -22,7 +22,7 @@ gameServer
 
 在 `onCreate()`, `onJoin()`, `onLeave()` 和 `onDispose()` 期间,将自动通知 `LobbyRoom`.
 
-如果您已经 [更新了您的房间的`元数据`](/server/room/#setmetadata-metadata) , 并且还需要更新游戏大厅,那么您可以在元数据更新后马上调用 `updateLobby()`:
+如果您已经 [更新了您的房间的`元数据`](/server/room/#setmetadata-metadata), 并且还需要更新游戏大厅, 那么您可以在元数据更新后马上调用 `updateLobby()`:
 
 ```typescript
 import { Room, updateLobby } from "colyseus";
