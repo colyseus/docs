@@ -108,7 +108,7 @@ return await GetAvailableRooms<ColyseusRoomAvailable>(roomName, headers);
 ExampleRoomState room = await client.Create<ExampleRoomState>(roomName);
 ```
 
-- 你可以調用 `JoinById` 來加入特定房間：
+- 您可以調用 `JoinById` 來加入特定房間：
 ```csharp
 ExampleRoomState room = await client.JoinById<ExampleRoomState>(roomId);
 ```
@@ -195,7 +195,7 @@ room.Send("createEntity", new EntityCreationMessage() { creationId = creationId,
 ```
 
 ### 房間狀態：
-> 看看如何從 [State Handling](https://docs.colyseus.io/state/schema/#client-side-schema-generation) 生成你的 `RoomState`
+> 看看如何從 [State Handling](https://docs.colyseus.io/state/schema/#client-side-schema-generation) 生成您的 `RoomState`
 
 - 每個房間都有自己的狀態.房間的狀態變化會自動同步給所有連線的客戶端.
 - 房間狀態同步相關資訊：

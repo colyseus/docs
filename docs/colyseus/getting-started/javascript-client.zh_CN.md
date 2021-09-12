@@ -10,9 +10,9 @@ JavaScript/TypeScript SDK 几乎与所有平台兼容：
 
 ## 用法
 
-### 将 JavaScript SDK 包括在你的项目中
+### 将 JavaScript SDK 包括在您的项目中
 
-如果你在使用构建工具(`webpack`,  `rollup` 或类似工具), 这是最佳方式
+如果您在使用构建工具(`webpack`,  `rollup` 或类似工具), 这是最佳方式
 
 ```
 npm install --save colyseus.js

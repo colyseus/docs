@@ -1,11 +1,11 @@
 # 內建房間 &raquo; 轉送房間
 
-內建 `RelayRoom` 對於簡易使用的案例相當實用,除了連線其中的用戶端外,你不需要在伺服器端保持任何狀態.
+內建 `RelayRoom` 對於簡易使用的案例相當實用,除了連線其中的用戶端外,您不需要在伺服器端保持任何狀態.
 
 只要透過轉送訊息(將其自用戶端轉寄給其他所有人)－伺服器端無法驗證任何訊息－伺服器端為執行驗證者.
 
 !!! tip
-    [`RelayRoom` 的原始程式碼](https://github.com/colyseus/colyseus/blob/master/src/rooms/RelayRoom.ts) 非常簡單. 一般建議是在你看到時, 便使用伺服器端驗證來建置你自己的版本.
+    [`RelayRoom` 的原始程式碼](https://github.com/colyseus/colyseus/blob/master/src/rooms/RelayRoom.ts) 非常簡單. 一般建議是在您看到時, 便使用伺服器端驗證來建置您自己的版本.
 
 ## 伺服器端
 

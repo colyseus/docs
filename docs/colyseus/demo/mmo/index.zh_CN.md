@@ -101,21 +101,21 @@ After determining what the new grid position is, the client is given a new SeatR
 
 ## 调整演示
 
-当你播放此演示的时候,你可能希望进行一些调整,帮你更好地了解当前发生的情况.下面你将学习如何进行微调整.
+当您播放此演示的时候,您可能希望进行一些调整,帮您更好地了解当前发生的情况.下面您将学习如何进行微调整.
 
 ## Adjusting the Demo
 
 As you play around with this demo, you may want to make some adjustments to better familiarize yourself with what is happening. Below, you’ll learn how to make these minor adjustments.
 
-### 使用你自己的数据库
+### 使用您自己的数据库
 
-如果你希望将此演示指向你自己的数据库,你需要在 `Server` 目录下的 `arena.env` 中提供一个不同的 Mongo 连接字符串,它当前期望你托管一个本地的 Mongo 数据库：
+如果您希望将此演示指向您自己的数据库,您需要在 `Server` 目录下的 `arena.env` 中提供一个不同的 Mongo 连接字符串,它当前期望您托管一个本地的 Mongo 数据库：
 ``` javascript
 DEMO_DATABASE=mongodb://localhost:27017/demo?retryWrites=true&w=majority
 ```
 
 ### 聊天消息显示时间
-在客户端,你可以通过更改 `ChatManager.cs` 上的公共 `messageShowTime` 变量来更改消息显示的时长,然后在 `MMOManager.cs`:
+在客户端,您可以通过更改 `ChatManager.cs` 上的公共 `messageShowTime` 变量来更改消息显示的时长,然后在 `MMOManager.cs`:
 ```csharp
 private async void JoinChatRoom()
 {
@@ -124,8 +124,8 @@ private async void JoinChatRoom()
 }
 ```
 
-### 添加你自己的交互对象
-如果你想向客户端添加一个新的交互对象,其必须继承自 `Interactable.cs`.查看其他交互对象,想想你可以做什么.如果你想重写你的交互对象的 `serverType` 值,你也应当为你在服务器上的新 `serverType`  添加一个案例： `interactableObjectFactory.ts`:
+### 添加您自己的交互对象
+如果您想向客户端添加一个新的交互对象,其必须继承自 `Interactable.cs`.查看其他交互对象,想想您可以做什么.如果您想重写您的交互对象的 `serverType` 值,您也应当为您在服务器上的新 `serverType`  添加一个案例： `interactableObjectFactory.ts`:
 ```javascript
 export  function  getStateForType(type: string) : InteractableState {
 	let  state : InteractableState = new  InteractableState();

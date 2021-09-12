@@ -22,22 +22,22 @@
 
 ### 播放演示
 
-讓玩家出生在"大廳"場景,位置是 `Assets\GalleryShooter\Scenes\Lobby`. 輸入你的用戶名並創建房間以開始. **如果你無法進入房間製作界面,請確認你的本地伺服器工作正常,並檢查 Unity 編輯器的錯誤日誌.** 如果你成功了,客戶端將加載 "GalleryShooter" 場景. 如果你按下 Enter 鍵,你將"準備就緒",同時遊戲將會開始.如果你在你的本地伺服器上等待更多玩家加入,必須在所有玩家都"準備就緒"後遊戲才會開始.
+讓玩家出生在"大廳"場景,位置是 `Assets\GalleryShooter\Scenes\Lobby`. 輸入您的用戶名並創建房間以開始. **如果您無法進入房間製作界面,請確認您的本地伺服器工作正常,並檢查 Unity 編輯器的錯誤日誌.** 如果您成功了,客戶端將加載 "GalleryShooter" 場景. 如果您按下 Enter 鍵,您將"準備就緒",同時遊戲將會開始.如果您在您的本地伺服器上等待更多玩家加入,必須在所有玩家都"準備就緒"後遊戲才會開始.
 
 
 ## 調整演示
 
-當你播放此演示的時候,你可能希望進行一些調整,幫你更好地了解當前發生的情況.下面你將學習如何進行微調整.
+當您播放此演示的時候,您可能希望進行一些調整,幫您更好地了解當前發生的情況.下面您將學習如何進行微調整.
 
 ### 目標
 
-遊戲內目標的值可以在伺服器代碼 `Server\src\rooms\customLogic\targets.ts` 中找到. 在此處, 你可以調整分值, 重命名目標並添加/移除目標選項.如果你添加了一個新目標,請務必給它一個新的 "id" 值,否則 Unity 客戶端將不知道該展示何種目標模型.
+遊戲內目標的值可以在伺服器代碼 `Server\src\rooms\customLogic\targets.ts` 中找到. 在此處, 您可以調整分值, 重命名目標並添加/移除目標選項.如果您添加了一個新目標,請務必給它一個新的 "id" 值,否則 Unity 客戶端將不知道該展示何種目標模型.
 
-客戶端上的這些目標選項可以在 "TargetController" 預設中調整,位置是 `Assets\GalleryShooter\Prefabs\Targets\Controls\TargetController.prefab`. 如果你希望調整模型或添加新目標,你可以在這裏為客戶端做準備
+客戶端上的這些目標選項可以在 "TargetController" 預設中調整,位置是 `Assets\GalleryShooter\Prefabs\Targets\Controls\TargetController.prefab`. 如果您希望調整模型或添加新目標,您可以在這裏為客戶端做準備
 
 ### 目標移動
 
-伺服器提供的目標將根據其所在行的位置移交給相應的 TargetTreadmill."行"會在伺服器 52 列 `target.ts` 隨機設置.如果你在 GalleryShooter 場景中添加或移除行,伺服器必須通過此處對其進行了解：`LobbyController.numberOfTargetRows`:
+伺服器提供的目標將根據其所在行的位置移交給相應的 TargetTreadmill."行"會在伺服器 52 列 `target.ts` 隨機設置.如果您在 GalleryShooter 場景中添加或移除行,伺服器必須通過此處對其進行了解：`LobbyController.numberOfTargetRows`:
 
 ![LobbyController.numberOfTargetRows](/demo/shooting-gallery/number-of-target-rows.png):
 
@@ -59,8 +59,8 @@ TargetBase 對象在這裏控製其自身速度：
 
 ### 最大玩家數
 
-預設最大玩家數設置為 `25`. 你可以在 `Server\src\rooms\ShootingGalleryRoom.ts` 的 `94` 列更改. 或者, 如果你不希望設置限製, 移除此列即可.
+預設最大玩家數設置為 `25`. 您可以在 `Server\src\rooms\ShootingGalleryRoom.ts` 的 `94` 列更改. 或者, 如果您不希望設置限製, 移除此列即可.
 
 ### 調整玩家移動
 
-你可以在位於 `Assets\GalleryShooter\Prefabs\GalleryShootPlayer.prefab` 的預設中調整玩家的移動值.在這裏,你也可以調整遠端玩家的插值率以及其他限製.
+您可以在位於 `Assets\GalleryShooter\Prefabs\GalleryShootPlayer.prefab` 的預設中調整玩家的移動值.在這裏,您也可以調整遠端玩家的插值率以及其他限製.

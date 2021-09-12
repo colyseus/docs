@@ -3,15 +3,15 @@
 ## 安裝
 
 - 下载 [Cocos2d-X](http://www.cocos2d-x.org/download) 并遵守其 [installation instructions](https://github.com/cocos2d/cocos2d-x#download-stable-versions).
-- 下载 [colyseus-cocos2d-x](https://github.com/colyseus/colyseus-cocos2d-x/archive/master.zip) 并将 `Source/` 文件复制到你的项目中.
-- 添加 `Source/` 目录至你项目的 `Header Search Paths`.
+- 下载 [colyseus-cocos2d-x](https://github.com/colyseus/colyseus-cocos2d-x/archive/master.zip) 并将 `Source/` 文件复制到您的项目中.
+- 添加 `Source/` 目录至您项目的 `Header Search Paths`.
 
 !!! tip "Looking for Cocos Creator?"
     参见 [JavaScript » Cocos Creator](/getting-started/javascript-client/#cocos-creator-30).
 
 ## 使用方式
 
-下方你可以看到如何使用 `Client`, 匹配进入 `Room`, 以及从已连接的房间发送并接收消息.
+下方您可以看到如何使用 `Client`, 匹配进入 `Room`, 以及从已连接的房间发送并接收消息.
 
 > 了解如何從 [State Handling](/state/schema/#client-side-schema-generation) 生成您的 `RoomState`
 
