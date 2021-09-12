@@ -5,7 +5,7 @@
 The Colyseus SDK for Cocos Creator works in the same way as the [JavaScript SDK](/getting-started/javascript-client/). The major difference is how to [import it from a TypeScript Component](#importing-from-the-extension) asset from Cocos Creator.
 
 !!! tip "Looking for an example?"
-Take a look at the [Tic Tac Toe Example](https://github.com/colyseus/cocos-demo-tictactoe).
+    Take a look at the [Tic Tac Toe Example](https://github.com/colyseus/cocos-demo-tictactoe).
 
 ## 1. Install the extension
 
