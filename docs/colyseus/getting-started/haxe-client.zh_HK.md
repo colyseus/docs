@@ -12,7 +12,7 @@ haxelib install colyseus
 
 ## 用法
 
-### 連接至服務器：
+### 連線至伺服器：
 
 ```haxe
 import io.colyseus.Client;
@@ -60,7 +60,7 @@ room.onStateChange += function(state) {
 }
 ```
 
-從服務器廣播的消息或直接發給本客戶端的消息：
+從伺服器廣播的消息或直接發給本客戶端的消息：
 
 ```haxe
 room.onMessage("type", function (message) {
@@ -68,7 +68,7 @@ room.onMessage("type", function (message) {
 });
 ```
 
-發生服務器錯誤：
+發生伺服器錯誤：
 
 ```haxe
 room.onError += function() {
@@ -76,7 +76,7 @@ room.onError += function() {
 }
 ```
 
-服務器離開房間：
+伺服器離開房間：
 
 ```haxe
 room.onLeave += function() {
@@ -84,13 +84,13 @@ room.onLeave += function() {
 }
 ```
 
-## 運行演示項目
+## 執行演示專案
 
-[`example`](https://github.com/colyseus/colyseus-hx/blob/master/example/openfl) 項目可以被編譯為 `html5`, `neko`, `cpp`, `ios` 等.
+[`example`](https://github.com/colyseus/colyseus-hx/blob/master/example/openfl) 專案可以被編譯為 `html5`, `neko`, `cpp`, `ios` 等.
 
-它使用來自 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 項目的 `state_handler` 房間,你可以在 [這裏](https://github.com/colyseus/colyseus-examples/blob/master/rooms/02-state-handler.ts) 找到.
+它使用來自 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 專案的 `state_handler` 房間,你可以在 [這裏](https://github.com/colyseus/colyseus-examples/blob/master/rooms/02-state-handler.ts) 找到.
 
-### 編譯演示項目為 `html5`
+### 編譯演示專案為 `html5`
 
 ```
 git clone https://github.com/colyseus/colyseus-hx.git
@@ -98,7 +98,7 @@ cd colyseus-hx/example/openfl
 lime build project.xml html5
 ```
 
-你可以 [在此](http://colyseus.io/colyseus-hx/) 查看實時演示項目.
+你可以 [在此](http://colyseus.io/colyseus-hx/) 查看實時演示專案.
 
 
 ## `ios` 目標警告

@@ -1,4 +1,4 @@
-最後您可能發現會有惡意用戶利用 Colyseus 的房間匹配程序來淹沒您的服務器,導致您的服務器在沒有真實玩家使用的情況下一直在創建和刪除房間.
+最後您可能發現會有惡意用戶利用 Colyseus 的房間匹配程序來淹沒您的伺服器,導致您的伺服器在沒有真實玩家使用的情況下一直在創建和刪除房間.
 
 這種情況下我們建議使用 `express-rate-limit` 中間件來攔截來自同一來源的大量請求.更多詳情可查看 [`express-rate-limit` 的 README](https://github.com/nfriedly/express-rate-limit);
 

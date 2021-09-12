@@ -1,11 +1,11 @@
 # 身份驗證 + 社交 (`@colyseus/social`)
 
 !!! Warning "棄用通知"
-`@colyseus/social` 模塊即將被完全棄用. 目前我們建議使用 Firebase, Auth0 或其他身份證驗服務.
+`@colyseus/social` 模組即將被完全棄用. 目前我們建議使用 Firebase, Auth0 或其他身份證驗服務.
 
 在此介紹 [`@colyseus/social`](http://github.com/colyseus/colyseus-social) 的配置和用法.
 
-`@colyseus/social` 是一個實驗性模塊, 提供通用型後端服務, 以方便多人遊戲的開發. 歡迎為此 API 提供建議和改進方法.
+`@colyseus/social` 是一個實驗性模組, 提供通用型後端服務, 以方便多人遊戲的開發. 歡迎為此 API 提供建議和改進方法.
 
 
 !!! Tip
@@ -15,14 +15,14 @@
 
 1. [下載和安裝 MongoDB](https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installation-tutorials)
 
-2. 安裝 `@colyseus/social` 模塊.
+2. 安裝 `@colyseus/social` 模組.
 
 ```
 npm install @colyseus/social
 npm install express-jwt
 ```
 
-3. 導入和公開 `@colyseus/social` 提供的 Express 入口
+3. 匯入和公開 `@colyseus/social` 提供的 Express 入口
 
 ```typescript fct_label="TypeScript"
 import express from "express";
@@ -44,17 +44,17 @@ app.use("/", socialRoutes);
 app.listen(8080);
 ```
 
-## 服務器端配置
+## 伺服器端配置
 
-### 環境變量
+### 環境變數
 
-- `MONGO_URI`: MongoDB 連接 URI
+- `MONGO_URI`: MongoDB 連線 URI
 - `JWT_SECRET`: 用於身份驗證的安全保密字符串
 - `FACEBOOK_APP_TOKEN`: Facebook 應用令牌 (`"appid|appsecret"`)
 
-## 服務器端 API
+## 伺服器端 API
 
-`@colyseus/social` 裏提供了 MongoDB 模塊,以及令牌驗證功能.
+`@colyseus/social` 裏提供了 MongoDB 模組,以及令牌驗證功能.
 
 ```
 typescript import { User, FriendRequest, verifyToken } from "@colyseus/social";
@@ -82,7 +82,7 @@ class MyRoom extends Room {
 }
 ```
 
-### 觸發點
+### 勾點
 
 #### `hooks.beforeAuthenticate`
 
@@ -92,7 +92,7 @@ class MyRoom extends Room {
 import { hooks } from "@colyseus/social";
 
 hooks.beforeAuthenticate((provider, $setOnInsert, $set) => {
-    // 註冊時賦予默認元數據
+    // 註冊時賦予預設元數據
     $setOnInsert.metadata = {
       coins: 100,
       trophies: 0
@@ -102,7 +102,7 @@ hooks.beforeAuthenticate((provider, $setOnInsert, $set) => {
 
 #### `hooks.beforeUserUpdate`
 
-在用戶 [通過 save() 方法](#update-user-data) 更新自己的信息之前, 會觸發 `beforeUserUpdate`.
+在用戶 [通過 save() 方法](#update-user-data) 更新自己的資訊之前, 會觸發 `beforeUserUpdate`.
 
 ```typescript
 import Filter from "bad-words";

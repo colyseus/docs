@@ -27,11 +27,11 @@
 
 **JSON 屬性:**
 
-- **serverDir:** 這是上傳代碼所在的儲存庫根目錄的位置. 如果您將使用 'npm run build' 來建立您的部署代碼, 則將此命令輸出檔案的目錄放在此處.
+- **serverDir:** 這是上傳代碼所在的儲存庫根目錄的位置. 如果您將使用 'npm run build' 來建立您的部署代碼, 則將此指令輸出檔案的目錄放在此處.
 
 - **buildType:** 此屬性有兩個選項.
     - `arena` - 此選項將在嘗試從 serverDir 複製文件之前執行 ```npm install && npm run build```.
-    - `none` - 直接從 serverDir 資料夾複製檔案, 無需運行任何建置命令. 如果您的伺服器代碼在您簽入之前已經編譯並準備好在 Arena Cloud 上執行, 請使用此選項.
+    - `none` - 直接從 serverDir 資料夾複製檔案, 無需執行任何建置指令. 如果您的伺服器代碼在您簽入之前已經編譯並準備好在 Arena Cloud 上執行, 請使用此選項.
 
 - **gitServer:** 您的 git 儲存庫網址.
 

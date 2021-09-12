@@ -5,7 +5,7 @@
 
 ## 如何定義可同步結構
 
-- `Schema` 結構由服務器定義,用於房間狀態.
+- `Schema` 結構由伺服器定義,用於房間狀態.
 - 只有以 `@type()` 修飾的字段才被考慮用於同步.
 - _(可同步架構結構應當僅用於與您的狀態相關的數據.)_
 
@@ -33,7 +33,7 @@ schema.defineTypes(MyState, {
 ```
 
 !!! Tip "_"這個 `@type()` 關鍵字是什麽？ 我之前從未見過！"_"
-    您看見的在本頁大量使用的 `@type()` 是一個即將推出的 JavaScript 功能,還沒有被 TC39 正式認可.`type` 其實只是一個從 `@colyseus/schema` 模塊導入的功能.在屬性層級調用帶有 `@` 前綴的 `類型`,意味著我們將其作為一個_屬性修飾器_進行調用.[在這裏查看修飾器方案](https://github.com/tc39/proposal-decorators).
+    您看見的在本頁大量使用的 `@type()` 是一個即將推出的 JavaScript 功能,還沒有被 TC39 正式認可.`type` 其實只是一個從 `@colyseus/schema` 模組匯入的功能.在屬性層級調用帶有 `@` 前綴的 `類型`,意味著我們將其作為一個_屬性修飾器_進行調用.[在這裏查看修飾器方案](https://github.com/tc39/proposal-decorators).
 
 ### 在您的 `Room` 內使用狀態
 
@@ -52,10 +52,10 @@ export class MyRoom extends Room<MyState> {
 
 ## 處理架構
 
-- 只有服務器端負責處理變異架構結構
+- 只有伺服器端負責處理變異架構結構
 - 客戶端必須擁有通過 `[schema-codegen`` 生成的相同的 Schema` 定義._(如果您在使用 [JavaScript SDK](/getting-started/javascript-client/) 則為可選)_
-- 為了從服務器獲得更新,您需要[將架構的回調附加在客戶端內](#callbacks).
-- 客戶端永遠不該在架構上執行變異 - 因為在收到下一個來自服務器的更改時,它們就會被立刻替換.
+- 為了從伺服器獲得更新,您需要[將架構的回呼附加在客戶端內](#callbacks).
+- 客戶端永遠不該在架構上執行變異 - 因為在收到下一個來自伺服器的更改時,它們就會被立刻替換.
 
 ### 原始類型
 
@@ -85,7 +85,7 @@ export class MyRoom extends Room<MyState> {
 
 ### 復雜類型
 
-復雜類型由其他架構實例中的 `Schema` 實例組成.它們也可以包含 [項目集合](#collections-of-items)(數組, 地圖等).
+復雜類型由其他架構實例中的 `Schema` 實例組成.它們也可以包含 [專案集合](#collections-of-items)(數組, 地圖等).
 
 ```typescript fct_label="TypeScript"
 import { Schema, type } from "@colyseus/schema";
@@ -125,7 +125,7 @@ schema.defineTypes(MyState, {
 });
 ```
 
-## 項目集合
+## 專案集合
 
 ### ArraySchema
 
@@ -728,11 +728,11 @@ collection.forEach((value, at) => {
 !!! Warning "此功能為實驗性質"
     `@filter()`/`@filterChildren()` 為實驗性質, 可能不適合快節奏遊戲.
 
-過濾意味著對一個特定客戶端隱藏您的部分狀態,避免作弊,防止一名玩家因決定檢查來自網絡的數據而看到未過濾的狀態信息.
+過濾意味著對一個特定客戶端隱藏您的部分狀態,避免作弊,防止一名玩家因決定檢查來自網路的數據而看到未過濾的狀態資訊.
 
-數據過濾器為回調, 會在 **per client** 和 **per field** 觸發 (如果 `@filterChildren`, 則為每個子結構). 如果過濾器回調返回 `true`, 該字段數據將會發送給那個特定客戶端,否則,該數據將不會發送給該客戶端.
+數據過濾器為回呼, 會在 **per client** 和 **per field** 觸發 (如果 `@filterChildren`, 則為每個子結構). 如果過濾器回呼返回 `true`, 該字段數據將會發送給那個特定客戶端,否則,該數據將不會發送給該客戶端.
 
-請註意,如果過濾器功能的依賴項發生改變,將無法自動重新運行,但僅限於過濾字段(或其子字段)被更新時.查看[此問題](https://github.com/colyseus/schema/issues/102)的替代方法.
+請註意,如果過濾器功能的依賴項發生改變,將無法自動重新執行,但僅限於過濾字段(或其子字段)被更新時.查看[此問題](https://github.com/colyseus/schema/issues/102)的替代方法.
 
 ### `@filter()` 屬性修飾器
 
@@ -789,7 +789,7 @@ schema.filter(function(client, value, root) {
 
 ### `@filterChildren()` 屬性修飾器
 
-`@filterChildren()` 屬性修飾器可用於過濾掉數組, 地圖, 集合等內的項目.它的簽名與 `@filter()` 基本相同,但是在 `value` 之前添加了 `key` 參數 - 表示 [ArraySchema](#arrayschema), [MapSchema](#mapschema), [CollectionSchema](#collectionschema) 等中的每個項目.
+`@filterChildren()` 屬性修飾器可用於過濾掉數組, 地圖, 集合等內的專案.它的簽名與 `@filter()` 基本相同,但是在 `value` 之前添加了 `key` 參數 - 表示 [ArraySchema](#arrayschema), [MapSchema](#mapschema), [CollectionSchema](#collectionschema) 等中的每個專案.
 
 ```typescript fct_label="TypeScript"
 class State extends Schema {
@@ -846,7 +846,7 @@ schema.filterChildren(function(client, key, value, root) {
 
 **示例:** 在卡片遊戲中,應該僅有卡片的持有者知道每個卡片的相關數據,或者在特定條件下知道這些數據(例如,卡片被丟棄)
 
-查看 `@filter()` 回調簽名：
+查看 `@filter()` 回呼簽名：
 
 ```typescript fct_label="TypeScript"
 import { Client } from "colyseus";
@@ -895,11 +895,11 @@ schema.filter(function(client, value, root) {
 !!! Warning "C#, C++, Haxe"
     在使用靜入語言時,需要在您的 Typescript 架構定義基礎上 生成客戶端架構文件. [查看在客戶端生成架構](#client-side-schema-generation).
 
-### 回調
+### 回呼
 
-當應用來自服務器的狀態更改時,客戶端將根據正在應用的更改觸發本地實例上的回調.
+當應用來自伺服器的狀態更改時,客戶端將根據正在應用的更改觸發本地實例上的回呼.
 
-將根據實例引用觸發回調.應確保在服務器上實際發生變化的實例上附加回調.
+將根據實例引用觸發回呼.應確保在伺服器上實際發生變化的實例上附加回呼.
 
 - [onAdd (instance, key)](#onadd-instance-key)
 - [onRemove (instance, key)](#onremove-instance-key)
@@ -909,7 +909,7 @@ schema.filter(function(client, value, root) {
 
 #### `onAdd (instance, key)`
 
-只能在 (`MapSchema`, `MapSchema` 等) 項目集合中使用 `onAdd` 回調.使用新實例調用 `onAdd` 回調,並且使用持有者對象中的秘鑰作為參數.
+只能在 (`MapSchema`, `MapSchema` 等) 專案集合中使用 `onAdd` 回呼.使用新實例調用 `onAdd` 回呼,並且使用持有者對象中的秘鑰作為參數.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onAdd = (player, key) => {
@@ -978,7 +978,7 @@ room.State.players.OnAdd += (Player player, string key) =>
 
 #### `onRemove (instance, key)`
 
-只能在  (`MapSchema`) 映射和 (`ArraySchema`) 數組中使用 `onRemove` 回調.使用已移除實例調用 `onAdd` 回調,並且使用持有者對象中的秘鑰作為參數.
+只能在  (`MapSchema`) 映射和 (`ArraySchema`) 數組中使用 `onRemove` 回呼.使用已移除實例調用 `onAdd` 回呼,並且使用持有者對象中的秘鑰作為參數.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onRemove = (player, key) => {
@@ -1011,7 +1011,7 @@ room.State.players.OnRemove += (Player player, string key) =>
 
 > 對於直接 `Schema` 引用和集合結構,`onChange` 的工作方式各不相同. 對於 [`onChange` 集合結構(數組,映射等)的,請查看這裏](#onchange-instance-key).
 
-可以註冊 `onChange`,以跟蹤 `Schema` 實例的屬性變更.使用已變更的屬性及其以先前值觸發 `onChange` 回調.
+可以註冊 `onChange`,以跟蹤 `Schema` 實例的屬性變更.使用已變更的屬性及其以先前值觸發 `onChange` 回呼.
 
 
 ```javascript fct_label="JavaScript"
@@ -1046,7 +1046,7 @@ room.State.OnChange += (changes) =>
 };
 ```
 
-不能為還沒有與客戶端同步的對象註冊 `onChange` 回調.
+不能為還沒有與客戶端同步的對象註冊 `onChange` 回呼.
 
 ---
 
@@ -1054,7 +1054,7 @@ room.State.OnChange += (changes) =>
 
 > `onChange` works differently for direct `Schema` references and collection structures. For [`onChange` on `Schema` structures, check here](#onchange-changes-datachange).
 
-當 **primitive** 集合類型 (`string`, `number`, `boolean` 等) 更新其部分值時, 將觸發此回調.
+當 **primitive** 集合類型 (`string`, `number`, `boolean` 等) 更新其部分值時, 將觸發此回呼.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onChange = (player, key) => {
@@ -1078,7 +1078,7 @@ room.State.players.OnChange += (Player player, string key) =>
 如果想要檢測 **non-primitive** 集合類型(保留 `Schema` 實例),請使用 [`onAdd`](#onadd-instance-key) 並且為它們註冊 [`onChange`](#onchange-changes-datachange).
 
 !!! Warning "`onChange`, `onAdd` 和 `onRemove` 是 **互斥的**"
-    `onChange` 回調在 [`onAdd`](#onadd-instance-key) 或 [`onRemove`](#onremove-instance-key) 期間不會觸發.
+    `onChange` 回呼在 [`onAdd`](#onadd-instance-key) 或 [`onRemove`](#onremove-instance-key) 期間不會觸發.
 
     Consider registering `onAdd` and `onRemove` if you need to detect changes during these steps too.
 
@@ -1093,7 +1093,7 @@ room.State.players.OnChange += (Player player, string key) =>
 **Parameters:**
 
 - `property`:  想要偵聽其變化的屬性名稱.
-- `callback`: 當 `property` 變更時將會觸發的回調.
+- `callback`: 當 `property` 變更時將會觸發的回呼.
 
 
 ```typescript
@@ -1134,16 +1134,16 @@ state.onChange = function(changes) {
 
 ## 客戶端架構生成
 
-`schema-codegen` 是一個工具,它轉換服務器端架構定義文件,以便在客戶使用.
+`schema-codegen` 是一個工具,它轉換伺服器端架構定義文件,以便在客戶使用.
 
-要在客戶端解碼狀態,客戶端的本地架構定義必須兼容服務器端的架構定義.
+要在客戶端解碼狀態,客戶端的本地架構定義必須兼容伺服器端的架構定義.
 
 !!! Warning "在使用 [JavaScript SDK](/getting-started/javascript-client/) 時不需要"
     只有在客戶端使用靜態類型語言,例如  C#, Haxe 等,才需要使用 `schema-codegen`.
 
 **用法**
 
-要在終端上查看用法,請 `cd` 進入服務器目錄,運行以下命令：
+要在終端上查看用法,請 `cd` 進入伺服器目錄,執行以下指令：
 
 ```
 npx schema-codegen --help
@@ -1190,7 +1190,7 @@ generated: State.cs
 }
 ```
 
-這樣,就可以運行 `npm run schema-codegen`,而不必運行完整的命令
+這樣,就可以執行 `npm run schema-codegen`,而不必執行完整的指令
 
 ```
 npm run schema-codegen
@@ -1249,12 +1249,12 @@ class MyState extends Schema {
 - `Infinity` 數字被編碼為 `Number.MAX_SAFE_INTEGER`
 - 不支持多維數組. [查看如何將一維數組作為多維數組使用](https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid/212813#212813)
 - `@colyseus/schema` 編碼順序基於字段定義順義.
-    - 編碼器(服務器)和解碼器(客戶端)必須具有相同的架構定義.
+    - 編碼器(伺服器)和解碼器(客戶端)必須具有相同的架構定義.
     - 字段的順序必須相同.
 
 ### 集合
 
-集合類型 (`ArraySchema`, `MapSchema` 等) 必須包含相同類型的項目,或共享相同的基礎類型.
+集合類型 (`ArraySchema`, `MapSchema` 等) 必須包含相同類型的專案,或共享相同的基礎類型.
 
 **支持以下示例：**
 

@@ -4,15 +4,15 @@
 
 ## 建議與最佳實踐
 
-- 模擬服務端與客戶端信息交換之後, 在兩端分別設置斷言.
+- 模擬服務端與客戶端資訊交換之後, 在兩端分別設置斷言.
 - 測試完成後釋放 Room 實例 - 確保每個測試對象都是為了測試而新建的, 不同測試間不要共用房間.
 - 每個測試都要標註 `async`.
-- 測試斷言之前確保 [等待服務器或客戶端的任務處理完成](#等待異步程序處理完成)
+- 測試斷言之前確保 [等待伺服器或客戶端的任務處理完成](#等待異步程序處理完成)
 
 ```typescript fct_label="Mocha + TypeScript"
 import { ColyseusTestServer, boot } from "@colyseus/testing";
 
-// 在此處導入您的 "arena.config.ts" 文件.
+// 在此處匯入您的 "arena.config.ts" 文件.
 import appConfig from "../src/arena.config";
 
 describe("testing your Colyseus app", () => {
@@ -69,7 +69,7 @@ describe("testing your Colyseus app", () => {
 
 ### `room.waitForMessage(type)`
 
-等待某個 `type` 信息發送至服務器.
+等待某個 `type` 資訊發送至伺服器.
 
 ```typescript
 it("should receive message", async() => {
@@ -78,10 +78,10 @@ it("should receive message", async() => {
 
     client1.send("foo", "payload");
 
-    // 等待想要的信息
+    // 等待想要的資訊
     const [ client, message ] = await room.waitForMessage("foo");
 
-    // ... 信息 "foo" 被服務器接收處理完成
+    // ... 資訊 "foo" 被伺服器接收處理完成
     assert.strictEqual(client.sessionId, client1.sessionId);
     assert.strictEqual("payload", message);
 });
@@ -91,11 +91,11 @@ it("should receive message", async() => {
 
 ### `room.waitForNextMessage()`
 
-等待下一個信息發送至服務器.
+等待下一個資訊發送至伺服器.
 
 **參數**
 
-- `additionalDelay: number` - 在服務器 `onMessage` 觸發之後額外再多等待的毫秒數 (可選參數)
+- `additionalDelay: number` - 在伺服器 `onMessage` 觸發之後額外再多等待的毫秒數 (可選參數)
 
 ```typescript
 it("should receive message", async() => {
@@ -118,7 +118,7 @@ it("should receive message", async() => {
 
 ### `room.waitForNextPatch()`
 
-等待服務器對客戶端發送最新補丁數據.
+等待伺服器對客戶端發送最新補丁數據.
 
 ```typescript
 it("client state must match server's after patch is received", async() => {
@@ -127,7 +127,7 @@ it("client state must match server's after patch is received", async() => {
 
     await room.waitForNextPatch();
 
-    // 接到補丁數據後客戶端與服務器端狀態應保持一致
+    // 接到補丁數據後客戶端與伺服器端狀態應保持一致
     assert.deepStrictEqual(client1.state.toJSON(), room.state.toJSON());
 });
 ```
@@ -177,13 +177,13 @@ it("should connect into battle_room with options x, y, z", async () => {
 
 ### `client.waitForNextPatch()`
 
-等待客戶端狀態與服務器同步.
+等待客戶端狀態與伺服器同步.
 
 ```typescript
 it("should do xyz after receiving message 'x'", async () => {
     const client = await colyseus.sdk.joinOrCreate("battle_room");
     await client.waitForNextPatch();
-    // 客戶端收到信息後在這裏設置斷言
+    // 客戶端收到資訊後在這裏設置斷言
 });
 ```
 
@@ -191,7 +191,7 @@ it("should do xyz after receiving message 'x'", async () => {
 
 ### `client.waitForMessage(type)`
 
-等待某個 `type` 信息發送至客戶端.
+等待某個 `type` 資訊發送至客戶端.
 
 ```typescript
 it("should do xyz after receiving message 'x'", async () => {
@@ -199,7 +199,7 @@ it("should do xyz after receiving message 'x'", async () => {
     client.send("ask-for-x");
 
     await client.waitForMessage("received-x");
-    // 客戶端收到 "received-x" 信息後在這裏設置斷言.
+    // 客戶端收到 "received-x" 資訊後在這裏設置斷言.
 });
 ```
 
@@ -207,7 +207,7 @@ it("should do xyz after receiving message 'x'", async () => {
 
 ### `client.waitForNextMessage()`
 
-等待下一個信息發送至客戶端.
+等待下一個資訊發送至客戶端.
 
 ```typescript
 it("should do xyz after receiving message 'x'", async () => {
@@ -215,7 +215,7 @@ it("should do xyz after receiving message 'x'", async () => {
     client.send("ask-for-x");
 
     await client.waitForNextMessage();
-    // 客戶端收到下一個信息後在這裏設置斷言
+    // 客戶端收到下一個資訊後在這裏設置斷言
 });
 ```
 

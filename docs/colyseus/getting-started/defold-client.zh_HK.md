@@ -13,7 +13,7 @@ Defold Engine 是用於跨平臺發布的免費2D遊戲引擎.
     https://github.com/colyseus/colyseus-defold/archive/0.14.zip
     https://github.com/defold/extension-websocket/archive/refs/tags/2.2.3.zip
 
-閱讀更多關於 [Defold 庫依賴](http://www.defold.com/manuals/libraries/) 的信息
+閱讀更多關於 [Defold 庫依賴](http://www.defold.com/manuals/libraries/) 的資訊
 
 你也可以通過復製其各自的 zip 存檔 URL,來指定該 SDK 的[具體版本](https://github.com/colyseus/colyseus-defold/releases).
 
@@ -45,15 +45,15 @@ end
 
 ## 常見問題
 
-### "我無法連接至本地服務器！"
+### "我無法連線至本地伺服器！"
 
-在本地服務器上運行時,確保端口 80 上沒有運行任何服務,否則,客戶端將不會連接到指定的端口號.
+在本地伺服器上執行時,確保端口 80 上沒有執行任何服務,否則,客戶端將不會連線到指定的端口號.
 
-或者, 你也可以將 Colyseus 服務器綁定至端口80.
+或者, 你也可以將 Colyseus 伺服器綁定至端口80.
 
 ### "`reconnect()` 在 iOS 上無效！"
 
-如果你的手機鎖屏,所有 WebSocket 連接都將關閉.你可以調用 `reconnect()` 來重新建立進程,這需要對 iOS 采取以下解決辦法：
+如果你的手機鎖屏,所有 WebSocket 連線都將關閉.你可以調用 `reconnect()` 來重新建立進程,這需要對 iOS 采取以下解決辦法：
 
 ```lua
 function window_callback(self, event, data)

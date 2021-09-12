@@ -3,7 +3,7 @@
 !!! Warning "您可能不需要這樣做！"
     本部分介紹高級用法.您通常可以使用 [客戶端方法](/client/client/#methods).如果不能使用客戶端方法來實現目上標,可以考慮使用本頁介紹的方法.
 
-下面介紹的方法由 `matchMaker` 單一實例提供,可以從 `"colyseus"` 包導入:
+下面介紹的方法由 `matchMaker` 單一實例提供,可以從 `"colyseus"` 包匯入:
 
 ```typescript fct_label="TypeScript"
 import { matchMaker } from "colyseus";
@@ -172,7 +172,7 @@ console.log(room);
 ```
 
 ## `.remoteRoomCall(roomId, method, args)`
-調用一個方法或返回一個遠程房間的屬性.
+調用一個方法或返回一個遠端房間的屬性.
 
 **參數:**
 

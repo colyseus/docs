@@ -10,7 +10,7 @@ JavaScript/TypeScript SDK 幾乎與所有平臺兼容：
 
 ## 用法
 
-### 將 JavaScript SDK 包括在你的項目中
+### 將 JavaScript SDK 包括在你的專案中
 
 如果你在使用構建工具(`webpack`,  `rollup` 或類似工具), 這是最佳方式
 
@@ -24,13 +24,13 @@ npm install --save colyseus.js
 <script src="colyseus.js"></script>
 ```
 
-或者您也可以直接使用 unpkg 加載分布式文件.記得將其中的 `@x.x.x` 內容替換為與您服務器兼容的版本.
+或者您也可以直接使用 unpkg 加載分布式文件.記得將其中的 `@x.x.x` 內容替換為與您伺服器兼容的版本.
 
 ```html
 <script src="https://unpkg.com/colyseus.js@^0.14.0/dist/colyseus.js"></script>
 ```
 
-### 連接至服務器：
+### 連線至伺服器：
 
 ```ts
 import * as Colyseus from "colyseus.js"; // not necessary if included via <script> tag.
@@ -58,7 +58,7 @@ room.onStateChange((state) => {
 });
 ```
 
-從服務器廣播的消息或直接發給本客戶端的消息：
+從伺服器廣播的消息或直接發給本客戶端的消息：
 
 ```ts
 room.onMessage("message_type", (message) => {
@@ -66,7 +66,7 @@ room.onMessage("message_type", (message) => {
 });
 ```
 
-發生服務器錯誤：
+發生伺服器錯誤：
 
 ```ts
 room.onError((code, message) => {
@@ -74,7 +74,7 @@ room.onError((code, message) => {
 });
 ```
 
-服務器離開房間：
+伺服器離開房間：
 
 ```ts
 room.onLeave((code) => {

@@ -2,7 +2,7 @@
 
 至於何時執行拒絕操作則取決於您的用例.
 
-下方是驗證 [@colyseus/social](/tools/colyseus-social/#server-side-api) 身份認證令牌,以及檢索與用戶 id 關聯的 `Hero` 記錄.
+下方是驗證 [@colyseus/social](/tools/colyseus-social/#server-side-api) 身份驗證令牌,以及檢索與用戶 id 關聯的 `Hero` 記錄.
 
 ```typescript
 export class BattleRoom extends Room {

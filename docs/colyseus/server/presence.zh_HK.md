@@ -1,19 +1,19 @@
-# 服務器 API &raquo; 狀態
+# 伺服器 API &raquo; 狀態
 
-在多處理器和/或機器上擴展服務器時,需要為 `Server` 提供 [`Presence`](/server/api/#optionspresence) 選項. `Presence` 的作用是允許不同進程之間的通信和數據共享, 特別是在匹配期間.
+在多處理器和/或機器上擴展伺服器時,需要為 `Server` 提供 [`Presence`](/server/api/#optionspresence) 選項. `Presence` 的作用是允許不同進程之間的通信和數據共享, 特別是在匹配期間.
 
-- [`LocalPresence`](#localpresence)(默認)
+- [`LocalPresence`](#localpresence)(預設)
 - [`RedisPresence`](#redispresence-clientopts)
 
 `presence` 實例也可以用於所有 `Room` 處理程序.可以使用它的 [API](#api) 保留數據和通過 PUB/SUB 進行房間之間的通信.
 
 ### `LocalPresence`
 
-這是默認選項.在單進程中運行  Colyseus 時,應使用此選項.
+這是預設選項.在單進程中執行  Colyseus 時,應使用此選項.
 
 ### `RedisPresence (clientOpts?)`
 
-在多進程和/或多機器上運行  Colyseus 時,應使用此選項.
+在多進程和/或多機器上執行  Colyseus 時,應使用此選項.
 
 **Parameters:**
 
@@ -96,7 +96,7 @@ gameServer.listen(2567);
 
 ### `srem(key: string, value: any)`
 
-移除存儲在鍵值中的集合中的特定成員.忽略不屬於此集合的成員的特定成員.如果鍵值不存在,則視它為空集合,此命令返回 0.
+移除存儲在鍵值中的集合中的特定成員.忽略不屬於此集合的成員的特定成員.如果鍵值不存在,則視它為空集合,此指令返回 0.
 
 ### `scard(key: string)`
 
@@ -124,7 +124,7 @@ gameServer.listen(2567);
 
 ### `hdel(key: string, field: string)`
 
-移除存儲在鍵值中的集合中的特定成員.將忽略在此哈希值中不存在的特定字段.如果鍵值不存在,則將其視為空哈希值,此命令返回 0.
+移除存儲在鍵值中的集合中的特定成員.將忽略在此哈希值中不存在的特定字段.如果鍵值不存在,則將其視為空哈希值,此指令返回 0.
 
 ### `hlen(key: string):Promise<number>`
 

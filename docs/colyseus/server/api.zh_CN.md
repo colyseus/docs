@@ -14,7 +14,7 @@ Colyseus 默认使用其内置 WebSocket 传输. [点此查看如何自定义传
 
 ### `options.presence`
 
-在多个进程/机器中扩展 Colyseus 时,您需要提供一个状态服务器.了解更多关于[扩展性](/scalability/)和 [`Presence API`](/server/presence/#api) 的信息.
+在多个进程/机器中扩展 Colyseus 时,您需要提供一个状态服务器.了解更多关于[扩展性](/scalability/)和 [`Presence API`](/server/presence/#api) 的資訊.
 
 ```typescript fct_label="TypeScript"
 import { Server, RedisPresence } from "colyseus";
@@ -268,7 +268,7 @@ client.joinOrCreate("battle", { maxClients: 20 }).then(room => {/* ... */});
 
 #### `sortBy(options)`
 
-根据房间创建时的信息,您可以为加入房间设置一个不同的优先级.
+根据房间创建时的資訊,您可以为加入房间设置一个不同的优先级.
 
 `options` 参数是一个键值对象, 左边是字段名称, 右边是排序方向. 排序方向可能为下列值之一：`-1`, `"desc"`, `"descending"`, `1`, `"asc"` 或 `"ascending"`.
 
@@ -397,7 +397,7 @@ gameServer.attach({ ws: wss });
 
 ## `onShutdown (callback:Function)`
 
-注册一个回调, 其应该在进程关闭前被调用. 查看 [优雅关闭](/server/graceful-shutdown/) 了解更多详细信息.
+注册一个回调, 其应该在进程关闭前被调用. 查看 [优雅关闭](/server/graceful-shutdown/) 了解更多详细資訊.
 
 ## `gracefullyShutdown (exit: boolean)`
 

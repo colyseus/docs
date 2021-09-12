@@ -8,7 +8,7 @@
 
 ## 建立 Colyseus 伺服器表單 NPM 樣板
 
-使用 `npm init colyseus-app` 命令生成準系統 Colyseus 伺服器. 您可以選擇 TypeScript（推薦）和 JavaScript 作為伺服器語言. **Arena Cloud** 目前僅支持這兩種語言.
+使用 `npm init colyseus-app` 指令生成準系統 Colyseus 伺服器. 您可以選擇 TypeScript（推薦）和 JavaScript 作為伺服器語言. **Arena Cloud** 目前僅支持這兩種語言.
 
 ``` npm init colyseus-app ./my-colyseus-app ```
 

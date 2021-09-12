@@ -10,7 +10,7 @@
     - 理想情況下,各個擴展 `架構` 的類別應該只有欄位定義.
     - 可實作自定義的 getter 和 setter 方法,只要其中沒有遊戲邏輯即可.
 - 您的遊戲邏輯應由其他結構處理,例如：
-    - [命令模式](#the-command-pattern)
+    - [指令模式](#the-command-pattern)
     - [實體-組件系統](#entity-component-system-ecs).
 
 ## 單元測試
@@ -19,19 +19,19 @@
 
 ## 設計模式
 
-### 命令模式
+### 指令模式
 
 **為什麼？**
 
 - 模型 ([`@colyseus/架構`](https://github.com/colyseus/schema)) 主要應包含資料,沒有繁重的遊戲邏輯.
 - 房間應該有盡可能少的代碼,並將動作轉發到其他結構
 
-**命令模式有幾個優點,例如：**
+**指令模式有幾個優點,例如：**
 
 - 其將調用操作的類別與知道如何執行操作的物件分離.
-- 它能讓您透過提供隊列系統來建立命令序列.
-- 實作擴展以新增新命令很容易,無需更改現有代碼即可完成.
-- 嚴格控制叫用命令的方式和時間.
+- 它能讓您透過提供隊列系統來建立指令序列.
+- 實作擴展以新增新指令很容易,無需更改現有代碼即可完成.
+- 嚴格控制叫用指令的方式和時間.
 - 提高代碼可讀性和單元測試的可能性.
 
 #### 使用方式
@@ -94,7 +94,7 @@ class MyRoom extends colyseus.Room {
 }
 ```
 
-命令實作看起來像這樣：
+指令實作看起來像這樣：
 
 ```typescript fct_label="TypeScript"
 // OnJoinCommand.ts
@@ -126,7 +126,7 @@ exports.OnJoinCommand = class OnJoinCommand extends command.Command {
 
 #### 深入瞭解
 
-- 請參閱[命令定義](https://github.com/colyseus/command/blob/master/test/scenarios/CardGameScenario.ts)
+- 請參閱[指令定義](https://github.com/colyseus/command/blob/master/test/scenarios/CardGameScenario.ts)
 - 請參閱[使用方式](https://github.com/colyseus/command/blob/master/test/Test.ts)
 - 請參閱[實作](https://github.com/colyseus/command/blob/master/src/index.ts)
 

@@ -4,7 +4,7 @@
 
 ## 建议与最佳实践
 
-- 模拟服务端与客户端信息交换之后, 在两端分别设置断言.
+- 模拟服务端与客户端資訊交换之后, 在两端分别设置断言.
 - 测试完成后释放 Room 实例 - 确保每个测试对象都是为了测试而新建的, 不同测试间不要共用房间.
 - 每个测试都要标注 `async`.
 - 测试断言之前确保 [等待服务器或客户端的任务处理完成](#等待异步程序处理完成)
@@ -69,7 +69,7 @@ describe("testing your Colyseus app", () => {
 
 ### `room.waitForMessage(type)`
 
-等待某个 `type` 信息发送至服务器.
+等待某个 `type` 資訊发送至服务器.
 
 ```typescript
 it("should receive message", async() => {
@@ -78,10 +78,10 @@ it("should receive message", async() => {
 
     client1.send("foo", "payload");
 
-    // 等待想要的信息
+    // 等待想要的資訊
     const [ client, message ] = await room.waitForMessage("foo");
 
-    // ... 信息 "foo" 被服务器接收处理完成
+    // ... 資訊 "foo" 被服务器接收处理完成
     assert.strictEqual(client.sessionId, client1.sessionId);
     assert.strictEqual("payload", message);
 });
@@ -91,7 +91,7 @@ it("should receive message", async() => {
 
 ### `room.waitForNextMessage()`
 
-等待下一个信息发送至服务器.
+等待下一个資訊发送至服务器.
 
 **参数**
 
@@ -183,7 +183,7 @@ it("should connect into battle_room with options x, y, z", async () => {
 it("should do xyz after receiving message 'x'", async () => {
     const client = await colyseus.sdk.joinOrCreate("battle_room");
     await client.waitForNextPatch();
-    // 客户端收到信息后在这里设置断言
+    // 客户端收到資訊后在这里设置断言
 });
 ```
 
@@ -191,7 +191,7 @@ it("should do xyz after receiving message 'x'", async () => {
 
 ### `client.waitForMessage(type)`
 
-等待某个 `type` 信息发送至客户端.
+等待某个 `type` 資訊发送至客户端.
 
 ```typescript
 it("should do xyz after receiving message 'x'", async () => {
@@ -199,7 +199,7 @@ it("should do xyz after receiving message 'x'", async () => {
     client.send("ask-for-x");
 
     await client.waitForMessage("received-x");
-    // 客户端收到 "received-x" 信息后在这里设置断言.
+    // 客户端收到 "received-x" 資訊后在这里设置断言.
 });
 ```
 
@@ -207,7 +207,7 @@ it("should do xyz after receiving message 'x'", async () => {
 
 ### `client.waitForNextMessage()`
 
-等待下一个信息发送至客户端.
+等待下一个資訊发送至客户端.
 
 ```typescript
 it("should do xyz after receiving message 'x'", async () => {
@@ -215,7 +215,7 @@ it("should do xyz after receiving message 'x'", async () => {
     client.send("ask-for-x");
 
     await client.waitForNextMessage();
-    // 客户端收到下一个信息后在这里设置断言
+    // 客户端收到下一个資訊后在这里设置断言
 });
 ```
 

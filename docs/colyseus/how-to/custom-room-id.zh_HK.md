@@ -6,7 +6,7 @@
 2. 生成房間 ID(直到生成一個未被占用的 ID 為止).
 3. 用 Presence API 註冊新房間 ID.
 
-步驟 2 即使有數百萬個房間,這裏也很可能只需要使用 4 個字母長度的房間 ID 進行一次叠代.以該方式使用 Presence API 還能讓您在多臺機器上運行您的服務器(通過切換到 [RedisPresence](https://docs.colyseus.io/server/presence/#redispresence-clientopts)).
+步驟 2 即使有數百萬個房間,這裏也很可能只需要使用 4 個字母長度的房間 ID 進行一次叠代.以該方式使用 Presence API 還能讓您在多臺機器上執行您的伺服器(通過切換到 [RedisPresence](https://docs.colyseus.io/server/presence/#redispresence-clientopts)).
 
 參見下方代碼：
 

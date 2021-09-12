@@ -1,4 +1,4 @@
-# 服務器 API  &raquo; 定時事件
+# 伺服器 API  &raquo; 定時事件
 
 對於 [定時事件](https://www.w3.org/TR/2011/WD-html5-20110525/timers.html), 建議在您的 `Room` 實例中使用 [`this.clock`](/server/room/#clock-clocktimer) 方法.
 
@@ -79,7 +79,7 @@ export class MyRoom extends Room {
 
 #### `clock.elapsedTime`
 
-在 [`clock.start()`](#clockstart) 方法被調用後的運行時間,以毫秒計.只讀.
+在 [`clock.start()`](#clockstart) 方法被調用後的執行時間,以毫秒計.只讀.
 
 #### `clock.currentTime`
 
@@ -109,17 +109,17 @@ export class MyRoom extends Room {
 
 #### `delayed.reset()`
 
-重設運行時間
+重設執行時間
 
 ### 公用屬性
 
 #### `delayed.elapsedTime: number`
 
-`Delayed` 實例的運行時間,自開始起以毫秒計.
+`Delayed` 實例的執行時間,自開始起以毫秒計.
 
 #### `delayed.active: boolean`
 
-如果計時器仍在運行,返回 `true`.
+如果計時器仍在執行,返回 `true`.
 
 #### `delayed.paused: boolean`
 

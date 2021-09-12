@@ -1,4 +1,4 @@
-這是一份介紹如何使用腳本創建 colyseus 服務器的分步指南.
+這是一份介紹如何使用腳本創建 colyseus 伺服器的分步指南.
 
 ##工具要求
 
@@ -16,7 +16,7 @@ mkdir colyseusServer
 cd colyseusServer
 ```
 
-使用默認選項初始化 npm
+使用預設選項初始化 npm
 ```cmd
 npm init
 ```
@@ -44,7 +44,7 @@ npm i colyseus
 npm i --save-dev typescript ts-node-dev
 ```
 
-在項目的根目錄中新建名為 `tsconfig.json` 的文件夾
+在專案的根目錄中新建名為 `tsconfig.json` 的文件夾
 ```json
 {
     "compilerOptions": {
@@ -84,26 +84,26 @@ gameServer.listen(port)
 console.log(`[GameServer] Listening on Port: ${port}`)
 ```
 
-恭喜！您已完成 colyseus 服務器的安裝.
+恭喜！您已完成 colyseus 伺服器的安裝.
 
-##命令
+##指令
 
-您現在可以啟用服務器了：
+您現在可以啟用伺服器了：
 ```cmd
 npm start
 ```
 
-您可使用 `start:dev` 命令進行開發.服務器會在您修改文件後自動重啟.
+您可使用 `start:dev` 指令進行開發.伺服器會在您修改文件後自動重啟.
 ```cmd
 npm run start:dev
 ```
 
-生產環境需要先創建一個構建命令.
+生產環境需要先創建一個構建指令.
 ```cmd
 npm run build
 ```
 
-然後您就可以使用 `start:prod` 命令來啟動服務器了.該命令使用的是 `dist` 文件夾中 `build` 命令創建的文件.
+然後您就可以使用 `start:prod` 指令來啟動伺服器了.該指令使用的是 `dist` 文件夾中 `build` 指令創建的文件.
 ```cmd
 npm run start:prod
 ```

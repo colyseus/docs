@@ -18,7 +18,7 @@
 
 ### 建立準系統 Colyseus 伺服器
 
-使用 `npm init colyseus-app` 命令生成準系統 Colyseus 伺服器. 您可以選擇 TypeScript(推薦), JavaScript 或 Haxe 作為伺服器的首選語言.
+使用 `npm init colyseus-app` 指令生成準系統 Colyseus 伺服器. 您可以選擇 TypeScript(推薦), JavaScript 或 Haxe 作為伺服器的首選語言.
 
 ```
 npm init colyseus-app ./my-colyseus-app

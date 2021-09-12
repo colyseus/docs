@@ -1,19 +1,19 @@
-# 服務器 API &raquo; 傳輸
+# 伺服器 API &raquo; 傳輸
 
 Colyseus 目前提供兩個 WebSocket 實現作為其 Transport 層.
 
 每個 Transport 都有其自己的一組自定義選項.
 
-- [默認 WebSocket Transport (`ws`)](#default-websocket-transport-via-ws)
+- [預設 WebSocket Transport (`ws`)](#default-websocket-transport-via-ws)
 - [Native C++ WebSocket Transport (`uWebSockets.js`)](#native-c-websocket-transport-via-uwebsocketsjs)
 
 ---
 
-##  默認 WebSocket Transport (通過 `ws`)
+##  預設 WebSocket Transport (通過 `ws`)
 
-默認 WebSocket 傳輸使用 [`websockets/ws`](https://github.com/websockets/ws) 實現.
+預設 WebSocket 傳輸使用 [`websockets/ws`](https://github.com/websockets/ws) 實現.
 
-如果沒有 `transport` 提供給 [`Server`](/server/api/#new-server-options) 的構造函數,則自動使用帶有默認選項的 `WebSocketTransport`.
+如果沒有 `transport` 提供給 [`Server`](/server/api/#new-server-options) 的構造函數,則自動使用帶有預設選項的 `WebSocketTransport`.
 
 <!--
 
@@ -57,7 +57,7 @@ export default Arena({
 
 #### `options.server`:
 
-供 WebSocket 服務器重復使用的一個 Node.js http 服務器.如果您想將 Express 和 Colyseus 一起使用,這就能派上用場.
+供 WebSocket 伺服器重復使用的一個 Node.js http 伺服器.如果您想將 Express 和 Colyseus 一起使用,這就能派上用場.
 
 ```typescript fct_label="Example"
 import { createServer } from "http";
@@ -89,17 +89,17 @@ const gameServer = new Server({
 });
 ```
 
-如果不提供這個選項,將會自動為您創建一個 http 服務器.
+如果不提供這個選項,將會自動為您創建一個 http 伺服器.
 
 ---
 
 #### `options.pingInterval`
 
-服務器"ping"客戶端的毫秒數.
+伺服器"ping"客戶端的毫秒數.
 
-如果客戶端在 [pingMaxRetries](#optionspingmaxretries) 次重試後未能響應,將被強製斷開連接.
+如果客戶端在 [pingMaxRetries](#optionspingmaxretries) 次重試後未能響應,將被強製斷開連線.
 
-默認：`3000`
+預設：`3000`
 
 ---
 
@@ -107,7 +107,7 @@ const gameServer = new Server({
 
 ping 無響應的最大允許數.
 
-默認：`2`
+預設：`2`
 
 ---
 
@@ -120,7 +120,7 @@ ping 無響應的最大允許數.
     - `req` (http.IncomingMessage) 客戶端 HTTP GET 請求.
     - `secure` (Boolean) `true` 如果 `req.connection.authorized` 或 `req.connection.encrypted` 已設置.
 
-- `next` (Function) 用戶在 `info`字段檢查時必須調用的回調.此回調中的參數為：
+- `next` (Function) 用戶在 `info`字段檢查時必須調用的回呼.此回呼中的參數為：
     - `result` (Boolean) 是否接受握手.
     - `code`(Number) When `result` is `false` 此字段決定要發給客戶端的 HTTP 錯誤狀態代碼.
     - `name` (String) When `result` is `false` 此字段決定 HTTP 動作原因.
@@ -129,10 +129,10 @@ ping 無響應的最大允許數.
 
 ## 本機 C++ WebSocket Transport (通過 `uWebSockets.js`)
 
-[`uWebSockets.js`](https://github.com/uNetworking/uWebSockets.js) 實現通常會在可容納的 CCU 數量以及內存消耗方面比默認表現得好.
+[`uWebSockets.js`](https://github.com/uNetworking/uWebSockets.js) 實現通常會在可容納的 CCU 數量以及內存消耗方面比預設表現得好.
 
 !!! Warning "HTTP 路由的運作方式與 `uWebSockets.js` 不同"
-    使用 `uWebSockets.js` 的最大缺點在於其 HTTP/路由系統的運作方式與常規 Node.js/express 路徑不同.查看 [Custom HTTP routes with `uWebSockets.js`](#custom-http-routes-with-uwebsocketsjs) 了解更多相關信息
+    使用 `uWebSockets.js` 的最大缺點在於其 HTTP/路由系統的運作方式與常規 Node.js/express 路徑不同.查看 [Custom HTTP routes with `uWebSockets.js`](#custom-http-routes-with-uwebsocketsjs) 了解更多相關資訊
 
 **安裝**
 
@@ -157,19 +157,19 @@ const gameServer = new Server({
 
 #### `options.maxPayloadLength`
 
-接收消息最大長度.如果一個客戶端嘗試向您發送比它更大的信息,連接會立即關閉.
+接收消息最大長度.如果一個客戶端嘗試向您發送比它更大的資訊,連線會立即關閉.
 
-默認 `1024 * 1024`.
+預設 `1024 * 1024`.
 
 ---
 
 #### `options.idleTimeout`
 
-未發送或接受消息可經過的最大秒數.如果超時,連接將關閉.超時分辨率(時間粒度)通常為 4 秒,四舍五入取最接近的數值.
+未發送或接受消息可經過的最大秒數.如果超時,連線將關閉.超時分辨率(時間粒度)通常為 4 秒,四舍五入取最接近的數值.
 
 使用 `0` 來禁用.
 
-默認 `120`.
+預設 `120`.
 
 ---
 
@@ -178,7 +178,7 @@ const gameServer = new Server({
 使用何種 permessage-deflate 壓縮.
 `uWS.DISABLED`, `uWS.SHARED_COMPRESSOR` 或任意 `uWS.DEDICATED_COMPRESSOR_xxxKB`.
 
-默認 `uWS.DISABLED`
+預設 `uWS.DISABLED`
 
 ---
 
@@ -186,7 +186,7 @@ const gameServer = new Server({
 
 發布或發送消息時每個套接口所允許的反向壓力最大長度.高反向壓力的緩慢接收器將被跳過,直至其趕上或超時為止.
 
-默認 `1024 * 1024`.
+預設 `1024 * 1024`.
 
 ---
 
@@ -212,7 +212,7 @@ SSL 文件的路徑(通過 Node.js 應用程序用於 SSL 終端.)
 
 #### 本機 `uWebSockets.js` 路由：
 
-`uWebSocketsTransport` 會公布變量 `app`,作為 `uWebSockets.js` 函數庫中的原始 `uws.App` 或 `uws.SSLApp`.
+`uWebSocketsTransport` 會公布變數 `app`,作為 `uWebSockets.js` 函數庫中的原始 `uws.App` 或 `uws.SSLApp`.
 
 您可以直接使用 `transport.app` 來綁定使用 `uWebSockets.js` API 的 http 路由,如下所示：
 
@@ -228,7 +228,7 @@ transport.app.get("/*", (res, req) => {
 });
 ```
 
-查看 [`uWebSockets.js` examples](https://github.com/uNetworking/uWebSockets.js/tree/master/examples) 了解更多信息.
+查看 [`uWebSockets.js` examples](https://github.com/uNetworking/uWebSockets.js/tree/master/examples) 了解更多資訊.
 
 #### 替代選項：express 兼容層
 

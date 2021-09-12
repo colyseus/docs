@@ -15,7 +15,7 @@
 
 !!! NOTE
     - Arena 應用程式 **僅支援** 編譯後的 Javascript 代碼. 如果您使用 TypeScript, 請務必先建置您的代碼並上傳建置資料夾的內容.
-    - 如果您使用 ***NPM*** 樣板建立 Colyseus 伺服器, 則 ``` npm run build ``` 命令將編譯所有必要的檔案並將其複製到您的輸出資料夾中.
+    - 如果您使用 ***NPM*** 樣板建立 Colyseus 伺服器, 則 ``` npm run build ``` 指令將編譯所有必要的檔案並將其複製到您的輸出資料夾中.
     - 為 TypeScript 建置輸出資料夾: ``` lib ``` / JavaScript: ``` upload ```
 
 ## 伺服器代碼概覽
@@ -80,6 +80,6 @@ ABC_GAME_MODE=dev
 
 - **index.js** 在 Arena Cloud 上託管時不使用此檔案. 此檔案有助於本機開發託管或自託管. 使用 Arena Cloud 時, 您的 *arena.config.js* 將由專為企業級可擴展性和穩定性設計的 Colyseus 開源的修改版本初始化.
 
-- **package.json** **NPM** 樣板上的建置命令將您現有的 package.json 複製到分發資料夾中. 此檔案用於在遊戲伺服器啟動時安裝使用者定義的模組.
+- **package.json** **NPM** 樣板上的建置指令將您現有的 package.json 複製到分發資料夾中. 此檔案用於在遊戲伺服器啟動時安裝使用者定義的模組.
 
 - **.npmrc** *（可選）* : 請參閱[使用私有 NPM 儲存庫](../../reference/npmrc-custom/)

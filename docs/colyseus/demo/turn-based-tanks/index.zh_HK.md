@@ -11,17 +11,17 @@
 
 ## 開始
 
-### 啟用本地服務器
+### 啟用本地伺服器
 
-您需要從 **提供的服務器目錄** 中選擇安裝並啟用服務器,以正常操作本演示.按照 [這些文檔中 Unity3d 部分之"運行演示服務器"](https://docs.colyseus.io/getting-started/unity3d-client/#running-the-demo-server) 中的說明操作即可.
+您需要從 **提供的伺服器目錄** 中選擇安裝並啟用伺服器,以正常操作本演示.按照 [這些文檔中 Unity3d 部分之"執行演示伺服器"](https://docs.colyseus.io/getting-started/unity3d-client/#running-the-demo-server) 中的說明操作即可.
 
 ### ColyseusSettings ScriptableObject
 
-服務器的所有設置都可通過此處的 ColyseusSetting ScriptableObject 進行更改：
+伺服器的所有設置都可通過此處的 ColyseusSetting ScriptableObject 進行更改：
 
 ![ScriptableObject](../common-images/scriptable-object.png)
 
-如果您運行的是本地服務器,默認的設置就能夠滿足需求；但若您希望托管服務器,則需要相應地更改 **Colyseus 服務器地址** 和 **Colyseus 服務器端口**.
+如果您執行的是本地伺服器,預設的設置就能夠滿足需求；但若您希望托管伺服器,則需要相應地更改 **Colyseus 伺服器地址** 和 **Colyseus 伺服器端口**.
 
 ## 演示概覽
 
@@ -61,7 +61,7 @@ private TanksRoomsAvailable[] TrimRooms(TanksRoomsAvailable[] originalRooms)
 
 ### 保持房間的存在狀態
 
-為了使這個演示成為一個異步的回合製遊戲,我們需要保持房間的存在狀態,即使是在雙方玩家都離開房間之後.通過將 `autoDispose` 標誌設為 false, 該房間將繼續保持存在狀態. (你可以在 onCreate 處理程序的 TanksRoom 服務器代碼中看到此項).
+為了使這個演示成為一個異步的回合製遊戲,我們需要保持房間的存在狀態,即使是在雙方玩家都離開房間之後.通過將 `autoDispose` 標誌設為 false, 該房間將繼續保持存在狀態. (你可以在 onCreate 處理程序的 TanksRoom 伺服器代碼中看到此項).
 
 ``` javascript
 this.autoDispose = false;
@@ -75,12 +75,12 @@ if(this.metadata.team0 && this.metadata.team1 == null) {
     disconnectRoom = true;
 }
 
-// 房間裏沒有其他用戶,所以斷開連接
+// 房間裏沒有其他用戶,所以斷開連線
 if(this.inProcessOfQuitingGame && this.state.networkedUsers.size <= 1 && this.connectedUsers <= 1) {
     disconnectRoom = true;
 }
 
-// 房間是否應該斷開連接?
+// 房間是否應該斷開連線?
 if(disconnectRoom) {
     this.disconnect();
 }
@@ -88,13 +88,13 @@ if(disconnectRoom) {
 
 ### 暫停房間
 
-由於這是一個異步遊戲的示例,我們的房間可能在任何時間都沒有用戶連接進來.當沒有用戶連接至房間時,服務器不需要更新模擬循環.當用戶斷開與房間的連接時,將執行檢查以查看是否不再有用戶連接到房間.當沒有更多用戶連接到房間時,通過將延遲設置為高值,可以有效地暫停模擬間隔.在本示例中,該值略大於 24 天.
+由於這是一個異步遊戲的示例,我們的房間可能在任何時間都沒有用戶連線進來.當沒有用戶連線至房間時,伺服器不需要更新模擬循環.當用戶斷開與房間的連線時,將執行檢查以查看是否不再有用戶連線到房間.當沒有更多用戶連線到房間時,通過將延遲設置為高值,可以有效地暫停模擬間隔.在本示例中,該值略大於 24 天.
 
 ``` javascript
 
 // 在房間的 `onLeave` 處理程序中
-// 檢查服務器是否應該暫停模擬循環,因為
-// 沒有用戶連接到房間
+// 檢查伺服器是否應該暫停模擬循環,因為
+// 沒有用戶連線到房間
 let anyConnected: boolean = false;
 this.state.players.forEach((player, index) => {
     if(player.connected) {
@@ -103,7 +103,7 @@ this.state.players.forEach((player, index) => {
 });
 
 if(anyConnected == false) {
-    // 沒有用戶連接,所以暫停服務器更新
+    // 沒有用戶連線,所以暫停伺服器更新
     this.setServerPause(true);
 }
 
@@ -114,7 +114,7 @@ private setServerPause(pause: boolean) {
         this.setSimulationInterval(dt => this.gameLoop(dt), this.pauseDelay);
     }
     else {
-        // 設置模擬間隔回調
+        // 設置模擬間隔回呼
         this.setSimulationInterval(dt => this.gameLoop(dt));
     }
 
@@ -126,16 +126,16 @@ private setServerPause(pause: boolean) {
 ``` javascript
 
 // 在房間的 `onJoin` 處理程序中/
-// 檢查服務器是否需要解除暫停狀態
+// 檢查伺服器是否需要解除暫停狀態
 if(this.serverPaused) {
-    // 服務器目前處於暫停狀態,由於有玩家加入連接,因此取消暫停狀態
+    // 伺服器目前處於暫停狀態,由於有玩家加入連線,因此取消暫停狀態
     this.setServerPause(false);
 }
 ```
 
 ### 播放演示
 
-讓玩家出生在 "TanksLobby" 場景,位置是 `Assets\TurnBasedTanks\Scenes\TanksLobby`. 輸入你的用戶名並創建房間以開始. **如果你無法進入房間製作界面,請確認你的本地服務器工作正常,並檢查 Unity 編輯器的錯誤日誌.** 如果你成功了,客戶端將加載 "TankArena" 場景.
+讓玩家出生在 "TanksLobby" 場景,位置是 `Assets\TurnBasedTanks\Scenes\TanksLobby`. 輸入你的用戶名並創建房間以開始. **如果你無法進入房間製作界面,請確認你的本地伺服器工作正常,並檢查 Unity 編輯器的錯誤日誌.** 如果你成功了,客戶端將加載 "TankArena" 場景.
 
 - 本演示為異步回合製遊戲.
 

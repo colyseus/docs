@@ -131,7 +131,7 @@ sudo a2enmod proxy_wstunnel
 
 ## greenlock-express
 
-如果你想在服務器上快速配置SSL,Greenlock是個不錯的工具,不需要配置反向代理.
+如果你想在伺服器上快速配置SSL,Greenlock是個不錯的工具,不需要配置反向代理.
 
 在使用 [`greenlock-express`](https://www.npmjs.com/package/greenlock-express) 時,你 **不應該** 在其後面配置任何反向代理,比如 [Nginx](#nginx-recommended) 或 [Apache](#apache).
 
@@ -187,9 +187,9 @@ if (process.env.NODE\_ENV === "production") {
 
 先決條件：
 
-* `package.json` 與 `package-lock.json` 位於項目中.
+* `package.json` 與 `package-lock.json` 位於專案中.
 
-* 創建`npm start`命令來啟動伺服器
+* 創建`npm start` 指令來啟動伺服器
 
 步驟：
 
@@ -220,7 +220,7 @@ CMD [ "npm", "start" ]
 ```
 node\_modules npm-debug.log
 ```
-這將防止本機模組和調試日誌被復製到 Docker 映像上,並可能覆蓋安裝在映像中的模塊.
+這將防止本機模組和調試日誌被復製到 Docker 映像上,並可能覆蓋安裝在映像中的模組.
 
 **步驟 4** 進入存放 Dockerfile 的目錄,執行以下指令構建Docker映像. -t 標誌允許您標記映像,以便稍後使用中更容易找到：
 
@@ -248,7 +248,7 @@ docker run -p 8080:8080 -d <your username>/colyseus-server
 使用 -d 執行映像會使容器以分離模式執行,讓容器在後臺執行. 而 -p 標誌將公共端口重定向到容器內的私有端口.
 
 
-**步驟 7** 完成,現在你可以通過 `localhost:8080` 連接至伺服器
+**步驟 7** 完成,現在你可以通過 `localhost:8080` 連線至伺服器
 
 更多資訊：
 

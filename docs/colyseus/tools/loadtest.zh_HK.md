@@ -14,16 +14,16 @@ npm install --save-dev @colyseus/loadtest
 
 ## 用法
 
-`colyseus-loadtest` 命令需要的參數有:
+`colyseus-loadtest` 指令需要的參數有:
 
 - `script`: 要使用的自定義腳本
-- `--endpoint`: 您的伺服器入口(默認使用 `ws://localhost:2567`)
-- `--room`: 要連接的房間名
+- `--endpoint`: 您的伺服器入口(預設使用 `ws://localhost:2567`)
+- `--room`: 要連線的房間名
 - `--numClients`: 進入房間的客戶端數量
 
 ### 範例
 
-這是一個範例腳本文件. 基於每個已連接客戶端上 room 的生命周期, 可以實現一個 "bot", 與房間進行交互.
+這是一個範例腳本文件. 基於每個已連線客戶端上 room 的生命周期, 可以實現一個 "bot", 與房間進行交互.
 
 ```typescript fct_label="TypeScript"
 // script.ts
@@ -79,7 +79,7 @@ exports.onStateChange = function (state) {
 }
 ```
 
-### 測試 50 個客戶端連接進入 `"battle"` 房間
+### 測試 50 個客戶端連線進入 `"battle"` 房間
 
 ```
 npx colyseus-loadtest script.ts --room battle --numClients 50 --endpoint ws://localhost:2567

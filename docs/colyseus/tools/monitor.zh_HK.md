@@ -9,7 +9,7 @@
 - 檢查特定房間
     - 檢視房間狀態
     - 為用戶端傳送/廣播訊息
-    - 強制中斷用戶端的連接
+    - 強制中斷用戶端的連線
 
 <img src="https://github.com/colyseus/colyseus-monitor/raw/master/media/demo.gif?raw=true" />
 

@@ -10,7 +10,7 @@
 
 ## 客戶端實例：
 
-`客戶端` 實例用於執行匹配調用,而後連接到一個或多個房間.
+`客戶端` 實例用於執行匹配調用,而後連線到一個或多個房間.
 
 ```typescript fct_label="JavaScript"
 import Colyseus from "colyseus.js";
@@ -40,7 +40,7 @@ import io.colyseus.Client;
 var client = new Client("ws://localhost:2567");
 ```
 
-尚未通過創建 `客戶端` 實例建立起與服務器的連接.
+尚未通過創建 `客戶端` 實例建立起與伺服器的連線.
 
 ### 方法
 
@@ -327,7 +327,7 @@ client->joinById<YourStateClass>("battle", {/* options */}, [=](std::string err,
 
 將客戶端重新接入原先接入過的房間.
 
-必須與服務器端中的 [`allowReconnection()`](/server/room#allowreconnection-client-seconds) 一起使用.
+必須與伺服器端中的 [`allowReconnection()`](/server/room#allowreconnection-client-seconds) 一起使用.
 
 ```typescript fct_label="TypeScript"
 try {
@@ -566,15 +566,15 @@ client->consumeSeatReservation<YourStateClass>(reservation, [=](std::string err,
 
 #### `state: any`
 
-當前房間狀態.該變量始終與服務器端的最新 `狀態` 同步.要想偵聽整體狀態的更新情況,參見 [`onStateChange`](#onstatechange) 事件.
+當前房間狀態.該變數始終與伺服器端的最新 `狀態` 同步.要想偵聽整體狀態的更新情況,參見 [`onStateChange`](#onstatechange) 事件.
 
-您可將回調附加到您狀態內的特定架構上. [參見架構回調](/state/schema/#client-side).
+您可將回呼附加到您狀態內的特定架構上. [參見架構回呼](/state/schema/#client-side).
 
 ---
 
 #### `sessionId: string`
 
-當前已接入客戶端的唯一標識.該屬性與服務器端中的 [`client.sessionId`](/server/client/#sessionid-string) 互相匹配.
+當前已接入客戶端的唯一標識.該屬性與伺服器端中的 [`client.sessionId`](/server/client/#sessionid-string) 互相匹配.
 
 ---
 
@@ -654,14 +654,14 @@ room.send("move", { direction: "left" });
 room.send(0, { direction: "left" });
 ```
 
-!!! tip "使用服務器端的 `Room#onMessage()` 進行信息檢索"
+!!! tip "使用伺服器端的 `Room#onMessage()` 進行資訊檢索"
     查看 [Server-side API » Room - onMessage()](/server/room/#onmessage-type-callback) 章節
 
 ---
 
 #### `leave ()`
 
-斷開與房間的連接.
+斷開與房間的連線.
 
 **Parameters**
 
@@ -700,7 +700,7 @@ room.leave(false);
 ```
 
 !!! Tip
-    使用 [Room#onLeave()](/server/room/#onleave-client-consented) 來處理與服務器端的斷連.
+    使用 [Room#onLeave()](/server/room/#onleave-client-consented) 來處理與伺服器端的斷連.
 
 ---
 
@@ -712,10 +712,10 @@ room.leave(false);
 
 #### onStateChange
 
-!!! Tip "您可為特定的 Schema 架構設置觸發回調"
+!!! Tip "您可為特定的 Schema 架構設置觸發回呼"
     更多詳情可查看 [狀態處理» Schema »客戶端](/state/schema/#client-side) 章節.
 
-服務器狀態更新時觸發該事件.
+伺服器狀態更新時觸發該事件.
 
 ```typescript fct_label="JavaScript"
 room.onStateChange.once((state) => {
@@ -760,7 +760,7 @@ room.onStateChange = [=](State>* state) {
 
 #### onMessage
 
-服務器直接或通過廣播向客戶端發送消息時觸發該事件.
+伺服器直接或通過廣播向客戶端發送消息時觸發該事件.
 
 ```typescript fct_label="JavaScript"
 room.onMessage("powerup", (message) => {
@@ -802,7 +802,7 @@ room.onMessage("powerup", [=](msgpack::object message) -> void {
 ```
 
 !!! Tip
-    若要從服務器直接發送消息至客戶端,您需要使用 [client.send()](/server/client/#sendtype-message) 或 [room.broadcast()](/server/room/#broadcast-type-message-options) 進行操作.
+    若要從伺服器直接發送消息至客戶端,您需要使用 [client.send()](/server/client/#sendtype-message) 或 [room.broadcast()](/server/room/#broadcast-type-message-options) 進行操作.
 
 ---
 
@@ -844,7 +844,7 @@ room.onLeave = [=]() -> void {
 
 - `1000` - 定期關閉套接字
 - `1001` 到 `1015` 之間 - 套接字異常關閉
-- `4000` 到 `4999` 之間 - 自定義套接字關閉代碼(查看 [更多詳細信息](/server/room/#table-of-websocket-close-codes))
+- `4000` 到 `4999` 之間 - 自定義套接字關閉代碼(查看 [更多詳細資訊](/server/room/#table-of-websocket-close-codes))
 
 
 ---
