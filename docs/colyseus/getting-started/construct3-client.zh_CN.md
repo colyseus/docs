@@ -4,11 +4,11 @@
 
 - [下载 Construct 3 SDK](https://www.construct.net/en/make-games/addons/111/colyseus-multiplayer-client)
 
-!!! Warning "注意！您需要一个服务器来使用 Colyseus！"
+!!! Warning "注意!您需要一个服务器来使用 Colyseus!"
     众所周知 Construct 的现有功能可以从客户端"托管"一个多人进程. 这在使用 Colyseus 时是不可能的.Colyseus 是一个权威性 **服务器**,由 Node.js 编写. 您无法使您的客户端直接托管游戏进程.
 
 !!! tip "Construct 3 SDK:Source code"
-    您可以在此找到 Construct SDK 的源代码：[Construct 3](https://github.com/colyseus/colyseus-construct3) (与 Construct3 的 C3 和 C2 运行时间兼容 / [Construct 2](https://github.com/colyseus/colyseus-construct2) (非最新版 - 与 0.9.x 服务器兼容)
+    您可以在此找到 Construct SDK 的源代码: [Construct 3](https://github.com/colyseus/colyseus-construct3) (与 Construct3 的 C3 和 C2 运行时间兼容 / [Construct 2](https://github.com/colyseus/colyseus-construct2) (非最新版 - 与 0.9.x 服务器兼容)
 
 ## 示例项目
 
@@ -20,7 +20,7 @@
 
 ## 处理消息
 
-从服务器向客户端发送消息时的一个重要注意事项：您需要提供一个拥有 `"type"` 字段的对象, 以便客户端能够进行解析.
+从服务器向客户端发送消息时的一个重要注意事项: 您需要提供一个拥有 `"type"` 字段的对象, 以便客户端能够进行解析.
 
 **服务器端**
 
@@ -41,7 +41,7 @@ typescript this.broadcast("foo", "bar");
 ## 行动
 
 ### 设置端点为{0}
-格式：wss://example.com
+格式: wss://example.com
 
 ### 以{1}选项加入房间{0}.
 以名称加入房间

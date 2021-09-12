@@ -1,6 +1,6 @@
 # Colyseus SDK &raquo; 用法
 
-目前 Colyseus 有以下平臺的客戶端 SDK：
+目前 Colyseus 有以下平臺的客戶端 SDK:
 
 - [Unity](/getting-started/unity3d-client) ([查看源代碼](https://github.com/colyseus/colyseus-unity3d))
 - [JavaScript/TypeScript](/getting-started/javascript-client) ([查看源代碼](https://github.com/colyseus/colyseus.js))
@@ -8,7 +8,7 @@
 - [Haxe](/getting-started/haxe-client) ([查看源代碼](https://github.com/colyseus/colyseus-hx))
 - [Construct3](/getting-started/construct3-client) ([查看源代碼](https://github.com/colyseus/colyseus-construct3))
 
-## 客戶端實例：
+## 客戶端實例:
 
 `客戶端` 實例用於執行匹配調用,而後連線到一個或多個房間.
 
@@ -560,7 +560,7 @@ client->consumeSeatReservation<YourStateClass>(reservation, [=](std::string err,
 !!! Tip "高級用法"
     參見 [Match-maker API](/server/matchmaker/#reserveseatforroom-options) 了解如何在房間內為某個客戶端預留席位.
 
-## 房間實例：
+## 房間實例:
 
 ### 屬性
 
@@ -596,7 +596,7 @@ client.joinById(roomId).then(room => {
 
 #### `name: string`
 
-房間處理程序的名稱.示例：`"battle"`.
+房間處理程序的名稱.示例: `"battle"`.
 
 ---
 
@@ -840,7 +840,7 @@ room.onLeave = [=]() -> void {
 };
 ```
 
-**可能出現的關閉 `代碼` 及其含義：**
+**可能出現的關閉 `代碼` 及其含義: **
 
 - `1000` - 定期關閉套接字
 - `1001` 到 `1015` 之間 - 套接字異常關閉

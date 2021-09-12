@@ -6,7 +6,7 @@
 
 ## Heroku
 
-建议您只有在进行游戏原型设计阶段使用 Heroku. 通过点击下面的按钮就能部署 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 项目：
+建议您只有在进行游戏原型设计阶段使用 Heroku. 通过点击下面的按钮就能部署 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 项目:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/colyseus/colyseus-examples)
 
@@ -151,7 +151,7 @@ import { Server } from "colyseus";
 function setup(app: express.Application, server: http.Server) {
   const gameServer = new Server({ server });
 
-  // TODO：按需配置 `app` 和 `gameServer`.
+  // TODO: 按需配置 `app` 和 `gameServer`.
   // gameServer.define("room", YourRoom);
 
   return app;

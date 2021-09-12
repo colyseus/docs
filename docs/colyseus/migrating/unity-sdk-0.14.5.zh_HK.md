@@ -68,7 +68,7 @@ FossilDeltaSerializer 已經從插件中完全移除.
 
 - 匯入全新 Colyseus Unity 包
 - 從 Plugins 文件夾刪除所有 Colyseus 代碼
-    - 目錄包含：
+    - 目錄包含:
         - Colyseus
         - FossilDelta
         - Serialization
@@ -80,4 +80,4 @@ FossilDeltaSerializer 已經從插件中完全移除.
     - 單擊右鍵 > Create > Colyseus > Generate ColyseusSettings ScriptableObject
     - 在您的管理器的 "ColyseusSettings" 字段中分配該對象
 
-預估現有插件的全部潛在用例並在製定這些變更時將其納入考量, 是極其困難的. 不過, 我們認為所做的變更對於專案的未來有利, 能夠提高長久性和穩定性. 如果您在嘗試更新您的專案時遇到任何問題, 請聯系我們並讓我們知悉, 這樣我們才能提供幫助, 並升級該文件以在之後幫助其他開發者！
+預估現有插件的全部潛在用例並在製定這些變更時將其納入考量, 是極其困難的. 不過, 我們認為所做的變更對於專案的未來有利, 能夠提高長久性和穩定性. 如果您在嘗試更新您的專案時遇到任何問題, 請聯系我們並讓我們知悉, 這樣我們才能提供幫助, 並升級該文件以在之後幫助其他開發者!

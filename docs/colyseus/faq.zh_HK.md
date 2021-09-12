@@ -18,7 +18,7 @@ Linux 伺服器預設的 "file descriptor limit"(開放連線數)大約是 1024 
 
 Colyseus 並沒有提供任何用戶端預測的解決方案. 像 [wilds.io](http://wilds.io/) 和 [mazmorra.io](https://mazmorra.io/) 樣的遊戲不使用任何形式的用戶端預測. [`lerp`](http://gamestd.io/mathf/globals.html#lerp) 的用戶座標通常會得到合理的結果.
 
-### 我得到了此類錯誤：`"Class constructor Room cannot be invoked without 'new'"`,我應該怎麼做？
+### 我得到了此類錯誤: `"Class constructor Room cannot be invoked without 'new'"`,我應該怎麼做？
 
 請確保您的 `tsconfig.json` 中有 `es2015` 或更高版本.
 

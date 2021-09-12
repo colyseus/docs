@@ -9,7 +9,7 @@
 
 ![Arena 應用程式管理視圖](../../images/edit-server-code.jpg)
 
-在此畫面中, 您可以將代碼 **建立** 、 **刪除** 、 **上傳** 和 **部署** 到您的部署遊戲伺服器隊列. 選擇 **上傳** 可開啟對話框, 您可以從這裡選擇上傳單一檔案或上傳資料夾.
+在此畫面中, 您可以將代碼 **建立** ,  **刪除** ,  **上傳** 和 **部署** 到您的部署遊戲伺服器隊列. 選擇 **上傳** 可開啟對話框, 您可以從這裡選擇上傳單一檔案或上傳資料夾.
 
 ![Arena 應用程式管理視圖](../../images/upload-dialog.jpg)
 
@@ -24,7 +24,7 @@
 
 ![Arena 代碼樣板](../../images/code-template.jpg)
 
-- **arena.config.js:**您應該在此檔案中新增房間聲明、快速加載項以及在伺服器啟動之前需要調用的任何其他函數. 將應用程序部署到 Arena Cloud 時, 將此視為您的 ***index.js***.
+- **arena.config.js:**您應該在此檔案中新增房間聲明, 快速加載項以及在伺服器啟動之前需要調用的任何其他函數. 將應用程序部署到 Arena Cloud 時, 將此視為您的 ***index.js***.
 
 *File ```arena.config.js``` Example:*
 ```
@@ -82,4 +82,4 @@ ABC_GAME_MODE=dev
 
 - **package.json** **NPM** 樣板上的建置指令將您現有的 package.json 複製到分發資料夾中. 此檔案用於在遊戲伺服器啟動時安裝使用者定義的模組.
 
-- **.npmrc** *（可選）* : 請參閱[使用私有 NPM 儲存庫](../../reference/npmrc-custom/)
+- **.npmrc** * (可選)* : 請參閱[使用私有 NPM 儲存庫](../../reference/npmrc-custom/)

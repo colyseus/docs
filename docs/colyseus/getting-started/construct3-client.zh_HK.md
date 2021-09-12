@@ -4,11 +4,11 @@
 
 - [下載 Construct 3 SDK](https://www.construct.net/en/make-games/addons/111/colyseus-multiplayer-client)
 
-!!! Warning "註意！您需要一個伺服器來使用 Colyseus！"
+!!! Warning "註意!您需要一個伺服器來使用 Colyseus!"
     眾所周知 Construct 的現有功能可以從客戶端"托管"一個多人進程. 這在使用 Colyseus 時是不可能的.Colyseus 是一個權威性 **伺服器**,由 Node.js 編寫. 您無法使您的客戶端直接托管遊戲進程.
 
 !!! tip "Construct 3 SDK:Source code"
-    您可以在此找到 Construct SDK 的源代碼：[Construct 3](https://github.com/colyseus/colyseus-construct3) (與 Construct3 的 C3 和 C2 執行時間兼容 / [Construct 2](https://github.com/colyseus/colyseus-construct2) (非最新版 - 與 0.9.x 伺服器兼容)
+    您可以在此找到 Construct SDK 的源代碼: [Construct 3](https://github.com/colyseus/colyseus-construct3) (與 Construct3 的 C3 和 C2 執行時間兼容 / [Construct 2](https://github.com/colyseus/colyseus-construct2) (非最新版 - 與 0.9.x 伺服器兼容)
 
 ## 示例專案
 
@@ -20,7 +20,7 @@
 
 ## 處理消息
 
-從伺服器向客戶端發送消息時的一個重要註意事項：您需要提供一個擁有 `"type"` 字段的對象, 以便客戶端能夠進行解析.
+從伺服器向客戶端發送消息時的一個重要註意事項: 您需要提供一個擁有 `"type"` 字段的對象, 以便客戶端能夠進行解析.
 
 **伺服器端**
 
@@ -41,7 +41,7 @@ typescript this.broadcast("foo", "bar");
 ## 行動
 
 ### 設置端點為{0}
-格式：wss://example.com
+格式: wss://example.com
 
 ### 以{1}選項加入房間{0}.
 以名稱加入房間

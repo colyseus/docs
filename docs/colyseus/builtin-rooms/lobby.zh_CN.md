@@ -22,7 +22,7 @@ gameServer
 
 在 `onCreate()`, `onJoin()`, `onLeave()` 和 `onDispose()` 期间,将自动通知 `LobbyRoom`.
 
-如果您已经 [更新了您的房间的`元数据`](/server/room/#setmetadata-metadata) , 并且还需要更新游戏大厅,那么您可以在元数据更新后马上调用 `updateLobby()`：
+如果您已经 [更新了您的房间的`元数据`](/server/room/#setmetadata-metadata) , 并且还需要更新游戏大厅,那么您可以在元数据更新后马上调用 `updateLobby()`:
 
 ```typescript
 import { Room, updateLobby } from "colyseus";

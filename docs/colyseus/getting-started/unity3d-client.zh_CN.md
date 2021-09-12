@@ -8,12 +8,12 @@
 ## 使用 Unity Package Manager
 
 - 前往 Window > Package Manager点击按钮 "+", 选择"Add package from git URL..."
-- 进入Git URL：`https://github.com/colyseus/colyseus-unity3d.git#upm`
+- 进入Git URL: `https://github.com/colyseus/colyseus-unity3d.git#upm`
 - 点击"ADD"
 
 点击导入示例项目以测试内置的演示文件.
 
-## 使用旧版 `.unitypackage`：
+## 使用旧版 `.unitypackage`:
 
 - 下载最新的 [Colyseus Unity SDK](https://github.com/colyseus/colyseus-unity3d/releases/latest/download/Colyseus_Plugin.unitypackage)
 - 将 `Colyseus_Plugin.unitypackage` 内容导入到您的项目中.
@@ -24,7 +24,7 @@
 
 下面我们将向您介绍 Unity 客户端的安装, 运行以及连接到 Colyseus 服务器的具体步骤.
 
-涵盖的主题如下：
+涵盖的主题如下:
 
 - 在本地运行服务器
 - 服务器设置
@@ -36,7 +36,7 @@
 
 ## 在本地运行服务器
 
-要想在本地运行演示服务器,请在您的终端设备上运行以下命令：
+要想在本地运行演示服务器,请在您的终端设备上运行以下命令:
 
 ```
 cd Server
@@ -44,9 +44,9 @@ npm install
 npm start
 ```
 
-内置的演示文件带有一个 [房间处理程序](https://github.com/colyseus/colyseus-unity3d/blob/master/Server/src/rooms/MyRoom.ts), 内含处理游戏实体和玩家的建议. 您可随意修改所有内容来满足自身需求！
+内置的演示文件带有一个 [房间处理程序](https://github.com/colyseus/colyseus-unity3d/blob/master/Server/src/rooms/MyRoom.ts), 内含处理游戏实体和玩家的建议. 您可随意修改所有内容来满足自身需求!
 
-## 创建 Colyseus 设置对象：
+## 创建 Colyseus 设置对象:
 
 - 在项目文件夹中任意位置点击鼠标右键,选择"Create",选择"Colyseus",然后点击"Generate ColyseusSettings Scriptable Object"
 - 根据需要填写字段.
@@ -61,7 +61,7 @@ npm start
         - `ColyseusRequest` 类使用默认标头.
         - 示例标头可包含`"Content-Type"` 的 `"名称"`以及`"application/json"` 的 `"值"`.
 
-## Colyseus 管理器：
+## Colyseus 管理器:
 
 - 您需要创建自己的管理器脚本,可以从 `ColyseusManager` 中获取,也可以使用并修改所提供的 `ExampleManager`.
 ```csharp
@@ -70,7 +70,7 @@ public class ExampleManager : ColyseusManager<ExampleManager>
 - 创建场景内管理器对象来托管您的自定义管理器脚本.
 - 在场景检查器中为您的管理器提供 Colyseus 设置对象参考.
 
-## 客户端：
+## 客户端:
 
 - 调用您管理器中的 `InitializeClient()` 来创建一个 `ColyseusClient` 对象,该对象将储存在 `ColyseusManager` 的变量 `client` 中.它将被用来创建/加入房间以及建立与服务器的连接.
 ```csharp
@@ -96,32 +96,32 @@ public override void InitializeClient()
     guildClient = new ColyseusClient(guildHostURLEndpoint);             //Create the guildClient with only a string endpoint
 }
 ```
-- 您可以通过调用 `ColyseusClient` 的 `GetAvailableRooms` 来获取服务端上的空闲房间信息：
+- 您可以通过调用 `ColyseusClient` 的 `GetAvailableRooms` 来获取服务端上的空闲房间信息:
 ```csharp
 return await GetAvailableRooms<ColyseusRoomAvailable>(roomName, headers);
 ```
 ## 接入房间
 
 - 有多种创建或加入房间的方式.
-- 您可以调用 `ColyseusClient` 的 `创建`方法来创建房间,{2>ColyseusClient<2}将自动在服务端上创建房间实例并加入其中：
+- 您可以调用 `ColyseusClient` 的 `创建`方法来创建房间,{2>ColyseusClient<2}将自动在服务端上创建房间实例并加入其中:
 ```csharp
 ExampleRoomState room = await client.Create<ExampleRoomState>(roomName);
 ```
 
-- 您可以调用 `JoinById` 来加入特定房间：
+- 您可以调用 `JoinById` 来加入特定房间:
 ```csharp
 ExampleRoomState room = await client.JoinById<ExampleRoomState>(roomId);
 ```
 
-- 您可以调用 `ColyseusClient` 的 `JoinOrCreate`,它会为您匹配并接入空闲房间；在可行的情况下,也会在服务端上创建一个新房间并加入其中：
+- 您可以调用 `ColyseusClient` 的 `JoinOrCreate`,它会为您匹配并接入空闲房间; 在可行的情况下,也会在服务端上创建一个新房间并加入其中:
 ```csharp
 ExampleRoomState room = await client.JoinOrCreate<ExampleRoomState>(roomName);
 ```
 
-## 房间选项：
+## 房间选项:
 
 - 创建新房间时您可以传入一个房间选项字典,比如开始游戏的最少人数要求,或者要在您服务器上运行的自定义逻辑文件的名称.
-- 选项所属类型为`对象`, 并由 `字符串` 类型进行键控：
+- 选项所属类型为`对象`, 并由 `字符串` 类型进行键控:
 ```csharp
 Dictionary<string, object> roomOptions = new Dictionary<string, object>
 {
@@ -132,9 +132,9 @@ Dictionary<string, object> roomOptions = new Dictionary<string, object>
 ExampleRoomState room = await ExampleManager.Instance.JoinOrCreate<ExampleRoomState>(roomName, roomOptions);
 ```
 
-## 房间事件：
+## 房间事件:
 
-`ColyseusRoom` 有您想订阅的各种事件：
+`ColyseusRoom` 有您想订阅的各种事件:
 
 ### OnJoin
 - 客户端成功接入房间后调用.
@@ -148,7 +148,7 @@ ExampleRoomState room = await ExampleManager.Instance.JoinOrCreate<ExampleRoomSt
 ```csharp
 room.OnLeave += OnLeaveRoom;
 ```
-- 其中 `OnLeaveRoom` 函数为：
+- 其中 `OnLeaveRoom` 函数为:
 ```csharp
 private void OnLeaveRoom(int code)
   {
@@ -172,7 +172,7 @@ private static void OnStateChangeHandler(ExampleRoomState state, bool isFirstSta
 - 服务器上发生与房间相关的错误时,该事件会一并上报.
 - 有错误代码和错误信息的参数
 
-## 房间信息：
+## 房间信息:
 您可以监听来自服务器上房间实例的自定义信息,或发送自定义信息至服务器上的房间实例.
 
 ### onMessage
@@ -194,11 +194,11 @@ room.OnMessage<ExampleNetworkedUser>("onUserJoin", currentNetworkedUser =>
 room.Send("createEntity", new EntityCreationMessage() { creationId = creationId, attributes = attributes });
 ```
 
-### 房间状态：
+### 房间状态:
 > 看看如何从 [State Handling](https://docs.colyseus.io/state/schema/#client-side-schema-generation) 生成您的 `RoomState`
 
 - 每个房间都有自己的状态.房间的状态变化会自动同步给所有连接的客户端.
-- 房间状态同步相关信息：
+- 房间状态同步相关信息:
     - 当用户成功加入房间时,将从服务器接收到全部状态.
     - 每个`patchRate`中,状态的二进制补丁都会被发送给各个客户端(默认50ms)
     - 客户端接收到服务器发来的补丁后即调用 `onStateChange`.

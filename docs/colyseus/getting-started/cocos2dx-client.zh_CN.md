@@ -86,7 +86,7 @@ bool HelloWorld::init()
 
 ### 執行用戶端
 
-从 `Example` 目录,运行 `cocos run -p {platform-id}` 命令,例如：
+从 `Example` 目录,运行 `cocos run -p {platform-id}` 命令,例如:
 
 **Building for Windows:**
 

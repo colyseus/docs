@@ -1,6 +1,6 @@
 # JavaScript/TypeScript SDK
 
-JavaScript/TypeScript SDK 几乎与所有平台兼容：
+JavaScript/TypeScript SDK 几乎与所有平台兼容:
 
 - 浏览器(Google Chrome, Firefox, Safari, Opera, Brave等.)
 - [Node.js](https://nodejs.org/)
@@ -30,7 +30,7 @@ npm install --save colyseus.js
 <script src="https://unpkg.com/colyseus.js@^0.14.0/dist/colyseus.js"></script>
 ```
 
-### 连接至服务器：
+### 连接至服务器:
 
 ```ts
 import * as Colyseus from "colyseus.js"; // not necessary if included via <script> tag.
@@ -38,7 +38,7 @@ import * as Colyseus from "colyseus.js"; // not necessary if included via <scrip
 var client = new Colyseus.Client('ws://localhost:2567');
 ```
 
-### 加入房间：
+### 加入房间:
 
 ```ts
 client.joinOrCreate("room_name").then(room => {
@@ -50,7 +50,7 @@ client.joinOrCreate("room_name").then(room => {
 
 ### 房间事件
 
-房间状态已更新：
+房间状态已更新:
 
 ```ts
 room.onStateChange((state) => {
@@ -58,7 +58,7 @@ room.onStateChange((state) => {
 });
 ```
 
-从服务器广播的消息或直接发给本客户端的消息：
+从服务器广播的消息或直接发给本客户端的消息:
 
 ```ts
 room.onMessage("message_type", (message) => {
@@ -66,7 +66,7 @@ room.onMessage("message_type", (message) => {
 });
 ```
 
-发生服务器错误：
+发生服务器错误:
 
 ```ts
 room.onError((code, message) => {
@@ -74,7 +74,7 @@ room.onError((code, message) => {
 });
 ```
 
-服务器离开房间：
+服务器离开房间:
 
 ```ts
 room.onLeave((code) => {

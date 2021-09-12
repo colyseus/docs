@@ -4,7 +4,7 @@
 
 ## Redis
 
-下載並安裝 [Redis](https://redis.io/topics/quickstart). 然後創建 `RedisPresence`：
+下載並安裝 [Redis](https://redis.io/topics/quickstart). 然後創建 `RedisPresence`:
 
 ```typescript fct_label="TypeScript"
 import { Server, RedisPresence } from "colyseus";
@@ -30,7 +30,7 @@ const gameServer = new colyseus.Server({
 
 ## MongoDB
 
-下載安裝 [MongoDB](https://docs.mongodb.com/manual/administration/install-community/) 並安裝 `mongoose` 包：
+下載安裝 [MongoDB](https://docs.mongodb.com/manual/administration/install-community/) 並安裝 `mongoose` 包:
 
 ```
 npm install --save mongoose
@@ -87,7 +87,7 @@ console.log("Listening on", PORT);
 npm install -g pm2
 ```
 
-應用如下 `ecosystem.config.js` 配置：
+應用如下 `ecosystem.config.js` 配置:
 
 ```javascript
 // ecosystem.config.js
@@ -130,7 +130,7 @@ npm install -g @colyseus/proxy
 
 ### 環境變數
 
-配置下列環境變數來滿足您的需求：
+配置下列環境變數來滿足您的需求:
 
 - `PORT` 是代理執行的埠口.
 - `REDIS_URL` 是各個 Colyseus 處理序裏應用的同一個 Redis 實例的路徑.

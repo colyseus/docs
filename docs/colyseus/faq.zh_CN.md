@@ -1,6 +1,6 @@
 # 常见问题
 
-### 一个 Colyseus 服务器能够承载多少 CCU？！
+### 一个 Colyseus 服务器能够承载多少 CCU？!
 
 一个 Colyseus 服务器能够承载的最大并发用户数将取决于您的游戏的 CPU 运算密集程度以及您的服务器向客户端发送的数据流量.
 
@@ -18,9 +18,9 @@ Linux 默认的 "file descriptor limit" (最大连接数)限制为 1024 —— �
 
 Colyseus 本身不提供现成的客户端预测方法. 像 [wilds.io](http://wilds.io/) 和 [mazmorra.io](https://mazmorra.io/) 这样的游戏并没有使用任何形式的客户端预测. 把用户坐标进行 [`补间插值`](http://gamestd.io/mathf/globals.html#lerp) 的效果通常不错.
 
-### 爆出这个错误：`"Class constructor Room cannot be invoked without 'new'"`, 我该怎么办？
+### 爆出这个错误: `"Class constructor Room cannot be invoked without 'new'"`, 我该怎么办？
 
-请确定在您的 `tsconfig.json` 文件里开启了 `es2015` 或更新的编译配置：
+请确定在您的 `tsconfig.json` 文件里开启了 `es2015` 或更新的编译配置:
 
 ```javascript
 {

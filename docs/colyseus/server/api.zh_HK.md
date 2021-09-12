@@ -34,7 +34,7 @@ const gameServer = new colyseus.Server({
 });
 ```
 
-當前可用的狀態伺服器為：
+當前可用的狀態伺服器為:
 
 - `RedisPresence` (在單一伺服器或多個伺服器上擴展)
 
@@ -112,7 +112,7 @@ gameServer.listen(port);
 !!! Warning "該選項將被棄用"
     詳見 [WebSocket 傳輸選項](/server/transport/#optionspinginterval)
 
-伺服器"ping"客戶端的毫秒數. 預設： `3000`
+伺服器"ping"客戶端的毫秒數. 預設:  `3000`
 
 如果客戶端在 [pingMaxRetries](/server/api/#optionspingMaxRetries) 次重試後未能響應, 將被強製斷開連線.
 
@@ -123,7 +123,7 @@ gameServer.listen(port);
 !!! Warning "該選項將被棄用"
     詳見[WebSocket 傳輸選項](/server/transport/#optionspingmaxretries)
 
-ping 無響應的最大允許數.預設：`2`.
+ping 無響應的最大允許數.預設: `2`.
 
 ---
 
@@ -139,7 +139,7 @@ ping 無響應的最大允許數.預設：`2`.
     - `req` (http.IncomingMessage) 客戶端 HTTP GET 請求.
     - `secure` (Boolean) `true` 如果 `req.connection.authorized` 或 `req.connection.encrypted` 已設置.
 
-- `next` (Function) 用戶在 `info`字段檢查時必須調用的回呼.此回呼中的參數為：
+- `next` (Function) 用戶在 `info`字段檢查時必須調用的回呼.此回呼中的參數為:
     - `result` (Boolean) 是否接受握手.
     - `code`(Number) When `result` is `false` 此字段決定要發給客戶端的 HTTP 錯誤狀態代碼.
     - `name` (String) When `result` is `false` 此字段決定 HTTP 動作原因.
@@ -216,7 +216,7 @@ gameServer.define("battle_woods", BattleRoom, { map: "woods" });
 - `options: string[]` - 選項名稱列表
 
 
-**示例：** 允許不同的 "遊戲模式".
+**示例: ** 允許不同的 "遊戲模式".
 
 ```typescript
 gameServer
@@ -247,7 +247,7 @@ class BattleRoom extends Room {
 }
 ```
 
-**示例：** 由內置 `maxClients` 篩選
+**示例: ** 由內置 `maxClients` 篩選
 
 `maxClients` 是一個存儲的內置變數,用於匹配比賽,也可用於過濾.
 
@@ -270,11 +270,11 @@ client.joinOrCreate("battle", { maxClients: 20 }).then(room => {/* ... */});
 
 根據房間創建時的資訊,您可以為加入房間設置一個不同的優先級.
 
-`options` 參數是一個鍵值對象, 左邊是字段名稱, 右邊是排序方向. 排序方向可能為下列值之一：`-1`, `"desc"`, `"descending"`, `1`, `"asc"` 或 `"ascending"`.
+`options` 參數是一個鍵值對象, 左邊是字段名稱, 右邊是排序方向. 排序方向可能為下列值之一: `-1`, `"desc"`, `"descending"`, `1`, `"asc"` 或 `"ascending"`.
 
-**示例：** 由內置`客戶端`篩選
+**示例: ** 由內置`客戶端`篩選
 
-`clients` 是一個存儲的內置變數, 用於匹配比賽, 其包含已連線客戶端的當前數量. 在下面的示例中, 擁有最高數量已連線客戶端的房間將獲得優先權. 使用 `-1`, `"desc"` 或 `"descending"` 進行降序排列：
+`clients` 是一個存儲的內置變數, 用於匹配比賽, 其包含已連線客戶端的當前數量. 在下面的示例中, 擁有最高數量已連線客戶端的房間將獲得優先權. 使用 `-1`, `"desc"` 或 `"descending"` 進行降序排列:
 an internal variable stored for matchmaking, which contains the current number of connected clients. On the example below, the rooms with the highest amount of clients connected will have priority. Use `-1`, `"desc"` or `"descending"` for descending order:
 
 ```typescript
@@ -283,7 +283,7 @@ gameServer
   .sortBy({ clients: -1 });
 ```
 
-如想要以最少數量玩家排序,您可以反向操作.使用 `1`, `"asc"` 或 `"ascending"` 進行升序排列：
+如想要以最少數量玩家排序,您可以反向操作.使用 `1`, `"asc"` 或 `"ascending"` 進行升序排列:
 
 ```typescript
 gameServer
@@ -295,7 +295,7 @@ gameServer
 
 #### 大廳實時列表
 
-想要允許 `LobbyRoom` 從某種特定類型的房間接收更新,您應該啟用實時列表並對房間進行定義：
+想要允許 `LobbyRoom` 從某種特定類型的房間接收更新,您應該啟用實時列表並對房間進行定義:
 
 ```typescript
 gameServer
@@ -309,7 +309,7 @@ gameServer
 
 #### 公共生命周期事件
 
-您可以從房間實例範圍外監聽匹配比賽事件,例如：
+您可以從房間實例範圍外監聽匹配比賽事件,例如:
 
 - `"create"` - 當一個房間被創建時
 - `"dispose"` - 當一個房間被配置時
@@ -318,7 +318,7 @@ gameServer
 - `"lock"` - 當一個房間被鎖定時
 - `"unlock"` - 當一個房間被解鎖時
 
-**用法：**
+**用法: **
 
 ```typescript
 gameServer

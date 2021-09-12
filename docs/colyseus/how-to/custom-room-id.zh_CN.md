@@ -1,6 +1,6 @@
 您可以重写新房间的房间 ID 设置方式.
 
-为确保我们不会在无意中重复使用相同的房间 ID,我们用 Presence API,操作如下：
+为确保我们不会在无意中重复使用相同的房间 ID,我们用 Presence API,操作如下:
 
 1. 用 Presence API 获取已注册的房间 ID.
 2. 生成房间 ID(直到生成一个未被占用的 ID 为止).
@@ -8,7 +8,7 @@
 
 步骤 2 即使有数百万个房间,这里也很可能只需要使用 4 个字母长度的房间 ID 进行一次迭代.以该方式使用 Presence API 还能让您在多台机器上运行您的服务器(通过切换到 [RedisPresence](https://docs.colyseus.io/server/presence/#redispresence-clientopts)).
 
-参见下方代码：
+参见下方代码:
 
 ```typescript
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -53,4 +53,4 @@ export class MyRoom extends Room<MyRoomState> {
 }
 ```
 
-**警告**：这段代码中存在一个小竞争机制,即调用两个 onCreate 时, 其中任一个调用注册前会随机生成相同的代码. 这将导致两个不同房间拥有同一个 ID. 然而这种竞争是完全不可能发生的(即使有 100 万个活跃的房间且存在随机性,发生的概率仍为 15 万亿分之一).
+**警告**: 这段代码中存在一个小竞争机制,即调用两个 onCreate 时, 其中任一个调用注册前会随机生成相同的代码. 这将导致两个不同房间拥有同一个 ID. 然而这种竞争是完全不可能发生的(即使有 100 万个活跃的房间且存在随机性,发生的概率仍为 15 万亿分之一).

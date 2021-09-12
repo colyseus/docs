@@ -29,7 +29,7 @@ export class BattleRoom extends Room {
 }
 ```
 
-客户端在尝试加入房间时会收错误提示：
+客户端在尝试加入房间时会收错误提示:
 
 ```typescript
 client.joinOrCreate("battle", {}).then(room => {

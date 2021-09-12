@@ -24,7 +24,7 @@
 npm init colyseus-app ./my-colyseus-app
 ```
 
-### 摘自官方示例：
+### 摘自官方示例:
 
 您也可以复制 [示例项目](https://github.com/colyseus/colyseus-examples) 并在本地运行查看各种应用案例.
 
@@ -36,7 +36,7 @@ npm install
 
 在本地运行服务器需要先运行 `npm start`,然后打开 [http://localhost:2567](http://localhost:2567) 来查看各个案例.
 
-### 展示：Colyseus 工作原理概览
+### 展示: Colyseus 工作原理概览
 
 <center>
     <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vSjJtmU-SIkng_bFQ5z1000M6nPSoAoQL54j0Y_Cbg7R5tRe9FXLKaBmcKbY_iyEpnMqQGDjx_335QJ/embed?start=false&loop=false&delayms=3000" frameborder="0" width="680" height="411" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>

@@ -5,7 +5,7 @@
 
 **[下載演示](https://github.com/colyseus/unity-demo-starboss/archive/main.zip)** ([查看源代碼](https://github.com/colyseus/unity-demo-starboss/))
 
-[玩玩看！](https://sac-dt.colyseus.dev/)
+[玩玩看!](https://sac-dt.colyseus.dev/)
 
 ![屏幕截圖](screenshot.PNG)
 
@@ -17,11 +17,11 @@
 
 ### ColyseusSettings ScriptableObject
 
-伺服器的所有設置都可通過此處的 ColyseusSetting ScriptableObject 進行更改：
+伺服器的所有設置都可通過此處的 ColyseusSetting ScriptableObject 進行更改:
 
 ![ScriptableObject](../common-images/scriptable-object.png)
 
-如果您執行的是本地伺服器,預設的設置就能夠滿足需求；但若您希望托管伺服器,則需要按需更改 **Colyseus 伺服器地址** 和 **Colyseus 伺服器端口**.
+如果您執行的是本地伺服器,預設的設置就能夠滿足需求; 但若您希望托管伺服器,則需要按需更改 **Colyseus 伺服器地址** 和 **Colyseus 伺服器端口**.
 
 ### 播放演示
 
@@ -30,13 +30,13 @@
 ## 演示概覽
 
 ### 創建並列出不同遊戲模式的房間
-在客戶端 `StarBossLobbyController.cs` 中的被重寫 `CreateRoom` 函數中, 您會看到我們是在哪裏決定發布團隊死鬥模式或合作模式房間的：
+在客戶端 `StarBossLobbyController.cs` 中的被重寫 `CreateRoom` 函數中, 您會看到我們是在哪裏決定發布團隊死鬥模式或合作模式房間的:
 ```csharp
 string gameModeLogic = coopToggle.isOn ? "starBossCoop" : "starBossTDM";
 roomOptions = new Dictionary<string, object> {{"logic", gameModeLogic }, { "scoreToWin", 3 } };
 LoadMainScene(() => { ExampleManager.Instance.CreateNewRoom(selectRoomMenu.RoomCreationName, roomOptions);
 ```
-在伺服器端的 `StarBossRoom.ts` 我們收到這些 `roomOptions` 並使用  `logic` 成員來決定創建的房間類型：
+在伺服器端的 `StarBossRoom.ts` 我們收到這些 `roomOptions` 並使用  `logic` 成員來決定創建的房間類型:
 ```javascript
 // Retrieve the custom logic for the room
 const  customLogic = await  this.getCustomLogic(options["logic"]);
@@ -51,7 +51,7 @@ catch(error){
 	logger.error("Error with custom room logic: " + error);
 }
 ```
-這一行：
+這一行:
 ```javascript
 this.setMetadata({isCoop:  options["logic"] == "starBossCoop" });
 ```
@@ -88,7 +88,7 @@ else {
     backgroundImage.color = deathmatchColor;
 }
 ```
-最終結果顯示為：
+最終結果顯示為:
 ![RoomList](room-list.PNG)
 
 ## 調整演示

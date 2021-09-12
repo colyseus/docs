@@ -15,13 +15,13 @@
 
 ## 安裝
 
-安裝模組：
+安裝模組:
 
 ```
 npm install --save @colyseus/monitor
 ```
 
-將其包含至您的專案：
+將其包含至您的專案:
 
 ```typescript fct_label="TypeScript"
 // ...

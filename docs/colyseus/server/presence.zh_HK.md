@@ -47,7 +47,7 @@ gameServer.listen(2567);
 
 `Presence` API 高度基於 Redis 的API, 後者是一個鍵-值數據庫.
 
-每個 [`Room`](/server/room) 實例都有一個 [`presence`](/server/room/#presence-presence) 屬性, 實現以下方法：
+每個 [`Room`](/server/room) 實例都有一個 [`presence`](/server/room/#presence-presence) 屬性, 實現以下方法:
 
 ### `subscribe(topic: string, callback:Function)`
 

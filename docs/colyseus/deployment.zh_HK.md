@@ -6,7 +6,7 @@
 
 ## Heroku
 
-Heroku 只推薦用於原型設計. 您可以透過點擊此按鈕在上面部署 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 專案：
+Heroku 只推薦用於原型設計. 您可以透過點擊此按鈕在上面部署 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 專案:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/colyseus/colyseus-examples)
 
@@ -24,7 +24,7 @@ Heroku 只推薦用於原型設計. 您可以透過點擊此按鈕在上面部�
 npm install -g pm2
 ```
 
-之後使用它啟動伺服器：
+之後使用它啟動伺服器:
 
 ```
 pm2 start your-server.js
@@ -79,7 +79,7 @@ server {
 
 下面是如果使用 Apache 作為您的 Node.js Colyseus 應用代理.(感謝 [tomkleine](https://github.com/tomkleine) !)
 
-安裝所需 Apache 模組：
+安裝所需 Apache 模組:
 
 ```
 sudo a2enmod ssl
@@ -141,7 +141,7 @@ npm install --save greenlock-express
 
 请遵循 [greenlock-express 的讀我文檔](https://www.npmjs.com/package/greenlock-express#1-create-your-project).
 
-下面是處理開發及生產環境的推薦方法：
+下面是處理開發及生產環境的推薦方法:
 
 ```typescript
 import http from "http";
@@ -185,13 +185,13 @@ if (process.env.NODE\_ENV === "production") {
 
 ## Docker
 
-先決條件：
+先決條件:
 
 * `package.json` 與 `package-lock.json` 位於專案中.
 
 * 創建`npm start` 指令來啟動伺服器
 
-步驟：
+步驟:
 
 **步驟 1** 安装 [Docker](https://www.docker.com/)
 
@@ -222,7 +222,7 @@ node\_modules npm-debug.log
 ```
 這將防止本機模組和調試日誌被復製到 Docker 映像上,並可能覆蓋安裝在映像中的模組.
 
-**步驟 4** 進入存放 Dockerfile 的目錄,執行以下指令構建Docker映像. -t 標誌允許您標記映像,以便稍後使用中更容易找到：
+**步驟 4** 進入存放 Dockerfile 的目錄,執行以下指令構建Docker映像. -t 標誌允許您標記映像,以便稍後使用中更容易找到:
 
 ```
 docker build -t <your username>/colyseus-server .
@@ -241,7 +241,7 @@ node                            12      1934b0b038d1    About a minute ago
 <your username>/colseus-server  latest  d64d3505b0d2    About a minute ago
 ```
 
-**步驟 6** 使用下列指令執行 Docker 鏡像：
+**步驟 6** 使用下列指令執行 Docker 鏡像:
 ```
 docker run -p 8080:8080 -d <your username>/colyseus-server
 ```
@@ -250,7 +250,7 @@ docker run -p 8080:8080 -d <your username>/colyseus-server
 
 **步驟 7** 完成,現在您可以通過 `localhost:8080` 連線至伺服器
 
-更多資訊：
+更多資訊:
 
 - [官方 Node.js Docker 镜像](https://hub.docker.com/_/node/)
 

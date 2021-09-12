@@ -1,6 +1,6 @@
 # Colyseus SDK &raquo; 用法
 
-目前 Colyseus 有以下平台的客户端 SDK：
+目前 Colyseus 有以下平台的客户端 SDK:
 
 - [Unity](/getting-started/unity3d-client) ([查看源代码](https://github.com/colyseus/colyseus-unity3d))
 - [JavaScript/TypeScript](/getting-started/javascript-client) ([查看源代码](https://github.com/colyseus/colyseus.js))
@@ -8,7 +8,7 @@
 - [Haxe](/getting-started/haxe-client) ([查看源代码](https://github.com/colyseus/colyseus-hx))
 - [Construct3](/getting-started/construct3-client) ([查看源代码](https://github.com/colyseus/colyseus-construct3))
 
-## 客户端实例：
+## 客户端实例:
 
 `客户端` 实例用于执行匹配调用,而后连接到一个或多个房间.
 
@@ -560,7 +560,7 @@ client->consumeSeatReservation<YourStateClass>(reservation, [=](std::string err,
 !!! Tip "高级用法"
     参见 [Match-maker API](/server/matchmaker/#reserveseatforroom-options) 了解如何在房间内为某个客户端预留席位.
 
-## 房间实例：
+## 房间实例:
 
 ### 属性
 
@@ -596,7 +596,7 @@ client.joinById(roomId).then(room => {
 
 #### `name: string`
 
-房间处理程序的名称.示例：`"battle"`.
+房间处理程序的名称.示例: `"battle"`.
 
 ---
 
@@ -840,7 +840,7 @@ room.onLeave = [=]() -> void {
 };
 ```
 
-**可能出现的关闭 `代码` 及其含义：**
+**可能出现的关闭 `代码` 及其含义: **
 
 - `1000` - 定期关闭套接字
 - `1001` 到 `1015` 之间 - 套接字异常关闭

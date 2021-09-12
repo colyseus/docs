@@ -53,7 +53,7 @@ export default Arena({
 });
 ```
 
-### 可用選項：
+### 可用選項:
 
 #### `options.server`:
 
@@ -99,7 +99,7 @@ const gameServer = new Server({
 
 如果客戶端在 [pingMaxRetries](#optionspingmaxretries) 次重試後未能響應,將被強製斷開連線.
 
-預設：`3000`
+預設: `3000`
 
 ---
 
@@ -107,7 +107,7 @@ const gameServer = new Server({
 
 ping 無響應的最大允許數.
 
-預設：`2`
+預設: `2`
 
 ---
 
@@ -120,7 +120,7 @@ ping 無響應的最大允許數.
     - `req` (http.IncomingMessage) 客戶端 HTTP GET 請求.
     - `secure` (Boolean) `true` 如果 `req.connection.authorized` 或 `req.connection.encrypted` 已設置.
 
-- `next` (Function) 用戶在 `info`字段檢查時必須調用的回呼.此回呼中的參數為：
+- `next` (Function) 用戶在 `info`字段檢查時必須調用的回呼.此回呼中的參數為:
     - `result` (Boolean) 是否接受握手.
     - `code`(Number) When `result` is `false` 此字段決定要發給客戶端的 HTTP 錯誤狀態代碼.
     - `name` (String) When `result` is `false` 此字段決定 HTTP 動作原因.
@@ -153,7 +153,7 @@ const gameServer = new Server({
 })
 ```
 
-### 可用選項：
+### 可用選項:
 
 #### `options.maxPayloadLength`
 
@@ -210,11 +210,11 @@ SSL 文件的路徑(通過 Node.js 應用程序用於 SSL 終端.)
 
 ### 自定義 HTTP 的 `uWebSockets.js` 路由
 
-#### 本機 `uWebSockets.js` 路由：
+#### 本機 `uWebSockets.js` 路由:
 
 `uWebSocketsTransport` 會公布變數 `app`,作為 `uWebSockets.js` 函數庫中的原始 `uws.App` 或 `uws.SSLApp`.
 
-您可以直接使用 `transport.app` 來綁定使用 `uWebSockets.js` API 的 http 路由,如下所示：
+您可以直接使用 `transport.app` 來綁定使用 `uWebSockets.js` API 的 http 路由,如下所示:
 
 ```typescript
 import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
@@ -230,7 +230,7 @@ transport.app.get("/*", (res, req) => {
 
 查看 [`uWebSockets.js` examples](https://github.com/uNetworking/uWebSockets.js/tree/master/examples) 了解更多資訊.
 
-#### 替代選項：express 兼容層
+#### 替代選項: express 兼容層
 
 作為替代,我們構建了一個薄的兼容層,旨在提供與 Express 相同的功能,但使用 `uWebSockets.js`高級選項.
 

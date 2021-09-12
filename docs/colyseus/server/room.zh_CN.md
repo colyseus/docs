@@ -103,7 +103,7 @@ gameServer.define("my_room", MyRoom, {
 如果此方法未被实现,将始终返回  `true`,从而允许任何客户连接.
 
 !!! Tip "正在获取玩家的 IP 地址"
-    可以使用 `request` 变量检索用户的 IP 地址, http 标头和更多信息.例如： `request.headers['x-forwarded-for'] || request.connection.remoteAddress`
+    可以使用 `request` 变量检索用户的 IP 地址, http 标头和更多信息.例如:  `request.headers['x-forwarded-for'] || request.connection.remoteAddress`
 
 **Implementations examples**
 
@@ -168,7 +168,7 @@ class MyRoom extends Room {
 
 **Client-side examples**
 
-在客户端,可以使用来自于您选择的身份验证服务(例如Facebook)的令牌调用匹配方法(`join`, `joinOrCreate` 等)：
+在客户端,可以使用来自于您选择的身份验证服务(例如Facebook)的令牌调用匹配方法(`join`, `joinOrCreate` 等):
 
 ```javascript fct_label="JavaScript"
 client.joinOrCreate("world", {
@@ -254,7 +254,7 @@ client.joinOrCreate("world", {
 
 - `客户端` [`客户端实例`](/server/client).
 - `options`:  在 [Server#define()](/server/api/#define-roomname-string-room-room-options-any) 中指定的合并值,带有客户 [`client.join()`](/client/client/#join-roomname-string-options-any) 时提供的选项
-- `auth`：(可选) 返回的身份验证方法数据 [`onAuth`](#onauth-client-options-request)
+- `auth`: (可选) 返回的身份验证方法数据 [`onAuth`](#onauth-client-options-request)
 
 在 `requestJoin` 和 `onAuth` 完成后, 客户成功进入房间时调用.
 
@@ -285,7 +285,7 @@ async onLeave(client, consented) {
 
 ### `onDispose ()`
 
-在销毁房间之前调用 `onDispose()` 方法,在发生以下情况时调用：
+在销毁房间之前调用 `onDispose()` 方法,在发生以下情况时调用:
 
 - 房间里没有客户,而且 `autoDispose` 被设置为 `true`(默认值)
 - 可以手动调用 [`.disconnect()`](#disconnect).
@@ -453,7 +453,7 @@ onCreate () {
 
 ### `setSimulationInterval (callback[, milliseconds=16.6])`
 
-(可选)设置一个可以更改游戏状态的模拟间隔期.此模拟间隔期间是您的游戏循环周期.默认模拟间隔期：16.6ms (60fps)
+(可选)设置一个可以更改游戏状态的模拟间隔期.此模拟间隔期间是您的游戏循环周期.默认模拟间隔期: 16.6ms (60fps)
 
 ```typescript
 onCreate () {
@@ -492,7 +492,7 @@ update (deltaTime) {
 this.setMetadata({ friendlyFire: true });
 ```
 
-现在,房间已经有附加的元数据,举例来说,客户端可以检查哪个房间有 `friendlyFire`,并且可以通过其 `roomId` 直接连接到房间：
+现在,房间已经有附加的元数据,举例来说,客户端可以检查哪个房间有 `friendlyFire`,并且可以通过其 `roomId` 直接连接到房间:
 
 ```javascript
 // client-side
@@ -535,14 +535,14 @@ client.getAvailableRooms("battle").then(rooms => {
 
 向所有连接的客户端发送一条消息.
 
-可用的选项为：
+可用的选项为:
 
 - **`except`**: a [`Client`](/server/client/) 不会发送消息至
 - **`afterNextPatch`**: 等待,直到下一补丁广播消息
 
 #### 广播示例
 
-向所有客户端广播一条消息：
+向所有客户端广播一条消息:
 
 ```typescript
 onCreate() {
@@ -553,7 +553,7 @@ onCreate() {
 }
 ```
 
-向所有客户端广播一条消息,发送者除外：
+向所有客户端广播一条消息,发送者除外:
 
 ```typescript
 onCreate() {
@@ -564,7 +564,7 @@ onCreate() {
 }
 ```
 
-仅在应用状态变更之后,向所有客户端广播一条消息：
+仅在应用状态变更之后,向所有客户端广播一条消息:
 
 ```typescript
 onCreate() {
@@ -578,7 +578,7 @@ onCreate() {
 }
 ```
 
-广播一条架构编码消息：
+广播一条架构编码消息:
 
 ```typescript
 class MyMessage extends Schema {
@@ -709,12 +709,12 @@ async onLeave (client: Client, consented: boolean) {
 
 ### `broadcastPatch ()`
 
-!!! Warning "您可能不需要这样做！"
+!!! Warning "您可能不需要这样做!"
     框架会自动调用此方法.
 
 此方法会检查是否已经在 `state` 中发生变化(mutation), 并将变化广播给所有已连接的客户端.
 
-如果想要控制何时广播补丁,可以禁用默认的补丁间隔时间来实现：
+如果想要控制何时广播补丁,可以禁用默认的补丁间隔时间来实现:
 
 ```typescript
 onCreate() {
@@ -785,7 +785,7 @@ onCreate() {
 
 ### `locked: boolean`(只读)
 
-对于以下情况,此属性将发生改变：
+对于以下情况,此属性将发生改变:
 
 - 允许的客户端数量已经达到 (`maxClients`)
 - 可以使用 [`lock()`](#lock) 或 [`unlock()`](#unlock) 手动锁定或解锁房间.
@@ -806,7 +806,7 @@ onCreate() {
 
 ## 客户端
 
-服务器端的 `client` 实例负责服务器与客户端之间的 **transport** 层.不应该与 [`Client` from the client-side SDK](/client/client/) 混淆,因为它们具有完全不同的目的！
+服务器端的 `client` 实例负责服务器与客户端之间的 **transport** 层.不应该与 [`Client` from the client-side SDK](/client/client/) 混淆,因为它们具有完全不同的目的!
 
 可以通过 [`this.clients`](#clients-client), [`Room#onJoin()`](#onjoin-client-options-auth), [`Room#onLeave()`](#onleave-client-consented) 和 [`Room#onMessage()`](#onmessage-type-callback) 操作 `client` 实例.
 

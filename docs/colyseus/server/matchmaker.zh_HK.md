@@ -1,6 +1,6 @@
 # Server API &raquo; Match-maker API
 
-!!! Warning "您可能不需要這樣做！"
+!!! Warning "您可能不需要這樣做!"
     本部分介紹高級用法.您通常可以使用 [客戶端方法](/client/client/#methods).如果不能使用客戶端方法來實現目上標,可以考慮使用本頁介紹的方法.
 
 下面介紹的方法由 `matchMaker` 單一實例提供,可以從 `"colyseus"` 包匯入:
@@ -18,8 +18,8 @@ const matchMaker = require("colyseus").matchMaker;
 
 **Parameters:**
 
-- **`roomName`**：您在 `gameServer.define()` 上定義的標識符.
-- **`options`**：`onCreate` 的選項
+- **`roomName`**: 您在 `gameServer.define()` 上定義的標識符.
+- **`options`**: `onCreate` 的選項
 
 ```typescript
 const room = await matchMaker.createRoom("battle", { mode: "duo" });
@@ -35,8 +35,8 @@ console.log(room);
 
 **Parameters:**
 
-- **`roomName`**：您在 `gameServer.define()` 上定義的標識符.
-- **`options`**：客戶端的座位保留選項(用於 `onJoin` / `onAuth`)
+- **`roomName`**: 您在 `gameServer.define()` 上定義的標識符.
+- **`options`**: 客戶端的座位保留選項(用於 `onJoin` / `onAuth`)
 
 ```typescript
 const reservation = await matchMaker.joinOrCreate("battle", { mode: "duo" });
@@ -60,8 +60,8 @@ console.log(reservation);
 
 **Parameters:**
 
-- **`room`**：房間數據(`createRoom()` 等函數的結果)
-- **`options`**：`onCreate` 的選項
+- **`room`**: 房間數據(`createRoom()` 等函數的結果)
+- **`options`**: `onCreate` 的選項
 
 ```typescript
 const reservation = await matchMaker.reserveSeatFor("battle", { mode: "duo" });
@@ -79,8 +79,8 @@ console.log(reservation);
 
 **參數:**
 
-- **`roomName`**：您在 `gameServer.define()` 上定義的標識符.
-- **`options`**：客戶端的座位保留選項(用於 `onJoin`/`onAuth`)
+- **`roomName`**: 您在 `gameServer.define()` 上定義的標識符.
+- **`options`**: 客戶端的座位保留選項(用於 `onJoin`/`onAuth`)
 
 ```typescript
 const reservation = await matchMaker.join("battle", { mode: "duo" });
@@ -101,8 +101,8 @@ console.log(reservation);
 
 **參數:**
 
-- **`roomId`**：一個特定房間實例的 ID.
-- **`options`**：客戶端的座位保留選項(用於 `onJoin`/`onAuth`)
+- **`roomId`**: 一個特定房間實例的 ID.
+- **`options`**: 客戶端的座位保留選項(用於 `onJoin`/`onAuth`)
 
 ```typescript
 const reservation = await matchMaker.joinById("xxxxxxxxx", {});
@@ -123,8 +123,8 @@ console.log(reservation);
 
 **參數:**
 
-- **`roomName`**：您在 `gameServer.define()` 上定義的標識符.
-- **`options`**：客戶端的座位保留選項(用於 `onJoin`/`onAuth`)
+- **`roomName`**: 您在 `gameServer.define()` 上定義的標識符.
+- **`options`**: 客戶端的座位保留選項(用於 `onJoin`/`onAuth`)
 
 ```typescript
 const reservation = await matchMaker.create("battle", { mode: "duo" });
@@ -160,8 +160,8 @@ console.log(rooms);
 
 **參數:**
 
-- **`roomId`**：一個特定房間實例的 ID.
-- **`options`**：客戶端的座位保留選項(用於 `onJoin`/`onAuth`)
+- **`roomId`**: 一個特定房間實例的 ID.
+- **`options`**: 客戶端的座位保留選項(用於 `onJoin`/`onAuth`)
 
 ```typescript
 const room = await matchMaker.findOneRoomAvailable("battle", { mode: "duo" });
@@ -176,7 +176,7 @@ console.log(room);
 
 **參數:**
 
-- **`roomId`**：一個特定房間實例的 ID.
+- **`roomId`**: 一個特定房間實例的 ID.
 - **`method`**: 方法或屬性,用於調用或檢索
 - **`args`**: 參數數組
 

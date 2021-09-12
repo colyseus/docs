@@ -10,11 +10,11 @@
 
 ## 時鐘
 
-提供了有用的時鐘機製,用於為狀態性模擬之外的事件計時.舉一個使用案例：當一名玩家收集一件物品時,您可能 `clock.setTimeout` 以創建一個新的可收集物.使用 `clock.` 的一個好處在於您無須擔心房間更新和增量,相反,您可以專註於為房間狀態的每個事件單獨計時.
+提供了有用的時鐘機製,用於為狀態性模擬之外的事件計時.舉一個使用案例: 當一名玩家收集一件物品時,您可能 `clock.setTimeout` 以創建一個新的可收集物.使用 `clock.` 的一個好處在於您無須擔心房間更新和增量,相反,您可以專註於為房間狀態的每個事件單獨計時.
 
 ### 公用方法
 
-*備註： `time` 參數以毫秒為單位*
+*備註:  `time` 參數以毫秒為單位*
 
 #### `clock.setInterval(callback, time, ...args):Delayed`
 
@@ -26,7 +26,7 @@
 
 **示例**
 
-此 MVP 示例展示的房間擁有：`setInterval()`, `setTimeout` 並清理了之前存儲的 `Delayed` 類型實例；同時顯示房間時鐘實例的當前時間.1 秒後'Time now ' + `this.clock.currentTime` 被 `console.log`,之後再過 10 秒我們清理了間隔：`this.delayedInterval.clear();`.
+此 MVP 示例展示的房間擁有: `setInterval()`, `setTimeout` 並清理了之前存儲的 `Delayed` 類型實例; 同時顯示房間時鐘實例的當前時間.1 秒後'Time now ' + `this.clock.currentTime` 被 `console.log`,之後再過 10 秒我們清理了間隔: `this.delayedInterval.clear();`.
 
 ```typescript fct_label="TypeScript"
 // Import Delayed

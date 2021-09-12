@@ -14,11 +14,11 @@
 
 ### ColyseusSettings ScriptableObject
 
-服务器的所有设置都可通过此处的 ColyseusSetting ScriptableObject 进行更改：
+服务器的所有设置都可通过此处的 ColyseusSetting ScriptableObject 进行更改:
 
 ![ScriptableObject](../common-images/scriptable-object.png)
 
-如果您运行的是本地服务器,默认的设置就能够满足需求；但若您希望托管服务器,则需要按需更改 **Colyseus 服务器地址** 和 **Colyseus 服务器端口**.
+如果您运行的是本地服务器,默认的设置就能够满足需求; 但若您希望托管服务器,则需要按需更改 **Colyseus 服务器地址** 和 **Colyseus 服务器端口**.
 
 ### 播放演示
 
@@ -37,23 +37,23 @@
 
 ### 目标移动
 
-服务器提供的目标将根据其所在行的位置移交给相应的 TargetTreadmill."行"会在服务器 52 列 `target.ts` 随机设置.如果您在 GalleryShooter 场景中添加或移除行,服务器必须通过此处对其进行了解：`LobbyController.numberOfTargetRows`:
+服务器提供的目标将根据其所在行的位置移交给相应的 TargetTreadmill."行"会在服务器 52 列 `target.ts` 随机设置.如果您在 GalleryShooter 场景中添加或移除行,服务器必须通过此处对其进行了解: `LobbyController.numberOfTargetRows`:
 
 ![LobbyController.numberOfTargetRows](/demo/shooting-gallery/number-of-target-rows.png):
 
 这个数字将在房间初始化时提供给服务器,并在随机选择目标所在的行时使用该值.
 
-treadmills 单独控制发送目标的频率：
+treadmills 单独控制发送目标的频率:
 
 ![Time between targets](/demo/shooting-gallery/time-between-targets.png)
 
-TargetBase 对象在这里控制其自身速度：
+TargetBase 对象在这里控制其自身速度:
 
 ![Move speed](/demo/shooting-gallery/move-speed.png)
 
 ### 调整枪支
 
-枪支的重要值可以在枪预设这里进行更改：
+枪支的重要值可以在枪预设这里进行更改:
 
 ![Guns](/demo/shooting-gallery/guns.png)
 

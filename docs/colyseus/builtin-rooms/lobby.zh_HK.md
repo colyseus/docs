@@ -22,7 +22,7 @@ gameServer
 
 `LobbyRoom` 會在 `onCreate()`, `onJoin()`, `onLeave()` 和 `onDispose()` 期間自動收到通知.
 
-如果您 [已更新了房間的 `中繼資料` ](/server/room/#setmetadata-metadata) , 且必須觸發大廳的更新, 可以在中繼資料更新完後立即呼叫 `updateLobby()`：
+如果您 [已更新了房間的 `中繼資料` ](/server/room/#setmetadata-metadata) , 且必須觸發大廳的更新, 可以在中繼資料更新完後立即呼叫 `updateLobby()`:
 
 ```typescript
 import { Room, updateLobby } from "colyseus";

@@ -9,13 +9,13 @@
 - 使同步化的資料結構盡可能縮小
     - 理想情況下,各個擴展 `架構` 的類別應該只有欄位定義.
     - 可實作自定義的 getter 和 setter 方法,只要其中沒有遊戲邏輯即可.
-- 您的遊戲邏輯應由其他結構處理,例如：
+- 您的遊戲邏輯應由其他結構處理,例如:
     - [指令模式](#the-command-pattern)
     - [實體-組件系統](#entity-component-system-ecs).
 
 ## 單元測試
 
-> TODO：我們需要提供一個 `@colyseus/測試` 套件,以輕鬆模擬 `房間` 類別並觸發其生命週期事件,以及建立虛擬客戶端.
+> TODO: 我們需要提供一個 `@colyseus/測試` 套件,以輕鬆模擬 `房間` 類別並觸發其生命週期事件,以及建立虛擬客戶端.
 
 ## 設計模式
 
@@ -26,7 +26,7 @@
 - 模型 ([`@colyseus/架構`](https://github.com/colyseus/schema)) 主要應包含資料,沒有繁重的遊戲邏輯.
 - 房間應該有盡可能少的代碼,並將動作轉發到其他結構
 
-**指令模式有幾個優點,例如：**
+**指令模式有幾個優點,例如: **
 
 - 其將調用操作的類別與知道如何執行操作的物件分離.
 - 它能讓您透過提供隊列系統來建立指令序列.
@@ -42,7 +42,7 @@
 npm install --save @colyseus/command
 ```
 
-在您的房間實現中初始化 `dispatcher`：
+在您的房間實現中初始化 `dispatcher`:
 
 ```typescript fct_label="TypeScript"
 import { Room } from "colyseus";
@@ -94,7 +94,7 @@ class MyRoom extends colyseus.Room {
 }
 ```
 
-指令實作看起來像這樣：
+指令實作看起來像這樣:
 
 ```typescript fct_label="TypeScript"
 // OnJoinCommand.ts

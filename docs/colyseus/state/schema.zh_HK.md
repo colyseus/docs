@@ -32,7 +32,7 @@ schema.defineTypes(MyState, {
 });
 ```
 
-!!! Tip "_"這個 `@type()` 關鍵字是什麽？ 我之前從未見過！"_"
+!!! Tip "_"這個 `@type()` 關鍵字是什麽？ 我之前從未見過!"_"
     您看見的在本頁大量使用的 `@type()` 是一個即將推出的 JavaScript 功能,還沒有被 TC39 正式認可.`type` 其實只是一個從 `@colyseus/schema` 模組匯入的功能.在屬性層級調用帶有 `@` 前綴的 `類型`,意味著我們將其作為一個_屬性修飾器_進行調用.[在這裏查看修飾器方案](https://github.com/tc39/proposal-decorators).
 
 ### 在您的 `Room` 內使用狀態
@@ -365,7 +365,7 @@ schema.defineTypes(MyState, {
 
 #### `map.get()`
 
-通過秘鑰來獲取地圖項：
+通過秘鑰來獲取地圖項:
 
 ```typescript
 const map = new MapSchema<string>();
@@ -388,7 +388,7 @@ const item = map["key"];
 
 #### `map.set()`
 
-通過秘鑰來設置一個地圖項：
+通過秘鑰來設置一個地圖項:
 
 ```typescript
 const map = new MapSchema<string>();
@@ -411,7 +411,7 @@ map["key"] = "value";
 
 #### `map.delete()`
 
-通過秘鑰來移除一個地圖項：
+通過秘鑰來移除一個地圖項:
 
 ```typescript
 map.delete("key");
@@ -738,7 +738,7 @@ collection.forEach((value, at) => {
 
 `@filter()` 屬性修飾器可用於過濾掉整個 Schema 字段.
 
-看看 `@filter()` 簽名是什麽樣子的：
+看看 `@filter()` 簽名是什麽樣子的:
 
 ```typescript fct_label="TypeScript"
 class State extends Schema {
@@ -846,7 +846,7 @@ schema.filterChildren(function(client, key, value, root) {
 
 **示例:** 在卡片遊戲中,應該僅有卡片的持有者知道每個卡片的相關數據,或者在特定條件下知道這些數據(例如,卡片被丟棄)
 
-查看 `@filter()` 回呼簽名：
+查看 `@filter()` 回呼簽名:
 
 ```typescript fct_label="TypeScript"
 import { Client } from "colyseus";
@@ -1143,7 +1143,7 @@ state.onChange = function(changes) {
 
 **用法**
 
-要在終端上查看用法,請 `cd` 進入伺服器目錄,執行以下指令：
+要在終端上查看用法,請 `cd` 進入伺服器目錄,執行以下指令:
 
 ```
 npx schema-codegen --help
@@ -1182,7 +1182,7 @@ generated: State.cs
 
 **Using `npm` scripts:**
 
-簡而言之,建議在 `package.json` 中的 `npm`  中配置 `schema-codegen` 參數：
+簡而言之,建議在 `package.json` 中的 `npm`  中配置 `schema-codegen` 參數:
 
 ```json
 "scripts": {
@@ -1256,7 +1256,7 @@ class MyState extends Schema {
 
 集合類型 (`ArraySchema`, `MapSchema` 等) 必須包含相同類型的專案,或共享相同的基礎類型.
 
-**支持以下示例：**
+**支持以下示例: **
 
 ```typescript
 class Item extends Schema {/* base Item fields */}

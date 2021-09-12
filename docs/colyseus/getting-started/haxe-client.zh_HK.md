@@ -1,10 +1,10 @@
 # Haxe SDK
 
-我們歡迎您將 SDK 與任何 Haxe 遊戲引擎一同使用,比如：[OpenFL](https://www.openfl.org/), [Kha](http://kha.tech/), [HaxeFlixel](http://haxeflixel.com/), [Heaps](https://heaps.io/), [HaxePunk](http://haxepunk.com/) 等.
+我們歡迎您將 SDK 與任何 Haxe 遊戲引擎一同使用,比如: [OpenFL](https://www.openfl.org/), [Kha](http://kha.tech/), [HaxeFlixel](http://haxeflixel.com/), [Heaps](https://heaps.io/), [HaxePunk](http://haxepunk.com/) 等.
 
 ## 安裝
 
-從 haxelib 安裝 `colyseus`：
+從 haxelib 安裝 `colyseus`:
 
 ```
 haxelib install colyseus
@@ -12,7 +12,7 @@ haxelib install colyseus
 
 ## 用法
 
-### 連線至伺服器：
+### 連線至伺服器:
 
 ```haxe
 import io.colyseus.Client;
@@ -21,7 +21,7 @@ import io.colyseus.Room;
 var client = new Client('ws://localhost:2567');
 ```
 
-### 加入房間：
+### 加入房間:
 
 > 看看如何從 [State Handling](/state/schema/#client-side-schema-generation) 生成您的 `RoomState`
 
@@ -52,7 +52,7 @@ client.joinOrCreate("room_name", [], RoomState, function(err, room) {
 
 ### 其他房間事件
 
-房間狀態已更新：
+房間狀態已更新:
 
 ```haxe
 room.onStateChange += function(state) {
@@ -60,7 +60,7 @@ room.onStateChange += function(state) {
 }
 ```
 
-從伺服器廣播的消息或直接發給本客戶端的消息：
+從伺服器廣播的消息或直接發給本客戶端的消息:
 
 ```haxe
 room.onMessage("type", function (message) {
@@ -68,7 +68,7 @@ room.onMessage("type", function (message) {
 });
 ```
 
-發生伺服器錯誤：
+發生伺服器錯誤:
 
 ```haxe
 room.onError += function() {
@@ -76,7 +76,7 @@ room.onError += function() {
 }
 ```
 
-伺服器離開房間：
+伺服器離開房間:
 
 ```haxe
 room.onLeave += function() {
@@ -103,6 +103,6 @@ lime build project.xml html5
 
 ## `ios` 目標警告
 
-如果想在 iOS 上編譯,您可能需要手動應用該補丁：[HaxeFoundation/hxcpp@5f63d23](https://github.com/HaxeFoundation/hxcpp/commit/5f63d23768988ba2a4d4488843afab70d279a593)
+如果想在 iOS 上編譯,您可能需要手動應用該補丁: [HaxeFoundation/hxcpp@5f63d23](https://github.com/HaxeFoundation/hxcpp/commit/5f63d23768988ba2a4d4488843afab70d279a593)
 
-> 詳情請見：http://community.openfl.org/t/solved-system-not-available-on-ios-with-xcode-9-0/9683?source\_topic\_id=10046
+> 詳情請見: http://community.openfl.org/t/solved-system-not-available-on-ios-with-xcode-9-0/9683?source\_topic\_id=10046

@@ -36,7 +36,7 @@ npm install
 
 若要在本機執行伺服器,請執行 `npm start`,然後打開 [http://localhost:2567](http://localhost:2567) 以探索每個示例.
 
-### 介紹：Colyseus 工作原理概述
+### 介紹: Colyseus 工作原理概述
 
 <center>
     <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vSjJtmU-SIkng_bFQ5z1000M6nPSoAoQL54j0Y_Cbg7R5tRe9FXLKaBmcKbY_iyEpnMqQGDjx_335QJ/embed?start=false&loop=false&delayms=3000" frameborder="0" width="680" height="411" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>

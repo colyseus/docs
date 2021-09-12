@@ -4,11 +4,11 @@
 
 - [下载并安装 Node.js](https://nodejs.org/) V12.0 或更高版本
 - [下载并安装 Git SCM](https://git-scm.com/downloads)
-- [下载并安装 Visual Studio Code](https://code.visualstudio.com/) （或您选择的其它编辑器）
+- [下载并安装 Visual Studio Code](https://code.visualstudio.com/)  (或您选择的其它编辑器)
 
 ## 创建 Colyseus 服务器表单 NPM 模板
 
-使用 `npm init colyseus-app` 命令生成准系统 Colyseus 服务器. 您可以选择 TypeScript（推荐）和 JavaScript 作为服务器语言. **Arena Cloud** 目前仅支持两种语言.
+使用 `npm init colyseus-app` 命令生成准系统 Colyseus 服务器. 您可以选择 TypeScript (推荐)和 JavaScript 作为服务器语言. **Arena Cloud** 目前仅支持两种语言.
 
 ```
 npm init colyseus-app ./my-colyseus-app
@@ -63,4 +63,4 @@ npm init colyseus-app ./my-colyseus-app
 
 - **arena.env / development.env:** 这些文件用于管理 Colyseus 服务器环境变量, 在 Arena Cloud 上托管时, 将默认加载arena.env.
 
-- **lib / upload Folder:** 只有在第一次运行 ```npm run build``` 命令后才会创建此文件夹. 此文件夹包含编译后的 JS 代码、package.json 和 .env 文件, 需要将这些文件上传到 Arena Cloud.
+- **lib / upload Folder:** 只有在第一次运行 ```npm run build``` 命令后才会创建此文件夹. 此文件夹包含编译后的 JS 代码, package.json 和 .env 文件, 需要将这些文件上传到 Arena Cloud.

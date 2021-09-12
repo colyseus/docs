@@ -5,7 +5,7 @@
 
 **[下載演示](https://github.com/colyseus/unity-demo-tanks/archive/main.zip)** ([查看源代碼](https://github.com/colyseus/unity-demo-tanks/))
 
-[玩玩看！](https://xcdazr.colyseus.dev/)
+[玩玩看!](https://xcdazr.colyseus.dev/)
 
 ![大廳](/demo/turn-based-tanks/WeaponFired.png)
 
@@ -17,11 +17,11 @@
 
 ### ColyseusSettings ScriptableObject
 
-伺服器的所有設置都可通過此處的 ColyseusSetting ScriptableObject 進行更改：
+伺服器的所有設置都可通過此處的 ColyseusSetting ScriptableObject 進行更改:
 
 ![ScriptableObject](../common-images/scriptable-object.png)
 
-如果您執行的是本地伺服器,預設的設置就能夠滿足需求；但若您希望托管伺服器,則需要相應地更改 **Colyseus 伺服器地址** 和 **Colyseus 伺服器端口**.
+如果您執行的是本地伺服器,預設的設置就能夠滿足需求; 但若您希望托管伺服器,則需要相應地更改 **Colyseus 伺服器地址** 和 **Colyseus 伺服器端口**.
 
 ## 演示概覽
 
@@ -163,7 +163,7 @@ if(this.serverPaused) {
 
 - 在每次移動或開火行動後有 2 秒延遲,之後才能進行下一次行動.
 
-- 在一名玩家的坦克損毀或有人投降時遊戲結束,遊戲結束菜單顯示勝/負消息,並展示兩個選項：再來一局或退出遊戲.如果另一名玩家在您離開前要求再來一局,您的遊戲結束菜單上將顯示一條消息.
+- 在一名玩家的坦克損毀或有人投降時遊戲結束,遊戲結束菜單顯示勝/負消息,並展示兩個選項: 再來一局或退出遊戲.如果另一名玩家在您離開前要求再來一局,您的遊戲結束菜單上將顯示一條消息.
 
 - 您的對手名稱旁邊會有一個"在線標誌",來顯示其是否與您同時處於房間內.
     - **紅色** = 離線

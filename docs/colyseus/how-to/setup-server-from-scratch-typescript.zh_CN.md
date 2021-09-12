@@ -84,11 +84,11 @@ gameServer.listen(port)
 console.log(`[GameServer] Listening on Port: ${port}`)
 ```
 
-恭喜！您已完成 colyseus 服务器的安装.
+恭喜!您已完成 colyseus 服务器的安装.
 
 ##命令
 
-您现在可以启用服务器了：
+您现在可以启用服务器了:
 ```cmd
 npm start
 ```
