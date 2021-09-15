@@ -27,6 +27,23 @@ The following is the expected folder structure and files that are created in the
 
 ```
     getId: () => "Your Colyseus App",
+    
+    initializeTransport: () => {
+        /**
+         * Define your server transports as uWS (latest)
+         */
+        return new uWebSocketsTransport({});
+        
+        /**
+         * Define your server transports as Legacy WS (legacy)
+         * For local development with Legacy WS you will need to
+         * provide the server option below, this is not required on Arena
+         */
+        // return new WebSocketTransport({
+        //     pingInterval: 5000,
+        //     pingMaxRetries: 3,
+        // });
+    },
 
     initializeGameServer: (gameServer) => {
         /**
