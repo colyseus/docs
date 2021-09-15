@@ -1,13 +1,13 @@
 # [状态同步](/state/overview) &raquo; 架构
 
 !!! Tip "还没使用 TypeScript?"
-    强烈建议您使用 TypeScript 以便更好地定义架构结构并提高整体开发体验. TypeScript 支持的 "实验性修饰器" 会在本手册内大量使用.
+    强烈建议您使用 TypeScript 以便更好地定义 Schema 结构并提高整体开发体验. TypeScript 支持的 "实验性修饰器" 会在本手册内大量使用.
 
 ## 如何定义可同步结构
 
-- `Schema` 结构由服务器定义, 用于房间状态.
-- 只有以 `@type()` 修饰的字段才被考虑用于同步.
-- _(可同步架构结构应当仅用于与您的状态相关的数据.)_
+- `Schema` 结构由服务器定义, 用于房间状态同步.
+- 只有以 `@type()` 修饰的字段才会被用于同步.
+- _(可同步 Schema 结构仅应用于状态相关的数据.)_
 
 ### 定义 `Schema` 结构
 
@@ -33,7 +33,7 @@ schema.defineTypes(MyState, {
 ```
 
 !!! Tip "_"这个 `@type()` 关键字是什么? 我之前从未见过!"_"
-    您看见的在本页大量使用的 `@type()` 是一个即将推出的 JavaScript 功能, 还没有被 TC39 正式认可. `type` 其实只是一个从 `@colyseus/schema` 模块导入的功能. 在属性层级调用带有 `@` 前缀的 `类型`, 意味着我们将其作为一个 _属性修饰器_ 进行调用. [在这里查看修饰器方案](https://github.com/tc39/proposal-decorators).
+    您看见的在本页大量使用的 `@type()` 是一个即将推出的 JavaScript 功能, 还没有被 TC39 正式认可. `type` 其实只是一个从 `@colyseus/schema` 模块导入的函数. 在属性层级调用带有 `@` 前缀的 `type`, 意味着我们将其作为一个 _属性修饰器_ 进行调用. [在这里查看修饰器方案](https://github.com/tc39/proposal-decorators).
 
 ### 在您的 `Room` 内使用状态
 
@@ -50,42 +50,42 @@ export class MyRoom extends Room<MyState> {
 ```
 
 
-## 处理架构
+## 使用 Schema
 
-- 只有服务器端负责处理变异架构结构
-- 客户端必须拥有通过 `[schema-codegen`` 生成的相同的 Schema` 定义. _(如果您在使用 [JavaScript SDK](/getting-started/javascript-client/) 则为可选)_
-- 为了从服务器获得更新,您需要 [将架构的回调附加在客户端内](#callbacks).
-- 客户端永远不该在架构上执行变异 - 因为在收到下一个来自服务器的更改时, 它们就会被立刻替换.
+- 只有服务器端有权修改 Schema 数据
+- 客户端要包含以 [`schema-codegen`](#client-side-schema-generation) 生成的与服务器端同样的 `Schema` 定义. _(如果使用 [JavaScript SDK](/getting-started/javascript-client/) 则此条为可选项)_
+- 为了从服务器获得更新, 需要 [在客户端把回调附加在 schema 实例上](#callbacks).
+- 客户端永远不应主动修改 schema - 因为在收到来自服务器的下一个心跳就会把它更新覆盖掉.
 
-### 原始类型
+### 基本类型
 
-原始类型为数字, 字符串和布尔值.
+基本类型为数字, 字符串和布尔值.
 
-| Type | Description | Limitation |
+| 类型 | 描述 | 范围 |
 |------|-------------|------------|
-| `"string"` | utf8 strings | maximum byte size of `4294967295` |
-| `"number"` | also known as "varint". Auto-detects the number type to use. (may use one extra byte when encoding) | `0` to `18446744073709551615` |
-| `"boolean"` | `true` or `false` | `0` or `1` |
+| `"string"` | utf8 字符串 | 最大 `4294967295` 字节|
+| `"number"` | 又称为 "正整数". 自动定义数字类型. (编码时可能会多用1个字节) | 取值范围 `0` 到 `18446744073709551615` |
+| `"boolean"` | `true` 或 `false` | 取值为 `0` 或 `1` |
 
-**Specialized number types:**
+**特定数值类型:**
 
-| Type | Description | Limitation |
+| 类型 | 描述 | 范围 |
 |------|-------------|------------|
-| `"int8"` | signed 8-bit integer | `-128` to `127` |
-| `"uint8"` | unsigned 8-bit integer | `0` to `255` |
-| `"int16"` | signed 16-bit integer | `-32768` to `32767` |
-| `"uint16"` | unsigned 16-bit integer | `0` to `65535` |
-| `"int32"` | signed 32-bit integer | `-2147483648` to `2147483647` |
-| `"uint32"` | unsigned 32-bit integer | `0` to `4294967295` |
-| `"int64"` | signed 64-bit integer | `-9223372036854775808` to `9223372036854775807` |
-| `"uint64"` | unsigned 64-bit integer | `0` to `18446744073709551615` |
-| `"float32"` | single-precision floating-point number | `-3.40282347e+38` to `3.40282347e+38`|
-| `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |
+| `"int8"` | 有符号 8-bit 整数 | `-128` 到 `127` |
+| `"uint8"` | 无符号 8-bit 整数 | `0` 到 `255` |
+| `"int16"` | 有符号 16-bit 整数 | `-32768` 到 `32767` |
+| `"uint16"` | 无符号 16-bit 整数 | `0` 到 `65535` |
+| `"int32"` | 有符号 32-bit 整数 | `-2147483648` 到 `2147483647` |
+| `"uint32"` | 无符号 32-bit 整数 | `0` 到 `4294967295` |
+| `"int64"` | 有符号 64-bit 整数 | `-9223372036854775808` 到 `9223372036854775807` |
+| `"uint64"` | 无符号 64-bit 整数 | `0` 到 `18446744073709551615` |
+| `"float32"` | 单精度浮点数 | `-3.40282347e+38` 到 `3.40282347e+38`|
+| `"float64"` | 双精度浮点数 | `-1.7976931348623157e+308` 到 `1.7976931348623157e+308` |
 
 
 ### 复杂类型
 
-复杂类型由其他架构实例中的 `Schema` 实例组成. 它们也可以包含 [项目集合](#collections-of-items) (数组, 地图等).
+复杂类型由 `Schema` 嵌套而成. 它们也可以包含 [集合类型](#collections-of-items) (array, map 等).
 
 ```typescript fct_label="TypeScript"
 import { Schema, type } from "@colyseus/schema";
@@ -125,13 +125,13 @@ schema.defineTypes(MyState, {
 });
 ```
 
-## 项目集合
+## 集合类型
 
 ### ArraySchema
 
 `ArraySchema` 是一个可同步版本的内置 JavaScript [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) 类型.
 
-**示例:自定义 `Schema` 类型** 的数组
+**示例: 自定义 `Schema` 类型** 数组
 
 ```typescript fct_label="TypeScript"
 import { Schema, ArraySchema, type } from "@colyseus/schema";
@@ -170,9 +170,9 @@ schema.defineTypes(MyState, {
 });
 ```
 
-**示例:原始类型** 的数组
+**示例: 基本类型** 数组
 
-您无法将类型混合进数组中.
+数组元素必须是同一类型数据.
 
 ```typescript fct_label="TypeScript"
 import { Schema, ArraySchema, type } from "@colyseus/schema";
@@ -203,60 +203,60 @@ schema.defineTypes(MyState, {
 
 #### `array.push()`
 
-在一个数组后面添加一个或多个元素, 并返回该数组的新长度.
+在一个数组后面添加一个或多个元素, 并返回该数组更新后的长度.
 
 ```typescript
 const animals = new ArraySchema<string>();
 animals.push("pigs", "goats");
 animals.push("sheeps");
 animals.push("cows");
-// output: 4
+// 输出: 4
 ```
 
 ---
 
 #### `array.pop()`
 
-移除一个数组的最后一个元素并返回该元素. 该方法可以更改数组的长度.
+移除一个数组的最后一个元素并返回该元素. 该方法会改变数组的长度.
 
 ```typescript
 animals.pop();
-// output: "cows"
+// 输出: "cows"
 
 animals.length
-// output: 3
+// 输出: 3
 ```
 
 ---
 
 #### `array.shift()`
 
-移除一个数组的第一个元素并返回被移除的元素. 该方法可以更改数组的长度.
+移除一个数组的第一个元素并返回该元素. 该方法会改变数组的长度.
 
 ```typescript
 animals.shift();
-// output: "pigs"
+// 输出: "pigs"
 
 animals.length
-// output: 2
+// 输出: 2
 ```
 
 ---
 
 #### `array.unshift()`
 
-在一个数组的开头添加一个或更多元素并返回该数组的新长度.
+在一个数组的开头添加一个或多个元素, 并返回该数组更新后的长度.
 
 ```typescript
 animals.unshift("pigeon");
-// output: 3
+// 输出: 3
 ```
 
 ---
 
 #### `array.indexOf()`
 
-返回数组中可以找到的一个给定元素的第一个索引, 如果不存在则为 -1
+返回数组中找到给定元素的第一个索引, 如果不存在则返回 -1
 
 ```typescript
 const itemIndex = animals.indexOf("sheeps");
@@ -266,13 +266,13 @@ const itemIndex = animals.indexOf("sheeps");
 
 #### `array.splice()`
 
-通过移除或替换现有元素并/或 [在适当的位置](https://en.wikipedia.org/wiki/In-place_algorithm) 添加新元素的方式来更改一个数组的内容.
+移除替换现有元素或 [在指定位置](https://en.wikipedia.org/wiki/In-place_algorithm) 添加新元素来更改一个数组的内容.
 
 ```typescript
-// find the index of the item you'd like to remove
+// 找到需要移除元素的索引
 const itemIndex = animals.findIndex((animal) => animal === "sheeps");
 
-// remove it!
+// 移除元素!
 animals.splice(itemIndex, 1);
 ```
 
@@ -288,9 +288,9 @@ this.state.array1 = new ArraySchema<string>('a', 'b', 'c');
 this.state.array1.forEach(element => {
     console.log(element);
 });
-// output: "a"
-// output: "b"
-// output: "c"
+// 输出: "a"
+// 输出: "b"
+// 输出: "c"
 ```
 
 ```csharp fct_label="C#"
@@ -312,17 +312,17 @@ for (index => value in state.array1) {
 }
 ```
 
-!!! Note "Array有更多方法可用"
-    查看 [MDN 文档](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/).
+!!! Note "Array 还有更多函数可用"
+    详见 [MDN 文档](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/).
 
 ### MapSchema
 
-`MapSchema` 是一个可同步版本的内置 JavaScript [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) 类型.
+`MapSchema` 是一个基于 JavaScript 内置 [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) 的可同步版本.
 
-推荐使用 Maps 来通过 id 追踪您的游戏实体, 比如玩家, 敌人等.
+推荐使用 Maps 里的 id 来追踪游戏实体, 比如玩家, 敌人等.
 
-!!! Warning "当前仅支持字符串键"
-    目前,`MapSchema` 仅允许您自定义值的类型. 秘钥类型始终为 `字符串`.
+!!! Warning "当前仅支持字符串类型的 id"
+    目前, `MapSchema` 允许您自定义值的类型, 但是键的类型必须为为 `string`.
 
 ```typescript fct_label="TypeScript"
 import { Schema, MapSchema, type } from "@colyseus/schema";
@@ -365,21 +365,21 @@ schema.defineTypes(MyState, {
 
 #### `map.get()`
 
-通过秘钥来获取地图项:
+通过键得到 map 的值:
 
 ```typescript
 const map = new MapSchema<string>();
 const item = map.get("key");
 ```
 
-或
+或者
 
 ```typescript
 //
-// NOT RECOMMENDED
+// 不建议使用这种方法
 //
-// This is a compatibility layer with previous versions of @colyseus/schema
-// This is going to be deprecated in the future.
+// 保留这种方法只是为了 @colyseus/schema 的版本向下兼容
+// 未来会舍弃这种方法.
 //
 const item = map["key"];
 ```
@@ -388,21 +388,21 @@ const item = map["key"];
 
 #### `map.set()`
 
-通过秘钥来设置一个地图项:
+通过键来设置 map 的值:
 
 ```typescript
 const map = new MapSchema<string>();
 map.set("key", "value");
 ```
 
-或
+或者
 
 ```typescript
 //
-// NOT RECOMMENDED
+// 不建议使用这种方法
 //
-// This is a compatibility layer with previous versions of @colyseus/schema
-// This is going to be deprecated in the future.
+// 保留这种方法只是为了 @colyseus/schema 的版本向下兼容
+// 未来会舍弃这种方法.
 //
 map["key"] = "value";
 ```
@@ -411,20 +411,20 @@ map["key"] = "value";
 
 #### `map.delete()`
 
-通过秘钥来移除一个地图项:
+通过键移除 map 的值:
 
 ```typescript
 map.delete("key");
 ```
 
-或
+或者
 
 ```typescript
 //
-// NOT RECOMMENDED
+// 不建议使用这种方法
 //
-// This is a compatibility layer with previous versions of @colyseus/schema
-// This is going to be deprecated in the future.
+// 保留这种方法只是为了 @colyseus/schema 的版本向下兼容
+// 未来会舍弃这种方法.
 //
 delete map["key"];
 ```
@@ -433,7 +433,7 @@ delete map["key"];
 
 #### `map.size`
 
-在一个 `MapSchema` 对象中返回元素的数量.
+返回 `MapSchema` 对象中元素的数量.
 
 ```typescript
 const map = new MapSchema<number>();
@@ -448,7 +448,7 @@ console.log(map.size);
 
 #### `map.forEach()`
 
-迭代地图的每对秘钥/值, 按照插入顺序.
+迭代 map 中的键值对, 以元素插入顺序.
 
 ```typescript fct_label="TypeScript"
 this.state.players.forEach((value, key) => {
@@ -477,8 +477,8 @@ for (key => value in state.players) {
 }
 ```
 
-!!! Note "Map 有更多方法可用"
-    查看 [MDN 文档](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/).
+!!! Note "Map 还有更多函数可用"
+    详见 [MDN 文档](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/).
 
 
 ### SetSchema
