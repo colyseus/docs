@@ -1,64 +1,40 @@
-# Cocos Creator 3
+# Cocos Creator 3 
 
-[Cocos Creator](https://cocos.com/creator) is a Cross-Platform 2D/3D Game Creation Tool.
+[Cocos Creator](https://cocos.com/creator) 是一款跨平台的 2D/3D 遊戲創作工具。
 
-The Colyseus SDK for Cocos Creator works in the same way as the [JavaScript SDK](/getting-started/javascript-client/). The major difference is how to [import it from a TypeScript Component](#importing-from-the-extension) asset from Cocos Creator.
+Colyseus SDK for Cocos Creator 的運作方式與 [JavaScript SDK](/getting-started/javascript-client/) 相同。主要區別在於如何[>從 Cocos Creator 的 TypeScript 組件](#importing-from-the-extension)資產中匯入它。
 
-!!! tip "Looking for an example?"
-    Take a look at the [Tic Tac Toe Example](https://github.com/colyseus/cocos-demo-tictactoe).
+!!! 提示「尋找一個例子？」 查看[井字遊戲示例](https://github.com/colyseus/cocos-demo-tictactoe)}。
 
-## 1. Install the extension
+## 1\.安裝擴充功能
 
-- [Open the Cocos Store](https://store.cocos.com/app/en/detail/2937/) (Menu: "Extension" &raquo; "Store")
-- Search for "Colyseus SDK"
-- Download the extension
-- Decompress the zip file to <path_to_your_project>/extensions/
-  ![image](https://user-images.githubusercontent.com/42052366/130320623-9b1e556b-4fe1-44a6-b0d7-1e44cc231555.png)
-- Start up Cocos Creator, open extention manager (Menu: "Extension" &raquo; "Extension Manager")
-- Click "search for plugins" button on the "Project" tab
-- Enable the "colyseus-sdk" plugin
-  ![image](https://user-images.githubusercontent.com/42052366/130320703-74e6ea85-e217-462a-ac77-01e933475257.png)
+- [打開 Cocos 商店](https://store.cocos.com/app/en/detail/2937/) (Menu:"Extension" » "Store")
+- 搜尋「Colyseus SDK」
+- 獲取擴充功能
 
+## 2\.更新您的 `tsconfig.json` 檔案
 
-## 2. Update your `tsconfig.json` file
+確保在 `"compilerOptions"` 下有 `"esModuleInterop": true`：
 
-Make sure you have `"esModuleInterop": true` under `"compilerOptions"`:
+```json // ...
 
-```json
-  // ...
+  /* 在此處新增您的自訂配置。\*/ "compilerOptions": { // ... "esModuleInterop": true // ... } // ... ```
 
-  /* Add your custom configuration here. */
-  "compilerOptions": {
-    // ...
-    "esModuleInterop": true
-    // ...
-  }
-  // ...
-```
+## 3\.從擴充功能匯入
 
-## 3. Importing from the extension
+您必須從其擴充路徑匯入 Colyseus：
 
-You must import Colyseus from its extension path:
+```typescript import Colyseus from 'db://colyseus-sdk/colyseus.js'; ```
 
-```typescript
-import Colyseus from 'db://colyseus-sdk/colyseus.js';
-```
+以下是一個更詳細的示例，您可以將其複制並粘貼到您的專案中。
 
-Below is a more elaborate example you can copy and paste into your project.
+將以下內容另存為 `assets` 資料夾下的 `NetworkManager.ts`。
 
-Save the contents below as `NetworkManager.ts` under your `assets` folder.
-
-```typescript
-import { _decorator, Component, Node } from 'cc';
-const { ccclass, property } = _decorator;
+```typescript import { \_decorator, Component, Node } from 'cc'; const { ccclass, property } = \_decorator;
 
 import Colyseus from 'db://colyseus-sdk/colyseus.js';
 
-@ccclass('NetworkManager')
-export class NetworkManager extends Component {
-    @property hostname = "localhost";
-    @property port = 2567;
-    @property useSSL = false;
+@ccclass('NetworkManager') export class NetworkManager extends Component { @property hostname = "localhost"; @property port = 2567; @property useSSL = false;
 
     client!: Colyseus.Client;
     room!: Colyseus.Room;
@@ -72,7 +48,7 @@ export class NetworkManager extends Component {
         this.connect();
     }
 
-    async connect() {
+    async connect() { 
         try {
             this.room = await this.client.joinOrCreate("my_room");
 
@@ -91,25 +67,24 @@ export class NetworkManager extends Component {
             console.error(e);
         }
     }
-}
-```
+} ```
 
-You can now attach `NetworkManager` as a Component on any Node from Cocos Creator.
+您現在可以從 Cocos Creator 將 `NetworkManager` 作為組件附加到任何節點上。 
 
-Because we're using the `@property` decorator above, you can edit the `hostname`, `port` and `useSSL` from Cocos Creator editor:
+因為我們使用了上面的 `@property` 裝飾器，所以您可以從 Cocos Creator 編輯器中編輯 `hostname`、`port` 和 `useSSL`：
 
 ![Colyseus SDK on TypeScript Component](cocos-creator-component.png)
 
 
 ---
 
-## Alternative: How to manually add the `colyseus.js` file into your project (without the extension)
+## 選擇：如何手動將 `colyseus.js` 檔案新增到您的專案中（不帶擴充功能）
 
-- [Download the latest `colyseus-js-client.zip` release from GitHub](https://github.com/colyseus/colyseus.js/releases).
-- Unzip the `colyseus-js-client.zip` file into the `assets/` folder.
-- Move both `colyseus.js` and `colyseus.d.ts` files into your Cocos Creator project's `scripts` folder.
-- Click on the `colyseus.js` file from the Assets panel, and enable to "Import As Plugin" (see image below)
-- **TypeScript**: require it using `import Colyseus from "./colyseus.js";`
-- **JavaScript**: require it using `const Colyseus = require("./colyseus.js");`
+- [從 GitHub 下載 `colyseus-js-client.zip` 的最新版本](https://github.com/colyseus/colyseus.js/releases)。
+- 將 `colyseus-js-client.zip` 檔案解壓縮到 `assets/` 資料夾中。
+- 將 `colyseus.js` 和 `colyseus.d.ts` 檔案移動到 Cocos Creator 專案的 `scripts` 資料夾中。
+- 點擊「資產」面板中的 `colyseus.js` 檔案，並啟用「作為外掛程式匯入」（見下圖）
+- **TypeScript**: 使用 `import Colyseus from "./colyseus.js" 來取得該檔案 ;`
+- **JavaScript**: 使用 `const Colyseus = require("./colyseus.js");` 來取得該檔案
 
-![Import as plugin](cocos-creator-import-as-plugin.png)
+![作為外掛程式匯入](cocos-creator-import-as-plugin.png)
