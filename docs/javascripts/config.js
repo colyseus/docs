@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     var languageOptions = Array.from(document.querySelectorAll('.md-header__option .md-select .md-select__item > a'));
 
     // Builds regexp: /(pt|en|fr|...)/
-    var languageOptionsRegexp = new RegExp("\/(" + languageOptions.map((el) => el.getAttribute("hreflang")).join("|") + ")\/")
+    var languageOptionsRegexp = new RegExp("\/(" + languageOptions.map((el) => el.getAttribute("hreflang")).join("|") + ")\/", "i")
     var currentPath = document.location.pathname.replace(languageOptionsRegexp, "/");
 
     languageOptions.forEach((el) => {
