@@ -2,7 +2,7 @@
 
 **Requirements**:
 
-- [Download and install Node.js](https://nodejs.org/) v12.0 or higher
+- [Download and install Node.js](https://nodejs.org/) v14.0 or higher
 - [Download and install Git SCM](https://git-scm.com/downloads)
 - [Download and install Visual Studio Code](https://code.visualstudio.com/) (or other editor of your choice)
 
@@ -23,17 +23,17 @@ The following is the expected folder structure and files that are created in the
 
 - **index.ts / js:** This file is used for local testing or self-hosting. To ensure Arena Cloud complatitablity we ***recommend*** that you make ***NO*** changes to the index file directly. Changes or functionality added here will not be reflected when your server is hosted on Arena Cloud. For local testing you can modifiy this file to change the Colyseus server port.
 
-- **arena.config.ts / js:** On this file you can make additions and modifications required to support your game. Take note of the three core functions that will be called during the initialization of your game server. 
+- **arena.config.ts / js:** On this file you can make additions and modifications required to support your game. Take note of the three core functions that will be called during the initialization of your game server.
 
 ```
     getId: () => "Your Colyseus App",
-    
+
     initializeTransport: (options) => {
         /**
          * Define your server transports as uWS (latest)
          */
         return new uWebSocketsTransport({});
-        
+
         /**
          * Define your server transports as Legacy WS (legacy)
          * For local development with Legacy WS you will need to

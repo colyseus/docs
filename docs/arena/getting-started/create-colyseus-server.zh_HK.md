@@ -2,7 +2,7 @@
 
 **要求**
 
-- [下載並安裝 Node.js ](https://nodejs.org/) v12.0 或更高版本
+- [下載並安裝 Node.js ](https://nodejs.org/) v14.0 或更高版本
 - [下載並安裝 Git SCM](https://git-scm.com/downloads)
 - [下載並安裝 Visual Studio Code](https://code.visualstudio.com/) (或您選擇的其他編輯器)
 
