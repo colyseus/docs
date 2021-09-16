@@ -441,7 +441,7 @@ map.set("one", 1);
 map.set("two", 2);
 
 console.log(map.size);
-// output: 2
+// 输出: 2
 ```
 
 ---
@@ -483,12 +483,12 @@ for (key => value in state.players) {
 
 ### SetSchema
 
-!!! Warning "`SetSchema` 仅在 JavaScript 中实现"
-    目前 `SetSchema` 只能与 JavaScript 一同使用. 尚不支持 Haxe, C#, LUA 和 C++ 客户端.
+!!! Warning "`SetSchema` 仅支持 JavaScript"
+    目前 `SetSchema` 只能在 JavaScript 中使用. 尚不支持 Haxe, C#, LUA 和 C++ 客户端.
 
-`SetSchema` 是一个可同步版本的内置 JavaScript [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) 类型.
+`SetSchema` 是一个基于 JavaScript 内置 [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) 的可同步版本.
 
-`SetSchema` 的用法和 [`CollectionSchema`] 十分类似, 最大区别在于 Sets 拥有独特的值. Sets 没有直接访问值的方法. (如 [collection.at()](#collectionat))
+`SetSchema` 的用法和 [`CollectionSchema`] 十分类似, 最大区别在于 Set 的值具有唯一性. JS 的 Set 没有直接获取值的方法. (比如像 [collection.at()](#collectionat))
 
 ```typescript fct_label="TypeScript"
 import { Schema, SetSchema, type } from "@colyseus/schema";
@@ -529,8 +529,7 @@ schema.defineTypes(Player, {
 
 #### `set.add()`
 
-将一个项附加至 `SetSchema` 对象.
-item to the `SetSchema` object.
+为 `SetSchema` 添加元素.
 
 ```typescript
 const set = new CollectionSchema<number>();
@@ -543,7 +542,7 @@ set.add(3);
 
 #### `set.at()`
 
-在特定 `index` 中获取一个项.
+获取 `index` 处的值.
 
 ```typescript
 const set = new CollectionSchema<string>();
@@ -552,14 +551,14 @@ set.add("two");
 set.add("three");
 
 set.at(1);
-// output: "two"
+// 输出: "two"
 ```
 
 ---
 
 #### `set.delete()`
 
-按项的值删除项.
+按值删除元素.
 
 ```typescript
 set.delete("three");
@@ -569,7 +568,7 @@ set.delete("three");
 
 #### `set.has()`
 
-返回一个布尔值, 无论该项是否存在于 Collection 中.
+检查集合中是否有该值.
 
 ```typescript
 if (set.has("two")) {
@@ -583,7 +582,7 @@ if (set.has("two")) {
 
 #### `set.size`
 
-在一个 `SetSchema` 对象中返回元素的数量.
+返回 `SetSchema` 里元素的长度.
 
 ```typescript
 const set = new SetSchema<number>();
@@ -592,19 +591,19 @@ set.add(20);
 set.add(30);
 
 console.log(set.size);
-// output: 3
+// 输出: 3
 ```
 
-!!! Note "Set 有更多方法可用"
-    查看 [MDN 文档](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
+!!! Note "Set 还有更多函数可用"
+    详见 [MDN 文档](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
 
 
 ### CollectionSchema
 
-!!! Note "`CollectionSchema` 仅在 JavaScript 中实现"
-    目前 `CollectionSchema` 只能与 JavaScript 一同使用. 尚不支持 Haxe, C#, LUA 和 C++ 客户端.
+!!! Note "`CollectionSchema` 仅支持 JavaScript"
+    目前 `CollectionSchema` 只能在 JavaScript 中使用. 尚不支持 Haxe, C#, LUA 和 C++ 客户端.
 
-`CollectionSchema` 的运作方式与 `ArraySchema` 类似, 需要注意的是, 您无法控制它的索引.
+`CollectionSchema` 的用法与 `ArraySchema` 类似, 需要注意的是, 它不具备某些数组可用的函数.
 
 ```typescript fct_label="TypeScript"
 import { Schema, CollectionSchema, type } from "@colyseus/schema";
@@ -645,7 +644,7 @@ schema.defineTypes(Player, {
 
 #### `collection.add()`
 
-将一个项附加至 `CollectionSchema` 对象.
+为 `CollectionSchema` 添加元素.
 
 ```typescript
 const collection = new CollectionSchema<number>();
@@ -658,7 +657,7 @@ collection.add(3);
 
 #### `collection.at()`
 
-在特定 `索引` 中获取一个项.
+获取 `index` 处的值.
 
 ```typescript
 const collection = new CollectionSchema<string>();
@@ -667,14 +666,14 @@ collection.add("two");
 collection.add("three");
 
 collection.at(1);
-// output: "two"
+// 输出: "two"
 ```
 
 ---
 
 #### `collection.delete()`
 
-按项的值删除项.
+按值删除元素.
 
 ```typescript
 collection.delete("three");
@@ -684,7 +683,7 @@ collection.delete("three");
 
 #### `collection.has()`
 
-返回一个布尔值, 无论该项是否存在于 Collection 中.
+检查集合中是否有该值.
 
 ```typescript
 if (collection.has("two")) {
@@ -698,7 +697,7 @@ if (collection.has("two")) {
 
 #### `collection.size`
 
-在一个 `CollectionSchema` 对象中返回元素的数量.
+返回 `CollectionSchema` 里元素的长度.
 
 ```typescript
 const collection = new CollectionSchema<number>();
@@ -707,14 +706,14 @@ collection.add(20);
 collection.add(30);
 
 console.log(collection.size);
-// output: 3
+// 输出: 3
 ```
 
 ---
 
 #### `collection.forEach()`
 
-`forEach()` 方法会为 `CollectionSchema` 对象中每对索引/值执行一次给定功能, 按插入顺序.
+迭代 `CollectionSchema` 中的键值对, 以元素插入顺序.
 
 ```typescript
 collection.forEach((value, at) => {
@@ -726,36 +725,36 @@ collection.forEach((value, at) => {
 ## 每个客户端过滤数据
 
 !!! Warning "此功能为实验性质"
-    `@filter()`/`@filterChildren()` 为实验性质, 可能不适合快节奏游戏.
+    `@filter()` / `@filterChildren()` 为实验性质, 可能不适合快节奏游戏.
 
-过滤意味着对一个特定客户端隐藏您的部分状态, 避免作弊, 防止一名玩家因决定检查来自网络的数据而看到未过滤的状态信息.
+过滤用来为指定客户端隐藏部分状态数据, 防止作弊, 防止玩家获取全部数据.
 
-数据过滤器为回调, 会在 **per client** 和 **per field** 触发 (如果 `@filterChildren`, 则为每个子结构). 如果过滤器回调返回 `true`, 该字段数据将会发送给那个特定客户端, 否则, 该数据将不会发送给该客户端.
+数据过滤器回调, 可以针对 **每个客户端** 的 **每个字段** 进行触发 (如果使用了 `@filterChildren`, 还可在每个子结构触发). 如果过滤器回调返回 `true`, 则该字段数据将会发送给那个指定的客户端, 否则不发送.
 
-请注意, 如果过滤器功能的依赖项发生改变, 将无法自动重新运行, 但仅限于过滤字段(或其子字段)被更新时. 查看 [此问题](https://github.com/colyseus/schema/issues/102) 的替代方法.
+请注意, 只有被过滤字段 (或其子字段) 数据更新时, 过滤器回调才能被触发. 要想手动触发请参考 [此问题](https://github.com/colyseus/schema/issues/102) 里描述的方法.
 
 ### `@filter()` 属性修饰器
 
-`@filter()` 属性修饰器可用于过滤掉整个 Schema 字段.
+`@filter()` 属性修饰器可作用于整个 Schema 字段.
 
-看看 `@filter()` 签名是什么样子的:
+下面展示了 `@filter()` 的函数签名:
 
 ```typescript fct_label="TypeScript"
 class State extends Schema {
     @filter(function(client, value, root) {
-        // client is:
+        // client 参数是:
         //
-        // the current client that's going to receive this data. you may use its
-        // client.sessionId, or other information to decide whether this value is
-        // going to be synched or not.
+        // 当前将要接受数据的客户端. 可以通过其
+        // client.sessionId, 及其他信息判定是否
+        // 要把数据同步给这个客户端.
 
-        // value is:
-        // the value of the field @filter() is being applied to
+        // value 参数是:
+        // 被 @filter() 标记过滤的字段值
 
-        // root is:
-        // the root instance of your room state. you may use it to access other
-        // structures in the process of decision whether this value is going to be
-        // synched or not.
+        // root 参数是:
+        // 房间 Schema 实例引用. 方便在是否过滤的
+        // 决策过程中
+        // 访问房间状态.
     })
     @type("string") field: string;
 }
@@ -794,22 +793,19 @@ schema.filter(function(client, value, root) {
 ```typescript fct_label="TypeScript"
 class State extends Schema {
     @filterChildren(function(client, key, value, root) {
-        // client is:
+        // client 参数是:
         //
-        // the current client that's going to receive this data. you may use its
-        // client.sessionId, or other information to decide whether this value is
-        // going to be synched or not.
+        // 当前将要接受数据的客户端. 可以通过其
+        // client.sessionId, 及其他信息判定是否
+        // 要把数据同步给这个客户端.
 
-        // key is:
-        // the key of the current value inside the structure
+        // value 参数是:
+        // 被 @filter() 标记过滤的字段值
 
-        // value is:
-        // the current value inside the structure
-
-        // root is:
-        // the root instance of your room state. you may use it to access other
-        // structures in the process of decision whether this value is going to be
-        // synched or not.
+        // root 参数是:
+        // 房间 Schema 实例引用. 方便在是否过滤的
+        // 决策过程中
+        // 访问房间状态.
     })
     @type([Cards]) cards = new ArraySchema<Card>();
 }
@@ -824,46 +820,46 @@ schema.defineTypes(State, {
 });
 
 schema.filterChildren(function(client, key, value, root) {
-    // client is:
+    // client 参数是:
     //
-    // the current client that's going to receive this data. you may use its
-    // client.sessionId, or other information to decide whether this value is
-    // going to be synched or not.
+    // 当前将要接受数据的客户端. 可以通过其
+    // client.sessionId, 及其他信息判定是否
+    // 要把数据同步给这个客户端.
 
-    // key is:
-    // the key of the current value inside the structure
+    // key 参数是:
+    // 子字段名
 
-    // value is:
-    // the current value inside the structure
+    // value 参数是:
+    // 被 @filter() 标记过滤的字段值
 
-    // root is:
-    // the root instance of your room state. you may use it to access other
-    // structures in the process of decision whether this value is going to be
-    // synched or not.
+    // root 参数是:
+    // 房间 Schema 实例引用. 方便在是否过滤的
+    // 决策过程中
+    // 访问房间状态.
     return true;
 })(State.prototype, "cards");
 ```
 
-**示例:** 在卡片游戏中, 应该仅有卡片的持有者知道每个卡片的相关数据, 或者在特定条件下知道这些数据 (例如, 卡片被丢弃)
+**示例:** 在卡牌游戏中, 应该只有卡牌的持有者知道每个卡片的数据, 或者在特定条件下才能知道这些数据 (例如摊牌)
 
-查看 `@filter()` 回调签名:
+参考 `@filter()` 回调签名:
 
 ```typescript fct_label="TypeScript"
 import { Client } from "colyseus";
 
 class Card extends Schema {
-    @type("string") owner: string; // contains the sessionId of Card owner
+    @type("string") owner: string; // 用来保存卡牌持有者的 sessionId
     @type("boolean") discarded: boolean = false;
 
     /**
-     * DO NOT USE ARROW FUNCTION INSIDE `@filter`
-     * (IT WILL FORCE A DIFFERENT `this` SCOPE)
+     * 不要在 `@filter` 函数里使用箭头函数
+     * (会造成 `this` 指针丢失)
      */
     @filter(function(
-        this: Card, // the instance of the class `@filter` has been defined (instance of `Card`)
-        client: Client, // the Room's `client` instance which this data is going to be filtered to
-        value: Card['number'], // the value of the field to be filtered. (value of `number` field)
-        root: Schema // the root state Schema instance
+        this: Card, // 定义 `@filter` 的类 (这里 this 就是 `Card` 的实例)
+        client: Client, // 要被过滤的客户端 `client` 实例
+        value: Card['number'], // 要被过滤的字段值. (这里是 `number` 字段的值)
+        root: Schema // 房间状态 Schema 实例
     ) {
         return this.discarded || this.owner === client.sessionId;
     })
@@ -882,8 +878,8 @@ schema.defineTypes(Card, {
 });
 
 /**
- * DO NOT USE ARROW FUNCTION INSIDE `@filter`
- * (IT WILL FORCE A DIFFERENT `this` SCOPE)
+ * 不要在 `@filter` 函数里使用箭头函数
+ * (会造成 `this` 指针丢失)
  */
 schema.filter(function(client, value, root) {
     return this.discarded || this.owner === client.sessionId;
