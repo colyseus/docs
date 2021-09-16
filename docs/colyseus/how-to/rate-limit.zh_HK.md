@@ -1,20 +1,36 @@
-最后您可能发现会有恶意用户利用 Colyseus 的房间匹配程序来淹没您的服务器，导致您的服务器在没有真实玩家使用的情况下一直在创建和删除房间。
+最後您可能發現會有惡意用戶利用 Colyseus 的房間匹配程序來淹沒您的伺服器, 導致您的伺服器在沒有真實玩家使用的情況下一直在創建和刪除房間.
 
-这种情况下我们建议使用 `express-rate-limit` 中间件来拦截来自同一来源的大量请求。更多详情可查看 [`express-rate-limit` 的 README](https://github.com/nfriedly/express-rate-limit);
+這種情況下我們建議使用 `express-rate-limit` 中間件來攔截來自同一來源的大量請求. 更多詳情可查看 [`express-rate-limit` 的 README](https://github.com/nfriedly/express-rate-limit);
 
-``` npm install --save express-rate-limit ```
+```
+npm install --save express-rate-limit
+```
 
 ## 用法
 
-```typescript fct\_label="TypeScript" import rateLimit from "express-rate-limit";
+```typescript fct_label="TypeScript"
+import rateLimit from "express-rate-limit";
 
-const apiLimiter = rateLimit({ windowMs:15 * 60 * 1000, // 15 minutes max:100 }); app.use("/matchmake/", apiLimiter); ```
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100
+});
+app.use("/matchmake/", apiLimiter);
+```
 
-```javascript fct\_label="JavaScript" const rateLimit = require("express-rate-limit");
+```javascript fct_label="JavaScript"
+const rateLimit = require("express-rate-limit");
 
-const apiLimiter = rateLimit({ windowMs:15 * 60 * 1000, // 15 minutes max:100 }); app.use("/matchmake/", apiLimiter); ```
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100
+});
+app.use("/matchmake/", apiLimiter);
+```
 
+若您使用了反向代理(如 Heroku, Bluemix, AWS ELB, Nginx 等), 則必須同時啟用 `"trust proxy"`
 
-若您使用了反向代理（如 Heroku、Bluemix、AWS ELB、Nginx 等），则必须同时启用 `"trust proxy"`
-
-```javascript // see https://expressjs.com/en/guide/behind-proxies.html app.set('trust proxy', 1); ```
+```javascript
+// see https://expressjs.com/en/guide/behind-proxies.html
+app.set('trust proxy', 1);
+```

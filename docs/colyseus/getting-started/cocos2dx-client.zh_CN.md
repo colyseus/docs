@@ -2,23 +2,33 @@
 
 ## 安裝
 
-- 下载[Cocos2d-X](http://www.cocos2d-x.org/download)并遵守其[installation instructions](https://github.com/cocos2d/cocos2d-x#download-stable-versions)。
-- 下载[colyseus-cocos2d-x](https://github.com/colyseus/colyseus-cocos2d-x/archive/master.zip)并将`Source/`文件复制到你的项目中。
-- 添加`Source/`目录至你项目的`Header Search Paths`。
+- 下载 [Cocos2d-X](http://www.cocos2d-x.org/download) 并遵守其 [installation instructions](https://github.com/cocos2d/cocos2d-x#download-stable-versions).
+- 下载 [colyseus-cocos2d-x](https://github.com/colyseus/colyseus-cocos2d-x/archive/master.zip) 并将 `Source/` 文件复制到您的项目中.
+- 添加 `Source/` 目录至您项目的 `Header Search Paths`.
 
-!!! tip "Looking for Cocos Creator?" 见[JavaScript » Cocos Creator](/getting-started/javascript-client/#cocos-creator-30)。
+!!! tip "Looking for Cocos Creator?"
+    参见 [JavaScript » Cocos Creator](/getting-started/javascript-client/#cocos-creator-30).
 
 ## 使用方式
 
-下方你可以看到如何使用`Client`，匹配进入`Room`，以及从已连接的房间发送并接收消息。
+下方您可以看到如何使用 `Client`, 匹配进入 `Room`, 以及从已连接的房间发送并接收消息.
 
 > 了解如何從 [State Handling](/state/schema/#client-side-schema-generation) 生成您的 `RoomState`
 
-```cpp #include "Colyseus/Client.h";
+```cpp
+#include "Colyseus/Client.h";
 
-Client* client = new Client("ws://localhost:2567"); Room* room;
+Client* client = new Client("ws://localhost:2567");
+Room* room;
 
-bool HelloWorld::init() { client = new Client("ws://localhost:2667"); client->joinOrCreate<RoomState>("state\_handler", {}, \[=\](MatchMakeError *err, Room<RoomState>* \_room) { if (err != "") { std::cout << "JOIN ERROR! " << err << std::endl; return; }
+bool HelloWorld::init()
+{
+    client = new Client("ws://localhost:2667");
+    client->joinOrCreate<RoomState>("state_handler", {}, [=](MatchMakeError *err, Room<RoomState>* _room) {
+        if (err != "") {
+            std::cout << "JOIN ERROR! " << err << std::endl;
+            return;
+        }
 
         room = _room;
 
@@ -67,20 +77,25 @@ bool HelloWorld::init() { client = new Client("ws://localhost:2667"); client->jo
 
         std::cout << "Done!" << std::endl;
     });
-} ```
+}
+```
 
 ## 示例
 
-该示例使用[colyseus-examples](https://github.com/colyseus/colyseus-examples)作为服务器（`02-state-handler.ts`示例）请遵循[colyseus-examples](https://github.com/colyseus/colyseus-examples)的README中的安装指示。
+该示例使用 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 作为服务器 (`02-state-handler.ts` 示例) 请遵循 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 的README中的安装指示.
 
 ### 執行用戶端
 
-从`Example`目录，运行`cocos run -p {platform-id}` 命令，例如：
+从 `Example` 目录,运行 `cocos run -p {platform-id}` 命令,例如:
 
 **Building for Windows:**
 
-``` cocos run -p win32 ```
+```
+cocos run -p win32
+```
 
 **Building for Mac:**
 
-``` cocos run -p mac ```
+```
+cocos run -p mac
+```

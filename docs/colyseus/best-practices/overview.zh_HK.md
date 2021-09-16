@@ -1,96 +1,138 @@
-# 最佳实践和建议
+# 最佳實踐和建議
 
-!!!注意，在“工作中” ，此文档页面不完整
+!!! Note "本文档正在编辑中"
+    此文件頁面不完整
 
-本节提供一般建议和最佳惯例，以确保您的代码库对您的团队来说是健康和可读的。这些建议和最佳惯例都是可选的，如果遵循它们，将提高代码的可读性和整洁性。
+本節提供一般建議和最佳實踐, 以確保您的代碼庫保持健康並對您的團隊保持可讀性. 相關建議和實踐可有可無, 但如果遵循相關建議和實踐則可提高代碼的可讀性和清潔度.
 
-- 您的房间应尽可能保持低等级，而将特定于游戏的功能委托给其他可组合结构。
-- 可同步的数据结构应尽可能较小
-    - 理想情况下，每个扩展 `Schema` 的类应该只有字段定义。
-    - 可以实现自定义 getter 和 setter 方法，只要其中没有游戏逻辑即可。
-- 应该由其他结构处理游戏逻辑，例如：
-    - [命令模式](#the-command-pattern)
-    - 这是一种[实体-组件系统](#entity-component-system-ecs)。
+- 將您的房間等級盡可能縮小, 將遊戲的特定功能委託給其他可組合結構.
+- 使同步化的資料結構盡可能縮小
+    - 理想情況下,各個擴展 `架構` 的類別應該只有欄位定義.
+    - 可實作自定義的 getter 和 setter 方法, 只要其中沒有遊戲邏輯即可.
+- 您的遊戲邏輯應由其他結構處理, 例如:
+    - [指令模式](#the-command-pattern)
+    - [實體-組件系統](#entity-component-system-ecs).
 
-## 单元测试
+## 單元測試
 
-> TODO：我们需要提供一个 `@colyseus/testing` 包，以轻松模拟 `Room` 类，并触发其生命周期事件，以及创建虚拟客户端。
+> TODO: 我們需要提供一個 `@colyseus/測試` 套件, 以輕鬆模擬 `房間` 類別並觸發其生命週期事件, 以及建立虛擬客戶端.
 
-## 设计模式
+## 設計模式
 
-### 命令模式
+### 指令模式
 
-**為什麼？**
+**為什麼?**
 
-- 模型 ([`@colyseus/schema`](https://github.com/colyseus/schema)) 应主要包含数据，而不包含复杂的游戏逻辑。
-- 房间代码应尽可能少，并将动作转移到其他结构
+- 模型 ([`@colyseus/架構`](https://github.com/colyseus/schema)) 主要應包含資料,沒有繁重的遊戲邏輯.
+- 房間應該有盡可能少的代碼,並將動作轉發到其他結構
 
-**命令模式具有多项优势，例如：**
+**指令模式有幾個優點,例如:**
 
-- 它将调用操作的类与知道如何执行操作的对象进行分离。
-- 它允许通过提供队列系统来创建命令序列。
-- 很容易实现扩展以添加新命令，无需更改现有代码即可完成。
-- 严格控制调用命令的方式和时间。
-- 提高代码可读性和单元测试可能性。
+- 其將調用操作的類別與知道如何執行操作的物件分離.
+- 它能讓您透過提供隊列系統來建立指令序列.
+- 實作擴展以新增新指令很容易,無需更改現有代碼即可完成.
+- 嚴格控制叫用指令的方式和時間.
+- 提高代碼可讀性和單元測試的可能性.
 
-#### 用法
+#### 使用方式
 
-安装
+安裝
 
-``` npm install --save @colyseus/command ```
+```
+npm install --save @colyseus/command
+```
 
-在房间实现中初始化\`调度程序`：
+在您的房間實現中初始化 `dispatcher`:
 
-```typescript fct\_label="TypeScript" import { Room } from "colyseus"; import { Dispatcher } from "@colyseus/command";
+```typescript fct_label="TypeScript"
+import { Room } from "colyseus";
+import { Dispatcher } from "@colyseus/command";
 
 import { OnJoinCommand } from "./OnJoinCommand";
 
-class MyRoom extends Room<YourState> { dispatcher = new Dispatcher(this);
+class MyRoom extends Room<YourState> {
+  dispatcher = new Dispatcher(this);
 
-  onCreate() { this.setState(new YourState()); }
+  onCreate() {
+    this.setState(new YourState());
+  }
 
-  onJoin(client, options) { this.dispatcher.dispatch(new OnJoinCommand(), { sessionId: client.sessionId }); }
+  onJoin(client, options) {
+    this.dispatcher.dispatch(new OnJoinCommand(), {
+        sessionId: client.sessionId
+    });
+  }
 
-  onDispose() { this.dispatcher.stop(); } } ```
+  onDispose() {
+    this.dispatcher.stop();
+  }
+}
+```
 
-```typescript fct\_label="JavaScript" const colyseus = require("colyseus"); const command = require("@colyseus/command");
+```typescript fct_label="JavaScript"
+const colyseus = require("colyseus");
+const command = require("@colyseus/command");
 
-const OnJoinCommand = require("./OnJoinCommand");
+const { OnJoinCommand } = require("./OnJoinCommand");
 
 class MyRoom extends colyseus.Room {
 
-  onCreate() { this.dispatcher = new command.Dispatcher(this); this.setState(new YourState()); }
+  onCreate() {
+    this.dispatcher = new command.Dispatcher(this);
+    this.setState(new YourState());
+  }
 
-  onJoin(client, options) { this.dispatcher.dispatch(new OnJoinCommand(), { sessionId: client.sessionId }); }
+  onJoin(client, options) {
+    this.dispatcher.dispatch(new OnJoinCommand(), {
+        sessionId: client.sessionId
+    });
+  }
 
-  onDispose() { this.dispatcher.stop(); } } ```
+  onDispose() {
+    this.dispatcher.stop();
+  }
+}
+```
 
-命令实现看起来是这样的：
+指令實作看起來像這樣:
 
-```typescript fct\_label="TypeScript" // OnJoinCommand.ts import { Command } from "@colyseus/command";
+```typescript fct_label="TypeScript"
+// OnJoinCommand.ts
+import { Command } from "@colyseus/command";
 
-export class OnJoinCommand extends Command<YourState, { sessionId: string }> {
+export class OnJoinCommand extends Command<YourState, {
+    sessionId: string
+}> {
 
-  execute({ sessionId }) { this.state.players\[sessionId] = new Player(); }
+  execute({ sessionId }) {
+    this.state.players[sessionId] = new Player();
+  }
 
-} ```
+}
+```
 
-```typescript fct\_label="JavaScript" // OnJoinCommand.js const command = require("@colyseus/command");
+```typescript fct_label="JavaScript"
+// OnJoinCommand.js
+const command = require("@colyseus/command");
 
 exports.OnJoinCommand = class OnJoinCommand extends command.Command {
 
-  execute({ sessionId }) { this.state.players\[sessionId] = new Player(); }
+  execute({ sessionId }) {
+    this.state.players[sessionId] = new Player();
+  }
 
-} ```
+}
+```
 
-#### 参阅更多
+#### 深入瞭解
 
-- 参见 [command definitions](https://github.com/colyseus/command/blob/master/test/scenarios/CardGameScenario.ts)
-- [用法：](https://github.com/colyseus/command/blob/master/test/Test.ts)
-- 参见 [implementation](https://github.com/colyseus/command/blob/master/src/index.ts)
+- 請參閱[指令定義](https://github.com/colyseus/command/blob/master/test/scenarios/CardGameScenario.ts)
+- 請參閱[使用方式](https://github.com/colyseus/command/blob/master/test/Test.ts)
+- 請參閱[實作](https://github.com/colyseus/command/blob/master/src/index.ts)
 
-### 实体组件系统 (ECS)
+### 實體組件系統 (ECS)
 
-目前我们没有正式的 ECS（实体组件系统），尽管我们已经看到社区成员实现了他们自己的解决方案。
+我們目前沒有正式的 ECS(實體組件系統),儘管我們已經看到社群成員實作其自己專屬的解決方案.
 
-!!!警告“待测试性非常高” 某些作品[已经开始尝试将 ECSY 与 @colyseus/schema 相结合](http://github.com/endel/ecs)。
+!!! Warning "试验中的功能"
+    一些工作 [已開始嘗試將 ECSY 與 @colyseus/架構](http://github.com/endel/ecs) 結合起來.

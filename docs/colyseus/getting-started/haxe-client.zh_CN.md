@@ -1,26 +1,36 @@
 # Haxe SDK
 
-我們鼓勵您將此 SDK 與任何 Haxe 遊戲引擎一起使用，例如：[OpenFL](https://www.openfl.org/)、[Kha](http://kha.tech/)、[HaxeFlixel](http://haxeflixel.com/)、[Heaps](https://heaps.io/)、[HaxePunk](http://haxepunk.com/) 等。
+我们欢迎您将 SDK 与任何 Haxe 游戏引擎一同使用, 比如: [OpenFL](https://www.openfl.org/), [Kha](http://kha.tech/), [HaxeFlixel](http://haxeflixel.com/), [Heaps](https://heaps.io/), [HaxePunk](http://haxepunk.com/) 等.
 
-## 安裝
+## 安装
 
-從 haxelib 安裝 `colyseus`：
+从 haxelib 安装 `colyseus`:
 
-``` haxelib 安裝 colyseus ```
+```
+haxelib install colyseus
+```
 
-## 使用方式
+## 用法
 
-### 連接到伺服器：
+### 连接至服务器:
 
-``haxe import io.colyseus.Client; 匯入 io.colyseus.Room;
+```haxe
+import io.colyseus.Client;
+import io.colyseus.Room;
 
-var client = new Client('ws://localhost:2567'); ```
+var client = new Client('ws://localhost:2567');
+```
 
-### 加入房間：
+### 加入房间:
 
-> 了解如何從 [State Handling](/state/schema/#client-side-schema-generation) 生成您的 `RoomState`
+> 看看如何从 [State Handling](/state/schema/#client-side-schema-generation) 生成您的 `RoomState`
 
-```haxe client.joinOrCreate("room\_name", \[], RoomState, function(err, room) { if (err != null) { trace("JOIN ERROR: " + err); return; }
+```haxe
+client.joinOrCreate("room_name", [], RoomState, function(err, room) {
+    if (err != null) {
+        trace("JOIN ERROR: " + err);
+        return;
+    }
 
     room.state.entities.onAdd = function(entity, key) {
         trace("entity added at " + key + " => " + entity);
@@ -37,41 +47,62 @@ var client = new Client('ws://localhost:2567'); ```
     room.state.entities.onRemove = function(entity, key) {
         trace("entity removed at " + key + " => " + entity);
     }
-}); ```
+});
+```
 
-### 其他房間活動
+### 其他房间事件
 
-房間狀態已更新：
+房间状态已更新:
 
-```haxe room.onStateChange += function(state) { // 'state' 變數上可用的全新狀態 } ```
+```haxe
+room.onStateChange += function(state) {
+  // full new state avaialble on 'state' variable
+}
+```
 
-從伺服器或直接向此用戶端廣播的訊息：
+从服务器广播的消息或直接发给本客户端的消息:
 
-```haxe room.onMessage("type", function (message) { trace(client.id + " received on " + room.name + ": " + message); }); ```
+```haxe
+room.onMessage("type", function (message) {
+  trace(client.id + " received on " + room.name + ": " + message);
+});
+```
 
-發生伺服器錯誤：
+发生服务器错误:
 
-```haxe room.onError += function() { trace(client.id + " couldn't join " + room.name); } ```
+```haxe
+room.onError += function() {
+  trace(client.id + " couldn't join " + room.name);
+}
+```
 
-客戶離開房間：
+服务器离开房间:
 
-```haxe room.onLeave += function() { trace(client.id + " left " + room.name); } ```
+```haxe
+room.onLeave += function() {
+  trace(client.id + " left " + room.name);
+}
+```
 
-## 執行演示專案
+## 运行演示项目
 
-[`示例`](https://github.com/colyseus/colyseus-hx/blob/master/example/openfl)專案可以編譯為 `html5`、`neko`、`cpp`、`ios` ， 等等。
+[`example`](https://github.com/colyseus/colyseus-hx/blob/master/example/openfl) 项目可以被编译为 `html5`, `neko`, `cpp`, `ios` 等.
 
-其使用 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 專案中的 `state_handler` 空間，您可以在[此處](https://github.com/colyseus/colyseus-examples/blob/master/rooms/02-state-handler.ts)找到該空間。
+它使用来自 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 项目的 `state_handler` 房间, 您可以在 [这里](https://github.com/colyseus/colyseus-examples/blob/master/rooms/02-state-handler.ts) 找到.
 
-### 將演示項目編譯為 `html5`
+### 编译演示项目为 `html5`
 
-``` git clone https://github.com/colyseus/colyseus-hx.git cd colyseus-hx/example/openfllime build project.xml html5 ```
+```
+git clone https://github.com/colyseus/colyseus-hx.git
+cd colyseus-hx/example/openfl
+lime build project.xml html5
+```
 
-您可以[在此處查看演示專案](http://colyseus.io/colyseus-hx/)。
+您可以 [在此](http://colyseus.io/colyseus-hx/) 查看实时演示项目.
 
 
-## `ios` 目標警告
+## `ios` 目标警告
 
-您可能需要手動套用此修補程式才能為 iOS 進行編譯：[HaxeFoundation/hxcpp@5f63d23](https://github.com/HaxeFoundation/hxcpp/commit/5f63d23768988ba2a4d4488843afab70d279a593)
+如果想在 iOS 上编译, 您可能需要手动应用该补丁: [HaxeFoundation/hxcpp@5f63d23](https://github.com/HaxeFoundation/hxcpp/commit/5f63d23768988ba2a4d4488843afab70d279a593)
 
-> 更多資訊：http://community.openfl.org/t/solved-system-not-available-on-ios-with-xcode-9-0/9683?source\_topic\_id=10046
+> 详情请见: http://community.openfl.org/t/solved-system-not-available-on-ios-with-xcode-9-0/9683?source\_topic\_id=10046

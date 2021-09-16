@@ -1,127 +1,139 @@
-# 伺服器 API » 目前狀態
+# 服务器 API &raquo; 状态
 
-當您需要在多個處理序和/或多部機器上縮放伺服器時， 您必須提供[`目前狀態`](/server/api/#optionspresence)選項至`伺服器`。`目前狀態`的目的是允許在不同處裡序間通訊與分享資料，特別是在進行配對的時候。
+在多处理器和/或机器上扩展服务器时, 需要为 `Server` 提供 [`Presence`](/server/api/#optionspresence) 选项. `Presence` 的作用是允许不同进程之间的通信和数据共享, 特别是在匹配期间.
 
-- [`LocalPresence`](#localpresence)（預設）
+- [`LocalPresence`](#localpresence)(默认)
 - [`RedisPresence`](#redispresence-clientopts)
 
-`目前狀態`執行個體也可用於每個`房間`處理常式。您可以透過 PUB/SUB 使用其 [API](#api) 保存房間之間的資料和通訊。
+`presence` 实例也可以用于所有 `Room` 处理程序.可以使用它的 [API](#api) 保留数据和通过 PUB/SUB 进行房间之间的通信.
 
 ### `LocalPresence`
 
-這是預設選項。這選項是您在單一處理序中執行 Colyseus 時會使用的。
+这是默认选项.在单进程中运行 Colyseus 时, 应使用此选项.
 
 ### `RedisPresence (clientOpts?)`
 
-當您在多個處理序和/或多部機器執行 Colyseus 時，使用此選項。
+在多进程和/或多机器上运行 Colyseus 时, 应使用此选项.
 
-**參數：**
+**Parameters:**
 
-- `clientOpts`：Redis 用戶端選項（主機/認證）。[查看選項的完整清單](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/redis/index.d.ts#L28-L52)。
+- `clientOpts`: redis 客户端选项(主机/凭证). [查看完整选项列表](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/redis/index.d.ts#L28-L52).
 
-```typescript fct\_label="TypeScript" import { Server, RedisPresence } from "colyseus";
+```typescript fct_label="TypeScript"
+import { Server, RedisPresence } from "colyseus";
 
-// 這會在從屬處理序中發生。 const gameServer = new Server({ // ... presence: new RedisPresence() });
+// This happens on the slave processes.
+const gameServer = new Server({
+    // ...
+    presence: new RedisPresence()
+});
 
-gameServer.listen(2567); ```
+gameServer.listen(2567);
+```
 
-```typescript fct\_label="JavaScript" const colyseus = require('colyseus');
+```typescript fct_label="JavaScript"
+const colyseus = require('colyseus');
 
-// 這會在從屬處理序中發生。 const gameServer = new colyseus.Server({ // ... presence: new colyseus.RedisPresence() });
+// This happens on the slave processes.
+const gameServer = new colyseus.Server({
+    // ...
+    presence: new colyseus.RedisPresence()
+});
 
-gameServer.listen(2567); ```
+gameServer.listen(2567);
+```
 
 ## API
 
-`目前狀態` API 高度基於 Redis 的 API，這是個索引鍵值資料庫。
+`Presence` API 高度基于 Redis 的API, 后者是一个键-值数据库.
 
-每個[`房間`](/server/room)執行個體都具有[`目前狀態`](/server/room/#presence-presence)屬性，其實作以下方法：
+每个 [`Room`](/server/room) 实例都有一个 [`presence`](/server/room/#presence-presence) 属性, 实现以下方法:
 
 ### `subscribe(topic: string, callback:Function)`
 
-訂閱指定的`主題`。訊息於`主題`[發佈](#publishtopic-string-data-any)時會觸發`回調`。
+订阅给定的 `topic`. 每当有关于 `topic` 的消息 [发布](#publishtopic-string-data-any) 时, 就会触发 `callback`.
 
 ### `unsubscribe(topic: string)`
 
-取消訂閱指定的`主題`。
+取消订阅给定的 `topic`.
 
 ### `publish(topic: string, data: any)`
 
-張貼訊息至指定的`主題`。
+发布给定 `topic` 的消息.
 
 ### `exists(key: string):Promise<boolean>`
 
-如果索引鍵存在，則進行傳回。
+如果键值存在, 则返回.
 
 ### `setex(key: string, value: string, seconds: number)`
 
-將索引鍵設為保留字串值，並將索引鍵設為在指定秒數後逾時。
+设置键值, 以保存字符串值, 设置键值, 从而在指定秒数后超时.
 
 ### `get(key: string)`
 
-取得索引鍵值。
+获取键值.
 
 ### `del(key: string): void`
 
-移除指定的索引鍵。
+移除特定的键.
 
 ### `sadd(key: string, value: any)`
 
-將指定的成員新增至儲存在索引鍵的集合中。會忽略已經是此集合之成員的指定成員。如果索引鍵不存在，則會在新增指定的成員前建立新的集合。
+将特定的成员添加至存储在键值中的集合. 忽略已属于此集合的成员的特定成员. 如果键值不存在, 则创建一个新的集合, 然后添加特定成员.
 
 ### `smembers(key: string)`
 
-傳回所有儲存在索引鍵的集合值成員。
+返回存储在键值中的集合的所有成员.
 
 ### `sismember(member: string)`
 
-如果\`成員`是儲存在索引鍵的集合成員，則進行傳回。
+如果成员 `member` 是存储在键值中的集合的成员, 则返回.
 
-**傳回值**
+**Return value**
 
-- `1` 如果元素是集合成員。
-- `0` 如果元素不是集合成員，或如果索引鍵不存在。
+- `1` 如果元素是集合的成员.
+- `0` 如果元素不是集合的成员, 或键值不存在.
 
 ### `srem(key: string, value: any)`
 
-自儲存在索引鍵的集合中移除指定的成員。會忽略不是此集合之成員的指定成員。如果索引鍵不存在，會將其視為空集合且此命令傳回 0。
+移除存储在键值中的集合中的特定成员. 忽略不属于此集合的成员的特定成员. 如果键值不存在, 则视它为空集合, 此命令返回 0.
 
 ### `scard(key: string)`
 
-傳回儲存在索引鍵之集合的集合基數（元素數）。
+返回存储在键值中的集合的势(元素的数量).
 
 ### `sinter(...keys: string[])`
 
-傳回集合的成員，該集合為指定集合交集的結果。
+返回由所有给定集合的交集产生的集合成员.
 
 ### `hset(key: string, field: string, value: string)`
 
-將儲存在索引鍵的雜湊中的欄位設為值。如果索引鍵不存在，則會建立保有雜湊的新索引鍵。如果欄位已存在於雜湊，則會覆寫。
+将存储在键中的散列中的字段设置为值. 如果键值不存在, 则创建一个包含哈希值的新键值. 如果字段已存在于哈希值中, 则将其覆盖.
 
 ### `hincrby(key: string, field: string, value: number)`
 
-以遞增方式，增加儲存在索引鍵中的雜湊中，儲存在欄位中的數字。如果索引鍵不存在，則會建立保有雜湊的新索引鍵。如果欄位不存在，則在執行作業前，值會設為 0。
+按增量递增存储在键值中的哈希字段中的数量. 如果键值不存在, 则创建一个包含哈希值的新键值. 如果字段不存在, 则在执行操作之前将值设置为 0.
 
 ### `hget(key: string, field: string):Promise<string>`
 
-傳回關聯於儲存在索引鍵中之雜湊的欄位的值。
+返回与存储在键值的哈希值中的字段相关联的值.
 
 ### `hgetall(key: string):Promise<{\[field: string]: string}>`
 
-傳回儲存在索引鍵中之雜湊的所有欄位和值。
+返回存储在键值的哈希值中的所有字段和值.
 
 ### `hdel(key: string, field: string)`
 
-自儲存在索引鍵中的欄位移除指定的欄位。會忽略不存在此雜湊中的指定欄位。如果索引鍵不存在，則會將其視為空雜湊，且此命令傳回 0。
+移除存储在键值中的集合中的特定成员. 将忽略在此哈希值中不存在的特定字段. 如果键值不存在, 则将其视为空哈希值, 此命令返回 0.
 
 ### `hlen(key: string):Promise<number>`
 
-傳回儲存在索引鍵中之雜湊包含的欄位數字。
+返回存储在键值中的哈希值所包含的字段数量
 
 ### `incr(key: string)`
 
-將儲存在索引鍵中的數字增加一。如果該索引鍵不存在，則會在執行作業前將其設為 0。如果索引鍵包含錯誤類型的值或包含無法以整數呈現的字串，則會傳回錯誤。此作業僅限 64 位元帶正負號的整數。
+将存储在键值中的数量增加 1. 如果键值不存在,则在执行操作前将其设置为 0. 如果键值包含错误类型的值或包含不能表示为整数的字符串, 则返回错误. 此操作仅限于 64 位有符号整数.
 
 ### `decr(key: string)`
 
-將儲存在索引鍵中的數字減少一。如果該索引鍵不存在，則會在執行作業前將其設為 0。如果索引鍵包含錯誤類型的值或包含無法以整數呈現的字串，則會傳回錯誤。此作業僅限 64 位元帶正負號的整數。
+将存储在键值中的数量减 1. 如果键值不存在,则在执行操作前将其设置为 0. 如果键值包含错误类型的值或包含不能表示为整数的字符串, 则返回错误. 此操作仅限于 64 位有符号整数.

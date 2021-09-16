@@ -1,134 +1,138 @@
 # Construct 3 SDK
 
-## 安装
+## 安裝
 
-- [下载 Construct 3 SDK](https://www.construct.net/en/make-games/addons/111/colyseus-multiplayer-client)
+- [下載 Construct 3 SDK](https://www.construct.net/en/make-games/addons/111/colyseus-multiplayer-client)
 
-!!!警告“注意！你需要一个服务器来使用 Colyseus！” 众所周知 Construct 的现有功能可以从客户端“托管”一个多人进程。这在使用 Colyseus 时是不可能的。Colyseus 是一个权威性**服务器**，由 Node.js 编写。你无法使你的客户端直接托管游戏进程。
+!!! Warning "註意! 您需要一個伺服器來使用 Colyseus!"
+    眾所周知 Construct 的現有功能可以從客戶端 "托管" 一個多人進程. 這在使用 Colyseus 時是不可能的.Colyseus 是一個權威性 **伺服器**, 由 Node.js 編寫. 您無法使您的客戶端直接托管遊戲進程.
 
-!!! 提示 "Construct 3 SDK:Source code" 你可以在此找到 Construct SDK 的源代码：[Construct 3](https://github.com/colyseus/colyseus-construct3) （与 Construct3 的 C3 和 C2 运行时间兼容 / [Construct 2](https://github.com/colyseus/colyseus-construct2) （非最新版 - 与 0.9.x 服务器兼容）
+!!! tip "Construct 3 SDK:Source code"
+    您可以在此找到 Construct SDK 的源代碼: [Construct 3](https://github.com/colyseus/colyseus-construct3) (與 Construct3 的 C3 和 C2 執行時間兼容) / [Construct 2](https://github.com/colyseus/colyseus-construct2) (非最新版 - 與 0.9.x 伺服器兼容)
 
-## 示例项目
+## 示例專案
 
-示例项目与 [TypeScript (pixijs-boilerplate)](https://github.com/endel/colyseus-pixijs-boilerplate)有相同的结果。
+示例專案與 [TypeScript (pixijs-boilerplate)](https://github.com/endel/colyseus-pixijs-boilerplate) 有相同的結果.
 
-- [客户端（c3p 项目）](/_downloads/ColyAgarClient-0-14-0.c3p)
-- [Glitch 上的服务器端（源代码）](https://glitch.com/~colyseus-construct3)
-
-
-## 处理消息
-
-从服务器向客户端发送消息时的一个重要注意事项：你需要提供一个拥有`"type"`字段的对象，以便客户端能够进行解析。
-
-**服务器端**
-
-```typescript this.broadcast("foo", "bar"); ```
-
-**客户端**
-
-使用 `On Message` 条件，以`"foo"`作为自变数。表达式 `CurrentValue` 将拥有一个数值`"栏"`。
+- [客戶端(c3p 專案)](/_downloads/ColyAgarClient-0-14-0.c3p)
+- [Glitch 上的伺服器端(源代碼)](https://glitch.com/~colyseus-construct3)
 
 
-## 属性
+## 處理消息
 
-### 默认端点
-使用"Connect"行动的默认端点。
+從伺服器向客戶端發送消息時的一個重要註意事項: 您需要提供一個擁有 `"type"` 字段的對象, 以便客戶端能夠進行解析.
 
-## 行动
+**伺服器端**
 
-### 设置端点为{0}
-格式：wss://example.com
+```
+typescript this.broadcast("foo", "bar");
+```
 
-### 以{1}选项加入房间{0}。
-以名称加入房间
+**客戶端**
 
-### 以{1}选项加入房间{0}。
-以名称加入房间
+使用 `On Message` 條件, 以 `"foo"` 作為自變數. 表達式 `CurrentValue` 將擁有一個數值 `"欄"`.
 
-### 以{1}选项创建房间{0}。
-以名称创建房间
 
-### 以{1}选项加入房间{0}。
-以 ID 加入现有房间
+## 屬性
 
-### 以 sessionId {1} 重新连接至房间{0}。
-使用之前连接过的房间重新连接
+### 預設端點
+使用 "Connect" 行動的預設端點.
 
-### 以{1}发送{0}
-向一个房间发送消息
+## 行動
 
-### 从房间离开
-从房间断开客户端连接。
+### 設置端點為{0}
+格式: wss://example.com
 
-### 获得可用的{0}房间。
-以名称获得可用房间，当数据可用时 OnGetAvailableRooms 触发。数据以 JSON 字符串 CurrentValue 表达式返回
+### 以{1}選項加入房間{0}.
+以名稱加入房間
 
-## 条件
+### 以{1}選項加入房間{0}.
+以名稱加入房間
 
-### 加入时
-成功加入房间时触发。
+### 以{1}選項創建房間{0}.
+以名稱創建房間
 
-### 离开时
-离开房间时触发。
+### 以{1}選項加入房間{0}.
+以 ID 加入現有房間
 
-### 错误时
-服务器发生错误时触发。
+### 以 sessionId {1} 重新連線至房間{0}.
+使用之前連線過的房間重新連線
+
+### 以{1}發送{0}
+向一個房間發送消息
+
+### 從房間離開
+從房間斷開客戶端連線.
+
+### 獲得可用的{0}房間.
+以名稱獲得可用房間, 當數據可用時 OnGetAvailableRooms 觸發. 數據以 JSON 字符串 CurrentValue 表達式返回
+
+## 條件
+
+### 加入時
+成功加入房間時觸發.
+
+### 離開時
+離開房間時觸發.
+
+### 錯誤時
+伺服器發生錯誤時觸發.
 
 ### On Message ({0})
-当房间广播一条消息，或直接向本客户端发送消息时触发。
+當房間廣播一條消息, 或直接向本客戶端發送消息時觸發.
 
-### 状态改变时
-当房间状态改变时触发。
+### 狀態改變時
+當房間狀態改變時觸發.
 
-### 获得可用房间时
-当可用的房间数据在CurrentValue表达式中准备好时触发。
+### 獲得可用房間時
+當可用的房間數據在 CurrentValue 表達式中準備好時觸發.
 
-### 添加时{0}
-当一个项添加至ArraySchema或MapSchema时触发。
+### 添加時{0}
+當一個項添加至 ArraySchema 或 MapSchema 時觸發.
 
-### 字段改变时{0}
-当Schema实例中字段改变时触发。需要使用
+### 字段改變時{0}
+當 Schema 實例中字段改變時觸發. 需要使用
 
-### 改变时{0}
-当ArraySchema或MapSchema中的一个项发生改变时触发。
+### 改變時{0}
+當 ArraySchema 或 MapSchema 中的一個項發生改變時觸發.
 
-### 移除时{0}
-当一个项从ArraySchema或MapSchema移除时触发。
+### 移除時{0}
+當一個項從 ArraySchema 或 MapSchema 移除時觸發.
 
-### 作为索引{0}
-仅对Arrays和Maps可用。检查当前项的索引是否与提供的值相等。
+### 作為索引{0}
+僅對 Arrays和Maps 可用. 檢查當前項的索引是否與提供的值相等.
 
-### 作为字段{0}
-只有在直接对象"改变"时可用。检查一个字段名是否被更改。
+### 作為字段{0}
+只有在直接對象 "改變" 時可用. 檢查一個字段名是否被更改.
 
-## 表达式
+## 表達式
 
 ### JSON
-声明一个 JSON 值。
+聲明一個 JSON 值.
 
 ### CurrentValue
-从当前项获取值
+從當前項獲取值
 
 ### PreviousValue
-从当前项获取之前的值。只有在实例变量"改变"时可用。arrays和maps不可用。
+從當前項獲取之前的值. 只有在實例變數 "改變" 時可用. arrays 和 maps 不可用.
 
 ### CurrentValueAt
-从当前项获取嵌套值
+從當前項獲取嵌套值
 
 ### CurrentIndex
-从当前项获取索引。"添加"、"改变"或"移除"时可用
+從當前項獲取索引. "添加", "改變" 或 "移除" 時可用
 
 ### CurrentField
-获取被更改的当前字段。"字段更改"时可用
+獲取被更改的當前字段. "字段更改" 時可用
 
-### 状态
-获取房间状态的值
+### 狀態
+獲取房間狀態的值
 
 ### SessionId
-当前用户的独特 sessionId
+當前用戶的獨特 sessionId
 
 ### ErrorCode
-获取上一个错误代码
+獲取上一個錯誤代碼
 
 ### ErrorMessage
-获取上一条错误消息
+獲取上一條錯誤消息

@@ -1,13 +1,13 @@
-# 状态同步
+# 狀態同步
 
-Colyseus 通过其强类型的 [`Schema` 结构](/state/schema/) 自动处理状态同步。
+Colyseus 透過其強力類型 [`Schema`結構](/state/schema/) 來自動處理狀態同步.
 
-### 它是如何运作的？
+### 這是如何運作的?
 
-- 当用户成功加入房间时，将从服务器接收到全部状态。
-- 每 [patchRate](/server/room/#patchrate-number)，状态的二进制补丁会发送给每个客户端（默认为 `50ms`）
-- 应用来自服务器的补丁时，客户端会触发 [schema callbacks](/state/schema/#callbacks)。
-- 客户端中应用了全部最新补丁时，触发 [`onStateChange`](/client/room/#onstatechange)。
-- 您的客户端逻辑可以随时变异房间状态。已连接客户端会永远确保与服务器保持同步。
+- 當使用者成功加入房間時, 其會自伺服器接收到完整的狀態.
+- 在每個 [patchRate](/server/room/#patchrate-number) 中, 狀態的二進位修補程式會傳送至每個用戶端(預設為 `50ms`)
+- 當套用來自伺服器的修補程式時, 會在用戶端觸發 [回呼](/state/schema/#callbacks)
+- [`onStateChange`](/client/room/#onstatechange) 會在所有修補程式皆已套用至用戶端時觸發.
+- 您的伺服器端邏輯可能會隨時變動房間狀態. 連線的用戶端肯定能與伺服器同步.
 
-![状态同步图表](state-sync.png)
+![狀態同步圖表](state-sync.png)
