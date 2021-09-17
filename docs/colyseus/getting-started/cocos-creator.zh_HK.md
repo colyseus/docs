@@ -5,7 +5,7 @@
 Colyseus SDK 在 Cocos Creator 的運用上與 [JavaScript SDK](https://docs.colyseus.io/getting-started/javascript-client/) 類似. 主要區別在於如何通過 Cocos Creator 的 [TypeScript 組件來引入服務](https://docs.colyseus.io/colyseus/getting-started/cocos-creator/#importing-from-the-extension).
 
 !!! tip "想要具體實例?"
-看看 [Tic Tac Toe 項目](https://github.com/colyseus/cocos-demo-tictactoe).
+    看看 [Tic Tac Toe 項目](https://github.com/colyseus/cocos-demo-tictactoe).
 
 #### 1. 安裝擴展插件
 
