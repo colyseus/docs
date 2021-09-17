@@ -793,13 +793,13 @@ onCreate() {
 
 ---
 
-### `时钟ClockTimer`
+### `时钟 ClockTimer`
 
 一个 [`ClockTimer`](https://github.com/gamestdio/timer#api) 实例, 用于 [timing events](/server/timing-events).
 
 ---
 
-### Presence`Presence`
+### Presence `Presence`
 
 `presence` 实例. 查阅 [Presence API](/server/presence) 了解更多详细信息.
 

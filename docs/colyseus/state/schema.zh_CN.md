@@ -59,7 +59,7 @@ export class MyRoom extends Room<MyState> {
 
 ### 基本类型
 
-基本类型为数字, 字符串和布尔值.
+基本类型为数字, 字符串和布尔型.
 
 | 类型 | 描述 | 范围 |
 |------|-------------|------------|
@@ -889,31 +889,31 @@ schema.filter(function(client, value, root) {
 ## 客户端
 
 !!! Warning "C#, C++, Haxe"
-    在使用静入语言时, 需要在您的 Typescript 架构定义基础上生成客户端架构文件. [查看在客户端生成架构](#client-side-schema-generation).
+    在使用强类型语言时, 需要基于 Typescript schema 定义手动生成客户端 schema 文件. [生成客户端 schema 的方法](#client-side-schema-generation).
 
 ### 回调
 
-当应用来自服务器的状态更改时, 客户端将根据正在应用的更改触发本地实例上的回调.
+服务器状态变更应用到客户端时, 会根据变更的类型自动触发本地实例上的回调.
 
-将根据实例引用触发回调. 应确保在服务器上实际发生变化的实例上附加回调.
+回调通过房间状态实例触发. 使用前要确保该实例上已实现回调函数.
 
 - [onAdd (instance, key)](#onadd-instance-key)
 - [onRemove (instance, key)](#onremove-instance-key)
-- [onChange (changes)](#onchange-changes-datachange) (on `Schema` instance)
-- [onChange (instance, key)](#onchange-instance-key) (on collections:`MapSchema`, `ArraySchema`, etc.)
+- [onChange (changes)](#onchange-changes-datachange) (触发于 `Schema` 实例)
+- [onChange (instance, key)](#onchange-instance-key) (触发于集合实例: `MapSchema`, `ArraySchema` 等等.)
 - [listen()](#listenprop-callback)
 
 #### `onAdd (instance, key)`
 
-只能在 (`MapSchema`, `MapSchema` 等) 项目集合中使用 `onAdd` 回调. 使用新实例调用 `onAdd` 回调, 并且使用持有者对象中的秘钥作为参数.
+只有集合 (`MapSchema`, `MapSchema` 等) 可以使用 `onAdd` 回调. 集合更新后触发 `onAdd` 回调, 外加已更新集合的键作为参数.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onAdd = (player, key) => {
     console.log(player, "has been added at", key);
 
-    // add your player entity to the game world!
+    // 在游戏中加入player!
 
-    // If you want to track changes on a child object inside a map, this is a common pattern:
+    // 要想跟踪地图上物体的移动, 通常要这么做:
     player.onChange = function(changes) {
         changes.forEach(change => {
             console.log(change.field);
@@ -922,7 +922,7 @@ room.state.players.onAdd = (player, key) => {
         })
     };
 
-    // force "onChange" to be called immediatelly
+    // 手动强制触发 "onChange"
     player.triggerAll();
 };
 ```
@@ -931,9 +931,9 @@ room.state.players.onAdd = (player, key) => {
 room.state.players['on_add'] = function (player, key)
     print("player has been added at", key);
 
-    -- add your player entity to the game world!
+    -- 在游戏中加入player!
 
-    -- If you want to track changes on a child object inside a map, this is a common pattern:
+    -- 要想跟踪地图上物体的移动, 通常要这么做:
     player['on_change'] = function(changes)
         for i, change in ipairs(changes) do
             print(change.field)
@@ -942,7 +942,7 @@ room.state.players['on_add'] = function (player, key)
         end
     end
 
-    -- force "on_change" to be called immediatelly
+    -- 手动强制触发 "onChange"
     player.trigger_all()
 end
 ```
@@ -952,9 +952,9 @@ room.State.players.OnAdd += (Player player, string key) =>
 {
     Debug.Log("player has been added at " + key);
 
-    // add your player entity to the game world!
+    // 在游戏中加入player!
 
-    // If you want to track changes on a child object inside a map, this is a common pattern:
+    // 要想跟踪地图上物体的移动, 通常要这么做:
     player.OnChange += (changes) =>
     {
         changes.ForEach((obj) =>
@@ -965,7 +965,7 @@ room.State.players.OnAdd += (Player player, string key) =>
         });
     };
 
-    // force "OnChange" to be called immediatelly
+    // 手动强制触发 "onChange"
     e.Value.TriggerAll();
 };
 ```
@@ -974,13 +974,13 @@ room.State.players.OnAdd += (Player player, string key) =>
 
 #### `onRemove (instance, key)`
 
-只能在  (`MapSchema`) 映射和 (`ArraySchema`) 数组中使用 `onRemove` 回调. 使用已移除实例调用 `onAdd` 回调, 并且使用持有者对象中的秘钥作为参数.
+只有图 (`MapSchema`) 和数组 (`ArraySchema`) 可以使用 `onRemove` 回调. 集合更新后触发 `onRemove` 回调, 外加已更新集合的键作为参数.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onRemove = (player, key) => {
     console.log(player, "has been removed at", key);
 
-    // remove your player entity from the game world!
+    // 从游戏中移除player!
 };
 ```
 
@@ -988,7 +988,7 @@ room.state.players.onRemove = (player, key) => {
 room.state.players['on_remove'] = function (player, key)
     print("player has been removed at " .. key);
 
-    -- remove your player entity from the game world!
+    -- 从游戏中移除player!
 end
 ```
 
@@ -997,17 +997,17 @@ room.State.players.OnRemove += (Player player, string key) =>
 {
     Debug.Log("player has been removed at " + key);
 
-    // remove your player entity from the game world!
+    // 从游戏中移除player!
 };
 ```
 
 ---
 
-#### `onChange (changes:DataChange\[])`
+#### `onChange (changes:DataChange[])`
 
-> 对于直接 `Schema` 引用和集合结构, `onChange` 的工作方式各不相同. 对于 [`onChange` 集合结构(数组,映射等)的, 请查看这里](#onchange-instance-key).
+> `Schema` 上的 `onChange` 和集合结构上的不一样. 对于 [集合结构(数组, 映射等)的 `onChange` 请参考这里](#onchange-instance-key).
 
-可以注册 `onChange`, 以跟踪 `Schema` 实例的属性变更. 使用已变更的属性及其以先前值触发 `onChange` 回调.
+可以注册 `onChange` 以跟踪 `Schema` 实例属性的变更. `onChange` 的参数数组包含已变更的属性以及变更前的值.
 
 
 ```javascript fct_label="JavaScript"
@@ -1042,15 +1042,15 @@ room.State.OnChange += (changes) =>
 };
 ```
 
-不能为还没有与客户端同步的对象注册 `onChange` 回调.
+没有同步过的客户端不能注册 `onChange` 回调.
 
 ---
 
 #### `onChange (instance, key)`
 
-> `onChange` works differently for direct `Schema` references and collection structures. For [`onChange` on `Schema` structures, check here](#onchange-changes-datachange).
+> `Schema` 上的 `onChange` 和集合结构上的不一样. 对于 [`Schema` 的 `onChange` 请参考这里](#onchange-changes-datachange).
 
-当 **primitive** 集合类型 (`string`, `number`, `boolean` 等) 更新其部分值时, 将触发此回调.
+当集合里的 **基本** 类型 (`string`, `number`, `boolean` 等) 值更新时, 将触发此回调.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onChange = (player, key) => {
@@ -1071,25 +1071,25 @@ room.State.players.OnChange += (Player player, string key) =>
 };
 ```
 
-如果想要检测 **non-primitive** 集合类型(保留 `Schema` 实例), 请使用 [`onAdd`](#onadd-instance-key) 并且为它们注册 [`onChange`](#onchange-changes-datachange).
+对于 **非基本** 类型 (各种 `Schema` 集合), 请先注册 [`onAdd`](#onadd-instance-key) 再注册 [`onChange`](#onchange-changes-datachange).
 
 !!! Warning "`onChange`, `onAdd` 和 `onRemove` 是 **互斥的**"
-    `onChange` 回调在 [`onAdd`](#onadd-instance-key) 或 [`onRemove`](#onremove-instance-key) 期间不会触发.
+    `onChange` 回调在 [`onAdd`](#onadd-instance-key) 或 [`onRemove`](#onremove-instance-key) 期间不会被触发.
 
-    Consider registering `onAdd` and `onRemove` if you need to detect changes during these steps too.
+    如果想要跟踪的更新包括 `onAdd` 和 `onRemove`, 请注册这两个回调.
 
 ---
 
 #### `.listen(prop, callback)`
 
-侦听单个属性变更.
+侦听单个属性更新.
 
 > `.listen()` 目前仅可用于 JavaScript/TypeScript.
 
-**Parameters:**
+**参数:**
 
-- `property`: 想要侦听其变化的属性名称.
-- `callback`: 当 `property` 变更时将会触发的回调.
+- `property`: 想要侦听更新的属性名称.
+- `callback`: 当 `property` 更新时触发的回调.
 
 
 ```typescript
@@ -1099,7 +1099,7 @@ state.listen("currentTurn", (currentValue, previousValue) => {
 });
 ```
 
-`.listen()` 返回一个函数, 用于取消注册侦听器
+`.listen()` 返回的函数可用于移除侦听器
 
 
 ```typescript
@@ -1107,13 +1107,13 @@ const removeListener = state.listen("currentTurn", (currentValue, previousValue)
     // ...
 });
 
-// later on, if you don't need the listener anymore, you can call `removeListener()` to stop listening for `"currentTurn"` changes.
+// 之后, 如果不需要侦听器了, 可以调用 `removeListener()` 来移除对 `"currentTurn"` 的侦听.
 removeListener();
 ```
 
-**What's the difference between `listen` and `onChange`?**
+**`listen` 和 `onChange` 有什么区别?**
 
-`.listen()` 方法是单个属性 `onChange` 的简化形式. 下面是
+`.listen()` 方法是专为监听单个属性 `onChange` 的简化版本. 下面是把 `.listen()` 写成 `onChange` 的样子:
 
 ```typescript
 state.onChange = function(changes) {
@@ -1128,24 +1128,24 @@ state.onChange = function(changes) {
 
 ---
 
-## 客户端架构生成
+## 生成客户端 schema 的方法
 
-`schema-codegen` 是一个工具, 它转换服务器端架构定义文件, 以便在客户使用.
+`schema-codegen` 是一个转译工具, 用于把服务器端的 schema 定义文件转换为客户端可以使用的版本:
 
-要在客户端解码状态, 客户端的本地架构定义必须兼容服务器端的架构定义.
+要在客户端正确解码 state, 客户端的 schema 定义文件必须与服务器端相兼容.
 
-!!! Warning "在使用 [JavaScript SDK](/getting-started/javascript-client/) 时不需要"
-    只有在客户端使用静态类型语言, 例如  C#, Haxe 等, 才需要使用 `schema-codegen`.
+!!! Warning "在使用 [JavaScript SDK](/getting-started/javascript-client/) 时不必使用此工具"
+    只有在客户端使用强类型语言, 如 C#, Haxe 等时, 才需要使用 `schema-codegen`.
 
-**用法**
+**使用方法**
 
-要在终端上查看用法, 请 `cd` 进入服务器目录, 运行以下命令:
+要在终端查看使用方法, 先 `cd` 进入服务器目录, 然后运行以下命令:
 
 ```
 npx schema-codegen --help
 ```
 
-**Output:**
+**输出:**
 
 ```
 schema-codegen [path/to/Schema.ts]
@@ -1166,9 +1166,9 @@ Optional:
     --namespace: generate namespace on output code
 ```
 
-### 示例Unity / C#
+### 举例: Unity / C#
 
-下面是一个利用 [demo Unity project](https://github.com/colyseus/colyseus-unity3d/blob/aa9a722a50b2958ce01785969cd8ecb8aee24fd0/Server/package.json#L12) 生成 C# 架构文件的真实示例.
+下面是用 [Unity 演示项目](https://github.com/colyseus/colyseus-unity3d/blob/aa9a722a50b2958ce01785969cd8ecb8aee24fd0/Server/package.json#L12) 生成 C# schema 文件的实例.
 
 ```
 npx schema-codegen src/rooms/schema/* --csharp --output ../Assets/Scripts/States/"
@@ -1176,9 +1176,9 @@ generated: Player.cs
 generated: State.cs
 ```
 
-**Using `npm` scripts:**
+**使用 `npm` 脚本:**
 
-简而言之, 建议在 `package.json` 中的 `npm`  中配置 `schema-codegen` 参数:
+简言之, 推荐您把 `schema-codegen` 的参数保存在 `package.json` 文件中的 `npm` 脚本里:
 
 ```json
 "scripts": {
@@ -1186,7 +1186,7 @@ generated: State.cs
 }
 ```
 
-这样, 就可以运行 `npm run schema-codegen`, 而不必运行完整的命令
+这样, 运行 `npm run schema-codegen`, 就可以代替完整的命令:
 
 ```
 npm run schema-codegen
@@ -1194,9 +1194,9 @@ generated: Player.cs
 generated: State.cs
 ```
 
-### 版本及向后/向前兼容
+### 版本及向下/向上兼容
 
-通过在现有结构的末尾声明新字段, 可以实现向后/向前兼容, 不应删除先前的声明, 而是应该根据需要将其标记为 `@deprecated()` 下面是一个版本示例.
+通过在现有结构末尾声明新字段, 可以实现向下/向上兼容, 不应删除先前的声明, 而是应该根据需要将其标记为 `@deprecated()`. 下面是一个例子.
 
 ```typescript fct_label="Live version 1"
 import { Schema, type, deprecated } from "@colyseus/schema";
@@ -1210,10 +1210,10 @@ class MyState extends Schema {
 import { Schema, type, deprecated } from "@colyseus/schema";
 
 class MyState extends Schema {
-    // Flag field as deprecated.
+    // 标记此字段作废.
     @deprecated() @type("string") myField: string;
 
-    // To allow your server to play nicely with multiple client-side versions.
+    // 保证不同客户端版本的服务器兼容.
     @type("string") newField: string;
 }
 ```
@@ -1222,42 +1222,42 @@ class MyState extends Schema {
 import { Schema, type, deprecated } from "@colyseus/schema";
 
 class MyState extends Schema {
-    // Flag field as deprecated.
+    // 标记此字段作废.
     @deprecated() @type("string") myField: string;
 
-    // Flag field as deprecated again.
+    // 再次标记此字段作废.
     @deprecated() @type("string") newField: string;
 
-    // New fields always at the end of the structure
+    // 最新的字段总是保持在最下边
     @type("string") anotherNewField: string;
 }
 ```
 
-这对于本地编译目标语言特别有用, 包括 C#, C++, Haxe 等, 在这些语言中, 客户端可能没有最新的架构定义版本.
+这对于本地编译类语言很有用, 如 C#, C++, Haxe 等 - 即使这些客户端编译时没有最新的 schema 定义.
 
 ---
 
 ## 限制和最佳实践
 
-- 每个 `Schema` 结构最多可以保存 `64` 个字段.如果需要更多字段,可以使用嵌套式 `Schema` 结构.
+- 每个 `Schema` 结构最多可以保存 `64` 个字段. 如果需要更多字段, 可以嵌套使用 `Schema` 结构.
 - `NaN` 或 `null` 数字被编码为 `0`
 - `null` 字符串被编码为 `""`
 - `Infinity` 数字被编码为 `Number.MAX_SAFE_INTEGER`
 - 不支持多维数组. [查看如何将一维数组作为多维数组使用](https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid/212813#212813)
-- `@colyseus/schema` 编码顺序基于字段定义顺义.
-    - 编码器(服务器)和解码器(客户端)必须具有相同的架构定义.
-    - 字段的顺序必须相同.
+- `@colyseus/schema` 编码顺序按照字段定义顺序.
+    - 编码器 (服务器) 和解码器 (客户端) 都必须拥有相同的 schema 定义.
+    - 字段的顺序也要相同.
 
 ### 集合
 
-集合类型 (`ArraySchema`, `MapSchema` 等) 必须包含相同类型的项目, 或共享相同的基础类型.
+集合类型 (`ArraySchema`, `MapSchema` 等) 里的元素类型必须相同, 或者基类相同.
 
-**支持以下示例:**
+**支持以下写法:**
 
 ```typescript
-class Item extends Schema {/* base Item fields */}
-class Weapon extends Item {/* specialized Weapon fields */}
-class Shield extends Item {/* specialized Shield fields */}
+class Item extends Schema {/* 基类 Item */}
+class Weapon extends Item {/* 武器类 */}
+class Shield extends Item {/* 盾牌类 */}
 
 class Inventory extends Schema {
     @type({ map: Item }) items = new MapSchema<Item>();
@@ -1267,21 +1267,3 @@ const inventory = new Inventory();
 inventory.set("left", new Weapon());
 inventory.set("right", new Shield());
 ```
-
-### 原始类型
-
-| Type | Description | Limitation |
-|------|-------------|------------|
-| `"string"` | utf8 strings | maximum byte size of `4294967295` |
-| `"number"` | also known as "varint". Auto-detects the number type to use. (may use one extra byte when encoding) | `0` to `18446744073709551615` |
-| `"boolean"` | `true` or `false` | `0` or `1` |
-| `"int8"` | signed 8-bit integer | `-128` to `127` |
-| `"uint8"` | unsigned 8-bit integer | `0` to `255` |
-| `"int16"` | signed 16-bit integer | `-32768` to `32767` |
-| `"uint16"` | unsigned 16-bit integer | `0` to `65535` |
-| `"int32"` | signed 32-bit integer | `-2147483648` to `2147483647` |
-| `"uint32"` | unsigned 32-bit integer | `0` to `4294967295` |
-| `"int64"` | signed 64-bit integer | `-9223372036854775808` to `9223372036854775807` |
-| `"uint64"` | unsigned 64-bit integer | `0` to `18446744073709551615` |
-| `"float32"` | single-precision floating-point number | `-3.40282347e+38` to `3.40282347e+38`|
-| `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |
