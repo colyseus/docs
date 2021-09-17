@@ -889,7 +889,7 @@ schema.filter(function(client, value, root) {
 ## 客户端
 
 !!! Warning "C#, C++, Haxe"
-    在使用静入语言时, 需要在您的 Typescript 架构定义基础上生成客户端架构文件. [查看在客户端生成架构](#client-side-schema-generation).
+    在使用强类型语言时, 需要基于 Typescript schema 定义手动生成客户端 schema 文件. [生成客户端 schema 的方法](#client-side-schema-generation).
 
 ### 回调
 
@@ -1128,7 +1128,7 @@ state.onChange = function(changes) {
 
 ---
 
-## 客户端架构生成
+## 生成客户端 schema 的方法
 
 `schema-codegen` 是一个工具, 它转换服务器端架构定义文件, 以便在客户使用.
 
