@@ -5,8 +5,8 @@
 
 ## How to define synchronizable structures
 
-- `Schema` structures are defined the server-side to be used in the room state. 
-- Only fields decorated with `@type()` are going to be considered for synchronization. 
+- `Schema` structures are defined the server-side to be used in the room state.
+- Only fields decorated with `@type()` are going to be considered for synchronization.
 - _(Synchronizable schema structures should only be used for data related to your state.)_
 
 ### Defining a `Schema` structure
@@ -33,7 +33,7 @@ schema.defineTypes(MyState, {
 ```
 
 !!! Tip "_"What is this `@type()` keyword? I've never seen this before!"_"
-    The `@type()` you see heavily used on this page is an upcoming JavaScript feature that is yet to be formally established by TC39. `type` is actually just a function imported from `@colyseus/schema` module. By calling `type` with the `@` prefix at the property level means we're calling it as a _property decorator_. [See the decorators proposal here](https://github.com/tc39/proposal-decorators). 
+    The `@type()` you see heavily used on this page is an upcoming JavaScript feature that is yet to be formally established by TC39. `type` is actually just a function imported from `@colyseus/schema` module. By calling `type` with the `@` prefix at the property level means we're calling it as a _property decorator_. [See the decorators proposal here](https://github.com/tc39/proposal-decorators).
 
 ### Using the state within your `Room`
 
@@ -59,7 +59,7 @@ export class MyRoom extends Room<MyState> {
 
 ### Primitive types
 
-Primitive types are numbers, strings and boolean. 
+Primitive types are numbers, strings and boolean.
 
 | Type | Description | Limitation |
 |------|-------------|------------|
@@ -1085,7 +1085,7 @@ If you'd like to detect changes inside a collection of **non-primitive** types (
 
 #### `.listen(prop, callback)`
 
-Listens for a single property change. 
+Listens for a single property change.
 
 > `.listen()` is currently only available for JavaScript/TypeScript.
 
@@ -1116,7 +1116,7 @@ removeListener();
 
 **What's the difference between `listen` and `onChange`?**
 
-The `.listen()` method is a shorthand for `onChange` on a single property. Below is 
+The `.listen()` method is a shorthand for `onChange` on a single property. Below is a rewrite from `.listen()` to `onChange`:
 
 ```typescript
 state.onChange = function(changes) {
@@ -1169,7 +1169,7 @@ Optional:
     --namespace: generate namespace on output code
 ```
 
-### Example: Unity / C# 
+### Example: Unity / C#
 
 Below is a real example to generate the C# schema files from the [demo Unity project](https://github.com/colyseus/colyseus-unity3d/blob/aa9a722a50b2958ce01785969cd8ecb8aee24fd0/Server/package.json#L12).
 
@@ -1182,7 +1182,7 @@ generated: State.cs
 **Using `npm` scripts:**
 
 For short, it is recommended to have your `schema-codegen` arguments configured under a `npm` script in your `package.json`:
-    
+
 ```json
 "scripts": {
     "schema-codegen": "schema-codegen src/rooms/schema/* --csharp --output ../Assets/Scripts/States/"
@@ -1217,7 +1217,7 @@ class MyState extends Schema {
     @deprecated() @type("string") myField: string;
 
     // To allow your server to play nicely with multiple client-side versions.
-    @type("string") newField: string; 
+    @type("string") newField: string;
 }
 ```
 
@@ -1229,7 +1229,7 @@ class MyState extends Schema {
     @deprecated() @type("string") myField: string;
 
     // Flag field as deprecated again.
-    @deprecated() @type("string") newField: string; 
+    @deprecated() @type("string") newField: string;
 
     // New fields always at the end of the structure
     @type("string") anotherNewField: string;
@@ -1270,21 +1270,3 @@ const inventory = new Inventory();
 inventory.set("left", new Weapon());
 inventory.set("right", new Shield());
 ```
-
-### Primitive types
-
-| Type | Description | Limitation |
-|------|-------------|------------|
-| `"string"` | utf8 strings | maximum byte size of `4294967295` |
-| `"number"` | also known as "varint". Auto-detects the number type to use. (may use one extra byte when encoding) | `0` to `18446744073709551615` |
-| `"boolean"` | `true` or `false` | `0` or `1` |
-| `"int8"` | signed 8-bit integer | `-128` to `127` |
-| `"uint8"` | unsigned 8-bit integer | `0` to `255` |
-| `"int16"` | signed 16-bit integer | `-32768` to `32767` |
-| `"uint16"` | unsigned 16-bit integer | `0` to `65535` |
-| `"int32"` | signed 32-bit integer | `-2147483648` to `2147483647` |
-| `"uint32"` | unsigned 32-bit integer | `0` to `4294967295` |
-| `"int64"` | signed 64-bit integer | `-9223372036854775808` to `9223372036854775807` |
-| `"uint64"` | unsigned 64-bit integer | `0` to `18446744073709551615` |
-| `"float32"` | single-precision floating-point number | `-3.40282347e+38` to `3.40282347e+38`|
-| `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |

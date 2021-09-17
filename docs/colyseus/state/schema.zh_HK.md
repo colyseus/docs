@@ -1,13 +1,13 @@
 # [狀態同步](/state/overview) &raquo; 架構
 
 !!! Tip "還沒使用 TypeScript?"
-    強烈建議您使用 TypeScript 以便更好地定義架構結構並提高整體開發體驗. TypeScript 支持的 "實驗性修飾器" 會在本手冊內大量使用.
+強烈建議您使用 TypeScript 以便更好地定義 Schema 結構並提高整體開發體驗. TypeScript 支持的 "實驗性修飾器" 會在本手冊內大量使用.
 
 ## 如何定義可同步結構
 
-- `Schema` 結構由伺服器定義,用於房間狀態.
-- 只有以 `@type()` 修飾的字段才被考慮用於同步.
-- _(可同步架構結構應當僅用於與您的狀態相關的數據.)_
+- `Schema` 結構由服務器定義, 用於房間狀態同步.
+- 只有以 `@type()` 修飾的字段才會被用於同步.
+- _(可同步 Schema 結構僅應用於狀態相關的數據.)_
 
 ### 定義 `Schema` 結構
 
@@ -33,7 +33,7 @@ schema.defineTypes(MyState, {
 ```
 
 !!! Tip "_"這個 `@type()` 關鍵字是什麽? 我之前從未見過!"_"
-    您看見的在本頁大量使用的 `@type()` 是一個即將推出的 JavaScript 功能, 還沒有被 TC39 正式認可. `type` 其實只是一個從 `@colyseus/schema` 模組匯入的功能. 在屬性層級調用帶有 `@` 前綴的 `類型`, 意味著我們將其作為一個 _屬性修飾器_ 進行調用. [在這裏查看修飾器方案](https://github.com/tc39/proposal-decorators).
+您看見的在本頁大量使用的 `@type()` 是一個即將推出的 JavaScript 功能, 還沒有被 TC39 正式認可. `type` 其實只是一個從 `@colyseus/schema` 模塊導入的函數. 在屬性層級調用帶有 `@` 前綴的 `type`, 意味著我們將其作為一個 _屬性修飾器_ 進行調用. [在這裏查看修飾器方案](https://github.com/tc39/proposal-decorators).
 
 ### 在您的 `Room` 內使用狀態
 
@@ -50,42 +50,42 @@ export class MyRoom extends Room<MyState> {
 ```
 
 
-## 處理架構
+## 使用 Schema
 
-- 只有伺服器端負責處理變異架構結構
-- 客戶端必須擁有通過 `[schema-codegen`` 生成的相同的 Schema` 定義. _(如果您在使用 [JavaScript SDK](/getting-started/javascript-client/) 則為可選)_
-- 為了從伺服器獲得更新, 您需要 [將架構的回呼附加在客戶端內](#callbacks).
-- 客戶端永遠不該在架構上執行變異 - 因為在收到下一個來自伺服器的更改時, 它們就會被立刻替換.
+- 只有服務器端有權修改 Schema 數據
+- 客戶端要包含以 [`schema-codegen`](#client-side-schema-generation) 生成的與服務器端同樣的 `Schema` 定義. _(如果使用 [JavaScript SDK](/getting-started/javascript-client/) 則此條為可選項)_
+- 為了從服務器獲得更新, 需要 [在客戶端把回調附加在 schema 實例上](#callbacks).
+- 客戶端永遠不應主動修改 schema - 因為在收到來自服務器的下一個心跳就會把它更新覆蓋掉.
 
-### 原始類型
+### 基本類型
 
-原始類型為數字, 字符串和布爾值.
+基本類型為數字, 字符串和布爾型.
 
-| Type | Description | Limitation |
+| 類型 | 描述 | 範圍 |
 |------|-------------|------------|
-| `"string"` | utf8 strings | maximum byte size of `4294967295` |
-| `"number"` | also known as "varint". Auto-detects the number type to use. (may use one extra byte when encoding) | `0` to `18446744073709551615` |
-| `"boolean"` | `true` or `false` | `0` or `1` |
+| `"string"` | utf8 字符串 | 最大 `4294967295` 字節|
+| `"number"` | 又稱為 "正整數". 自動定義數字類型. (編碼時可能會多用1個字節) | 取值範圍 `0` 到 `18446744073709551615` |
+| `"boolean"` | `true` 或 `false` | 取值為 `0` 或 `1` |
 
-**Specialized number types:**
+**特定數值類型:**
 
-| Type | Description | Limitation |
+| 類型 | 描述 | 範圍 |
 |------|-------------|------------|
-| `"int8"` | signed 8-bit integer | `-128` to `127` |
-| `"uint8"` | unsigned 8-bit integer | `0` to `255` |
-| `"int16"` | signed 16-bit integer | `-32768` to `32767` |
-| `"uint16"` | unsigned 16-bit integer | `0` to `65535` |
-| `"int32"` | signed 32-bit integer | `-2147483648` to `2147483647` |
-| `"uint32"` | unsigned 32-bit integer | `0` to `4294967295` |
-| `"int64"` | signed 64-bit integer | `-9223372036854775808` to `9223372036854775807` |
-| `"uint64"` | unsigned 64-bit integer | `0` to `18446744073709551615` |
-| `"float32"` | single-precision floating-point number | `-3.40282347e+38` to `3.40282347e+38`|
-| `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |
+| `"int8"` | 有符號 8-bit 整數 | `-128` 到 `127` |
+| `"uint8"` | 無符號 8-bit 整數 | `0` 到 `255` |
+| `"int16"` | 有符號 16-bit 整數 | `-32768` 到 `32767` |
+| `"uint16"` | 無符號 16-bit 整數 | `0` 到 `65535` |
+| `"int32"` | 有符號 32-bit 整數 | `-2147483648` 到 `2147483647` |
+| `"uint32"` | 無符號 32-bit 整數 | `0` 到 `4294967295` |
+| `"int64"` | 有符號 64-bit 整數 | `-9223372036854775808` 到 `9223372036854775807` |
+| `"uint64"` | 無符號 64-bit 整數 | `0` 到 `18446744073709551615` |
+| `"float32"` | 單精度浮點數 | `-3.40282347e+38` 到 `3.40282347e+38`|
+| `"float64"` | 雙精度浮點數 | `-1.7976931348623157e+308` 到 `1.7976931348623157e+308` |
 
 
 ### 復雜類型
 
-復雜類型由其他架構實例中的 `Schema` 實例組成. 它們也可以包含 [專案集合](#collections-of-items) (數組, 地圖等).
+復雜類型由 `Schema` 嵌套而成. 它們也可以包含 [集合類型](#collections-of-items) (array, map 等).
 
 ```typescript fct_label="TypeScript"
 import { Schema, type } from "@colyseus/schema";
@@ -125,13 +125,13 @@ schema.defineTypes(MyState, {
 });
 ```
 
-## 專案集合
+## 集合類型
 
 ### ArraySchema
 
 `ArraySchema` 是一個可同步版本的內置 JavaScript [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) 類型.
 
-**示例:自定義 `Schema` 類型** 的數組
+**示例: 自定義 `Schema` 類型** 數組
 
 ```typescript fct_label="TypeScript"
 import { Schema, ArraySchema, type } from "@colyseus/schema";
@@ -170,9 +170,9 @@ schema.defineTypes(MyState, {
 });
 ```
 
-**示例:原始類型** 的數組
+**示例: 基本類型** 數組
 
-您無法將類型混合進數組中.
+數組元素必須是同一類型數據.
 
 ```typescript fct_label="TypeScript"
 import { Schema, ArraySchema, type } from "@colyseus/schema";
@@ -203,60 +203,60 @@ schema.defineTypes(MyState, {
 
 #### `array.push()`
 
-在一個數組後面添加一個或多個元素, 並返回該數組的新長度.
+在一個數組後面添加一個或多個元素, 並返回該數組更新後的長度.
 
 ```typescript
 const animals = new ArraySchema<string>();
 animals.push("pigs", "goats");
 animals.push("sheeps");
 animals.push("cows");
-// output: 4
+// 輸出: 4
 ```
 
 ---
 
 #### `array.pop()`
 
-移除一個數組的最後一個元素並返回該元素. 該方法可以更改數組的長度.
+移除一個數組的最後一個元素並返回該元素. 該方法會改變數組的長度.
 
 ```typescript
 animals.pop();
-// output: "cows"
+// 輸出: "cows"
 
 animals.length
-// output: 3
+// 輸出: 3
 ```
 
 ---
 
 #### `array.shift()`
 
-移除一個數組的第一個元素並返回被移除的元素. 該方法可以更改數組的長度.
+移除一個數組的第一個元素並返回該元素. 該方法會改變數組的長度.
 
 ```typescript
 animals.shift();
-// output: "pigs"
+// 輸出: "pigs"
 
 animals.length
-// output: 2
+// 輸出: 2
 ```
 
 ---
 
 #### `array.unshift()`
 
-在一個數組的開頭添加一個或更多元素並返回該數組的新長度.
+在一個數組的開頭添加一個或多個元素, 並返回該數組更新後的長度.
 
 ```typescript
 animals.unshift("pigeon");
-// output: 3
+// 輸出: 3
 ```
 
 ---
 
 #### `array.indexOf()`
 
-返回數組中可以找到的一個給定元素的第一個索引, 如果不存在則為 -1
+返回數組中找到給定元素的第一個索引, 如果不存在則返回 -1
 
 ```typescript
 const itemIndex = animals.indexOf("sheeps");
@@ -266,13 +266,13 @@ const itemIndex = animals.indexOf("sheeps");
 
 #### `array.splice()`
 
-通過移除或替換現有元素並/或 [在適當的位置](https://en.wikipedia.org/wiki/In-place_algorithm) 添加新元素的方式來更改一個數組的內容.
+移除替換現有元素或 [在指定位置](https://en.wikipedia.org/wiki/In-place_algorithm) 添加新元素來更改一個數組的內容.
 
 ```typescript
-// find the index of the item you'd like to remove
+// 找到需要移除元素的索引
 const itemIndex = animals.findIndex((animal) => animal === "sheeps");
 
-// remove it!
+// 移除元素!
 animals.splice(itemIndex, 1);
 ```
 
@@ -288,9 +288,9 @@ this.state.array1 = new ArraySchema<string>('a', 'b', 'c');
 this.state.array1.forEach(element => {
     console.log(element);
 });
-// output: "a"
-// output: "b"
-// output: "c"
+// 輸出: "a"
+// 輸出: "b"
+// 輸出: "c"
 ```
 
 ```csharp fct_label="C#"
@@ -312,17 +312,17 @@ for (index => value in state.array1) {
 }
 ```
 
-!!! Note "Array有更多方法可用"
-    查看 [MDN 文檔](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/).
+!!! Note "Array 還有更多函數可用"
+詳見 [MDN 文檔](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/).
 
 ### MapSchema
 
-`MapSchema` 是一個可同步版本的內置 JavaScript [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) 類型.
+`MapSchema` 是一個基於 JavaScript 內置 [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) 的可同步版本.
 
-推薦使用 Maps 來通過 id 追蹤您的遊戲實體,比如玩家, 敵人等.
+推薦使用 Maps 裏的 id 來追蹤遊戲實體, 比如玩家, 敵人等.
 
-!!! Warning "當前僅支持字符串鍵"
-    目前, `MapSchema` 僅允許您自定義值的類型. 秘鑰類型始終為 `字符串`.
+!!! Warning "當前僅支持字符串類型的 id"
+目前, `MapSchema` 允許您自定義值的類型, 但是鍵的類型必須為為 `string`.
 
 ```typescript fct_label="TypeScript"
 import { Schema, MapSchema, type } from "@colyseus/schema";
@@ -365,21 +365,21 @@ schema.defineTypes(MyState, {
 
 #### `map.get()`
 
-通過秘鑰來獲取地圖項:
+通過鍵得到 map 的值:
 
 ```typescript
 const map = new MapSchema<string>();
 const item = map.get("key");
 ```
 
-或
+或者
 
 ```typescript
 //
-// NOT RECOMMENDED
+// 不建議使用這種方法
 //
-// This is a compatibility layer with previous versions of @colyseus/schema
-// This is going to be deprecated in the future.
+// 保留這種方法只是為了 @colyseus/schema 的版本向下兼容
+// 未來會舍棄這種方法.
 //
 const item = map["key"];
 ```
@@ -388,21 +388,21 @@ const item = map["key"];
 
 #### `map.set()`
 
-通過秘鑰來設置一個地圖項:
+通過鍵來設置 map 的值:
 
 ```typescript
 const map = new MapSchema<string>();
 map.set("key", "value");
 ```
 
-或
+或者
 
 ```typescript
 //
-// NOT RECOMMENDED
+// 不建議使用這種方法
 //
-// This is a compatibility layer with previous versions of @colyseus/schema
-// This is going to be deprecated in the future.
+// 保留這種方法只是為了 @colyseus/schema 的版本向下兼容
+// 未來會舍棄這種方法.
 //
 map["key"] = "value";
 ```
@@ -411,20 +411,20 @@ map["key"] = "value";
 
 #### `map.delete()`
 
-通過秘鑰來移除一個地圖項:
+通過鍵移除 map 的值:
 
 ```typescript
 map.delete("key");
 ```
 
-或
+或者
 
 ```typescript
 //
-// NOT RECOMMENDED
+// 不建議使用這種方法
 //
-// This is a compatibility layer with previous versions of @colyseus/schema
-// This is going to be deprecated in the future.
+// 保留這種方法只是為了 @colyseus/schema 的版本向下兼容
+// 未來會舍棄這種方法.
 //
 delete map["key"];
 ```
@@ -433,7 +433,7 @@ delete map["key"];
 
 #### `map.size`
 
-在一個 `MapSchema` 對象中返回元素的數量.
+返回 `MapSchema` 對象中元素的數量.
 
 ```typescript
 const map = new MapSchema<number>();
@@ -441,14 +441,14 @@ map.set("one", 1);
 map.set("two", 2);
 
 console.log(map.size);
-// output: 2
+// 輸出: 2
 ```
 
 ---
 
 #### `map.forEach()`
 
-叠代地圖的每對秘鑰/值, 按照插入順序.
+叠代 map 中的鍵值對, 以元素插入順序.
 
 ```typescript fct_label="TypeScript"
 this.state.players.forEach((value, key) => {
@@ -477,18 +477,18 @@ for (key => value in state.players) {
 }
 ```
 
-!!! Note "Map 有更多方法可用"
-    查看 [MDN 文檔](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/).
+!!! Note "Map 還有更多函數可用"
+詳見 [MDN 文檔](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/).
 
 
 ### SetSchema
 
-!!! Warning "`SetSchema` 僅在 JavaScript 中實現"
-    目前 `SetSchema` 只能與 JavaScript 一同使用. 尚不支持 Haxe, C#, LUA 和 C++ 客戶端.
+!!! Warning "`SetSchema` 僅支持 JavaScript"
+目前 `SetSchema` 只能在 JavaScript 中使用. 尚不支持 Haxe, C#, LUA 和 C++ 客戶端.
 
-`SetSchema` 是一個可同步版本的內置 JavaScript [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) 類型.
+`SetSchema` 是一個基於 JavaScript 內置 [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) 的可同步版本.
 
-`SetSchema` 的用法和 [`CollectionSchema`] 十分類似, 最大區別在於 Sets 擁有獨特的值. Sets 沒有直接訪問值的方法. (如[collection.at()](#collectionat))
+`SetSchema` 的用法和 [`CollectionSchema`] 十分類似, 最大區別在於 Set 的值具有唯一性. JS 的 Set 沒有直接獲取值的方法. (比如像 [collection.at()](#collectionat))
 
 ```typescript fct_label="TypeScript"
 import { Schema, SetSchema, type } from "@colyseus/schema";
@@ -529,8 +529,7 @@ schema.defineTypes(Player, {
 
 #### `set.add()`
 
-將一個項附加至 `SetSchema` 對象.
-item to the `SetSchema` object.
+為 `SetSchema` 添加元素.
 
 ```typescript
 const set = new CollectionSchema<number>();
@@ -543,7 +542,7 @@ set.add(3);
 
 #### `set.at()`
 
-在特定 `index` 中獲取一個項.
+獲取 `index` 處的值.
 
 ```typescript
 const set = new CollectionSchema<string>();
@@ -552,14 +551,14 @@ set.add("two");
 set.add("three");
 
 set.at(1);
-// output: "two"
+// 輸出: "two"
 ```
 
 ---
 
 #### `set.delete()`
 
-按項的值刪除項.
+按值刪除元素.
 
 ```typescript
 set.delete("three");
@@ -569,7 +568,7 @@ set.delete("three");
 
 #### `set.has()`
 
-返回一個布爾值, 無論該項是否存在於 Collection 中.
+檢查集合中是否有該值.
 
 ```typescript
 if (set.has("two")) {
@@ -583,7 +582,7 @@ if (set.has("two")) {
 
 #### `set.size`
 
-在一個 `SetSchema` 對象中返回元素的數量.
+返回 `SetSchema` 裏元素的長度.
 
 ```typescript
 const set = new SetSchema<number>();
@@ -592,19 +591,19 @@ set.add(20);
 set.add(30);
 
 console.log(set.size);
-// output: 3
+// 輸出: 3
 ```
 
-!!! Note "Set 有更多方法可用"
-    查看 [MDN 文檔](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
+!!! Note "Set 還有更多函數可用"
+詳見 [MDN 文檔](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
 
 
 ### CollectionSchema
 
-!!! Note "`CollectionSchema` 僅在 JavaScript 中實現"
-    目前 `CollectionSchema` 只能與 JavaScript 一同使用. 尚不支持 Haxe, C#, LUA 和 C++ 客戶端.
+!!! Note "`CollectionSchema` 僅支持 JavaScript"
+目前 `CollectionSchema` 只能在 JavaScript 中使用. 尚不支持 Haxe, C#, LUA 和 C++ 客戶端.
 
-`CollectionSchema` 的運作方式與 `ArraySchema` 類似, 需要註意的是, 您無法控製它的索引.
+`CollectionSchema` 的用法與 `ArraySchema` 類似, 需要註意的是, 它不具備某些數組可用的函數.
 
 ```typescript fct_label="TypeScript"
 import { Schema, CollectionSchema, type } from "@colyseus/schema";
@@ -645,7 +644,7 @@ schema.defineTypes(Player, {
 
 #### `collection.add()`
 
-將一個項附加至 `CollectionSchema` 對象.
+為 `CollectionSchema` 添加元素.
 
 ```typescript
 const collection = new CollectionSchema<number>();
@@ -658,7 +657,7 @@ collection.add(3);
 
 #### `collection.at()`
 
-在特定 `索引` 中獲取一個項.
+獲取 `index` 處的值.
 
 ```typescript
 const collection = new CollectionSchema<string>();
@@ -667,14 +666,14 @@ collection.add("two");
 collection.add("three");
 
 collection.at(1);
-// output: "two"
+// 輸出: "two"
 ```
 
 ---
 
 #### `collection.delete()`
 
-按項的值刪除項.
+按值刪除元素.
 
 ```typescript
 collection.delete("three");
@@ -684,7 +683,7 @@ collection.delete("three");
 
 #### `collection.has()`
 
-返回一個布爾值, 無論該項是否存在於 Collection 中.
+檢查集合中是否有該值.
 
 ```typescript
 if (collection.has("two")) {
@@ -698,7 +697,7 @@ if (collection.has("two")) {
 
 #### `collection.size`
 
-在一個 `CollectionSchema` 對象中返回元素的數量.
+返回 `CollectionSchema` 裏元素的長度.
 
 ```typescript
 const collection = new CollectionSchema<number>();
@@ -707,14 +706,14 @@ collection.add(20);
 collection.add(30);
 
 console.log(collection.size);
-// output: 3
+// 輸出: 3
 ```
 
 ---
 
 #### `collection.forEach()`
 
-`forEach()` 方法會為 `CollectionSchema` 對象中每對索引/值執行一次給定功能, 按插入順序.
+叠代 `CollectionSchema` 中的鍵值對, 以元素插入順序.
 
 ```typescript
 collection.forEach((value, at) => {
@@ -726,36 +725,36 @@ collection.forEach((value, at) => {
 ## 每個客戶端過濾數據
 
 !!! Warning "此功能為實驗性質"
-    `@filter()`/`@filterChildren()` 為實驗性質, 可能不適合快節奏遊戲.
+`@filter()` / `@filterChildren()` 為實驗性質, 可能不適合快節奏遊戲.
 
-過濾意味著對一個特定客戶端隱藏您的部分狀態, 避免作弊, 防止一名玩家因決定檢查來自網路的數據而看到未過濾的狀態資訊.
+過濾用來為指定客戶端隱藏部分狀態數據, 防止作弊, 防止玩家獲取全部數據.
 
-數據過濾器為回呼, 會在 **per client** 和 **per field** 觸發 (如果 `@filterChildren`, 則為每個子結構). 如果過濾器回呼返回 `true`, 該字段數據將會發送給那個特定客戶端, 否則, 該數據將不會發送給該客戶端.
+數據過濾器回調, 可以針對 **每個客戶端** 的 **每個字段** 進行觸發 (如果使用了 `@filterChildren`, 還可在每個子結構觸發). 如果過濾器回調返回 `true`, 則該字段數據將會發送給那個指定的客戶端, 否則不發送.
 
-請註意, 如果過濾器功能的依賴項發生改變, 將無法自動重新執行, 但僅限於過濾字段(或其子字段)被更新時. 查看 [此問題](https://github.com/colyseus/schema/issues/102) 的替代方法.
+請註意, 只有被過濾字段 (或其子字段) 數據更新時, 過濾器回調才能被觸發. 要想手動觸發請參考 [此問題](https://github.com/colyseus/schema/issues/102) 裏描述的方法.
 
 ### `@filter()` 屬性修飾器
 
-`@filter()` 屬性修飾器可用於過濾掉整個 Schema 字段.
+`@filter()` 屬性修飾器可作用於整個 Schema 字段.
 
-看看 `@filter()` 簽名是什麽樣子的:
+下面展示了 `@filter()` 的函數簽名:
 
 ```typescript fct_label="TypeScript"
 class State extends Schema {
     @filter(function(client, value, root) {
-        // client is:
+        // client 參數是:
         //
-        // the current client that's going to receive this data. you may use its
-        // client.sessionId, or other information to decide whether this value is
-        // going to be synched or not.
+        // 當前將要接受數據的客戶端. 可以通過其
+        // client.sessionId, 及其他信息判定是否
+        // 要把數據同步給這個客戶端.
 
-        // value is:
-        // the value of the field @filter() is being applied to
+        // value 參數是:
+        // 被 @filter() 標記過濾的字段值
 
-        // root is:
-        // the root instance of your room state. you may use it to access other
-        // structures in the process of decision whether this value is going to be
-        // synched or not.
+        // root 參數是:
+        // 房間 Schema 實例引用. 方便在是否過濾的
+        // 決策過程中
+        // 訪問房間狀態.
     })
     @type("string") field: string;
 }
@@ -789,27 +788,24 @@ schema.filter(function(client, value, root) {
 
 ### `@filterChildren()` 屬性修飾器
 
-`@filterChildren()` 屬性修飾器可用於過濾掉數組, 地圖, 集合等內的專案. 它的簽名與 `@filter()` 基本相同, 但是在 `value` 之前添加了 `key` 參數 - 表示 [ArraySchema](#arrayschema), [MapSchema](#mapschema), [CollectionSchema](#collectionschema) 等中的每個專案.
+`@filterChildren()` 屬性修飾器可用於過濾掉數組, 地圖, 集合等內的項目. 它的簽名與 `@filter()` 基本相同, 但是在 `value` 之前添加了 `key` 參數 - 表示 [ArraySchema](#arrayschema), [MapSchema](#mapschema), [CollectionSchema](#collectionschema) 等中的每個項目.
 
 ```typescript fct_label="TypeScript"
 class State extends Schema {
     @filterChildren(function(client, key, value, root) {
-        // client is:
+        // client 參數是:
         //
-        // the current client that's going to receive this data. you may use its
-        // client.sessionId, or other information to decide whether this value is
-        // going to be synched or not.
+        // 當前將要接受數據的客戶端. 可以通過其
+        // client.sessionId, 及其他信息判定是否
+        // 要把數據同步給這個客戶端.
 
-        // key is:
-        // the key of the current value inside the structure
+        // value 參數是:
+        // 被 @filter() 標記過濾的字段值
 
-        // value is:
-        // the current value inside the structure
-
-        // root is:
-        // the root instance of your room state. you may use it to access other
-        // structures in the process of decision whether this value is going to be
-        // synched or not.
+        // root 參數是:
+        // 房間 Schema 實例引用. 方便在是否過濾的
+        // 決策過程中
+        // 訪問房間狀態.
     })
     @type([Cards]) cards = new ArraySchema<Card>();
 }
@@ -824,46 +820,46 @@ schema.defineTypes(State, {
 });
 
 schema.filterChildren(function(client, key, value, root) {
-    // client is:
+    // client 參數是:
     //
-    // the current client that's going to receive this data. you may use its
-    // client.sessionId, or other information to decide whether this value is
-    // going to be synched or not.
+    // 當前將要接受數據的客戶端. 可以通過其
+    // client.sessionId, 及其他信息判定是否
+    // 要把數據同步給這個客戶端.
 
-    // key is:
-    // the key of the current value inside the structure
+    // key 參數是:
+    // 子字段名
 
-    // value is:
-    // the current value inside the structure
+    // value 參數是:
+    // 被 @filter() 標記過濾的字段值
 
-    // root is:
-    // the root instance of your room state. you may use it to access other
-    // structures in the process of decision whether this value is going to be
-    // synched or not.
+    // root 參數是:
+    // 房間 Schema 實例引用. 方便在是否過濾的
+    // 決策過程中
+    // 訪問房間狀態.
     return true;
 })(State.prototype, "cards");
 ```
 
-**示例:** 在卡片遊戲中, 應該僅有卡片的持有者知道每個卡片的相關數據, 或者在特定條件下知道這些數據 (例如, 卡片被丟棄)
+**示例:** 在卡牌遊戲中, 應該只有卡牌的持有者知道每個卡片的數據, 或者在特定條件下才能知道這些數據 (例如攤牌)
 
-查看 `@filter()` 回呼簽名:
+參考 `@filter()` 回調簽名:
 
 ```typescript fct_label="TypeScript"
 import { Client } from "colyseus";
 
 class Card extends Schema {
-    @type("string") owner: string; // contains the sessionId of Card owner
+    @type("string") owner: string; // 用來保存卡牌持有者的 sessionId
     @type("boolean") discarded: boolean = false;
 
     /**
-     * DO NOT USE ARROW FUNCTION INSIDE `@filter`
-     * (IT WILL FORCE A DIFFERENT `this` SCOPE)
+     * 不要在 `@filter` 函數裏使用箭頭函數
+     * (會造成 `this` 指針丟失)
      */
     @filter(function(
-        this: Card, // the instance of the class `@filter` has been defined (instance of `Card`)
-        client: Client, // the Room's `client` instance which this data is going to be filtered to
-        value: Card['number'], // the value of the field to be filtered. (value of `number` field)
-        root: Schema // the root state Schema instance
+        this: Card, // 定義 `@filter` 的類 (這裏 this 就是 `Card` 的實例)
+        client: Client, // 要被過濾的客戶端 `client` 實例
+        value: Card['number'], // 要被過濾的字段值. (這裏是 `number` 字段的值)
+        root: Schema // 房間狀態 Schema 實例
     ) {
         return this.discarded || this.owner === client.sessionId;
     })
@@ -882,8 +878,8 @@ schema.defineTypes(Card, {
 });
 
 /**
- * DO NOT USE ARROW FUNCTION INSIDE `@filter`
- * (IT WILL FORCE A DIFFERENT `this` SCOPE)
+ * 不要在 `@filter` 函數裏使用箭頭函數
+ * (會造成 `this` 指針丟失)
  */
 schema.filter(function(client, value, root) {
     return this.discarded || this.owner === client.sessionId;
@@ -893,31 +889,31 @@ schema.filter(function(client, value, root) {
 ## 客戶端
 
 !!! Warning "C#, C++, Haxe"
-    在使用靜入語言時, 需要在您的 Typescript 架構定義基礎上生成客戶端架構文件. [查看在客戶端生成架構](#client-side-schema-generation).
+在使用強類型語言時, 需要基於 Typescript schema 定義手動生成客戶端 schema 文件. [生成客戶端 schema 的方法](#client-side-schema-generation).
 
-### 回呼
+### 回調
 
-當應用來自伺服器的狀態更改時, 客戶端將根據正在應用的更改觸發本地實例上的回呼.
+服務器狀態變更應用到客戶端時, 會根據變更的類型自動觸發本地實例上的回調.
 
-將根據實例引用觸發回呼. 應確保在伺服器上實際發生變化的實例上附加回呼.
+回調通過房間狀態實例觸發. 使用前要確保該實例上已實現回調函數.
 
 - [onAdd (instance, key)](#onadd-instance-key)
 - [onRemove (instance, key)](#onremove-instance-key)
-- [onChange (changes)](#onchange-changes-datachange) (on `Schema` instance)
-- [onChange (instance, key)](#onchange-instance-key) (on collections:`MapSchema`, `ArraySchema`, etc.)
+- [onChange (changes)](#onchange-changes-datachange) (觸發於 `Schema` 實例)
+- [onChange (instance, key)](#onchange-instance-key) (觸發於集合實例: `MapSchema`, `ArraySchema` 等等.)
 - [listen()](#listenprop-callback)
 
 #### `onAdd (instance, key)`
 
-只能在 (`MapSchema`, `MapSchema` 等) 專案集合中使用 `onAdd` 回呼. 使用新實例調用 `onAdd` 回呼, 並且使用持有者對象中的秘鑰作為參數.
+只有集合 (`MapSchema`, `MapSchema` 等) 可以使用 `onAdd` 回調. 集合更新後觸發 `onAdd` 回調, 外加已更新集合的鍵作為參數.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onAdd = (player, key) => {
     console.log(player, "has been added at", key);
 
-    // add your player entity to the game world!
+    // 在遊戲中加入player!
 
-    // If you want to track changes on a child object inside a map, this is a common pattern:
+    // 要想跟蹤地圖上物體的移動, 通常要這麽做:
     player.onChange = function(changes) {
         changes.forEach(change => {
             console.log(change.field);
@@ -926,7 +922,7 @@ room.state.players.onAdd = (player, key) => {
         })
     };
 
-    // force "onChange" to be called immediatelly
+    // 手動強製觸發 "onChange"
     player.triggerAll();
 };
 ```
@@ -935,9 +931,9 @@ room.state.players.onAdd = (player, key) => {
 room.state.players['on_add'] = function (player, key)
     print("player has been added at", key);
 
-    -- add your player entity to the game world!
+    -- 在遊戲中加入player!
 
-    -- If you want to track changes on a child object inside a map, this is a common pattern:
+    -- 要想跟蹤地圖上物體的移動, 通常要這麽做:
     player['on_change'] = function(changes)
         for i, change in ipairs(changes) do
             print(change.field)
@@ -946,7 +942,7 @@ room.state.players['on_add'] = function (player, key)
         end
     end
 
-    -- force "on_change" to be called immediatelly
+    -- 手動強製觸發 "onChange"
     player.trigger_all()
 end
 ```
@@ -956,9 +952,9 @@ room.State.players.OnAdd += (Player player, string key) =>
 {
     Debug.Log("player has been added at " + key);
 
-    // add your player entity to the game world!
+    // 在遊戲中加入player!
 
-    // If you want to track changes on a child object inside a map, this is a common pattern:
+    // 要想跟蹤地圖上物體的移動, 通常要這麽做:
     player.OnChange += (changes) =>
     {
         changes.ForEach((obj) =>
@@ -969,7 +965,7 @@ room.State.players.OnAdd += (Player player, string key) =>
         });
     };
 
-    // force "OnChange" to be called immediatelly
+    // 手動強製觸發 "onChange"
     e.Value.TriggerAll();
 };
 ```
@@ -978,13 +974,13 @@ room.State.players.OnAdd += (Player player, string key) =>
 
 #### `onRemove (instance, key)`
 
-只能在  (`MapSchema`) 映射和 (`ArraySchema`) 數組中使用 `onRemove` 回呼. 使用已移除實例調用 `onAdd` 回呼, 並且使用持有者對象中的秘鑰作為參數.
+只有圖 (`MapSchema`) 和數組 (`ArraySchema`) 可以使用 `onRemove` 回調. 集合更新後觸發 `onRemove` 回調, 外加已更新集合的鍵作為參數.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onRemove = (player, key) => {
     console.log(player, "has been removed at", key);
 
-    // remove your player entity from the game world!
+    // 從遊戲中移除player!
 };
 ```
 
@@ -992,7 +988,7 @@ room.state.players.onRemove = (player, key) => {
 room.state.players['on_remove'] = function (player, key)
     print("player has been removed at " .. key);
 
-    -- remove your player entity from the game world!
+    -- 從遊戲中移除player!
 end
 ```
 
@@ -1001,17 +997,17 @@ room.State.players.OnRemove += (Player player, string key) =>
 {
     Debug.Log("player has been removed at " + key);
 
-    // remove your player entity from the game world!
+    // 從遊戲中移除player!
 };
 ```
 
 ---
 
-#### `onChange (changes:DataChange\[])`
+#### `onChange (changes:DataChange[])`
 
-> 對於直接 `Schema` 引用和集合結構, `onChange` 的工作方式各不相同. 對於 [`onChange` 集合結構(數組,映射等)的, 請查看這裏](#onchange-instance-key).
+> `Schema` 上的 `onChange` 和集合結構上的不一樣. 對於 [集合結構(數組, 映射等)的 `onChange` 請參考這裏](#onchange-instance-key).
 
-可以註冊 `onChange`, 以跟蹤 `Schema` 實例的屬性變更. 使用已變更的屬性及其以先前值觸發 `onChange` 回呼.
+可以註冊 `onChange` 以跟蹤 `Schema` 實例屬性的變更. `onChange` 的參數數組包含已變更的屬性以及變更前的值.
 
 
 ```javascript fct_label="JavaScript"
@@ -1046,15 +1042,15 @@ room.State.OnChange += (changes) =>
 };
 ```
 
-不能為還沒有與客戶端同步的對象註冊 `onChange` 回呼.
+沒有同步過的客戶端不能註冊 `onChange` 回調.
 
 ---
 
 #### `onChange (instance, key)`
 
-> `onChange` works differently for direct `Schema` references and collection structures. For [`onChange` on `Schema` structures, check here](#onchange-changes-datachange).
+> `Schema` 上的 `onChange` 和集合結構上的不一樣. 對於 [`Schema` 的 `onChange` 請參考這裏](#onchange-changes-datachange).
 
-當 **primitive** 集合類型 (`string`, `number`, `boolean` 等) 更新其部分值時, 將觸發此回呼.
+當集合裏的 **基本** 類型 (`string`, `number`, `boolean` 等) 值更新時, 將觸發此回調.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onChange = (player, key) => {
@@ -1075,25 +1071,25 @@ room.State.players.OnChange += (Player player, string key) =>
 };
 ```
 
-如果想要檢測 **non-primitive** 集合類型(保留 `Schema` 實例), 請使用 [`onAdd`](#onadd-instance-key) 並且為它們註冊 [`onChange`](#onchange-changes-datachange).
+對於 **非基本** 類型 (各種 `Schema` 集合), 請先註冊 [`onAdd`](#onadd-instance-key) 再註冊 [`onChange`](#onchange-changes-datachange).
 
 !!! Warning "`onChange`, `onAdd` 和 `onRemove` 是 **互斥的**"
-    `onChange` 回呼在 [`onAdd`](#onadd-instance-key) 或 [`onRemove`](#onremove-instance-key) 期間不會觸發.
+`onChange` 回調在 [`onAdd`](#onadd-instance-key) 或 [`onRemove`](#onremove-instance-key) 期間不會被觸發.
 
-    Consider registering `onAdd` and `onRemove` if you need to detect changes during these steps too.
+    如果想要跟蹤的更新包括 `onAdd` 和 `onRemove`, 請註冊這兩個回調.
 
 ---
 
 #### `.listen(prop, callback)`
 
-偵聽單個屬性變更.
+偵聽單個屬性更新.
 
 > `.listen()` 目前僅可用於 JavaScript/TypeScript.
 
-**Parameters:**
+**參數:**
 
-- `property`: 想要偵聽其變化的屬性名稱.
-- `callback`: 當 `property` 變更時將會觸發的回呼.
+- `property`: 想要偵聽更新的屬性名稱.
+- `callback`: 當 `property` 更新時觸發的回調.
 
 
 ```typescript
@@ -1103,7 +1099,7 @@ state.listen("currentTurn", (currentValue, previousValue) => {
 });
 ```
 
-`.listen()` 返回一個函數, 用於取消註冊偵聽器
+`.listen()` 返回的函數可用於移除偵聽器
 
 
 ```typescript
@@ -1111,13 +1107,13 @@ const removeListener = state.listen("currentTurn", (currentValue, previousValue)
     // ...
 });
 
-// later on, if you don't need the listener anymore, you can call `removeListener()` to stop listening for `"currentTurn"` changes.
+// 之後, 如果不需要偵聽器了, 可以調用 `removeListener()` 來移除對 `"currentTurn"` 的偵聽.
 removeListener();
 ```
 
-**What's the difference between `listen` and `onChange`?**
+**`listen` 和 `onChange` 有什麽區別?**
 
-`.listen()` 方法是單個屬性 `onChange` 的簡化形式. 下面是
+`.listen()` 方法是專為監聽單個屬性 `onChange` 的簡化版本. 下面是把 `.listen()` 寫成 `onChange` 的樣子:
 
 ```typescript
 state.onChange = function(changes) {
@@ -1132,24 +1128,24 @@ state.onChange = function(changes) {
 
 ---
 
-## 客戶端架構生成
+## 生成客戶端 schema 的方法
 
-`schema-codegen` 是一個工具, 它轉換伺服器端架構定義文件, 以便在客戶使用.
+`schema-codegen` 是一個轉譯工具, 用於把服務器端的 schema 定義文件轉換為客戶端可以使用的版本:
 
-要在客戶端解碼狀態, 客戶端的本地架構定義必須兼容伺服器端的架構定義.
+要在客戶端正確解碼 state, 客戶端的 schema 定義文件必須與服務器端相兼容.
 
-!!! Warning "在使用 [JavaScript SDK](/getting-started/javascript-client/) 時不需要"
-    只有在客戶端使用靜態類型語言, 例如  C#, Haxe 等,才需要使用 `schema-codegen`.
+!!! Warning "在使用 [JavaScript SDK](/getting-started/javascript-client/) 時不必使用此工具"
+只有在客戶端使用強類型語言, 如 C#, Haxe 等時, 才需要使用 `schema-codegen`.
 
-**用法**
+**使用方法**
 
-要在終端上查看用法, 請 `cd` 進入伺服器目錄, 執行以下指令:
+要在終端查看使用方法, 先 `cd` 進入服務器目錄, 然後運行以下命令:
 
 ```
 npx schema-codegen --help
 ```
 
-**Output:**
+**輸出:**
 
 ```
 schema-codegen [path/to/Schema.ts]
@@ -1170,9 +1166,9 @@ Optional:
     --namespace: generate namespace on output code
 ```
 
-### 示例Unity / C#
+### 舉例: Unity / C#
 
-下面是一個利用 [demo Unity project](https://github.com/colyseus/colyseus-unity3d/blob/aa9a722a50b2958ce01785969cd8ecb8aee24fd0/Server/package.json#L12) 生成 C# 架構文件的真實示例.
+下面是用 [Unity 演示項目](https://github.com/colyseus/colyseus-unity3d/blob/aa9a722a50b2958ce01785969cd8ecb8aee24fd0/Server/package.json#L12) 生成 C# schema 文件的實例.
 
 ```
 npx schema-codegen src/rooms/schema/* --csharp --output ../Assets/Scripts/States/"
@@ -1180,9 +1176,9 @@ generated: Player.cs
 generated: State.cs
 ```
 
-**Using `npm` scripts:**
+**使用 `npm` 腳本:**
 
-簡而言之, 建議在 `package.json` 中的 `npm`  中配置 `schema-codegen` 參數:
+簡言之, 推薦您把 `schema-codegen` 的參數保存在 `package.json` 文件中的 `npm` 腳本裏:
 
 ```json
 "scripts": {
@@ -1190,7 +1186,7 @@ generated: State.cs
 }
 ```
 
-這樣, 就可以執行 `npm run schema-codegen`, 而不必執行完整的指令
+這樣, 運行 `npm run schema-codegen`, 就可以代替完整的命令:
 
 ```
 npm run schema-codegen
@@ -1198,9 +1194,9 @@ generated: Player.cs
 generated: State.cs
 ```
 
-### 版本及向後/向前兼容
+### 版本及向下/向上兼容
 
-通過在現有結構的末尾聲明新字段, 可以實現向後/向前兼容, 不應刪除先前的聲明, 而是應該根據需要將其標記為 `@deprecated()` 下面是一個版本示例.
+通過在現有結構末尾聲明新字段, 可以實現向下/向上兼容, 不應刪除先前的聲明, 而是應該根據需要將其標記為 `@deprecated()`. 下面是一個例子.
 
 ```typescript fct_label="Live version 1"
 import { Schema, type, deprecated } from "@colyseus/schema";
@@ -1214,10 +1210,10 @@ class MyState extends Schema {
 import { Schema, type, deprecated } from "@colyseus/schema";
 
 class MyState extends Schema {
-    // Flag field as deprecated.
+    // 標記此字段作廢.
     @deprecated() @type("string") myField: string;
 
-    // To allow your server to play nicely with multiple client-side versions.
+    // 保證不同客戶端版本的服務器兼容.
     @type("string") newField: string;
 }
 ```
@@ -1226,42 +1222,42 @@ class MyState extends Schema {
 import { Schema, type, deprecated } from "@colyseus/schema";
 
 class MyState extends Schema {
-    // Flag field as deprecated.
+    // 標記此字段作廢.
     @deprecated() @type("string") myField: string;
 
-    // Flag field as deprecated again.
+    // 再次標記此字段作廢.
     @deprecated() @type("string") newField: string;
 
-    // New fields always at the end of the structure
+    // 最新的字段總是保持在最下邊
     @type("string") anotherNewField: string;
 }
 ```
 
-這對於本地編譯目標語言特別有用, 包括 C#, C++, Haxe 等, 在這些語言中, 客戶端可能沒有最新的架構定義版本.
+這對於本地編譯類語言很有用, 如 C#, C++, Haxe 等 - 即使這些客戶端編譯時沒有最新的 schema 定義.
 
 ---
 
 ## 限製和最佳實踐
 
-- 每個 `Schema` 結構最多可以保存 `64` 個字段. 如果需要更多字段, 可以使用嵌套式 `Schema` 結構.
+- 每個 `Schema` 結構最多可以保存 `64` 個字段. 如果需要更多字段, 可以嵌套使用 `Schema` 結構.
 - `NaN` 或 `null` 數字被編碼為 `0`
 - `null` 字符串被編碼為 `""`
 - `Infinity` 數字被編碼為 `Number.MAX_SAFE_INTEGER`
 - 不支持多維數組. [查看如何將一維數組作為多維數組使用](https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid/212813#212813)
-- `@colyseus/schema` 編碼順序基於字段定義順義.
-    - 編碼器(伺服器)和解碼器(客戶端)必須具有相同的架構定義.
-    - 字段的順序必須相同.
+- `@colyseus/schema` 編碼順序按照字段定義順序.
+    - 編碼器 (服務器) 和解碼器 (客戶端) 都必須擁有相同的 schema 定義.
+    - 字段的順序也要相同.
 
 ### 集合
 
-集合類型 (`ArraySchema`, `MapSchema` 等) 必須包含相同類型的專案, 或共享相同的基礎類型.
+集合類型 (`ArraySchema`, `MapSchema` 等) 裏的元素類型必須相同, 或者基類相同.
 
-**支持以下示例:**
+**支持以下寫法:**
 
 ```typescript
-class Item extends Schema {/* base Item fields */}
-class Weapon extends Item {/* specialized Weapon fields */}
-class Shield extends Item {/* specialized Shield fields */}
+class Item extends Schema {/* 基類 Item */}
+class Weapon extends Item {/* 武器類 */}
+class Shield extends Item {/* 盾牌類 */}
 
 class Inventory extends Schema {
     @type({ map: Item }) items = new MapSchema<Item>();
@@ -1271,21 +1267,3 @@ const inventory = new Inventory();
 inventory.set("left", new Weapon());
 inventory.set("right", new Shield());
 ```
-
-### 原始類型
-
-| Type | Description | Limitation |
-|------|-------------|------------|
-| `"string"` | utf8 strings | maximum byte size of `4294967295` |
-| `"number"` | also known as "varint". Auto-detects the number type to use. (may use one extra byte when encoding) | `0` to `18446744073709551615` |
-| `"boolean"` | `true` or `false` | `0` or `1` |
-| `"int8"` | signed 8-bit integer | `-128` to `127` |
-| `"uint8"` | unsigned 8-bit integer | `0` to `255` |
-| `"int16"` | signed 16-bit integer | `-32768` to `32767` |
-| `"uint16"` | unsigned 16-bit integer | `0` to `65535` |
-| `"int32"` | signed 32-bit integer | `-2147483648` to `2147483647` |
-| `"uint32"` | unsigned 32-bit integer | `0` to `4294967295` |
-| `"int64"` | signed 64-bit integer | `-9223372036854775808` to `9223372036854775807` |
-| `"uint64"` | unsigned 64-bit integer | `0` to `18446744073709551615` |
-| `"float32"` | single-precision floating-point number | `-3.40282347e+38` to `3.40282347e+38`|
-| `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |
