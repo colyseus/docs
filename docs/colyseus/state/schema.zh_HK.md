@@ -1,7 +1,7 @@
 # [狀態同步](/state/overview) &raquo; 架構
 
 !!! Tip "還沒使用 TypeScript?"
-強烈建議您使用 TypeScript 以便更好地定義 Schema 結構並提高整體開發體驗. TypeScript 支持的 "實驗性修飾器" 會在本手冊內大量使用.
+    強烈建議您使用 TypeScript 以便更好地定義 Schema 結構並提高整體開發體驗. TypeScript 支持的 "實驗性修飾器" 會在本手冊內大量使用.
 
 ## 如何定義可同步結構
 
@@ -33,7 +33,7 @@ schema.defineTypes(MyState, {
 ```
 
 !!! Tip "_"這個 `@type()` 關鍵字是什麽? 我之前從未見過!"_"
-您看見的在本頁大量使用的 `@type()` 是一個即將推出的 JavaScript 功能, 還沒有被 TC39 正式認可. `type` 其實只是一個從 `@colyseus/schema` 模塊導入的函數. 在屬性層級調用帶有 `@` 前綴的 `type`, 意味著我們將其作為一個 _屬性修飾器_ 進行調用. [在這裏查看修飾器方案](https://github.com/tc39/proposal-decorators).
+    您看見的在本頁大量使用的 `@type()` 是一個即將推出的 JavaScript 功能, 還沒有被 TC39 正式認可. `type` 其實只是一個從 `@colyseus/schema` 模塊導入的函數. 在屬性層級調用帶有 `@` 前綴的 `type`, 意味著我們將其作為一個 _屬性修飾器_ 進行調用. [在這裏查看修飾器方案](https://github.com/tc39/proposal-decorators).
 
 ### 在您的 `Room` 內使用狀態
 
@@ -313,7 +313,7 @@ for (index => value in state.array1) {
 ```
 
 !!! Note "Array 還有更多函數可用"
-詳見 [MDN 文檔](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/).
+    詳見 [MDN 文檔](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/).
 
 ### MapSchema
 
@@ -322,7 +322,7 @@ for (index => value in state.array1) {
 推薦使用 Maps 裏的 id 來追蹤遊戲實體, 比如玩家, 敵人等.
 
 !!! Warning "當前僅支持字符串類型的 id"
-目前, `MapSchema` 允許您自定義值的類型, 但是鍵的類型必須為為 `string`.
+    目前, `MapSchema` 允許您自定義值的類型, 但是鍵的類型必須為為 `string`.
 
 ```typescript fct_label="TypeScript"
 import { Schema, MapSchema, type } from "@colyseus/schema";
@@ -478,13 +478,13 @@ for (key => value in state.players) {
 ```
 
 !!! Note "Map 還有更多函數可用"
-詳見 [MDN 文檔](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/).
+    詳見 [MDN 文檔](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/).
 
 
 ### SetSchema
 
 !!! Warning "`SetSchema` 僅支持 JavaScript"
-目前 `SetSchema` 只能在 JavaScript 中使用. 尚不支持 Haxe, C#, LUA 和 C++ 客戶端.
+    目前 `SetSchema` 只能在 JavaScript 中使用. 尚不支持 Haxe, C#, LUA 和 C++ 客戶端.
 
 `SetSchema` 是一個基於 JavaScript 內置 [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) 的可同步版本.
 
@@ -595,13 +595,13 @@ console.log(set.size);
 ```
 
 !!! Note "Set 還有更多函數可用"
-詳見 [MDN 文檔](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
+    詳見 [MDN 文檔](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
 
 
 ### CollectionSchema
 
 !!! Note "`CollectionSchema` 僅支持 JavaScript"
-目前 `CollectionSchema` 只能在 JavaScript 中使用. 尚不支持 Haxe, C#, LUA 和 C++ 客戶端.
+    目前 `CollectionSchema` 只能在 JavaScript 中使用. 尚不支持 Haxe, C#, LUA 和 C++ 客戶端.
 
 `CollectionSchema` 的用法與 `ArraySchema` 類似, 需要註意的是, 它不具備某些數組可用的函數.
 
@@ -725,7 +725,7 @@ collection.forEach((value, at) => {
 ## 每個客戶端過濾數據
 
 !!! Warning "此功能為實驗性質"
-`@filter()` / `@filterChildren()` 為實驗性質, 可能不適合快節奏遊戲.
+    `@filter()` / `@filterChildren()` 為實驗性質, 可能不適合快節奏遊戲.
 
 過濾用來為指定客戶端隱藏部分狀態數據, 防止作弊, 防止玩家獲取全部數據.
 
@@ -889,7 +889,7 @@ schema.filter(function(client, value, root) {
 ## 客戶端
 
 !!! Warning "C#, C++, Haxe"
-在使用強類型語言時, 需要基於 Typescript schema 定義手動生成客戶端 schema 文件. [生成客戶端 schema 的方法](#client-side-schema-generation).
+    在使用強類型語言時, 需要基於 Typescript schema 定義手動生成客戶端 schema 文件. [生成客戶端 schema 的方法](#client-side-schema-generation).
 
 ### 回調
 
@@ -1074,7 +1074,7 @@ room.State.players.OnChange += (Player player, string key) =>
 對於 **非基本** 類型 (各種 `Schema` 集合), 請先註冊 [`onAdd`](#onadd-instance-key) 再註冊 [`onChange`](#onchange-changes-datachange).
 
 !!! Warning "`onChange`, `onAdd` 和 `onRemove` 是 **互斥的**"
-`onChange` 回調在 [`onAdd`](#onadd-instance-key) 或 [`onRemove`](#onremove-instance-key) 期間不會被觸發.
+    `onChange` 回調在 [`onAdd`](#onadd-instance-key) 或 [`onRemove`](#onremove-instance-key) 期間不會被觸發.
 
     如果想要跟蹤的更新包括 `onAdd` 和 `onRemove`, 請註冊這兩個回調.
 
@@ -1135,7 +1135,7 @@ state.onChange = function(changes) {
 要在客戶端正確解碼 state, 客戶端的 schema 定義文件必須與服務器端相兼容.
 
 !!! Warning "在使用 [JavaScript SDK](/getting-started/javascript-client/) 時不必使用此工具"
-只有在客戶端使用強類型語言, 如 C#, Haxe 等時, 才需要使用 `schema-codegen`.
+    只有在客戶端使用強類型語言, 如 C#, Haxe 等時, 才需要使用 `schema-codegen`.
 
 **使用方法**
 
