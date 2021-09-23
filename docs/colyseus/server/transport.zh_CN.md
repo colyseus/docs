@@ -1,23 +1,23 @@
 # 服务器 API &raquo; 传输
 
-Colyseus 目前提供两个 WebSocket 实现作为其 Transport 层.
+Colyseus 目前提供两个 WebSocket 实现以作为其传输之用.
 
-每个 Transport 都有其自己的一组自定义选项.
+每种套接字都有自己的一组自定义选项.
 
-- [默认 WebSocket Transport (`ws`)](#default-websocket-transport-via-ws)
-- [Native C++ WebSocket Transport (`uWebSockets.js`)](#native-c-websocket-transport-via-uwebsocketsjs)
+- [默认 WebSocket 传输 (`ws`)](#default-websocket-transport-via-ws)
+- [原生 C++ WebSocket 传输 (`uWebSockets.js`)](#native-c-websocket-transport-via-uwebsocketsjs)
 
 ---
 
-##  默认 WebSocket Transport (通过 `ws`)
+##  默认 WebSocket 传输 (协议为 `ws`)
 
-默认 WebSocket 传输使用 [`websockets/ws`](https://github.com/websockets/ws) 实现.
+默认 WebSocket 传输使用 [`websockets/ws`](https://github.com/websockets/ws) 协议.
 
-如果没有 `transport` 提供给 [`Server`](/server/api/#new-server-options) 的构造函数, 则自动使用带有默认选项的 `WebSocketTransport`.
+如果没有在 [`Server`](/server/api/#new-server-options) 的构造函数中提供 `transport` 参数, 则默认使用自带的 `WebSocketTransport`.
 
 <!--
 
-**Installation**
+**安装**
 
 ```
 npm install --save @colyseus/ws-transport
@@ -25,14 +25,14 @@ npm install --save @colyseus/ws-transport
 
 -->
 
-**用法**
+**使用方法**
 
 ```typescript fct_label="Example"
 import { Server } from "@colyseus/core";
 import { WebSocketTransport } from "@colyseus/ws-transport"
 
 const gameServer = new Server({
-    transport: new WebSocketTransport({ /* transport options */ })
+    transport: new WebSocketTransport({ /* 传输选项 */ })
 })
 ```
 
@@ -45,7 +45,7 @@ export default Arena({
 
   initializeTransport: function() {
     return new WebSocketTransport({
-      /* ...options */
+      /* ...选项 */
     });
   },
 
@@ -57,18 +57,18 @@ export default Arena({
 
 #### `options.server`:
 
-供 WebSocket 服务器重复使用的一个 Node.js http 服务器. 如果您想将 Express 和 Colyseus 一起使用, 这就能派上用场.
+一个基于 Node.js 的 http 服务器, 可供 WebSocket 服务共用. 便于让 Express 和 Colyseus 一起使用.
 
 ```typescript fct_label="Example"
 import { createServer } from "http";
 import { Server } from "@colyseus/core";
 import { WebSocketTransport } from "@colyseus/ws-transport"
 
-const server = createServer(app); // create the http server manually
+const server = createServer(app); // 手动创建 http 服务器
 
 const gameServer = new Server({
   transport: new WebSocketTransport({
-      server // provide the custom server for `WebSocketTransport`
+      server // 为 `WebSocketTransport` 提供自定义服务器
   })
 });
 ```
@@ -80,24 +80,24 @@ import { Server } from "@colyseus/core";
 import { WebSocketTransport } from "@colyseus/ws-transport"
 
 const app = express();
-const server = createServer(app); // create the http server manually
+const server = createServer(app); // 手动创建 http 服务器
 
 const gameServer = new Server({
   transport: new WebSocketTransport({
-      server // provide the custom server for `WebSocketTransport`
+      server // 为 `WebSocketTransport` 提供自定义服务器
   })
 });
 ```
 
-如果不提供这个选项, 将会自动为您创建一个 http 服务器.
+此选项未提供的话, 默认自动创建 http 服务器.
 
 ---
 
 #### `options.pingInterval`
 
-服务器 "ping" 客户端的毫秒数.
+服务器 "ping" 客户端的间隔毫秒数.
 
-如果客户端在 [pingMaxRetries](#optionspingmaxretries) 次重试后未能响应, 将被强制断开连接.
+如果客户端在 [pingMaxRetries](#optionspingmaxretries) 次重试后仍然未能响应, 将被强制断开连接.
 
 默认: `3000`
 
@@ -105,7 +105,7 @@ const gameServer = new Server({
 
 #### `options.pingMaxRetries`
 
-ping 无响应的最大允许数.
+服务器 ping 客户端的最大重试次数数.
 
 默认: `2`
 
