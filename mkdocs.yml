@@ -66,6 +66,12 @@ plugins:
           Production Deployments: "Production Deployments"
           Managing Deployments: "Managing Deployments"
           Reference: "Reference"
+          Tech Demos: "Tech Demos"
+          Shooting Gallery: "Shooting Gallery"
+          Tanks: "Tanks"
+          StarBoss: "StarBoss"
+          MMO: "MMO"
+          Migrating: "Migrating"
 
         zh_CN:
           getting started: "开始使用"
