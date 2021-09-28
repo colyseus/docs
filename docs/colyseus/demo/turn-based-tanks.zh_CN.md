@@ -7,7 +7,7 @@
 
 [玩玩看!](https://xcdazr.colyseus.dev/)
 
-![大厅](WeaponFired.png)
+![大厅](WeaponFired.PNG)
 
 ## 开始
 
@@ -57,7 +57,7 @@ private TanksRoomsAvailable[] TrimRooms(TanksRoomsAvailable[] originalRooms)
 }
 ```
 
-![大厅](Rooms.png)
+![大厅](Rooms.PNG)
 
 ### 保持房间的存在状态
 

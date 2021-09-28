@@ -4,7 +4,7 @@ The purpose of this technical demo is to show how to create rooms, utilize custo
 
 **[Download demo](https://github.com/colyseus/unity-demo-shooting-gallery/archive/master.zip)** ([View source code](https://github.com/colyseus/unity-demo-shooting-gallery/))
 
-![Screenshot](screenshot.png)
+![Screenshot](shooting-gallery/screenshot.png)
 
 ## Getting Started
 
@@ -16,7 +16,7 @@ You need to install and launch the server from the **provided Server directory**
 
 All server settings can be changed via the ColyseusSetting ScriptableObject located here:
 
-![ScriptableObject](../common-images/scriptable-object.png)
+![ScriptableObject](common-images/scriptable-object.png)
 
 If you are running a local server, the default settings should be sufficient, however if you wish to host a server you’ll need to change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly.
 
@@ -39,23 +39,23 @@ These target options on the client can be adjusted in the “TargetController”
 
 The targets, when provided from the server, will be handed off to the corresponding TargetTreadmill based off of their row. “Row” is randomly set on the server in `target.ts` at line 52. If you add or remove rows in the GalleryShooter scene, the server must be made aware of it via `LobbyController.numberOfTargetRows`:
 
-![numberOfTargetRows](/demo/shooting-gallery/number-of-target-rows.png)
+![numberOfTargetRows](/colyseus/demo/shooting-gallery/number-of-target-rows.png)
 
 This number will be fed to the server upon initialization of a room and that value will be used when randomly selecting a target’s row.
 
 The treadmills individually control the frequency with which they’ll send out targets:
 
-![Time between targets](/demo/shooting-gallery/time-between-targets.png)
+![Time between targets](/colyseus/demo/shooting-gallery/time-between-targets.png)
 
 The TargetBase objects control their own speed here:
 
-![Move speed](/demo/shooting-gallery/move-speed.png)
+![Move speed](/colyseus/demo/shooting-gallery/move-speed.png)
 
 ### Adjusting the guns
 
 The important values for the gun can be changed on the Gun prefab here:
 
-![Guns](/demo/shooting-gallery/guns.png)
+![Guns](/colyseus/demo/shooting-gallery/guns.png)
 
 ### Max Players
 

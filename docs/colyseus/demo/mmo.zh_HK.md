@@ -11,7 +11,7 @@
 
 [玩下看看!](https://xey3jn.us-west-1.colyseus.dev/)
 
-![屏幕截圖](screenshot.PNG)
+![屏幕截圖](mmo/screenshot.PNG)
 
 ## 開始
 
@@ -33,7 +33,7 @@
 
 
 
-![ScriptableObject](../common-images/scriptable-object.png)
+![ScriptableObject](common-images/scriptable-object.png)
 
 
 
@@ -75,12 +75,12 @@ this.onMessage("transitionArea", (client: Client, transitionData: Vector[]) => {
 
 在确定新的网格位置后，客户端会获得一个新的可用SeatReservation，用以加入正确的ColyseusRoom来获取新的网格位置。 登录/注册的时候也会有相似的流程（参见 玩家持久性 章节）。
 
-![MapScreenshop](map.PNG)
+![MapScreenshop](mmo/map.PNG)
 
 這是本演示中使用的網格地圖. 除綠色網格之外, 其他網格都帶有互通出口, 您可以在這些網格之間進出. 比如在 `-3x3` 網格空間中, 您可以通過西北方向的出口進入到 `3x-3` 網格空間. 所有其他相連的網格之間都有互通出口. 僅與角落有接觸的網格空間, 其出口在角落上, 玩家可以在對角線上穿梭.
 
 ### 聊天系統
-![ChatScreenshot](chatScreenshot.PNG) 我們有另一個 ColyseusRoom 來處理聊天系統: `ChatRoom.ts`. 不論是從哪裏(伺服器端或客戶端)進入或離開 MMORoom, 我們都會同時進入或離開 ChatRoom. 這些聊天室均經過 `roomId` 篩選, 後者與接入 MMORoom 的 ID 是一致的. 客戶端發送的消息會被添加到 ChatRoomState's ChatQueue, 觸發所有已連線的客戶端狀態變更. 每一條新進消息都會收到一個 `timeStamp` 值, 接收到後該資訊就會被移出隊列.
+![ChatScreenshot](mmo/chatScreenshot.PNG) 我們有另一個 ColyseusRoom 來處理聊天系統: `ChatRoom.ts`. 不論是從哪裏(伺服器端或客戶端)進入或離開 MMORoom, 我們都會同時進入或離開 ChatRoom. 這些聊天室均經過 `roomId` 篩選, 後者與接入 MMORoom 的 ID 是一致的. 客戶端發送的消息會被添加到 ChatRoomState's ChatQueue, 觸發所有已連線的客戶端狀態變更. 每一條新進消息都會收到一個 `timeStamp` 值, 接收到後該資訊就會被移出隊列.
 ### 玩家持久性
 !!! tip "用戶身份驗證說明"
     本演示使用的是很基礎的用戶驗證體系, 目的是為了讓玩家能夠持續使用唯一的用戶賬號, 該方式不可用於真實場景去實現整體用戶身份驗證.
@@ -90,7 +90,7 @@ this.onMessage("transitionArea", (client: Client, transitionData: Vector[]) => {
 需要註冊玩家賬號才能播放本演示.成功驗證用戶身份後,房間席位預定將回傳至客戶端. 席位預定的會話 id 會作為 "pendingSessionId" 被保存至數據庫中玩家賬號條目中. 客戶端嘗試使用席位預定時, 房間的 "onAuth" 處理程序會執行玩家賬號查找操作, 來讓玩家順利進入房間. 若查找不到與 "pendingSessionId" 匹配的玩家賬號, 客戶端則無法加入房間. 但是在成功查找到玩家賬號後, "pendingSessionId" 變為 "activeSessionId", 則玩家可加入房間.
 匹配過程中玩家的遊戲進度將被用來過濾房間. 比如, 遊戲進度值為 "1,1" (代表其在網格區域中坐標為 1x1) 的玩家將被匹配進具有相同進度值的房間(若房間已存在). 若不存在具有相同進度值的房間,則系統會自動創建一個. 因此, 只有當玩家在時才存在與其網格坐標匹配的房間. 玩家通過任一網格出口離開網格區域, 進入另一個網格時, 其遊戲進度將會更新.
 ### 可交互元素
-![Interactables](coinOp.PNG) 網格周圍可能會散落`Interactables`. 這些是 `InteractableState` 架構對象在客戶端的展示. 我們製作新網格空間預製件時會將它們放入編輯器中. 玩家與其中一個對象互動時, 客戶端會向伺服器端發送一條 `objectInteracted` 消息. 若伺服器端還未獲取到已提供的對象交互 ID, 則會創建一個新的架構引用, 將其添加至房間的架構映射中, 並回傳給客戶端. 然後伺服器會客戶端是否具備執行互動的條件. 若成功, 所有客戶端將會收到一條 `objectUsed` 廣播消息, 包含交互對象的 ID 以及與之互動的用戶. 客戶端上, 適當的 `NetworkedEntity` 和 `Interactable` 對象則會被告知一起執行. 本演示中有 4 種不同類型的交互元素, 您可在不同的網格空間中找到:
+![Interactables](mmo/coinOp.PNG) 網格周圍可能會散落`Interactables`. 這些是 `InteractableState` 架構對象在客戶端的展示. 我們製作新網格空間預製件時會將它們放入編輯器中. 玩家與其中一個對象互動時, 客戶端會向伺服器端發送一條 `objectInteracted` 消息. 若伺服器端還未獲取到已提供的對象交互 ID, 則會創建一個新的架構引用, 將其添加至房間的架構映射中, 並回傳給客戶端. 然後伺服器會客戶端是否具備執行互動的條件. 若成功, 所有客戶端將會收到一條 `objectUsed` 廣播消息, 包含交互對象的 ID 以及與之互動的用戶. 客戶端上, 適當的 `NetworkedEntity` 和 `Interactable` 對象則會被告知一起執行. 本演示中有 4 種不同類型的交互元素, 您可在不同的網格空間中找到:
 -按鍵臺
 - 用戶每按一次可獲得一枚硬幣
 -投幣騎乘機
