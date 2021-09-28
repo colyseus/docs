@@ -57,7 +57,7 @@ private TanksRoomsAvailable[] TrimRooms(TanksRoomsAvailable[] originalRooms)
 }
 ```
 
-![大廳](/demo/turn-based-tanks/Rooms.png)
+![大廳](Rooms.PNG)
 
 ### 保持房間的存在狀態
 
@@ -171,8 +171,8 @@ if(this.serverPaused) {
 
 - 您可以通過按下空格鍵來選擇跳過您的剩余回合.
 
-![大廳](/demo/turn-based-tanks/GameplayWithLabels.png)
-![大廳](/demo/turn-based-tanks/GameOver.png)
+![大廳](GameplayWithLabels.png)
+![大廳](GameOver.PNG)
 
 ## 調整演示
 

@@ -7,7 +7,7 @@
 
 [玩玩看!](https://xcdazr.colyseus.dev/)
 
-![大厅](/demo/turn-based-tanks/WeaponFired.png)
+![大厅](WeaponFired.png)
 
 ## 开始
 
@@ -57,7 +57,7 @@ private TanksRoomsAvailable[] TrimRooms(TanksRoomsAvailable[] originalRooms)
 }
 ```
 
-![大厅](/demo/turn-based-tanks/Rooms.png)
+![大厅](Rooms.png)
 
 ### 保持房间的存在状态
 
@@ -171,8 +171,8 @@ if(this.serverPaused) {
 
 - 您可以通过按下空格键来选择跳过您的剩余回合.
 
-![大厅](/demo/turn-based-tanks/GameplayWithLabels.png)
-![大厅](/demo/turn-based-tanks/GameOver.png)
+![大厅](GameplayWithLabels.png)
+![大厅](GameOver.PNG)
 
 ## 调整演示
 
