@@ -19,7 +19,7 @@ You need to install and launch the server from the **provided Server directory**
 
 All server settings can be changed via the ColyseusSetting ScriptableObject located here:
 
-![ScriptableObject](../common-images/scriptable-object.png)
+![ScriptableObject](common-images/scriptable-object.png)
 
 If you are running a local server, the default settings should be sufficient, however if you wish to host a server you will need to change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly.
 
@@ -57,7 +57,7 @@ private TanksRoomsAvailable[] TrimRooms(TanksRoomsAvailable[] originalRooms)
 }
 ```
 
-![Lobby](Rooms.PNG)
+![Lobby](turn-based-tanks/Rooms.PNG)
 
 ### Keeping the Room Alive
 
@@ -171,8 +171,8 @@ Start the player in the scene &quot;TanksLobby&quot; located at `Assets\TurnBase
 
 - You have the option to skip your remaining turn by pressing the SPACEBAR.
 
-![Lobby](GameplayWithLabels.png)
-![Lobby](GameOver.PNG)
+![Lobby](turn-based-tanks/GameplayWithLabels.png)
+![Lobby](turn-based-tanks/GameOver.PNG)
 
 ## Adjusting the Demo
 

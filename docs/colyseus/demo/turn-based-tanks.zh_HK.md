@@ -19,7 +19,7 @@
 
 伺服器的所有設置都可通過此處的 ColyseusSetting ScriptableObject 進行更改:
 
-![ScriptableObject](../common-images/scriptable-object.png)
+![ScriptableObject](common-images/scriptable-object.png)
 
 如果您執行的是本地伺服器, 預設的設置就能夠滿足需求; 但若您希望托管伺服器, 則需要相應地更改 **Colyseus 伺服器地址** 和 **Colyseus 伺服器端口**.
 
@@ -57,7 +57,7 @@ private TanksRoomsAvailable[] TrimRooms(TanksRoomsAvailable[] originalRooms)
 }
 ```
 
-![大廳](Rooms.PNG)
+![大廳](turn-based-tanks/Rooms.PNG)
 
 ### 保持房間的存在狀態
 
@@ -171,8 +171,8 @@ if(this.serverPaused) {
 
 - 您可以通過按下空格鍵來選擇跳過您的剩余回合.
 
-![大廳](GameplayWithLabels.png)
-![大廳](GameOver.PNG)
+![大廳](turn-based-tanks/GameplayWithLabels.png)
+![大廳](turn-based-tanks/GameOver.PNG)
 
 ## 調整演示
 
