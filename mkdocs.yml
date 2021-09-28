@@ -109,6 +109,8 @@ plugins:
           Tech Demos: "技术演示"
           Shooting Gallery: "射击场"
           Tanks: "坦克"
+          StarBoss: "StarBoss"
+          MMO: "MMO"
           Migrating: "迁移"
 
         zh_HK:
@@ -153,7 +155,10 @@ plugins:
           Tech Demos: "技術演示"
           Shooting Gallery: "射擊場技術演示"
           Tanks: "坦克"
+          StarBoss: "StarBoss"
+          MMO: "MMO"
           Migrating: "遷移"
+
         pt:
           getting started: "Introdução"
           Client-side SDK: "Client-side SDK"
@@ -163,6 +168,7 @@ plugins:
           Production Deployments: "TBD"
           Managing Deployments: "TBD"
           Reference: "TBD"
+
         de:
           getting started: 'Einstieg'
           Client-side SDK: "Clientseitiges SDK"
@@ -172,6 +178,7 @@ plugins:
           Production Deployments: "TBD"
           Managing Deployments: "TBD"
           Reference: "TBD"
+
         hi:
           getting started: "TBD"
           Client-side SDK: "TBD"
@@ -181,6 +188,7 @@ plugins:
           Production Deployments: "TBD"
           Managing Deployments: "TBD"
           Reference: "TBD"
+
         fr:
           getting started: "TBD"
           Client-side SDK: "TBD"

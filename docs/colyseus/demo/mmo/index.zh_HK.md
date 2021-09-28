@@ -1,4 +1,4 @@
-﻿﻿
+﻿
 # MMO 技術演示
 
 本技術演示旨在展示一種製作 **基礎的** 大型多人遊戲(MMO)的方法. 包括聊天系統, 玩家持久性, 多個流動 ColyseusRooms 以及聯網的可交互對象. 需註意的是, 本演示包含生產大規模 MMO 所需的數據分區或其他任何負載平衡方式. 本演示使用 Colyseus 0.14.7 版本以及 [Unity version 2020.3.1f1](https://unity3d.com/unity/qa/lts-releases).
@@ -72,7 +72,8 @@ this.onMessage("transitionArea", (client: Client, transitionData: Vector[]) => {
     this.onGridUpdate(client, transitionData[0] as  Vector2, transitionData[1] as  Vector3);
 });
 ```
-After determining what the new grid position is, the client is given a new SeatReservation to consume, thus joining the correct ColyseusRoom for their new grid position. A similar flow also occurs when Logging in/Signing up (see <b>Player Persistence</b> section).
+
+在确定新的网格位置后，客户端会获得一个新的可用SeatReservation，用以加入正确的ColyseusRoom来获取新的网格位置。 登录/注册的时候也会有相似的流程（参见 玩家持久性 章节）。
 
 ![MapScreenshop](map.PNG)
 
@@ -103,9 +104,9 @@ After determining what the new grid position is, the client is given a new SeatR
 
 當您播放此演示的時候, 您可能希望進行一些調整, 幫您更好地了解當前發生的情況. 下面您將學習如何進行微調整.
 
-## Adjusting the Demo
+## 调整演示
 
-As you play around with this demo, you may want to make some adjustments to better familiarize yourself with what is happening. Below, you’ll learn how to make these minor adjustments.
+当你播放此演示的时候，你可能希望进行一些调整，帮你更好地了解当前发生的情况。 下面你将学习如何进行微调整。
 
 ### 使用您自己的數據庫
 

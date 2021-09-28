@@ -72,7 +72,8 @@ this.onMessage("transitionArea", (client: Client, transitionData: Vector[]) => {
     this.onGridUpdate(client, transitionData[0] as  Vector2, transitionData[1] as  Vector3);
 });
 ```
-After determining what the new grid position is, the client is given a new SeatReservation to consume, thus joining the correct ColyseusRoom for their new grid position. A similar flow also occurs when Logging in/Signing up (see <b>Player Persistence</b> section).
+
+在确定了新的网格位置之后，客户机将获得一个新的SeatServation来消费，从而加入正确的ColyseusRoom以获得新的网格位置。登录/注册时也会出现类似的流（请参阅玩家持久性部分）。
 
 ![MapScreenshop](map.PNG)
 
@@ -103,9 +104,9 @@ After determining what the new grid position is, the client is given a new SeatR
 
 当您播放此演示的时候, 您可能希望进行一些调整, 帮您更好地了解当前发生的情况. 下面您将学习如何进行微调整.
 
-## Adjusting the Demo
+## 调整演示
 
-As you play around with this demo, you may want to make some adjustments to better familiarize yourself with what is happening. Below, you’ll learn how to make these minor adjustments.
+“当您玩这个演示时，您可能需要进行一些调整，以便更好地熟悉正在发生的事情。下面，您将学习如何进行这些小调整。
 
 ### 使用您自己的数据库
 
