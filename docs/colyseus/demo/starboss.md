@@ -7,7 +7,7 @@ The purpose of this technical demo is to show how to take an existing, single pl
 
 [Play the demo!](https://sac-dt.colyseus.dev/)
 
-![Screenshot](screenshot.PNG)
+![Screenshot](starboss/screenshot.PNG)
 
 ## Getting Started
 
@@ -19,7 +19,7 @@ You need to install and launch the server from the **provided Server directory**
 
 All server settings can be changed via the ColyseusSetting ScriptableObject located here:
 
-![ScriptableObject](../common-images/scriptable-object.png)
+![ScriptableObject](common-images/scriptable-object.png)
 
 If you are running a local server, the default settings should be sufficient, however if you wish to host a server you’ll need to change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly.
 
@@ -55,7 +55,7 @@ In this line:
 ```javascript
 this.setMetadata({isCoop:  options["logic"] == "starBossCoop" });
 ```
-We set the value for `isCoop` in the room's metadata, which we can then use on the client side to display the type of room. 
+We set the value for `isCoop` in the room's metadata, which we can then use on the client side to display the type of room.
 
 To accomplish this, on the client side we created a Serializable class `StarBossRoomMetaData.cs` that contains the `isCoop` value. We then use this class within our custom `StarBossRoomAvailable` which inherits from `ColyseusRoomAvailable`:
 ```csharp
@@ -89,7 +89,7 @@ else {
 }
 ```
 The final result gives us something like this:
-![RoomList](room-list.PNG)
+![RoomList](starboss/room-list.PNG)
 
 ## Adjusting the Demo
 

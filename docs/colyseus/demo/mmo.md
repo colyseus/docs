@@ -3,19 +3,19 @@
 
 The purpose of this technical demo is to show one method of how to make a **basic** MMO. Including a chat system, player persistence, multiple flowing ColyseusRooms and networked interactable objects. It is important to note that this demo **does not** include sharding or any other methods of load balancing that one would need for a production scale MMO. This demo is designed to work with Colyseus version 0.14.7 and [Unity version 2020.3.1f1](https://unity3d.com/unity/qa/lts-releases).
 
-  
+
 
 **[Download demo](https://github.com/colyseus/unity-demo-mmo/archive/master.zip)** ([View source code](https://github.com/colyseus/unity-demo-mmo/))
 
-  
+
 
 [Play the demo!](https://xey3jn.us-west-1.colyseus.dev/)
 
-![Screenshot](screenshot.PNG)
+![Screenshot](mmo/screenshot.PNG)
 
 ## Getting Started
 
-  
+
 
 ### Launching a local server
 
@@ -27,17 +27,17 @@ Additionally, this demo uses MongoDB for player persistence. If you wish to run 
 
 ### ColyseusSettings ScriptableObject
 
-  
+
 
 All server settings can be changed via the ColyseusSetting ScriptableObject located here:
 
-  
 
-![ScriptableObject](../common-images/scriptable-object.png)
 
-  
+![ScriptableObject](common-images/scriptable-object.png)
 
-If you are running a local server, the default settings should be sufficient, however if you wish to host a server you’ll need to change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly.  
+
+
+If you are running a local server, the default settings should be sufficient, however if you wish to host a server you’ll need to change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly.
 
 ## Playing the Demo
 
@@ -59,7 +59,7 @@ The controls for this demo are visible in the Escape menu at any time and are as
 This demo was designed to show how a user could potentially design and implement an MMO style game using Colyseus. It highlights the following features:
 ### Dynamic Rooms
 MMORooms are created and disposed of as needed. When a player enters a grid space, we join a room where it's `progress` value is set to the grid values, as seen in `arena.config.ts`:
-```javascript 
+```javascript
 gameServer.define('lobby_room', MMORoom).filterBy(["progress"]); // Filter room by "progress" (which grid we're wanting to join EX: -1x2)
 ```
 As players move throughout the world, they join/leave rooms based off of their position in the world grid. A message is sent from the client to the server stating that the player is trying to update their progress, which we then catch in `MMORoom.ts`:
@@ -74,26 +74,26 @@ this.onMessage("transitionArea", (client: Client, transitionData: Vector[]) => {
 ```
 After determining what the new grid position is, the client is given a new SeatReservation to consume, thus joining the correct ColyseusRoom for their new grid position. A similar flow also occurs when Logging in/Signing up (see <b>Player Persistence</b> section).
 
-![MapScreenshop](map.PNG)
+![MapScreenshop](mmo/map.PNG)
 
 This is the implemented grid map for this demo. The non-green grid spaces contain exits that will wrap around to each other, allowing you to travel from one to the other. For example in grid space `-3x3`, you can take the North West exit and you will be placed into grid space `3x-3`. All other contiguous grid spaces will have exits to each other. The grid spaces that are only touching corners will have exits in those corners to traverse the grid diagonally.
 
 ### Chat System
-![ChatScreenshot](chatScreenshot.PNG)
+![ChatScreenshot](mmo/chatScreenshot.PNG)
 An additional ColyseusRoom is used to handle the Chat system: `ChatRoom.ts`. In both the client and the server, anywhere we join or leave an MMORoom we also join or leave a ChatRoom. These ChatRooms are filtered by `roomId` which is the ID of the MMORoom it is connected to.
 When a client sends a message, it's added to the ChatRoomState's ChatQueue, triggering a state change on all connected clients. Every new message that comes in receives a `timeStamp` value, after which it will be removed from the queue.
 ### Player Persistence
 !!! tip "User Authentication Note"
-		This demo makes use of a very basic user authentication system with the intent of having 
+		This demo makes use of a very basic user authentication system with the intent of having
 		player persistence for unique user accounts and should NOT be used as a real
 		world example of how to implement user authentication as a whole.
 		Do NOT use any email and password combination you actually use anywhere else.
-		
-In this demo, unique player accounts are persisted in a database in order to keep track of a player's progress (which room they are currently in and which room they were in last), position, coin balance, and more.    
-A player account is necessary to play this demo. With successful user authentication, a seat reservation for a room is sent back to the client.  The session Id of that seat reservation is saved to the player's account entry in the database as a "pendingSessionId". When the client attempts to consume the seat reservation, in order to join the room, a player account look up operation using the "pendingSessionId" is performed in the "onAuth" handler of the room. If no player account with a matching "pendingSessionId" exists, the client will not be allowed to join the room. However, with a successful player account look up, the "pendingSessionId" will become an "activeSessionId" and the client will join the room.  
+
+In this demo, unique player accounts are persisted in a database in order to keep track of a player's progress (which room they are currently in and which room they were in last), position, coin balance, and more.
+A player account is necessary to play this demo. With successful user authentication, a seat reservation for a room is sent back to the client.  The session Id of that seat reservation is saved to the player's account entry in the database as a "pendingSessionId". When the client attempts to consume the seat reservation, in order to join the room, a player account look up operation using the "pendingSessionId" is performed in the "onAuth" handler of the room. If no player account with a matching "pendingSessionId" exists, the client will not be allowed to join the room. However, with a successful player account look up, the "pendingSessionId" will become an "activeSessionId" and the client will join the room.
 A player's progress is used to filter rooms during the matchmaking process. For example, a player with a progress value of "1,1" (representing grid area coordinates 1x1) will matchmake into a room with the same progress value if it already exists. If no room with that progress value exists, then one shall be created. This way, rooms for each grid coordinate only exist as players are in them. A player's progress is updated as they leave one grid area to move to another via one of the exit doors.
 ### Interactable Elements
-![Interactables](coinOp.PNG)
+![Interactables](mmo/coinOp.PNG)
 Grid spaces may have `Interactables` scattered around them. These are client-side representations of `InteractableState` schema objects that are placed within the editor when we make a new grid space prefab. When a player performs an interaction with one of these objects, the client will send a `objectInteracted` message to the server. If the server is not yet aware of the Interactable ID that has been provided, it will create a new schema reference which will be added to the room's schema map and makes its way back to the client. The server will then check if the Client meets the requirements to perform an interaction. If successful, all clients will receive an `objectUsed` message broadcast, along with the interactable's ID and the user who interacted with it. On the client's side, the appropriate `NetworkedEntity` and `Interactable` objects will be told to perform together.
 This demo comes with 4 different types of interactables that you can find in the various grid spaces:
 - Button Podium

@@ -51,10 +51,10 @@ plugins:
         en: "English"
         zh_CN: "简体中文" #Simplified Chinese
         zh_HK: "繁體中文" # Traditional Chinese
-        pt: "Português" # Portuguese
-        de: "Deutsch" # German
-        hi: "हिंदी" # Hindi
-        fr: "Français" # French
+        # pt: "Português" # Portuguese
+        # de: "Deutsch" # German
+        # hi: "हिंदी" # Hindi
+        # fr: "Français" # French
 
       nav_translations:
         en:
@@ -66,6 +66,12 @@ plugins:
           Production Deployments: "Production Deployments"
           Managing Deployments: "Managing Deployments"
           Reference: "Reference"
+          Tech Demos: "Tech Demos"
+          Shooting Gallery: "Shooting Gallery"
+          Tanks: "Tanks"
+          StarBoss: "StarBoss"
+          MMO: "MMO"
+          Migrating: "Migrating"
 
         zh_CN:
           getting started: "开始使用"
@@ -159,45 +165,45 @@ plugins:
           MMO: "MMO"
           Migrating: "遷移"
 
-        pt:
-          getting started: "Introdução"
-          Client-side SDK: "Client-side SDK"
-          Installation: "Instalação"
-          Unity: "TBD"
-          Deployment: "TBD"
-          Production Deployments: "TBD"
-          Managing Deployments: "TBD"
-          Reference: "TBD"
+        # pt:
+        #   getting started: "Introdução"
+        #   Client-side SDK: "Client-side SDK"
+        #   Installation: "Instalação"
+        #   Unity: "TBD"
+        #   Deployment: "TBD"
+        #   Production Deployments: "TBD"
+        #   Managing Deployments: "TBD"
+        #   Reference: "TBD"
 
-        de:
-          getting started: 'Einstieg'
-          Client-side SDK: "Clientseitiges SDK"
-          Installation: "Installation"
-          Unity: "TBD"
-          Deployment: "Einsatz"
-          Production Deployments: "TBD"
-          Managing Deployments: "TBD"
-          Reference: "TBD"
+        # de:
+        #   getting started: 'Einstieg'
+        #   Client-side SDK: "Clientseitiges SDK"
+        #   Installation: "Installation"
+        #   Unity: "TBD"
+        #   Deployment: "Einsatz"
+        #   Production Deployments: "TBD"
+        #   Managing Deployments: "TBD"
+        #   Reference: "TBD"
 
-        hi:
-          getting started: "TBD"
-          Client-side SDK: "TBD"
-          Installation: "TBD"
-          Unity: "TBD"
-          Deployment: "TBD"
-          Production Deployments: "TBD"
-          Managing Deployments: "TBD"
-          Reference: "TBD"
+        # hi:
+        #   getting started: "TBD"
+        #   Client-side SDK: "TBD"
+        #   Installation: "TBD"
+        #   Unity: "TBD"
+        #   Deployment: "TBD"
+        #   Production Deployments: "TBD"
+        #   Managing Deployments: "TBD"
+        #   Reference: "TBD"
 
-        fr:
-          getting started: "TBD"
-          Client-side SDK: "TBD"
-          Installation: "TBD"
-          Unity: "TBD"
-          Deployment: "TBD"
-          Production Deployments: "TBD"
-          Managing Deployments: "TBD"
-          Reference: "TBD"
+        # fr:
+        #   getting started: "TBD"
+        #   Client-side SDK: "TBD"
+        #   Installation: "TBD"
+        #   Unity: "TBD"
+        #   Deployment: "TBD"
+        #   Production Deployments: "TBD"
+        #   Managing Deployments: "TBD"
+        #   Reference: "TBD"
 
 
 extra_css:
@@ -303,10 +309,10 @@ nav:
     - 'Setup server from scratch (TS)': 'colyseus/how-to/setup-server-from-scratch-typescript.md'
 
   - "Tech Demos":
-    - 'Shooting Gallery': 'colyseus/demo/shooting-gallery/index.md'
-    - 'StarBoss': 'colyseus/demo/starboss/index.md'
-    - 'Tanks': 'colyseus/demo/turn-based-tanks/index.md'
-    - 'MMO': 'colyseus/demo/mmo/index.md'
+    - 'Shooting Gallery': 'colyseus/demo/shooting-gallery.md'
+    - 'StarBoss': 'colyseus/demo/starboss.md'
+    - 'Tanks': 'colyseus/demo/turn-based-tanks.md'
+    - 'MMO': 'colyseus/demo/mmo.md'
 
   - 'Migrating':
     - '0.14.18': 'colyseus/migrating/0.14.18.md'
