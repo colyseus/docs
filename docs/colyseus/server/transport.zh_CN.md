@@ -113,26 +113,26 @@ const gameServer = new Server({
 
 #### `options.verifyClient`
 
-该方法会在 WebSocket 握手之前发生. 如果 `verifyClient` 未设置, 则握手会被自动接受.
+在 WebSocket 握手之前进行客户端验证. 如果 `verifyClient` 未设置, 则默认客户端通过验证.
 
 - `info` (Object)
-    - `origin` (String) 客户端指定的 Origin 标头的值.
+    - `origin` (String) 客户端指定的 Origin header.
     - `req` (http.IncomingMessage) 客户端 HTTP GET 请求.
-    - `secure` (Boolean) `true` 如果 `req.connection.authorized` 或 `req.connection.encrypted` 已设置.
+    - `secure` (Boolean) 如果已设置 `req.connection.authorized` 或 `req.connection.encrypted` 则返回 `true`.
 
 - `next` (Function) 用户在 `info` 字段检查时必须调用的回调. 此回调中的参数为:
     - `result` (Boolean) 是否接受握手.
-    - `code`(Number) When `result` is `false` 此字段决定要发给客户端的 HTTP 错误状态代码.
-    - `name` (String) When `result` is `false` 此字段决定 HTTP 动作原因.
+    - `code`(Number) 如果 `result` 为 `false`, 此字段决定要发给客户端的 HTTP 错误状态代码.
+    - `name` (String) 如果 `result` 为 `false`, 此字段决定要发给客户端的 HTTP 错误原因.
 
 ---
 
-## 本机 C++ WebSocket Transport (通过 `uWebSockets.js`)
+## 原生 C++ WebSocket 传输 (协议为 `uWebSockets.js`)
 
-[`uWebSockets.js`](https://github.com/uNetworking/uWebSockets.js) 实现通常会在可容纳的 CCU 数量以及内存消耗方面比默认表现得好.
+[`uWebSockets.js`](https://github.com/uNetworking/uWebSockets.js) 协议通常在 CCU 数量以及内存消耗方面比默认传输性能更好.
 
-!!! Warning "HTTP 路由的运作方式与 `uWebSockets.js` 不同"
-    使用 `uWebSockets.js` 的最大缺点在于其 HTTP/路由系统的运作方式与常规 Node.js/express 路径不同. 查看 [Custom HTTP routes with `uWebSockets.js`](#custom-http-routes-with-uwebsocketsjs) 了解更多相关信息
+!!! Warning "HTTP 的传输方法与 `uWebSockets.js` 不同"
+    使用 `uWebSockets.js` 的最大缺点在于其 HTTP/路由 的运作方式与常规 Node.js/express 不同. 了解更多信息请参考 [自定义 HTTP 路由的 `uWebSockets.js`](#custom-http-routes-with-uwebsocketsjs)
 
 **安装**
 
@@ -140,7 +140,7 @@ const gameServer = new Server({
 npm install --save @colyseus/uwebsockets-transport
 ```
 
-**用法**
+**使用方法**
 
 ```typescript
 import { Server } from "@colyseus/core";
@@ -148,7 +148,7 @@ import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
 
 const gameServer = new Server({
     transport: new uWebSocketsTransport({
-        /* options */
+        /* 选项 */
     })
 })
 ```
