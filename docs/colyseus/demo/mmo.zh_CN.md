@@ -11,7 +11,7 @@
 
 [玩下看看!](https://xey3jn.us-west-1.colyseus.dev/)
 
-![屏幕截图](screenshot.PNG)
+![屏幕截图](mmo/screenshot.PNG)
 
 ## 开始
 
@@ -33,7 +33,7 @@
 
 
 
-![ScriptableObject](../common-images/scriptable-object.png)
+![ScriptableObject](common-images/scriptable-object.png)
 
 
 
@@ -72,14 +72,15 @@ this.onMessage("transitionArea", (client: Client, transitionData: Vector[]) => {
     this.onGridUpdate(client, transitionData[0] as  Vector2, transitionData[1] as  Vector3);
 });
 ```
-After determining what the new grid position is, the client is given a new SeatReservation to consume, thus joining the correct ColyseusRoom for their new grid position. A similar flow also occurs when Logging in/Signing up (see <b>Player Persistence</b> section).
 
-![MapScreenshop](map.PNG)
+在确定了新的网格位置之后，客户机将获得一个新的SeatServation来消费，从而加入正确的ColyseusRoom以获得新的网格位置。登录/注册时也会出现类似的流（请参阅玩家持久性部分）。
+
+![MapScreenshop](mmo/map.PNG)
 
 这是本演示中使用的网格地图. 除绿色网格之外, 其他网格都带有互通出口, 您可以在这些网格之间进出.比如在 `-3x3` 网格空间中, 您可以通过西北方向的出口进入到 `3x-3` 网格空间. 所有其他相连的网格之间都有互通出口. 仅与角落有接触的网格空间, 其出口在角落上, 玩家可以在对角线上穿梭.
 
 ### 聊天系统
-![ChatScreenshot](chatScreenshot.PNG) 我们有另一个 ColyseusRoom 来处理聊天系统: `ChatRoom.ts`. 不论是从哪里(服务器端或客户端)进入或离开 MMORoom, 我们都会同时进入或离开 ChatRoom. 这些聊天室均经过 `roomId` 筛选, 后者与接入 MMORoom 的 ID 是一致的. 客户端发送的消息会被添加到 ChatRoomState's ChatQueue, 触发所有已连接的客户端状态变更. 每一条新进消息都会收到一个 `timeStamp` 值, 接收到后该信息就会被移出队列.
+![ChatScreenshot](mmo/chatScreenshot.PNG) 我们有另一个 ColyseusRoom 来处理聊天系统: `ChatRoom.ts`. 不论是从哪里(服务器端或客户端)进入或离开 MMORoom, 我们都会同时进入或离开 ChatRoom. 这些聊天室均经过 `roomId` 筛选, 后者与接入 MMORoom 的 ID 是一致的. 客户端发送的消息会被添加到 ChatRoomState's ChatQueue, 触发所有已连接的客户端状态变更. 每一条新进消息都会收到一个 `timeStamp` 值, 接收到后该信息就会被移出队列.
 ### 玩家持久性
 !!! tip "用户身份认证说明"
     本演示使用的是很基础的用户认证体系, 目的是为了让玩家能够持续使用唯一的用户账号, 该方式不可用于真实场景去实现整体用户身份认证.
@@ -89,7 +90,7 @@ After determining what the new grid position is, the client is given a new SeatR
 需要注册玩家账号才能播放本演示. 成功认证用户身份后, 房间席位预定将回传至客户端. 席位预定的会话 id 会作为 "pendingSessionId" 被保存至数据库中玩家账号条目中. 客户端尝试使用席位预定时, 房间的 "onAuth" 处理程序会执行玩家账号查找操作, 来让玩家顺利进入房间. 若查找不到与 "pendingSessionId" 匹配的玩家账号, 客户端则无法加入房间. 但是在成功查找到玩家账号后, "pendingSessionId" 变为 "activeSessionId", 则玩家可加入房间.
 匹配过程中玩家的游戏进度将被用来过滤房间. 比如, 游戏进度值为"1,1"(代表其在网格区域中坐标为 1x1)的玩家将被匹配进具有相同进度值的房间(若房间已存在). 若不存在具有相同进度值的房间, 则系统会自动创建一个. 因此, 只有当玩家在时才存在与其网格坐标匹配的房间. 玩家通过任一网格出口离开网格区域, 进入另一个网格时, 其游戏进度将会更新.
 ### 可交互元素
-![Interactables](coinOp.PNG)网格周围可能会散落`Interactables`. 这些是 `InteractableState` 架构对象在客户端的展示. 我们制作新网格空间预制件时会将它们放入编辑器中. 玩家与其中一个对象互动时, 客户端会向服务器端发送一条 `objectInteracted` 消息. 若服务器端还未获取到已提供的对象交互 ID, 则会创建一个新的架构引用, 将其添加至房间的架构映射中, 并回传给客户端. 然后服务器会客户端是否具备执行互动的条件. 若成功, 所有客户端将会收到一条 `objectUsed`广播消息, 包含交互对象的 ID 以及与之互动的用户. 客户端上, 适当的 `NetworkedEntity` 和 `Interactable` 对象则会被告知一起执行. 本演示中有 4 种不同类型的交互元素, 您可在不同的网格空间中找到:
+![Interactables](mmo/coinOp.PNG)网格周围可能会散落`Interactables`. 这些是 `InteractableState` 架构对象在客户端的展示. 我们制作新网格空间预制件时会将它们放入编辑器中. 玩家与其中一个对象互动时, 客户端会向服务器端发送一条 `objectInteracted` 消息. 若服务器端还未获取到已提供的对象交互 ID, 则会创建一个新的架构引用, 将其添加至房间的架构映射中, 并回传给客户端. 然后服务器会客户端是否具备执行互动的条件. 若成功, 所有客户端将会收到一条 `objectUsed`广播消息, 包含交互对象的 ID 以及与之互动的用户. 客户端上, 适当的 `NetworkedEntity` 和 `Interactable` 对象则会被告知一起执行. 本演示中有 4 种不同类型的交互元素, 您可在不同的网格空间中找到:
 -按键台
     - 用户每按一次可获得一枚硬币
 -投币骑乘机
@@ -103,9 +104,9 @@ After determining what the new grid position is, the client is given a new SeatR
 
 当您播放此演示的时候, 您可能希望进行一些调整, 帮您更好地了解当前发生的情况. 下面您将学习如何进行微调整.
 
-## Adjusting the Demo
+## 调整演示
 
-As you play around with this demo, you may want to make some adjustments to better familiarize yourself with what is happening. Below, you’ll learn how to make these minor adjustments.
+“当您玩这个演示时，您可能需要进行一些调整，以便更好地熟悉正在发生的事情。下面，您将学习如何进行这些小调整。
 
 ### 使用您自己的数据库
 

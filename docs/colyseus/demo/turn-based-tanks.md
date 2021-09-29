@@ -19,7 +19,7 @@ You need to install and launch the server from the **provided Server directory**
 
 All server settings can be changed via the ColyseusSetting ScriptableObject located here:
 
-![ScriptableObject](../common-images/scriptable-object.png)
+![ScriptableObject](common-images/scriptable-object.png)
 
 If you are running a local server, the default settings should be sufficient, however if you wish to host a server you will need to change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly.
 
@@ -57,7 +57,7 @@ private TanksRoomsAvailable[] TrimRooms(TanksRoomsAvailable[] originalRooms)
 }
 ```
 
-![Lobby](Rooms.PNG)
+![Lobby](turn-based-tanks/Rooms.PNG)
 
 ### Keeping the Room Alive
 
@@ -79,7 +79,7 @@ if(this.metadata.team0 && this.metadata.team1 == null) {
 if(this.inProcessOfQuitingGame && this.state.networkedUsers.size <= 1 && this.connectedUsers <= 1) {
     disconnectRoom = true;
 }
-	
+
 // Should the room disconnect?
 if(disconnectRoom) {
     this.disconnect();
@@ -88,7 +88,7 @@ if(disconnectRoom) {
 
 ### Pausing the Room
 
-Since this is an example of an asynchronous game, our room could have no users connected to it for any amount of time. When there are no users connected to the room the server doesn't need to update the simulation loop. 
+Since this is an example of an asynchronous game, our room could have no users connected to it for any amount of time. When there are no users connected to the room the server doesn't need to update the simulation loop.
 When users disconnect from the room a check is performed to look if there are no more users connected to the room. When no more users are connected to the room the simulation interval effectively gets paused by setting the delay to a high value. In this case the value is a little more than 24 days.
 ``` javascript
 
@@ -165,14 +165,14 @@ Start the player in the scene &quot;TanksLobby&quot; located at `Assets\TurnBase
 
 - When a game ends due to a player&#39;s tank getting destroyed, or someone surrendering, a game over menu, showing a win/loss message, will be displayed with the options to either request a rematch or to quit the game. If the other player requests a rematch before you leave, a message will be displayed on the game over menu.
 
-- There is an &quot;online indicator&quot; next to your opponents name to signal whether they are in the room at the same time with you. 
-	- **Red** = offline 
+- There is an &quot;online indicator&quot; next to your opponents name to signal whether they are in the room at the same time with you.
+	- **Red** = offline
 	- **Green** = online.
 
 - You have the option to skip your remaining turn by pressing the SPACEBAR.
 
-![Lobby](GameplayWithLabels.png)
-![Lobby](GameOver.PNG)
+![Lobby](turn-based-tanks/GameplayWithLabels.png)
+![Lobby](turn-based-tanks/GameOver.PNG)
 
 ## Adjusting the Demo
 

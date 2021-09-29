@@ -7,7 +7,7 @@
 
 [玩玩看!](https://sac-dt.colyseus.dev/)
 
-![屏幕截圖](screenshot.PNG)
+![屏幕截圖](starboss/screenshot.PNG)
 
 ## 開始
 
@@ -19,7 +19,7 @@
 
 伺服器的所有設置都可通過此處的 ColyseusSetting ScriptableObject 進行更改:
 
-![ScriptableObject](../common-images/scriptable-object.png)
+![ScriptableObject](common-images/scriptable-object.png)
 
 如果您執行的是本地伺服器, 預設的設置就能夠滿足需求; 但若您希望托管伺服器, 則需要按需更改 **Colyseus 伺服器地址** 和 **Colyseus 伺服器端口**.
 
@@ -89,7 +89,7 @@ else {
 }
 ```
 最終結果顯示為:
-![RoomList](room-list.PNG)
+![RoomList](starboss/room-list.PNG)
 
 ## 調整演示
 

@@ -7,7 +7,7 @@
 
 [玩玩看!](https://xcdazr.colyseus.dev/)
 
-![大厅](/demo/turn-based-tanks/WeaponFired.png)
+![大厅](turn-based-tanks/WeaponFired.PNG)
 
 ## 开始
 
@@ -19,7 +19,7 @@
 
 服务器的所有设置都可通过此处的 ColyseusSetting ScriptableObject 进行更改:
 
-![ScriptableObject](../common-images/scriptable-object.png)
+![ScriptableObject](common-images/scriptable-object.png)
 
 如果您运行的是本地服务器, 默认的设置就能够满足需求; 但若您希望托管服务器, 则需要相应地更改 **Colyseus 服务器地址** 和 **Colyseus 服务器端口**.
 
@@ -57,7 +57,7 @@ private TanksRoomsAvailable[] TrimRooms(TanksRoomsAvailable[] originalRooms)
 }
 ```
 
-![大厅](/demo/turn-based-tanks/Rooms.png)
+![大厅](turn-based-tanks/Rooms.PNG)
 
 ### 保持房间的存在状态
 
@@ -171,8 +171,8 @@ if(this.serverPaused) {
 
 - 您可以通过按下空格键来选择跳过您的剩余回合.
 
-![大厅](/demo/turn-based-tanks/GameplayWithLabels.png)
-![大厅](/demo/turn-based-tanks/GameOver.png)
+![大厅](turn-based-tanks/GameplayWithLabels.png)
+![大厅](turn-based-tanks/GameOver.PNG)
 
 ## 调整演示
 

@@ -4,7 +4,7 @@
 
 **[下載演示](https://github.com/colyseus/unity-demo-shooting-gallery/archive/master.zip)** ([查看源代碼](https://github.com/colyseus/unity-demo-shooting-gallery/))
 
-![屏幕截圖](screenshot.png)
+![屏幕截圖](shooting-gallery/screenshot.png)
 
 ## 開始
 
@@ -16,7 +16,7 @@
 
 伺服器的所有設置都可通過此處的 ColyseusSetting ScriptableObject 進行更改:
 
-![ScriptableObject](../common-images/scriptable-object.png)
+![ScriptableObject](common-images/scriptable-object.png)
 
 如果您執行的是本地伺服器, 預設的設置就能夠滿足需求; 但若您希望托管伺服器, 則需要按需更改 **Colyseus 伺服器地址** 和 **Colyseus 伺服器端口**.
 
@@ -39,23 +39,23 @@
 
 伺服器提供的目標將根據其所在行的位置移交給相應的 TargetTreadmill. "行" 會在伺服器 52 列 `target.ts` 隨機設置. 如果您在 GalleryShooter 場景中添加或移除行, 伺服器必須通過此處對其進行了解: `LobbyController.numberOfTargetRows`:
 
-![LobbyController.numberOfTargetRows](/demo/shooting-gallery/number-of-target-rows.png):
+![LobbyController.numberOfTargetRows](/colyseus/demo/shooting-gallery/number-of-target-rows.png):
 
 這個數字將在房間初始化時提供給伺服器, 並在隨機選擇目標所在的行時使用該值.
 
 treadmills 單獨控製發送目標的頻率:
 
-![Time between targets](/demo/shooting-gallery/time-between-targets.png)
+![Time between targets](/colyseus/demo/shooting-gallery/time-between-targets.png)
 
 TargetBase 對象在這裏控製其自身速度:
 
-![Move speed](/demo/shooting-gallery/move-speed.png)
+![Move speed](/colyseus/demo/shooting-gallery/move-speed.png)
 
 ### 調整槍支
 
 槍支的重要值可以在槍預設這裏進行更改:
 
-![Guns](/demo/shooting-gallery/guns.png)
+![Guns](/colyseus/demo/shooting-gallery/guns.png)
 
 ### 最大玩家數
 
