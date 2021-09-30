@@ -909,7 +909,7 @@ The callbacks are triggered based on instance reference. Make sure to attach the
 
 #### `onAdd (instance, key)`
 
-The `onAdd` callback can only be used in collection of items (`MapSchema`, `MapSchema`, etc.). The `onAdd` callback is called with the new instance and its key on holder object as argument.
+The `onAdd` callback can only be used in collection of items (`MapSchema`, `ArraySchema`, etc.). The `onAdd` callback is called with the new instance and its key on holder object as argument.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onAdd = (player, key) => {

@@ -905,7 +905,7 @@ schema.filter(function(client, value, root) {
 
 #### `onAdd (instance, key)`
 
-只有集合 (`MapSchema`, `MapSchema` 等) 可以使用 `onAdd` 回調. 集合更新後觸發 `onAdd` 回調, 外加已更新集合的鍵作為參數.
+只有集合 (`MapSchema`, `ArraySchema` 等) 可以使用 `onAdd` 回調. 集合更新後觸發 `onAdd` 回調, 外加已更新集合的鍵作為參數.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onAdd = (player, key) => {
