@@ -157,7 +157,7 @@ const gameServer = new Server({
 
 #### `options.maxPayloadLength`
 
-接收消息最大长度. 如果一个客户端尝试向您发送比它更大的信息, 连接会立即关闭.
+接收消息最大长度. 如果一个客户端尝试发送更大消息, 连接会立即关闭.
 
 默认 `1024 * 1024`.
 
@@ -165,7 +165,7 @@ const gameServer = new Server({
 
 #### `options.idleTimeout`
 
-未发送或接受消息可经过的最大秒数. 如果超时, 连接将关闭. 超时分辨率(时间粒度)通常为 4 秒, 四舍五入取最接近的数值.
+消息等待最大秒数. 如果超时, 连接将关闭. 超时分辨率 (刷新粒度) 通常为 4 秒左右, 四舍五入.
 
 使用 `0` 来禁用.
 
@@ -175,8 +175,8 @@ const gameServer = new Server({
 
 #### `options.compression`
 
-使用何种 permessage-deflate 压缩.
-`uWS.DISABLED`, `uWS.SHARED_COMPRESSOR` 或任意 `uWS.DEDICATED_COMPRESSOR_xxxKB`.
+使用何种消息压缩方法.
+`uWS.DISABLED`, `uWS.SHARED_COMPRESSOR` 或自定义 `uWS.DEDICATED_COMPRESSOR_xxxKB`.
 
 默认 `uWS.DISABLED`
 
@@ -184,7 +184,7 @@ const gameServer = new Server({
 
 #### `options.maxBackpressure`
 
-发布或发送消息时每个套接口所允许的反向压力最大长度. 高反向压力的缓慢接收器将被跳过, 直至其赶上或超时为止.
+广播或发布消息时每个连接允许的最大背压. 高背压下, 速度慢的客户端会被掠过, 直至其赶上或超时为止.
 
 默认 `1024 * 1024`.
 
@@ -192,35 +192,35 @@ const gameServer = new Server({
 
 #### `options.key_file_name`
 
-SSL 密钥文件的路径 (通过Node.js应用程序用于SSL终端.)
+SSL 密钥文件的路径 (通过 Node.js 程序作用于 SSL 终端.)
 
 ---
 
 #### `options.cert_file_name`
 
-SSL 证书文件的路径 (通过 Node.js 应用程序用于 SSL 终端.)
+SSL 证书文件的路径 (通过 Node.js 程序作用于 SSL 终端.)
 
 ---
 
 #### `options.passphrase`
 
-SSL 文件的路径 (通过 Node.js 应用程序用于 SSL 终端.)
+SSL 文件的密码 (通过 Node.js 程序作用于 SSL 终端.)
 
 ---
 
-### 自定义 HTTP 的 `uWebSockets.js` 路由
+### 使用 `uWebSockets.js` 自定义 HTTP 路由
 
-#### 本机 `uWebSockets.js` 路由:
+#### 原生 `uWebSockets.js` 传输:
 
-`uWebSocketsTransport` 会公布变量 `app`,作为 `uWebSockets.js` 函数库中的原始 `uws.App` 或 `uws.SSLApp`.
+`uWebSocketsTransport` 公开变量 `app` 作为 `uWebSockets.js` 中原生 `uws.App` 或 `uws.SSLApp` 的引用.
 
-您可以直接使用 `transport.app` 来绑定使用 `uWebSockets.js` API 的 http 路由, 如下所示:
+您可以直接使用 `transport.app` 来绑定原本使用 `uWebSockets.js` API 的 http 传输功能, 如下所示:
 
 ```typescript
 import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
 
 const transport = new uWebSocketsTransport({
-    /* ...options */
+    /* ...选项 */
 });
 
 transport.app.get("/*", (res, req) => {
@@ -228,11 +228,11 @@ transport.app.get("/*", (res, req) => {
 });
 ```
 
-查看 [`uWebSockets.js` examples](https://github.com/uNetworking/uWebSockets.js/tree/master/examples) 了解更多信息.
+更多详情请参考 [`uWebSockets.js` 示例](https://github.com/uNetworking/uWebSockets.js/tree/master/examples).
 
-#### 替代选项: express 兼容层
+#### 另一种选择: express 兼容层
 
-作为替代, 我们构建了一个薄的兼容层, 旨在提供与 Express 相同的功能, 但使用 `uWebSockets.js`高级选项.
+作为另一种方法, 我们构建了一个轻兼容层, 旨在提供与 Express 相同的功能的同时, 使用 `uWebSockets.js` 作为底层.
 
 !!! tip "此功能为实验性质"
     该 Express 兼容层为实验性质, 可能无法处理复杂代码
@@ -243,7 +243,7 @@ transport.app.get("/*", (res, req) => {
 npm install --save uwebsockets-express
 ```
 
-**用法**
+**使用方法**
 
 ```typescript fct_label="Example"
 import express from "express";
@@ -251,11 +251,11 @@ import expressify from "uwebsockets-express"
 import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
 
 const transport = new uWebSocketsTransport({
-    /* ...options */
+    /* ...选项 */
 });
 const app = expressify(transport.app);
 
-// use existing middleware implementations!
+// 使用已有的中间件!
 app.use(express.json());
 app.use('/', serveIndex(path.join(__dirname, ".."), { icons: true, hidden: true }))
 app.use('/', express.static(path.join(__dirname, "..")));
@@ -275,16 +275,16 @@ export default Arena({
   // ...
   initializeTransport: function() {
     return new uWebSocketsTransport({
-      /* ...options */
+      /* ...选项 */
     });
   },
 
   //
-  // when using `@colyseus/arena`, the `uwebsockets-express` is loaded automatically.
-  // you get the expressify(transport.app) as argument here.
+  // 使用 `@colyseus/arena` 时, `uwebsockets-express` 被自动加载.
+  // 您可以通过这里的参数获取其引用 (transport.app).
   //
   initializeExpress: (app) => {
-    // use existing middleware implementations!
+    // 使用已有的中间件!
     app.use('/', serveIndex(path.join(__dirname, ".."), { icons: true, hidden: true }))
     app.use('/', express.static(path.join(__dirname, "..")));
 
