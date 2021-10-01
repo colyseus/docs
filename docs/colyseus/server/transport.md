@@ -184,7 +184,7 @@ Defaults to `uWS.DISABLED`
 
 #### `options.maxBackpressure`
 
-when publishing or sending messages. Slow receivers with too high backpressure will be skipped until they catch up or timeout.
+Maximum length of allowed backpressure per socket when publishing or sending messages. Slow receivers with too high backpressure will be skipped until they catch up or timeout.
 
 Defaults to `1024 * 1024`.
 
