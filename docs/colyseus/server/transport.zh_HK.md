@@ -64,7 +64,7 @@ import { createServer } from "http";
 import { Server } from "@colyseus/core";
 import { WebSocketTransport } from "@colyseus/ws-transport"
 
-const server = createServer(app); // create the http server manually
+const server = createServer(); // create the http server manually
 
 const gameServer = new Server({
   transport: new WebSocketTransport({
