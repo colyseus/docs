@@ -19,8 +19,9 @@
 ```
 import Arena from "@colyseus/arena";
 import { monitor } from "@colyseus/monitor";
+import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport";
+//import { WebSocketTransport } from  "@colyseus/ws-transport";
 import { ShootingGalleryRoom } from "./rooms/ShootingGalleryRoom";
-
 const port = Number(process.env.PORT);
 
 export default Arena({
@@ -30,6 +31,20 @@ export default Arena({
 
         gameServer.define('ShootingGalleryRoom', ShootingGalleryRoom);
 
+    },
+
+    initializeTransport: (options) => {
+
+        return new uWebSocketsTransport({});
+
+        /**
+         * Define your server transports as Legacy WS (legacy)
+         */
+        // return new WebSocketTransport({
+        //     ...options,
+        //     pingInterval: 5000,
+        //     pingMaxRetries: 3,
+        // });
     },
 
     initializeExpress: (app) => {

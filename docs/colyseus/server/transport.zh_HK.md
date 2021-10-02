@@ -64,7 +64,7 @@ import { createServer } from "http";
 import { Server } from "@colyseus/core";
 import { WebSocketTransport } from "@colyseus/ws-transport"
 
-const server = createServer(app); // 手動創建 http 服務器
+const server = createServer(); // 手動創建 http 服務器
 
 const gameServer = new Server({
   transport: new WebSocketTransport({
