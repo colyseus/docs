@@ -132,7 +132,7 @@ const gameServer = new Server({
 [`uWebSockets.js`](https://github.com/uNetworking/uWebSockets.js) 協議通常在 CCU 數量以及內存消耗方面比默認傳輸性能更好.
 
 !!! Warning "HTTP 的傳輸方法與 `uWebSockets.js` 不同"
-使用 `uWebSockets.js` 的最大缺點在於其 HTTP/路由 的運作方式與常規 Node.js/express 不同. 了解更多信息請參考 [自定義 HTTP 路由的 `uWebSockets.js`](#custom-http-routes-with-uwebsocketsjs)
+    使用 `uWebSockets.js` 的最大缺點在於其 HTTP/路由 的運作方式與常規 Node.js/express 不同. 了解更多信息請參考 [自定義 HTTP 路由的 `uWebSockets.js`](#custom-http-routes-with-uwebsocketsjs)
 
 **安裝**
 
@@ -235,7 +235,7 @@ transport.app.get("/*", (res, req) => {
 作為另一種方法, 我們構建了一個輕兼容層, 旨在提供與 Express 相同的功能的同時, 使用 `uWebSockets.js` 作為底層.
 
 !!! tip "此功能為實驗性質"
-該 Express 兼容層為實驗性質, 可能無法處理復雜代碼
+    該 Express 兼容層為實驗性質, 可能無法處理復雜代碼
 
 **安裝**
 
