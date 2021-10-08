@@ -1,28 +1,28 @@
 # 服务器 API &raquo; 房间
 
-Room 类的作用是实现游戏会话, 并且/或作为一组客户端之间的通信通道.
+Room 类的作用是实现游戏会话, 也可作为一组客户端之间的交流通道.
 
-- 默认情况下, 在匹配期间 **on demand** 创建房间
-- 必须使用 [`.define()`](/server/api/#define-roomname-string-room-room-options-any) 发布 Room 类
+- 默认情况下系统在做房间匹配时, 房间根据客户端请求 **随求随建**.
+- Room 类必须使用 [`.define()`](/server/api/#define-roomname-string-room-room-options-any) 公开.
 
 ```typescript fct_label="TypeScript"
 import http from "http";
 import { Room, Client } from "colyseus";
 
 export class MyRoom extends Room {
-    // When room is initialized
+    // 房间初始化时
     onCreate (options: any) { }
 
-    // Authorize client based on provided options before WebSocket handshake is complete
+    // 在 WebSocket 握手完成前, 客户端基于其提供的 options 进行验证
     onAuth (client: Client, options: any, request: http.IncomingMessage) { }
 
-    // When client successfully join the room
+    // 当客户端成功加入房间时
     onJoin (client: Client, options: any, auth: any) { }
 
-    // When a client leaves the room
+    // 当客户端离开房间时
     onLeave (client: Client, consented: boolean) { }
 
-    // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
+    // 析构函数, 当房间里没有客户端时被调用. (参考 `autoDispose`)
     onDispose () { }
 }
 ```
@@ -31,27 +31,27 @@ export class MyRoom extends Room {
 const colyseus = require('colyseus');
 
 export class MyRoom extends colyseus.Room {
-    // When room is initialized
+    // 房间初始化时
     onCreate (options) { }
 
-    // Authorize client based on provided options before WebSocket handshake is complete
+    // 在 WebSocket 握手完成前, 客户端基于其提供的 options 进行验证
     onAuth (client, options, request) { }
 
-    // When client successfully join the room
+    // 当客户端成功加入房间时
     onJoin (client, options, auth) { }
 
-    // When a client leaves the room
+    // 当客户端离开房间时
     onLeave (client, consented) { }
 
-    // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
+    // 析构函数, 当房间里没有客户端时被调用. (参考 `autoDispose`)
     onDispose () { }
 }
 ```
 
 ## 房间生命周期事件
 
-- 自动调用房间生命周期事件.
-- 每个生命周期事件都支持 [`async`/`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) 选项.
+- 房间生命周期函数会自动被调用.
+- 生命周期事件都可支持 [`async`/`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function).
 
 ### `onCreate (options)`
 
