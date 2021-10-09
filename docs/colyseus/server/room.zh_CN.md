@@ -55,28 +55,28 @@ export class MyRoom extends colyseus.Room {
 
 ### `onCreate (options)`
 
-在匹配器创建房间之后, 进行一次调用.
+房间匹配器创建房间后, 调用一次.
 
-**The `options` argument is provided by the client upon room creation:**
+**`options` 参数在房间创建时由客户端提供:**
 
 ```typescript
-// Client-side - JavaScript SDK
+// 客户端 - JavaScript SDK
 client.joinOrCreate("my_room", {
   name: "Jake",
   map: "de_dust2"
 })
 
-// onCreate() - options are:
+// onCreate() - options 为:
 // {
 //   name: "Jake",
 //   map: "de_dust2"
 // }
 ```
 
-**The server may overwrite options during [`.define()`](/server/api/#define-roomname-string-room-room-options-any) for authortity:**
+**服务器可以使用 [`.define()`](/server/api/#define-roomname-string-room-room-options-any) 覆盖 options 或者进行用户检验:**
 
 ```typescript fct_label="Definition"
-// Server-side
+// 服务器端
 gameServer.define("my_room", MyRoom, {
   map: "cs_assault"
 })
@@ -88,7 +88,7 @@ gameServer.define("my_room", MyRoom, {
 // }
 ```
 
-在本例中, 在 `onCreate()` 期间, `map` 选项是 `"cs_assault"`, 在 `onJoin()` 期间的选项是 `"de_dust2"`.
+上例中, 在 `onCreate()` 时, options 的 `map` 为 `"cs_assault"`, 但是在 `onJoin()` 时变成了 `"de_dust2"`.
 
 ---
 
