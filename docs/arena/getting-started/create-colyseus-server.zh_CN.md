@@ -1,6 +1,6 @@
 # 创建新的 Colyseus 服务器
 
-**工具要求**:
+**需求**:
 
 - [下载并安装 Node.js](https://nodejs.org/) v14.0 或更高版本
 - [下载并安装 Git SCM](https://git-scm.com/downloads)

@@ -1,16 +1,16 @@
 # GitSync (PA 及更高版本)
 
-### 要求
+### 需求
 
-* 仅适用于 **Powered Ascent** 计划及更高版本.
+* 仅适用于 **Powered Ascent** 计划及更高计划版本.
 
-## 设置您的配置文件
+## 配置文件
 
 要配置 git sync, 需要将以下 ```arena.gitsync.json``` JSON 文件添加到服务器代码的根文件夹并将其部署到您的应用.
 
-同步服务大约每 2 分钟拉取一次 Git 存储库, 以在请求的分支中进行新签入.
+同步服务大约每 2 分钟拉取一次 Git 存储库, 以便从请求的分支中载入更新配置.
 
-## Example of arena.gitsync.json 示例
+## arena.gitsync.json 示例
 ```
 {
     "serverDir": "upload",
@@ -25,7 +25,7 @@
 }
 ```
 
-**JSON Attributes:**
+**JSON 属性:**
 
 - **serverDir:** 这是上传代码所在的存储库根目录的位置. 如果使用 "npm run build" 创建部署代码, 应该列出此命令将文件所输出到的目录.
 
