@@ -14,11 +14,12 @@ Arena Cloud is available in multiple regions with custom region deployments avai
 
 - N. Virginia (USA - East 1)
 - Ohio (USA - East 2)
+- N. Virginia (USA - East 3 | Indie/Dev) 
 - N. California (USA - West 1)
-- Mumbai (Asia Pacific - South)
+- Mumbai (Asia Pacific - South | Indie/Dev)
 - Ireland (Europe - West)
-- Frankfurt (Europe - Central)
-- Seoul (Asia Pacific - North East) -- Coming Soon
+- Frankfurt (Europe - Central | Indie/Dev)
+- Seoul (Asia Pacific - North East)
 - *São Paulo (South America - East) -- Available On Request*
 
 ## Application Management 
