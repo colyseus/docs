@@ -1,50 +1,51 @@
-# 概覽
+# 概述
 
 ## 歡迎來到 Colyseus Arena
-部署 Colyseus 伺服器的最簡單解決方案, 讓您可以 **更快地玩樂 Get To Fun Faster™**
+部署 Colyseus 服務器的最簡單解決方案, 讓您可以 **Get To Fun Faster™**
 
-Arena Cloud 是一種完全託管的解決方案, 可讓您專注於多人遊戲開發.它為開發人員提供企業級託管, 將伺服器管理, 基礎設施, DevOps 和擴展交給我們. 透過 Arena, 您可以從直觀的管理儀錶板中點擊幾下, 以設定, 管理和更新您的 Colyseus 伺服器.
+Arena Cloud 是一站式托管解決方案, 可讓您專註於多人遊戲開發. 它在服務器托管的基礎上, 為開發人員提供企業級服務器管理, 基礎設施建設, 開發運營和規模擴展等服務. 使用 Arena, 只需在直觀的管理儀表板上點擊幾下, 即可完成 Colyseus 服務器的配置, 管理和更新.
 
-**[註冊](https://https://console.colyseus.io/register) Arena Cloud 帳戶 (目前僅限邀請 [請求存取](https://www.colyseus.io/arena))**
+**[註冊](https://console.colyseus.io/register) Arena Cloud 賬戶**
 
-![Arena 儀錶板視圖](../../images/dashboard-view.jpg)
+![Arena 儀表板視圖](../../images/dashboard-view.jpg)
 
-## Arena Cloud 區域
-Arena Cloud 可在多個區域使用, 並可應要求提供自定義區域部署.
+## Arena Cloud 服務器部署地區
+可以在全球多地使用 Arena Cloud, 並可應要求提供客戶指定區域部署.
 
-- N.維吉尼亞州 (美國 - 東部 1)
+- 北弗吉尼亞州 (美國 - 東部 1)
 - 俄亥俄州 (美國 - 東部 2)
-- N.加利福尼亞州 (美國 - 西部 1)
-- 孟買 (亞太地區 - 南部)
+- N. Virginia (USA - East 3 | 可免費試用)
+- 北加利福尼亞州 (美國 - 西部 1)
+- 孟買 (Asia Pacific - South | 可免費試用)
 - 愛爾蘭 (歐洲 - 西部)
-- 法蘭克福 (歐洲 - 中部)
-- 首爾 (亞太地區 - 東北部)——即將推出
-- *聖保羅 (南美洲 - 東部)——可應要求提供*
+- 法蘭克福 (歐洲 - 中部 | 可免費試用)
+- 首爾 (亞太地區 - 東北部)
+- *聖保羅 (南美 - 東部) -- 根據客戶要求提供*
 
-## 應用程式管理
-只需透過直觀的儀錶板即可管理應用程式部署和查看即時統計數據. 在此控制台中, 您可以上傳和編輯代碼, 觸發建置, 使用 Git 儲存庫設定 CI/CD 流, 查看日誌以及重新啟動特定伺服器或您的完整部署.
+## 應用管理
+只需通過直觀的儀表板即可管理應用程序部署和查看實時統計數據. 在此控製臺上, 您可以上傳和編輯代碼, 觸發構建, 使用 Git 存儲庫設置 CI/CD 流, 查看日誌以及重新啟動指定服務器或者完全重新部署.
 
-![Arena 應用程式管理視圖](../../images/app-manage-view.jpg)
+![Arena 應用管理界面](../../images/app-manage-view.jpg)
 
 
-## Colyseus Arena 企業服務團隊
-我們的企業服務團隊可以為大大小小的開發商提供完全客製化的解決方案, 該解決方案通常比自託管更具成本效益和可靠性. 利用我們的 Global Arena 基礎設施, 您可以獲得 "規模經濟" 的優勢, 這使我們能夠以每單位定價提供一流的服務.從按 CCU 到按 CPU 定價, 我們可以自定義計劃以滿足您在預算範圍內的遊戲或應用程式需求.
+## Colyseus Arena 企業版
+我們的企業服務團隊可以為各類開發人員提供量身定製的解決方案, 這些解決方案比自托管具有更好的成本效益和可靠性. 利用我們的全球 Arena 基礎設施, 您將獲得 "規模性優勢". 我們能夠按單位定價, 提供同類性價比最高的服務. 從按 CCU 到按 CPU, 自由選擇定價方案, 在您的預算範圍內滿足遊戲或應用的需求.
 
-### 常見企業用例
-- 行銷或限時虛擬活動
-- 大規模啟動手機應用程式 (> 10k CCU)
-- 自定義 Colyseus 或非 Colyseus 遊戲伺服器
-- 多個伺服器版本並行運作的複雜設定部署
-- MMO / 大型皇室戰爭
+### 常見企業應用案例
+- 市場營銷或臨時虛擬活動
+- 大規模用戶手機應用上線 (> 10k CCU)
+- 自研 Colyseus 或非 Colyseus 遊戲服務器部署
+- 復雜配置部署, 多個服務器多版本並行運行
+- 多人在線 / 大型對戰遊戲
 
-[討論企業解決方案](mailto:contact@lucidsight.com)
+[洽談企業版解決方案](mailto:contact@lucidsight.com)
 
-## Arena Enterprise 託管自定義伺服器
-有基於 Linux 的遊戲伺服器或無頭 Unity / Unreal 遊戲伺服器嗎? 您是否正在尋找可以處理 DevOps, 維護和基礎架構擴展的彈性伺服器主機, 讓您的團隊可以自由地專注於遊戲開發?若為如此, 請立即聯絡我們的團隊, 看看我們如何為伺服器託管提供現代, 可擴展且具有成本效益的解決方案.
+## Arena 企業級托管自研服務器
+您有基於 Linux 的遊戲服務器或無界面 Unity / Unreal 遊戲服務器? 您是否在尋找可以處理開發運營, 維護並且可以擴展基礎架構的靈活服務器主機, 讓您的團隊可以自由地專註於遊戲開發? 如果是這樣, 請立即聯系我們的團隊, 了解我們如何為服務器托管提供現代, 可擴展而且具有成本效益的解決方案.
 
-[自定義伺服器託管](mailto:support@lucidsight.com)
+[洽談自研服務器托管](mailto:support@lucidsight.com)
 
-## Colyseus Arena Legacy Support < 0.14
-Arena Cloud 執行最新版本的 Colyseus Open-source, 但 Arena 能夠大規模託管和支援任何先前的 Colyseus 版本.
+## Colyseus Arena 向下支持 < 0.14
+Arena Cloud 運行最新的 Colyseus 開源版本, 而且 Arena 能夠大規模托管和支持任何以前的 Colyseus 版本.
 
-請透過 [Legacy Support](mailto:support@lucidsight.com) 聯絡我們的支援團隊, 將較舊的 Colyseus 版本新增到您的應用程式中.
+通過 [Legacy Support](mailto:support@lucidsight.com) 聯系我們的支持團隊, 可將老版本的 Colyseus 版本添加到您的應用.

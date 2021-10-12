@@ -5,7 +5,7 @@
 
 Arena Cloud 是一站式托管解决方案, 可让您专注于多人游戏开发. 它在服务器托管的基础上, 为开发人员提供企业级服务器管理, 基础设施建设, 开发运营和规模扩展等服务. 使用 Arena, 只需在直观的管理仪表板上点击几下, 即可完成 Colyseus 服务器的配置, 管理和更新.
 
-**[注册](https://https://console.colyseus.io/register) Arena Cloud 帐户 (目前仅限受邀用户的 [试用请求](https://www.colyseus.io/arena))**
+**[注册](https://console.colyseus.io/register) Arena Cloud 账户**
 
 ![Arena 仪表板视图](../../images/dashboard-view.jpg)
 
@@ -14,11 +14,12 @@ Arena Cloud 是一站式托管解决方案, 可让您专注于多人游戏开发
 
 - 北弗吉尼亚州 (美国 - 东部 1)
 - 俄亥俄州 (美国 - 东部 2)
+- N. Virginia (USA - East 3 | 可免费试用)
 - 北加利福尼亚州 (美国 - 西部 1)
-- 孟买 (亚太地区 - 南部)
+- 孟买 (Asia Pacific - South | 可免费试用)
 - 爱尔兰 (欧洲 - 西部)
-- 法兰克福 (欧洲 - 中部)
-- 首尔 (亚太地区 - 东北部) -- 即将推出
+- 法兰克福 (欧洲 - 中部 | 可免费试用)
+- 首尔 (亚太地区 - 东北部)
 - *圣保罗 (南美 - 东部) -- 根据客户要求提供*
 
 ## 应用管理
