@@ -4,11 +4,11 @@
 
 - [下载并安装 Node.js](https://nodejs.org/) v14.0 或更高版本
 - [下载并安装 Git SCM](https://git-scm.com/downloads)
-- [下载并安装 Visual Studio Code](https://code.visualstudio.com/) (或您选择的其它编辑器)
+- [下载并安装 Visual Studio Code](https://code.visualstudio.com/) (或其他编辑器)
 
-## 创建 Colyseus 服务器表单 NPM 模板
+## 从 NPM 模板创建 Colyseus 服务器
 
-使用 `npm init colyseus-app` 命令生成准系统 Colyseus 服务器. 您可以选择 TypeScript (推荐) 和 JavaScript 作为服务器语言. **Arena Cloud** 目前仅支持两种语言.
+使用 `npm init colyseus-app` 命令创建新的 Colyseus 服务器. 您可以选择 TypeScript (推荐) 和 JavaScript 作为服务器语言. **Arena Cloud** 目前仅支持两种语言.
 
 ```
 npm init colyseus-app ./my-colyseus-app
@@ -16,22 +16,22 @@ npm init colyseus-app ./my-colyseus-app
 
 ![NPM Selection](../../images/arena-app-support.jpg)
 
-- ONLY Complied **TypeScript** and **JavaScript (CommonJS)** are currently supported. *ESM support is coming soon.*
+- 目前仅支持编译后的 **TypeScript** 和 **JavaScript (CommonJS)** . *不久后会支持 ESM.*
 
-以下是在 *my-colyseus-app* 目录中为 TypeScript 服务器创建的预期文件夹结构和文件.
+以下是在 *my-colyseus-app* 为 TypeScript 服务器创建的目录结构和文件.
 
 ![NPM Code](../../images/new-arena-server-code.jpg)
 
-- **index.ts / js:** 此文件用于本地测试或自托管. 为确保 Arena Cloud 兼容性, 我们 ***建议*** 对于直接对索引文件 ***不要*** 进行更改. 当您的服务器托管在 Arena Cloud 上时, 此处添加的更改或功能将不会反映出来对于本地测试, 可以修改此文件以更改 Colyseus 服务器端口.
+- **index.ts / js:** 此文件用于本地测试或自托管. 为确保 Arena Cloud 兼容性, 我们 ***建议*** 您 ***不要*** 直接对 index 文件进行更改. 服务器托管在 Arena Cloud 上时, 您对此文件的修改和功能更新都不会生效. 做本地测试时可以修改此文件里面的 Colyseus 服务器端口.
 
-- **arena.config.ts / js:** 可以在此文件中进行添加和修改, 以支持您的游戏. 请注意, 在游戏服务器初始化期间, 将调用三个核心函数.
+- **arena.config.ts / js:** 可以在此文件中进行修改和功能更新, 以便更好地支持您的游戏. 请注意在服务器初始化时需要调用的三个核心函数.
 
 ```
     getId: () => "Your Colyseus App",
 
     initializeGameServer: (gameServer) => {
         /**
-         * Define your room handlers:
+         * 定义房间句柄:
          */
         gameServer.define('my_room', MyRoom);
 
@@ -39,16 +39,16 @@ npm init colyseus-app ./my-colyseus-app
 
     initializeExpress: (app) => {
         /**
-         * Bind your custom express routes here:
+         * 自定义 express 路由地址:
          */
         app.get("/", (req, res) => {
             res.send("It's time to kick ass and chew bubblegum!");
         });
 
         /**
-         * Bind @colyseus/monitor
-         * It is recommended to protect this route with a password.
-         * Read more: https://docs.colyseus.io/tools/monitor/
+         * 绑定 @colyseus/monitor
+         * 建议使用密码把这个路由地址保护起来.
+         * 详见: https://docs.colyseus.io/tools/monitor/
          */
         app.use("/colyseus", monitor());
     },
@@ -56,12 +56,12 @@ npm init colyseus-app ./my-colyseus-app
 
     beforeListen: () => {
         /**
-         * Before before gameServer.listen() is called.
+         * 在执行 gameServer.listen() 之前自动调用此函数.
          */
     }
 ```
 
 
-- **arena.env / development.env:** 这些文件用于管理 Colyseus 服务器环境变量, 在 Arena Cloud 上托管时, 将默认加载arena.env.
+- **arena.env / development.env:** 这些文件用于管理 Colyseus 服务器的环境变量, 在 Arena Cloud 上托管时, 默认加载 arena.env.
 
-- **lib / upload Folder:** 只有在第一次运行 ```npm run build``` 命令后才会创建此文件夹. 此文件夹包含编译后的 JS 代码, package.json 和 .env 文件, 需要将这些文件上传到 Arena Cloud.
+- **lib / upload Folder:** 只有在第一次运行 ```npm run build``` 命令时才会创建此文件夹. 此文件夹包含了需要上传到 Arena Cloud 的文件, 包括编译后的 JS 代码, package.json 和 .env 文件.
