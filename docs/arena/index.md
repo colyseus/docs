@@ -5,7 +5,7 @@ The simplest solution to deploy your Colyseus Server allowing you to **Get To Fu
 
 Arena Cloud  is a fully managed solution that enables you to focus on your multiplayer game development. It provides developers with enterprise grade hosting leaving server management, infrastructure, DevOps and scaling to us. With Arena, you can setup, manage and update your Colyseus servers with a few clicks from an intuitive administration dashboard.
 
-**[Sign-up](https://console.colyseus.io/register) for a Arena Cloud Account (Currently By Invite Only [Request Access](https://www.colyseus.io/arena))**
+**[Sign-up](https://console.colyseus.io/register) for a Arena Cloud Account**
 
 ![Arena Dashboard View](../../images/dashboard-view.jpg)
 
@@ -14,11 +14,12 @@ Arena Cloud is available in multiple regions with custom region deployments avai
 
 - N. Virginia (USA - East 1)
 - Ohio (USA - East 2)
+- N. Virginia (USA - East 3 | Indie/Dev) 
 - N. California (USA - West 1)
-- Mumbai (Asia Pacific - South)
+- Mumbai (Asia Pacific - South | Indie/Dev)
 - Ireland (Europe - West)
-- Frankfurt (Europe - Central)
-- Seoul (Asia Pacific - North East) -- Coming Soon
+- Frankfurt (Europe - Central | Indie/Dev)
+- Seoul (Asia Pacific - North East)
 - *São Paulo (South America - East) -- Available On Request*
 
 ## Application Management 
