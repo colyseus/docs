@@ -38,14 +38,14 @@ Arena Cloud 是一站式托管解決方案, 可讓您專註於多人遊戲開發
 - 復雜配置部署, 多個服務器多版本並行運行
 - 多人在線 / 大型對戰遊戲
 
-[洽談企業版解決方案](mailto:contact@lucidsight.com)
+[洽談企業版解決方案](mailto:cs@lucidsight.com)
 
 ## Arena 企業級托管自研服務器
 您有基於 Linux 的遊戲服務器或無界面 Unity / Unreal 遊戲服務器? 您是否在尋找可以處理開發運營, 維護並且可以擴展基礎架構的靈活服務器主機, 讓您的團隊可以自由地專註於遊戲開發? 如果是這樣, 請立即聯系我們的團隊, 了解我們如何為服務器托管提供現代, 可擴展而且具有成本效益的解決方案.
 
-[洽談自研服務器托管](mailto:support@lucidsight.com)
+[洽談自研服務器托管](mailto:cs@lucidsight.com)
 
 ## Colyseus Arena 向下支持 < 0.14
 Arena Cloud 運行最新的 Colyseus 開源版本, 而且 Arena 能夠大規模托管和支持任何以前的 Colyseus 版本.
 
-通過 [Legacy Support](mailto:support@lucidsight.com) 聯系我們的支持團隊, 可將老版本的 Colyseus 版本添加到您的應用.
+通過 [Legacy Support](mailto:cs@lucidsight.com) 聯系我們的支持團隊, 可將老版本的 Colyseus 版本添加到您的應用.

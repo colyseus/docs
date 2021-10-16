@@ -2,7 +2,7 @@
 
 ### 需求
 
-* [注册](https://https://console.colyseus.io/register) Arena Cloud 账户
+* [注册](https://console.colyseus.io/register) Arena Cloud 账户
 * 兼容 [Arena Cloud](../create-colyseus-server/) 的 Colyseus 服务器应用
 
 ## 创建应用部署
