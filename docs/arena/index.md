@@ -38,14 +38,14 @@ Our Enterprise service team can provide developers, large and small, a fully cus
 - Complex setup deployment with multiple server versions running in parallel
 - MMO / Large scale battle royals
 
-[Discuss Enterprise Solutions](mailto:contact@lucidsight.com)
+[Discuss Enterprise Solutions](mailto:cs@lucidsight.com)
 
 ## Arena Enterprise Hosting of Custom Servers
 Have a linux based game server or headless Unity / Unreal game server? Are you looking for a flexible server host that can handle the DevOps, maintenance, and scaling of your infrastructure leaving your team free to focus on game development? If so, reach out to our team today and see how we can provide a modern, scalable and cost effective solution for server hosting.
 
-[Custom Server Hosting](mailto:support@lucidsight.com)
+[Custom Server Hosting](mailto:cs@lucidsight.com)
 
 ## Colyseus Arena Legacy Support < 0.14
 Arena Cloud runs the latest version of Colyseus Open-source, however Arena has the ability to host and support at scale any previous Colyseus version. 
 
-Contact our support team at [Legacy Support](mailto:support@lucidsight.com) to have older Colyseus versions added to your application. 
+Contact our support team at [Legacy Support](mailto:cs@lucidsight.com) to have older Colyseus versions added to your application. 
