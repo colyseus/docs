@@ -1,6 +1,6 @@
 # 網絡界面
 
-### 需求
+### 要求
 
 * [已完成創建](../create-application/) Arena 應用部署.
 

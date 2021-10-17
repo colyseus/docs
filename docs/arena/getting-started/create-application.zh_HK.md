@@ -1,6 +1,6 @@
 # 應用部署
 
-### 需求
+### 要求
 
 * [註冊](https://console.colyseus.io/register) Arena Cloud 賬戶
 * 兼容 [Arena Cloud](../create-colyseus-server/) 的 Colyseus 伺服器應用
