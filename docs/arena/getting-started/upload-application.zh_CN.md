@@ -20,7 +20,7 @@
 
 ## 服务器代码概述
 
-如果使用的 ```npm run build``` 模板, 完成上传后应该会看到如下的文件夹结构.
+如果使用的 ```npm run build``` 模板, 完成上传后应该会看到如下的目录结构.
 
 ![Arena 代码模板](../../images/code-template.jpg)
 

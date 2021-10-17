@@ -20,7 +20,7 @@
 
 ## 伺服器代碼概述
 
-如果使用的 ```npm run build``` 樣板, 完成上傳後應該會看到如下的文件夾結構.
+如果使用的 ```npm run build``` 樣板, 完成上傳後應該會看到如下的目錄結構.
 
 ![Arena 代碼樣板](../../images/code-template.jpg)
 
@@ -64,7 +64,7 @@ module.exports = Arena({
 
     beforeListen: () => {
         /**
-         * 調用 gameServer.listen() 之前需要執行的程序.
+         * 調用 gameServer.listen() 之前需要執行的程式.
          */
     }
 

@@ -1,4 +1,4 @@
-# Package.json / 文件夾位置
+# Package.json / 目錄路徑
 
 ## Package.json 用法
 

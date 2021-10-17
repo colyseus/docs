@@ -6,7 +6,7 @@
 
 ## 配置文件
 
-要使用 git 同步, 需要将如下 ```arena.gitsync.json``` JSON 文件添加到服务器代码的根文件夹并将其部署到您的应用中.
+要使用 git 同步, 需要将如下 ```arena.gitsync.json``` 文件添加到服务器代码的根目录并将其部署到您的应用中.
 
 同步服务大约每 2 分钟从 Git 托管库的指定分支中拉取更新.
 
@@ -27,7 +27,7 @@
 
 **JSON 属性:**
 
-- **serverDir:** 这是您上传的代码被保存的根文件夹. 如果用 "npm run build" 创建部署代码, 应将此文件夹作为输出目标文件夹.
+- **serverDir:** 这是您上传的代码被保存的根目录. 如果用 "npm run build" 创建部署代码, 应将此文件夹作为输出目标文件夹.
 
 - **buildType:** 此属性有两个可选项.
     - `arena` - 在从 serverDir 复制文件之前运行 ```npm install && npm run build```.
