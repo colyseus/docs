@@ -56,7 +56,7 @@ module.exports = Arena({
 
         /**
          * 绑定 @colyseus/monitor
-         * 建议使用密码保护此地址.
+         * 建议使用密码将这个路由地址保护起来.
          * 详见: https://docs.colyseus.io/tools/monitor/
          */
         app.use("/colyseus", monitor());
