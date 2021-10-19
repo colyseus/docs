@@ -1,4 +1,4 @@
-# Best Practices
+# Production Best Practices
 
 !!! NOTE   
     - This is our current recommendation for using Arena in a production environment, future updates are incoming that will streamline this process & allow for graceful rolling updates from a single deployment.
