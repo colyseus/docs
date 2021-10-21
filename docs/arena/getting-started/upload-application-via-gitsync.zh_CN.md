@@ -8,6 +8,9 @@
 
 要使用 git 同步, 需要将如下 ```arena.gitsync.json``` 文件添加到服务器代码的根目录并将其部署到您的应用中.
 
+!!! NOTE
+    - **再次提示** 必须点选 `Deploy` 来推送 ```arena.gitsync.json``` 到您的应用服务器, GitSync 才能正确更新.
+
 同步服务大约每 2 分钟从 Git 托管库的指定分支中拉取更新.
 
 ## arena.gitsync.json 示例
