@@ -344,6 +344,7 @@ nav:
   - Reference:
     - 'arena/reference/npmrc-custom.md'
     - 'arena/reference/root-folder.md'
+    - 'arena/reference/upload-application-via-gitsync.md'
   - Application Deployments:
     - 'arena/production/deploy-prod-application.md'
     - 'arena/troubleshooting/troubleshoot.md'
