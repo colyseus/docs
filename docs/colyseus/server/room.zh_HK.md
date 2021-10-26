@@ -596,7 +596,7 @@ onCreate() {
 ```
 
 !!! Tip
-    [參見如何在客戶端處理這些 onMessage().](/client/room/#onmessage)
+    [參見如何在客戶端處理這些 onMessage().](/colyseus/client/client/#onmessage)
 
 ---
 
@@ -887,7 +887,7 @@ client.send(data);
  -->
 
 !!! Tip
-    [查看如何在客戶端處理這些資訊.](/client/room/#onmessage)
+    [查看如何在客戶端處理這些資訊.](/colyseus/client/client/#onmessage)
 
 ---
 

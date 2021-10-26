@@ -50,12 +50,12 @@ export class MyRoom extends colyseus.Room {
 
 ## Room lifecycle events
 
-- The room lifecycle events are called automatically. 
+- The room lifecycle events are called automatically.
 - Optional [`async`/`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) is supported on every lifecycle event.
 
 ### `onCreate (options)`
 
-Called once, when the room is created by the matchmaker. 
+Called once, when the room is created by the matchmaker.
 
 **The `options` argument is provided by the client upon room creation:**
 
@@ -78,7 +78,7 @@ client.joinOrCreate("my_room", {
 ```typescript fct_label="Definition"
 // Server-side
 gameServer.define("my_room", MyRoom, {
-  map: "cs_assault" 
+  map: "cs_assault"
 })
 
 // onCreate() - options are:
@@ -596,7 +596,7 @@ onCreate() {
 ```
 
 !!! Tip
-    [See how to handle these onMessage() in the client-side.](/client/room/#onmessage)
+    [See how to handle these onMessage() in the client-side.](/colyseus/client/client/#onmessage)
 
 ---
 
@@ -621,7 +621,7 @@ If **`seconds`** is provided, the reconnection is going to be cancelled after th
 **Return type:**
 
 - `allowReconnection()` returns a `Deferred<Client>` instance.
-- The `Deferred` is a promise-like type 
+- The `Deferred` is a promise-like type
 - `Deferred` type can forcibly reject the promise by calling `.reject()` (see second example)
 
 **Example:** Rejecting the reconnection after a 20 second timeout.
@@ -741,7 +741,7 @@ onCreate() {
 
 A unique, auto-generated, 9-character-long id of the room.
 
-You may replace `this.roomId` during `onCreate()`. 
+You may replace `this.roomId` during `onCreate()`.
 
 !!! Tip "Using a custom `roomId`"
     Check out the guide [How-to &raquo; Customize room id](/how-to/custom-room-id/)
@@ -809,7 +809,7 @@ The `presence` instance. Check [Presence API](/server/presence) for more details
 
 ---
 
-## Client 
+## Client
 
 The `client` instance from the server-side is responsible for the **transport** layer between the server and the client. It should not be confused with the [`Client` from the client-side SDK](/client/client/), as they have completely different purposes!
 
@@ -873,7 +873,7 @@ client.send("powerup", { kind: "ammo" });
 client.send(1, { kind: "ammo"});
 ```
 
-<!-- 
+<!--
 **Sending a schema-encoded message:**
 
 Sending schema-encoded messages is particularly useful for statically-typed languages such as C#.
@@ -891,7 +891,7 @@ client.send(data);
  -->
 
 !!! Tip
-    [See how to handle these messages on client-side.](/client/room/#onmessage)
+    [See how to handle these messages on client-side.](/colyseus/client/client/#onmessage)
 
 ---
 
@@ -902,7 +902,7 @@ Force disconnection of the `client` with the room. You may send a custom `code` 
 !!! Tip
     This will trigger [`room.onLeave`](/client/room/#onleave) event on the client-side.
 
-##### Table of WebSocket close codes 
+##### Table of WebSocket close codes
 
 | Close code (uint16) | Codename               | Internal | Customizable | Description |
 |---------------------|------------------------|----------|--------------|-------------|
