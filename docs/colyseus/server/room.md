@@ -612,17 +612,18 @@ Unlocking the room returns it to the pool of available rooms for new clients to 
 
 ---
 
-### `allowReconnection (client, seconds?)`
+### `allowReconnection (client, seconds)`
 
 Allow the specified client to [`reconnect`](/client/client/#reconnect-roomid-string-sessionid-string) into the room. Must be used inside [`onLeave()`](#onleave-client) method.
 
-If **`seconds`** is provided, the reconnection is going to be cancelled after the provided amout of seconds.
+- **`client`**: the disconnecting [`Client`](/server/client/) instance
+- **`seconds`**: number of seconds to wait for client to perform [`.reconnect()`](/client/client/#reconnect-roomid-string-sessionid-string), or `"manual"`, to allow for manual reconnection rejection (see second example)
 
 **Return type:**
 
 - `allowReconnection()` returns a `Deferred<Client>` instance.
-- The `Deferred` is a promise-like type
-- `Deferred` type can forcibly reject the promise by calling `.reject()` (see second example)
+
+The returned `Deferred` instance is a promise-like structure, you can forcibly reject the reconnection by calling `.reject()` on it. (see second example)
 
 **Example:** Rejecting the reconnection after a 20 second timeout.
 
@@ -664,7 +665,7 @@ async onLeave (client: Client, consented: boolean) {
     }
 
     // get reconnection token
-    const reconnection = this.allowReconnection(client);
+    const reconnection = this.allowReconnection(client, "manual");
 
     //
     // here is the custom logic for rejecting the reconnection.
