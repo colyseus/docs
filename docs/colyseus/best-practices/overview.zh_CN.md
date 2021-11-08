@@ -100,7 +100,7 @@ class MyRoom extends colyseus.Room {
 // OnJoinCommand.ts
 import { Command } from "@colyseus/command";
 
-export class OnJoinCommand extends Command<YourState, {
+export class OnJoinCommand extends Command<MyRoom, {
     sessionId: string
 }> {
 
