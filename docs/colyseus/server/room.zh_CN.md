@@ -97,15 +97,15 @@ gameServer.define("my_room", MyRoom, {
 在 `onJoin()` 之前, 将执行 `onAuth()` 方法. 在客户进入房间时, 可以使用此方法验证身份.
 
 - 如果 `onAuth()` 返回一个 [truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) 值, 将调用 `onJoin()`, 并将返回值作为第三个参数.
-- 如果 `onAuth()` 返回 [falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy) 值, 将立即拒绝客户, 导致在客户端调用匹配函数失败.
-- 也可以抛出一个 `ServerError`, 以便在客户端处理自定义错误.
+- 如果 `onAuth()` 返回 [falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy) 值, 将立即拒绝客户端登入, 并客户端报告匹配失败.
+- 也可以抛出一个 `ServerError`, 以便在客户端进行处理.
 
-如果此方法未被实现,将始终返回  `true`, 从而允许任何客户连接.
+如果没有实现 onAuth 方法, 则默认返回 `true`, 从而允许任何客户连接.
 
 !!! Tip "正在获取玩家的 IP 地址"
-    可以使用 `request` 变量检索用户的 IP 地址, http 标头和更多信息. 例如:  `request.headers['x-forwarded-for'] || request.connection.remoteAddress`
+    可以利用 `request` 变量取得用户的 IP 地址, http 标头和更多信息. 例如:  `request.headers['x-forwarded-for'] || request.connection.remoteAddress`
 
-**Implementations examples**
+**举例**
 
 ```typescript fct_label="async / await"
 import { Room, ServerError } from "colyseus";
@@ -113,8 +113,8 @@ import { Room, ServerError } from "colyseus";
 class MyRoom extends Room {
   async onAuth (client, options, request) {
     /**
-     * Alternatively, you can use `async` / `await`,
-     * which will return a `Promise` under the hood.
+     * 可以使用 `async` / `await`,
+     * 异步底层基于 `Promise`.
      */
     const userData = await validateToken(options.accessToken);
     if (userData) {
@@ -133,7 +133,7 @@ import { Room } from "colyseus";
 class MyRoom extends Room {
   onAuth (client, options, request): boolean {
     /**
-     * You can immediatelly return a `boolean` value.
+     * 也可以立即返回 `boolean` 值.
      */
      if (options.password === "secret") {
        return true;
@@ -151,7 +151,7 @@ import { Room } from "colyseus";
 class MyRoom extends Room {
   onAuth (client, options, request): Promise<any> {
     /**
-     * You can return a `Promise`, and perform some asynchronous task to validate the client.
+     * 还可以返回一个 `Promise`, 然后利用它来异步地验证用户合法性.
      */
     return new Promise((resolve, reject) => {
       validateToken(options.accessToken, (err, userData) => {
@@ -166,7 +166,7 @@ class MyRoom extends Room {
 }
 ```
 
-**Client-side examples**
+**客户端举例**
 
 在客户端, 可以使用来自于您选择的身份验证服务(例如Facebook)的令牌调用匹配方法(`join`, `joinOrCreate` 等):
 
