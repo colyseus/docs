@@ -168,17 +168,17 @@ class MyRoom extends Room {
 
 **客户端举例**
 
-在客户端, 可以使用来自于您选择的身份验证服务(例如Facebook)的令牌调用匹配方法(`join`, `joinOrCreate` 等):
+在客户端, 可以在匹配函数 (`join`, `joinOrCreate` 等函数) 中使用自定义的身份验证服务 (例如 Facebook):
 
 ```javascript fct_label="JavaScript"
 client.joinOrCreate("world", {
   accessToken: yourFacebookAccessToken
 
 }).then((room) => {
-  // success
+  // 成功
 
 }).catch((err) => {
-  // handle error...
+  // 处理报错...
   err.code // 400
   err.message // "bad access token"
 });
@@ -189,10 +189,10 @@ try {
   var room = await client.JoinOrCreate<YourStateClass>("world", new {
     accessToken = yourFacebookAccessToken
   });
-  // success
+  // 成功
 
 } catch (err) {
-  // handle error...
+  // 处理报错...
   err.code // 400
   err.message // "bad access token"
 }
@@ -204,13 +204,13 @@ client:join_or_create("world", {
 
 }, function(err, room)
   if err then
-    -- handle error...
+    -- 处理报错...
     err.code -- 400
     err.message -- "bad access token"
     return
   end
 
-  -- success
+  -- 成功
 end)
 ```
 
@@ -220,13 +220,13 @@ client.joinOrCreate("world", {
 
 }, YourStateClass, function (err, room) {
   if (err != null) {
-    // handle error...
+    // 处理报错...
     err.code // 400
     err.message // "bad access token"
     return;
   }
 
-  // success
+  // 成功
 })
 ```
 
@@ -236,13 +236,13 @@ client.joinOrCreate("world", {
 
 }, [=](MatchMakeError *err, Room<YourStateClass>* room) {
   if (err != "") {
-    // handle error...
+    // 处理报错...
     err.code // 400
     err.message // "bad access token"
     return;
   }
 
-  // success
+  // 成功
 });
 ```
 
@@ -250,21 +250,21 @@ client.joinOrCreate("world", {
 
 ### `onJoin (client, options, auth?)`
 
-**Parameters:**
+**参数:**
 
-- `客户端` [`客户端实例`](/server/client).
-- `options`:  在 [Server#define()](/server/api/#define-roomname-string-room-room-options-any) 中指定的合并值, 带有客户 [`client.join()`](/client/client/#join-roomname-string-options-any) 时提供的选项
-- `auth`: (可选) 返回的身份验证方法数据 [`onAuth`](#onauth-client-options-request)
+- `client`: [`client`](/server/client) 实例.
+- `options`:  把 [Server#define()](/server/api/#define-roomname-string-room-room-options-any) 中指定的值, 与客户端 [`client.join()`](/client/client/#join-roomname-string-options-any) 时提供的选项值进行合并.
+- `auth`: (可选) 由 [`onAuth`](#onauth-client-options-request) 返回的身份验证数据
 
-在 `requestJoin` 和 `onAuth` 完成后, 客户成功进入房间时调用.
+在 `requestJoin` 和 `onAuth` 完成后, 客户端成功进入房间时调用.
 
 ---
 
 ### `onLeave (client, consented)`
 
-当客户离开房间时调用. 如果由 [initiated by the client](/client/room/#leave) 发起断开, `consented` 参数将是 `true`, 否则将是 `false`.
+当客户端离开房间时会调用此函数. 如果是由 [客户端主动离开](/client/room/#leave), 则 `consented` 参数是 `true`, 否则是 `false`.
 
-可以将此函数定义为 `async`. 参见 [graceful shutdown](/server/graceful-shutdown).
+可以将此函数定义为 `async`. 参见 [优雅关闭](/server/graceful-shutdown).
 
 ```typescript fct_label="Synchronous"
 onLeave(client, consented) {
@@ -285,25 +285,25 @@ async onLeave(client, consented) {
 
 ### `onDispose ()`
 
-在销毁房间之前调用 `onDispose()` 方法,在发生以下情况时调用:
+在销毁房间之前会调用 `onDispose()` 方法, 条件可以是:
 
-- 房间里没有客户,而且 `autoDispose` 被设置为 `true`(默认值)
-- 可以手动调用 [`.disconnect()`](#disconnect).
+- 房间里没有客户端, 而且 `autoDispose` 被设置为 `true`(默认值)
+- 手动调用了 [`.disconnect()`](#disconnect).
 
-可以将 `async onDispose()` 定义为异步方法, 以便在数据库中保留一些数据. 事实上, 在游戏结束后, 很适合使用此方法在数据库中保留玩家的数据.
+可以写成 `async onDispose()` 将它定义为异步方法, 以便在数据库中保留一些数据. 事实上此方法很适合在游戏结束时把玩家数据存进数据库里.
 
-参见 [graceful shutdown](/server/graceful-shutdown).
+参见 [优雅关闭](/server/graceful-shutdown).
 
 ---
 
-### 示例房间
-此示例演示实现 `onCreate`, `onJoin` 和 `onMessage` 方法的完整房间.
+### 房间示例
+此示例演示了房间 `onCreate`, `onJoin` 和 `onMessage` 的用法.
 
 ```typescript fct_label="TypeScript"
 import { Room, Client } from "colyseus";
 import { Schema, MapSchema, type } from "@colyseus/schema";
 
-// An abstract player object, demonstrating a potential 2D world position
+// 一个抽象玩家对象, 表达其在2D世界的位置
 export class Player extends Schema {
   @type("number")
   x: number = 0.11;
@@ -312,19 +312,19 @@ export class Player extends Schema {
   y: number = 2.22;
 }
 
-// Our custom game state, an ArraySchema of type Player only at the moment
+// 自定义游戏状态, 当前只有以 Player 为元素的一个 ArraySchema
 export class State extends Schema {
   @type({ map: Player })
   players = new MapSchema<Player>();
 }
 
 export class GameRoom extends Room<State> {
-  // Colyseus will invoke when creating the room instance
+  // 在 room 实例化时 Colyseus 会自动调用此函数
   onCreate(options: any) {
-    // initialize empty room state
+    // 初始化房间状态
     this.setState(new State());
 
-    // Called every time this room receives a "move" message
+    // 房间接到 "move" 消息时调用
     this.onMessage("move", (client, data) => {
       const player = this.state.players.get(client.sessionId);
       player.x += data.x;
@@ -333,7 +333,7 @@ export class GameRoom extends Room<State> {
     });
   }
 
-  // Called every time a client joins
+  // 客户端进入房间时自动调用此函数
   onJoin(client: Client, options: any) {
     this.state.players.set(client.sessionId, new Player());
   }
@@ -344,7 +344,7 @@ export class GameRoom extends Room<State> {
 const colyseus = require('colyseus');
 const schema = require('@colyseus/schema');
 
-// An abstract player object, demonstrating a potential 2D world position
+// 一个抽象玩家对象, 表达其在2D世界的位置
 exports.Player = class Player extends schema.Schema {
     constructor() {
         super();
@@ -357,7 +357,7 @@ schema.defineTypes(Player, {
     y: "number",
 });
 
-// Our custom game state, an ArraySchema of type Player only at the moment
+// 自定义游戏状态, 当前只有以 Player 为元素的一个 ArraySchema
 exports.State = class State extends schema.Schema {
     constructor() {
         super();
@@ -369,12 +369,12 @@ defineTypes(State, {
 });
 
 exports.GameRoom = class GameRoom extends colyseus.Room {
-  // Colyseus will invoke when creating the room instance
+  // 在 room 实例化时 Colyseus 会自动调用此函数
   onCreate(options) {
-    // initialize empty room state
+    // 初始化房间状态
     this.setState(new State());
 
-    // Called every time this room receives a "move" message
+    // 房间接到 "move" 消息时调用
     this.onMessage("move", (client, data) => {
       const player = this.state.players.get(client.sessionId);
       player.x += data.x;
@@ -383,7 +383,7 @@ exports.GameRoom = class GameRoom extends colyseus.Room {
     });
   }
 
-  // Called every time a client joins
+  // 客户端进入房间时自动调用此函数
   onJoin(client, options) {
     this.state.players.set(client.sessionId, new Player());
   }
@@ -392,9 +392,9 @@ exports.GameRoom = class GameRoom extends colyseus.Room {
 
 ---
 
-## 公用方法
+## 公开方法
 
-房间句柄提供这些方法.
+房间提供了以下公开方法.
 
 ### `onMessage (type, callback)`
 
