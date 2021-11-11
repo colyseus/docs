@@ -11,7 +11,7 @@ Defold Engine 是用于跨平台发布的免费2D游戏引擎.
 打开您的 `game.project` 文件,添加以下 URL 至`Dependencies`部分 (在 `Project -> Dependencies` 下):
 
     https://github.com/colyseus/colyseus-defold/archive/0.14.zip
-    https://github.com/defold/extension-websocket/archive/refs/tags/2.2.3.zip
+    https://github.com/defold/extension-websocket/archive/refs/tags/3.0.0.zip
 
 阅读更多关于 [Defold 库依赖](http://www.defold.com/manuals/libraries/) 的信息
 
