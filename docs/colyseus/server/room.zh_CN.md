@@ -394,15 +394,15 @@ exports.GameRoom = class GameRoom extends colyseus.Room {
 
 ## 公开方法
 
-房间提供了以下公开方法.
+房间公开了以下方法.
 
 ### `onMessage (type, callback)`
 
-注册一个回调, 以处理客户端发送的某种类型的信息.
+注册一个回调, 以处理客户端发送的各类型的消息.
 
-`type` 参数可以是 `string` 或 `number`
+`type` 参数可以是 `string` 或 `number` 类型
 
-**Callback for specific type of message**
+**某一类型消息回调**
 
 ```typescript
 onCreate () {
@@ -412,48 +412,48 @@ onCreate () {
 }
 ```
 
-**Callback for ALL messages**
+**通用类型消息回调**
 
-可以注册单个回调, 以处理所有其它类型的消息.
+可以注册一个通用回调以处理所有类型的消息.
 
 ```typescript
 onCreate () {
     this.onMessage("action", (client, message) => {
         //
-        // Triggers when 'action' message is sent.
+        // 当收到 'action' 消息时触发回调.
         //
     });
 
     this.onMessage("*", (client, type, message) => {
         //
-        // Triggers when any other type of message is sent,
-        // excluding "action", which has its own specific handler defined above.
+        // 当收到其他各种消息时触发回调,
+        // 不包括 "action", 因为已经提前对该类型消息进行了注册.
         //
         console.log(client.sessionId, "sent", type, message);
     });
 }
 ```
 
-!!! tip "Use `room.send()` from the client-side SDK to send messages"
-    Check out [`room.send()`](/client/client/#send-type-message)} section.
+!!! tip "客户端通过使用 `room.send()` 来发送消息"
+    详见 [`room.send()`](/client/client/#send-type-message)} 章节.
 
 ---
 
 ### `setState (object)`
 
-设置同步房间状态. 参见 [State Synchronization](/state/overview/) 和 [Schema](/state/schema/) 了解更多信息.
+设置房间同步状态. 参见 [State Synchronization](/state/overview/) 和 [Schema](/state/schema/) 以了解更多信息.
 
 !!! Tip
-    通常, 可以在 [`onCreate()`](#onCreate-options) 期间调用此方法一次
+    设置同步状态通常只需在 [`onCreate()`](#onCreate-options) 时调用一次即可
 
 !!! Warning
-    不要调用 `.setState()` 来进行每次房间更新. 每次调用时, 将会重置二叉树路径算法.
+    房间状态更新时不需要调用 `.setState()`. 因为每次调用都会重置二叉树路径算法.
 
 ---
 
 ### `setSimulationInterval (callback[, milliseconds=16.6])`
 
-(可选)设置一个可以更改游戏状态的模拟间隔期. 此模拟间隔期间是您的游戏循环周期. 默认模拟间隔期: 16.6ms (60fps)
+(可选) 设置一个可以更改游戏状态的模拟时间间隔. 代表游戏更新循环. 默认模拟间隔: 16.6ms (60fps)
 
 ```typescript
 onCreate () {
@@ -461,8 +461,8 @@ onCreate () {
 }
 
 update (deltaTime) {
-    // implement your physics or world updates here!
-    // this is a good place to update the room state
+    // 此处实现游戏物理或者视觉更新!
+    // 同时也是房间状态更新的地方
 }
 ```
 
@@ -470,37 +470,37 @@ update (deltaTime) {
 
 ### `setPatchRate (milliseconds)`
 
-设置将补丁状态发送至所有客户端的频率. 默认值为 `50`ms (20fps)
+设置状态补间发送给所有客户端的频率. 默认值为 `50`ms (20fps)
 
 ---
 
 
 ### `setPrivate (bool)`
 
-将房间列表设置为私有(或转换为公有, 如果提供 `false`).
+将该房间设置为私人房间(参数传入 `false` 则表示设置为公共房间).
 
-在 [`>getAvailableRooms()`](/client/client/#getavailablerooms-roomname-string) 方法中未列出私有房间.
+私人房间不会出现在 [`>getAvailableRooms()`](/client/client/#getavailablerooms-roomname-string) 方法返回的房间列表中.
 
 ---
 
 ### `setMetadata (metadata)`
 
-为此房间设置元数据. 每个房间实例都可能附加了元数据 - 附加元数据的唯一目的是在从客户端获取可用房间列表时, 将一个房间与另一个房间区分开来, 通过 `roomId` 连接到房间, 并使用 [`client.getAvailableRooms()`](/client/client/#getavailablerooms-roomname).
+设置该房间的元数据. 每个房间实例都可附加元数据 - 附加元数据的唯一目的在于客户端使用 [`client.getAvailableRooms()`](/client/client/#getavailablerooms-roomname) 获取房间和通过 `roomId` 连接房间时能区分同名但不同属性的房间.
 
 ```typescript
-// server-side
+// 服务端
 this.setMetadata({ friendlyFire: true });
 ```
 
-现在,房间已经有附加的元数据, 举例来说, 客户端可以检查哪个房间有 `friendlyFire`, 并且可以通过其 `roomId` 直接连接到房间:
+此时房间已经附加了元数据, 举例来说, 客户端可以检查哪个房间有 `friendlyFire`, 然后通过其 `roomId` 连接到想要进入的房间:
 
 ```javascript
-// client-side
+// 客户端
 client.getAvailableRooms("battle").then(rooms => {
   for (var i=0; i<rooms.length; i++) {
     if (room.metadata && room.metadata.friendlyFire) {
       //
-      // join the room with `friendlyFire` by id:
+      // 查找具有 `friendlyFire` 元数据的房间 id:
       //
       var room = client.join(room.roomId);
       return;
@@ -510,13 +510,13 @@ client.getAvailableRooms("battle").then(rooms => {
 ```
 
 !!! Tip
-    [See how to call `getAvailableRooms()` in other languages.](/client/client/#getavailablerooms-roomname)
+    [其他语音客户端的 `getAvailableRooms()` 参见这里.](/client/client/#getavailablerooms-roomname)
 
 ---
 
 ### `setSeatReservationTime (seconds)`
 
-设置房间可以等待客户端有效加入的秒数. 应该考虑 [`onAuth()`](#onauth-client-options-request) 需要等待多长时间, 以设置不同的座位预订时间. 默认值为 15 秒.
+设置该房间等待客户端加入的秒数. 应该考虑 [`onAuth()`](#onauth-client-options-request) 需要等待多长时间, 以设置不同的座位预订时间. 默认值为 15 秒.
 
 如果想要全局更改座位预订时间, 可以设置 `COLYSEUS_SEAT_RESERVATION_TIME` 环境变量.
 
