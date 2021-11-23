@@ -518,7 +518,7 @@ client.getAvailableRooms("battle").then(rooms => {
 
 设置该房间等待客户端加入的秒数. 应该考虑 [`onAuth()`](#onauth-client-options-request) 需要等待多长时间, 以设置不同的座位预订时间. 默认值为 15 秒.
 
-如果想要全局更改座位预订时间, 可以设置 `COLYSEUS_SEAT_RESERVATION_TIME` 环境变量.
+如果想要全局设置房间等待时间, 可以设置 `COLYSEUS_SEAT_RESERVATION_TIME` 环境变量.
 
 ---
 
@@ -526,19 +526,19 @@ client.getAvailableRooms("battle").then(rooms => {
 ### `send (client, message)`
 
 !!! Warning "已弃用"
-    `this.send()` 已被弃用. 请使用 [`client.send()` instead](/server/client/#sendtype-message).
+    `this.send()` 已被弃用. 请使用 [`client.send()`](/server/client/#sendtype-message) 代替.
 
 ---
 
 
 ### `broadcast (type, message, options?)`
 
-向所有连接的客户端发送一条消息.
+向已连接的所有客户端发送一条消息广播.
 
-可用的选项为:
+options 参数可以包含:
 
-- **`except`**: a [`Client`](/server/client/) 不会发送消息至
-- **`afterNextPatch`**: 等待, 直到下一补丁广播消息
+- **`except`**: 排除发送消息至这些 [`Client`](/server/client/)
+- **`afterNextPatch`**: 等到下一个状态补间再发送广播消息
 
 #### 广播示例
 
@@ -547,7 +547,7 @@ client.getAvailableRooms("battle").then(rooms => {
 ```typescript
 onCreate() {
     this.onMessage("action", (client, message) => {
-        // broadcast a message to all clients
+        // 广播至所有客户端
         this.broadcast("action-taken", "an action has been taken!");
     });
 }
@@ -558,27 +558,27 @@ onCreate() {
 ```typescript
 onCreate() {
     this.onMessage("fire", (client, message) => {
-        // sends "fire" event to every client, except the one who triggered it.
+        // 发送 "fire" 事件到所有客户端, 除了发送者自己.
         this.broadcast("fire", message, { except: client });
     });
 }
 ```
 
-仅在应用状态变更之后, 向所有客户端广播一条消息:
+在应用状态变更之后, 向所有客户端广播一条消息:
 
 ```typescript
 onCreate() {
     this.onMessage("destroy", (client, message) => {
-        // perform changes in your state!
+        // 改变 state
         this.state.destroySomething();
 
-        // this message will arrive only after new state has been applied
+        // 此消息会在 state 改变应用之后再到达客户端
         this.broadcast("destroy", "something has been destroyed", { afterNextPatch: true });
     });
 }
 ```
 
-广播一条架构编码消息:
+广播一条 schema 消息:
 
 ```typescript
 class MyMessage extends Schema {
@@ -596,19 +596,19 @@ onCreate() {
 ```
 
 !!! Tip
-    [参见如何在客户端处理这些 onMessage().](/colyseus/client/client/#onmessage)
+    [关于客户端如何使用 onMessage() 处理消息, 请参考这里.](/colyseus/client/client/#onmessage)
 
 ---
 
 ### `lock ()`
 
-锁定房间将会从供新客户连接的房间池中删除房间.
+锁定房间会从供新客户端连接的房间池中移除该房间.
 
 ---
 
 ### `unlock ()`
 
-解锁房间会将房间返回至可供新客户连接的房间池.
+解锁房会将房间重新添加至供新客户连接的房间池中.
 
 ---
 
@@ -618,7 +618,7 @@ onCreate() {
 
 如果提供 **`seconds`**, 将在提供的秒数之后取消重新连接.
 
-**Return type:**
+**返回类型:**
 
 - `allowReconnection()` 返回一个 `Deferred<Client>` 实例.
 - `Deferred` 是一个类似于 pormise 的类型
@@ -628,7 +628,7 @@ onCreate() {
 
 ```typescript
 async onLeave (client: Client, consented: boolean) {
-  // flag client as inactive for other users
+  // 标注客户端离线
   this.state.players.get(client.sessionId).connected = false;
 
   try {
@@ -636,15 +636,15 @@ async onLeave (client: Client, consented: boolean) {
         throw new Error("consented leave");
     }
 
-    // allow disconnected client to reconnect into this room until 20 seconds
+    // 允许离线客户端在 20 秒内重新连接
     await this.allowReconnection(client, 20);
 
-    // client returned! let's re-activate it.
+    // 客户端回连, 标注其已连接.
     this.state.players.get(client.sessionId).connected = true;
 
   } catch (e) {
 
-    // 20 seconds expired. let's remove the client.
+    // 20 秒超时. 移除离线客户端.
     this.state.players.delete(client.sessionId);
   }
 }
@@ -655,7 +655,7 @@ async onLeave (client: Client, consented: boolean) {
 
 ```typescript
 async onLeave (client: Client, consented: boolean) {
-  // flag client as inactive for other users
+  // 标注客户端离线
   this.state.players.get(client.sessionId).connected = false;
 
   try {
@@ -663,37 +663,37 @@ async onLeave (client: Client, consented: boolean) {
         throw new Error("consented leave");
     }
 
-    // get reconnection token
+    // 获取重连令牌
     const reconnection = this.allowReconnection(client);
 
     //
-    // here is the custom logic for rejecting the reconnection.
-    // for demonstration purposes of the API, an interval is created
-    // rejecting the reconnection if the player has missed 2 rounds,
-    // (assuming he's playing a turn-based game)
+    // 这里展示了自定义逻辑拒绝重连
+    // 的 API 用法, 如果用户 2 轮失败
+    // 则设置超时禁止重连,
+    // (假设游戏是回合制的)
     //
-    // in a real scenario, you would store the `reconnection` in
-    // your Player instance, for example, and perform this check during your
-    // game loop logic
+    // 实际操作中, 应该把 `reconnection` 保存在
+    // 你的 Player 实例中, 然后在自定义逻辑中
+    // 进行检测
     //
     const currentRound = this.state.currentRound;
     const interval = setInterval(() => {
       if ((this.state.currentRound - currentRound) > 2) {
-        // manually reject the client reconnection
+        // 手动禁止客户端重连
         reconnection.reject();
         clearInterval(interval);
       }
     }, 1000);
 
-    // allow disconnected client to reconnect
+    // 允许离线重连
     await reconnection;
 
-    // client returned! let's re-activate it.
+    // 客户端回连, 标注其已连接.
     this.state.players.get(client.sessionId).connected = true;
 
   } catch (e) {
 
-    // 20 seconds expired. let's remove the client.
+    // 20 秒超时. 移除离线客户端.
     this.state.players.delete(client.sessionId);
   }
 }
@@ -709,23 +709,23 @@ async onLeave (client: Client, consented: boolean) {
 
 ### `broadcastPatch ()`
 
-!!! Warning "您可能不需要这样做!"
-    框架会自动调用此方法.
+!!! Warning "一般不需要这样做!"
+    框架系统会自动调用此方法.
 
-此方法会检查是否已经在 `state` 中发生变化(mutation), 并将变化广播给所有已连接的客户端.
+此方法会检查 `state` 是否发生变化, 并将变化广播给所有已连接的客户端.
 
-如果想要控制何时广播补丁, 可以禁用默认的补丁间隔时间来实现:
+如果想要控制何时广播补丁, 可以禁用默认补丁间隔时间来实现:
 
 ```typescript
 onCreate() {
-    // disable automatic patches
+    // 关闭自动补丁广播
     this.setPatchRate(null);
 
-    // ensure clock timers are enabled
+    // 确保计时有效
     this.setSimulationInterval(() => {/* */});
 
     this.clock.setInterval(() => {
-        // only broadcast patches if your custom conditions are met.
+        // 达到自定义条件, 广播补丁.
         if (yourCondition) {
             this.broadcastPatch();
         }
@@ -735,7 +735,7 @@ onCreate() {
 
 ---
 
-## 公用属性
+## 公开属性
 
 ### `roomId: string`
 
