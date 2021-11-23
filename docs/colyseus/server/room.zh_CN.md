@@ -739,61 +739,61 @@ onCreate() {
 
 ### `roomId: string`
 
-一个唯一, 自动生成的 8 字符长度的房间 id.
+自动生成的 9 字符长的唯一房间 id.
 
-在 `onCreate()` 期间, 可以更换 `this.roomId`.
+在 `onCreate()` 期间, 可以修改 `this.roomId`.
 
-!!!提示 "使用自定义 `roomId`".
-    查阅指南 Check out the guide [How-to » Customize room id](/how-to/custom-room-id/)
+!!! Tip "使用自定义 `roomId` "
+    请参考 [How-to &raquo; Customize room id](/how-to/custom-room-id/)
 
 ---
 
 ### `roomName: string`
 
-房间名称作为 [`gameServer.define()`](/server/api/#define-roomname-string-room-room-options-any) 的第一个参数.
+房间名称会作为 [`gameServer.define()`](/server/api/#define-roomname-string-room-room-options-any) 的第一个参数.
 
 ---
 
-### `状态T`
+### `state: T`
 
 提供给 [`setState()`](#setstate-object) 的状态实例.
 
 ---
 
-### `clients:客户端`
+### `clients: Client[]`
 
-已连接的客户端数组.参见 [Web-Socket Client](/server/client).
+已连接客户端的数组. 参见 [Web-Socket Client](/server/client).
 
 ---
 
 ### `maxClients: number`
 
-允许连接进入房间的最大客户端数量. 当房间数量达到此限值时, 将自动锁定. 除非通过 [lock()](#lock) 方法显式锁定, 否则, 将在客户端自动断开房间时立即解锁房间.
+允许连接进入房间的最大客户端数量. 当数量达到此限制时, 房间将自动锁定. 房间除非通过 [lock()](#lock) 方法手动锁定, 否则都会在客户端断开房间时立即解锁.
 
 ---
 
 ### `patchRate: number`
 
-将房间状态发送至客户端的频率, 单位为毫秒. 默认值为 `50`ms (20fps)
+将房间状态发送至客户端的频率, 单位为毫秒. 默认值为 `50` ms (20fps)
 
 ---
 
 ### `autoDispose: boolean`
 
-最近一次客户断开连接后, 自动销毁房间. 默认值是 `true`
+最后一个客户端断开连接后, 自动销毁房间. 默认值是 `true`
 
 ---
 
-### `locked: boolean`(只读)
+### `locked: boolean` (只读)
 
-对于以下情况, 此属性将发生改变:
+以下情况会影响此属性:
 
 - 允许的客户端数量已经达到 (`maxClients`)
-- 可以使用 [`lock()`](#lock) 或 [`unlock()`](#unlock) 手动锁定或解锁房间.
+- 用 [`lock()`](#lock) 或 [`unlock()`](#unlock) 手动锁定或解锁房间.
 
 ---
 
-### `时钟 ClockTimer`
+### `clock: ClockTimer`
 
 一个 [`ClockTimer`](https://github.com/gamestdio/timer#api) 实例, 用于 [timing events](/server/timing-events).
 
@@ -807,12 +807,12 @@ onCreate() {
 
 ## 客户端
 
-服务器端的 `client` 实例负责服务器与客户端之间的 **transport** 层. 不应该与 [`Client` from the client-side SDK](/client/client/) 混淆, 因为它们具有完全不同的目的!
+服务器端的 `client` 实例负责服务器与客户端之间的 **transport** 层. 不应该与 [客户端 SDK 里的 `Client`](/client/client/) 相混淆, 因为它们的意义完全不同!
 
-可以通过 [`this.clients`](#clients-client), [`Room#onJoin()`](#onjoin-client-options-auth), [`Room#onLeave()`](#onleave-client-consented) 和 [`Room#onMessage()`](#onmessage-type-callback) 操作 `client` 实例.
+可以通过 [`this.clients`](#clients-client), 在 [`Room#onJoin()`](#onjoin-client-options-auth), [`Room#onLeave()`](#onleave-client-consented) 和 [`Room#onMessage()`](#onmessage-type-callback) 中操作 `client` 实例.
 
 !!! Note
-    这是来自于 [`ws`](https://www.npmjs.com/package/ws) 包的原始 WebSocket 连接. 还有更多的方法可用, 但是不建议用于 Colyseus.
+    这是来自 [`ws`](https://www.npmjs.com/package/ws) 包的原始 WebSocket 连接. 还有更多的方法可用, 但是不建议用于 Colyseus.
 
 ### 属性
 
@@ -827,7 +827,7 @@ onCreate() {
 
 #### `userData: any`
 
-可用于存储关于客户端连接的自定义数据. `userData` 并不同步于 **not** 客户端, 仅用于保留与其连接相关的用户数据.
+可用于存储关于客户端连接的自定义数据. `userData` **不会** 与客户端同步, 仅用于保存指定用户的连接.
 
 ```typescript
 onJoin(client, options) {
@@ -847,24 +847,24 @@ onLeave(client)  {
 
 ---
 
-### 方法.
+### 方法
 
 #### `send(type, message)`
 
-发送消息类型至客户端. 消息使用 MsgPack 编码, 仅含有可序列化 JSON 数据结构.
+发送某类型消息至客户端. 消息使用 MsgPack 编码, 可用于任何可序列化的 JSON 数据结构.
 
 `type` 可以是 `string` 或 `number`.
 
-**Sending a message:**
+**发送消息:**
 
 ```typescript
 //
-// sending message with a string type ("powerup")
+// 发送字符串类型消息 ("powerup")
 //
 client.send("powerup", { kind: "ammo" });
 
 //
-// sending message with a number type (1)
+// 发送数字类型消息 (1)
 //
 client.send(1, { kind: "ammo"});
 ```
@@ -893,39 +893,39 @@ client.send(data);
 
 #### `leave(code?: number)`
 
-`客户端` 与房间强制断开连接. 您可以在关闭连接时发送一个数值介于 `4000` 和 `4999` 之间的自定义 `code` (见 [WebSocket 关闭代码表](#websocket-close-codes-table))
+把 `client` 与房间强行断开. 您可以在关闭连接时发送一个介于 `4000` 和 `4999` 之间的自定义 `code` (参见 [WebSocket 断线状态代码表](#websocket-close-codes-table))
 
 !!! Tip
     这将在客户端触发 [`room.onLeave`](/client/room/#onleave) 事件.
 
-##### WebSocket 关闭代码表
+##### WebSocket 断线状态代码表
 
-| Close code (uint16) | Codename               | Internal | Customizable | Description |
+| 断线代码 (uint16) | 代码名称               | 内部使用 | 可自定义 | 说明 |
 |---------------------|------------------------|----------|--------------|-------------|
-| `0` - `999`             |                        | Yes      | No           | Unused |
-| `1000`                | `CLOSE_NORMAL`         | No       | No           | Successful operation / regular socket shutdown |
-| `1001`                | `CLOSE_GOING_AWAY`     | No       | No           | Client is leaving (browser tab closing) |
-| `1002`                | `CLOSE_PROTOCOL_ERROR` | Yes      | No           | Endpoint received a malformed frame |
-| `1003`                | `CLOSE_UNSUPPORTED`    | Yes      | No           | Endpoint received an unsupported frame (e.g. binary-only endpoint received text frame) |
-| `1004`                |                        | Yes      | No           | Reserved |
-| `1005`                | `CLOSED_NO_STATUS`     | Yes      | No           | Expected close status, received none |
-| `1006`                | `CLOSE_ABNORMAL`       | Yes      | No           | No close code frame has been receieved |
-| `1007`                | *Unsupported payload*  | Yes      | No           | Endpoint received inconsistent message (e.g. malformed UTF-8) |
-| `1008`                | *Policy violation*     | No       | No           | Generic code used for situations other than 1003 and 1009 |
-| `1009`                | `CLOSE_TOO_LARGE`      | No       | No           | Endpoint won't process large frame |
-| `1010`                | *Mandatory extension*  | No       | No           | Client wanted an extension which server did not negotiate |
-| `1011`                | *Server error*         | No       | No           | Internal server error while operating |
-| `1012`                | *Service restart*      | No       | No           | Server/service is restarting |
-| `1013`                | *Try again later*      | No       | No           | Temporary server condition forced blocking client's request |
-| `1014`                | *Bad gateway*          | No       | No           | Server acting as gateway received an invalid response |
-| `1015`                | *TLS handshake fail*   | Yes      | No           | Transport Layer Security handshake failure |
-| `1016` - `1999`         |                        | Yes      | No           | Reserved for future use by the WebSocket standard. |
-| `2000` - `2999`         |                        | Yes      | Yes          | Reserved for use by WebSocket extensions |
-| `3000` - `3999`         |                        | No       | Yes          | 	Available for use by libraries and frameworks. May not be used by applications. Available for registration at the IANA via first-come, first-serve. |
-| `4000` - `4999`         |                        | No       | Yes          | **Available for applications** |
+| `0` - `999`             |                        | Yes      | No           | 未使用 |
+| `1000`                | `CLOSE_NORMAL`         | No       | No           | 成功断开 / 套接字断开 |
+| `1001`                | `CLOSE_GOING_AWAY`     | No       | No           | 客户端离开 (浏览器页面关闭) |
+| `1002`                | `CLOSE_PROTOCOL_ERROR` | Yes      | No           | 入口接到错误帧 |
+| `1003`                | `CLOSE_UNSUPPORTED`    | Yes      | No           | 入口接到不支持帧 (例如二进制入口接到文本帧) |
+| `1004`                |                        | Yes      | No           | 保留 |
+| `1005`                | `CLOSED_NO_STATUS`     | Yes      | No           | 未收到状态代码的断开 |
+| `1006`                | `CLOSE_ABNORMAL`       | Yes      | No           | 收到无断开代码的帧 |
+| `1007`                | *Unsupported payload*  | Yes      | No           | 入口接到错误消息 (例如非法 UTF-8) |
+| `1008`                | *Policy violation*     | No       | No           | 1003 与 1009 之外的一般状态代码|
+| `1009`                | `CLOSE_TOO_LARGE`      | No       | No           | 入口接到无法处理的大数据帧 |
+| `1010`                | *Mandatory extension*  | No       | No           | 客户端发送了未协商的扩展数据 |
+| `1011`                | *Server error*         | No       | No           | 运行中的服务器内部错误 |
+| `1012`                | *Service restart*      | No       | No           | 服务器/服务正在重启 |
+| `1013`                | *Try again later*      | No       | No           | 服务器临时状况导致客户端请求受阻 |
+| `1014`                | *Bad gateway*          | No       | No           | 用于网关的服务器收到非法响应 |
+| `1015`                | *TLS handshake fail*   | Yes      | No           | 传输层安全相关错误 |
+| `1016` - `1999`         |                        | Yes      | No           | 为未来的 WebSocket 标准保留. |
+| `2000` - `2999`         |                        | Yes      | Yes          | 为 WebSocket 扩展数据保留 |
+| `3000` - `3999`         |                        | No       | Yes          | 用于支持其他库或框架使用. 服务器可能不会用到. 可以通过 IANA 先到先得途径注册. |
+| `4000` - `4999`         |                        | No       | Yes          | **用于应用服务器** |
 
 ---
 
 #### `error(code, message)`
 
-将错误及代码与消息一并发送给客户端. 客户端可以在 [`onError`](/client/room/#onerror) 对其进行处理
+将错误代码与消息一并发送给客户端. 客户端可以在 [`onError`](/client/room/#onerror) 中对其进行处理.
