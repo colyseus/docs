@@ -1,4 +1,4 @@
-# 服务器 API &raquo; 状态
+# 服务器 API &raquo; Presence
 
 在多处理器和/或机器上扩展服务器时, 需要为 `Server` 提供 [`Presence`](/server/api/#optionspresence) 选项. `Presence` 的作用是允许不同进程之间的通信和数据共享, 特别是在匹配期间.
 
