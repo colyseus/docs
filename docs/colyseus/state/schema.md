@@ -935,16 +935,13 @@ room.state.players:on_add(function (player, key)
     -- add your player entity to the game world!
 
     -- If you want to track changes on a child object inside a map, this is a common pattern:
-    player['on_change'] = function(changes)
+    player:on_change(function(changes)
         for i, change in ipairs(changes) do
             print(change.field)
             print(change.value)
             print(change.previousValue)
         end
-    end
-
-    -- force "on_change" to be called immediatelly
-    player.trigger_all()
+    end)
 end)
 ```
 
@@ -1022,7 +1019,7 @@ room.state:on_change(function (changes)
     for i, change in ipairs(changes) do
         print(change.field)
         print(change.value)
-        print(change.previousValue)
+        print(change.previous_value)
     end
 end)
 ```

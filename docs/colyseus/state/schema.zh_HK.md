@@ -1016,7 +1016,7 @@ room.state:on_change(function (changes)
     for i, change in ipairs(changes) do
         print(change.field)
         print(change.value)
-        print(change.previousValue)
+        print(change.previous_value)
     end
 end)
 ```
