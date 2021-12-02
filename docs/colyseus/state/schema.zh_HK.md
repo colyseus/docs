@@ -908,7 +908,7 @@ schema.filter(function(client, value, root) {
 只有集合 (`MapSchema`, `ArraySchema` 等) 可以使用 `onAdd` 回調. 集合更新後觸發 `onAdd` 回調, 外加已更新集合的鍵作為參數.
 
 ```javascript fct_label="JavaScript"
-room.state.players.onAdd = (player, key) => {
+room.state.players.onAdd((player, key) => {
     console.log(player, "has been added at", key);
 
     // 在遊戲中加入player!
@@ -921,41 +921,35 @@ room.state.players.onAdd = (player, key) => {
             console.log(change.previousValue);
         })
     };
-
-    // 手動強製觸發 "onChange"
-    player.triggerAll();
-};
+});
 ```
 
 ```lua fct_label="LUA"
-room.state.players['on_add'] = function (player, key)
+room.state.players:on_add(function (player, key)
     print("player has been added at", key);
 
     -- 在遊戲中加入player!
 
     -- 要想跟蹤地圖上物體的移動, 通常要這麽做:
-    player['on_change'] = function(changes)
+    player:on_change(function(changes)
         for i, change in ipairs(changes) do
             print(change.field)
             print(change.value)
             print(change.previousValue)
         end
-    end
-
-    -- 手動強製觸發 "onChange"
-    player.trigger_all()
-end
+    end)
+end)
 ```
 
 ```csharp fct_label="C#"
-room.State.players.OnAdd += (Player player, string key) =>
+room.State.players.OnAdd((string key, Player player) =>
 {
     Debug.Log("player has been added at " + key);
 
     // 在遊戲中加入player!
 
     // 要想跟蹤地圖上物體的移動, 通常要這麽做:
-    player.OnChange += (changes) =>
+    player.OnChange((changes) =>
     {
         changes.ForEach((obj) =>
         {
@@ -963,11 +957,8 @@ room.State.players.OnAdd += (Player player, string key) =>
             Debug.Log(obj.Value);
             Debug.Log(obj.PreviousValue);
         });
-    };
-
-    // 手動強製觸發 "onChange"
-    e.Value.TriggerAll();
-};
+    });
+});
 ```
 
 ---
@@ -977,28 +968,28 @@ room.State.players.OnAdd += (Player player, string key) =>
 只有圖 (`MapSchema`) 和數組 (`ArraySchema`) 可以使用 `onRemove` 回調. 集合更新後觸發 `onRemove` 回調, 外加已更新集合的鍵作為參數.
 
 ```javascript fct_label="JavaScript"
-room.state.players.onRemove = (player, key) => {
+room.state.players.onRemove((player, key) => {
     console.log(player, "has been removed at", key);
 
     // 從遊戲中移除player!
-};
+});
 ```
 
 ```lua fct_label="LUA"
-room.state.players['on_remove'] = function (player, key)
+room.state.players:on_remove(function (player, key)
     print("player has been removed at " .. key);
 
     -- 從遊戲中移除player!
-end
+end)
 ```
 
 ```csharp fct_label="C#"
-room.State.players.OnRemove += (Player player, string key) =>
+room.State.players.OnRemove((string key, Player player) =>
 {
     Debug.Log("player has been removed at " + key);
 
     // 從遊戲中移除player!
-};
+});
 ```
 
 ---
@@ -1011,27 +1002,27 @@ room.State.players.OnRemove += (Player player, string key) =>
 
 
 ```javascript fct_label="JavaScript"
-room.state.onChange = (changes) => {
+room.state.onChange((changes) => {
     changes.forEach(change => {
         console.log(change.field);
         console.log(change.value);
         console.log(change.previousValue);
     });
-};
+});
 ```
 
 ```lua fct_label="LUA"
-room.state['on_change'] = function (changes)
+room.state:on_change(function (changes)
     for i, change in ipairs(changes) do
         print(change.field)
         print(change.value)
         print(change.previousValue)
     end
-end
+end)
 ```
 
 ```csharp fct_label="C#"
-room.State.OnChange += (changes) =>
+room.State.OnChange((changes) =>
 {
     changes.ForEach((obj) =>
     {
@@ -1039,7 +1030,7 @@ room.State.OnChange += (changes) =>
         Debug.Log(obj.Value);
         Debug.Log(obj.PreviousValue);
     });
-};
+});
 ```
 
 沒有同步過的客戶端不能註冊 `onChange` 回調.
@@ -1053,22 +1044,22 @@ room.State.OnChange += (changes) =>
 當集合裏的 **基本** 類型 (`string`, `number`, `boolean` 等) 值更新時, 將觸發此回調.
 
 ```javascript fct_label="JavaScript"
-room.state.players.onChange = (player, key) => {
+room.state.players.onChange((player, key) => {
     console.log(player, "have changes at", key);
-};
+});
 ```
 
 ```lua fct_label="LUA"
-room.state.players['on_change'] = function (player, key)
+room.state.players:on_change(function (player, key)
     print("player have changes at " .. key);
-end
+end)
 ```
 
 ```csharp fct_label="C#"
-room.State.players.OnChange += (Player player, string key) =>
+room.State.players.OnChange((string key, Player player) =>
 {
     Debug.Log("player have changes at " + key);
-};
+});
 ```
 
 對於 **非基本** 類型 (各種 `Schema` 集合), 請先註冊 [`onAdd`](#onadd-instance-key) 再註冊 [`onChange`](#onchange-changes-datachange).
@@ -1116,14 +1107,14 @@ removeListener();
 `.listen()` 方法是專為監聽單個屬性 `onChange` 的簡化版本. 下面是把 `.listen()` 寫成 `onChange` 的樣子:
 
 ```typescript
-state.onChange = function(changes) {
+state.onChange(function(changes) {
     changes.forEach((change) => {
         if (change.field === "currentTurn") {
             console.log(`currentTurn is now ${change.value}`);
             console.log(`previous value was: ${change.previousValue}`);
         }
     })
-}
+})
 ```
 
 ---
