@@ -392,6 +392,21 @@ exports.GameRoom = class GameRoom extends colyseus.Room {
 
 ---
 
+### `onBeforePatch ()`
+
+The `onBeforePatch` lifecycle hook is triggered before state synchronization, at patch rate frequency. (see [setPatchRate()](#setpatchrate-milliseconds))
+
+```typescript
+onBeforePatch() {
+    //
+    // here you can mutate something in the state just before it is encoded &
+    // synchronized with all clients
+    //
+}
+```
+
+---
+
 ## Public methods
 
 Room handlers have these methods available.
