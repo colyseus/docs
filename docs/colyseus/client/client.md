@@ -10,7 +10,7 @@ Colyseus currently has client-side SDK's available for the following platforms:
 
 ## The Client Instance:
 
-The `Client` instance is used to perform matchmaking calls, and later connect to one or many rooms. 
+The `Client` instance is used to perform matchmaking calls, and later connect to one or many rooms.
 
 ```typescript fct_label="JavaScript"
 import Colyseus from "colyseus.js";
@@ -320,18 +320,19 @@ client->joinById<YourStateClass>("battle", {/* options */}, [=](std::string err,
 
 !!! Tip "Getting available `roomId`'s you can join"
     See [`getAvailableRooms()`](#getavailablerooms-roomname-string) to retrieve a list of rooms with their respective `roomId`'s available for joining, along with their metadata.
-    
+
 ---
 
-#### `reconnect (roomId: string, sessionId: string)`
+#### `reconnect (reconnectionToken)`
 
-Reconnects the client into a room he was previously connected with.
+Reconnects the client back into a previously connected room.
 
-Must be used along with [`allowReconnection()`](/server/room#allowreconnection-client-seconds) in the server-side.
+- You must store/cache the `room.reconnectionToken` from an active room connection to be able to reconnect.
+- To enable the reconnection of a particular client, the server-side needs to call [`.allowReconnection()`](/server/room#allowreconnection-client-seconds) for that client instance.
 
 ```typescript fct_label="TypeScript"
 try {
-  const room = await client.reconnect("wNHTX5qik", "SkNaHTazQ");
+  const room = await client.reconnect(cachedReconnectionToken);
   console.log("joined successfully", room);
 
 } catch (e) {
@@ -340,7 +341,7 @@ try {
 ```
 
 ```typescript fct_label="JavaScript"
-client.reconnect("wNHTX5qik", "SkNaHTazQ").then(room => {
+client.reconnect(cachedReconnectionToken).then(room => {
   console.log("joined successfully", room);
 }).catch(e => {
   console.error("join error", e);
@@ -349,7 +350,7 @@ client.reconnect("wNHTX5qik", "SkNaHTazQ").then(room => {
 
 ```csharp fct_label="C#"
 try {
-  Room<YourStateClass> room = await client.Reconnect<YourStateClass>("wNHTX5qik", "SkNaHTazQ");
+  Room<YourStateClass> room = await client.Reconnect<YourStateClass>(cachedReconnectionToken);
   Debug.Log("joined successfully");
 
 } catch (ex) {
@@ -359,7 +360,7 @@ try {
 ```
 
 ```lua fct_label="lua"
-client:reconnect("wNHTX5qik", "SkNaHTazQ", function(err, room)
+client:reconnect(cached_reconnection_token, function(err, room)
   if (err ~= nil) then
     print("join error: " .. err)
     return
@@ -370,7 +371,7 @@ end)
 ```
 
 ```haxe fct_label="Haxe"
-client.reconnect("wNHTX5qik", "SkNaHTazQ", YourStateClass, function(err, room) {
+client.reconnect(cachedReconnectionToken, YourStateClass, function(err, room) {
   if (err != null) {
     trace("join error: " + err);
     return;
@@ -380,8 +381,8 @@ client.reconnect("wNHTX5qik", "SkNaHTazQ", YourStateClass, function(err, room) {
 });
 ```
 
-```haxe fct_label="C++"
-client->reconnect<YourStateClass>("wNHTX5qik", "SkNaHTazQ", [=](std::string err, Room<State>* room) {
+<!-- ```haxe fct_label="C++"
+client->reconnect<YourStateClass>(cachedReconnectionToken, [=](std::string err, Room<State>* room) {
   if (err != "") {
     std::cout << "join error: " << err << std::endl;
     return;
@@ -389,7 +390,7 @@ client->reconnect<YourStateClass>("wNHTX5qik", "SkNaHTazQ", [=](std::string err,
 
   std::cout << "joined successfully" << std::endl;
 });
-```
+``` -->
 
 ---
 
@@ -397,7 +398,7 @@ client->reconnect<YourStateClass>("wNHTX5qik", "SkNaHTazQ", [=](std::string err,
 
 Queries for all available rooms to connect.
 
-- Locked and private rooms won't be listed. 
+- Locked and private rooms won't be listed.
 - If the `roomName` parameter is ommitted, all rooms are going to be queried.
 
 ```typescript fct_label="JavaScript"
@@ -848,7 +849,7 @@ room.onLeave = [=]() -> void {
 **Possible closing `code`s and their meaning:**
 
 - `1000` - Regular socket shutdown
-- Between `1001` and `1015` - Abnormal socket shutdown 
+- Between `1001` and `1015` - Abnormal socket shutdown
 - Between `4000` and `4999` - Custom socket close code (See [more details](/server/room/#table-of-websocket-close-codes))
 
 

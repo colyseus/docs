@@ -614,7 +614,7 @@ onCreate() {
 
 ### `allowReconnection (client, seconds?)`
 
-允许指定的客户 [`reconnect`](/client/client/#reconnect-roomid-string-sessionid-string) 房间. 必须在 [`onLeave()`](#onleave-client) 方法中使用.
+允许指定的客户 [`reconnect`](/client/client/#reconnect-reconnectiontoken) 房间. 必须在 [`onLeave()`](#onleave-client) 方法中使用.
 
 如果提供 **`seconds`**, 将在提供的秒数之后取消重新连接.
 
