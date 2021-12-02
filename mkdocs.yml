@@ -103,7 +103,7 @@ plugins:
           Unit Testing: "单元测试"
           Monitoring Panel: "监控面板"
           Load Testing: "负载测试"
-          Authentication + Social: "认证 + 社交"
+        #   Authentication + Social: "认证 + 社交"
           Debugging: "调试"
           Scalability: "可扩展性"
           How-to: "操作说明"
@@ -149,7 +149,7 @@ plugins:
           Unit Testing: "單元測試"
           Monitoring Panel: "監測小組"
           Load Testing: "負載測試"
-          Authentication + Social: "認證+社交"
+        #   Authentication + Social: "認證+社交"
           Debugging: "調試"
           Scalability: "可擴縮性"
           How-to: "指南"
@@ -285,7 +285,8 @@ nav:
     - 'Overview': 'colyseus/state/overview.md'
     - 'Schema': 'colyseus/state/schema.md'
 
-  - 'Best practices': 'colyseus/best-practices/overview.md'
+  - 'Best practices':
+    - 'colyseus/best-practices/index.md'
 
   - 'Built-in Rooms':
     - 'Lobby room': 'colyseus/builtin-rooms/lobby.md'
@@ -295,7 +296,7 @@ nav:
     - "Unit Testing": 'colyseus/tools/unit-testing.md'
     - "Monitoring Panel": 'colyseus/tools/monitor.md'
     - "Load Testing": 'colyseus/tools/loadtest.md'
-    - "Authentication + Social": 'colyseus/tools/colyseus-social.md'
+    # - "Authentication + Social": 'colyseus/tools/colyseus-social.md'
 
   - 'Debugging': 'colyseus/debugging.md'
   - 'Deployment': 'colyseus/deployment.md'
