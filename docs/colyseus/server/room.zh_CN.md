@@ -1,28 +1,28 @@
 # 服务器 API &raquo; 房间
 
-Room 类的作用是实现游戏会话, 并且/或作为一组客户端之间的通信通道.
+Room 类的作用是实现游戏会话, 也可作为一组客户端之间的交流通道.
 
-- 默认情况下, 在匹配期间 **on demand** 创建房间
-- 必须使用 [`.define()`](/server/api/#define-roomname-string-room-room-options-any) 发布 Room 类
+- 默认情况下系统在做房间匹配时, 房间根据客户端请求 **随求随建**.
+- Room 类必须使用 [`.define()`](/server/api/#define-roomname-string-room-room-options-any) 公开.
 
 ```typescript fct_label="TypeScript"
 import http from "http";
 import { Room, Client } from "colyseus";
 
 export class MyRoom extends Room {
-    // When room is initialized
+    // 房间初始化时
     onCreate (options: any) { }
 
-    // Authorize client based on provided options before WebSocket handshake is complete
+    // 在 WebSocket 握手完成前, 客户端基于其提供的 options 进行验证
     onAuth (client: Client, options: any, request: http.IncomingMessage) { }
 
-    // When client successfully join the room
+    // 当客户端成功加入房间时
     onJoin (client: Client, options: any, auth: any) { }
 
-    // When a client leaves the room
+    // 当客户端离开房间时
     onLeave (client: Client, consented: boolean) { }
 
-    // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
+    // 析构函数, 当房间里没有客户端时被调用. (参考 `autoDispose`)
     onDispose () { }
 }
 ```
@@ -31,52 +31,52 @@ export class MyRoom extends Room {
 const colyseus = require('colyseus');
 
 export class MyRoom extends colyseus.Room {
-    // When room is initialized
+    // 房间初始化时
     onCreate (options) { }
 
-    // Authorize client based on provided options before WebSocket handshake is complete
+    // 在 WebSocket 握手完成前, 客户端基于其提供的 options 进行验证
     onAuth (client, options, request) { }
 
-    // When client successfully join the room
+    // 当客户端成功加入房间时
     onJoin (client, options, auth) { }
 
-    // When a client leaves the room
+    // 当客户端离开房间时
     onLeave (client, consented) { }
 
-    // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
+    // 析构函数, 当房间里没有客户端时被调用. (参考 `autoDispose`)
     onDispose () { }
 }
 ```
 
 ## 房间生命周期事件
 
-- 自动调用房间生命周期事件.
-- 每个生命周期事件都支持 [`async`/`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) 选项.
+- 房间生命周期函数会自动被调用.
+- 生命周期事件都可支持 [`async`/`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function).
 
 ### `onCreate (options)`
 
-在匹配器创建房间之后, 进行一次调用.
+房间匹配器创建房间后, 调用一次.
 
-**The `options` argument is provided by the client upon room creation:**
+**`options` 参数在房间创建时由客户端提供:**
 
 ```typescript
-// Client-side - JavaScript SDK
+// 客户端 - JavaScript SDK
 client.joinOrCreate("my_room", {
   name: "Jake",
   map: "de_dust2"
 })
 
-// onCreate() - options are:
+// onCreate() - options 为:
 // {
 //   name: "Jake",
 //   map: "de_dust2"
 // }
 ```
 
-**The server may overwrite options during [`.define()`](/server/api/#define-roomname-string-room-room-options-any) for authortity:**
+**服务器可以使用 [`.define()`](/server/api/#define-roomname-string-room-room-options-any) 覆盖 options 或者进行用户检验:**
 
 ```typescript fct_label="Definition"
-// Server-side
+// 服务器端
 gameServer.define("my_room", MyRoom, {
   map: "cs_assault"
 })
@@ -88,7 +88,7 @@ gameServer.define("my_room", MyRoom, {
 // }
 ```
 
-在本例中, 在 `onCreate()` 期间, `map` 选项是 `"cs_assault"`, 在 `onJoin()` 期间的选项是 `"de_dust2"`.
+上例中, 在 `onCreate()` 时, options 的 `map` 为 `"cs_assault"`, 但是在 `onJoin()` 时变成了 `"de_dust2"`.
 
 ---
 
@@ -97,15 +97,15 @@ gameServer.define("my_room", MyRoom, {
 在 `onJoin()` 之前, 将执行 `onAuth()` 方法. 在客户进入房间时, 可以使用此方法验证身份.
 
 - 如果 `onAuth()` 返回一个 [truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) 值, 将调用 `onJoin()`, 并将返回值作为第三个参数.
-- 如果 `onAuth()` 返回 [falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy) 值, 将立即拒绝客户, 导致在客户端调用匹配函数失败.
-- 也可以抛出一个 `ServerError`, 以便在客户端处理自定义错误.
+- 如果 `onAuth()` 返回 [falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy) 值, 将立即拒绝客户端登入, 并客户端报告匹配失败.
+- 也可以抛出一个 `ServerError`, 以便在客户端进行处理.
 
-如果此方法未被实现,将始终返回  `true`, 从而允许任何客户连接.
+如果没有实现 onAuth 方法, 则默认返回 `true`, 从而允许任何客户连接.
 
 !!! Tip "正在获取玩家的 IP 地址"
-    可以使用 `request` 变量检索用户的 IP 地址, http 标头和更多信息. 例如:  `request.headers['x-forwarded-for'] || request.connection.remoteAddress`
+    可以利用 `request` 变量取得用户的 IP 地址, http 标头和更多信息. 例如:  `request.headers['x-forwarded-for'] || request.connection.remoteAddress`
 
-**Implementations examples**
+**举例**
 
 ```typescript fct_label="async / await"
 import { Room, ServerError } from "colyseus";
@@ -113,8 +113,8 @@ import { Room, ServerError } from "colyseus";
 class MyRoom extends Room {
   async onAuth (client, options, request) {
     /**
-     * Alternatively, you can use `async` / `await`,
-     * which will return a `Promise` under the hood.
+     * 可以使用 `async` / `await`,
+     * 异步底层基于 `Promise`.
      */
     const userData = await validateToken(options.accessToken);
     if (userData) {
@@ -133,7 +133,7 @@ import { Room } from "colyseus";
 class MyRoom extends Room {
   onAuth (client, options, request): boolean {
     /**
-     * You can immediatelly return a `boolean` value.
+     * 也可以立即返回 `boolean` 值.
      */
      if (options.password === "secret") {
        return true;
@@ -151,7 +151,7 @@ import { Room } from "colyseus";
 class MyRoom extends Room {
   onAuth (client, options, request): Promise<any> {
     /**
-     * You can return a `Promise`, and perform some asynchronous task to validate the client.
+     * 还可以返回一个 `Promise`, 然后利用它来异步地验证用户合法性.
      */
     return new Promise((resolve, reject) => {
       validateToken(options.accessToken, (err, userData) => {
@@ -166,19 +166,19 @@ class MyRoom extends Room {
 }
 ```
 
-**Client-side examples**
+**客户端举例**
 
-在客户端, 可以使用来自于您选择的身份验证服务(例如Facebook)的令牌调用匹配方法(`join`, `joinOrCreate` 等):
+在客户端, 可以在匹配函数 (`join`, `joinOrCreate` 等函数) 中使用自定义的身份验证服务 (例如 Facebook):
 
 ```javascript fct_label="JavaScript"
 client.joinOrCreate("world", {
   accessToken: yourFacebookAccessToken
 
 }).then((room) => {
-  // success
+  // 成功
 
 }).catch((err) => {
-  // handle error...
+  // 处理报错...
   err.code // 400
   err.message // "bad access token"
 });
@@ -189,10 +189,10 @@ try {
   var room = await client.JoinOrCreate<YourStateClass>("world", new {
     accessToken = yourFacebookAccessToken
   });
-  // success
+  // 成功
 
 } catch (err) {
-  // handle error...
+  // 处理报错...
   err.code // 400
   err.message // "bad access token"
 }
@@ -204,13 +204,13 @@ client:join_or_create("world", {
 
 }, function(err, room)
   if err then
-    -- handle error...
+    -- 处理报错...
     err.code -- 400
     err.message -- "bad access token"
     return
   end
 
-  -- success
+  -- 成功
 end)
 ```
 
@@ -220,13 +220,13 @@ client.joinOrCreate("world", {
 
 }, YourStateClass, function (err, room) {
   if (err != null) {
-    // handle error...
+    // 处理报错...
     err.code // 400
     err.message // "bad access token"
     return;
   }
 
-  // success
+  // 成功
 })
 ```
 
@@ -236,13 +236,13 @@ client.joinOrCreate("world", {
 
 }, [=](MatchMakeError *err, Room<YourStateClass>* room) {
   if (err != "") {
-    // handle error...
+    // 处理报错...
     err.code // 400
     err.message // "bad access token"
     return;
   }
 
-  // success
+  // 成功
 });
 ```
 
@@ -250,21 +250,21 @@ client.joinOrCreate("world", {
 
 ### `onJoin (client, options, auth?)`
 
-**Parameters:**
+**参数:**
 
-- `客户端` [`客户端实例`](/server/client).
-- `options`:  在 [Server#define()](/server/api/#define-roomname-string-room-room-options-any) 中指定的合并值, 带有客户 [`client.join()`](/client/client/#join-roomname-string-options-any) 时提供的选项
-- `auth`: (可选) 返回的身份验证方法数据 [`onAuth`](#onauth-client-options-request)
+- `client`: [`client`](/server/client) 实例.
+- `options`:  把 [Server#define()](/server/api/#define-roomname-string-room-room-options-any) 中指定的值, 与客户端 [`client.join()`](/client/client/#join-roomname-string-options-any) 时提供的选项值进行合并.
+- `auth`: (可选) 由 [`onAuth`](#onauth-client-options-request) 返回的身份验证数据
 
-在 `requestJoin` 和 `onAuth` 完成后, 客户成功进入房间时调用.
+在 `requestJoin` 和 `onAuth` 完成后, 客户端成功进入房间时调用.
 
 ---
 
 ### `onLeave (client, consented)`
 
-当客户离开房间时调用. 如果由 [initiated by the client](/client/room/#leave) 发起断开, `consented` 参数将是 `true`, 否则将是 `false`.
+当客户端离开房间时会调用此函数. 如果是由 [客户端主动离开](/client/room/#leave), 则 `consented` 参数是 `true`, 否则是 `false`.
 
-可以将此函数定义为 `async`. 参见 [graceful shutdown](/server/graceful-shutdown).
+可以将此函数定义为 `async`. 参见 [优雅关闭](/server/graceful-shutdown).
 
 ```typescript fct_label="Synchronous"
 onLeave(client, consented) {
@@ -285,25 +285,25 @@ async onLeave(client, consented) {
 
 ### `onDispose ()`
 
-在销毁房间之前调用 `onDispose()` 方法,在发生以下情况时调用:
+在销毁房间之前会调用 `onDispose()` 方法, 条件可以是:
 
-- 房间里没有客户,而且 `autoDispose` 被设置为 `true`(默认值)
-- 可以手动调用 [`.disconnect()`](#disconnect).
+- 房间里没有客户端, 而且 `autoDispose` 被设置为 `true`(默认值)
+- 手动调用了 [`.disconnect()`](#disconnect).
 
-可以将 `async onDispose()` 定义为异步方法, 以便在数据库中保留一些数据. 事实上, 在游戏结束后, 很适合使用此方法在数据库中保留玩家的数据.
+可以写成 `async onDispose()` 将它定义为异步方法, 以便在数据库中保留一些数据. 事实上此方法很适合在游戏结束时把玩家数据存进数据库里.
 
-参见 [graceful shutdown](/server/graceful-shutdown).
+参见 [优雅关闭](/server/graceful-shutdown).
 
 ---
 
-### 示例房间
-此示例演示实现 `onCreate`, `onJoin` 和 `onMessage` 方法的完整房间.
+### 房间示例
+此示例演示了房间 `onCreate`, `onJoin` 和 `onMessage` 的用法.
 
 ```typescript fct_label="TypeScript"
 import { Room, Client } from "colyseus";
 import { Schema, MapSchema, type } from "@colyseus/schema";
 
-// An abstract player object, demonstrating a potential 2D world position
+// 一个抽象玩家对象, 表达其在2D世界的位置
 export class Player extends Schema {
   @type("number")
   x: number = 0.11;
@@ -312,19 +312,19 @@ export class Player extends Schema {
   y: number = 2.22;
 }
 
-// Our custom game state, an ArraySchema of type Player only at the moment
+// 自定义游戏状态, 当前只有以 Player 为元素的一个 ArraySchema
 export class State extends Schema {
   @type({ map: Player })
   players = new MapSchema<Player>();
 }
 
 export class GameRoom extends Room<State> {
-  // Colyseus will invoke when creating the room instance
+  // 在 room 实例化时 Colyseus 会自动调用此函数
   onCreate(options: any) {
-    // initialize empty room state
+    // 初始化房间状态
     this.setState(new State());
 
-    // Called every time this room receives a "move" message
+    // 房间接到 "move" 消息时调用
     this.onMessage("move", (client, data) => {
       const player = this.state.players.get(client.sessionId);
       player.x += data.x;
@@ -333,7 +333,7 @@ export class GameRoom extends Room<State> {
     });
   }
 
-  // Called every time a client joins
+  // 客户端进入房间时自动调用此函数
   onJoin(client: Client, options: any) {
     this.state.players.set(client.sessionId, new Player());
   }
@@ -344,7 +344,7 @@ export class GameRoom extends Room<State> {
 const colyseus = require('colyseus');
 const schema = require('@colyseus/schema');
 
-// An abstract player object, demonstrating a potential 2D world position
+// 一个抽象玩家对象, 表达其在2D世界的位置
 exports.Player = class Player extends schema.Schema {
     constructor() {
         super();
@@ -357,7 +357,7 @@ schema.defineTypes(Player, {
     y: "number",
 });
 
-// Our custom game state, an ArraySchema of type Player only at the moment
+// 自定义游戏状态, 当前只有以 Player 为元素的一个 ArraySchema
 exports.State = class State extends schema.Schema {
     constructor() {
         super();
@@ -369,12 +369,12 @@ defineTypes(State, {
 });
 
 exports.GameRoom = class GameRoom extends colyseus.Room {
-  // Colyseus will invoke when creating the room instance
+  // 在 room 实例化时 Colyseus 会自动调用此函数
   onCreate(options) {
-    // initialize empty room state
+    // 初始化房间状态
     this.setState(new State());
 
-    // Called every time this room receives a "move" message
+    // 房间接到 "move" 消息时调用
     this.onMessage("move", (client, data) => {
       const player = this.state.players.get(client.sessionId);
       player.x += data.x;
@@ -383,7 +383,7 @@ exports.GameRoom = class GameRoom extends colyseus.Room {
     });
   }
 
-  // Called every time a client joins
+  // 客户端进入房间时自动调用此函数
   onJoin(client, options) {
     this.state.players.set(client.sessionId, new Player());
   }
@@ -392,17 +392,17 @@ exports.GameRoom = class GameRoom extends colyseus.Room {
 
 ---
 
-## 公用方法
+## 公开方法
 
-房间句柄提供这些方法.
+房间公开了以下方法.
 
 ### `onMessage (type, callback)`
 
-注册一个回调, 以处理客户端发送的某种类型的信息.
+注册一个回调, 以处理客户端发送的各类型的消息.
 
-`type` 参数可以是 `string` 或 `number`
+`type` 参数可以是 `string` 或 `number` 类型
 
-**Callback for specific type of message**
+**某一类型消息回调**
 
 ```typescript
 onCreate () {
@@ -412,48 +412,48 @@ onCreate () {
 }
 ```
 
-**Callback for ALL messages**
+**通用类型消息回调**
 
-可以注册单个回调, 以处理所有其它类型的消息.
+可以注册一个通用回调以处理所有类型的消息.
 
 ```typescript
 onCreate () {
     this.onMessage("action", (client, message) => {
         //
-        // Triggers when 'action' message is sent.
+        // 当收到 'action' 消息时触发回调.
         //
     });
 
     this.onMessage("*", (client, type, message) => {
         //
-        // Triggers when any other type of message is sent,
-        // excluding "action", which has its own specific handler defined above.
+        // 当收到其他各种消息时触发回调,
+        // 不包括 "action", 因为已经提前对该类型消息进行了注册.
         //
         console.log(client.sessionId, "sent", type, message);
     });
 }
 ```
 
-!!! tip "Use `room.send()` from the client-side SDK to send messages"
-    Check out [`room.send()`](/client/client/#send-type-message)} section.
+!!! tip "客户端通过使用 `room.send()` 来发送消息"
+    详见 [`room.send()`](/client/client/#send-type-message)} 章节.
 
 ---
 
 ### `setState (object)`
 
-设置同步房间状态. 参见 [State Synchronization](/state/overview/) 和 [Schema](/state/schema/) 了解更多信息.
+设置房间同步状态. 参见 [State Synchronization](/state/overview/) 和 [Schema](/state/schema/) 以了解更多信息.
 
 !!! Tip
-    通常, 可以在 [`onCreate()`](#onCreate-options) 期间调用此方法一次
+    设置同步状态通常只需在 [`onCreate()`](#onCreate-options) 时调用一次即可
 
 !!! Warning
-    不要调用 `.setState()` 来进行每次房间更新. 每次调用时, 将会重置二叉树路径算法.
+    房间状态更新时不需要调用 `.setState()`. 因为每次调用都会重置二叉树路径算法.
 
 ---
 
 ### `setSimulationInterval (callback[, milliseconds=16.6])`
 
-(可选)设置一个可以更改游戏状态的模拟间隔期. 此模拟间隔期间是您的游戏循环周期. 默认模拟间隔期: 16.6ms (60fps)
+(可选) 设置一个可以更改游戏状态的模拟时间间隔. 代表游戏更新循环. 默认模拟间隔: 16.6ms (60fps)
 
 ```typescript
 onCreate () {
@@ -461,8 +461,8 @@ onCreate () {
 }
 
 update (deltaTime) {
-    // implement your physics or world updates here!
-    // this is a good place to update the room state
+    // 此处实现游戏物理或者视觉更新!
+    // 同时也是房间状态更新的地方
 }
 ```
 
@@ -470,37 +470,37 @@ update (deltaTime) {
 
 ### `setPatchRate (milliseconds)`
 
-设置将补丁状态发送至所有客户端的频率. 默认值为 `50`ms (20fps)
+设置状态补间发送给所有客户端的频率. 默认值为 `50`ms (20fps)
 
 ---
 
 
 ### `setPrivate (bool)`
 
-将房间列表设置为私有(或转换为公有, 如果提供 `false`).
+将该房间设置为私人房间(参数传入 `false` 则表示设置为公共房间).
 
-在 [`>getAvailableRooms()`](/client/client/#getavailablerooms-roomname-string) 方法中未列出私有房间.
+私人房间不会出现在 [`>getAvailableRooms()`](/client/client/#getavailablerooms-roomname-string) 方法返回的房间列表中.
 
 ---
 
 ### `setMetadata (metadata)`
 
-为此房间设置元数据. 每个房间实例都可能附加了元数据 - 附加元数据的唯一目的是在从客户端获取可用房间列表时, 将一个房间与另一个房间区分开来, 通过 `roomId` 连接到房间, 并使用 [`client.getAvailableRooms()`](/client/client/#getavailablerooms-roomname).
+设置该房间的元数据. 每个房间实例都可附加元数据 - 附加元数据的唯一目的在于客户端使用 [`client.getAvailableRooms()`](/client/client/#getavailablerooms-roomname) 获取房间和通过 `roomId` 连接房间时能区分同名但不同属性的房间.
 
 ```typescript
-// server-side
+// 服务端
 this.setMetadata({ friendlyFire: true });
 ```
 
-现在,房间已经有附加的元数据, 举例来说, 客户端可以检查哪个房间有 `friendlyFire`, 并且可以通过其 `roomId` 直接连接到房间:
+此时房间已经附加了元数据, 举例来说, 客户端可以检查哪个房间有 `friendlyFire`, 然后通过其 `roomId` 连接到想要进入的房间:
 
 ```javascript
-// client-side
+// 客户端
 client.getAvailableRooms("battle").then(rooms => {
   for (var i=0; i<rooms.length; i++) {
     if (room.metadata && room.metadata.friendlyFire) {
       //
-      // join the room with `friendlyFire` by id:
+      // 查找具有 `friendlyFire` 元数据的房间 id:
       //
       var room = client.join(room.roomId);
       return;
@@ -510,15 +510,15 @@ client.getAvailableRooms("battle").then(rooms => {
 ```
 
 !!! Tip
-    [See how to call `getAvailableRooms()` in other languages.](/client/client/#getavailablerooms-roomname)
+    [其他语音客户端的 `getAvailableRooms()` 参见这里.](/client/client/#getavailablerooms-roomname)
 
 ---
 
 ### `setSeatReservationTime (seconds)`
 
-设置房间可以等待客户端有效加入的秒数. 应该考虑 [`onAuth()`](#onauth-client-options-request) 需要等待多长时间, 以设置不同的座位预订时间. 默认值为 15 秒.
+设置该房间等待客户端加入的秒数. 应该考虑 [`onAuth()`](#onauth-client-options-request) 需要等待多长时间, 以设置不同的座位预订时间. 默认值为 15 秒.
 
-如果想要全局更改座位预订时间, 可以设置 `COLYSEUS_SEAT_RESERVATION_TIME` 环境变量.
+如果想要全局设置房间等待时间, 可以设置 `COLYSEUS_SEAT_RESERVATION_TIME` 环境变量.
 
 ---
 
@@ -526,19 +526,19 @@ client.getAvailableRooms("battle").then(rooms => {
 ### `send (client, message)`
 
 !!! Warning "已弃用"
-    `this.send()` 已被弃用. 请使用 [`client.send()` instead](/server/client/#sendtype-message).
+    `this.send()` 已被弃用. 请使用 [`client.send()`](/server/client/#sendtype-message) 代替.
 
 ---
 
 
 ### `broadcast (type, message, options?)`
 
-向所有连接的客户端发送一条消息.
+向已连接的所有客户端发送一条消息广播.
 
-可用的选项为:
+options 参数可以包含:
 
-- **`except`**: a [`Client`](/server/client/) 不会发送消息至
-- **`afterNextPatch`**: 等待, 直到下一补丁广播消息
+- **`except`**: 排除发送消息至这些 [`Client`](/server/client/)
+- **`afterNextPatch`**: 等到下一个状态补间再发送广播消息
 
 #### 广播示例
 
@@ -547,7 +547,7 @@ client.getAvailableRooms("battle").then(rooms => {
 ```typescript
 onCreate() {
     this.onMessage("action", (client, message) => {
-        // broadcast a message to all clients
+        // 广播至所有客户端
         this.broadcast("action-taken", "an action has been taken!");
     });
 }
@@ -558,27 +558,27 @@ onCreate() {
 ```typescript
 onCreate() {
     this.onMessage("fire", (client, message) => {
-        // sends "fire" event to every client, except the one who triggered it.
+        // 发送 "fire" 事件到所有客户端, 除了发送者自己.
         this.broadcast("fire", message, { except: client });
     });
 }
 ```
 
-仅在应用状态变更之后, 向所有客户端广播一条消息:
+在应用状态变更之后, 向所有客户端广播一条消息:
 
 ```typescript
 onCreate() {
     this.onMessage("destroy", (client, message) => {
-        // perform changes in your state!
+        // 改变 state
         this.state.destroySomething();
 
-        // this message will arrive only after new state has been applied
+        // 此消息会在 state 改变应用之后再到达客户端
         this.broadcast("destroy", "something has been destroyed", { afterNextPatch: true });
     });
 }
 ```
 
-广播一条架构编码消息:
+广播一条 schema 消息:
 
 ```typescript
 class MyMessage extends Schema {
@@ -596,19 +596,19 @@ onCreate() {
 ```
 
 !!! Tip
-    [参见如何在客户端处理这些 onMessage().](/colyseus/client/client/#onmessage)
+    [关于客户端如何使用 onMessage() 处理消息, 请参考这里.](/colyseus/client/client/#onmessage)
 
 ---
 
 ### `lock ()`
 
-锁定房间将会从供新客户连接的房间池中删除房间.
+锁定房间会从供新客户端连接的房间池中移除该房间.
 
 ---
 
 ### `unlock ()`
 
-解锁房间会将房间返回至可供新客户连接的房间池.
+解锁房会将房间重新添加至供新客户连接的房间池中.
 
 ---
 
@@ -618,7 +618,7 @@ onCreate() {
 
 如果提供 **`seconds`**, 将在提供的秒数之后取消重新连接.
 
-**Return type:**
+**返回类型:**
 
 - `allowReconnection()` 返回一个 `Deferred<Client>` 实例.
 - `Deferred` 是一个类似于 pormise 的类型
@@ -628,7 +628,7 @@ onCreate() {
 
 ```typescript
 async onLeave (client: Client, consented: boolean) {
-  // flag client as inactive for other users
+  // 标注客户端离线
   this.state.players.get(client.sessionId).connected = false;
 
   try {
@@ -636,15 +636,15 @@ async onLeave (client: Client, consented: boolean) {
         throw new Error("consented leave");
     }
 
-    // allow disconnected client to reconnect into this room until 20 seconds
+    // 允许离线客户端在 20 秒内重新连接
     await this.allowReconnection(client, 20);
 
-    // client returned! let's re-activate it.
+    // 客户端回连, 标注其已连接.
     this.state.players.get(client.sessionId).connected = true;
 
   } catch (e) {
 
-    // 20 seconds expired. let's remove the client.
+    // 20 秒超时. 移除离线客户端.
     this.state.players.delete(client.sessionId);
   }
 }
@@ -655,7 +655,7 @@ async onLeave (client: Client, consented: boolean) {
 
 ```typescript
 async onLeave (client: Client, consented: boolean) {
-  // flag client as inactive for other users
+  // 标注客户端离线
   this.state.players.get(client.sessionId).connected = false;
 
   try {
@@ -663,37 +663,37 @@ async onLeave (client: Client, consented: boolean) {
         throw new Error("consented leave");
     }
 
-    // get reconnection token
+    // 获取重连令牌
     const reconnection = this.allowReconnection(client);
 
     //
-    // here is the custom logic for rejecting the reconnection.
-    // for demonstration purposes of the API, an interval is created
-    // rejecting the reconnection if the player has missed 2 rounds,
-    // (assuming he's playing a turn-based game)
+    // 这里展示了自定义逻辑拒绝重连
+    // 的 API 用法, 如果用户 2 轮失败
+    // 则设置超时禁止重连,
+    // (假设游戏是回合制的)
     //
-    // in a real scenario, you would store the `reconnection` in
-    // your Player instance, for example, and perform this check during your
-    // game loop logic
+    // 实际操作中, 应该把 `reconnection` 保存在
+    // 你的 Player 实例中, 然后在自定义逻辑中
+    // 进行检测
     //
     const currentRound = this.state.currentRound;
     const interval = setInterval(() => {
       if ((this.state.currentRound - currentRound) > 2) {
-        // manually reject the client reconnection
+        // 手动禁止客户端重连
         reconnection.reject();
         clearInterval(interval);
       }
     }, 1000);
 
-    // allow disconnected client to reconnect
+    // 允许离线重连
     await reconnection;
 
-    // client returned! let's re-activate it.
+    // 客户端回连, 标注其已连接.
     this.state.players.get(client.sessionId).connected = true;
 
   } catch (e) {
 
-    // 20 seconds expired. let's remove the client.
+    // 20 秒超时. 移除离线客户端.
     this.state.players.delete(client.sessionId);
   }
 }
@@ -709,23 +709,23 @@ async onLeave (client: Client, consented: boolean) {
 
 ### `broadcastPatch ()`
 
-!!! Warning "您可能不需要这样做!"
-    框架会自动调用此方法.
+!!! Warning "一般不需要这样做!"
+    框架系统会自动调用此方法.
 
-此方法会检查是否已经在 `state` 中发生变化(mutation), 并将变化广播给所有已连接的客户端.
+此方法会检查 `state` 是否发生变化, 并将变化广播给所有已连接的客户端.
 
-如果想要控制何时广播补丁, 可以禁用默认的补丁间隔时间来实现:
+如果想要控制何时广播补丁, 可以禁用默认补丁间隔时间来实现:
 
 ```typescript
 onCreate() {
-    // disable automatic patches
+    // 关闭自动补丁广播
     this.setPatchRate(null);
 
-    // ensure clock timers are enabled
+    // 确保计时有效
     this.setSimulationInterval(() => {/* */});
 
     this.clock.setInterval(() => {
-        // only broadcast patches if your custom conditions are met.
+        // 达到自定义条件, 广播补丁.
         if (yourCondition) {
             this.broadcastPatch();
         }
@@ -735,65 +735,65 @@ onCreate() {
 
 ---
 
-## 公用属性
+## 公开属性
 
 ### `roomId: string`
 
-一个唯一, 自动生成的 8 字符长度的房间 id.
+自动生成的 9 字符长的唯一房间 id.
 
-在 `onCreate()` 期间, 可以更换 `this.roomId`.
+在 `onCreate()` 期间, 可以修改 `this.roomId`.
 
-!!!提示 "使用自定义 `roomId`".
-    查阅指南 Check out the guide [How-to » Customize room id](/how-to/custom-room-id/)
+!!! Tip "使用自定义 `roomId` "
+    请参考 [How-to &raquo; Customize room id](/how-to/custom-room-id/)
 
 ---
 
 ### `roomName: string`
 
-房间名称作为 [`gameServer.define()`](/server/api/#define-roomname-string-room-room-options-any) 的第一个参数.
+房间名称会作为 [`gameServer.define()`](/server/api/#define-roomname-string-room-room-options-any) 的第一个参数.
 
 ---
 
-### `状态T`
+### `state: T`
 
 提供给 [`setState()`](#setstate-object) 的状态实例.
 
 ---
 
-### `clients:客户端`
+### `clients: Client[]`
 
-已连接的客户端数组.参见 [Web-Socket Client](/server/client).
+已连接客户端的数组. 参见 [Web-Socket Client](/server/client).
 
 ---
 
 ### `maxClients: number`
 
-允许连接进入房间的最大客户端数量. 当房间数量达到此限值时, 将自动锁定. 除非通过 [lock()](#lock) 方法显式锁定, 否则, 将在客户端自动断开房间时立即解锁房间.
+允许连接进入房间的最大客户端数量. 当数量达到此限制时, 房间将自动锁定. 房间除非通过 [lock()](#lock) 方法手动锁定, 否则都会在客户端断开房间时立即解锁.
 
 ---
 
 ### `patchRate: number`
 
-将房间状态发送至客户端的频率, 单位为毫秒. 默认值为 `50`ms (20fps)
+将房间状态发送至客户端的频率, 单位为毫秒. 默认值为 `50` ms (20fps)
 
 ---
 
 ### `autoDispose: boolean`
 
-最近一次客户断开连接后, 自动销毁房间. 默认值是 `true`
+最后一个客户端断开连接后, 自动销毁房间. 默认值是 `true`
 
 ---
 
-### `locked: boolean`(只读)
+### `locked: boolean` (只读)
 
-对于以下情况, 此属性将发生改变:
+以下情况会影响此属性:
 
 - 允许的客户端数量已经达到 (`maxClients`)
-- 可以使用 [`lock()`](#lock) 或 [`unlock()`](#unlock) 手动锁定或解锁房间.
+- 用 [`lock()`](#lock) 或 [`unlock()`](#unlock) 手动锁定或解锁房间.
 
 ---
 
-### `时钟 ClockTimer`
+### `clock: ClockTimer`
 
 一个 [`ClockTimer`](https://github.com/gamestdio/timer#api) 实例, 用于 [timing events](/server/timing-events).
 
@@ -807,12 +807,12 @@ onCreate() {
 
 ## 客户端
 
-服务器端的 `client` 实例负责服务器与客户端之间的 **transport** 层. 不应该与 [`Client` from the client-side SDK](/client/client/) 混淆, 因为它们具有完全不同的目的!
+服务器端的 `client` 实例负责服务器与客户端之间的 **transport** 层. 不应该与 [客户端 SDK 里的 `Client`](/client/client/) 相混淆, 因为它们的意义完全不同!
 
-可以通过 [`this.clients`](#clients-client), [`Room#onJoin()`](#onjoin-client-options-auth), [`Room#onLeave()`](#onleave-client-consented) 和 [`Room#onMessage()`](#onmessage-type-callback) 操作 `client` 实例.
+可以通过 [`this.clients`](#clients-client), 在 [`Room#onJoin()`](#onjoin-client-options-auth), [`Room#onLeave()`](#onleave-client-consented) 和 [`Room#onMessage()`](#onmessage-type-callback) 中操作 `client` 实例.
 
 !!! Note
-    这是来自于 [`ws`](https://www.npmjs.com/package/ws) 包的原始 WebSocket 连接. 还有更多的方法可用, 但是不建议用于 Colyseus.
+    这是来自 [`ws`](https://www.npmjs.com/package/ws) 包的原始 WebSocket 连接. 还有更多的方法可用, 但是不建议用于 Colyseus.
 
 ### 属性
 
@@ -827,7 +827,7 @@ onCreate() {
 
 #### `userData: any`
 
-可用于存储关于客户端连接的自定义数据. `userData` 并不同步于 **not** 客户端, 仅用于保留与其连接相关的用户数据.
+可用于存储关于客户端连接的自定义数据. `userData` **不会** 与客户端同步, 仅用于保存指定用户的连接.
 
 ```typescript
 onJoin(client, options) {
@@ -847,24 +847,24 @@ onLeave(client)  {
 
 ---
 
-### 方法.
+### 方法
 
 #### `send(type, message)`
 
-发送消息类型至客户端. 消息使用 MsgPack 编码, 仅含有可序列化 JSON 数据结构.
+发送某类型消息至客户端. 消息使用 MsgPack 编码, 可用于任何可序列化的 JSON 数据结构.
 
 `type` 可以是 `string` 或 `number`.
 
-**Sending a message:**
+**发送消息:**
 
 ```typescript
 //
-// sending message with a string type ("powerup")
+// 发送字符串类型消息 ("powerup")
 //
 client.send("powerup", { kind: "ammo" });
 
 //
-// sending message with a number type (1)
+// 发送数字类型消息 (1)
 //
 client.send(1, { kind: "ammo"});
 ```
@@ -893,39 +893,39 @@ client.send(data);
 
 #### `leave(code?: number)`
 
-`客户端` 与房间强制断开连接. 您可以在关闭连接时发送一个数值介于 `4000` 和 `4999` 之间的自定义 `code` (见 [WebSocket 关闭代码表](#websocket-close-codes-table))
+把 `client` 与房间强行断开. 您可以在关闭连接时发送一个介于 `4000` 和 `4999` 之间的自定义 `code` (参见 [WebSocket 断线状态代码表](#websocket-close-codes-table))
 
 !!! Tip
     这将在客户端触发 [`room.onLeave`](/client/room/#onleave) 事件.
 
-##### WebSocket 关闭代码表
+##### WebSocket 断线状态代码表
 
-| Close code (uint16) | Codename               | Internal | Customizable | Description |
+| 断线代码 (uint16) | 代码名称               | 内部使用 | 可自定义 | 说明 |
 |---------------------|------------------------|----------|--------------|-------------|
-| `0` - `999`             |                        | Yes      | No           | Unused |
-| `1000`                | `CLOSE_NORMAL`         | No       | No           | Successful operation / regular socket shutdown |
-| `1001`                | `CLOSE_GOING_AWAY`     | No       | No           | Client is leaving (browser tab closing) |
-| `1002`                | `CLOSE_PROTOCOL_ERROR` | Yes      | No           | Endpoint received a malformed frame |
-| `1003`                | `CLOSE_UNSUPPORTED`    | Yes      | No           | Endpoint received an unsupported frame (e.g. binary-only endpoint received text frame) |
-| `1004`                |                        | Yes      | No           | Reserved |
-| `1005`                | `CLOSED_NO_STATUS`     | Yes      | No           | Expected close status, received none |
-| `1006`                | `CLOSE_ABNORMAL`       | Yes      | No           | No close code frame has been receieved |
-| `1007`                | *Unsupported payload*  | Yes      | No           | Endpoint received inconsistent message (e.g. malformed UTF-8) |
-| `1008`                | *Policy violation*     | No       | No           | Generic code used for situations other than 1003 and 1009 |
-| `1009`                | `CLOSE_TOO_LARGE`      | No       | No           | Endpoint won't process large frame |
-| `1010`                | *Mandatory extension*  | No       | No           | Client wanted an extension which server did not negotiate |
-| `1011`                | *Server error*         | No       | No           | Internal server error while operating |
-| `1012`                | *Service restart*      | No       | No           | Server/service is restarting |
-| `1013`                | *Try again later*      | No       | No           | Temporary server condition forced blocking client's request |
-| `1014`                | *Bad gateway*          | No       | No           | Server acting as gateway received an invalid response |
-| `1015`                | *TLS handshake fail*   | Yes      | No           | Transport Layer Security handshake failure |
-| `1016` - `1999`         |                        | Yes      | No           | Reserved for future use by the WebSocket standard. |
-| `2000` - `2999`         |                        | Yes      | Yes          | Reserved for use by WebSocket extensions |
-| `3000` - `3999`         |                        | No       | Yes          | 	Available for use by libraries and frameworks. May not be used by applications. Available for registration at the IANA via first-come, first-serve. |
-| `4000` - `4999`         |                        | No       | Yes          | **Available for applications** |
+| `0` - `999`             |                        | Yes      | No           | 未使用 |
+| `1000`                | `CLOSE_NORMAL`         | No       | No           | 成功断开 / 套接字断开 |
+| `1001`                | `CLOSE_GOING_AWAY`     | No       | No           | 客户端离开 (浏览器页面关闭) |
+| `1002`                | `CLOSE_PROTOCOL_ERROR` | Yes      | No           | 入口接到错误帧 |
+| `1003`                | `CLOSE_UNSUPPORTED`    | Yes      | No           | 入口接到不支持帧 (例如二进制入口接到文本帧) |
+| `1004`                |                        | Yes      | No           | 保留 |
+| `1005`                | `CLOSED_NO_STATUS`     | Yes      | No           | 未收到状态代码的断开 |
+| `1006`                | `CLOSE_ABNORMAL`       | Yes      | No           | 收到无断开代码的帧 |
+| `1007`                | *Unsupported payload*  | Yes      | No           | 入口接到错误消息 (例如非法 UTF-8) |
+| `1008`                | *Policy violation*     | No       | No           | 1003 与 1009 之外的一般状态代码|
+| `1009`                | `CLOSE_TOO_LARGE`      | No       | No           | 入口接到无法处理的大数据帧 |
+| `1010`                | *Mandatory extension*  | No       | No           | 客户端发送了未协商的扩展数据 |
+| `1011`                | *Server error*         | No       | No           | 运行中的服务器内部错误 |
+| `1012`                | *Service restart*      | No       | No           | 服务器/服务正在重启 |
+| `1013`                | *Try again later*      | No       | No           | 服务器临时状况导致客户端请求受阻 |
+| `1014`                | *Bad gateway*          | No       | No           | 用于网关的服务器收到非法响应 |
+| `1015`                | *TLS handshake fail*   | Yes      | No           | 传输层安全相关错误 |
+| `1016` - `1999`         |                        | Yes      | No           | 为未来的 WebSocket 标准保留. |
+| `2000` - `2999`         |                        | Yes      | Yes          | 为 WebSocket 扩展数据保留 |
+| `3000` - `3999`         |                        | No       | Yes          | 用于支持其他库或框架使用. 服务器可能不会用到. 可以通过 IANA 先到先得途径注册. |
+| `4000` - `4999`         |                        | No       | Yes          | **用于应用服务器** |
 
 ---
 
 #### `error(code, message)`
 
-将错误及代码与消息一并发送给客户端. 客户端可以在 [`onError`](/client/room/#onerror) 对其进行处理
+将错误代码与消息一并发送给客户端. 客户端可以在 [`onError`](/client/room/#onerror) 中对其进行处理.

@@ -1,4 +1,4 @@
-# [状态同步](/state/overview) &raquo; 架构
+# [状态同步](/state/overview) &raquo; Schema
 
 !!! Tip "还没使用 TypeScript?"
     强烈建议您使用 TypeScript 以便更好地定义 Schema 结构并提高整体开发体验. TypeScript 支持的 "实验性修饰器" 会在本手册内大量使用.
