@@ -253,7 +253,7 @@ client.joinOrCreate("world", {
 **Parameters:**
 
 - `客戶端` [`客戶端實例`](/server/client).
-- `options`:  在 [Server#define()](/server/api/#define-roomname-string-room-room-options-any) 中指定的合並值, 帶有客戶 [`client.join()`](/client/client/#join-roomname-string-options-any) 時提供的選項
+- `options`:  在 [Server#define()](/server/api/#define-roomname-string-room-room-options-any) 中指定的合並值, 帶有客戶 [`client.join()`](/client/#join-roomname-string-options-any) 時提供的選項
 - `auth`: (可選) 返回的身份驗證方法數據 [`onAuth`](#onauth-client-options-request)
 
 在 `requestJoin` 和 `onAuth` 完成後, 客戶成功進入房間時調用.
@@ -435,7 +435,7 @@ onCreate () {
 ```
 
 !!! tip "Use `room.send()` from the client-side SDK to send messages"
-    Check out [`room.send()`](/client/client/#send-type-message)} section.
+    Check out [`room.send()`](/client/#send-type-message)} section.
 
 ---
 
@@ -479,13 +479,13 @@ update (deltaTime) {
 
 將房間列表設置為私有(或轉換為公有, 如果提供 `false`).
 
-在 [`>getAvailableRooms()`](/client/client/#getavailablerooms-roomname-string) 方法中未列出私有房間.
+在 [`>getAvailableRooms()`](/client/#getavailablerooms-roomname-string) 方法中未列出私有房間.
 
 ---
 
 ### `setMetadata (metadata)`
 
-為此房間設置元數據. 每個房間實例都可能附加了元數據 - 附加元數據的唯一目的是在從客戶端獲取可用房間列表時, 將一個房間與另一個房間區分開來, 通過 `roomId` 連線到房間, 並使用 [`client.getAvailableRooms()`](/client/client/#getavailablerooms-roomname).
+為此房間設置元數據. 每個房間實例都可能附加了元數據 - 附加元數據的唯一目的是在從客戶端獲取可用房間列表時, 將一個房間與另一個房間區分開來, 通過 `roomId` 連線到房間, 並使用 [`client.getAvailableRooms()`](/client/#getavailablerooms-roomname).
 
 ```typescript
 // server-side
@@ -510,7 +510,7 @@ client.getAvailableRooms("battle").then(rooms => {
 ```
 
 !!! Tip
-    [See how to call `getAvailableRooms()` in other languages.](/client/client/#getavailablerooms-roomname)
+    [See how to call `getAvailableRooms()` in other languages.](/client/#getavailablerooms-roomname)
 
 ---
 
@@ -596,7 +596,7 @@ onCreate() {
 ```
 
 !!! Tip
-    [參見如何在客戶端處理這些 onMessage().](/colyseus/client/client/#onmessage)
+    [參見如何在客戶端處理這些 onMessage().](/colyseus/client/#onmessage)
 
 ---
 
@@ -614,7 +614,7 @@ onCreate() {
 
 ### `allowReconnection (client, seconds?)`
 
-允許指定的客戶 [`reconnect`](/client/client/#reconnect-reconnectiontoken) 房間. 必須在 [`onLeave()`](#onleave-client) 方法中使用.
+允許指定的客戶 [`reconnect`](/client/#reconnect-reconnectiontoken) 房間. 必須在 [`onLeave()`](#onleave-client) 方法中使用.
 
 如果提供 **`seconds`**, 將在提供的秒數之後取消重新連線.
 
@@ -807,7 +807,7 @@ onCreate() {
 
 ## 客戶端
 
-伺服器端的 `client` 實例負責伺服器與客戶端之間的 **transport** 層. 不應該與 [`Client` from the client-side SDK](/client/client/) 混淆, 因為它們具有完全不同的目的!
+伺服器端的 `client` 實例負責伺服器與客戶端之間的 **transport** 層. 不應該與 [`Client` from the client-side SDK](/client/) 混淆, 因為它們具有完全不同的目的!
 
 可以通過 [`this.clients`](#clients-client), [`Room#onJoin()`](#onjoin-client-options-auth), [`Room#onLeave()`](#onleave-client-consented) 和 [`Room#onMessage()`](#onmessage-type-callback) 操作 `client` 實例.
 
@@ -887,7 +887,7 @@ client.send(data);
  -->
 
 !!! Tip
-    [查看如何在客戶端處理這些資訊.](/colyseus/client/client/#onmessage)
+    [查看如何在客戶端處理這些資訊.](/colyseus/client/#onmessage)
 
 ---
 

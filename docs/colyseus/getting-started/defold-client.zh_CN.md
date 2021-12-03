@@ -41,7 +41,7 @@ function init(self)
 end
 ```
 
-参阅 [客户端](/client/client/).
+参阅 [客户端](/client/).
 
 ## 常见问题
 

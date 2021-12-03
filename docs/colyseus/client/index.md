@@ -1,5 +1,3 @@
-# Colyseus SDK &raquo; Usage
-
 Colyseus currently has client-side SDK's available for the following platforms:
 
 - [Unity](/getting-started/unity3d-client) ([view source-code](https://github.com/colyseus/colyseus-unity3d))
@@ -711,6 +709,8 @@ room.leave(false);
 #### `removeAllListeners()`
 
 Removes `onMessage`, `onStateChange`, `onLeave` and `onError` listeners.
+
+---
 
 ### Events
 

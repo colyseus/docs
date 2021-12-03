@@ -181,7 +181,7 @@ const gameServer = new colyseus.Server({
 为匹配器定义一种新类型的房间.
 
 - `.define()` 期间房间 **未创建**
-- 客户端请求时创建房间 ([参阅客户端方法](/client/client/#methods))
+- 客户端请求时创建房间 ([参阅客户端方法](/client/#methods))
 
 **Parameters:**
 

@@ -1,7 +1,7 @@
 # Server API &raquo; Match-maker API
 
 !!! Warning "您可能不需要這樣做!"
-    本部分介紹高級用法. 您通常可以使用 [客戶端方法](/client/client/#methods). 如果不能使用客戶端方法來實現目上標, 可以考慮使用本頁介紹的方法.
+    本部分介紹高級用法. 您通常可以使用 [客戶端方法](/client/#methods). 如果不能使用客戶端方法來實現目上標, 可以考慮使用本頁介紹的方法.
 
 下面介紹的方法由 `matchMaker` 單一實例提供,可以從 `"colyseus"` 包匯入:
 
@@ -50,13 +50,13 @@ console.log(reservation);
 ```
 
 !!! Tip "耗用座位保留量"
-    您可以使用 [客戶端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation), 通過預留座位加入房間.
+    您可以使用 [客戶端的 `consumeSeatReservation()`](/client/#consumeseatreservation-reservation), 通過預留座位加入房間.
 
 ## `.reserveSeatFor(room, options)`
 為客戶端保留房間座位.
 
 !!! Tip "耗用座位保留量"
-    您可以使用 [客戶端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation), 通過預留座位加入房間.
+    您可以使用 [客戶端的 `consumeSeatReservation()`](/client/#consumeseatreservation-reservation), 通過預留座位加入房間.
 
 **Parameters:**
 
@@ -94,7 +94,7 @@ console.log(reservation);
 ```
 
 !!! Tip "耗用座位保留量"
-    您可以使用 [客戶端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation), 通過預留座位加入房間.
+    您可以使用 [客戶端的 `consumeSeatReservation()`](/client/#consumeseatreservation-reservation), 通過預留座位加入房間.
 
 ## `.joinById(roomId, options)`
 按  id 加入房間, 並返回座位保留量. 如果 `roomName` 沒有房間, 則拋出異常.
@@ -116,7 +116,7 @@ console.log(reservation);
 ```
 
 !!! Tip "耗用座位保留量"
-    您可以使用 [客戶端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation), 通過預留座位加入房間.
+    您可以使用 [客戶端的 `consumeSeatReservation()`](/client/#consumeseatreservation-reservation), 通過預留座位加入房間.
 
 ## `.create(roomName, options)`
 創建房間, 並返回客戶座位保留量.
@@ -138,7 +138,7 @@ console.log(reservation);
 ```
 
 !!! Tip "耗用座位保留量"
-    您可以使用 [客戶端的 `consumeSeatReservation()`](/client/client/#consumeseatreservation-reservation), 通過預留座位加入房間.
+    您可以使用 [客戶端的 `consumeSeatReservation()`](/client/#consumeseatreservation-reservation), 通過預留座位加入房間.
 
 ## `.query(conditions)`
 執行預存房間查詢.

@@ -181,7 +181,7 @@ const gameServer = new colyseus.Server({
 為匹配器定義一種新類型的房間.
 
 - `.define()` 期間房間 **未創建**
-- 客戶端請求時創建房間 ([參閱客戶端方法](/client/client/#methods))
+- 客戶端請求時創建房間 ([參閱客戶端方法](/client/#methods))
 
 **Parameters:**
 

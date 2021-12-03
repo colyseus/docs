@@ -41,7 +41,7 @@ function init(self)
 end
 ```
 
-參閱 [客戶端](/client/client/).
+參閱 [客戶端](/client/).
 
 ## 常見問題
 

@@ -708,6 +708,8 @@ room.leave(false);
 
 移除 `onMessage`, `onStateChange`, `onLeave` 和 `onError` 偵聽程序.
 
+---
+
 ### 事件
 
 #### onStateChange

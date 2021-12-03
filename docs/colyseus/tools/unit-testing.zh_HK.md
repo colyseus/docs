@@ -157,10 +157,10 @@ it("should assert something after room's simulation tick", async() => {
 
 在測試當中, 可以通過客戶端 SDK 的 `colyseus.sdk` 來調用客戶端的各種功能.
 
-- [`colyseus.sdk.joinOrCreate()`](/colyseus/client/client/#joinorcreate-roomname-string-options-any)
-- [`colyseus.sdk.create()`](/colyseus/client/client/#create-roomname-string-options-any)
-- [`colyseus.sdk.join()`](/colyseus/client/client/#join-roomname-string-options-any)
-- [`colyseus.sdk.joinById()`](/colyseus/client/client/#joinbyid-roomid-string-options-any)
+- [`colyseus.sdk.joinOrCreate()`](/colyseus/client/#joinorcreate-roomname-string-options-any)
+- [`colyseus.sdk.create()`](/colyseus/client/#create-roomname-string-options-any)
+- [`colyseus.sdk.join()`](/colyseus/client/#join-roomname-string-options-any)
+- [`colyseus.sdk.joinById()`](/colyseus/client/#joinbyid-roomid-string-options-any)
 
 **舉例**
 

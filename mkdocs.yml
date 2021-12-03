@@ -84,7 +84,6 @@ plugins:
           Reference: "参考资料"
           Colyseus for Arena Cloud: "适用于 Arena Cloud 的 Colyseus"
           Uploading Server Code: "上传服务器代码"
-          Usage: "使用"
           Server API: "服务器 API"
           Room: "房间"
           Timing events: "计时事件"
@@ -130,7 +129,6 @@ plugins:
           Reference: "引用"
           Colyseus for Arena Cloud: "Colyseus for Arena Cloud"
           Uploading Server Code: "上傳伺服器代碼"
-          Usage: "用法"
           Server API: "伺服器API"
           Room: "房間"
           Timing events: "計時事件"
@@ -261,6 +259,7 @@ nav:
   - getting started:
     - 'colyseus/index.md'
   - Client-side SDK:
+    - 'colyseus/client/index.md'
     - Installation:
       - 'Unity': 'colyseus/getting-started/unity3d-client.md'
       - 'JavaScript': 'colyseus/getting-started/javascript-client.md'
@@ -269,7 +268,6 @@ nav:
       - 'Cocos Creator': 'colyseus/getting-started/cocos-creator.md'
       # - 'Cocos2d-x': 'getting-started/cocos2dx-client.md'
       - 'Construct3': 'colyseus/getting-started/construct3-client.md'
-    - 'Usage': 'colyseus/client/client.md'
 
   - 'Server API':
     - 'Server': 'colyseus/server/api.md'

@@ -41,7 +41,7 @@ function init(self)
 end
 ```
 
-See [client-side documentation](/client/client/).
+See [client-side documentation](/client/).
 
 ## FAQ
 

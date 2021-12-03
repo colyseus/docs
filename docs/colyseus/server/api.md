@@ -124,7 +124,7 @@ gameServer.listen(port);
 Define a new type of room for the matchmaker.
 
 - Rooms are **not created** during `.define()`
-- Rooms are created upon client request ([See client-side methods](/client/client/#methods))
+- Rooms are created upon client request ([See client-side methods](/client/#methods))
 
 **Parameters:**
 
