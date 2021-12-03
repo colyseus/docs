@@ -372,18 +372,6 @@ const map = new MapSchema<string>();
 const item = map.get("key");
 ```
 
-或者
-
-```typescript
-//
-// 不建議使用這種方法
-//
-// 保留這種方法只是為了 @colyseus/schema 的版本向下兼容
-// 未來會舍棄這種方法.
-//
-const item = map["key"];
-```
-
 ---
 
 #### `map.set()`
@@ -395,18 +383,6 @@ const map = new MapSchema<string>();
 map.set("key", "value");
 ```
 
-或者
-
-```typescript
-//
-// 不建議使用這種方法
-//
-// 保留這種方法只是為了 @colyseus/schema 的版本向下兼容
-// 未來會舍棄這種方法.
-//
-map["key"] = "value";
-```
-
 ---
 
 #### `map.delete()`
@@ -415,18 +391,6 @@ map["key"] = "value";
 
 ```typescript
 map.delete("key");
-```
-
-或者
-
-```typescript
-//
-// 不建議使用這種方法
-//
-// 保留這種方法只是為了 @colyseus/schema 的版本向下兼容
-// 未來會舍棄這種方法.
-//
-delete map["key"];
 ```
 
 ---

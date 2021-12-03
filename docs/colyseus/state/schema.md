@@ -372,18 +372,6 @@ const map = new MapSchema<string>();
 const item = map.get("key");
 ```
 
-OR
-
-```typescript
-//
-// NOT RECOMMENDED
-//
-// This is a compatibility layer with previous versions of @colyseus/schema
-// This is going to be deprecated in the future.
-//
-const item = map["key"];
-```
-
 ---
 
 #### `map.set()`
@@ -395,18 +383,6 @@ const map = new MapSchema<string>();
 map.set("key", "value");
 ```
 
-OR
-
-```typescript
-//
-// NOT RECOMMENDED
-//
-// This is a compatibility layer with previous versions of @colyseus/schema
-// This is going to be deprecated in the future.
-//
-map["key"] = "value";
-```
-
 ---
 
 #### `map.delete()`
@@ -415,18 +391,6 @@ Removes a map item by key:
 
 ```typescript
 map.delete("key");
-```
-
-OR
-
-```typescript
-//
-// NOT RECOMMENDED
-//
-// This is a compatibility layer with previous versions of @colyseus/schema
-// This is going to be deprecated in the future.
-//
-delete map["key"];
 ```
 
 ---
