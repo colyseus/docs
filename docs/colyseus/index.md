@@ -41,7 +41,9 @@ This server template is ready to be used locally, self-hosted, or on [Colyseus A
 #### Next steps
 
 - Connect to your server by using one of the [client-side SDK's available](/colyseus/client/).
+- Learn how to [exchange messages](/colyseus/server/room/#onmessage-type-callback) between client and server
 - Understand how the [automatic state synchronization](/colyseus/state/overview/) works
+- Experiment! Play, and have fun!
 
 ---
 
