@@ -5,7 +5,7 @@ The simplest solution to deploy your Colyseus Server allowing you to **Get To Fu
 
 Arena Cloud  is a fully managed solution that enables you to focus on your multiplayer game development. It provides developers with enterprise grade hosting leaving server management, infrastructure, DevOps and scaling to us. With Arena, you can setup, manage and update your Colyseus servers with a few clicks from an intuitive administration dashboard.
 
-**[Sign-up](https://console.colyseus.io/register) for a Arena Cloud Account (Currently By Invite Only [Request Access](https://www.colyseus.io/arena))**
+**[Sign-up](https://console.colyseus.io/register) for a Arena Cloud Account**
 
 ![Arena Dashboard View](../../images/dashboard-view.jpg)
 
@@ -14,11 +14,12 @@ Arena Cloud is available in multiple regions with custom region deployments avai
 
 - N. Virginia (USA - East 1)
 - Ohio (USA - East 2)
+- N. Virginia (USA - East 3 | Indie/Dev) 
 - N. California (USA - West 1)
-- Mumbai (Asia Pacific - South)
+- Mumbai (Asia Pacific - South | Indie/Dev)
 - Ireland (Europe - West)
-- Frankfurt (Europe - Central)
-- Seoul (Asia Pacific - North East) -- Coming Soon
+- Frankfurt (Europe - Central | Indie/Dev)
+- Seoul (Asia Pacific - North East)
 - *São Paulo (South America - East) -- Available On Request*
 
 ## Application Management 
@@ -37,14 +38,14 @@ Our Enterprise service team can provide developers, large and small, a fully cus
 - Complex setup deployment with multiple server versions running in parallel
 - MMO / Large scale battle royals
 
-[Discuss Enterprise Solutions](mailto:contact@lucidsight.com)
+[Discuss Enterprise Solutions](mailto:cs@lucidsight.com)
 
 ## Arena Enterprise Hosting of Custom Servers
 Have a linux based game server or headless Unity / Unreal game server? Are you looking for a flexible server host that can handle the DevOps, maintenance, and scaling of your infrastructure leaving your team free to focus on game development? If so, reach out to our team today and see how we can provide a modern, scalable and cost effective solution for server hosting.
 
-[Custom Server Hosting](mailto:support@lucidsight.com)
+[Custom Server Hosting](mailto:cs@lucidsight.com)
 
 ## Colyseus Arena Legacy Support < 0.14
 Arena Cloud runs the latest version of Colyseus Open-source, however Arena has the ability to host and support at scale any previous Colyseus version. 
 
-Contact our support team at [Legacy Support](mailto:support@lucidsight.com) to have older Colyseus versions added to your application. 
+Contact our support team at [Legacy Support](mailto:cs@lucidsight.com) to have older Colyseus versions added to your application. 

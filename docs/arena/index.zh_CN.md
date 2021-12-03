@@ -5,7 +5,7 @@
 
 Arena Cloud 是一种完全托管的解决方案, 可让您专注于多人游戏开发. 它为开发人员提供企业级托管, 我们将完成服务器管理, 基础设施, DevOps 和扩展等工作.使用 Arena, 只需在直观的管理仪表板上点击几下, 即可设置, 管理和更新您的 Colyseus 服务器.
 
-**[注册](https://https://console.colyseus.io/register) Arena Cloud 帐户 (目前仅接受被邀请的用户 [请求访问](https://www.colyseus.io/arena))**
+**[注册](https://console.colyseus.io/register) Arena Cloud 帐户 (目前仅接受被邀请的用户 [请求访问](https://www.colyseus.io/arena))**
 
 ![Arena 仪表板视图](../../images/dashboard-view.jpg)
 

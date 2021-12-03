@@ -496,7 +496,7 @@ schema.defineTypes(Player, {
 为 `SetSchema` 添加元素.
 
 ```typescript
-const set = new CollectionSchema<number>();
+const set = new SetSchema<number>();
 set.add(1);
 set.add(2);
 set.add(3);
@@ -509,7 +509,7 @@ set.add(3);
 获取 `index` 处的值.
 
 ```typescript
-const set = new CollectionSchema<string>();
+const set = new SetSchema<string>();
 set.add("one");
 set.add("two");
 set.add("three");

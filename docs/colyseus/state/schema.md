@@ -496,7 +496,7 @@ schema.defineTypes(Player, {
 Appends an item to the `SetSchema` object.
 
 ```typescript
-const set = new CollectionSchema<number>();
+const set = new SetSchema<number>();
 set.add(1);
 set.add(2);
 set.add(3);
@@ -509,7 +509,7 @@ set.add(3);
 Gets an item at the specified `index`.
 
 ```typescript
-const set = new CollectionSchema<string>();
+const set = new SetSchema<string>();
 set.add("one");
 set.add("two");
 set.add("three");

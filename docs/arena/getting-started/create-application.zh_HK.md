@@ -2,7 +2,7 @@
 
 ### 相關要求
 
-* [註冊](https://https://console.colyseus.io/register) 一個 Arena Cloud 帳戶
+* [註冊](https://console.colyseus.io/register) 一個 Arena Cloud 帳戶
 * 相容於 [Arena Cloud](../create-colyseus-server/) 的 Colyseus 伺服器
 
 ## 建立一個應用程式部署

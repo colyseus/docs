@@ -6,7 +6,7 @@
 
 ## Setup your Config File
 
-To configure git sync you will need to add the following ```arena.gitsync.json``` JSON file to the root folder of your Server Code and Deploy it to your application. 
+To configure git sync you will need to add the following ```arena.gitsync.json``` JSON file to the root folder of your Server Code and `Deploy` it to your application. 
 
 !!! NOTE   
     - **REMINDER** you must click `Deploy` to push the updated ```arena.gitsync.json``` to your application servers before the GitSync service will see the changes.
