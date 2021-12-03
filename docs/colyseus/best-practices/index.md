@@ -100,7 +100,7 @@ How a command implementation looks like:
 // OnJoinCommand.ts
 import { Command } from "@colyseus/command";
 
-export class OnJoinCommand extends Command<YourState, {
+export class OnJoinCommand extends Command<MyRoom, {
     sessionId: string
 }> {
 
