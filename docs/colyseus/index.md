@@ -6,7 +6,17 @@
 
 ## Introduction
 
-Colyseus is an Authoritative Multiplayer Framework written in Node.js. When working on a Colyseus project, you will have to write your own logic in the server, and in the client (through one of the Client-side SDK's available)
+Colyseus is an Authoritative Multiplayer Framework for writing your own game servers using JavaScript/TypeScript and Node.js.
+
+It is agnostic regarding the technology you choose for the client-side. You can use one of the official client-side SDK's available, such as [Unity](/colyseus/getting-started/unity3d-client/), [JavaScript/TypeScript](/colyseus/getting-started/javascript-client/), [Defold Engine](/colyseus/getting-started/defold-client/), [Haxe](/colyseus/getting-started/haxe-client/), [Cocos Creator](/colyseus/getting-started/cocos-creator/) and [Construct3](/colyseus/getting-started/construct3-client/).
+
+**What Colyseus provides to you:**
+
+- WebSocket-based realtime communication
+- Simple API in the server-side and client-side.
+- Automatic state synchronization between server and client.
+- Matchmaking clients into game sessions
+- Scale vertically or horizontally
 
 ## Getting started
 
