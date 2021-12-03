@@ -46,25 +46,10 @@ To enable all debug logs, run your server using the `DEBUG=colyseus:*` environme
 DEBUG=colyseus:* npm start
 ```
 
-Alternatively, you can only enable to printing debug logs per category. 
-
-### `colyseus:patch`
-
-Logs the number of bytes and interval between patches broadcasted to all clients.
-
-```
-colyseus:patch "chat" (roomId: "ryWiL5rLTZ") is sending 28 bytes: +57ms
-```
-
-### `colyseus:errors`
-
-Logs whenever unexpected (or expected, internally) errors happens on the server-side.
-
-### `colyseus:matchmaking`
-
-Logs whenever a room is spanwed or disposed.
-
-```
-colyseus:matchmaking spawning 'chat' on worker 77218 +52s
-colyseus:matchmaking disposing 'chat' on worker 77218 +2s
-```
+- `colyseus:errors`: Whenever unexpected (or expected, internally) errors happens on the server-side.
+- `colyseus:matchmaking`: Whenever a room is spanwed or disposed.
+- `colyseus:message`: Incoming and outgoing room messages
+- `colyseus:patch`: The number of bytes and interval between patches broadcasted to all clients.
+- `colyseus:connection`: Incoming and outgoing connections
+<!-- - `colyseus:driver`:  -->
+<!-- - `colyseus:presence`:  -->
