@@ -867,9 +867,9 @@ The callbacks are triggered based on instance reference. Make sure to attach the
 
 - [onAdd (instance, key)](#onadd-instance-key)
 - [onRemove (instance, key)](#onremove-instance-key)
-- [onChange (changes)](#onchange-changes-datachange) (on `Schema` instance)
 - [onChange (instance, key)](#onchange-instance-key) (on collections: `MapSchema`, `ArraySchema`, etc.)
 - [listen()](#listenprop-callback)
+- [onChange (changes)](#onchange-changes-datachange) (on `Schema` instance)
 
 #### `onAdd (instance, key)`
 
@@ -1062,9 +1062,9 @@ state.OnCurrentTurnChange((currentValue, previousValue) => {
 ```
 
 ```lua fct_label="LUA"
-state:listen("currentTurn", function (currentValue, previousValue)
-    pprint(currentValue);
-    pprint(previousValue);
+state:listen("currentTurn", function (current_value, previous_value)
+    pprint(current_value);
+    pprint(previous_value);
 end)
 ```
 
