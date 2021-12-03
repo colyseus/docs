@@ -16,25 +16,36 @@ Before we start, let's make sure we have the necessary system requirements insta
 - [Download and install Git SCM](https://git-scm.com/downloads)
 - [Download and install Visual Studio Code](https://code.visualstudio.com/) (or other editor of your choice)
 
-### Creating a barebones Colyseus server
+### Create your first game server
 
-Use the `npm init colyseus-app` command to generate a barebones Colyseus server. You may select between TypeScript (recommended), JavaScript or Haxe as your language of choice for the server.
-
-```
-npm init colyseus-app ./my-colyseus-app
-```
-
-### From the official examples
-
-Alternatively, you can check some examples in action by cloning the [examples project](https://github.com/colyseus/colyseus-examples) and running it locally.
+Use the `npm init colyseus-app` command to create a new empty Colyseus project.
 
 ```
-git clone https://github.com/colyseus/colyseus-examples.git
-cd colyseus-examples
-npm install
+npm init colyseus-app ./my-first-game-server
 ```
 
-To run the server locally, run `npm start`, then open [http://localhost:2567](http://localhost:2567) to explore each example.
+It is recommended to select TypeScript as your main language, although you can use JavaScript if you're more comfortable with it.
+
+### Examples
+
+You are encouraged to check out existing projects to explore and understand how Colyseus works.
+
+- [Official examples](https://github.com/colyseus/colyseus-examples)
+- [PixiJS Tic-Tac-Toe](https://github.com/endel/colyseus-tic-tac-toe)
+- [Colyseus + PixiJS Boilerplate (Agar.io simplistic adaptation)](https://github.com/endel/colyseus-pixijs-boilerplate)
+- [BabylonJS + Colyseus: Multiplayer Boilerpate](https://github.com/endel/colyseus-babylonjs-boilerplate)
+
+**Unity Tech Demos**
+
+- [Shooting Gallery](/colyseus/demo/shooting-gallery/)
+- [Starboss](/colyseus/demo/starboss/)
+- [Turn Based Tanks](/colyseus/demo/turn-based-tanks/)
+- [MMO](/colyseus/demo/mmo/)
+
+**Videos**
+
+- [Multiplayer Tic-Tac-Toe in Colyseus & Phaser 3.50](https://www.youtube.com/playlist?list=PLumYWZ2t7CRueXsocQXOGqewmwzohljof)
+- [Multiplayer Game Design Colyseus and Unity](https://www.youtube.com/playlist?list=PLxgtJR7f0RBK_yGDSbPuspqMR-oEi1S25)
 
 ### Presentation: Overview of how Colyseus works
 
