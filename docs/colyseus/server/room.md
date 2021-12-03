@@ -681,7 +681,7 @@ async onLeave (client: Client, consented: boolean) {
 
     //
     // Get reconnection token
-    // NOTE: do not use `await` here!
+    // NOTE: do not use `await` here yet
     //
     const reconnection = this.allowReconnection(client, "manual");
 
@@ -704,7 +704,7 @@ async onLeave (client: Client, consented: boolean) {
       }
     }, 1000);
 
-    // allow disconnected client to reconnect
+    // now it's time to `await` for the reconnection
     await reconnection;
 
     // client returned! let's re-activate it.
@@ -712,7 +712,7 @@ async onLeave (client: Client, consented: boolean) {
 
   } catch (e) {
 
-    // 20 seconds expired. let's remove the client.
+    // reconnection has been rejected. let's remove the client.
     this.state.players.delete(client.sessionId);
   }
 }
