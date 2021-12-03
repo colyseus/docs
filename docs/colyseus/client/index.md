@@ -1,3 +1,5 @@
+# Client-side SDK
+
 Colyseus currently has client-side SDK's available for the following platforms:
 
 - [Unity](/getting-started/unity3d-client) ([view source-code](https://github.com/colyseus/colyseus-unity3d))
@@ -5,6 +7,7 @@ Colyseus currently has client-side SDK's available for the following platforms:
 - [Defold Engine](/getting-started/defold-client) ([view source-code](https://github.com/colyseus/colyseus-defold))
 - [Haxe](/getting-started/haxe-client) ([view source-code](https://github.com/colyseus/colyseus-hx))
 - [Construct3](/getting-started/construct3-client) ([view source-code](https://github.com/colyseus/colyseus-construct3))
+- [Cocos Creator](/getting-started/cocos-creator)
 
 ## The Client Instance:
 

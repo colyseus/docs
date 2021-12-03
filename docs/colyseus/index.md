@@ -8,7 +8,7 @@
 
 Colyseus is an Authoritative Multiplayer Framework for writing your own game servers using JavaScript/TypeScript and Node.js.
 
-It is agnostic regarding the technology you choose for the client-side. You can use one of the official client-side SDK's available, such as [Unity](/colyseus/getting-started/unity3d-client/), [JavaScript/TypeScript](/colyseus/getting-started/javascript-client/), [Defold Engine](/colyseus/getting-started/defold-client/), [Haxe](/colyseus/getting-started/haxe-client/), [Cocos Creator](/colyseus/getting-started/cocos-creator/) and [Construct3](/colyseus/getting-started/construct3-client/).
+Colyseus is agnostic regarding the technology you choose for the client-side. You can use one of the official client-side SDK's available, such as [Unity](/colyseus/getting-started/unity3d-client/), [JavaScript/TypeScript](/colyseus/getting-started/javascript-client/), [Defold Engine](/colyseus/getting-started/defold-client/), [Haxe](/colyseus/getting-started/haxe-client/), [Cocos Creator](/colyseus/getting-started/cocos-creator/) and [Construct3](/colyseus/getting-started/construct3-client/).
 
 **What Colyseus provides to you:**
 
@@ -30,18 +30,18 @@ Before we start, let's make sure we have the necessary system requirements insta
 
 ### Creating your server
 
-Use the `npm init colyseus-app` command to create an empty Colyseus server.
+Open your system terminal, and use the command below to set up a barebones server locally.
 
 ```
 npm init colyseus-app ./my-first-game-server
 ```
 
-> We recommend using TypeScript as your main language, although you can use JavaScript if you're more comfortable with it.
+This server template is ready to be used locally, self-hosted, or on [Colyseus Arena](/arena/).
 
-#### Establishing client connections
+#### Next steps
 
-#### Manipulating the state
-
+- Connect to your server by using one of the [client-side SDK's available](/colyseus/client/).
+- Understand how the [automatic state synchronization](/colyseus/state/overview/) works
 
 ---
 
@@ -62,9 +62,7 @@ You are encouraged to check out existing projects to explore and understand how 
 - [Turn Based Tanks](/colyseus/demo/turn-based-tanks/)
 - [MMO](/colyseus/demo/mmo/)
 
-**Community videos**
-
-Here is a selection of video made by community members:
+**Community videos**: a selection of videos made by community members for you:
 
 - [Multiplayer Tic-Tac-Toe in Colyseus & Phaser 3.50](https://www.youtube.com/playlist?list=PLumYWZ2t7CRueXsocQXOGqewmwzohljof)
 - [Multiplayer Game Design Colyseus and Unity](https://www.youtube.com/playlist?list=PLxgtJR7f0RBK_yGDSbPuspqMR-oEi1S25)
