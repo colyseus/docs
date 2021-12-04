@@ -1,8 +1,13 @@
+- [Colyseus Arena](#colyseus-arena)
 - [Deploying on Heroku](#heroku)
 - [Deploying on Nginx (recommended)](#nginx-recommended)
 - [Deploying on Apache](#apache)
 - [Using greenlock-express](#greenlock-express)
 - [Docker](#docker)
+
+## Colyseus Arena
+
+The easiest way to deploy your Colyseus server is to use the [Colyseus Arena](/arena). It should take less than 5 minutes to get your server up and running.
 
 ## Heroku
 
@@ -190,12 +195,12 @@ if (process.env.NODE_ENV === "production") {
 
 ## Docker
 
-Prerequisite: 
+Prerequisite:
 
 * `package.json` and `package-lock.json` are in the project.
 
 * Set up the `npm start` command so it starts the server
- 
+
 Steps:
 
 **Step 1** Install [Docker](https://www.docker.com/)
@@ -239,7 +244,7 @@ docker build -t <your username>/colyseus-server .
 docker images
 
 ```
-Output: 
+Output:
 ```
 # Example
 REPOSITORY                      TAG        ID              CREATED
