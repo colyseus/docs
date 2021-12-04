@@ -11,7 +11,9 @@ The easiest way to deploy your Colyseus server is to use the [Colyseus Arena](/a
 
 ## Heroku
 
-Heroku is recommended just for prototyping. You can deploy the [colyseus-examples](https://github.com/colyseus/colyseus-examples) project on it by hitting this button:
+Heroku _can_ be used for prototyping. You can deploy the [colyseus-examples](https://github.com/colyseus/colyseus-examples) project on it by hitting this button:
+
+Scaling Colyseus on Heroku is not practical. We do not recommend using Heroku with Colyseus in production.
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/colyseus/colyseus-examples)
 
