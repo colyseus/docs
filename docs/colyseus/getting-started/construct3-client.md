@@ -12,11 +12,15 @@
 
 ## Example project
 
-The example project has a similar result as the [TypeScript (pixijs-boilerplate)](https://github.com/endel/colyseus-pixijs-boilerplate).
+Please explore this demonstration project to understand how to use Colyseus with Construct3.
 
-- [Client-side (c3p project)](/_downloads/ColyAgarClient-0-14-0.c3p)
-- [Server-side on Glitch (source-code)](https://glitch.com/~colyseus-construct3)
+- [Download `.c3p` and server files](https://github.com/colyseus/construct3-demo/archive/refs/heads/master.zip)
+- Open the `ConstructProject.c3p` file on Construct editor.
+- (optional) Start the local server by running `npm install` and then `npm start`
 
+To use your local server, make sure to replace the `serverURI` global variable with `ws://localhost:8080` from the Event Sheet on Construct.
+
+> This project was based on the [TypeScript (pixijs-boilerplate)](https://github.com/endel/colyseus-pixijs-boilerplate).
 
 ## Handling messages
 
