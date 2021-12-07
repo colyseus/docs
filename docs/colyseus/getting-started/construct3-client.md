@@ -20,7 +20,7 @@ Please explore this demonstration project to understand how to use Colyseus with
 
 To use your local server, make sure to replace the `serverURI` global variable with `ws://localhost:8080` from the Event Sheet on Construct.
 
-> This project was based on the [TypeScript (pixijs-boilerplate)](https://github.com/endel/colyseus-pixijs-boilerplate).
+> The `.c3p` project and server files is open-source and is available at [colyseus/construct3-demo](https://github.com/colyseus/construct3-demo/)
 
 ## Handling messages
 
