@@ -762,7 +762,7 @@ The state instance you provided to [`setState()`](#setstate-object).
 
 ### `clients: Client[]`
 
-The array of connected clients. See [Web-Socket Client](/server/client).
+The array of connected clients. See [Client instance](#client).
 
 ---
 
