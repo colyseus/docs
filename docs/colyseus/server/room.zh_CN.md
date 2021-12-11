@@ -762,7 +762,7 @@ onCreate() {
 
 ### `clients: Client[]`
 
-已连接客户端的数组. 参见 [Web-Socket Client](/server/client).
+已连接客户端的数组. 参见 [Client instance](#client).
 
 ---
 
