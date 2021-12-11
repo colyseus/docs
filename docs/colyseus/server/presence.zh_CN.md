@@ -15,7 +15,7 @@
 
 在多进程和/或多机器上运行 Colyseus 时, 应使用此选项.
 
-**Parameters:**
+**参数:**
 
 - `clientOpts`: redis 客户端选项(主机/凭证). [查看完整选项列表](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/redis/index.d.ts#L28-L52).
 
