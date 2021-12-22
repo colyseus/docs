@@ -304,8 +304,9 @@ nav:
     - 'Customize room id': 'colyseus/how-to/custom-room-id.md'
     - 'Password-protect a room': 'colyseus/how-to/password-protect-room.md'
     - 'Deny a player joining a room': 'colyseus/how-to/deny-player-join-a-room.md'
-    - 'Rate-limit': 'colyseus/how-to/rate-limit.md'
+    - 'Custom CORS headers': 'colyseus/how-to/custom-cors-headers.md'
     - 'Setup server from scratch (TS)': 'colyseus/how-to/setup-server-from-scratch-typescript.md'
+    - 'Rate-limit': 'colyseus/how-to/rate-limit.md'
 
   - "Tech Demos":
     - 'Shooting Gallery': 'colyseus/demo/shooting-gallery.md'
