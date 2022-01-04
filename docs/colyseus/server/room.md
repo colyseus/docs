@@ -552,7 +552,7 @@ Send a message to all connected clients.
 
 Available options are:
 
-- **`except`**: a [`Client`](/server/client/) instance not to send the message to
+- **`except`**: a [`Client`](/server/client/), or array of `Client` instances not to send the message to
 - **`afterNextPatch`**: waits until next patch to broadcast the message
 
 #### Broadcast examples
