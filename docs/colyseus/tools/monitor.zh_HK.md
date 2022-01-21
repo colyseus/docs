@@ -11,7 +11,7 @@
     - 為用戶端傳送/廣播訊息
     - 強制中斷用戶端的連線
 
-<img src="https://github.com/colyseus/colyseus-monitor/raw/master/media/demo.gif?raw=true" />
+<img src="https://github.com/colyseus/colyseus/raw/master/packages/monitor/media/demo.gif?raw=true" />
 
 ## 安裝
 
