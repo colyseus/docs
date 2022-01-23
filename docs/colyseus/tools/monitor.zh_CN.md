@@ -11,7 +11,7 @@
     - 向客户端发送 / 广播信息
     - 强制断开客户端
 
-<img src="https://github.com/colyseus/colyseus-monitor/raw/master/media/demo.gif?raw=true" />
+<img src="https://github.com/colyseus/colyseus/raw/master/packages/monitor/media/demo.gif?raw=true" />
 
 ## 安装
 
