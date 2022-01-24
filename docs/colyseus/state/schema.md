@@ -865,11 +865,76 @@ When applying state changes coming from the server, the client-side is going to 
 
 The callbacks are triggered based on instance reference. Make sure to attach the callback on the instances that are actually changing on the server.
 
+- [listen()](#listenprop-callback)
 - [onAdd (instance, key)](#onadd-instance-key)
 - [onRemove (instance, key)](#onremove-instance-key)
 - [onChange (instance, key)](#onchange-instance-key) (on collections: `MapSchema`, `ArraySchema`, etc.)
-- [listen()](#listenprop-callback)
 - [onChange (changes)](#onchange-changes-datachange) (on `Schema` instance)
+
+#### `.listen(prop, callback)`
+
+Listens for a single property change.
+
+**Parameters:**
+
+- `property`: the property name you'd like to listen for changes.
+- `callback`: the callback that is going to be triggered when `property` changes.
+
+```typescript fct_label="TypeScript"
+state.listen("currentTurn", (currentValue, previousValue) => {
+    console.log(`currentTurn is now ${currentValue}`);
+    console.log(`previous value was: ${previousValue}`);
+});
+```
+
+```csharp fct_label="C#"
+state.OnCurrentTurnChange((currentValue, previousValue) => {
+    Debug.Log(currentValue);
+    Debug.Log(previousValue);
+})
+```
+
+```lua fct_label="LUA"
+state:listen("currentTurn", function (current_value, previous_value)
+    pprint(current_value);
+    pprint(previous_value);
+end)
+```
+
+```haxe fct_label="Haxe"
+state.listen("currentTurn", (currentValue, previousValue) => {
+    trace(currentValue);
+    trace(previousValue);
+});
+```
+
+The `.listen()` method returns a function that, when called, removes the attached callback:
+
+
+```typescript
+const unbindCallback = state.listen("currentTurn", (currentValue, previousValue) => {
+    // ...
+});
+
+// later on, if you don't need the listener anymore, you can call `unbindCallback()` to stop listening for `"currentTurn"` changes.
+unbindCallback();
+```
+
+**What's the difference between `listen` and `onChange`?**
+
+The `.listen()` method is a shorthand for `onChange` on a single property. Below is a rewrite from `.listen()` to `onChange`:
+
+```typescript
+state.onChange(function(changes) {
+    changes.forEach((change) => {
+        if (change.field === "currentTurn") {
+            console.log(`currentTurn is now ${change.value}`);
+            console.log(`previous value was: ${change.previousValue}`);
+        }
+    })
+});
+```
+---
 
 #### `onAdd (instance, key)`
 
@@ -1035,72 +1100,6 @@ If you'd like to detect changes inside a collection of **non-primitive** types (
     The `onChange` callback is not triggered during [`onAdd`](#onadd-instance-key) or [`onRemove`](#onremove-instance-key).
 
     Consider registering `onAdd` and `onRemove` if you need to detect changes during these steps too.
-
----
-
-#### `.listen(prop, callback)`
-
-Listens for a single property change.
-
-**Parameters:**
-
-- `property`: the property name you'd like to listen for changes.
-- `callback`: the callback that is going to be triggered when `property` changes.
-
-```typescript fct_label="TypeScript"
-state.listen("currentTurn", (currentValue, previousValue) => {
-    console.log(`currentTurn is now ${currentValue}`);
-    console.log(`previous value was: ${previousValue}`);
-});
-```
-
-```csharp fct_label="C#"
-state.OnCurrentTurnChange((currentValue, previousValue) => {
-    Debug.Log(currentValue);
-    Debug.Log(previousValue);
-})
-```
-
-```lua fct_label="LUA"
-state:listen("currentTurn", function (current_value, previous_value)
-    pprint(current_value);
-    pprint(previous_value);
-end)
-```
-
-```haxe fct_label="Haxe"
-state.listen("currentTurn", (currentValue, previousValue) => {
-    trace(currentValue);
-    trace(previousValue);
-});
-```
-
-The `.listen()` method returns a function that, when called, removes the attached callback:
-
-
-```typescript
-const unbindCallback = state.listen("currentTurn", (currentValue, previousValue) => {
-    // ...
-});
-
-// later on, if you don't need the listener anymore, you can call `unbindCallback()` to stop listening for `"currentTurn"` changes.
-unbindCallback();
-```
-
-**What's the difference between `listen` and `onChange`?**
-
-The `.listen()` method is a shorthand for `onChange` on a single property. Below is a rewrite from `.listen()` to `onChange`:
-
-```typescript
-state.onChange(function(changes) {
-    changes.forEach((change) => {
-        if (change.field === "currentTurn") {
-            console.log(`currentTurn is now ${change.value}`);
-            console.log(`previous value was: ${change.previousValue}`);
-        }
-    })
-});
-```
 
 ---
 

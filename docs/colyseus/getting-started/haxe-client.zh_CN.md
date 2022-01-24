@@ -35,9 +35,9 @@ client.joinOrCreate("room_name", [], RoomState, function(err, room) {
     room.state.entities.onAdd(function(entity, key) {
         trace("entity added at " + key + " => " + entity);
 
-        entity.onChange = function (changes) {
-            trace("entity changes => " + changes);
-        }
+        entity.onChange(function (changes) {
+            trace("entity has been changed");
+        });
     })
 
     room.state.entities.onChange(function(entity, key) {
