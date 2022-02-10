@@ -17,7 +17,7 @@
 
 **Parameters:**
 
-- `clientOpts`: redis 客戶端選項(主機/憑證). [查看完整選項列表](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/redis/index.d.ts#L28-L52).
+- `clientOpts`: redis 客戶端選項 (主機/憑證). [查看完整選項列表](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/redis/index.d.ts#L28-L52).
 
 ```typescript fct_label="TypeScript"
 import { Server, RedisPresence } from "colyseus";
