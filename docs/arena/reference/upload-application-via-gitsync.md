@@ -58,3 +58,6 @@ You can check on the status of your sync or look for any errors using the ***Dep
 
 ## Troubleshooting
 If you have a merge conflict or other unknown / critical error in the sync process we recommend you select **Restart** from the deployments screen for the **Git Sync Service**. Restarting the GitSync service will clear the local repo and pull a fresh copy upon restart.
+
+If you are not including a `arena.env` in your Git Repo do be aware that the file created on the Source Code section of the dashboard will be removed on every new Git Sync. If you would like to keep a file that persists you will need to create and deploy `arena.secret.env` file. This file is stored permanently and cannot be deleted via the source code dashboard, it can only be overwritten. To have this file deleted you must open a support ticket, to clear information on the file just deploy a blank version of it.
+ 
