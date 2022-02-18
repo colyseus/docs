@@ -223,7 +223,24 @@ const transport = new uWebSocketsTransport({
     /* ...options */
 });
 
-transport.app.get("/*", (res, req) => {
+// ASYNC route
+transport.app.get("/async_route", (res, req) => {
+    /* Can't return or yield from here without responding or attaching an abort handler */
+    res.onAborted(() => {
+        res.aborted = true;
+    });
+    
+    /* Awaiting will yield and effectively return to C++, so you need to have called onAborted */
+    let result = await someAsyncTask();
+
+    /* If we were aborted, you cannot respond */
+    if (!res.aborted) {
+        res.writeStatus('200 OK').writeHeader('IsExample', 'Yes').end(result);
+    }
+});
+
+// SYNC route
+transport.app.get("/sync_route", (res, req) => {
     res.writeStatus('200 OK').writeHeader('IsExample', 'Yes').end('Hello there!');
 });
 ```
@@ -233,9 +250,6 @@ See [`uWebSockets.js` examples](https://github.com/uNetworking/uWebSockets.js/tr
 #### Alternative: express compatibility layer
 
 Alternatively, we've built a thin express compatibility layer that aims to provide the same functionality from Express, but using `uWebSockets.js` under the hood.
-
-!!! tip "This feature is experimental"
-    The Express compatibility layer is experimental and may not work with complex code
 
 **Installation**
 
