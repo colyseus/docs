@@ -77,7 +77,7 @@ mkdir src
 Create a new file called `main.ts` in the `src` directory
 ```ts
 import { Server } from "colyseus"
-const port = parseInt(process.env.port, 10) || 3000
+const port = parseInt(process.env.PORT, 10) || 3000
 
 const gameServer = new Server()
 gameServer.listen(port)
