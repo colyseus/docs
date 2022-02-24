@@ -77,7 +77,7 @@ mkdir src
 在 `src` 目录下新建一个名为 `main.ts` 的文件夹.
 ```ts
 import { Server } from "colyseus"
-const port = parseInt(process.env.port, 10) || 3000
+const port = parseInt(process.env.PORT, 10) || 3000
 
 const gameServer = new Server()
 gameServer.listen(port)

@@ -223,7 +223,24 @@ const transport = new uWebSocketsTransport({
     /* ...选项 */
 });
 
-transport.app.get("/*", (res, req) => {
+// 异步路由
+transport.app.get("/async_route", (res, req) => {
+    /* 没有响应或者中断处理的话, 不应从这里 return 或者 yield */
+    res.onAborted(() => {
+        res.aborted = true;
+    });
+
+    /* 中断程序去底层执行 C++, 此时 onAborted 函数应已被调用 */
+    let result = await someAsyncTask();
+
+    /* 中断状态下, 不应该响应 */
+    if (!res.aborted) {
+        res.writeStatus('200 OK').writeHeader('IsExample', 'Yes').end(result);
+    }
+});
+
+// 同步路由
+transport.app.get("/sync_route", (res, req) => {
     res.writeStatus('200 OK').writeHeader('IsExample', 'Yes').end('Hello there!');
 });
 ```
@@ -233,9 +250,6 @@ transport.app.get("/*", (res, req) => {
 #### 另一种选择: express 兼容层
 
 作为另一种方法, 我们构建了一个轻兼容层, 旨在提供与 Express 相同的功能的同时, 使用 `uWebSockets.js` 作为底层.
-
-!!! tip "此功能为实验性质"
-    该 Express 兼容层为实验性质, 可能无法处理复杂代码
 
 **安装**
 
