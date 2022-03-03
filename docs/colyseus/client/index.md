@@ -664,6 +664,27 @@ room.send(0, { direction: "left" });
 
 ---
 
+#### `sendBytes (type, bytes)`
+
+Send a raw byte array as a message to the server. A byte array is an array of numbers from `0` to `255`.
+
+This is useful if you'd like to manually encode a message, rather than the default encoding (MsgPack).
+
+```typescript fct_label="JavaScript"
+//
+// sending message with number type
+//
+room.send(0, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
+
+
+//
+// sending message with string type
+//
+room.send("some-bytes", [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
+```
+
+---
+
 #### `leave (consented: boolean)`
 
 Disconnect client from the room.

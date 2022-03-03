@@ -541,7 +541,7 @@ You may set the `COLYSEUS_SEAT_RESERVATION_TIME` environment variable if you'd l
 ### `send (client, message)`
 
 !!! Warning "Deprecated"
-    `this.send()` has been deprecated. Please use [`client.send()` instead](/server/client/#sendtype-message).
+    `this.send()` has been deprecated. Please use [`client.send()` instead](#sendtype-message).
 
 ---
 
@@ -911,6 +911,30 @@ client.send(data);
 
 !!! Tip
     [See how to handle these messages on client-side.](/colyseus/client/#onmessage)
+
+---
+
+#### `sendBytes(type, bytes)`
+
+Send a raw byte array message to the client.
+
+The `type` can be either a `string` or a `number`.
+
+This is useful if you'd like to manually encode a message, rather than the default encoding (MsgPack).
+
+**Sending a message:**
+
+```typescript
+//
+// sending message with a string type ("powerup")
+//
+client.sendBytes("powerup", [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
+
+//
+// sending message with a number type (1)
+//
+client.sendBytes(1, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
+```
 
 ---
 
