@@ -1,5 +1,8 @@
 # Arena Servers API
 
+!!! NOTE
+    ONLY works with Arena App Deployments of the Powered Ascent plan or higher.
+
 A simple, fast and high availability API to manage your Colyseus Arena server deployment. Ideal for multi-regional deployment or can be used to pass simple configuration information to your game client. This client API is a quick and effective solution to provide simple configurable data and server endpoints to your users.
 
 ## Getting Started
