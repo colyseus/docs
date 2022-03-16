@@ -498,7 +498,7 @@ this.setMetadata({ friendlyFire: true });
 // 客户端
 client.getAvailableRooms("battle").then(rooms => {
   for (var i=0; i<rooms.length; i++) {
-    if (room.metadata && room.metadata.friendlyFire) {
+    if (room.metadata?.friendlyFire) {
       //
       // 查找具有 `friendlyFire` 元数据的房间 id:
       //
