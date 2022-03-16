@@ -498,7 +498,7 @@ this.setMetadata({ friendlyFire: true });
 // client-side
 client.getAvailableRooms("battle").then(rooms => {
   for (var i=0; i<rooms.length; i++) {
-    if (room.metadata && room.metadata.friendlyFire) {
+    if (room.metadata?.friendlyFire) {
       //
       // join the room with `friendlyFire` by id:
       //
