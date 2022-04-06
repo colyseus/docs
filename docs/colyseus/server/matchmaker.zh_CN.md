@@ -1,4 +1,4 @@
-# Server API &raquo; Match-maker API
+# 服务器 API &raquo; 房间匹配 API
 
 !!! Warning "您可能不需要这样做!"
     本部分介绍高级用法. 您通常可以使用 [客户端方法](/client/client/#methods). 如果不能使用客户端方法来实现目上标, 可以考虑使用本页介绍的方法.

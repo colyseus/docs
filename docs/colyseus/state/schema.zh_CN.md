@@ -1,13 +1,13 @@
-# [状态同步](/state/overview) &raquo; Schema
+# [状态数据同步](/state/overview) &raquo; Schema
 
 !!! Tip "还没使用 TypeScript?"
     强烈建议您使用 TypeScript 以便更好地定义 Schema 结构并提高整体开发体验. TypeScript 支持的 "实验性修饰器" 会在本手册内大量使用.
 
 ## 如何定义可同步结构
 
-- `Schema` 结构由服务器定义, 用于房间状态同步.
+- `Schema` 结构由服务器定义, 用于房间状态服务端客户端数据同步.
 - 只有以 `@type()` 修饰的字段才会被用于同步.
-- _(可同步 Schema 结构仅应用于状态相关的数据.)_
+- _(可同步 Schema 结构仅应被用于需要服务器客户端同步的数据.)_
 
 ### 定义 `Schema` 结构
 
