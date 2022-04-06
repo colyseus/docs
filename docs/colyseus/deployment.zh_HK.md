@@ -34,7 +34,8 @@ pm2 start your-server.js
 
 ```
 server {
-    listen 80; server\_name yourdomain.com;
+    listen 80;
+    server_name yourdomain.com;
 
     location / {
         proxy_pass http://localhost:2567;
@@ -57,7 +58,7 @@ server {
 server {
     listen 80;
     listen 443 ssl;
-    server\_name yourdomain.com;
+    server_name yourdomain.com;
 
     ssl_certificate /path/to/your/cert.crt;
     ssl_certificate_key /path/to/your/cert.key;
@@ -92,7 +93,7 @@ sudo a2enmod proxy_wstunnel
 虛擬托管配置:
 
 ```
-<VirtualHost \*:80>
+<VirtualHost *:80>
     ServerName servername.xyz
 
     # 把從 80 端口收到的請求全部轉發至 HTTPS 端口 (強製使用 ssl):
@@ -101,7 +102,7 @@ sudo a2enmod proxy_wstunnel
 
 </VirtualHost>
 
-<VirtualHost \*:443>
+<VirtualHost *:443>
     ServerName servername.xyz
 
     # 開啟 SSL
@@ -157,7 +158,7 @@ function setup(app: express.Application, server: http.Server) {
   return app;
 }
 
-if (process.env.NODE\_ENV === "production") {
+if (process.env.NODE_ENV === "production") {
   require('greenlock-express')
     .init(function () {
       return {
@@ -165,7 +166,8 @@ if (process.env.NODE\_ENV === "production") {
         cluster: false
       };
     })
-    .ready(function (glx) { const app = express();
+    .ready(function (glx) {
+        const app = express();
 
       // 服務於 80 和 443 埠口
       // 神奇地自動獲取 SSL 證書!
@@ -176,9 +178,11 @@ if (process.env.NODE\_ENV === "production") {
   // 開發環境埠口
   const PORT = process.env.PORT || 2567;
 
-  const app = express(); const server = http.createServer(app);
+  const app = express();
+  const server = http.createServer(app);
 
-  setup(app, server); server.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`));
+  setup(app, server);
+  server.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`));
 }
 
 ```
@@ -197,14 +201,14 @@ if (process.env.NODE\_ENV === "production") {
 
 **步驟 2** 在 colyseus 项目根目录中创建 Dockerfile
 ```dockerfile
-FROM node:12
+FROM node:14
 
 ENV PORT 8080
 
 WORKDIR /usr/src/app
 
 # 使用一個萬用字元來確保 package.json 和 package-lock.json 得到復製
-COPY package\*.json ./
+COPY package*.json ./
 
 RUN npm ci
 # 在生產環境中執行此程序
@@ -218,7 +222,8 @@ CMD [ "npm", "start" ]
 ```
 **步驟 3** 在同目錄下創建 `.dockerignore` 文件
 ```
-node\_modules npm-debug.log
+node_modules
+npm-debug.log
 ```
 這將防止本機模組和調試日誌被復製到 Docker 映像上,並可能覆蓋安裝在映像中的模組.
 
@@ -237,7 +242,7 @@ docker images
 ```
 # 示例
 REPOSITORY                      TAG     ID              CREATED
-node                            12      1934b0b038d1    About a minute ago
+node                            14      1934b0b038d1    About a minute ago
 <your username>/colseus-server  latest  d64d3505b0d2    About a minute ago
 ```
 
