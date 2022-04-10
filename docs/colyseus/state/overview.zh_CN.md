@@ -1,4 +1,4 @@
-# 状态同步
+# 状态数据同步
 
 Colyseus 通过其强类型的 [`Schema` 结构](/state/schema/) 自动处理状态同步.
 

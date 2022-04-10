@@ -1,4 +1,4 @@
-# [狀態同步](/state/overview) &raquo; Schema
+# [狀態數據同步](/state/overview) &raquo; Schema
 
 !!! Tip "還沒使用 TypeScript?"
     強烈建議您使用 TypeScript 以便更好地定義 Schema 結構並提高整體開發體驗. TypeScript 支持的 "實驗性修飾器" 會在本手冊內大量使用.
