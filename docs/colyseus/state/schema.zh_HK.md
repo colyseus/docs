@@ -488,7 +488,7 @@ for (key => value in state.players) {
 
 `SetSchema` 是一個基於 JavaScript 內置 [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) 的可同步版本.
 
-`SetSchema` 的用法和 [`CollectionSchema`] 十分類似, 最大區別在於 Set 的值具有唯一性. JS 的 Set 沒有直接獲取值的方法. (比如像 [collection.at()](#collectionat))
+`SetSchema` 的用法和 [`CollectionSchema`] 十分類似, 最大區別在於 Set 的值具有唯一性. Set 沒有直接獲取值的方法. (比如像 [collection.at()](#collectionat))
 
 ```typescript fct_label="TypeScript"
 import { Schema, SetSchema, type } from "@colyseus/schema";
@@ -536,22 +536,6 @@ const set = new SetSchema<number>();
 set.add(1);
 set.add(2);
 set.add(3);
-```
-
----
-
-#### `set.at()`
-
-獲取 `index` 處的值.
-
-```typescript
-const set = new SetSchema<string>();
-set.add("one");
-set.add("two");
-set.add("three");
-
-set.at(1);
-// 輸出: "two"
 ```
 
 ---

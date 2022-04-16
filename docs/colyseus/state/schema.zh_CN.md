@@ -540,22 +540,6 @@ set.add(3);
 
 ---
 
-#### `set.at()`
-
-获取 `index` 处的值.
-
-```typescript
-const set = new SetSchema<string>();
-set.add("one");
-set.add("two");
-set.add("three");
-
-set.at(1);
-// 输出: "two"
-```
-
----
-
 #### `set.delete()`
 
 按值删除元素.
