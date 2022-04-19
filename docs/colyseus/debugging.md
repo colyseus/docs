@@ -62,7 +62,7 @@ Logs whenever unexpected (or expected, internally) errors happens on the server-
 
 ### `colyseus:matchmaking`
 
-Logs whenever a room is spanwed or disposed.
+Logs whenever a room is spawned or disposed.
 
 ```
 colyseus:matchmaking spawning 'chat' on worker 77218 +52s
