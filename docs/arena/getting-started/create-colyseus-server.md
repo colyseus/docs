@@ -6,7 +6,7 @@
 - [Download and install Git SCM](https://git-scm.com/downloads)
 - [Download and install Visual Studio Code](https://code.visualstudio.com/) (or other editor of your choice)
 
-## Creating a Colyseus server form NPM template
+## Creating a Colyseus server from NPM template
 
 Use the `npm init colyseus-app` command to generate a barebones Colyseus server. You may select between TypeScript (recommended) and JavaScript as the language for the server. These are the only two languages currently supported by **Arena Cloud**.
 
@@ -73,7 +73,7 @@ The following is the expected folder structure and files that are created in the
 
     beforeListen: () => {
         /**
-         * Before before gameServer.listen() is called.
+         * Before gameServer.listen() is called.
          */
     }
 ```

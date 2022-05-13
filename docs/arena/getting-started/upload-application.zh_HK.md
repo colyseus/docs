@@ -1,38 +1,38 @@
-# 網頁介面
+# 網絡界面
 
-### 相關要求
+### 要求
 
-* [建立](../create-application/) Arena 應用程式部署.
+* [已完成創建](../create-application/) Arena 應用部署.
 
 ## 上傳您的代碼
-在應用程式儀表板的左下角, 選擇 **伺服器代碼**, 以存取整合的 Web IDE 和 Uploader.
+在應用儀表板的左下角, 點選 **Server Code (伺服器代碼)**, 可以使用網頁集成 IDE 和 上傳功能.
 
-![Arena 應用程式管理視圖](../../images/edit-server-code.jpg)
+![Arena 應用管理界面](../../images/edit-server-code.jpg)
 
-在此畫面中, 您可以將代碼 **建立**, **刪除**, **上傳** 和 **部署** 到您的部署遊戲伺服器隊列. 選擇 **上傳** 可開啟對話框, 您可以從這裡選擇上傳單一檔案或上傳資料夾.
+在此界面上, 您可以 **CREATE (創建)**, **DELETE (刪除)**, **UPLOAD (上傳)** 代碼並將代碼 **DEPLOY (部署)** 到遊戲伺服器中. 點選 **Upload (上傳)** 打開對話框, 在這裏可以選擇上傳單個文件還是整個文件夾.
 
-![Arena 應用程式管理視圖](../../images/upload-dialog.jpg)
+![Arena 應用管理界面](../../images/upload-dialog.jpg)
 
 !!! NOTE
-    - Arena 應用程式 **僅支援** 編譯後的 Javascript 代碼. 如果您使用 TypeScript, 請務必先建置您的代碼並上傳建置資料夾的內容.
-    - 如果您使用 ***NPM*** 樣板建立 Colyseus 伺服器, 則 ```npm run build``` 指令將編譯所有必要的檔案並將其複製到您的輸出資料夾中.
-    - 為 TypeScript 建置輸出資料夾: ```lib``` / JavaScript: ```upload```
+    - Arena 應用 **僅支持** 已編譯的 Javascript 代碼, 如果您使用 TypeScript, 請務必先進行編譯然後上傳編譯後的文件夾內容.
+    - 如果您使用 ***NPM*** 樣板創建 Colyseus 伺服器, 則 ```npm run build``` 命令會將 require 的所有文件編譯復製到輸出文件夾中.
+    - 編譯輸出文件夾 TypeScript: ```lib``` / JavaScript: ```upload```
 
-## 伺服器代碼概覽
+## 伺服器代碼概述
 
-完成上傳後, 如果您使用 ```npm run build``` 模板, 您應該會看到以下檔案和資料夾結構.
+如果使用的 ```npm run build``` 樣板, 完成上傳後應該會看到如下的目錄結構.
 
 ![Arena 代碼樣板](../../images/code-template.jpg)
 
-- **arena.config.js:**您應該在此檔案中新增房間聲明, 快速加載項以及在伺服器啟動之前需要調用的任何其他函數. 將應用程序部署到 Arena Cloud 時, 將此視為您的 ***index.js***.
+- **arena.config.js:** 要在此文件中加入房間定義, express 插件以及各種需要在伺服器啟動之前執行的功能. 部署到 Arena Cloud 時, 此文件等同於您本地的 ***index.js***.
 
-*File ```arena.config.js``` Example:*
+*文件 ```arena.config.js``` 舉例:*
 ```
 const Arena = require("@colyseus/arena").default;
 const { monitor } = require("@colyseus/monitor");
 
 /**
- * Import your Room files
+ * 匯入房間定義
  */
 const { ShootingGalleryRoom } = require("./rooms/ShootingGalleryRoom");
 
@@ -41,45 +41,45 @@ module.exports = Arena({
 
     initializeGameServer: (gameServer) => {
         /**
-         * Define your room handlers:
+         * 定義房間句柄:
          */
         gameServer.define('ShootingGalleryRoom', ShootingGalleryRoom);
     },
 
     initializeExpress: (app) => {
         /**
-         * Bind your custom express routes here:
+         * 自定義 express 路由寫在這裏:
          */
         app.get("/", (req, res) => {
             res.send("It's time to kick ass and chew bubblegum!");
         });
 
         /**
-         * Bind @colyseus/monitor
-         * It is recommended to protect this route with a password.
-         * Read more: https://docs.colyseus.io/tools/monitor/
+         * 綁定 @colyseus/monitor
+         * 建議使用密碼將這個路由位址保護起來.
+         * 詳見: https://docs.colyseus.io/tools/monitor/
          */
         app.use("/colyseus", monitor());
     },
 
     beforeListen: () => {
         /**
-         * Before before gameServer.listen() is called.
+         * 調用 gameServer.listen() 之前需要執行的程式.
          */
     }
 
 });
 ```
-- **arena.env:** 在此檔案中, 您將定義應用程式所需的任何自定義環境變數. 這將是一個很好的檔案, 因為它可用於儲存分隔開發和生產環境的密鑰.
+- **arena.env:** 此文件中需要定義應用所需的各種自定義環境變數. 此文件很適合存放開發環境和生產環境的切換開關變數.
 
-*File ```arena.env``` Example:*
+*文件 ```arena.env``` 舉例:*
 ```
 NODE_ENV=production
 ABC_GAME_MODE=dev
 ```
 
-- **index.js** 在 Arena Cloud 上託管時不使用此檔案. 此檔案有助於本機開發託管或自託管. 使用 Arena Cloud 時, 您的 *arena.config.js* 將由專為企業級可擴展性和穩定性設計的 Colyseus 開源的修改版本初始化.
+- **index.js** 在 Arena Cloud 上托管時, 不使用此文件. 此文件可用於本地開發或自托管. 使用 Arena Cloud 時, 會由專為企業級可擴展性和穩定性而設計的 Colyseus 變更版來初始化 *arena.config.js* 文件.
 
-- **package.json** **NPM** 樣板上的建置指令將您現有的 package.json 複製到分發資料夾中. 此檔案用於在遊戲伺服器啟動時安裝使用者定義的模組.
+- **package.json** **NPM** 樣板上的 build 命令會將現有的 package.json 文件復製到分發文件夾中. 此文件用於在伺服器啟動時安裝用戶自定義模組.
 
-- **.npmrc** *(可選)*: 請參閱 [使用私有 NPM 儲存庫](../../reference/npmrc-custom/)
+- **.npmrc** *(可選)*: 詳見 [使用私有 NPM 托管庫](../../reference/npmrc-custom/)

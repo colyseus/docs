@@ -160,7 +160,7 @@ console.log(rooms);
 
 **參數:**
 
-- **`roomId`**: 一個特定房間實例的 ID.
+- **`roomName`**: 一個特定房間實例的 ID.
 - **`options`**: 客戶端的座位保留選項(用於 `onJoin`/`onAuth`)
 
 ```typescript

@@ -37,7 +37,7 @@ export class MyRoom extends Room<MyRoomState> {
             id = this.generateRoomIdSingle();
         } while (currentIds.includes(id));
 
-        await this.presence.sadd(this.LOBBY_CHANNEL, this.roomId);
+        await this.presence.sadd(this.LOBBY_CHANNEL, id);
         return id;
     }
 

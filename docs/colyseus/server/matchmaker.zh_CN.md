@@ -160,7 +160,7 @@ console.log(rooms);
 
 **参数:**
 
-- **`roomId`**: 一个特定房间实例的 ID.
+- **`roomName`**: 指定房间实例的 ID.
 - **`options`**: 客户端的座位保留选项(用于 `onJoin`/`onAuth`)
 
 ```typescript

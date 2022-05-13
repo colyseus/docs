@@ -6,12 +6,12 @@
 
 ## Setup your Config File
 
-To configure git sync you will need to add the following ```arena.gitsync.json``` JSON file to the root folder of your Server Code and Deploy it to your application. 
+To configure git sync you will need to add the following ```arena.gitsync.json``` JSON file to the root folder of your Server Code and Deploy it to your application.
 
-!!! NOTE   
+!!! NOTE
     - **REMINDER** you must click `Deploy` to push the updated ```arena.gitsync.json``` to your application servers before the GitSync service will see the changes.
 
-The syncing service will pull your Git repository for a new check-in in the requested branch approximately every 2 minutes. 
+The syncing service will pull your Git repository for a new check-in in the requested branch approximately every 2 minutes.
 
 ## Example of arena.gitsync.json
 ```
@@ -32,8 +32,8 @@ The syncing service will pull your Git repository for a new check-in in the requ
 
 - **serverDir:** This is the location from the root of your repo of where the upload code exists. If you will be using 'npm run build' to create your deployment code then put the directory where this command will output your files.
 
-- **buildType:** You have two options for this attribute. 
-    - `arena` - This will run ```npm install && npm run build``` before attempting to copy files from the serverDir. 
+- **buildType:** You have two options for this attribute.
+    - `arena` - This will run ```npm install && npm run build``` before attempting to copy files from the serverDir.
     - `none` - Directly copies files from serverDir folder without running any build commands. Use this option if your server code is already complied and ready to run on Arena Cloud before your check-in.
 
 - **gitServer:** Your git repo url.
@@ -46,7 +46,7 @@ The syncing service will pull your Git repository for a new check-in in the requ
 
 - **redeployOnChange:** If true, your new code will be immediately deployed to your game servers and they will be restarted, ending any existing games on those servers (Graceful rolling updating will be implemented in the next few weeks).
 
-- **overrideGitURL: ** For any non-standard / non-https URLs for your repo (We do not recommend using this option).
+- **overrideGitURL:** For any non-standard / non-https URLs for your repo (We do not recommend using this option).
 
 - **repoReset:** This will force delete the local copy of your repo on your git sync server. This is useful if you are changing the REPO to point to a new location. You will need to keep it on for one update cycle, then it can be turned off.
 

@@ -209,7 +209,7 @@ Steps:
 
 **Step 2** Create `Dockerfile` in the root of the colyseus project
 ```dockerfile
-FROM node:12
+FROM node:14
 
 ENV PORT 8080
 
@@ -250,7 +250,7 @@ Output:
 ```
 # Example
 REPOSITORY                      TAG        ID              CREATED
-node                            12         1934b0b038d1    About a minute ago
+node                            14         1934b0b038d1    About a minute ago
 <your username>/colseus-server    latest     d64d3505b0d2    About a minute ago
 ```
 

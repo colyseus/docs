@@ -498,7 +498,7 @@ this.setMetadata({ friendlyFire: true });
 // client-side
 client.getAvailableRooms("battle").then(rooms => {
   for (var i=0; i<rooms.length; i++) {
-    if (room.metadata && room.metadata.friendlyFire) {
+    if (room.metadata?.friendlyFire) {
       //
       // join the room with `friendlyFire` by id:
       //
@@ -762,7 +762,7 @@ onCreate() {
 
 ### `clients:客戶端`
 
-已連線的客戶端數組. 參見 [Web-Socket Client](/server/client).
+已連線的客戶端數組. 參見 [Client instance](#client).
 
 ---
 

@@ -513,7 +513,7 @@ Now that a room has metadata attached to it, the client-side can check which roo
 // client-side
 client.getAvailableRooms("battle").then(rooms => {
   for (var i=0; i<rooms.length; i++) {
-    if (room.metadata && room.metadata.friendlyFire) {
+    if (room.metadata?.friendlyFire) {
       //
       // join the room with `friendlyFire` by id:
       //
@@ -781,7 +781,7 @@ The state instance you provided to [`setState()`](#setstate-object).
 
 ### `clients: Client[]`
 
-The array of connected clients. See [Web-Socket Client](/server/client).
+The array of connected clients. See [Client instance](#client).
 
 ---
 

@@ -8,6 +8,9 @@
 
 要配置 git sync, 需要将以下 ```arena.gitsync.json``` JSON 文件添加到服务器代码的根文件夹并将其部署到您的应用.
 
+!!! NOTE
+    - **再次提示** 必须点选 `Deploy` 来推送 ```arena.gitsync.json``` 到您的应用服务器, GitSync 才能正确更新.
+
 同步服务大约每 2 分钟拉取一次 Git 存储库, 以在请求的分支中进行新签入.
 
 ## Example of arena.gitsync.json 示例
@@ -55,3 +58,5 @@
 
 ## 故障排除
 如果在同步过程中遇到合并冲突或其他未知/严重错误, 建议您在 **Git Sync Service** 的部署屏幕上选择 **Restart**. 重新启动 GitSync 服务将清除本地存储库, 并在重新启动时拉出一个新副本.
+
+如果您的 Git 仓库中未提供 `arena.env` 的话该文件会在主面板的 Source Code 页自动生成, 而且会随每次 Git Sync 被自动删除. 如果您需要固化环境配置的话请创建并部署 `arena.secret.env` 文件. 该文件会在 source code 页中永远保存着不能被删除, 只可以被覆盖. 如必须删除该文件只能向技术支持提交工单, 如需清空该文件只需要部署空文件覆盖它即可.

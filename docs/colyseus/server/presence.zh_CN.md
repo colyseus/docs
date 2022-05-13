@@ -1,4 +1,4 @@
-# 服务器 API &raquo; 状态
+# 服务器 API &raquo; Presence
 
 在多处理器和/或机器上扩展服务器时, 需要为 `Server` 提供 [`Presence`](/server/api/#optionspresence) 选项. `Presence` 的作用是允许不同进程之间的通信和数据共享, 特别是在匹配期间.
 
@@ -15,9 +15,9 @@
 
 在多进程和/或多机器上运行 Colyseus 时, 应使用此选项.
 
-**Parameters:**
+**参数:**
 
-- `clientOpts`: redis 客户端选项(主机/凭证). [查看完整选项列表](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/redis/index.d.ts#L28-L52).
+- `clientOpts`: redis 客户端选项 (主机/凭证). [查看完整选项列表](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/redis/index.d.ts#L28-L52).
 
 ```typescript fct_label="TypeScript"
 import { Server, RedisPresence } from "colyseus";

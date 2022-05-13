@@ -1,4 +1,7 @@
-# Arena Servers API 
+# Arena Servers API
+
+!!! NOTE
+    ONLY works with Arena App Deployments of the Powered Ascent plan or higher.
 
 A simple, fast and high availability API to manage your Colyseus Arena server deployment. Ideal for multi-regional deployment or can be used to pass simple configuration information to your game client. This client API is a quick and effective solution to provide simple configurable data and server endpoints to your users.
 
@@ -11,7 +14,7 @@ The API is configured by a JSON file to begin you will need to create a file `co
 **Required Value**
 
 - `url`: This is the only required value as it will be used to poll the server to check for availability.
-!!! NOTE   
+!!! NOTE
     - Arena Servers API is only compatible with Arena Plans that support auto-scaling (Powered Ascent or higher).
 
 **Example `config.json`:**
@@ -37,9 +40,9 @@ The API is configured by a JSON file to begin you will need to create a file `co
 ```
 
 ### Deploying your API
-To deploy you API safe your config file and select `Deploy` on the top right corner. Make sure to ***check reload*** before pressing the **Deploy** button.
+To deploy you API save your config file and select `Deploy` on the top right corner. Make sure to ***check reload*** before pressing the **Deploy** button.
 
-The new changes will be pushed to server drive and will trigger the launch a new API with these update changes, once the new server is active (approx 20 - 30 seconds) the old server will shutdown. This provides seamless availability for the API during the update.
+The new changes will be pushed to server drive and will trigger the launch of a new API server with these update changes, once the new server is active (approx 20 - 30 seconds) the old server will shutdown. This provides seamless availability for the API during the update.
 
 ### Endpoints
 To see results from your API server visit the URL displayed in the **Manage** section of your dashboard with the following endpoints.  (**IE:** *abc123.colyseus.dev/api/v1/list*)
@@ -76,5 +79,5 @@ To see results from your API server visit the URL displayed in the **Manage** se
   ]
 }
 ```
-!!! NOTE   
+!!! NOTE
     - Arena currently only support port 2567, 80, 443 (SSL).

@@ -1,20 +1,20 @@
 # 修改现有 Colyseus 服务器
 
-如果您已经拥有 Colyseus 服务器或在开始时使用自托管设置, 则可能拥有如下所示的服务器文件夹结构和索引文件.
+如果您拥有自己写好的 Colyseus 服务器或者刚刚在自托管服务器上进行初始化安装, 那么服务器的目录结构应该是下面那个样子滴.
 
-### Self-hosted index.ts
+### 自托管的 index.ts
 
-![NPM Code](../../images/standalone-colyseus-server.jpg)
+![NPM 代码](../../images/standalone-colyseus-server.jpg)
 
-## Arena Cloud 所需要的更改
+## Arena Cloud 上的必要修改
 
-要使用 Arena Cloud, 必须修改上述服务器代码以使用当前的 **NPM** Colyseus 模板. 总体来说, 这些修改对于现有的 0.14 服务器来说数量很小. 这些更改只需要您将房间定义和自定义快速路由移动到 ```arena.config``` 文件中. 对于上面的示例, 修改服务器代码的正确方法如下所示.
+要使用 Arena Cloud, 必须修改上述服务器代码以使用当前的 **NPM** Colyseus 模板. 一般来说, 这些修改跟现有的 0.14 版本服务器差别不大. 只需要您将房间定义和自定义的 express 路由移入 ```arena.config``` 文件中. 比如上面的示例, 应该修改服务器代码如下.
 
 !!! NOTE
-    您会注意到, 我们不需要 Arena Cloud 上的传输或驱动程序的定义. 这是因为 Arena Cloud 在后台运行为您大规模托管 Colyseus 服务器所需的所有必需服务和数据库. 因此, 作为开发人员, 您不需要定义 ***presence*** / ***matchmaking*** 驱动程序或部署和托管它们所需的数据库.
+    9/14/2021 更新: 您可能注意到, 我们不需要在 Arena Cloud 上定义驱动程序. 这是因为 Arena Cloud 在后台自动对 Colyseus 服务器所需的各种基础服务和数据库进行平衡和缩放. 因此作为开发人员, 您不需要定义 ***presence*** / ***matchmaking*** 这类驱动程序或部署和托管数据库.
 
 
-### Modified arena.config.ts
+### 修改后的 arena.config.ts
 
 ```
 import Arena from "@colyseus/arena";
@@ -38,7 +38,7 @@ export default Arena({
         return new uWebSocketsTransport({});
 
         /**
-         * Define your server transports as Legacy WS (legacy)
+         * 定义服务器传输层协议为原始 WS (旧版)
          */
         // return new WebSocketTransport({
         //     ...options,
@@ -63,6 +63,6 @@ export default Arena({
 });
 ```
 
-### 修改后的文件夹结构
+### 修改后的目录结构
 
-![NPM Code](../../images/new-arena-server-code.jpg)
+![NPM 代码](../../images/new-arena-server-code.jpg)

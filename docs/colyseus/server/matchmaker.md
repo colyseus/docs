@@ -160,7 +160,7 @@ Find for a public and unlocked room available
 
 **Parameters:**
 
-- **`roomId`**: the id of a specific room instance.
+- **`roomName`**: the id of a specific room instance.
 - **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`)
 
 ```typescript

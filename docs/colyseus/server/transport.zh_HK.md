@@ -1,23 +1,23 @@
-# 伺服器 API &raquo; 傳輸
+# 服務器 API &raquo; 傳輸
 
-Colyseus 目前提供兩個 WebSocket 實現作為其 Transport 層.
+Colyseus 目前提供兩個 WebSocket 實現以作為其傳輸之用.
 
-每個 Transport 都有其自己的一組自定義選項.
+每種套接字都有自己的一組自定義選項.
 
-- [預設 WebSocket Transport (`ws`)](#default-websocket-transport-via-ws)
-- [Native C++ WebSocket Transport (`uWebSockets.js`)](#native-c-websocket-transport-via-uwebsocketsjs)
+- [默認 WebSocket 傳輸 (`ws`)](#default-websocket-transport-via-ws)
+- [原生 C++ WebSocket 傳輸 (`uWebSockets.js`)](#native-c-websocket-transport-via-uwebsocketsjs)
 
 ---
 
-##  預設 WebSocket Transport (通過 `ws`)
+##  默認 WebSocket 傳輸 (協議為 `ws`)
 
-預設 WebSocket 傳輸使用 [`websockets/ws`](https://github.com/websockets/ws) 實現.
+默認 WebSocket 傳輸使用 [`websockets/ws`](https://github.com/websockets/ws) 協議.
 
-如果沒有 `transport` 提供給 [`Server`](/server/api/#new-server-options) 的構造函數, 則自動使用帶有預設選項的 `WebSocketTransport`.
+如果沒有在 [`Server`](/server/api/#new-server-options) 的構造函數中提供 `transport` 參數, 則默認使用自帶的 `WebSocketTransport`.
 
 <!--
 
-**Installation**
+**安裝**
 
 ```
 npm install --save @colyseus/ws-transport
@@ -25,14 +25,14 @@ npm install --save @colyseus/ws-transport
 
 -->
 
-**用法**
+**使用方法**
 
 ```typescript fct_label="Example"
 import { Server } from "@colyseus/core";
 import { WebSocketTransport } from "@colyseus/ws-transport"
 
 const gameServer = new Server({
-    transport: new WebSocketTransport({ /* transport options */ })
+    transport: new WebSocketTransport({ /* 傳輸選項 */ })
 })
 ```
 
@@ -45,7 +45,7 @@ export default Arena({
 
   initializeTransport: function() {
     return new WebSocketTransport({
-      /* ...options */
+      /* ...選項 */
     });
   },
 
@@ -57,18 +57,18 @@ export default Arena({
 
 #### `options.server`:
 
-供 WebSocket 伺服器重復使用的一個 Node.js http 伺服器. 如果您想將 Express 和 Colyseus 一起使用, 這就能派上用場.
+一個基於 Node.js 的 http 服務器, 可供 WebSocket 服務共用. 便於讓 Express 和 Colyseus 一起使用.
 
 ```typescript fct_label="Example"
 import { createServer } from "http";
 import { Server } from "@colyseus/core";
 import { WebSocketTransport } from "@colyseus/ws-transport"
 
-const server = createServer(); // create the http server manually
+const server = createServer(); // 手動創建 http 服務器
 
 const gameServer = new Server({
   transport: new WebSocketTransport({
-      server // provide the custom server for `WebSocketTransport`
+      server // 為 `WebSocketTransport` 提供自定義服務器
   })
 });
 ```
@@ -80,59 +80,59 @@ import { Server } from "@colyseus/core";
 import { WebSocketTransport } from "@colyseus/ws-transport"
 
 const app = express();
-const server = createServer(app); // create the http server manually
+const server = createServer(app); // 手動創建 http 服務器
 
 const gameServer = new Server({
   transport: new WebSocketTransport({
-      server // provide the custom server for `WebSocketTransport`
+      server // 為 `WebSocketTransport` 提供自定義服務器
   })
 });
 ```
 
-如果不提供這個選項, 將會自動為您創建一個 http 伺服器.
+此選項未提供的話, 默認自動創建 http 服務器.
 
 ---
 
 #### `options.pingInterval`
 
-伺服器 "ping" 客戶端的毫秒數.
+服務器 "ping" 客戶端的間隔毫秒數.
 
-如果客戶端在 [pingMaxRetries](#optionspingmaxretries) 次重試後未能響應, 將被強製斷開連線.
+如果客戶端在 [pingMaxRetries](#optionspingmaxretries) 次重試後仍然未能響應, 將被強製斷開連接.
 
-預設: `3000`
+默認: `3000`
 
 ---
 
 #### `options.pingMaxRetries`
 
-ping 無響應的最大允許數.
+服務器 ping 客戶端的最大重試次數數.
 
-預設: `2`
+默認: `2`
 
 ---
 
 #### `options.verifyClient`
 
-該方法會在 WebSocket 握手之前發生. 如果 `verifyClient` 未設置, 則握手會被自動接受.
+在 WebSocket 握手之前進行客戶端驗證. 如果 `verifyClient` 未設置, 則默認客戶端通過驗證.
 
 - `info` (Object)
-    - `origin` (String) 客戶端指定的 Origin 標頭的值.
+    - `origin` (String) 客戶端指定的 Origin header.
     - `req` (http.IncomingMessage) 客戶端 HTTP GET 請求.
-    - `secure` (Boolean) `true` 如果 `req.connection.authorized` 或 `req.connection.encrypted` 已設置.
+    - `secure` (Boolean) 如果已設置 `req.connection.authorized` 或 `req.connection.encrypted` 則返回 `true`.
 
-- `next` (Function) 用戶在 `info` 字段檢查時必須調用的回呼. 此回呼中的參數為:
+- `next` (Function) 用戶在 `info` 字段檢查時必須調用的回調. 此回調中的參數為:
     - `result` (Boolean) 是否接受握手.
-    - `code`(Number) When `result` is `false` 此字段決定要發給客戶端的 HTTP 錯誤狀態代碼.
-    - `name` (String) When `result` is `false` 此字段決定 HTTP 動作原因.
+    - `code`(Number) 如果 `result` 為 `false`, 此字段決定要發給客戶端的 HTTP 錯誤狀態代碼.
+    - `name` (String) 如果 `result` 為 `false`, 此字段決定要發給客戶端的 HTTP 錯誤原因.
 
 ---
 
-## 本機 C++ WebSocket Transport (通過 `uWebSockets.js`)
+## 原生 C++ WebSocket 傳輸 (協議為 `uWebSockets.js`)
 
-[`uWebSockets.js`](https://github.com/uNetworking/uWebSockets.js) 實現通常會在可容納的 CCU 數量以及內存消耗方面比預設表現得好.
+[`uWebSockets.js`](https://github.com/uNetworking/uWebSockets.js) 協議通常在 CCU 數量以及內存消耗方面比默認傳輸性能更好.
 
-!!! Warning "HTTP 路由的運作方式與 `uWebSockets.js` 不同"
-    使用 `uWebSockets.js` 的最大缺點在於其 HTTP/路由系統的運作方式與常規 Node.js/express 路徑不同. 查看 [Custom HTTP routes with `uWebSockets.js`](#custom-http-routes-with-uwebsocketsjs) 了解更多相關資訊
+!!! Warning "HTTP 的傳輸方法與 `uWebSockets.js` 不同"
+    使用 `uWebSockets.js` 的最大缺點在於其 HTTP/路由 的運作方式與常規 Node.js/express 不同. 了解更多信息請參考 [自定義 HTTP 路由的 `uWebSockets.js`](#custom-http-routes-with-uwebsocketsjs)
 
 **安裝**
 
@@ -140,7 +140,7 @@ ping 無響應的最大允許數.
 npm install --save @colyseus/uwebsockets-transport
 ```
 
-**用法**
+**使用方法**
 
 ```typescript
 import { Server } from "@colyseus/core";
@@ -148,7 +148,7 @@ import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
 
 const gameServer = new Server({
     transport: new uWebSocketsTransport({
-        /* options */
+        /* 選項 */
     })
 })
 ```
@@ -157,85 +157,99 @@ const gameServer = new Server({
 
 #### `options.maxPayloadLength`
 
-接收消息最大長度. 如果一個客戶端嘗試向您發送比它更大的資訊, 連線會立即關閉.
+接收消息最大長度. 如果一個客戶端嘗試發送更大消息, 連接會立即關閉.
 
-預設 `1024 * 1024`.
+默認 `1024 * 1024`.
 
 ---
 
 #### `options.idleTimeout`
 
-未發送或接受消息可經過的最大秒數. 如果超時, 連線將關閉. 超時分辨率(時間粒度)通常為 4 秒, 四舍五入取最接近的數值.
+消息等待最大秒數. 如果超時, 連接將關閉. 超時分辨率 (刷新粒度) 通常為 4 秒左右, 四舍五入.
 
 使用 `0` 來禁用.
 
-預設 `120`.
+默認 `120`.
 
 ---
 
 #### `options.compression`
 
-使用何種 permessage-deflate 壓縮.
-`uWS.DISABLED`, `uWS.SHARED_COMPRESSOR` 或任意 `uWS.DEDICATED_COMPRESSOR_xxxKB`.
+使用何種消息壓縮方法.
+`uWS.DISABLED`, `uWS.SHARED_COMPRESSOR` 或自定義 `uWS.DEDICATED_COMPRESSOR_xxxKB`.
 
-預設 `uWS.DISABLED`
+默認 `uWS.DISABLED`
 
 ---
 
 #### `options.maxBackpressure`
 
-發布或發送消息時每個套接口所允許的反向壓力最大長度. 高反向壓力的緩慢接收器將被跳過, 直至其趕上或超時為止.
+廣播或發布消息時每個連接允許的最大背壓. 高背壓下, 速度慢的客戶端會被掠過, 直至其趕上或超時為止.
 
-預設 `1024 * 1024`.
+默認 `1024 * 1024`.
 
 ---
 
 #### `options.key_file_name`
 
-SSL 密鑰文件的路徑 (通過Node.js應用程序用於SSL終端.)
+SSL 密鑰文件的路徑 (通過 Node.js 程式作用於 SSL 終端.)
 
 ---
 
 #### `options.cert_file_name`
 
-SSL 證書文件的路徑 (通過 Node.js 應用程序用於 SSL 終端.)
+SSL 證書文件的路徑 (通過 Node.js 程式作用於 SSL 終端.)
 
 ---
 
 #### `options.passphrase`
 
-SSL 文件的路徑 (通過 Node.js 應用程序用於 SSL 終端.)
+SSL 文件的密碼 (通過 Node.js 程式作用於 SSL 終端.)
 
 ---
 
-### 自定義 HTTP 的 `uWebSockets.js` 路由
+### 使用 `uWebSockets.js` 自定義 HTTP 路由
 
-#### 本機 `uWebSockets.js` 路由:
+#### 原生 `uWebSockets.js` 傳輸:
 
-`uWebSocketsTransport` 會公布變數 `app`, 作為 `uWebSockets.js` 函數庫中的原始 `uws.App` 或 `uws.SSLApp`.
+`uWebSocketsTransport` 公開變量 `app` 作為 `uWebSockets.js` 中原生 `uws.App` 或 `uws.SSLApp` 的引用.
 
-您可以直接使用 `transport.app` 來綁定使用 `uWebSockets.js` API 的 http 路由,如下所示:
+您可以直接使用 `transport.app` 來綁定原本使用 `uWebSockets.js` API 的 http 傳輸功能, 如下所示:
 
 ```typescript
 import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
 
 const transport = new uWebSocketsTransport({
-    /* ...options */
+    /* ...選項 */
 });
 
-transport.app.get("/*", (res, req) => {
+// 异步路由
+transport.app.get("/async_route", (res, req) => {
+    /* 沒有響應或者中斷處理的話, 不應從這裏 return 或者 yield */
+    res.onAborted(() => {
+        res.aborted = true;
+    });
+
+    /* 中斷程序去底層執行 C++, 此時 onAborted 函數應已被調用 */
+    let result = await someAsyncTask();
+
+    /* 中斷狀態下, 不應該響應 */
+    if (!res.aborted) {
+        res.writeStatus('200 OK').writeHeader('IsExample', 'Yes').end(result);
+    }
+});
+
+// 同步路由
+transport.app.get("/sync_route", (res, req) => {
     res.writeStatus('200 OK').writeHeader('IsExample', 'Yes').end('Hello there!');
 });
 ```
 
-查看 [`uWebSockets.js` examples](https://github.com/uNetworking/uWebSockets.js/tree/master/examples) 了解更多資訊.
+更多詳情請參考 [`uWebSockets.js` 示例](https://github.com/uNetworking/uWebSockets.js/tree/master/examples).
 
-#### 替代選項: express 兼容層
+#### 另一種選擇: express 兼容層
 
-作為替代, 我們構建了一個薄的兼容層, 旨在提供與 Express 相同的功能, 但使用 `uWebSockets.js`高級選項.
-
-!!! tip "此功能為實驗性質"
-    該 Express 兼容層為實驗性質, 可能無法處理復雜代碼
+作為另一種方法, 我們構建了一個輕兼容層, 旨在提供與 Express 相同的功能的同時, 使用 `uWebSockets.js` 作為底層.
 
 **安裝**
 
@@ -243,7 +257,7 @@ transport.app.get("/*", (res, req) => {
 npm install --save uwebsockets-express
 ```
 
-**用法**
+**使用方法**
 
 ```typescript fct_label="Example"
 import express from "express";
@@ -251,11 +265,11 @@ import expressify from "uwebsockets-express"
 import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
 
 const transport = new uWebSocketsTransport({
-    /* ...options */
+    /* ...選項 */
 });
 const app = expressify(transport.app);
 
-// use existing middleware implementations!
+// 使用已有的中間件!
 app.use(express.json());
 app.use('/', serveIndex(path.join(__dirname, ".."), { icons: true, hidden: true }))
 app.use('/', express.static(path.join(__dirname, "..")));
@@ -275,16 +289,16 @@ export default Arena({
   // ...
   initializeTransport: function() {
     return new uWebSocketsTransport({
-      /* ...options */
+      /* ...選項 */
     });
   },
 
   //
-  // when using `@colyseus/arena`, the `uwebsockets-express` is loaded automatically.
-  // you get the expressify(transport.app) as argument here.
+  // 使用 `@colyseus/arena` 時, `uwebsockets-express` 被自動加載.
+  // 您可以通過這裏的參數獲取其引用 (transport.app).
   //
   initializeExpress: (app) => {
-    // use existing middleware implementations!
+    // 使用已有的中間件!
     app.use('/', serveIndex(path.join(__dirname, ".."), { icons: true, hidden: true }))
     app.use('/', express.static(path.join(__dirname, "..")));
 
