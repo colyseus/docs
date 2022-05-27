@@ -47,7 +47,23 @@ gameServer.listen(2567);
 
 The `Presence` API is highly based on Redis's API, which is a key-value database.
 
-Every [`Room`](/server/room) instance has a [`presence`](/server/room/#presence-presence) property, which implements the following methods:
+Every [`Room`](/server/room) instance has a [`presence`](/server/room/#presence-presence) property:
+
+```typescript
+export class MyRoom extends Room {
+    onCreate() {
+        this.presence // full Presence API is available from here
+    }
+}
+```
+
+Alternatively, you can access `matchMaker.presence` from anywhere, by importing the [Match-maker API](/colyseus/server/matchmaker/):
+
+```typescript
+import { matchMaker } from "colyseus";
+
+matchMaker.presence // full Presence API is available from here
+```
 
 ### `subscribe(topic: string, callback: Function)`
 
