@@ -1,6 +1,8 @@
 > This document is a work-in-progress.
 
-To scale Colyseus into multiple processes or servers, you'll need to have Redis, MongoDB, and a dynamic proxy.
+
+
+To scale Colyseus into multiple processes or servers, you'll need to have Redis, and a dynamic proxy.
 
 ## Redis
 
