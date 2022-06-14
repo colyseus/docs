@@ -1,17 +1,17 @@
-# 服务器 API &raquo; 传输
+# 服务器 API &raquo; 传输层
 
-Colyseus 目前提供两个 WebSocket 实现以作为其传输之用.
+Colyseus 目前提供两种 WebSocket 实现方案作为传输层使用.
 
-每种套接字都有自己的一组自定义选项.
+每种传输层都有自己的一套自定义配置选项.
 
-- [默认 WebSocket 传输 (`ws`)](#default-websocket-transport-via-ws)
-- [原生 C++ WebSocket 传输 (`uWebSockets.js`)](#native-c-websocket-transport-via-uwebsocketsjs)
+- [默认 WebSocket 传输层 (`ws`)](#default-websocket-transport-via-ws)
+- [原生 C++ WebSocket 传输层 (`uWebSockets.js`)](#native-c-websocket-transport-via-uwebsocketsjs)
 
 ---
 
-##  默认 WebSocket 传输 (协议为 `ws`)
+##  默认 WebSocket 传输层 (基于 `ws`)
 
-默认 WebSocket 传输使用 [`websockets/ws`](https://github.com/websockets/ws) 协议.
+默认 WebSocket 传输使用 [`websockets/ws`](https://github.com/websockets/ws) 实现方案.
 
 如果没有在 [`Server`](/server/api/#new-server-options) 的构造函数中提供 `transport` 参数, 则默认使用自带的 `WebSocketTransport`.
 
@@ -32,7 +32,7 @@ import { Server } from "@colyseus/core";
 import { WebSocketTransport } from "@colyseus/ws-transport"
 
 const gameServer = new Server({
-    transport: new WebSocketTransport({ /* 传输选项 */ })
+    transport: new WebSocketTransport({ /* 配置选项 */ })
 })
 ```
 
@@ -45,7 +45,7 @@ export default Arena({
 
   initializeTransport: function() {
     return new WebSocketTransport({
-      /* ...选项 */
+      /* ...配置 */
     });
   },
 
@@ -53,7 +53,7 @@ export default Arena({
 });
 ```
 
-### 可用选项:
+### 可用配置选项:
 
 #### `options.server`:
 

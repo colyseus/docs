@@ -2,7 +2,7 @@
 
 ## 安裝
 
-- [下載 Construct 3 SDK](https://www.construct.net/en/make-games/addons/111/colyseus-multiplayer-client)
+- [下載 Construct 3 SDK](https://www.construct.net/en/make-games/addons/111/colyseus-multiplayer-sdk)
 
 !!! Warning "註意! 您需要一個伺服器來使用 Colyseus!"
     眾所周知 Construct 的現有功能可以從客戶端 "托管" 一個多人進程. 這在使用 Colyseus 時是不可能的.Colyseus 是一個權威性 **伺服器**, 由 Node.js 編寫. 您無法使您的客戶端直接托管遊戲進程.
