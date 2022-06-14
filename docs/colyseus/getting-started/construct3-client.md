@@ -2,7 +2,7 @@
 
 ## Installation
 
-- [Download Construct 3 SDK](https://www.construct.net/en/make-games/addons/111/colyseus-multiplayer-client)
+- [Download Construct 3 SDK](https://www.construct.net/en/make-games/addons/111/colyseus-multiplayer-sdk)
 
 !!! Warning "Attention! You need a server to use Colyseus!"
     Construct has well-known existing features to "host" a multiplayer session from the client-side. This is not possible when using Colyseus. Colyseus is an authoritative **server**, written in Node.js. You can't let your client-side host the game sessions directly.
