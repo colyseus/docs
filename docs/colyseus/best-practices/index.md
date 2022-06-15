@@ -1,6 +1,6 @@
 # Best practices & recommendations
 
-This section provides general recommendations and best practices to keep your codebase healthy and readable for your team. They are all optional, but if followed are going to improve code readability and cleanliness.
+This section provides general recommendations and best practices to keep your codebase healthy and readable for your team. They are all optional, but if followed can improve code readability and cleanliness.
 
 - Keep your room classes as small as possible, delegating game-specific functionality to other composable structures.
 - Keep your synchronizeable data structures as small as possible
