@@ -93,7 +93,10 @@ Ideally, you should have a regular load balancer to be sitting behind all the Co
 
 ## Spawning multiple Colyseus processes
 
-To run multiple Colyseus instances in the same server, you need each one of them to listen on a different port number. It's recommended to use ports `3001`, `3002`, `3003`, and so on. The Colyseus processes should **NOT** be exposed publicly. Only the [dynamic proxy](#dynamic-proxy) is.
+To run multiple Colyseus instances in the same server, you need each one of them to listen on a different port number. It's recommended to use ports `3001`, `3002`, `3003`, and so on.
+
+- If you're [using `@colyseus/proxy` (alternative 1.)](#alternative-1-using-a-dynamic-proxy), the Colyseus processes should **NOT** be exposed publicly. Only internally for the proxy.
+- If you're [not using using `@colyseus/proxy` (alternative 2.)](#alternative-2-without-the-proxy), each Colyseus process must have its own public address.
 
 The [PM2 process manager](http://pm2.keymetrics.io/) is recommended for managing multiple Node.js app instances, although not mandatory.
 
