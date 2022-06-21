@@ -40,6 +40,8 @@ const gameServer = new colyseus.Server({
 
 The `presence` is used to call room "seat reservation" functions from one process to another, and allows the developer to take advantage of the some data sharing functions across rooms. See [Presence API](/server/presence/#api).
 
+The `driver` is responsible for keeping a shared cache of available rooms, and room querying by any of the active Colyseus processes.
+
 Each Colyseus process also registers its own `processId` and network location to the `presence` API, which is later used by the [dynamic proxy](#dynamic-proxy) service. During graceful shutdown, the process unregisters itself.
 
 ## Alternative 1: Using a Dynamic Proxy
