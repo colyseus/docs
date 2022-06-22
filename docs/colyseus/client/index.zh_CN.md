@@ -1,4 +1,4 @@
-# Colyseus SDK &raquo; 用法
+# Colyseus 客户端 SDK
 
 目前 Colyseus 有以下平台的客户端 SDK:
 
@@ -41,7 +41,7 @@ import io.colyseus.Client;
 var client = new Client("ws://localhost:2567");
 ```
 
-尚未通过创建 `客户端` 实例建立起与服务器的连接.
+创建好 `Client` 实例不代表已经建立起与服务器的连接.
 
 ### 方法
 
@@ -708,8 +708,6 @@ room.leave(false);
 #### `removeAllListeners()`
 
 移除 `onMessage`, `onStateChange`, `onLeave` 和 `onError` 侦听程序.
-
----
 
 ### 事件
 

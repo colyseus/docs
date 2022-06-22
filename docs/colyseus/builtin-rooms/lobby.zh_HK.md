@@ -1,11 +1,11 @@
-# 內建房間 » 大廳房間
+# 內置房間 &raquo; 大廳房間
 
-!!! Warning "大廳房間的用戶端 API 將在 Colyseus 1.0.0 上更改"
-    內建大廳房間目前依賴於發送訊息來通知用戶端有關可用房間的資訊. 當 `@filter()` 變得穩定時, LobbyRoom 將改為使用該狀態.
+!!! Warning "在 Colyseus 1.0.0 中, 將更改大廳房間客戶端 API"
+    目前, 內置大廳房間依賴於發送消息, 向客戶端通知有關可用房間的信息. 當 `@filter()` 變得穩定時, LobbyRoom 將改為使用 state.
 
-## 伺服器端
+## 服務器端
 
-內建 `大廳房間` 會在具有(即時列表)的房間有更新時自動通知其連線的用戶端.
+在具有 "實時列表" 的房間有更新時, 內置的 `LobbyRoom` 會自動通知其連接的客戶端.
 
 ```typescript
 import { LobbyRoom } from "colyseus";
@@ -20,9 +20,9 @@ gameServer
   .enableRealtimeListing();
 ```
 
-`LobbyRoom` 會在 `onCreate()`, `onJoin()`, `onLeave()` 和 `onDispose()` 期間自動收到通知.
+在 `onCreate()`, `onJoin()`, `onLeave()` 和 `onDispose()` 期間,將自動通知 `LobbyRoom`.
 
-如果您 [已更新了房間的 `中繼資料` ](/server/room/#setmetadata-metadata), 且必須觸發大廳的更新, 可以在中繼資料更新完後立即呼叫 `updateLobby()`:
+如果您已經 [更新了您的房間的`元數據`](/server/room/#setmetadata-metadata), 並且還需要更新遊戲大廳, 那麽您可以在元數據更新後馬上調用 `updateLobby()`:
 
 ```typescript
 import { Room, updateLobby } from "colyseus";
@@ -48,9 +48,9 @@ class YourGameRoom extends Room {
 }
 ```
 
-## 用戶端
+## 客戶端
 
-您必須透過傳送到 `LobbyRoom` 用戶端的訊息,來追蹤新增, 移除和更新的房間.
+您需要根據 `LobbyRoom` 發送到客戶端的信息來遊戲房間的添加, 刪除和更新等狀態.
 
 ```typescript
 import { Client, RoomAvailable } from "colyseus.js";
