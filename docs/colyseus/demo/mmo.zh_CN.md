@@ -1,15 +1,15 @@
 ﻿﻿
 # MMO 技术演示
 
-本技术演示旨在展示一种制作 **基础的** 大型多人游戏(MMO)的方法. 包括聊天系统, 玩家持久性, 多个流动 ColyseusRooms 以及联网的可交互对象. 需注意的是, 本演示包含生产大规模 MMO 所需的数据分区或其他任何负载平衡方式. 本演示使用 Colyseus 0.14.7 版本以及 [Unity version 2020.3.1f1](https://unity3d.com/unity/qa/lts-releases).
+本技术演示旨在展示一种制作 **基础的** 大型多人游戏 (MMO) 的方法. 包括聊天系统, 玩家数据持久化, 多流 ColyseusRooms 以及网络可交互对象. 需注意的是, 本演示 **不含** 商业化自动伸缩 MMO 游戏常见的数据共享及其他负载平衡方式. 本演示使用 Colyseus 0.14.7 版本以及 [Unity 版本 2020.3.1f1](https://unity3d.com/unity/qa/lts-releases).
 
 
 
-**[下载演示](https://github.com/colyseus/unity-demo-mmo/archive/master.zip)** ([查看源代码](https://github.com/colyseus/unity-demo-mmo/))
+**[下载演示源码](https://github.com/colyseus/unity-demo-mmo/archive/master.zip)** ([查看源代码](https://github.com/colyseus/unity-demo-mmo/))
 
 
 
-[玩下看看!](https://xey3jn.us-west-1.colyseus.dev/)
+[玩玩看!](https://xey3jn.us-west-1.colyseus.dev/)
 
 ![屏幕截图](mmo/screenshot.PNG)
 
@@ -17,19 +17,19 @@
 
 
 
-### 启用本地服务器
+### 启动本地服务器
 
-您需要从 **提供的服务器目录** 中选择安装并启用服务器,以正常操作本演示. 按照 [这些文档中 Unity3d 部分之"运行演示服务器"](/getting-started/unity3d-client/#running-the-demo-server) 中的说明操作即可.
+您需要以 **提供的 Server 目录** 安装并启用服务器来打开本演示. 按照 [这些文档中 Unity3d 部分的 "运行演示服务器"](/getting-started/unity3d-client/#running-the-demo-server) 中的说明操作即可.
 
-此外, 本演示使用 MongoDB 来实现玩家信息持久性. 若您希望在本地运行此示例, 则需要安装自己的本地数据库或提供自己的(参见 "演示调整" 章节)
+此外, 本演示使用 MongoDB 来实现玩家数据持久化. 本地运行的话, 需要您安装自己的本地数据库或者提供自己指定的的数据库 (参见 "调整演示" 章节)
 
-[关于如何设置本地示例的详情,可前往 MongoDB 网站查看](https://docs.mongodb.com/guides/server/install/)
+[关于如何安装本地数据库, 可前往 MongoDB 网站查看](https://docs.mongodb.com/guides/server/install/)
 
 ### ColyseusSettings ScriptableObject
 
 
 
-服务器的所有设置都可通过此处的 ColyseusSetting ScriptableObject 进行更改:
+服务器的所有设置都可通过此处的 ColyseusSetting ScriptableObject 进行修改:
 
 
 
@@ -41,26 +41,26 @@
 
 ## 播放演示
 
-在位于 `ColyseusTechDemo-MMO\Assets\Scenes\MMOLoginScene` 的场景"MMOLoginScene"中登录玩家账号. 若您是初次操作,则需要创建一个账号. 输入您的邮箱地址和密码,登录后即可开始操作. 登录成功后,客户端会加载 "TowerScene" 场景并将 NetworkedEntity 放入其中. 您可以随时按下空格键查看控件, 自定义游戏人物或退出主菜单. 走进位于房间两侧的灰色方块时, 您就会被传送至另一间房.
+打开位于 `ColyseusTechDemo-MMO\Assets\Scenes\MMOLoginScene` 的场景 "MMOLoginScene" 进行玩家登录. 若您是初次操作, 则需要输入您的 e-mail 和密码, 先创建一个账号, 然后再登录即可. 登录成功后, 客户端会加载 "TowerScene" 场景并将 NetworkedEntity 放入场景. 您可以随时按下 ESC键 查看控件, 自定义游戏人物或者退出到主菜单. 走进房间边缘的灰色方块时, 您就会被传送至另一个房间.
 
-### 控件
-本演示的控件可随时在 Escape 菜单查看, 内容如下:
+### 控制方法
+本演示的控制按键可随时在 ESC菜单 中查看, 内容如下:
 
-| Input                            | Description        |
-|----------------------------------|--------------------|
-| W,A,S,M                          | 移动                |
-| 按住Shift键                       | 冲刺                |
-| Q,E                              | 旋转人物            |
-| 上滑/下滑                         | 放大/缩小           |
-| 按住并拖动鼠标右键                 | 摄像头轴转           |
-| `                                | 切换聊天窗口         |
+| 输入                    | 描述     |
+|------------------------|--------|
+| W,A,S,M                | 移动     |
+| 按住Shift键              | 冲刺     |
+| Q,E                    | 旋转人物   |
+| Scroll Up/Down          | 放大/缩小  |
+| 按住并拖动鼠标右键         | 旋转摄像机  |
+| `                      | 切换聊天窗口 |
 
 ## 演示概览
 本演示旨在向用户展示如何使用 Colyseus 来设计并实现一款 MMO 游戏. 它强调了以下特性:
 ### 动态房间
 可按需创建并配置 MMORooms. 当玩家进入一个网格空间时, 我们就加入一个房间, 并将其`progress`值设为网格值, 如 `arena.config.ts`:
-```
-javascript gameServer.define('lobby_room', MMORoom).filterBy(["progress"]); // Filter room by "progress" (which grid we're wanting to join EX: -1x2)
+```javascript
+gameServer.define('lobby_room', MMORoom).filterBy(["progress"]); // Filter room by "progress" (which grid we're wanting to join EX: -1x2)
 ```
 当玩家在地图中移动时,可以基于他们所在的网格位置加入/离开房间. 玩家尝试更新游戏进度时, 客户端会向服务器端发送一条消息, 然后服务器端会在 MMORoom.ts 中捕捉这条信息: `MMORoom.ts`:
 ```javascript
