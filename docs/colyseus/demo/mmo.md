@@ -101,7 +101,7 @@ This demo comes with 4 different types of interactables that you can find in the
 - Coin Op
     - A small ride that will disable your controls temporarily and bounce your NetworkedEntity around. Costs 1 coin per use
 - Teleporter
-    - A small platform that will teleport a user to it's "exit platform". Costs 2 coins to use
+    - A small platform that will teleport a user to its "exit platform". Costs 2 coins to use
 - FX Swirl
     - An alternate to the Button Podium that costs nothing and gives nothing, but displays a cool effect when pressed (uses the DEFAULT server type)
 
