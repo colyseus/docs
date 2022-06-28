@@ -39,7 +39,7 @@
 
 如果您运行的是本地服务器, 默认的设置就能够满足需求; 但若您希望托管服务器, 则需要按需更改 **Colyseus 服务器地址** 和 **Colyseus 服务器端口**.
 
-## 播放演示
+## 进入游戏
 
 打开位于 `ColyseusTechDemo-MMO\Assets\Scenes\MMOLoginScene` 的场景 "MMOLoginScene" 进行玩家登录. 若您是初次操作, 则需要输入您的 e-mail 和密码, 先创建一个账号, 然后再登录即可. 登录成功后, 客户端会加载 "TowerScene" 场景并将 NetworkedEntity 放入场景. 您可以随时按下 ESC键 查看控件, 自定义游戏人物或者退出到主菜单. 走进房间边缘的灰色方块时, 您就会被传送至另一个房间.
 
