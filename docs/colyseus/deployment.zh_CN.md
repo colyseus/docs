@@ -58,7 +58,7 @@ server {
 server {
     listen 80;
     listen 443 ssl;
-    server\_name yourdomain.com;
+    server_name yourdomain.com;
 
     ssl_certificate /path/to/your/cert.crt;
     ssl_certificate_key /path/to/your/cert.key;
@@ -102,7 +102,8 @@ sudo a2enmod proxy_wstunnel
 
 </VirtualHost>
 
-<VirtualHost \*:443> ServerName servername.xyz
+<VirtualHost *:443>
+    ServerName servername.xyz
 
     # 开启 SSL
     SSLEngine On
@@ -157,16 +158,16 @@ function setup(app: express.Application, server: http.Server) {
   return app;
 }
 
-if (process.env.NODE\_ENV === "production") {
+if (process.env.NODE_ENV === "production") {
   require('greenlock-express')
     .init(function () {
       return {
         greenlock: require('./greenlock'),
         cluster: false
-        };
-       })
-       .ready(function (glx) {
-         const app = express();
+      };
+    })
+      .ready(function (glx) {
+          const app = express();
 
       // 服务于 80 和 443 端口
       // 神奇地自动获取 SSL 证书!
@@ -200,14 +201,14 @@ if (process.env.NODE\_ENV === "production") {
 
 **第2步** 在 colyseus 项目的根目录新建 `Dockerfile`
 ```dockerfile
-FROM node:12
+FROM node:14
 
 ENV PORT 8080
 
 WORKDIR /usr/src/app
 
 # 使用通配符确保 package.json 和 package-lock.json 文件都能被复制
-COPY package\*.json ./
+COPY package*.json ./
 
 RUN npm ci
 # 只在商用环境下启动
@@ -217,11 +218,11 @@ COPY . .
 
 EXPOSE 8080
 
-CMD \[ "npm", "start" ]
+CMD [ "npm", "start" ]
 ```
 **第3步** 在上述目录下新建 `.dockerignore` 文件
 ```
-node\_modules
+node_modules
 npm-debug.log
 ```
 这样可以防止将本地模块和调试日志错被复制到 Docker 镜像上覆盖掉镜像内的模块.
@@ -241,7 +242,7 @@ docker images
 ```
 # 类似
 REPOSITORY                      TAG     ID              CREATED
-node                            12      1934b0b038d1    About a minute ago
+node                            14      1934b0b038d1    About a minute ago
 <your username>/colseus-server  latest  d64d3505b0d2    About a minute ago
 ```
 

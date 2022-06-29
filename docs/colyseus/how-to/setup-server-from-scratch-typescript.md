@@ -1,10 +1,10 @@
 This is a step by step guide for creating a colyseus server with typescript.
 
-##Requirements
+## Requirements
 
 - [`Node.js`](https://nodejs.org/)
 
-##Setup
+## Setup
 
 Create a new empty directory.
 ```cmd
@@ -86,7 +86,7 @@ console.log(`[GameServer] Listening on Port: ${port}`)
 
 Congrats you finished the setup for a colyseus server.
 
-##Commands
+## Commands
 
 Now you can start the server with:
 ```cmd

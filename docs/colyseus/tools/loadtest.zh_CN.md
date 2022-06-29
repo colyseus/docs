@@ -1,6 +1,6 @@
 # 加载测试 / 压力测试 (`@colyseus/loadtest`)
 
-当您想对服务器进行压力测试时,以了解其在上线时的表现时,`@colyseus/loadtest` 里的工具会很有用.
+当您想对服务器进行压力测试,以便了解项目上线后的表现时,`@colyseus/loadtest` 里的工具会很有用.
 
 [![asciicast](https://asciinema.org/a/229378.svg)](https://asciinema.org/a/229378)
 
