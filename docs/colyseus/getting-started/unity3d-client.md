@@ -203,7 +203,7 @@ room.Send("createEntity", new EntityCreationMessage() { creationId = creationId,
   - At every `patchRate`, binary patches of the state are sent to every client (default is 50ms)
   - `onStateChange` is called on the client-side after every patch received from the server.
   - Each serialization method has its own particular way to handle incoming state patches.
-- `ColyseusRoomState` is the base room state you will want your room state to inherit from.
+- `ColyseusRoomState`??not Schema? is the base room state you will want your room state to inherit from.
 - Take a look at our tech demos for implementation examples of synchronizable data in a room&#39;s state such as networked entities, networked users, or room attributes. ([Shooting Gallery Tech Demo](https://docs.colyseus.io/demo/shooting-gallery/))
 
 ```csharp
