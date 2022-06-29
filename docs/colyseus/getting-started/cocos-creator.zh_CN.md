@@ -27,7 +27,7 @@ Colyseus SDK 在 Cocos Creator 的运用上与 [JavaScript SDK](https://docs.col
 ```json
   // ...
 
-  /* Add your custom configuration here. */
+  /* 此处进行自定义配置. */
   "compilerOptions": {
     // ...
     "esModuleInterop": true
@@ -96,9 +96,9 @@ export class NetworkManager extends Component {
 }
 ```
 
-然后就可以把 NetworkManager 作为组件安放在 Cocos Creator 的任意节点上.
+然后就可以把 `NetworkManager` 作为组件安放在 Cocos Creator 的任意节点上.
 
-因为上面用到了 @property 装饰词, 所以 hostname, port 和 useSSL 这些变量都可以在 Cocos Creator 中修改:
+因为上面用到了 `@property` 装饰词, 所以 `hostname`, `port` 和 `useSSL` 这些变量都可以在 Cocos Creator 编辑器中修改:
 
 ![Colyseus SDK on TypeScript Component](cocos-creator-component.png)
 ![login](logged_in.jpg)
@@ -109,7 +109,6 @@ export class NetworkManager extends Component {
 #### 另一种方法: 手动将 colyseus.js 文件导入项目 (不使用扩展插件)
 
 - [从 GitHub 上下载最新版 `colyseus-js-client.zip`](https://github.com/colyseus/colyseus.js/releases).
-
 - 把 `colyseus-js-client.zip` 里的文件解压到 `assets/` 文件夹里.
 - 把 `colyseus.js` 和 `colyseus.d.ts` 文件移动到 Cocos Creator 项目的 `scripts` 文件夹里.
 - 在资源面板点击 `colyseus.js`, 开启 "Import As Plugin" (详见下文图片)
