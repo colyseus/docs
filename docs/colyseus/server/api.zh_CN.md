@@ -1,6 +1,6 @@
 # 服务器 API &raquo; 服务器
 
-Colyseus 的 `Server` 实例会保存服务器配置选项, 比如传输层配置, presence, matchmaking 驱动等.
+Colyseus 的 `Server` 实例保存着服务器的配置选项, 比如传输层配置, presence, matchmaking 驱动等.
 
 - **Transport** 是服务器和客户端之间双向通信的一个分层.
 - **Presence** 是使房间和/或 Node.js 进程之间实现通信的执行.

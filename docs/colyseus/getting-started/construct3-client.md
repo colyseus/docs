@@ -94,7 +94,7 @@ Triggers when available rooms data is ready in the CurrentValue expresssion.
 Triggers when an item is added to ArraySchema or MapSchema.
 
 ### On field change at {0}
-Triggers when a field is changed inside a Schema instance. Need to use??
+Triggers when a field is changed inside a Schema instance.
 
 ### On change at {0}
 Triggers when an item is changed inside ArraySchema or MapSchema.
