@@ -2,19 +2,29 @@
 
 Colyseus 的 `Server` 实例保存着服务器的配置选项, 比如传输层配置, presence, matchmaking 驱动等.
 
-- **Transport** 是服务器和客户端之间双向通信的一个分层.
-- **Presence** 是使房间和/或 Node.js 进程之间实现通信的执行.
-- **Driver** 是用于在比赛匹配期间存储并查询房间的存储驱动程序.
+- **Transport** 是实现服务器和客户端之间双向通信的逻辑层.
+- **Presence** 实现房间之间通信以及多 Node.js 进程间通信.
+- **Driver** 是存储驱动程序, 用于房间的存储以及 matchmaking 期间的房间检索.
 
 ## `new Server (options)`
 
 ### `options.transport`
 
-Colyseus 默认使用其内置 WebSocket 传输. [点此查看如何自定义传输层](/server/transport/).
+Colyseus 默认使用其内置 WebSocket 传输. 详见 [自定义传输层](/server/transport/).
+
+### `options.driver`
+
+房间 matchmaking 驱动. 用于房间缓存和检索的地方. 需要考虑服务扩展时不要使用 `LocalDriver`.
+
+**配置可以是:**
+
+- `LocalDriver` - 默认.
+- `RedisDriver` - 取自 `@colyseus/redis-driver`
+- `MongooseDriver` - 取自`@colyseus/mongoose-driver`
 
 ### `options.presence`
 
-在多个进程/机器中扩展 Colyseus 时,您需要提供一个状态服务器. 了解更多关于 [扩展性](/scalability/) 和 [`Presence API`](/server/presence/#api) 的信息.
+通过多进程/机器扩展 Colyseus 时, 您需要提供一个 presence 服务. 详见 [扩展性](/scalability/) 和 [`Presence API`](/server/presence/#api).
 
 ```typescript fct_label="TypeScript"
 import { Server, RedisPresence } from "colyseus";
@@ -34,15 +44,11 @@ const gameServer = new colyseus.Server({
 });
 ```
 
-当前可用的状态服务器为:
-
-- `RedisPresence` (在单一服务器或多个服务器上扩展)
-
 ---
 
 ### `options.gracefullyShutdown`
 
-注册关闭例行程序自动生效. 默认值是 `true` 如果被禁用, 您需要从关闭进程中手动调用 [`gracefullyShutdown()`](#gracefullyshutdown-exit-boolean) 方法.
+自动注册关闭常规操作. 默认值是 `true` 如果被禁用, 您需要从关闭进程中手动调用 [`gracefullyShutdown()`](#gracefullyshutdown-exit-boolean) 方法.
 
 ---
 

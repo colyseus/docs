@@ -44,10 +44,6 @@ const gameServer = new colyseus.Server({
 });
 ```
 
-The currently available Presence servers are currently:
-
-- `RedisPresence` (scales on a single server and multiple servers)
-
 ---
 
 ### `options.gracefullyShutdown`
