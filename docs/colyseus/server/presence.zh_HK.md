@@ -253,12 +253,12 @@ await this.presence.sadd("global-set1", "member-one");
 await this.presence.sadd("global-set1", "member-two");
 
 // 向集合 "global-set2" 添加成員
+await this.presence.sadd("global-set2", "member-two");
 await this.presence.sadd("global-set2", "member-three");
-await this.presence.sadd("global-set2", "member-four");
 
 // 獲得交集
 const intersection = await this.presence.sinter("global-set1", "global-set2");
-console.log(intersection); // => ["member-one", "member-two", "member-three", "member-four"]
+console.log(intersection); // => ["member-two"]
 ```
 
 ### `hset(key: string, field: string, value: string)`
