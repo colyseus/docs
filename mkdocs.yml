@@ -18,6 +18,7 @@ repo_url: 'https://github.com/colyseus/colyseus'
 copyright: 'Copyright &copy; 2021 Lucid Sight'
 google_analytics: ['UA-108278048-3', 'docs.colyseus.io']
 
+
 # Documentation and theme
 theme:
   name: 'material'
@@ -239,6 +240,10 @@ extra:
     link: 'https://twitter.com/colyseus'
   - icon: 'fontawesome/brands/discord'
     link: 'https://discord.gg/RY8rRS7'
+  # todo: upgrade to Google Analytics 4 (https://squidfunk.github.io/mkdocs-material/setup/setting-up-site-analytics/?h=google+analytics#google-analytics)
+  analytics:
+    provider: google
+    property: UA-108278048-3
 
 # Extensions
 markdown_extensions:
