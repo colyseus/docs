@@ -253,12 +253,12 @@ await this.presence.sadd("global-set1", "member-one");
 await this.presence.sadd("global-set1", "member-two");
 
 // add members to "global-set2"
+await this.presence.sadd("global-set2", "member-two");
 await this.presence.sadd("global-set2", "member-three");
-await this.presence.sadd("global-set2", "member-four");
 
 // get the intersection
 const intersection = await this.presence.sinter("global-set1", "global-set2");
-console.log(intersection); // => ["member-one", "member-two", "member-three", "member-four"]
+console.log(intersection); // => ["member-two"]
 ```
 
 ### `hset(key: string, field: string, value: string)`

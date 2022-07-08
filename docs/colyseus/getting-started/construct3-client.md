@@ -2,7 +2,7 @@
 
 ## Installation
 
-- [Download Construct 3 SDK](https://www.construct.net/en/make-games/addons/111/colyseus-multiplayer-client)
+- [Download Construct 3 SDK](https://www.construct.net/en/make-games/addons/111/colyseus-multiplayer-sdk)
 
 !!! Warning "Attention! You need a server to use Colyseus!"
     Construct has well-known existing features to "host" a multiplayer session from the client-side. This is not possible when using Colyseus. Colyseus is an authoritative **server**, written in Node.js. You can't let your client-side host the game sessions directly.
@@ -46,11 +46,8 @@ Default Endpoint to use on "Connect" action.
 
 ## Actions
 
-### Set endpoint to {0}
+### Set endpoint to {0}.
 Format: wss://example.com
-
-### Join room {0} with options {1}.
-Join a room by name
 
 ### Join room {0} with options {1}.
 Join a room by name
@@ -58,16 +55,16 @@ Join a room by name
 ### Create room {0} with options {1}.
 Create a room by name
 
-### Join room {0} with options {1}.
+### Join room {0} with ID {1}.
 Join an existing room by its ID
 
 ### Reconnect into room {0} with sessionId {1}.
 Reconnect using a previously connected room
 
-### Send {0} with {1}
+### Send {0} with {1}.
 Send message to a room
 
-### Leave from the room
+### Leave from the room.
 Disconnect client from the room.
 
 ### Get available {0} rooms.
@@ -97,7 +94,7 @@ Triggers when available rooms data is ready in the CurrentValue expresssion.
 Triggers when an item is added to ArraySchema or MapSchema.
 
 ### On field change at {0}
-Triggers when a field is changed inside a Schema instance. Need to use
+Triggers when a field is changed inside a Schema instance.
 
 ### On change at {0}
 Triggers when an item is changed inside ArraySchema or MapSchema.

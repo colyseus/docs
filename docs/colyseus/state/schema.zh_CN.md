@@ -1,13 +1,13 @@
-# [状态同步](/state/overview) &raquo; Schema
+# [状态数据同步](/state/overview) &raquo; Schema
 
 !!! Tip "还没使用 TypeScript?"
     强烈建议您使用 TypeScript 以便更好地定义 Schema 结构并提高整体开发体验. TypeScript 支持的 "实验性修饰器" 会在本手册内大量使用.
 
 ## 如何定义可同步结构
 
-- `Schema` 结构由服务器定义, 用于房间状态同步.
+- `Schema` 结构由服务器定义, 用于房间状态服务端客户端数据同步.
 - 只有以 `@type()` 修饰的字段才会被用于同步.
-- _(可同步 Schema 结构仅应用于状态相关的数据.)_
+- _(可同步 Schema 结构仅应被用于需要服务器客户端同步的数据.)_
 
 ### 定义 `Schema` 结构
 
@@ -53,19 +53,19 @@ export class MyRoom extends Room<MyState> {
 ## 使用 Schema
 
 - 只有服务器端有权修改 Schema 数据
-- 客户端要包含以 [`schema-codegen`](#client-side-schema-generation) 生成的与服务器端同样的 `Schema` 定义. _(如果使用 [JavaScript SDK](/getting-started/javascript-client/) 则此条为可选项)_
+- 客户端要包含用 [`schema-codegen`](#client-side-schema-generation) 生成的, 与服务器端相一致的 `Schema` 定义. _(如果使用 [JavaScript SDK](/getting-started/javascript-client/) 则此条为可选项)_
 - 为了从服务器获得更新, 需要 [在客户端把回调附加在 schema 实例上](#callbacks).
-- 客户端永远不应主动修改 schema - 因为在收到来自服务器的下一个心跳就会把它更新覆盖掉.
+- 客户端永远不应主动修改 schema - 因为在收到来自服务器的下一帧更新时就会把它覆盖掉.
 
 ### 基本类型
 
 基本类型为数字, 字符串和布尔型.
 
-| 类型 | 描述 | 范围 |
-|------|-------------|------------|
-| `"string"` | utf8 字符串 | 最大 `4294967295` 字节|
-| `"number"` | 又称为 "正整数". 自动定义数字类型. (编码时可能会多用1个字节) | 取值范围 `0` 到 `18446744073709551615` |
-| `"boolean"` | `true` 或 `false` | 取值为 `0` 或 `1` |
+| 类型 | 描述                                  | 范围 |
+|------|-------------------------------------|------------|
+| `"string"` | utf8 字符串                            | 最大 `4294967295` 字节|
+| `"number"` | 又称为 "正整数". 自动检测数字类型. (编码时可能会多用1个字节) | 取值范围 `0` 到 `18446744073709551615` |
+| `"boolean"` | `true` 或 `false`                    | 取值为 `0` 或 `1` |
 
 **特定数值类型:**
 
@@ -129,7 +129,7 @@ schema.defineTypes(MyState, {
 
 ### ArraySchema
 
-`ArraySchema` 是一个可同步版本的内置 JavaScript [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) 类型.
+`ArraySchema` 是 JavaScript 内置 [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) 类型的一种可同步版本.
 
 **示例: 自定义 `Schema` 类型** 数组
 
@@ -170,9 +170,9 @@ schema.defineTypes(MyState, {
 });
 ```
 
-**示例: 基本类型** 数组
+**示例: 基本类型数组**
 
-数组元素必须是同一类型数据.
+数组元素必须是同一数据类型.
 
 ```typescript fct_label="TypeScript"
 import { Schema, ArraySchema, type } from "@colyseus/schema";
@@ -317,7 +317,7 @@ for (index => value in state.array1) {
 
 ### MapSchema
 
-`MapSchema` 是一个基于 JavaScript 内置 [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) 的可同步版本.
+`MapSchema` 是基于 JavaScript 内置 [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) 的一种可同步版本.
 
 推荐使用 Maps 里的 id 来追踪游戏实体, 比如玩家, 敌人等.
 
@@ -412,7 +412,7 @@ console.log(map.size);
 
 #### `map.forEach()`
 
-迭代 map 中的键值对, 以元素插入顺序.
+以元素插入顺序迭代 map 中的键值对.
 
 ```typescript fct_label="TypeScript"
 this.state.players.forEach((value, key) => {
@@ -452,7 +452,7 @@ for (key => value in state.players) {
 
 `SetSchema` 是一个基于 JavaScript 内置 [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) 的可同步版本.
 
-`SetSchema` 的用法和 [`CollectionSchema`] 十分类似, 最大区别在于 Set 的值具有唯一性. JS 的 Set 没有直接获取值的方法. (比如像 [collection.at()](#collectionat))
+`SetSchema` 的用法和 [`CollectionSchema`] 十分类似, 最大区别在于 Set 的值具有唯一性. Set 没有直接获取值的方法. (比如像 [collection.at()](#collectionat))
 
 ```typescript fct_label="TypeScript"
 import { Schema, SetSchema, type } from "@colyseus/schema";
@@ -506,7 +506,7 @@ set.add(3);
 
 #### `set.at()`
 
-获取 `index` 处的值.
+获取指定 `index` 处的元素值.
 
 ```typescript
 const set = new SetSchema<string>();
@@ -515,7 +515,7 @@ set.add("two");
 set.add("three");
 
 set.at(1);
-// 输出: "two"
+// 返回: "two"
 ```
 
 ---
@@ -686,16 +686,17 @@ collection.forEach((value, at) => {
 });
 ```
 
-## 每个客户端过滤数据
+## 按客户端过滤数据
 
 !!! Warning "此功能为实验性质"
     `@filter()` / `@filterChildren()` 为实验性质, 可能不适合快节奏游戏.
 
 过滤用来为指定客户端隐藏部分状态数据, 防止作弊, 防止玩家获取全部数据.
 
-数据过滤器回调, 可以针对 **每个客户端** 的 **每个字段** 进行触发 (如果使用了 `@filterChildren`, 还可在每个子结构触发). 如果过滤器回调返回 `true`, 则该字段数据将会发送给那个指定的客户端, 否则不发送.
+数据过滤器回调, 可以针对 **每个客户端** 的 **每个字段** 进行触发 (如果使用了 `@filterChildren`, 还可针对每个子结构触发). 如果过滤器回调返回 `true`, 则该字段数据将会发送给那个指定的客户端, 否则不发送.
 
-请注意, 只有被过滤字段 (或其子字段) 数据更新时, 过滤器回调才能被触发. 要想手动触发请参考 [此问题](https://github.com/colyseus/schema/issues/102) 里描述的方法.
+请注意, 只有被过滤字段 (或其子字段) 数据更新时, 过滤器回调才能被触发.
+要想手动触发请参考 [此问题](https://github.com/colyseus/schema/issues/102) 里描述的方法.
 
 ### `@filter()` 属性修饰器
 
@@ -733,26 +734,26 @@ schema.defineTypes(State, {
 });
 
 schema.filter(function(client, value, root) {
-    // client is:
+    // client 参数是:
     //
-    // the current client that's going to receive this data. you may use its
-    // client.sessionId, or other information to decide whether this value is
-    // going to be synched or not.
+    // 当前将要接受数据的客户端. 可以通过其
+    // client.sessionId, 及其他信息判定是否
+    // 要把数据同步给这个客户端.
 
-    // value is:
-    // the value of the field @filter() is being applied to
+    // value 参数是:
+    // 被 @filter() 标记过滤的字段值
 
-    // root is:
-    // the root instance of your room state. you may use it to access other
-    // structures in the process of decision whether this value is going to be
-    // synched or not.
+    // root 参数是:
+    // 房间 Schema 实例引用. 方便在是否过滤的
+    // 决策过程中
+    // 访问房间状态.
     return true;
 })(State.prototype, "field");
 ```
 
 ### `@filterChildren()` 属性修饰器
 
-`@filterChildren()` 属性修饰器可用于过滤掉数组, 地图, 集合等内的项目. 它的签名与 `@filter()` 基本相同, 但是在 `value` 之前添加了 `key` 参数 - 表示 [ArraySchema](#arrayschema), [MapSchema](#mapschema), [CollectionSchema](#collectionschema) 等中的每个项目.
+`@filterChildren()` 属性修饰器可用于过滤掉 array, map, set等集合类型的内容. 它的签名与 `@filter()` 基本相同, 但是在 `value` 之前添加了 `key` 参数 - 表示 [ArraySchema](#arrayschema), [MapSchema](#mapschema), [CollectionSchema](#collectionschema) 等内容的索引.
 
 ```typescript fct_label="TypeScript"
 class State extends Schema {
@@ -762,9 +763,12 @@ class State extends Schema {
         // 当前将要接受数据的客户端. 可以通过其
         // client.sessionId, 及其他信息判定是否
         // 要把数据同步给这个客户端.
+        
+        // key 参数是:
+        // 集合内容的当前索引
 
         // value 参数是:
-        // 被 @filter() 标记过滤的字段值
+        // 集合内容当前索引处的值
 
         // root 参数是:
         // 房间 Schema 实例引用. 方便在是否过滤的
@@ -789,12 +793,12 @@ schema.filterChildren(function(client, key, value, root) {
     // 当前将要接受数据的客户端. 可以通过其
     // client.sessionId, 及其他信息判定是否
     // 要把数据同步给这个客户端.
-
+    
     // key 参数是:
-    // 子字段名
+    // 集合内容的当前索引
 
     // value 参数是:
-    // 被 @filter() 标记过滤的字段值
+    // 集合内容当前索引处的值
 
     // root 参数是:
     // 房间 Schema 实例引用. 方便在是否过滤的
@@ -857,19 +861,84 @@ schema.filter(function(client, value, root) {
 
 ### 回调
 
-服务器状态变更应用到客户端时, 会根据变更的类型自动触发本地实例上的回调.
+服务器状态数据更新应用到客户端时, 会根据变更的类型自动触发本地实例上的回调.
 
 回调通过房间状态实例触发. 使用前要确保该实例上已实现回调函数.
 
+- [listen()](#listenprop-callback)
 - [onAdd (instance, key)](#onadd-instance-key)
 - [onRemove (instance, key)](#onremove-instance-key)
-- [onChange (changes)](#onchange-changes-datachange) (触发于 `Schema` 实例)
 - [onChange (instance, key)](#onchange-instance-key) (触发于集合实例: `MapSchema`, `ArraySchema` 等等.)
-- [listen()](#listenprop-callback)
+- [onChange (changes)](#onchange-changes-datachange) (触发于 `Schema` 实例)
+
+#### `.listen(prop, callback)`
+
+侦听单个属性更新.
+
+**参数:**
+
+- `property`: 想要侦听更新的属性名称.
+- `callback`: 当 `property` 更新时触发的回调.
+
+```typescript fct_label="TypeScript"
+state.listen("currentTurn", (currentValue, previousValue) => {
+    console.log(`currentTurn is now ${currentValue}`);
+    console.log(`previous value was: ${previousValue}`);
+});
+```
+
+```csharp fct_label="C#"
+state.OnCurrentTurnChange((currentValue, previousValue) => {
+    Debug.Log(currentValue);
+    Debug.Log(previousValue);
+})
+```
+
+```lua fct_label="LUA"
+state:listen("currentTurn", function (current_value, previous_value)
+    pprint(current_value);
+    pprint(previous_value);
+end)
+```
+
+```haxe fct_label="Haxe"
+state.listen("currentTurn", (currentValue, previousValue) => {
+    trace(currentValue);
+    trace(previousValue);
+});
+```
+
+`.listen()` 返回的句柄可用于移除侦听器
+
+
+```typescript
+const removeListener = state.listen("currentTurn", (currentValue, previousValue) => {
+    // ...
+});
+
+// 之后, 如果不需要侦听器了, 可以调用 `removeListener()` 来移除对 `"currentTurn"` 的侦听.
+removeListener();
+```
+
+**`listen` 和 `onChange` 有什么区别?**
+
+`.listen()` 方法是专为监听单个属性的 `onChange` 的简化版本. 下面是把 `.listen()` 写成 `onChange` 的样子:
+
+```typescript
+state.onChange = function(changes) {
+    changes.forEach((change) => {
+        if (change.field === "currentTurn") {
+            console.log(`currentTurn is now ${change.value}`);
+            console.log(`previous value was: ${change.previousValue}`);
+        }
+    })
+}
+```
+---
 
 #### `onAdd (instance, key)`
 
-只有集合 (`MapSchema`, `ArraySchema` 等) 可以使用 `onAdd` 回调. 集合更新后触发 `onAdd` 回调, 外加已更新集合的键作为参数.
+只有集合 (`MapSchema`, `ArraySchema` 等) 可以使用 `onAdd` 回调. 集合更新后触发 `onAdd` 回调, 外加已更新内容的键作为参数.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onAdd((player, key) => {
@@ -929,7 +998,7 @@ room.State.players.OnAdd((string key, Player player) =>
 
 #### `onRemove (instance, key)`
 
-只有图 (`MapSchema`) 和数组 (`ArraySchema`) 可以使用 `onRemove` 回调. 集合更新后触发 `onRemove` 回调, 外加已更新集合的键作为参数.
+只有映射 (`MapSchema`) 和数组 (`ArraySchema`) 可以使用 `onRemove` 回调. 集合更新后触发 `onRemove` 回调, 外加已移除内容的键作为参数.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onRemove((player, key) => {
@@ -960,10 +1029,9 @@ room.State.players.OnRemove((string key, Player player) =>
 
 #### `onChange (changes:DataChange[])`
 
-> `Schema` 上的 `onChange` 和集合结构上的不一样. 对于 [集合结构(数组, 映射等)的 `onChange` 请参考这里](#onchange-instance-key).
+> `Schema` 上的 `onChange` 和集合上的不一样. 对于 [集合结构(数组, 映射等)的 `onChange` 请参考这里](#onchange-instance-key).
 
 可以注册 `onChange` 以跟踪 `Schema` 实例属性的变更. `onChange` 的参数数组包含已变更的属性以及变更前的值.
-
 
 ```javascript fct_label="JavaScript"
 room.state.onChange((changes) => {
@@ -972,7 +1040,7 @@ room.state.onChange((changes) => {
         console.log(change.value);
         console.log(change.previousValue);
     });
-});
+};
 ```
 
 ```lua fct_label="LUA"
@@ -994,23 +1062,23 @@ room.State.OnChange((changes) =>
         Debug.Log(obj.Value);
         Debug.Log(obj.PreviousValue);
     });
-});
+};
 ```
 
-没有同步过的客户端不能注册 `onChange` 回调.
+没与客户端同步过的状态上不能注册 `onChange` 回调.
 
 ---
 
 #### `onChange (instance, key)`
 
-> `Schema` 上的 `onChange` 和集合结构上的不一样. 对于 [`Schema` 的 `onChange` 请参考这里](#onchange-changes-datachange).
+> `Schema` 上的 `onChange` 和集合上的不一样. 对于 [`Schema` 的 `onChange` 请参考这里](#onchange-changes-datachange).
 
 当集合里的 **基本** 类型 (`string`, `number`, `boolean` 等) 值更新时, 将触发此回调.
 
 ```javascript fct_label="JavaScript"
 room.state.players.onChange((player, key) => {
     console.log(player, "have changes at", key);
-});
+};
 ```
 
 ```lua fct_label="LUA"
@@ -1035,54 +1103,6 @@ room.State.players.OnChange((string key, Player player) =>
 
 ---
 
-#### `.listen(prop, callback)`
-
-侦听单个属性更新.
-
-> `.listen()` 目前仅可用于 JavaScript/TypeScript.
-
-**参数:**
-
-- `property`: 想要侦听更新的属性名称.
-- `callback`: 当 `property` 更新时触发的回调.
-
-
-```typescript
-state.listen("currentTurn", (currentValue, previousValue) => {
-    console.log(`currentTurn is now ${currentValue}`);
-    console.log(`previous value was: ${previousValue}`);
-});
-```
-
-`.listen()` 返回的函数可用于移除侦听器
-
-
-```typescript
-const removeListener = state.listen("currentTurn", (currentValue, previousValue) => {
-    // ...
-});
-
-// 之后, 如果不需要侦听器了, 可以调用 `removeListener()` 来移除对 `"currentTurn"` 的侦听.
-removeListener();
-```
-
-**`listen` 和 `onChange` 有什么区别?**
-
-`.listen()` 方法是专为监听单个属性 `onChange` 的简化版本. 下面是把 `.listen()` 写成 `onChange` 的样子:
-
-```typescript
-state.onChange(function(changes) {
-    changes.forEach((change) => {
-        if (change.field === "currentTurn") {
-            console.log(`currentTurn is now ${change.value}`);
-            console.log(`previous value was: ${change.previousValue}`);
-        }
-    })
-})
-```
-
----
-
 ## 生成客户端 schema 的方法
 
 `schema-codegen` 是一个转译工具, 用于把服务器端的 schema 定义文件转换为客户端可以使用的版本:
@@ -1090,7 +1110,7 @@ state.onChange(function(changes) {
 要在客户端正确解码 state, 客户端的 schema 定义文件必须与服务器端相兼容.
 
 !!! Warning "在使用 [JavaScript SDK](/getting-started/javascript-client/) 时不必使用此工具"
-    只有在客户端使用强类型语言, 如 C#, Haxe 等时, 才需要使用 `schema-codegen`.
+    只有在客户端使用强类型语言, 如 C#, Haxe 等时, 才必须使用 `schema-codegen`.
 
 **使用方法**
 
@@ -1133,7 +1153,7 @@ generated: State.cs
 
 **使用 `npm` 脚本:**
 
-简言之, 推荐您把 `schema-codegen` 的参数保存在 `package.json` 文件中的 `npm` 脚本里:
+方便起见, 推荐您把 `schema-codegen` 的参数保存在 `package.json` 文件中的 `npm` 脚本里:
 
 ```json
 "scripts": {

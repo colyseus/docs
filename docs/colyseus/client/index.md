@@ -71,7 +71,7 @@ client.joinOrCreate("battle", {/* options */}).then(room => {
 
 ```csharp fct_label="C#"
 try {
-  Room<YourStateClass> room = await client.JoinOrCreate<YourStateClass>("battle"/* , Dictionary of options */);
+  Room<YourStateClass> room = await client.JoinOrCreate<YourStateClass>("battle", /* Dictionary of options */);
   Debug.Log("joined successfully");
 
 } catch (ex) {
@@ -609,7 +609,7 @@ Name of the room handler. Ex: `"battle"`.
 
 #### `send (type, message)`
 
-Send a type of message to the room handler. Messages are encoded with MsgPack and can hold any JSON-seriazeable data structure.
+Send a type of message to the room handler. Messages are encoded with MsgPack and can hold any JSON-serializable data structure.
 
 ```typescript fct_label="JavaScript"
 //

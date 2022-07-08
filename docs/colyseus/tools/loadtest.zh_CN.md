@@ -1,6 +1,6 @@
 # 加载测试 / 压力测试 (`@colyseus/loadtest`)
 
-当您想对服务器进行压力测试时,以了解其在上线时的表现时,`@colyseus/loadtest` 里的工具会很有用.
+当您想对服务器进行压力测试,以便了解项目上线后的表现时,`@colyseus/loadtest` 里的工具会很有用.
 
 [![asciicast](https://asciinema.org/a/229378.svg)](https://asciinema.org/a/229378)
 
@@ -27,55 +27,60 @@ npm install --save-dev @colyseus/loadtest
 
 ```typescript fct_label="TypeScript"
 // script.ts
-import { Room, Client } from "colyseus.js";
+import { Client, Room } from "colyseus.js";
+import { Options } from "@colyseus/loadtest";
 
-export function requestJoinOptions (this: Client, i: number) {
-    return { requestNumber: i };
-}
+export async function main(options: Options) {
+    const client = new Client(options.endpoint);
+    const room: Room = await client.joinOrCreate(options.roomName, {
+        // 这里是加入房间的参数...
+    });
 
-export function onJoin(this: Room) {
-    console.log(this.sessionId, "joined.");
+    console.log("joined successfully!");
 
-    this.onMessage("*", (type, message) => {
+    room.onMessage("*", (type, message) => {
         console.log("onMessage:", type, message);
     });
-}
 
-export function onLeave(this: Room) {
-    console.log(this.sessionId, "left.");
-}
+    room.onStateChange((state) => {
+        console.log(room.sessionId, "new state:", state);
+    });
 
-export function onError(this: Room, err) {
-    console.error(this.sessionId, "!! ERROR !!", err.message);
-}
+    room.onError((err) => {
+        console.log(room.sessionId, "!! ERROR !!", err.message);
+    })
 
-export function onStateChange(this: Room, state) {
+    room.onLeave((code) => {
+        console.log(room.sessionId, "left.");
+    });
 }
 ```
 
 ```typescript fct_label="JavaScript"
 // script.js
-exports.requestJoinOptions = function (i) {
-    return { requestNumber: i };
-}
+exports.main = function (options) {
+    const client = new Client(options.endpoint);
+    const room = await client.joinOrCreate(options.roomName, {
+        // 这里是加入房间的参数...
+    });
 
-exports.onJoin = function () {
-    console.log(this.sessionId, "joined.");
+    console.log("joined successfully!");
 
-    this.onMessage("*", (type, message) => {
+    room.onMessage("*", (type, message) => {
         console.log("onMessage:", type, message);
     });
-}
 
-exports.onLeave = function () {
-    console.log(this.sessionId, "left.");
-}
+    room.onStateChange((state) => {
+        console.log(room.sessionId, "new state:", state);
+    });
 
-exports.onError = function (err) {
-    console.log(this.sessionId, "!! ERROR !!", err.message);
-}
+    room.onError((err) => {
+        console.log(room.sessionId, "!! ERROR !!", err.message);
+    })
 
-exports.onStateChange = function (state) {
+    room.onLeave((code) => {
+        console.log(room.sessionId, "left.");
+    });
 }
 ```
 

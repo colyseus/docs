@@ -13,9 +13,9 @@ The easiest way to deploy your Colyseus server is to use the [Colyseus Arena](/a
 
 Heroku _can_ be used for prototyping. You can deploy the [colyseus-examples](https://github.com/colyseus/colyseus-examples) project on it by hitting this button:
 
-Scaling Colyseus on Heroku is not practical. We do not recommend using Heroku with Colyseus in production.
-
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/colyseus/colyseus-examples)
+
+Scaling Colyseus on Heroku is not practical. We do not recommend using Heroku with Colyseus in production.
 
 **Important:** Make sure to set the environment variable `NPM_CONFIG_PRODUCTION=false` in order to use dev-dependencies in your deployment, such as `ts-node`, `ts-node-dev`, etc.
 
@@ -120,9 +120,9 @@ Virtual host configuration:
     #
     # setup the proxy to forward websocket requests properly to a normal websocket
     # and vice versa, so there's no need to change the colyseus library or the
-    # server for that matter)
+    # server for that matter
     #
-    # (note: this proxy automatically converts the secure websocket (wss)
+    # note: this proxy automatically converts the secure websocket (wss)
 
     RewriteEngine On
     RewriteCond %{HTTP:UPGRADE} ^WebSocket$           [NC,OR]

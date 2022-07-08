@@ -1,15 +1,15 @@
-﻿
+﻿﻿
 # MMO 技術演示
 
-本技術演示旨在展示一種製作 **基礎的** 大型多人遊戲(MMO)的方法. 包括聊天系統, 玩家持久性, 多個流動 ColyseusRooms 以及聯網的可交互對象. 需註意的是, 本演示包含生產大規模 MMO 所需的數據分區或其他任何負載平衡方式. 本演示使用 Colyseus 0.14.7 版本以及 [Unity version 2020.3.1f1](https://unity3d.com/unity/qa/lts-releases).
+本技術演示旨在展示一種製作 **基礎的** 大型多人遊戲 (MMO) 的方法. 包括聊天系統, 玩家數據持久化, 多流程 ColyseusRooms 以及網絡可交互對象. 需註意的是, 本演示 **不含** 商業化自動伸縮 MMO 遊戲常見的數據共享及其他負載平衡方式. 本演示使用 Colyseus 0.14.7 版本以及 [Unity 版本 2020.3.1f1](https://unity3d.com/unity/qa/lts-releases).
 
 
 
-**[下載演示](https://github.com/colyseus/unity-demo-mmo/archive/master.zip)** ([查看源代碼](https://github.com/colyseus/unity-demo-mmo/))
+**[下載演示源碼](https://github.com/colyseus/unity-demo-mmo/archive/master.zip)** ([查看源代碼](https://github.com/colyseus/unity-demo-mmo/))
 
 
 
-[玩下看看!](https://xey3jn.us-west-1.colyseus.dev/)
+[玩玩看!](https://xey3jn.us-west-1.colyseus.dev/)
 
 ![屏幕截圖](mmo/screenshot.PNG)
 
@@ -17,19 +17,19 @@
 
 
 
-### 啟用本地伺服器
+### 啟動本地服務器
 
-您需要從 **提供的伺服器目錄** 中選擇安裝並啟用伺服器, 以正常操作本演示. 按照 [這些文檔中 Unity3d 部分之"執行演示伺服器"](/getting-started/unity3d-client/#running-the-demo-server) 中的說明操作即可.
+您需要以 **提供的 Server 目錄** 安裝並啟用服務器來打開本演示. 按照 [這些文檔中 Unity3d 部分的 "運行演示服務器"](/getting-started/unity3d-client/#running-the-demo-server) 中的說明操作即可.
 
-此外,本演示使用 MongoDB 來實現玩家資訊持久性.若您希望在本地執行此示例,則需要安裝自己的本地數據庫或提供自己的(參見 "演示調整" 章節)
+此外, 本演示使用 MongoDB 來實現玩家數據持久化. 本地運行的話, 需要您安裝自己的本地數據庫或者提供自己指定的的數據庫 (參見 "調整演示" 章節)
 
-[關於如何設置本地示例的詳情,可前往 MongoDB 網站查看](https://docs.mongodb.com/guides/server/install/)
+[關於如何安裝本地數據庫, 可前往 MongoDB 網站查看](https://docs.mongodb.com/guides/server/install/)
 
 ### ColyseusSettings ScriptableObject
 
 
 
-伺服器的所有設置都可通過此處的 ColyseusSetting ScriptableObject 進行更改:
+服務器的所有設置都可通過此處的 ColyseusSetting ScriptableObject 進行修改:
 
 
 
@@ -37,32 +37,32 @@
 
 
 
-如果您執行的是本地伺服器,預設的設置就能夠滿足需求; 但若您希望托管伺服器, 則需要按需更改 **Colyseus 伺服器地址** 和 **Colyseus 伺服器端口**.
+如果您運行的是本地服務器, 默認的設置就能夠滿足需求; 但若您希望托管服務器, 則需要按需更改 **Colyseus 服務器地址** 和 **Colyseus 服務器端口**.
 
 ## 播放演示
 
-在位於 `ColyseusTechDemo-MMO\Assets\Scenes\MMOLoginScene` 的場景"MMOLoginScene"中登錄玩家賬號. 若您是初次操作, 則需要創建一個賬號. 輸入您的郵箱地址和密碼, 登錄後即可開始操作. 登錄成功後, 客戶端會加載 "TowerScene" 場景並將 NetworkedEntity 放入其中. 您可以隨時按下空格鍵查看控件, 自定義遊戲人物或退出主菜單. 走進位於房間兩側的灰色方塊時, 您就會被傳送至另一間房.
+打開位於 `ColyseusTechDemo-MMO\Assets\Scenes\MMOLoginScene` 的場景 "MMOLoginScene" 進行玩家登錄. 若您是初次操作, 則需要輸入您的 e-mail 和密碼, 先創建一個賬號, 然後再登錄即可. 登錄成功後, 客戶端會加載 "TowerScene" 場景並將 NetworkedEntity 放入場景. 您可以隨時按下 ESC鍵 查看控件, 自定義遊戲人物或者退出到主菜單. 走進房間邊緣的灰色方塊時, 您就會被傳送至另一個房間.
 
-### 控件
-本演示的控件可隨時在 Escape 菜單查看, 內容如下:
+### 控製方法
+本演示的控製按鍵可隨時在 ESC菜單 中查看, 內容如下:
 
-| Input                            | Description        |
-|----------------------------------|--------------------|
-| W,A,S,M                          | 移動                |
-| 按住Shift鍵                       | 沖刺                |
-| Q,E                              | 旋轉人物            |
-| 上滑/下滑                         | 放大/縮小           |
-| 按住並拖動鼠標右鍵                 | 攝像頭軸轉           |
-| `                                | 切換聊天窗口         |
+| 輸入               | 描述       |
+|-------------------|-----------|
+| W,A,S,M           | 移動        |
+| 按住Shift鍵        | 沖刺        |
+| Q,E               | 旋轉人物     |
+| Scroll Up/Down    | 放大/縮小    |
+| 按住並拖動鼠標右鍵   | 旋轉攝像機    |
+| `                 | 切換聊天窗口  |
 
 ## 演示概覽
 本演示旨在向用戶展示如何使用 Colyseus 來設計並實現一款 MMO 遊戲. 它強調了以下特性:
 ### 動態房間
-可按需創建並配置 MMORooms. 當玩家進入一個網格空間時, 我們就加入一個房間, 並將其 `progress` 值設為網格值, 如 `arena.config.ts`:
+可按需創建和銷毀 MMORooms. 當玩家進入一個區域時, 我們就讓他進入相應的房間, 並將其 `progress` 值設為相應網格值, 就像 `arena.config.ts` 裏的操作那樣:
+```javascript
+gameServer.define('lobby_room', MMORoom).filterBy(["progress"]); // 根據 "progress" 值過濾房間 (這個值就是將要進入的網格值, 例如: -1x2)
 ```
-javascript gameServer.define('lobby_room', MMORoom).filterBy(["progress"]); // Filter room by "progress" (which grid we're wanting to join EX: -1x2)
-```
-當玩家在地圖中移動時, 可以基於他們所在的網格位置加入/離開房間. 玩家嘗試更新遊戲進度時, 客戶端會向伺服器端發送一條消息, 然後伺服器端會在 MMORoom.ts 中捕捉這條資訊: `MMORoom.ts`:
+當玩家在世界地圖中移動時, 基於他們所在的網格位置讓他們 加入/離開 相應房間. 玩家更新位置時, 客戶端會向服務器端發送同步消息, 然後服務器端會在 `MMORoom.ts` 中得到玩家的位置:
 ```javascript
 this.onMessage("transitionArea", (client: Client, transitionData: Vector[]) => {
     if (transitionData == null || transitionData.length < 2) {
@@ -73,50 +73,51 @@ this.onMessage("transitionArea", (client: Client, transitionData: Vector[]) => {
 });
 ```
 
-在确定新的网格位置后，客户端会获得一个新的可用SeatReservation，用以加入正确的ColyseusRoom来获取新的网格位置。 登录/注册的时候也会有相似的流程（参见 玩家持久性 章节）。
+在確定了新的網格位置之後，客戶機將獲得一個新的 SeatServation，用以加入更新位置後相應的的 ColyseusRoom. 登錄/註冊時也使用了類似的流程（請參考 <b>Player Persistence</b> 部分）.
 
 ![MapScreenshop](mmo/map.PNG)
 
-這是本演示中使用的網格地圖. 除綠色網格之外, 其他網格都帶有互通出口, 您可以在這些網格之間進出. 比如在 `-3x3` 網格空間中, 您可以通過西北方向的出口進入到 `3x-3` 網格空間. 所有其他相連的網格之間都有互通出口. 僅與角落有接觸的網格空間, 其出口在角落上, 玩家可以在對角線上穿梭.
+這是本演示中使用的網格地圖. 非綠色網格都帶有傳送出口, 您可以在這些網格之間進行傳送. 比如當你在 `-3x3` 網格中向西北方向移動, 離開該網格時就會被傳送到 `3x-3` 網格裏. 其他相鄰網格之間都可以互通. 只有角落上的網格是對角線互通的.
 
 ### 聊天系統
-![ChatScreenshot](mmo/chatScreenshot.PNG) 我們有另一個 ColyseusRoom 來處理聊天系統: `ChatRoom.ts`. 不論是從哪裏(伺服器端或客戶端)進入或離開 MMORoom, 我們都會同時進入或離開 ChatRoom. 這些聊天室均經過 `roomId` 篩選, 後者與接入 MMORoom 的 ID 是一致的. 客戶端發送的消息會被添加到 ChatRoomState's ChatQueue, 觸發所有已連線的客戶端狀態變更. 每一條新進消息都會收到一個 `timeStamp` 值, 接收到後該資訊就會被移出隊列.
-### 玩家持久性
-!!! tip "用戶身份驗證說明"
-    本演示使用的是很基礎的用戶驗證體系, 目的是為了讓玩家能夠持續使用唯一的用戶賬號, 該方式不可用於真實場景去實現整體用戶身份驗證.
-    請勿使用任何您在其他地方真實使用的郵箱和密碼組合.
+![ChatScreenshot](mmo/chatScreenshot.PNG)
+有一個 ColyseusRoom 來專門處理聊天系統: `ChatRoom.ts`. 不管是客戶端還是服務端, 進入或離開一個 MMORoom 的同時也進入或離開了一個 ChatRoom. ChatRoom 用 `roomId` 過濾房間, 即與之對應的 MMORoom 的 ID.
+客戶端發送的消息會被添加到 ChatRoomState 的 ChatQueue, 給所有已連接的客戶端觸發一個 state change. 每一條新進消息都附加有 `timeStamp` 值, 消息觸發後就會被移出隊列.
+### 玩家數據持久化
+!!! tip "用戶身份認證說明"
+		本演示使用的是很基礎的用戶認證系統,
+        目的是為演示玩家賬號的數據持久化,
+        該方法不應被照搬用於實際項目.
+		請勿使用真實的郵箱和密碼組合來註冊演示賬號.
 
-在本演示中,為記錄玩家的遊戲進度(玩家目前所在的房間以及離開遊戲前所在的房間), 所在位置, 遊戲幣余額等資訊,玩家的唯一賬號會保留在數據庫中.
-需要註冊玩家賬號才能播放本演示.成功驗證用戶身份後,房間席位預定將回傳至客戶端. 席位預定的會話 id 會作為 "pendingSessionId" 被保存至數據庫中玩家賬號條目中. 客戶端嘗試使用席位預定時, 房間的 "onAuth" 處理程序會執行玩家賬號查找操作, 來讓玩家順利進入房間. 若查找不到與 "pendingSessionId" 匹配的玩家賬號, 客戶端則無法加入房間. 但是在成功查找到玩家賬號後, "pendingSessionId" 變為 "activeSessionId", 則玩家可加入房間.
-匹配過程中玩家的遊戲進度將被用來過濾房間. 比如, 遊戲進度值為 "1,1" (代表其在網格區域中坐標為 1x1) 的玩家將被匹配進具有相同進度值的房間(若房間已存在). 若不存在具有相同進度值的房間,則系統會自動創建一個. 因此, 只有當玩家在時才存在與其網格坐標匹配的房間. 玩家通過任一網格出口離開網格區域, 進入另一個網格時, 其遊戲進度將會更新.
+在本演示中, 每個玩家的數據被記錄到數據庫中用來跟蹤玩家的位置 (上次離開的房間和目前所在的房間), 坐標數據, 金幣數目等等.
+要建立數據檔玩家需要運行遊戲. 成功完成用戶認證, 成功發送 seat reservation 至客戶端. seat reservation 的 id 會作為該用戶的 "pendingSessionId" 被保存至數據庫中. 客戶端消費這個 seat reservation 時, 房間的 "onAuth" 函數通過 "pendingSessionId" 查找玩家檔案. 如果查找失敗, 則不允許客戶端進入房間. 查找到玩家賬號後, "pendingSessionId" 將會轉換為 "activeSessionId", 然後讓客戶端進入房間.
+玩家數據的 progress 在 matchmaking 階段被用以過濾房間. 比如, 某玩家 progress 值為 "1,1" (代表其在網格區域中坐標為 1x1) 的玩家將被匹配進入相應的已存在房間. 若不存在對應 progress 值的房間, 那麽系統就創建一個. 因此, 對於每個網格, 只有當玩家在時才存在與其匹配的房間. 玩家通過任一網格出口離開自己所在的網格區域, 進入另一個網格時, 其 progress 將會被更新.
 ### 可交互元素
-![Interactables](mmo/coinOp.PNG) 網格周圍可能會散落`Interactables`. 這些是 `InteractableState` 架構對象在客戶端的展示. 我們製作新網格空間預製件時會將它們放入編輯器中. 玩家與其中一個對象互動時, 客戶端會向伺服器端發送一條 `objectInteracted` 消息. 若伺服器端還未獲取到已提供的對象交互 ID, 則會創建一個新的架構引用, 將其添加至房間的架構映射中, 並回傳給客戶端. 然後伺服器會客戶端是否具備執行互動的條件. 若成功, 所有客戶端將會收到一條 `objectUsed` 廣播消息, 包含交互對象的 ID 以及與之互動的用戶. 客戶端上, 適當的 `NetworkedEntity` 和 `Interactable` 對象則會被告知一起執行. 本演示中有 4 種不同類型的交互元素, 您可在不同的網格空間中找到:
--按鍵臺
-- 用戶每按一次可獲得一枚硬幣
--投幣騎乘機
-- 一個小騎乘機, 可暫時禁用您的控件並來回彈跳晃動您的 NetworkedEntity. 每次使用消耗 1 枚金幣
-- 傳送器
-    - 一個能夠將使用者傳送至其 "退出平臺" 的小平臺. 使用時消耗 2 枚金幣
-- 特效旋渦
-    - 按鈕臺的替代品, 沒有消耗也沒有作用, 只在按下時顯示一個酷炫的特效(使用預設伺服器類型)
+![Interactables](mmo/coinOp.PNG)
+網格周圍可能散落 `Interactables`. 這些是 `InteractableState` schema 對象在客戶端的顯現. 我們製作網格空間 prefab 時將它們放進去的. 玩家與其中一個對象互動時, 客戶端會向服務器端發送一條 `objectInteracted` 消息. 若服務器端還沒見過這個交互對象的 ID, 則會在房間的 schema map 裏新建那麽一個, 並回傳給客戶端. 然後服務器會判斷該客戶端是否具備交互的條件. 若是, 則廣播一條 `objectUsed` 消息, 連同交互對象的 ID 以及與之交互的用戶, 發送到所有客戶端. 客戶端上, 相應的 `NetworkedEntity` 和 `Interactable` 對象就會一起運行起來.
+本演示中有 4 種不同類型的交互元素, 您可在各種網格空間中找到:
+- Button Podium
+    - 用戶每按一次可獲得一枚硬幣
+- Coin Op
+    - 一個小騎乘機, 會暫時禁止玩家控製, 同時把 NetworkedEntity 撒一地. 每次使用消耗 1 枚金幣
+- Teleporter
+    - 一個能夠將把玩家傳送至 "退出平臺" 上的小機關. 使用消耗 2 枚金幣
+- FX Swirl
+    - 類似 Button Podium, 但是不消耗也不提供金幣, 只是在按下時顯示一個酷炫的特效 (服務器類型使用 DEFAULT)
 
 ## 調整演示
 
-當您播放此演示的時候, 您可能希望進行一些調整, 幫您更好地了解當前發生的情況. 下面您將學習如何進行微調整.
-
-## 调整演示
-
-当你播放此演示的时候，你可能希望进行一些调整，帮你更好地了解当前发生的情况。 下面你将学习如何进行微调整。
+當您把玩該演示的時候, 您可能希望進行一些調整, 幫您更好地了解各種機製. 下面您會學習到微調帶來的效果.
 
 ### 使用您自己的數據庫
-
-如果您希望將此演示指向您自己的數據庫, 您需要在 `Server` 目錄下的 `arena.env` 中提供一個不同的 Mongo 連線字符串, 它當前期望您托管一個本地的 Mongo 數據庫:
+如果您希望將此演示指向您自己的數據庫, 您需要在 `Server` 目錄下的 `arena.env` 中提供一個自己的 Mongo 數據庫連接字符串, 默認連接的是一個本地的 Mongo 數據庫:
 ``` javascript
 DEMO_DATABASE=mongodb://localhost:27017/demo?retryWrites=true&w=majority
 ```
 
-### 聊天消息顯示時間
-在客戶端, 您可以通過更改 `ChatManager.cs` 上的公共 `messageShowTime` 變數來更改消息顯示的時長, 然後在 `MMOManager.cs`:
+### 聊天消息生命周期
+在客戶端, 您可以通過修改 `ChatManager.cs` 上的公開變量 `messageShowTime` 來更改消息顯示的時長, 該變量會在 `MMOManager.cs` 處理進入/退出房間時, 發送給服務端:
 ```csharp
 private async void JoinChatRoom()
 {
@@ -124,13 +125,12 @@ private async void JoinChatRoom()
     ChatManager.Instance.SetRoom(chatRoom);
 }
 ```
-
-### 添加您自己的交互對象
-如果您想向客戶端添加一個新的交互對象, 其必須繼承自 `Interactable.cs`. 查看其他交互對象, 想想您可以做什麽. 如果您想重寫您的交互對象的 `serverType` 值, 您也應當為您在伺服器上的新 `serverType`  添加一個案例: `interactableObjectFactory.ts`:
+### 添加自定義交互對象
+如果您想在客戶端添加一個新的交互對象, 那麽它必須繼承 `Interactable.cs`. 參考其他交互對象, 考慮新對象應該做什麽. 如果您想覆蓋交互對象的 `serverType` 值, 那麽還需要在服務端的 `interactableObjectFactory.ts` 裏添加一個 `serverType` 的 case:
 ```javascript
 export  function  getStateForType(type: string) : InteractableState {
 	let  state : InteractableState = new  InteractableState();
-	//Any new types need an appropriate constructor in here or they will return empty
+	//新 type 必須在此構造, 否則將返回空值
 	switch(type){
 		case("DEFAULT"):
 		{
@@ -173,18 +173,18 @@ export  function  getStateForType(type: string) : InteractableState {
 	return  state;
 }
 ```
-變數 `coinChange` 是在使用金幣時用戶的金幣數量應該改變的數值. 如果該值為負(金幣使用的交互成本)伺服器將在成功響應之前確認用戶擁有足夠金幣, 如函數中所示 `handleObjectCost` in `MMORoom.ts`:
+變量 `coinChange` 表示金幣的改變情況. 如果該值為負 (交互時使用了金幣) 服務器需要在給客戶端返回扣款成功響應之前, 確認用戶的金幣是否夠用, 就像 `MMORoom.ts` 裏的 `handleObjectCost` 寫的那樣:
 ``` javascript
 handleObjectCost(object: InteractableState, user: NetworkedEntityState): boolean {
     let cost: number = object.coinChange;
     let worked: boolean = false;
 
-    //Its a gain, no need to check
+    //收獲金幣, 不用檢查
     if (cost >= 0) {
       user.coins += cost;
       worked = true;
     }
-    //Check if user can afford this
+    //檢查金幣是否夠用
     if (cost < 0) {
       if (Math.abs(cost) <= user.coins) {
         user.coins += cost;
@@ -198,13 +198,13 @@ handleObjectCost(object: InteractableState, user: NetworkedEntityState): boolean
     return worked;
   }
 ```
-如果該檢查成功, 目標交互將正常繼續進行.
-變數 `useDuration` 是用來考慮交互對象在於用戶交互後能夠保持 `inUse` 多久的因素. 當一個交互對象被使用後, 其 `availableTimestamp` 將被設定為:
+如果檢查通過, 交互對象就會正常運行.
+變量 `useDuration` 用來表示交互對象在用戶使用後將保持 `inUse` 狀態多久. 當一個交互對象被使用時, 其 `availableTimestamp` 將做如下設定:
 ``` javascript
 interactableObject.inUse = true;
 interactableObject.availableTimestamp = this.state.serverTime + interactableObject.useDuration;
 ```
-伺服器之後將檢查每個 `simulationInterval`:
+然後服務器在每個 `simulationInterval` 中做如下檢查:
 ``` javascript
 checkObjectReset() {
     this.state.interactableItems.forEach((state: InteractableState) => {
@@ -215,4 +215,4 @@ checkObjectReset() {
     });
   }
 ```
-如果 `serverTime` 顯示時機已到, 這將重置 MMORoom 中任何交互對象的 `inUse` 值.
+對於 MMORoom 中的所有交互對象, 如果與 `serverTime` 比對超時, 則重置它的 `inUse` 值.

@@ -1,14 +1,21 @@
+- [Colyseus Arena](#colyseus-arena)
 - [在 Heroku 上部署服务器](#heroku)
 - [在 Nginx 上部署服务器 (官方推荐)](#nginx-recommended)
 - [在 Apache 上部署服务器](#apache)
 - [使用 greenlock-express](#greenlock-express)
 - [Docker](#docker)
 
+## Colyseus Arena
+
+部署 Colyseus 服务器最简便的方法是使用 [Colyseus Arena](/arena). 能在 5 分钟之内安装部署并成功运行您的服务程序.
+
 ## Heroku
 
 建议您只有在进行游戏原型设计阶段使用 Heroku. 通过点击下面的按钮就能部署 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 项目:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/colyseus/colyseus-examples)
+
+在 Heroku 上进行 Colyseus 服务器扩展是不现实的. 我们不建议您将商业化 Colyseus 部署在 Heroku 上.
 
 **注意:** 开发环境要设置 `NPM_CONFIG_PRODUCTION=false`, 以便引用开发依赖包, 如 `ts-node`, `ts-node-dev` 等.
 
@@ -58,7 +65,7 @@ server {
 server {
     listen 80;
     listen 443 ssl;
-    server\_name yourdomain.com;
+    server_name yourdomain.com;
 
     ssl_certificate /path/to/your/cert.crt;
     ssl_certificate_key /path/to/your/cert.key;
@@ -102,7 +109,8 @@ sudo a2enmod proxy_wstunnel
 
 </VirtualHost>
 
-<VirtualHost \*:443> ServerName servername.xyz
+<VirtualHost *:443>
+    ServerName servername.xyz
 
     # 开启 SSL
     SSLEngine On
@@ -111,9 +119,9 @@ sudo a2enmod proxy_wstunnel
 
     #
     # 让代理把 websocket 协议的请求转发给 websocket 服务器
-    # 反之亦然, 这样就不用修改 colyseus 库和程序了)
+    # 反之亦然, 这样就不用修改 colyseus 库和程序了
     #
-    # (注意: 代理会自动把 websocket 转换为加密版本 (wss)
+    # 注意: 代理会自动把 websocket 转换为加密版本 (wss)
 
     RewriteEngine On
     RewriteCond %{HTTP:UPGRADE} ^WebSocket$           [NC,OR]
@@ -157,16 +165,16 @@ function setup(app: express.Application, server: http.Server) {
   return app;
 }
 
-if (process.env.NODE\_ENV === "production") {
+if (process.env.NODE_ENV === "production") {
   require('greenlock-express')
     .init(function () {
       return {
         greenlock: require('./greenlock'),
         cluster: false
-        };
-       })
-       .ready(function (glx) {
-         const app = express();
+      };
+    })
+      .ready(function (glx) {
+          const app = express();
 
       // 服务于 80 和 443 端口
       // 神奇地自动获取 SSL 证书!
@@ -200,14 +208,14 @@ if (process.env.NODE\_ENV === "production") {
 
 **第2步** 在 colyseus 项目的根目录新建 `Dockerfile`
 ```dockerfile
-FROM node:12
+FROM node:14
 
 ENV PORT 8080
 
 WORKDIR /usr/src/app
 
 # 使用通配符确保 package.json 和 package-lock.json 文件都能被复制
-COPY package\*.json ./
+COPY package*.json ./
 
 RUN npm ci
 # 只在商用环境下启动
@@ -217,11 +225,11 @@ COPY . .
 
 EXPOSE 8080
 
-CMD \[ "npm", "start" ]
+CMD [ "npm", "start" ]
 ```
 **第3步** 在上述目录下新建 `.dockerignore` 文件
 ```
-node\_modules
+node_modules
 npm-debug.log
 ```
 这样可以防止将本地模块和调试日志错被复制到 Docker 镜像上覆盖掉镜像内的模块.
@@ -241,7 +249,7 @@ docker images
 ```
 # 类似
 REPOSITORY                      TAG     ID              CREATED
-node                            12      1934b0b038d1    About a minute ago
+node                            14      1934b0b038d1    About a minute ago
 <your username>/colseus-server  latest  d64d3505b0d2    About a minute ago
 ```
 
@@ -259,3 +267,4 @@ docker run -p 8080:8080 -d <your username>/colyseus-server
 - [官方 Node.js Docker 镜像](https://hub.docker.com/_/node/)
 
 - [Node.js Docker 最佳实践指南](https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md)
+- 

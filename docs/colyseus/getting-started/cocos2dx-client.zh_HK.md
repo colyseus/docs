@@ -2,18 +2,19 @@
 
 ## 安裝
 
-- 下載 [Cocos2d-X](http://www.cocos2d-x.org/download) 並遵守其 [installation instructions](https://github.com/cocos2d/cocos2d-x#download-stable-versions).
-- 下載 [colyseus-cocos2d-x](https://github.com/colyseus/colyseus-cocos2d-x/archive/master.zip) 並將 `Source/` 文件復製到您的專案中.
-- 添加 `Source/` 目錄至您專案的 `Header Search Paths`.
+- 下載 [Cocos2d-X](http://www.cocos2d-x.org/download) 並安裝 [installation instructions](https://github.com/cocos2d/cocos2d-x#download-stable-versions) 進行安裝.
+- 下載 [colyseus-cocos2d-x](https://github.com/colyseus/colyseus-cocos2d-x/archive/master.zip) 並將 `Source/` 目錄復製到您的項目中.
+- 添加 `Source/` 目錄至您項目的 `Header Search Paths`.
 
-!!! tip "Looking for Cocos Creator?"
+!!! tip "要用 Cocos Creator?"
     參見 [JavaScript » Cocos Creator](/getting-started/javascript-client/#cocos-creator-30).
 
 ## 使用方式
 
-下方您可以看到如何使用 `Client`, 匹配進入 `Room`, 以及從已連線的房間發送並接收消息.
+下方您可以看到如何使用 `Client`, 匹配進入 `Room`, 以及從已連接的房間中
+發送並接收消息.
 
-> 了解如何從 [State Handling](/state/schema/#client-side-schema-generation) 生成您的 `RoomState`
+> 了解如何使用 [State Handling](/state/schema/#client-side-schema-generation) 生成您的 `RoomState`
 
 ```cpp
 #include "Colyseus/Client.h";
@@ -82,19 +83,19 @@ bool HelloWorld::init()
 
 ## 示例
 
-該示例使用 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 作為伺服器 (`02-state-handler.ts` 示例) 請遵循 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 的README中的安裝指示.
+該示例使用 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 作為服務器 (`02-state-handler.ts` 示例) 請依照 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 的 README 進行安裝.
 
-### 執行用戶端
+### 運行用戶端
 
-從 `Example` 目錄,執行 `cocos run -p {platform-id}` 指令,例如:
+在 `Example` 目錄下, 運行 `cocos run -p {platform-id}` 命令, 例如:
 
-**Building for Windows:**
+**編譯 Windows 程序:**
 
 ```
 cocos run -p win32
 ```
 
-**Building for Mac:**
+**編譯 Mac 程序:**
 
 ```
 cocos run -p mac
