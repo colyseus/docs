@@ -259,6 +259,8 @@ markdown_extensions:
       single_block_as_tab: False
       active_class: 'active'
       template: 'default'
+  - attr_list
+
 
 # Nav menu
 nav:
@@ -334,9 +336,9 @@ nav:
 - 'Arena | Cloud Hosting':
   - 'arena/index.md'
   - getting started:
-    - Colyseus for Arena Cloud:
-      - 'arena/getting-started/create-colyseus-server.md'
-      - 'arena/getting-started/modify-colyseus-server.md'
+    # - Colyseus for Arena Cloud:
+    - 'arena/getting-started/create-colyseus-server.md'
+    - 'arena/getting-started/modify-colyseus-server.md'
     - 'arena/getting-started/create-application.md'
     - 'arena/getting-started/managing-application.md'
     - Uploading Server Code:
@@ -355,3 +357,9 @@ nav:
     - 'arena/troubleshooting/troubleshoot.md'
   - Add-on Services:
     - 'arena/addons/arena-servers-api.md'
+  - Public API:
+    - 'arena/public-apis/index.md'
+    - getting started:
+  #   - Colyseus for Arena Cloud:
+      - 'arena/public-apis/getting-started/create-api-token.md'
+      - 'arena/public-apis/getting-started/how-to-use.md'
