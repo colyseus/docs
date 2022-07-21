@@ -1,7 +1,7 @@
 # How To Use API-Tokens
 
 !!! Requirements
-    - [Sign-up](https://console.colyseus.io/register){target=_blank} for an Arena Cloud Account
+    - [Sign-up](https://console.colyseus.io/register){target=_blank} for a Colyseus Arena Account
     - An API Token needed
 
 !!! Important
