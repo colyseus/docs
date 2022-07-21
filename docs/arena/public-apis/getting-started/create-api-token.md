@@ -12,14 +12,14 @@ Lets get started
 
 - After logging in select **API Token** on the left side-bar of the dashboard.
 
-![API-Token-Side-Bar](../../images/create-api-token-side-bar.png){: style="height:300px;width:200px"}
+![API-Token-Side-Bar](../../../images/create-api-token-side-bar.png){: style="height:300px;width:200px"}
 
 - It will open up the **API Tokens** List view. All your active api-tokens can be viewed here.
 
-![API-TOKEN-UI](../../images/api-token-lists.png)
+![API-TOKEN-UI](../../../images/api-token-lists.png)
 
 - Click on **Generate Token** and a new modal will open up.
 
 - Add `Name` & `Description` and click `generate`
 
-![GENERATE-API-TOKEN](../../images/generate-api-token.png)
+![GENERATE-API-TOKEN](../../../images/generate-api-token.png)

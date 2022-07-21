@@ -352,28 +352,9 @@ nav:
     - 'arena/troubleshooting/troubleshoot.md'
   - Add-on Services:
     - 'arena/addons/arena-servers-api.md'
-
-- 'Public APIs | Arena Cloud':
-  - 'arena-public-apis/index.md'
-  - getting started:
+  - Public API:
+    - 'arena/public-apis/index.md'
+    - getting started:
   #   - Colyseus for Arena Cloud:
-    - 'arena-public-apis/getting-started/create-api-token.md'
-    - 'arena-public-apis/getting-started/how-to-use.md'
-  #   - 'arena/getting-started/create-application.md'
-  #   - 'arena/getting-started/managing-application.md'
-  #   - Uploading Server Code:
-  #     - 'arena/getting-started/upload-application.md'
-  #     - 'arena/getting-started/upload-application-via-gitsync.md'
-  #   - 'arena/getting-started/deploy-application.md'
-  #   - Managing Deployments:
-  #     - 'arena/getting-started/managing-deployments.md'
-  #     - 'arena/getting-started/deployment-logs.md'
-  # - Reference:
-  #   - 'arena/reference/npmrc-custom.md'
-  #   - 'arena/reference/root-folder.md'
-  #   - 'arena/reference/upload-application-via-gitsync.md'
-  # - Application Deployments:
-  #   - 'arena/production/deploy-prod-application.md'
-  #   - 'arena/troubleshooting/troubleshoot.md'
-  # - Add-on Services:
-  #   - 'arena/addons/arena-servers-api.md
+      - 'arena/public-apis/getting-started/create-api-token.md'
+      - 'arena/public-apis/getting-started/how-to-use.md'
