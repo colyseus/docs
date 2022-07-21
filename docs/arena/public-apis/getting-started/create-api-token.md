@@ -24,4 +24,4 @@ Lets get started
 
 ![GENERATE-API-TOKEN](../../../images/generate-api-token.png)
 
-Lets move to [How to Use API Token](./how-to-use.md).
+Let's move to [How to Use API Token](./how-to-use.md).
