@@ -1,12 +1,14 @@
 # Create an API-Token
 
-### Requirements
+!!! Requirements
+    - [Sign-up](https://console.colyseus.io/register){target=_blank} for a Colyseus Arena Account
 
-* [Sign-up](https://console.colyseus.io/register) for a Arena Cloud Account
-
+!!! Important
+    - Public API Docs URL: [https://public-api.colyseus.dev/api-docs/](https://public-api.colyseus.dev/api-docs/){target=_blank}
+    
 ## Create API-Token
 
-Create your API-Token via the [Colyseus Arena Console](https://console.colyseus.io). API-Tokens can be used for interacting with your Colyseus Arena Application(s).
+Create your API-Token via the [Colyseus Arena Console](https://console.colyseus.io){target=_blank}. API-Tokens can be used for interacting with your Colyseus Arena Application(s).
 
 Lets get started
 
