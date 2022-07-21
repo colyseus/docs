@@ -4,11 +4,11 @@
 
 * [Sign-up](https://console.colyseus.io/register) for a Arena Cloud Account
 * An API Token needed
-* Public API Docs URL : [https://public-api.colyseus.dev](https://public-api.colyseus.dev)
+* Public API Docs URL : [https://public-api.colyseus.dev/api-docs/](https://public-api.colyseus.dev/api-docs/)
 
 ## How to use API-Token
 
-The API Token created in the tutorial, [API Token](./create-api-token.md) can be used to interact with the Public APIs now on the Docs Swagger UI. Follow the below steps for the same:
+The API Token created in the tutorial, [API Token](./create-api-token.md) can be used to interact with the Public APIs via the docs link. Follow the below steps for the same:
 
 - Click on the `Copy` button next to listen **API-Token** on UI
 

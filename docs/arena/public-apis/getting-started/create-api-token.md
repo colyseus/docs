@@ -23,3 +23,5 @@ Lets get started
 - Add `Name` & `Description` and click `generate`
 
 ![GENERATE-API-TOKEN](../../../images/generate-api-token.png)
+
+Lets move to [How to Use API Token](./how-to-use.md).

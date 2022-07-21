@@ -8,4 +8,4 @@ The Public API is a REST-styled API that gives full control over the entire Aren
     - Colyseus Arena Account
     - An API Token
 
-Lets straight jump into [creating an api token](./getting-started/create-api-token.md).
+Lets jump straight into [creating an api token](./getting-started/create-api-token.md).
