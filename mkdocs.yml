@@ -18,6 +18,7 @@ repo_url: 'https://github.com/colyseus/colyseus'
 copyright: 'Copyright &copy; 2021 Lucid Sight'
 google_analytics: ['UA-108278048-3', 'docs.colyseus.io']
 
+
 # Documentation and theme
 theme:
   name: 'material'
@@ -239,6 +240,10 @@ extra:
     link: 'https://twitter.com/colyseus'
   - icon: 'fontawesome/brands/discord'
     link: 'https://discord.gg/RY8rRS7'
+  # todo: upgrade to Google Analytics 4 (https://squidfunk.github.io/mkdocs-material/setup/setting-up-site-analytics/?h=google+analytics#google-analytics)
+  analytics:
+    provider: google
+    property: UA-108278048-3
 
 # Extensions
 markdown_extensions:
@@ -254,6 +259,8 @@ markdown_extensions:
       single_block_as_tab: False
       active_class: 'active'
       template: 'default'
+  - attr_list
+
 
 # Nav menu
 nav:
@@ -329,9 +336,9 @@ nav:
 - 'Arena | Cloud Hosting':
   - 'arena/index.md'
   - getting started:
-    - Colyseus for Arena Cloud:
-      - 'arena/getting-started/create-colyseus-server.md'
-      - 'arena/getting-started/modify-colyseus-server.md'
+    # - Colyseus for Arena Cloud:
+    - 'arena/getting-started/create-colyseus-server.md'
+    - 'arena/getting-started/modify-colyseus-server.md'
     - 'arena/getting-started/create-application.md'
     - 'arena/getting-started/managing-application.md'
     - Uploading Server Code:
@@ -350,3 +357,9 @@ nav:
     - 'arena/troubleshooting/troubleshoot.md'
   - Add-on Services:
     - 'arena/addons/arena-servers-api.md'
+  - Public API:
+    - 'arena/public-apis/index.md'
+    - getting started:
+  #   - Colyseus for Arena Cloud:
+      - 'arena/public-apis/getting-started/create-api-token.md'
+      - 'arena/public-apis/getting-started/how-to-use.md'
