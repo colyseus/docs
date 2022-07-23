@@ -1,4 +1,4 @@
-# [狀態同步](/state/overview) &raquo; Schema
+# [狀態數據同步](/state/overview) &raquo; Schema
 
 !!! Tip "還沒使用 TypeScript?"
     強烈建議您使用 TypeScript 以便更好地定義 Schema 結構並提高整體開發體驗. TypeScript 支持的 "實驗性修飾器" 會在本手冊內大量使用.
@@ -488,7 +488,7 @@ for (key => value in state.players) {
 
 `SetSchema` 是一個基於 JavaScript 內置 [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) 的可同步版本.
 
-`SetSchema` 的用法和 [`CollectionSchema`] 十分類似, 最大區別在於 Set 的值具有唯一性. JS 的 Set 沒有直接獲取值的方法. (比如像 [collection.at()](#collectionat))
+`SetSchema` 的用法和 [`CollectionSchema`] 十分類似, 最大區別在於 Set 的值具有唯一性. Set 沒有直接獲取值的方法. (比如像 [collection.at()](#collectionat))
 
 ```typescript fct_label="TypeScript"
 import { Schema, SetSchema, type } from "@colyseus/schema";
@@ -536,22 +536,6 @@ const set = new SetSchema<number>();
 set.add(1);
 set.add(2);
 set.add(3);
-```
-
----
-
-#### `set.at()`
-
-獲取 `index` 處的值.
-
-```typescript
-const set = new SetSchema<string>();
-set.add("one");
-set.add("two");
-set.add("three");
-
-set.at(1);
-// 輸出: "two"
 ```
 
 ---

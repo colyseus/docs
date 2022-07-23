@@ -1,4 +1,4 @@
-# 狀態同步
+# 狀態數據同步
 
 Colyseus 透過其強力類型 [`Schema`結構](/state/schema/) 來自動處理狀態同步.
 
