@@ -1,5 +1,11 @@
 # MMO Tech Demo
 
+!!! requirement "Requirements"
+    - Node.js v14.0 or higher
+    - Colyseus 0.14.0
+    - Cocos 3.2.0
+    - MongoDB 4.4.1 or higher
+
 The purpose of this technical demo is to show one method of how to make a **basic** MMO. Including a chat system, player persistence, multiple flowing ColyseusRooms and networked interactable objects. It is important to note that this demo **does not** include sharding or any other methods of load balancing that one would need for a production scale MMO. This demo is designed to work with Colyseus version 0.14.0 and [Cocos version 3.2.0](cocos-dashboard://download/2d_3.2.0).
 
 **[Download demo](https://github.com/colyseus/cocos-demo-mmo/archive/master.zip)** ([View source code](https://github.com/colyseus/cocos-demo-mmo/))
@@ -16,9 +22,15 @@ For instruction on how to install the Colyseus SDK for the Cocos engine please s
 
 ### Launching a local server
 
-You need to install and launch the server from the **provided Server directory** for this demo to function properly. Simply follow the instructions found underneath [“Running the demo server” in the Unity3d section of these docs](/getting-started/unity3d-client/#running-the-demo-server) as they will be the same for this demo.
+You need to install and launch the server from the **provided Server directory** for this demo to function properly. To run the server locally, run the following commands in your terminal:
 
-Additionally, this demo uses MongoDB for player persistence. If you wish to run it locally, you'll have to set up your own local DB or provide your own connection URL (see the "Adjusting the Demo" section)
+```
+cd Server
+npm install
+npm start
+```
+
+Additionally, this demo uses MongoDB for player persistence. If you wish to run the server locally, you'll have to set up your own local DB or provide your own connection URL (see the "Adjusting the Demo" section).
 
 [See the MongoDB website for details on how to set up a local instance](https://docs.mongodb.com/guides/server/install/)
 
@@ -31,7 +43,7 @@ All server settings can be changed via the ColyseusSettings objects located here
 Two settings objects have been included already. The LocalSettings object is set up to connect to a locally hosted game server and is the default object used when you first open the project.
 If you are running a local server, the default settings should be sufficient, however if you wish to host a server you’ll need to change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly. The DemoSettings object will connect to the live demo server.
 
-If you want to use the DemoSettings object just drag and drop its prefab into the ColyseusSettingsObject property of the MMO Manager component in the inspector of the MMOLoginScene.
+If you want to use the `DemoSettings` object just drag and drop its prefab into the `ColyseusSettingsObject` property of the MMO Manager component in the inspector of the `MMOLoginScene`.
 
 ![Screenshot](mmo/changeSettings.PNG)
 
@@ -56,6 +68,8 @@ The controls for this demo are visible in the Escape menu at any time and are as
 ## Demo Overview
 
 This demo was designed to show how a user could potentially design and implement an MMO style game using Colyseus. It highlights the following features:
+
+---
 
 ### Dynamic Rooms
 
@@ -93,10 +107,10 @@ When a client sends a message, it's added to the ChatRoomState's ChatQueue, trig
 ### Player Persistence
 
 !!! tip "User Authentication Note"
-This demo makes use of a very basic user authentication system with the intent of having
-player persistence for unique user accounts and should NOT be used as a real
-world example of how to implement user authentication as a whole.
-Do NOT use any email and password combination you actually use anywhere else.
+    This demo makes use of a very basic user authentication system with the intent of having
+    player persistence for unique user accounts and **should NOT be used as a real
+    world example** of how to implement user authentication as a whole.
+    **Do NOT use any email and password combination you actually use anywhere else.**
 
 In this demo, unique player accounts are persisted in a database in order to keep track of a player's progress (which room they are currently in and which room they were in last), position, coin balance, and more.
 A player account is necessary to play this demo. With successful user authentication, a seat reservation for a room is sent back to the client. The session Id of that seat reservation is saved to the player's account entry in the database as a "pendingSessionId". When the client attempts to consume the seat reservation, in order to join the room, a player account look up operation using the "pendingSessionId" is performed in the "onAuth" handler of the room. If no player account with a matching "pendingSessionId" exists, the client will not be allowed to join the room. However, with a successful player account look up, the "pendingSessionId" will become an "activeSessionId" and the client will join the room.
