@@ -1,6 +1,6 @@
 # MMO 技術展示
 
-!!! 前提 "需求"
+!!! requirement "前提"
     - Node.js v14.0 或更高版本
     - Colyseus 0.14.0
     - Cocos Creator 3.2.0
