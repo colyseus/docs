@@ -1,7 +1,7 @@
 ﻿﻿
 # MMO 技术演示
 
-本技术演示旨在展示一种制作 **基础的** 大型多人游戏 (MMO) 的方法. 包括聊天系统, 玩家数据持久化, 多流程 ColyseusRooms 以及网络可交互对象. 需注意的是, 本演示 **不含** 商业化自动伸缩 MMO 游戏常见的数据共享及其他负载平衡方式. 本演示使用 Colyseus 0.14.7 版本以及 [Unity 版本 2020.3.1f1](https://unity3d.com/unity/qa/lts-releases).
+本技术演示旨在展示一种制作 **基础的** 大型多人游戏 (MMO) 的方法. 包括聊天系统, 玩家数据持久化, 多流程 ColyseusRooms 以及网络可交互对象. 需注意的是, 本演示 **不含** 商业化自动伸缩 MMO 游戏常见的分片技术及其他负载平衡方式. 本演示使用 Colyseus 0.14.7 版本以及 [Unity 版本 2020.3.1f1](https://unity3d.com/unity/qa/lts-releases).
 
 
 
