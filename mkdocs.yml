@@ -317,7 +317,7 @@ nav:
                       - "StarBoss": "colyseus/demo/starboss.md"
                       - "Tanks": "colyseus/demo/turn-based-tanks.md"
                       - "MMO": "colyseus/demo/mmo.md"
-                - Cocos:
+                - Cocos Creator:
                       - "MMO": "colyseus/demo/cocos/mmo.md"
 
           - "Migrating":
