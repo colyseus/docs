@@ -12,7 +12,7 @@
 
 [玩玩看!](https://kxb-tx.colyseus.dev/)
 
-![屏幕截圖](mmo/mmoOverview.PNG)
+![屏幕截圖](mmo/mmoOverview.png)
 
 ## 開始
 
@@ -45,7 +45,7 @@ npm start
 
 如果要使用 `DemoSettings` object 只要把其 prefab 拖拽進 `MMOLoginScene` 場景中 MMO Manager 組件檢視面板的 `ColyseusSettingsObject` 屬性框中即可.
 
-![Screenshot](mmo/changeSettings.PNG)
+![Screenshot](mmo/changeSettings.png)
 
 ## 進入遊戲
 
@@ -92,13 +92,13 @@ this.onMessage("transitionArea", (client: Client, transitionData: Vector[]) => {
 
 在確定了新的網格位置之後，客戶機將獲得一個新的 SeatServation，用以加入更新位置後相應的的 ColyseusRoom. 登錄/註冊時也使用了類似的流程（請參考 <b>Player Persistence</b> 部分）.
 
-![MapScreenshot](mmo/grid.PNG)
+![MapScreenshot](mmo/grid.png)
 
 這是本演示中使用的網格地圖. 每個網格上四個大方向都互相連通, 以便從一個網格移動到另一個. 比如在網格空間 `0x0` 上, 可以向北(綠色) 出去進入網格空間 `0x1`. 所有相連網格空間都是互相連通的. 綠色 = 向北, 紅色 = 向南, 藍色 = 向東, 黃色 = 向西.
 
 ### 聊天系統
 
-![ChatScreenshot](mmo/chat.PNG)
+![ChatScreenshot](mmo/chat.png)
 
 有一個 ColyseusRoom 來專門處理聊天系統: `ChatRoom.ts`. 不管是客戶端還是服務端, 進入或離開一個 MMORoom 的同時也進入或離開了一個 ChatRoom. ChatRoom 用 `roomId` 過濾房間, 即與之對應的 MMORoom 的 ID.
 客戶端發送的消息會被添加到 ChatRoomState 的 ChatQueue, 給所有已連接的客戶端觸發一個 state change. 每一條新進消息都附加有 `timeStamp` 值, 消息觸發後就會被移出隊列.
@@ -117,7 +117,7 @@ this.onMessage("transitionArea", (client: Client, transitionData: Vector[]) => {
 
 ### 可交互元素
 
-![Interactables](mmo/interactable.PNG)
+![Interactables](mmo/interactable.png)
 網格周圍可能散落 `Interactables`. 這些是 `InteractableState` schema 對象在客戶端的顯現. 我們製作網格空間 prefab 時將它們放進去的. 玩家與其中一個對象互動時, 客戶端會向服務器端發送一條 `objectInteracted` 消息. 若服務器端還沒見過這個交互對象的 ID, 則會在房間的 schema map 裏新建那麽一個, 並回傳給客戶端. 然後服務器會判斷該客戶端是否具備交互的條件. 若是, 則廣播一條 `objectUsed` 消息, 連同交互對象的 ID 以及與之交互的用戶, 發送到所有客戶端. 客戶端上, 相應的 `NetworkedEntity` 和 `Interactable` 對象就會一起運行起來.
 本演示中有 4 種不同類型的交互元素, 您可在各種網格空間中找到:
 - Button Podium
