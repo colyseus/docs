@@ -12,7 +12,7 @@ The purpose of this technical demo is to show one method of how to make a **basi
 
 [Play the demo!](https://kxb-tx.colyseus.dev/)
 
-![Screenshot](mmo/mmoOverview.PNG)
+![Screenshot](mmo/mmoOverview.png)
 
 ## Getting Started
 
@@ -45,7 +45,7 @@ If you are running a local server, the default settings should be sufficient, ho
 
 If you want to use the `DemoSettings` object just drag and drop its prefab into the `ColyseusSettingsObject` property of the MMO Manager component in the inspector of the `MMOLoginScene`.
 
-![Screenshot](mmo/changeSettings.PNG)
+![Screenshot](mmo/changeSettings.png)
 
 ## Playing the Demo
 
@@ -93,13 +93,13 @@ this.onMessage("transitionArea", (client: Client, transitionData: Vector[]) => {
 
 After determining what the new grid position is, the client is given a new SeatReservation to consume, thus joining the correct ColyseusRoom for their new grid position. A similar flow also occurs when Logging in/Signing up (see <b>Player Persistence</b> section).
 
-![MapScreenshot](mmo/grid.PNG)
+![MapScreenshot](mmo/grid.png)
 
 This is the implemented grid map for this demo. The grid spaces contain exits of the four cardinal directions to each other, allowing you to travel from one to the other. For example in grid space `0x0`, you can take the North(green) exit and you will be placed into grid space `0x1`. All other contiguous grid spaces will have exits to each other. Green = North, Red = South, Blue = East, and Yellow = West.
 
 ### Chat System
 
-![ChatScreenshot](mmo/chat.PNG)
+![ChatScreenshot](mmo/chat.png)
 
 An additional ColyseusRoom is used to handle the Chat system: `ChatRoom.ts`. In both the client and the server, anywhere we join or leave an MMORoom we also join or leave a ChatRoom. These ChatRooms are filtered by `roomId` which is the ID of the MMORoom it is connected to.
 When a client sends a message, it's added to the ChatRoomState's ChatQueue, triggering a state change on all connected clients. Every new message that comes in receives a `timeStamp` value, after which it will be removed from the queue.
@@ -118,7 +118,7 @@ A player's progress is used to filter rooms during the matchmaking process. For 
 
 ### Interactable Elements
 
-![Interactables](mmo/interactable.PNG)
+![Interactables](mmo/interactable.png)
 Grid spaces may have `Interactables` scattered around them. These are client-side representations of `InteractableState` schema objects that are placed within the editor when we make a new grid space prefab. When a player performs an interaction with one of these objects, the client will send a `objectInteracted` message to the server. If the server is not yet aware of the Interactable ID that has been provided, it will create a new schema reference which will be added to the room's schema map and makes its way back to the client. The server will then check if the Client meets the requirements to perform an interaction. If successful, all clients will receive an `objectUsed` message broadcast, along with the interactable's ID and the user who interacted with it. On the client's side, the appropriate `NetworkedEntity` and `Interactable` objects will be told to perform together.
 This demo comes with 4 different types of interactables that you can find in the various grid spaces:
 
