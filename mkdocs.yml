@@ -306,6 +306,7 @@ nav:
   - 'Debugging': 'colyseus/debugging.md'
   - 'Deployment': 'colyseus/deployment.md'
   - 'Scalability': 'colyseus/scalability.md'
+  - 'Dev Mode': 'colyseus/devmode.md'
 
   - "How-to":
     - 'Customize room id': 'colyseus/how-to/custom-room-id.md'
