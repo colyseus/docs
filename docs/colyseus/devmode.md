@@ -27,6 +27,37 @@ const gameServer = new colyseus.Server({
 
 ### Restoring data outside the room’s `state`
 
+When `devMode` is enabled, [Room](/colyseus/server/room) instance can be enriched with caching and restoring custom
+data using `onCacheRoom` and `onRestoreRoom` callbacks.
+
+* `onCacheRoom` will be executed during a graceful shutdown and the developers have the ability to store external data.
+
+```typescript fct_label="JavaScript"
+export class MyRoom extends Room<MyRoomState> {
+  ...
+
+  onCacheRoom() {
+    return { foo: "bar" };
+  }
+}
+```
+
+* `onRestoreRoom` will be executed during process startup, upon restoring cached data with using the returned data from `onCacheRoom` method which has been saved during previous graceful shutdown.
+
+```typescript fct_label="JavaScript"
+export class MyRoom extends Room<MyRoomState> {
+  ...
+
+  onRestoreRoom(cachedData: any): void {
+    console.log("ROOM HAS BEEN RESTORED!", cachedData);
+
+    this.state.players.forEach(player => {
+      player.method(cachedData["foo"]);
+    });
+  }
+}
+```
+
 :warning: **Attention **
 
 Upon devMode connection re-establishing, schema-callbacks(`onAdd`) will be triggered again.
