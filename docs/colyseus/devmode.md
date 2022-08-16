@@ -50,7 +50,7 @@ export default Arena({
 
 ---
 
-#### `onCacheRoom`:
+#### `onCacheRoom`
 
 The `onCacheRoom` will be executed before the room is cached and disposed.
 
@@ -66,7 +66,7 @@ export class MyRoom extends Room<MyRoomState> {
 
 ---
 
-#### `onRestoreRoom`:
+#### `onRestoreRoom`
 
 The `onRestoreRoom` will be executed after the room has been restored and the restored state is available.
 
