@@ -3,7 +3,7 @@
 Room 类的作用是实现游戏会话, 也可作为一组客户端之间的交流通道.
 
 - 默认情况下系统在做房间匹配时, 房间根据客户端请求 **随求随建**.
-- Room 类必须使用 [`.define()`](/server/api/#define-roomname-string-room-room-options-any) 公开定义.
+- Room 类必须使用 [`.define()`](/server/api/#define-roomname-string-room-room-options-any) 公开.
 
 ```typescript fct_label="TypeScript"
 import http from "http";
@@ -55,7 +55,7 @@ export class MyRoom extends colyseus.Room {
 
 ### `onCreate (options)`
 
-房间由 matchmaker 创建后, 调用一次.
+房间匹配器创建房间后, 调用一次.
 
 **`options` 参数在房间创建时由客户端提供:**
 
@@ -73,7 +73,7 @@ client.joinOrCreate("my_room", {
 // }
 ```
 
-**服务器的 [`.define()`](/server/api/#define-roomname-string-room-room-options-any) 时设置的 options 可以被覆盖以便进行用户认证等操作:**
+**服务器可以使用 [`.define()`](/server/api/#define-roomname-string-room-room-options-any) 覆盖 options 或者进行用户检验:**
 
 ```typescript fct_label="Definition"
 // 服务器端
@@ -102,7 +102,7 @@ gameServer.define("my_room", MyRoom, {
 
 如果没有实现 onAuth 方法, 则默认返回 `true`, 从而允许任何客户连接.
 
-!!! Tip "获取玩家的 IP 地址"
+!!! Tip "正在获取玩家的 IP 地址"
     可以利用 `request` 变量取得用户的 IP 地址, http 标头和更多信息. 例如:  `request.headers['x-forwarded-for'] || request.connection.remoteAddress`
 
 **举例**
@@ -168,7 +168,7 @@ class MyRoom extends Room {
 
 **客户端举例**
 
-在客户端, 可以在 matchmaking 函数 (`join`, `joinOrCreate` 等函数) 中使用自定义的身份验证服务 (例如 Facebook):
+在客户端, 可以在匹配函数 (`join`, `joinOrCreate` 等函数) 中使用自定义的身份验证服务 (例如 Facebook):
 
 ```javascript fct_label="JavaScript"
 client.joinOrCreate("world", {
@@ -392,21 +392,6 @@ exports.GameRoom = class GameRoom extends colyseus.Room {
 
 ---
 
-### `onBeforePatch ()`
-
-按照补丁频率, 每次在 state 同步之前都会触发 `onBeforePatch` 生命周期函数. (参见 [setPatchRate()](#setpatchrate-milliseconds))
-
-```typescript
-onBeforePatch() {
-    //
-    // 这里可以对 state 做出某些处理,
-    // 然后 state 就会被序列化并传送给所有客户端
-    //
-}
-```
-
----
-
 ## 公开方法
 
 房间公开了以下方法.
@@ -485,7 +470,7 @@ update (deltaTime) {
 
 ### `setPatchRate (milliseconds)`
 
-设置 state 补丁发送给所有客户端的频率. 默认值为 `50`ms (20fps)
+设置状态补间发送给所有客户端的频率. 默认值为 `50`ms (20fps)
 
 ---
 
@@ -525,7 +510,7 @@ client.getAvailableRooms("battle").then(rooms => {
 ```
 
 !!! Tip
-    [其他语言客户端的 `getAvailableRooms()` 参见这里.](/client/client/#getavailablerooms-roomname)
+    [其他语音客户端的 `getAvailableRooms()` 参见这里.](/client/client/#getavailablerooms-roomname)
 
 ---
 
@@ -553,7 +538,7 @@ client.getAvailableRooms("battle").then(rooms => {
 options 参数可以包含:
 
 - **`except`**: 排除发送消息至这些 [`Client`](/server/client/)
-- **`afterNextPatch`**: 等到下一个状态补丁再发送广播消息
+- **`afterNextPatch`**: 等到下一个状态补间再发送广播消息
 
 #### 广播示例
 
@@ -627,12 +612,11 @@ onCreate() {
 
 ---
 
-### `allowReconnection (client, seconds)`
+### `allowReconnection (client, seconds?)`
 
-允许指定的客户 [`reconnect`](/client/#reconnect-reconnectiontoken) 房间. 必须在 [`onLeave()`](#onleave-client) 方法中使用.
+允许指定的客户 [`reconnect`](/client/client/#reconnect-roomid-string-sessionid-string) 房间. 必须在 [`onLeave()`](#onleave-client) 方法中使用.
 
-- **`client`**: 掉线的 [`Client`](/server/client/) 实例
-- **`seconds`**: 等待客户端实施 [`.reconnect()`](/client/#reconnect-roomid-string-sessionid-string) 的秒数, 或者传入参数值 `"manual"`, 来实现手动拒绝重连 (见下面第二个示例)
+如果提供 **`seconds`**, 将在提供的秒数之后取消重新连接.
 
 **返回类型:**
 
@@ -667,7 +651,7 @@ async onLeave (client: Client, consented: boolean) {
 ```
 
 
-**示例** 使用自定义逻辑手动拒绝重连.
+**示例** 使用自定义逻辑拒绝重新连接.
 
 ```typescript
 async onLeave (client: Client, consented: boolean) {
@@ -679,11 +663,8 @@ async onLeave (client: Client, consented: boolean) {
         throw new Error("consented leave");
     }
 
-    //
     // 获取重连令牌
-    // 注意: 这里不要使用 `await`
-    //
-    const reconnection = this.allowReconnection(client, "manual");
+    const reconnection = this.allowReconnection(client);
 
     //
     // 这里展示了自定义逻辑拒绝重连
@@ -787,10 +768,7 @@ onCreate() {
 
 ### `maxClients: number`
 
-允许连接进入房间的最大客户端数量.
-当数量达到此限制时, 房间将自动锁定.
-房间除非通过 [lock()](#lock) 方法手动锁定,
-否则都会在客户端断开房间时立即解锁.
+允许连接进入房间的最大客户端数量. 当数量达到此限制时, 房间将自动锁定. 房间除非通过 [lock()](#lock) 方法手动锁定, 否则都会在客户端断开房间时立即解锁.
 
 ---
 
@@ -817,8 +795,7 @@ onCreate() {
 
 ### `clock: ClockTimer`
 
-一个 [`ClockTimer`](https://github.com/gamestdio/timer#api) 实例,
-用于 [timing events](/server/timing-events).
+一个 [`ClockTimer`](https://github.com/gamestdio/timer#api) 实例, 用于 [timing events](/server/timing-events).
 
 ---
 
@@ -910,31 +887,7 @@ client.send(data);
  -->
 
 !!! Tip
-    [查看如何在客户端处理这些信息.](/colyseus/client/#onmessage)
-
----
-
-#### `sendBytes(type, bytes)`
-
-向客户端发送字节数组.
-
-参数 `type` 可以是一个 `string` 或者是一个 `number`.
-
-当需要使用自定义编码, 而不使用默认编码器 (MsgPack) 时会很有用.
-
-**发送消息:**
-
-```typescript
-//
-// 发送字符串类型 ("powerup") 消息
-//
-client.sendBytes("powerup", [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
-
-//
-// 发送数字类型 (1) 消息
-//
-client.sendBytes(1, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
-```
+    [查看如何在客户端处理这些信息.](/colyseus/client/client/#onmessage)
 
 ---
 

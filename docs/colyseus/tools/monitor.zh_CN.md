@@ -82,3 +82,4 @@ app.use("/colyseus", basicAuthMiddleware, monitor({
 ```
 
 如果未指定, 默认房间属性列是: `['roomId', 'name', 'clients', 'maxClients', 'locked', 'elapsedTime']`.
+

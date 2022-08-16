@@ -1,21 +1,14 @@
-- [Colyseus Arena](#colyseus-arena)
 - [在 Heroku 上部署服务器](#heroku)
 - [在 Nginx 上部署服务器 (官方推荐)](#nginx-recommended)
 - [在 Apache 上部署服务器](#apache)
 - [使用 greenlock-express](#greenlock-express)
 - [Docker](#docker)
 
-## Colyseus Arena
-
-部署 Colyseus 服务器最简便的方法是使用 [Colyseus Arena](/arena). 能在 5 分钟之内安装部署并成功运行您的服务程序.
-
 ## Heroku
 
 建议您只有在进行游戏原型设计阶段使用 Heroku. 通过点击下面的按钮就能部署 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 项目:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/colyseus/colyseus-examples)
-
-在 Heroku 上进行 Colyseus 服务器扩展是不现实的. 我们不建议您将商业化 Colyseus 部署在 Heroku 上.
 
 **注意:** 开发环境要设置 `NPM_CONFIG_PRODUCTION=false`, 以便引用开发依赖包, 如 `ts-node`, `ts-node-dev` 等.
 
@@ -119,9 +112,9 @@ sudo a2enmod proxy_wstunnel
 
     #
     # 让代理把 websocket 协议的请求转发给 websocket 服务器
-    # 反之亦然, 这样就不用修改 colyseus 库和程序了
+    # 反之亦然, 这样就不用修改 colyseus 库和程序了)
     #
-    # 注意: 代理会自动把 websocket 转换为加密版本 (wss)
+    # (注意: 代理会自动把 websocket 转换为加密版本 (wss)
 
     RewriteEngine On
     RewriteCond %{HTTP:UPGRADE} ^WebSocket$           [NC,OR]
@@ -267,4 +260,3 @@ docker run -p 8080:8080 -d <your username>/colyseus-server
 - [官方 Node.js Docker 镜像](https://hub.docker.com/_/node/)
 
 - [Node.js Docker 最佳实践指南](https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md)
-- 

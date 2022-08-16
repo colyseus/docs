@@ -157,10 +157,10 @@ it("should assert something after room's simulation tick", async() => {
 
 From your test-cases, you may call any of the client-side SDK methods through `colyseus.sdk`
 
-- [`colyseus.sdk.joinOrCreate()`](/colyseus/client/#joinorcreate-roomname-string-options-any)
-- [`colyseus.sdk.create()`](/colyseus/client/#create-roomname-string-options-any)
-- [`colyseus.sdk.join()`](/colyseus/client/#join-roomname-string-options-any)
-- [`colyseus.sdk.joinById()`](/colyseus/client/#joinbyid-roomid-string-options-any)
+- [`colyseus.sdk.joinOrCreate()`](/colyseus/client/client/#joinorcreate-roomname-string-options-any)
+- [`colyseus.sdk.create()`](/colyseus/client/client/#create-roomname-string-options-any)
+- [`colyseus.sdk.join()`](/colyseus/client/client/#join-roomname-string-options-any)
+- [`colyseus.sdk.joinById()`](/colyseus/client/client/#joinbyid-roomid-string-options-any)
 
 **Example**
 

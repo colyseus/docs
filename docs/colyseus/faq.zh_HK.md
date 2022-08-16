@@ -1,34 +1,34 @@
-# 常見問題
+# 常見問答集
 
-### 一個 Colyseus 服務器能夠承載多少 CCU?!
+### 一個 Colyseus 伺服器能處理多少CCU?
 
-一個 Colyseus 服務器能夠承載的最大並發用戶數將取決於您的遊戲的 CPU 運算密集程度以及您的服務器向客戶端發送的數據流量.
+Colyseus 伺服器可以處理的最大併發用戶數(CCU)將根據您遊戲循環的 CPU 運算密集程度以及您的伺服器向用戶端發送的流量而有所變化.
 
-Linux 默認的 "file descriptor limit" (最大連接數) 限製為 1024 —— 可以根據需要酌情調整. 所以, 即使是最便宜的雲端服務器也能夠容納1024個並發用戶. 據說有人通過配置打開了 [60萬個 WebSocket 連接](https://blog.jayway.com/2015/04/13/600k-concurrent-websocket-connections-on-aws-using-node-js/), 即使是沒有數據傳輸的空連接 —— 這也證明了通過配置完全可以容納超過 1024 個連接的限製.
+Linux 伺服器預設的 "file descriptor limit"(開放連線數) 大約是 1024 - 此值可以增加,但風險自負. 因此, 您可以安全地假設最便宜的雲端伺服器能夠容納 1024 個併發連線. 有報告稱,人們設法擁有多達 [60萬個開放的WebSocket連線](https://blog.jayway.com/2015/04/13/600k-concurrent-websocket-connections-on-aws-using-node-js/), 即使其為空閒連線, 也不傳輸資料 - 這證明, 您有可能透過微調伺服器規格和配置處理超過 1024 個併發連線.
 
-### `"Error: seat reservation expired"` 是什麽意思??
+### `"Error: seat reservation expired"` 是什麼意思?
 
-該錯誤意味著客戶端未能在一定時間段內與房間完成連接. 通常在商用環境下會經常見到該錯誤. [可以適當提高超時設置](/server/room/#setseatreservationtime-seconds).
+此項錯誤意味著用戶端未能及時與房間建立連線. 在生產環境中,您可能會看到該項錯誤時常發生. [您可以增加等待時長](/server/room/#setseatreservationtime-seconds).
 
-### 我該如何將 `state` 數據只同步給一位特定客戶端?
+### 我怎樣才能將 `state` 的資料只同步到一個特定的用戶端?
 
-您可以使用 [schema filters](/state/schema/#filtering-data-per-client),或者通過 [room 的 send 方法](/server/client/#sendtype-message) 將數據手動發送給每個客戶端.
+您可以使用 [schema filters](/state/schema/#filtering-data-per-client),或透過 [room 的 send 函数](/server/client/#sendtype-message) 手動發送資料到各個用戶端.
 
-### Colyseus 是否會幫助我進行客戶端預測?
+### Colyseus 是否幫助我進行用戶端預測?
 
-Colyseus 本身不提供現成的客戶端預測方法. 像 [wilds.io](http://wilds.io/) 和 [mazmorra.io](https://mazmorra.io/) 這樣的遊戲並沒有使用任何形式的客戶端預測. 把用戶坐標進行 [`補間插值`](http://gamestd.io/mathf/globals.html#lerp) 的效果通常不錯.
+Colyseus 並沒有提供任何用戶端預測的解決方案. 像 [wilds.io](http://wilds.io/) 和 [mazmorra.io](https://mazmorra.io/) 樣的遊戲不使用任何形式的用戶端預測. [`lerp`](http://gamestd.io/mathf/globals.html#lerp) 的用戶座標通常會得到合理的結果.
 
-### 爆出這個錯誤: `"Class constructor Room cannot be invoked without 'new'"`, 我該怎麽辦?
+### 我得到了此類錯誤: `"Class constructor Room cannot be invoked without 'new'"`,我應該怎麼做?
 
-請確定在您的 `tsconfig.json` 文件裏開啟了 `es2015` 或更新的編譯配置:
+請確保您的 `tsconfig.json` 中有 `es2015` 或更高版本.
 
 ```javascript
 {
     "compilerOptions": {
-        // ...
-        "target": "es2015",
-        // ...
-    },
-    // ...
+     // ...
+     "target": "es2015",
+     // ...
+   },
+   // ...
 }
 ```

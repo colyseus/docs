@@ -25,7 +25,7 @@ If you are running a local server, the default settings should be sufficient, ho
 
 ### Playing the Demo
 
-Start the player in the scene “StarBossLobby” located at `Assets\StarBoss\Scenes\StarBossLobby`. Input your username and create a room to begin. **If you cannot reach the room creation screen, confirm your local server is working properly and check the Unity Editor for error logs.** If you are successful, the client will load the “Scene_Dev_Environment” scene. When creating a room, you have the option to make a Co-op or a Team Deathmatch room. If you press the Enter key or click the “Start” button within a Co-op room, you’ll “ready up” and the game will begin. If you wait for more players to join on your local server, all players must “ready up” before the game will begin. If you made a Team Deathmatch room, you will need at least 1 more player to join on the other team before you can begin.
+Start the player in the scene “StarBossLobby” located at `Assets\StarBoss\Scenes\StarBossLobby`. Input your username and create a room to begin. **If you cannot reach the room creation screen, confirm your local server is working properly and check the Unity Editor for error logs.** If you are successful, the client will load the “Scene_Dev_Environment” scene. When creating a room, you have the option to make a Co-op or a Team Deathmatch room. If you press the Enter key or click the “Start” button within a Co-op room, you’ll “ready up” and the game will begin. If you wait for more players to join on your local server, all players must “ready up” before the game will begin. If you made a Team Deathmatch room, you will need at least 1 more player to join on the other team before you can begin
 
 ## Demo Overview
 
@@ -64,14 +64,14 @@ public class StarBossRoomAvailable : ColyseusRoomAvailable {
     public StarBossRoomMetaData metadata;
 }
 ```
-And then within `ExampleManager.cs` we have updated the `GetAvailableRooms` function to receive data of type `StarBossRoomAvailable`:
+And then within  `ExampleManager.cs` we have updated the `GetAvailableRooms` function to receive data of type `StarBossRoomAvailable`:
 ```csharp
 public async void GetAvailableRooms() {
     StarBossRoomAvailable[] rooms = await client.GetAvailableRooms<StarBossRoomAvailable>(_roomController.roomName);
     onRoomsReceived?.Invoke(rooms);
 }
 ```
-We also updated the `OnRoomsReceived` delegate call to use `StarBossRoomAvailable`. Finally, for every entry we receive, we Instantiate an object with a `RoomListItem` component attached and we pass it a reference to the room available. In the `DetermineMode` function in `RoomListItem.cs`:
+We also updated the `OnRoomsReceived` delegate call to use `StarBossRoomAvailable`. Finally, for every entry we receive, we Instantiate an object with a `RoomListItem` component attached  and we pass it a reference to the room available. In the `DetermineMode` function in `RoomListItem.cs`:
 ```csharp
 bool isCoop = roomRef.metadata.isCoop;
 

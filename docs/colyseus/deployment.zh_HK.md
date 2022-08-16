@@ -1,27 +1,20 @@
-- [Colyseus Arena](#colyseus-arena)
-- [在 Heroku 上部署服務器](#heroku)
-- [在 Nginx 上部署服務器 (官方推薦)](#nginx-recommended)
-- [在 Apache 上部署服務器](#apache)
+- [在 Heroku 上部署](#heroku)
+- [在 Nginx 上部署(推薦)](#nginx-recommended)
+- [在 Apache 上部署](#apache)
 - [使用 greenlock-express](#greenlock-express)
 - [Docker](#docker)
 
-## Colyseus Arena
-
-部署 Colyseus 服務器最簡便的方法是使用 [Colyseus Arena](/arena). 能在 5 分鐘之內安裝部署並成功運行您的服務程序.
-
 ## Heroku
 
-建議您只有在進行遊戲原型設計階段使用 Heroku. 通過點擊下面的按鈕就能部署 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 項目:
+Heroku 只推薦用於原型設計. 您可以透過點擊此按鈕在上面部署 [colyseus-examples](https://github.com/colyseus/colyseus-examples) 專案:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/colyseus/colyseus-examples)
 
-在 Heroku 上進行 Colyseus 服務器擴展是不現實的. 我們不建議您將商業化 Colyseus 部署在 Heroku 上.
-
-**註意:** 開發環境要設置 `NPM_CONFIG_PRODUCTION=false`, 以便引用開發依賴包, 如 `ts-node`, `ts-node-dev` 等.
+**註意:** 一定要将环境变量设为 `NPM_CONFIG_PRODUCTION=false` 以便在部署中使用開發依赖项,比如 `ts-node`, `ts-node-dev` 等.
 
 ## Nginx (recommended)
 
-建議您在商用環境中使用 `pm2` 和 `nginx`.
+建議在生產環境中使用 `pm2` 和 `nginx`.
 
 ### PM2
 
@@ -31,13 +24,13 @@
 npm install -g pm2
 ```
 
-然後使用它啟動服務器:
+之後使用它啟動伺服器:
 
 ```
 pm2 start your-server.js
 ```
 
-### Nginx配置
+### Nginx 配置
 
 ```
 server {
@@ -57,9 +50,9 @@ server {
 }
 ```
 
-### 為 Nginx 配置 SSL
+### 用 SSL 进行 Nginx 配置
 
-建議您通過 [LetsEncrypt](https://letsencrypt.org) 獲取證書.
+建議從 [LetsEncrypt](https://letsencrypt.org) 獲取證書.
 
 ```
 server {
@@ -85,9 +78,9 @@ server {
 
 ## Apache
 
-下面介紹了如何使用 Apache 作為 Node.js Colyseus 程序的代理. (感謝 [tomkleine](https://github.com/tomkleine)!)
+下面是如果使用 Apache 作為您的 Node.js Colyseus 應用代理. (感謝 [tomkleine](https://github.com/tomkleine) !)
 
-需要安裝的 Apache 模塊:
+安裝所需 Apache 模組:
 
 ```
 sudo a2enmod ssl
@@ -103,7 +96,7 @@ sudo a2enmod proxy_wstunnel
 <VirtualHost *:80>
     ServerName servername.xyz
 
-    # 把從 80 端口收到的請求全部轉發至 HTTPS 端口 (強製使用 ssl)
+    # 把從 80 端口收到的請求全部轉發至 HTTPS 端口 (強製使用 ssl):
     RewriteEngine On
     RewriteRule ^(.*)$ https://%{HTTP_HOST}$1 [R=301,L]
 
@@ -118,17 +111,17 @@ sudo a2enmod proxy_wstunnel
     SSLCertificateKeyFile       /PATH/TO/PRIVATE/KEY/FILE
 
     #
-    # 讓代理把 websocket 協議的請求轉發給 websocket 服務器
-    # 反之亦然, 這樣就不用修改 colyseus 庫和程序了
+    # 讓代理把 websocket 協議的請求轉發給 websocket 伺服器
+    # 反之亦然, 這樣就不用修改 colyseus 庫和程序了)
     #
-    # 註意: 代理會自動把 websocket 轉換為加密版本 (wss)
+    # (註意: 代理會自動把 websocket 轉換為加密版本 (wss)
 
     RewriteEngine On
     RewriteCond %{HTTP:UPGRADE} ^WebSocket$           [NC,OR]
     RewriteCond %{HTTP:CONNECTION} ^Upgrade$          [NC]
     RewriteRule .* ws://127.0.0.1:APP-PORT-HERE%{REQUEST_URI}  [P,QSA,L]
 
-    # 讓代理把 https 協議的請求轉發給 http 服務器
+    # 讓代理把 https 協議的請求轉發給 http 伺服器
     # (同樣自動把 https 轉換為 http, 反之亦然)
 
     ProxyPass "/" "http://localhost:APP-PORT-HERE/"
@@ -139,17 +132,17 @@ sudo a2enmod proxy_wstunnel
 
 ## greenlock-express
 
-想快速配置好 SSL, 而又不想要反向代理, Greenlock 是一個很好的選擇.
+如果您想在伺服器上快速配置 SSL, Greenlock 是個不錯的工具, 不需要配置反向代理.
 
-使用 [`greenlock-express`](https://www.npmjs.com/package/greenlock-express) 時, **不應** 再為它配置任何反向代理, 如 [Nginx](#nginx-recommended) 或 [Apache](#apache).
+在使用 [`greenlock-express`](https://www.npmjs.com/package/greenlock-express) 時, 您 **不應該** 在其後面配置任何反向代理, 比如 [Nginx](#nginx-recommended) 或 [Apache](#apache).
 
 ```
 npm install --save greenlock-express
 ```
 
-詳情請參考 [greenlock-express 的 README](https://www.npmjs.com/package/greenlock-express#1-create-your-project).
+请遵循 [greenlock-express 的讀我文檔](https://www.npmjs.com/package/greenlock-express#1-create-your-project).
 
-下面是官方推薦的配置, 開發環境和商用環境都適用:
+下面是處理開發及生產環境的推薦方法:
 
 ```typescript
 import http from "http";
@@ -176,13 +169,13 @@ if (process.env.NODE_ENV === "production") {
     .ready(function (glx) {
         const app = express();
 
-      // 服務於 80 和 443 端口
+      // 服務於 80 和 443 埠口
       // 神奇地自動獲取 SSL 證書!
       glx.serveApp(setup(app, glx.httpsServer(undefined, app)));
     });
 
 } else {
-  // 開發環境端口
+  // 開發環境埠口
   const PORT = process.env.PORT || 2567;
 
   const app = express();
@@ -196,17 +189,17 @@ if (process.env.NODE_ENV === "production") {
 
 ## Docker
 
-準備工作:
+先決條件:
 
-* 確保項目裏有 `package.json` 和 `package-lock.json`.
+* `package.json` 與 `package-lock.json` 位於專案中.
 
-* 配置 `npm start` 腳本以便啟動服務器.
+* 創建`npm start` 指令來啟動伺服器
 
 步驟:
 
-**第1步** 安裝 [Docker](https://www.docker.com/)
+**步驟 1** 安装 [Docker](https://www.docker.com/)
 
-**第2步** 在 colyseus 項目的根目錄新建 `Dockerfile`
+**步驟 2** 在 colyseus 项目根目录中创建 Dockerfile
 ```dockerfile
 FROM node:14
 
@@ -214,12 +207,11 @@ ENV PORT 8080
 
 WORKDIR /usr/src/app
 
-# 使用通配符確保 package.json 和 package-lock.json 文件都能被復製
-
+# 使用一個萬用字元來確保 package.json 和 package-lock.json 得到復製
 COPY package*.json ./
 
 RUN npm ci
-# 只在商用環境下啟動
+# 在生產環境中執行此程序
 # npm ci --only=production
 
 COPY . .
@@ -228,44 +220,43 @@ EXPOSE 8080
 
 CMD [ "npm", "start" ]
 ```
-**第3步** 在上述目錄下新建 `.dockerignore` 文件
+**步驟 3** 在同目錄下創建 `.dockerignore` 文件
 ```
 node_modules
 npm-debug.log
 ```
-這樣可以防止將本地模塊和調試日誌錯被復製到 Docker 鏡像上覆蓋掉鏡像內的模塊.
+這將防止本機模組和調試日誌被復製到 Docker 映像上,並可能覆蓋安裝在映像中的模組.
 
-**第4步** 在 Dockerfile 目錄下執行以下命令執行以下指令來編譯鏡像. -t 參數用以設置鏡像的類目, 以便日後查找方便:
+**步驟 4** 進入存放 Dockerfile 的目錄,執行以下指令構建Docker映像. -t 標誌允許您標記映像,以便稍後使用中更容易找到:
 
 ```
 docker build -t <your username>/colyseus-server .
 ```
 
-**第5步** 用以下命令列出 Docker 鏡像:
+**步驟 5** 您的映像將會通過以下 Docker 指令列出:
 ```
 docker images
 
 ```
 輸出:
 ```
-# 類似
+# 示例
 REPOSITORY                      TAG     ID              CREATED
 node                            14      1934b0b038d1    About a minute ago
 <your username>/colseus-server  latest  d64d3505b0d2    About a minute ago
 ```
 
-**第6步** 用以下命令運行 Docker 鏡像:
+**步驟 6** 使用下列指令執行 Docker 鏡像:
 ```
 docker run -p 8080:8080 -d <your username>/colyseus-server
 ```
-用 -d 參數使用脫離模式, 在後臺運行鏡像. -p 參數把公開端口映射到容器內的私有端口.
+使用 -d 執行映像會使容器以分離模式執行, 讓容器在後臺執行. 而 -p 標誌將公共端口重定向到容器內的私有端口.
 
 
-**第7步** 完成. 現在就可以通過 `localhost:8080` 訪問服務器了.
+**步驟 7** 完成, 現在您可以通過 `localhost:8080` 連線至伺服器
 
-更多參考:
+更多資訊:
 
-- [官方 Node.js Docker 鏡像](https://hub.docker.com/_/node/)
+- [官方 Node.js Docker 镜像](https://hub.docker.com/_/node/)
 
 - [Node.js Docker 最佳實踐指南](https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md)
-- 

@@ -12,15 +12,11 @@
 
 ## Example project
 
-Please explore this demonstration project to understand how to use Colyseus with Construct3.
+The example project has a similar result as the [TypeScript (pixijs-boilerplate)](https://github.com/endel/colyseus-pixijs-boilerplate).
 
-- [Download `.c3p` and server files](https://github.com/colyseus/construct3-demo/archive/refs/heads/master.zip)
-- Open the `ConstructProject.c3p` file on Construct editor.
-- (optional) Start the local server by running `npm install` and then `npm start`
+- [Client-side (c3p project)](/_downloads/ColyAgarClient-0-14-0.c3p)
+- [Server-side on Glitch (source-code)](https://glitch.com/~colyseus-construct3)
 
-To use your local server, make sure to replace the `serverURI` global variable with `ws://localhost:8080` from the Event Sheet on Construct.
-
-> The `.c3p` project and server files is open-source and is available at [colyseus/construct3-demo](https://github.com/colyseus/construct3-demo/)
 
 ## Handling messages
 
@@ -46,8 +42,11 @@ Default Endpoint to use on "Connect" action.
 
 ## Actions
 
-### Set endpoint to {0}.
+### Set endpoint to {0}
 Format: wss://example.com
+
+### Join room {0} with options {1}.
+Join a room by name
 
 ### Join room {0} with options {1}.
 Join a room by name
@@ -55,16 +54,16 @@ Join a room by name
 ### Create room {0} with options {1}.
 Create a room by name
 
-### Join room {0} with ID {1}.
+### Join room {0} with options {1}.
 Join an existing room by its ID
 
 ### Reconnect into room {0} with sessionId {1}.
 Reconnect using a previously connected room
 
-### Send {0} with {1}.
+### Send {0} with {1}
 Send message to a room
 
-### Leave from the room.
+### Leave from the room
 Disconnect client from the room.
 
 ### Get available {0} rooms.
@@ -94,7 +93,7 @@ Triggers when available rooms data is ready in the CurrentValue expresssion.
 Triggers when an item is added to ArraySchema or MapSchema.
 
 ### On field change at {0}
-Triggers when a field is changed inside a Schema instance.
+Triggers when a field is changed inside a Schema instance. Need to use
 
 ### On change at {0}
 Triggers when an item is changed inside ArraySchema or MapSchema.

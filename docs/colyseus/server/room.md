@@ -253,7 +253,7 @@ client.joinOrCreate("world", {
 **Parameters:**
 
 - `client`: The [`client`](/server/client) instance.
-- `options`: merged values specified on [Server#define()](/server/api/#define-roomname-string-room-room-options-any) with the options provided the client on [`client.join()`](/client/#join-roomname-string-options-any)
+- `options`: merged values specified on [Server#define()](/server/api/#define-roomname-string-room-room-options-any) with the options provided the client on [`client.join()`](/client/client/#join-roomname-string-options-any)
 - `auth`: (optional) auth data returned by [`onAuth`](#onauth-client-options-request) method.
 
 Is called when the client successfully joins the room, after `requestJoin` and `onAuth` has succeeded.
@@ -392,59 +392,6 @@ exports.GameRoom = class GameRoom extends colyseus.Room {
 
 ---
 
-### `onBeforePatch ()`
-
-The `onBeforePatch` lifecycle hook is triggered before state synchronization, at patch rate frequency. (see [setPatchRate()](#setpatchrate-milliseconds))
-
-```typescript
-onBeforePatch() {
-    //
-    // here you can mutate something in the state just before it is encoded &
-    // synchronized with all clients
-    //
-}
-```
-
----
-
-### `onCacheRoom (): any`
-
-An optional hook to cache external data when [`devMode`](/colyseus/devmode) is enabled.
-(See [restoring data outside the room's state](/colyseus/devmode/#restoring-data-outside-the-rooms-state))
-
-```typescript fct_label="JavaScript"
-export class MyRoom extends Room<MyRoomState> {
-  ...
-
-  onCacheRoom() {
-    return { foo: "bar" };
-  }
-}
-```
-
----
-
-### `onRestoreData (cachedData: any): void`
-
-An optional hook to reprocess/restore data which was returned and stored from the previous hook [`onCacheRoom`](/colyseus/server/room/#oncacheroom-any) when [`devMode`](/colyseus/devmode) is enabled.
-(See [restoring data outside the room's state](/colyseus/devmode/#restoring-data-outside-the-rooms-state))
-
-```typescript fct_label="JavaScript"
-export class MyRoom extends Room<MyRoomState> {
-  ...
-
-  onRestoreRoom(cachedData: any): void {
-    console.log("ROOM HAS BEEN RESTORED!", cachedData);
-
-    this.state.players.forEach(player => {
-      player.method(cachedData["foo"]);
-    });
-  }
-}
-```
-
----
-
 ## Public methods
 
 Room handlers have these methods available.
@@ -488,7 +435,7 @@ onCreate () {
 ```
 
 !!! tip "Use `room.send()` from the client-side SDK to send messages"
-    Check out [`room.send()`](/client/#send-type-message) section.
+    Check out [`room.send()`](/client/client/#send-type-message) section.
 
 ---
 
@@ -532,13 +479,13 @@ Set frequency the patched state should be sent to all clients. Default is `50ms`
 
 Set the room listing as private (or revert to public, if `false` is provided).
 
-Private rooms are not listed in the [`getAvailableRooms()`](/client/#getavailablerooms-roomname-string) method.
+Private rooms are not listed in the [`getAvailableRooms()`](/client/client/#getavailablerooms-roomname-string) method.
 
 ---
 
 ### `setMetadata (metadata)`
 
-Set metadata to this room. Each room instance may have metadata attached to it - the only purpose for attaching metadata is to differentiate one room from another when getting the list of available rooms from the client-side, to connect to it by its `roomId`, using [`client.getAvailableRooms()`](/client/#getavailablerooms-roomname).
+Set metadata to this room. Each room instance may have metadata attached to it - the only purpose for attaching metadata is to differentiate one room from another when getting the list of available rooms from the client-side, to connect to it by its `roomId`, using [`client.getAvailableRooms()`](/client/client/#getavailablerooms-roomname).
 
 ```typescript
 // server-side
@@ -563,7 +510,7 @@ client.getAvailableRooms("battle").then(rooms => {
 ```
 
 !!! Tip
-    [See how to call `getAvailableRooms()` in other languages.](/client/#getavailablerooms-roomname)
+    [See how to call `getAvailableRooms()` in other languages.](/client/client/#getavailablerooms-roomname)
 
 ---
 
@@ -579,7 +526,7 @@ You may set the `COLYSEUS_SEAT_RESERVATION_TIME` environment variable if you'd l
 ### `send (client, message)`
 
 !!! Warning "Deprecated"
-    `this.send()` has been deprecated. Please use [`client.send()` instead](#sendtype-message).
+    `this.send()` has been deprecated. Please use [`client.send()` instead](/server/client/#sendtype-message).
 
 ---
 
@@ -590,7 +537,7 @@ Send a message to all connected clients.
 
 Available options are:
 
-- **`except`**: a [`Client`](/server/client/), or array of `Client` instances not to send the message to
+- **`except`**: a [`Client`](/server/client/) instance not to send the message to
 - **`afterNextPatch`**: waits until next patch to broadcast the message
 
 #### Broadcast examples
@@ -649,7 +596,7 @@ onCreate() {
 ```
 
 !!! Tip
-    [See how to handle these onMessage() in the client-side.](/colyseus/client/#onmessage)
+    [See how to handle these onMessage() in the client-side.](/colyseus/client/client/#onmessage)
 
 ---
 
@@ -665,17 +612,16 @@ Unlocking the room returns it to the pool of available rooms for new clients to 
 
 ---
 
-### `allowReconnection (client, seconds)`
+### `allowReconnection (client, seconds?)`
 
-Allow the specified client to [`reconnect`](/client/#reconnect-reconnectiontoken) into the room. Must be used inside [`onLeave()`](#onleave-client) method.
+Allow the specified client to [`reconnect`](/client/client/#reconnect-roomid-string-sessionid-string) into the room. Must be used inside [`onLeave()`](#onleave-client) method.
 
-- **`client`**: the disconnecting [`Client`](/server/client/) instance
-- **`seconds`**: number of seconds to wait for client to perform [`.reconnect()`](/client/#reconnect-roomid-string-sessionid-string), or `"manual"`, to allow for manual reconnection rejection (see second example)
+If **`seconds`** is provided, the reconnection is going to be cancelled after the provided amout of seconds.
 
 **Return type:**
 
 - `allowReconnection()` returns a `Deferred<Client>` instance.
-- The returned `Deferred` instance is a promise-like structure, you can forcibly reject the reconnection by calling `.reject()` on it. (see second example)
+- The `Deferred` is a promise-like type
 - `Deferred` type can forcibly reject the promise by calling `.reject()` (see second example)
 
 **Example:** Rejecting the reconnection after a 20 second timeout.
@@ -717,11 +663,8 @@ async onLeave (client: Client, consented: boolean) {
         throw new Error("consented leave");
     }
 
-    //
-    // Get reconnection token
-    // NOTE: do not use `await` here yet
-    //
-    const reconnection = this.allowReconnection(client, "manual");
+    // get reconnection token
+    const reconnection = this.allowReconnection(client);
 
     //
     // here is the custom logic for rejecting the reconnection.
@@ -742,7 +685,7 @@ async onLeave (client: Client, consented: boolean) {
       }
     }, 1000);
 
-    // now it's time to `await` for the reconnection
+    // allow disconnected client to reconnect
     await reconnection;
 
     // client returned! let's re-activate it.
@@ -750,7 +693,7 @@ async onLeave (client: Client, consented: boolean) {
 
   } catch (e) {
 
-    // reconnection has been rejected. let's remove the client.
+    // 20 seconds expired. let's remove the client.
     this.state.players.delete(client.sessionId);
   }
 }
@@ -868,7 +811,7 @@ The `presence` instance. Check [Presence API](/server/presence) for more details
 
 ## Client
 
-The `client` instance from the server-side is responsible for the **transport** layer between the server and the client. It should not be confused with the [`Client` from the client-side SDK](/client/), as they have completely different purposes!
+The `client` instance from the server-side is responsible for the **transport** layer between the server and the client. It should not be confused with the [`Client` from the client-side SDK](/client/client/), as they have completely different purposes!
 
 You operate on `client` instances from [`this.clients`](#clients-client), [`Room#onJoin()`](#onjoin-client-options-auth), [`Room#onLeave()`](#onleave-client-consented) and [`Room#onMessage()`](#onmessage-type-callback).
 
@@ -948,31 +891,7 @@ client.send(data);
  -->
 
 !!! Tip
-    [See how to handle these messages on client-side.](/colyseus/client/#onmessage)
-
----
-
-#### `sendBytes(type, bytes)`
-
-Send a raw byte array message to the client.
-
-The `type` can be either a `string` or a `number`.
-
-This is useful if you'd like to manually encode a message, rather than the default encoding (MsgPack).
-
-**Sending a message:**
-
-```typescript
-//
-// sending message with a string type ("powerup")
-//
-client.sendBytes("powerup", [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
-
-//
-// sending message with a number type (1)
-//
-client.sendBytes(1, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
-```
+    [See how to handle these messages on client-side.](/colyseus/client/client/#onmessage)
 
 ---
 

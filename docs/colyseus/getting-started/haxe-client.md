@@ -32,21 +32,21 @@ client.joinOrCreate("room_name", [], RoomState, function(err, room) {
         return;
     }
 
-    room.state.entities.onAdd(function(entity, key) {
+    room.state.entities.onAdd = function(entity, key) {
         trace("entity added at " + key + " => " + entity);
 
-        entity.onChange(function (changes) {
-            trace("entity has been changed");
-        });
-    })
+        entity.onChange = function (changes) {
+            trace("entity changes => " + changes);
+        }
+    }
 
-    room.state.entities.onChange(function(entity, key) {
+    room.state.entities.onChange = function(entity, key) {
         trace("entity changed at " + key + " => " + entity);
-    })
+    }
 
-    room.state.entities.onRemove(function(entity, key) {
+    room.state.entities.onRemove = function(entity, key) {
         trace("entity removed at " + key + " => " + entity);
-    })
+    }
 });
 ```
 

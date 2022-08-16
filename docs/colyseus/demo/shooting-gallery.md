@@ -33,7 +33,7 @@ As you play around with this demo, you may want to make some adjustments to bett
 
 The values used for the Targets in-game can be found in the server code at `Server\src\rooms\customLogic\targets.ts`. Here, you can adjust the score values, rename targets and add/remove target options. If you add a new target, make sure to also give it a new “id” value otherwise the Unity client will not know what target model to display.
 
-These target options on the client can be adjusted in the “TargetController” prefab, located at `Assets\GalleryShooter\Prefabs\Targets\Controls\TargetController.prefab`. If you wish to adjust the models or add new targets, here is where you prepare the client for them.
+These target options on the client can be adjusted in the “TargetController” prefab, located at `Assets\GalleryShooter\Prefabs\Targets\Controls\TargetController.prefab`. If you wish to adjust the models or add new targets, here is where you prepare the client for them
 
 ### Target Movement
 

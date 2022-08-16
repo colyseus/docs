@@ -45,34 +45,34 @@ const relay = await client.joinOrCreate("your_relayed_room", {
 //
 // Detect when a player joined the room
 //
-relay.state.players.onAdd((player, sessionId) => {
+relay.state.players.onAdd = (player, sessionId) => {
   if (relay.sessionId === sessionId) {
     console.log("It's me!", player.name);
 
   } else {
     console.log("It's an opponent", player.name, sessionId);
   }
-})
+}
 
 //
 // Detect when a player leave the room
 //
-relay.state.players.onRemove((player, sessionId) => {
+relay.state.players.onRemove = (player, sessionId) => {
   console.log("Opponent left!", player, sessionId);
-})
+}
 
 //
 // Detect when the connectivity of a player has changed
 // (only available if you provided `allowReconnection: true` in the server-side)
 //
-relay.state.players.onChange((player, sessionId) => {
+relay.state.players.onChange = (player, sessionId) => {
   if (player.connected) {
     console.log("Opponent has reconnected!", player, sessionId);
 
   } else {
     console.log("Opponent has disconnected!", player, sessionId);
   }
-})
+}
 ```
 
 ### Sending an receiving messages

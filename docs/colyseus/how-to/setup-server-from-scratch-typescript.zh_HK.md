@@ -1,10 +1,10 @@
-這是一份從零開始搭建使用 typescript 腳本的 colyseus 服務器的指南.
+這是一份介紹如何使用腳本創建 colyseus 伺服器的分步指南.
 
-## 工具要求
+##工具要求
 
 - [`Node.js`](https://nodejs.org/)
 
-## 安裝
+##安裝
 
 創建一個空目錄.
 ```cmd
@@ -16,7 +16,7 @@ mkdir colyseusServer
 cd colyseusServer
 ```
 
-使用默認參數初始化 npm
+使用預設選項初始化 npm
 ```cmd
 npm init
 ```
@@ -34,17 +34,17 @@ npm init
 }
 ```
 
-安裝依賴庫
+安裝依賴項
 ```cmd
 npm i colyseus
 ```
 
-安裝 Dev 依賴庫
+安裝 Dev 依賴項
 ```cmd
 npm i --save-dev typescript ts-node-dev
 ```
 
-在項目的根目錄中新建 `tsconfig.json` 文件
+在專案的根目錄中新建名為 `tsconfig.json` 的文件夾
 ```json
 {
     "compilerOptions": {
@@ -74,7 +74,7 @@ npm i --save-dev typescript ts-node-dev
 mkdir src
 ```
 
-在 `src` 目錄下新建 `main.ts` 文件.
+在 `src` 目錄下新建一個名為 `main.ts` 的文件夾.
 ```ts
 import { Server } from "colyseus"
 const port = parseInt(process.env.PORT, 10) || 3000
@@ -84,26 +84,26 @@ gameServer.listen(port)
 console.log(`[GameServer] Listening on Port: ${port}`)
 ```
 
-恭喜! 您已完成 colyseus 服務器的搭建.
+恭喜!您已完成 colyseus 伺服器的安裝.
 
-## 命令
+##指令
 
-現在可以用以下命令啟用服務器了:
+您現在可以啟用伺服器了:
 ```cmd
 npm start
 ```
 
-開發環境下可以使用 `start:dev` 命令啟動. 服務器會在您修改文件後自動重啟.
+您可使用 `start:dev` 指令進行開發. 伺服器會在您修改文件後自動重啟.
 ```cmd
 npm run start:dev
 ```
 
-生產環境下需要先執行編譯命令.
+生產環境需要先創建一個構建指令.
 ```cmd
 npm run build
 ```
 
-然後就可以使用 `start:prod` 命令來啟動服務器了. 該命令使用的是 `dist` 文件夾中 `build` 命令創建的文件.
+然後您就可以使用 `start:prod` 指令來啟動伺服器了. 該指令使用的是 `dist` 文件夾中 `build` 指令創建的文件.
 ```cmd
 npm run start:prod
 ```

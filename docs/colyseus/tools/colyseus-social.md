@@ -1,7 +1,7 @@
 # Authentication + Social (`@colyseus/social`)
 
 !!! Warning "Deprecation notice"
-    The `@colyseus/social` module has been deprecated. For now, we suggest using Firebase, Auth0, or other authentication provider of your choice.
+    The `@colyseus/social` module is going to be fully deprecated soon. For now, we suggest using Firebase, Auth0, or other authentication provider of your choice.
 
 This section covers the configuration and usage of [`@colyseus/social`](http://github.com/colyseus/colyseus-social).
 
