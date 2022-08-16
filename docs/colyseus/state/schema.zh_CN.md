@@ -170,7 +170,7 @@ schema.defineTypes(MyState, {
 });
 ```
 
-**示例: 基本类型** 数组
+**示例: 基本类型数组**
 
 数组元素必须是同一数据类型.
 
@@ -372,18 +372,6 @@ const map = new MapSchema<string>();
 const item = map.get("key");
 ```
 
-或者
-
-```typescript
-//
-// 不建议使用这种方法
-//
-// 保留这种方法只是为了 @colyseus/schema 的版本向下兼容
-// 未来会舍弃这种方法.
-//
-const item = map["key"];
-```
-
 ---
 
 #### `map.set()`
@@ -395,18 +383,6 @@ const map = new MapSchema<string>();
 map.set("key", "value");
 ```
 
-或者
-
-```typescript
-//
-// 不建议使用这种方法
-//
-// 保留这种方法只是为了 @colyseus/schema 的版本向下兼容
-// 未来会舍弃这种方法.
-//
-map["key"] = "value";
-```
-
 ---
 
 #### `map.delete()`
@@ -415,18 +391,6 @@ map["key"] = "value";
 
 ```typescript
 map.delete("key");
-```
-
-或者
-
-```typescript
-//
-// 不建议使用这种方法
-//
-// 保留这种方法只是为了 @colyseus/schema 的版本向下兼容
-// 未来会舍弃这种方法.
-//
-delete map["key"];
 ```
 
 ---
@@ -706,7 +670,7 @@ collection.forEach((value, at) => {
 });
 ```
 
-## 每个客户端过滤数据
+## 按客户端过滤数据
 
 !!! Warning "此功能为实验性质"
     `@filter()` / `@filterChildren()` 为实验性质, 可能不适合快节奏游戏.
@@ -715,7 +679,8 @@ collection.forEach((value, at) => {
 
 数据过滤器回调, 可以针对 **每个客户端** 的 **每个字段** 进行触发 (如果使用了 `@filterChildren`, 还可针对每个子结构触发). 如果过滤器回调返回 `true`, 则该字段数据将会发送给那个指定的客户端, 否则不发送.
 
-请注意, 只有被过滤字段 (或其子字段) 数据更新时, 过滤器回调才能被触发. 要想手动触发请参考 [此问题](https://github.com/colyseus/schema/issues/102) 里描述的方法.
+请注意, 只有被过滤字段 (或其子字段) 数据更新时, 过滤器回调才能被触发.
+要想手动触发请参考 [此问题](https://github.com/colyseus/schema/issues/102) 里描述的方法.
 
 ### `@filter()` 属性修饰器
 
@@ -884,205 +849,46 @@ schema.filter(function(client, value, root) {
 
 回调通过房间状态实例触发. 使用前要确保该实例上已实现回调函数.
 
+- [listen()](#listenprop-callback)
 - [onAdd (instance, key)](#onadd-instance-key)
 - [onRemove (instance, key)](#onremove-instance-key)
-- [onChange (changes)](#onchange-changes-datachange) (触发于 `Schema` 实例)
 - [onChange (instance, key)](#onchange-instance-key) (触发于集合实例: `MapSchema`, `ArraySchema` 等等.)
-- [listen()](#listenprop-callback)
-
-#### `onAdd (instance, key)`
-
-只有集合 (`MapSchema`, `ArraySchema` 等) 可以使用 `onAdd` 回调. 集合更新后触发 `onAdd` 回调, 外加已更新内容的键作为参数.
-
-```javascript fct_label="JavaScript"
-room.state.players.onAdd = (player, key) => {
-    console.log(player, "has been added at", key);
-
-    // 在游戏中加入player!
-
-    // 要想跟踪地图上物体的移动, 通常要这么做:
-    player.onChange = function(changes) {
-        changes.forEach(change => {
-            console.log(change.field);
-            console.log(change.value);
-            console.log(change.previousValue);
-        })
-    };
-
-    // 手动强制触发 "onChange"
-    player.triggerAll();
-};
-```
-
-```lua fct_label="LUA"
-room.state.players['on_add'] = function (player, key)
-    print("player has been added at", key);
-
-    -- 在游戏中加入player!
-
-    -- 要想跟踪地图上物体的移动, 通常要这么做:
-    player['on_change'] = function(changes)
-        for i, change in ipairs(changes) do
-            print(change.field)
-            print(change.value)
-            print(change.previousValue)
-        end
-    end
-
-    -- 手动强制触发 "onChange"
-    player.trigger_all()
-end
-```
-
-```csharp fct_label="C#"
-room.State.players.OnAdd += (Player player, string key) =>
-{
-    Debug.Log("player has been added at " + key);
-
-    // 在游戏中加入player!
-
-    // 要想跟踪地图上物体的移动, 通常要这么做:
-    player.OnChange += (changes) =>
-    {
-        changes.ForEach((obj) =>
-        {
-            Debug.Log(obj.Field);
-            Debug.Log(obj.Value);
-            Debug.Log(obj.PreviousValue);
-        });
-    };
-
-    // 手动强制触发 "onChange"
-    e.Value.TriggerAll();
-};
-```
-
----
-
-#### `onRemove (instance, key)`
-
-只有映射 (`MapSchema`) 和数组 (`ArraySchema`) 可以使用 `onRemove` 回调. 集合更新后触发 `onRemove` 回调, 外加已移除内容的键作为参数.
-
-```javascript fct_label="JavaScript"
-room.state.players.onRemove = (player, key) => {
-    console.log(player, "has been removed at", key);
-
-    // 从游戏中移除player!
-};
-```
-
-```lua fct_label="LUA"
-room.state.players['on_remove'] = function (player, key)
-    print("player has been removed at " .. key);
-
-    -- 从游戏中移除player!
-end
-```
-
-```csharp fct_label="C#"
-room.State.players.OnRemove += (Player player, string key) =>
-{
-    Debug.Log("player has been removed at " + key);
-
-    // 从游戏中移除player!
-};
-```
-
----
-
-#### `onChange (changes:DataChange[])`
-
-> `Schema` 上的 `onChange` 和集合上的不一样. 对于 [集合结构(数组, 映射等)的 `onChange` 请参考这里](#onchange-instance-key).
-
-可以注册 `onChange` 以跟踪 `Schema` 实例属性的变更. `onChange` 的参数数组包含已变更的属性以及变更前的值.
-
-
-```javascript fct_label="JavaScript"
-room.state.onChange = (changes) => {
-    changes.forEach(change => {
-        console.log(change.field);
-        console.log(change.value);
-        console.log(change.previousValue);
-    });
-};
-```
-
-```lua fct_label="LUA"
-room.state['on_change'] = function (changes)
-    for i, change in ipairs(changes) do
-        print(change.field)
-        print(change.value)
-        print(change.previousValue)
-    end
-end
-```
-
-```csharp fct_label="C#"
-room.State.OnChange += (changes) =>
-{
-    changes.ForEach((obj) =>
-    {
-        Debug.Log(obj.Field);
-        Debug.Log(obj.Value);
-        Debug.Log(obj.PreviousValue);
-    });
-};
-```
-
-没与客户端同步过的状态上不能注册 `onChange` 回调.
-
----
-
-#### `onChange (instance, key)`
-
-> `Schema` 上的 `onChange` 和集合上的不一样. 对于 [`Schema` 的 `onChange` 请参考这里](#onchange-changes-datachange).
-
-当集合里的 **基本** 类型 (`string`, `number`, `boolean` 等) 值更新时, 将触发此回调.
-
-```javascript fct_label="JavaScript"
-room.state.players.onChange = (player, key) => {
-    console.log(player, "have changes at", key);
-};
-```
-
-```lua fct_label="LUA"
-room.state.players['on_change'] = function (player, key)
-    print("player have changes at " .. key);
-end
-```
-
-```csharp fct_label="C#"
-room.State.players.OnChange += (Player player, string key) =>
-{
-    Debug.Log("player have changes at " + key);
-};
-```
-
-对于 **非基本** 类型 (各种 `Schema` 集合), 请先注册 [`onAdd`](#onadd-instance-key) 再注册 [`onChange`](#onchange-changes-datachange).
-
-!!! Warning "`onChange`, `onAdd` 和 `onRemove` 是 **互斥的**"
-    `onChange` 回调在 [`onAdd`](#onadd-instance-key) 或 [`onRemove`](#onremove-instance-key) 期间不会被触发.
-
-    如果想要跟踪的更新包括 `onAdd` 和 `onRemove`, 请注册这两个回调.
-
----
+- [onChange (changes)](#onchange-changes-datachange) (触发于 `Schema` 实例)
 
 #### `.listen(prop, callback)`
 
 侦听单个属性更新.
-
-> `.listen()` 目前仅可用于 JavaScript/TypeScript.
 
 **参数:**
 
 - `property`: 想要侦听更新的属性名称.
 - `callback`: 当 `property` 更新时触发的回调.
 
-
-```typescript
+```typescript fct_label="TypeScript"
 state.listen("currentTurn", (currentValue, previousValue) => {
     console.log(`currentTurn is now ${currentValue}`);
     console.log(`previous value was: ${previousValue}`);
+});
+```
+
+```csharp fct_label="C#"
+state.OnCurrentTurnChange((currentValue, previousValue) => {
+    Debug.Log(currentValue);
+    Debug.Log(previousValue);
+})
+```
+
+```lua fct_label="LUA"
+state:listen("currentTurn", function (current_value, previous_value)
+    pprint(current_value);
+    pprint(previous_value);
+end)
+```
+
+```haxe fct_label="Haxe"
+state.listen("currentTurn", (currentValue, previousValue) => {
+    trace(currentValue);
+    trace(previousValue);
 });
 ```
 
@@ -1112,6 +918,172 @@ state.onChange = function(changes) {
     })
 }
 ```
+---
+
+#### `onAdd (instance, key)`
+
+只有集合 (`MapSchema`, `ArraySchema` 等) 可以使用 `onAdd` 回调. 集合更新后触发 `onAdd` 回调, 外加已更新内容的键作为参数.
+
+```javascript fct_label="JavaScript"
+room.state.players.onAdd((player, key) => {
+    console.log(player, "has been added at", key);
+
+    // 在游戏中加入player!
+
+    // 要想跟踪地图上物体的移动, 通常要这么做:
+    player.onChange(function(changes) {
+        changes.forEach(change => {
+            console.log(change.field);
+            console.log(change.value);
+            console.log(change.previousValue);
+        })
+    });
+});
+```
+
+```lua fct_label="LUA"
+room.state.players:on_add(function (player, key)
+    print("player has been added at", key);
+
+    -- 在游戏中加入player!
+
+    -- 要想跟踪地图上物体的移动, 通常要这么做:
+    player:on_change(function(changes)
+        for i, change in ipairs(changes) do
+            print(change.field)
+            print(change.value)
+            print(change.previousValue)
+        end
+    end)
+end)
+```
+
+```csharp fct_label="C#"
+room.State.players.OnAdd((string key, Player player) =>
+{
+    Debug.Log("player has been added at " + key);
+
+    // 在游戏中加入player!
+
+    // 要想跟踪地图上物体的移动, 通常要这么做:
+    player.OnChange += (changes) =>
+    {
+        changes.ForEach((obj) =>
+        {
+            Debug.Log(obj.Field);
+            Debug.Log(obj.Value);
+            Debug.Log(obj.PreviousValue);
+        });
+    };
+});
+```
+
+---
+
+#### `onRemove (instance, key)`
+
+只有映射 (`MapSchema`) 和数组 (`ArraySchema`) 可以使用 `onRemove` 回调. 集合更新后触发 `onRemove` 回调, 外加已移除内容的键作为参数.
+
+```javascript fct_label="JavaScript"
+room.state.players.onRemove((player, key) => {
+    console.log(player, "has been removed at", key);
+
+    // 从游戏中移除player!
+});
+```
+
+```lua fct_label="LUA"
+room.state.players:on_remove(function (player, key)
+    print("player has been removed at " .. key);
+
+    -- 从游戏中移除player!
+end)
+```
+
+```csharp fct_label="C#"
+room.State.players.OnRemove((string key, Player player) =>
+{
+    Debug.Log("player has been removed at " + key);
+
+    // 从游戏中移除player!
+});
+```
+
+---
+
+#### `onChange (changes:DataChange[])`
+
+> `Schema` 上的 `onChange` 和集合上的不一样. 对于 [集合结构(数组, 映射等)的 `onChange` 请参考这里](#onchange-instance-key).
+
+可以注册 `onChange` 以跟踪 `Schema` 实例属性的变更. `onChange` 的参数数组包含已变更的属性以及变更前的值.
+
+```javascript fct_label="JavaScript"
+room.state.onChange((changes) => {
+    changes.forEach(change => {
+        console.log(change.field);
+        console.log(change.value);
+        console.log(change.previousValue);
+    });
+};
+```
+
+```lua fct_label="LUA"
+room.state:on_change(function (changes)
+    for i, change in ipairs(changes) do
+        print(change.field)
+        print(change.value)
+        print(change.previous_value)
+    end
+end)
+```
+
+```csharp fct_label="C#"
+room.State.OnChange((changes) =>
+{
+    changes.ForEach((obj) =>
+    {
+        Debug.Log(obj.Field);
+        Debug.Log(obj.Value);
+        Debug.Log(obj.PreviousValue);
+    });
+};
+```
+
+没与客户端同步过的状态上不能注册 `onChange` 回调.
+
+---
+
+#### `onChange (instance, key)`
+
+> `Schema` 上的 `onChange` 和集合上的不一样. 对于 [`Schema` 的 `onChange` 请参考这里](#onchange-changes-datachange).
+
+当集合里的 **基本** 类型 (`string`, `number`, `boolean` 等) 值更新时, 将触发此回调.
+
+```javascript fct_label="JavaScript"
+room.state.players.onChange((player, key) => {
+    console.log(player, "have changes at", key);
+};
+```
+
+```lua fct_label="LUA"
+room.state.players:on_change(function (player, key)
+    print("player have changes at " .. key);
+end)
+```
+
+```csharp fct_label="C#"
+room.State.players.OnChange((string key, Player player) =>
+{
+    Debug.Log("player have changes at " + key);
+});
+```
+
+对于 **非基本** 类型 (各种 `Schema` 集合), 请先注册 [`onAdd`](#onadd-instance-key) 再注册 [`onChange`](#onchange-changes-datachange).
+
+!!! Warning "`onChange`, `onAdd` 和 `onRemove` 是 **互斥的**"
+    `onChange` 回调在 [`onAdd`](#onadd-instance-key) 或 [`onRemove`](#onremove-instance-key) 期间不会被触发.
+
+    如果想要跟踪的更新包括 `onAdd` 和 `onRemove`, 请注册这两个回调.
 
 ---
 

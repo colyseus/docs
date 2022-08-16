@@ -5,9 +5,9 @@
 
 ## 如何定義可同步結構
 
-- `Schema` 結構由服務器定義, 用於房間狀態同步.
+- `Schema` 結構由服務器定義, 用於房間狀態服務端客戶端數據同步.
 - 只有以 `@type()` 修飾的字段才會被用於同步.
-- _(可同步 Schema 結構僅應用於狀態相關的數據.)_
+- _(可同步 Schema 結構僅應被用於需要服務器客戶端同步的數據.)_
 
 ### 定義 `Schema` 結構
 
@@ -53,19 +53,19 @@ export class MyRoom extends Room<MyState> {
 ## 使用 Schema
 
 - 只有服務器端有權修改 Schema 數據
-- 客戶端要包含以 [`schema-codegen`](#client-side-schema-generation) 生成的與服務器端同樣的 `Schema` 定義. _(如果使用 [JavaScript SDK](/getting-started/javascript-client/) 則此條為可選項)_
+- 客戶端要包含用 [`schema-codegen`](#client-side-schema-generation) 生成的, 與服務器端相一致的 `Schema` 定義. _(如果使用 [JavaScript SDK](/getting-started/javascript-client/) 則此條為可選項)_
 - 為了從服務器獲得更新, 需要 [在客戶端把回調附加在 schema 實例上](#callbacks).
-- 客戶端永遠不應主動修改 schema - 因為在收到來自服務器的下一個心跳就會把它更新覆蓋掉.
+- 客戶端永遠不應主動修改 schema - 因為在收到來自服務器的下一幀更新時就會把它覆蓋掉.
 
 ### 基本類型
 
 基本類型為數字, 字符串和布爾型.
 
-| 類型 | 描述 | 範圍 |
-|------|-------------|------------|
-| `"string"` | utf8 字符串 | 最大 `4294967295` 字節|
-| `"number"` | 又稱為 "正整數". 自動定義數字類型. (編碼時可能會多用1個字節) | 取值範圍 `0` 到 `18446744073709551615` |
-| `"boolean"` | `true` 或 `false` | 取值為 `0` 或 `1` |
+| 類型 | 描述                                  | 範圍 |
+|------|-------------------------------------|------------|
+| `"string"` | utf8 字符串                            | 最大 `4294967295` 字節|
+| `"number"` | 又稱為 "正整數". 自動檢測數字類型. (編碼時可能會多用1個字節) | 取值範圍 `0` 到 `18446744073709551615` |
+| `"boolean"` | `true` 或 `false`                    | 取值為 `0` 或 `1` |
 
 **特定數值類型:**
 
@@ -129,7 +129,7 @@ schema.defineTypes(MyState, {
 
 ### ArraySchema
 
-`ArraySchema` 是一個可同步版本的內置 JavaScript [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) 類型.
+`ArraySchema` 是 JavaScript 內置 [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) 類型的一種可同步版本.
 
 **示例: 自定義 `Schema` 類型** 數組
 
@@ -170,9 +170,9 @@ schema.defineTypes(MyState, {
 });
 ```
 
-**示例: 基本類型** 數組
+**示例: 基本類型數組**
 
-數組元素必須是同一類型數據.
+數組元素必須是同一數據類型.
 
 ```typescript fct_label="TypeScript"
 import { Schema, ArraySchema, type } from "@colyseus/schema";
@@ -317,7 +317,7 @@ for (index => value in state.array1) {
 
 ### MapSchema
 
-`MapSchema` 是一個基於 JavaScript 內置 [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) 的可同步版本.
+`MapSchema` 是基於 JavaScript 內置 [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) 的一種可同步版本.
 
 推薦使用 Maps 裏的 id 來追蹤遊戲實體, 比如玩家, 敵人等.
 
@@ -372,18 +372,6 @@ const map = new MapSchema<string>();
 const item = map.get("key");
 ```
 
-或者
-
-```typescript
-//
-// 不建議使用這種方法
-//
-// 保留這種方法只是為了 @colyseus/schema 的版本向下兼容
-// 未來會舍棄這種方法.
-//
-const item = map["key"];
-```
-
 ---
 
 #### `map.set()`
@@ -395,18 +383,6 @@ const map = new MapSchema<string>();
 map.set("key", "value");
 ```
 
-或者
-
-```typescript
-//
-// 不建議使用這種方法
-//
-// 保留這種方法只是為了 @colyseus/schema 的版本向下兼容
-// 未來會舍棄這種方法.
-//
-map["key"] = "value";
-```
-
 ---
 
 #### `map.delete()`
@@ -415,18 +391,6 @@ map["key"] = "value";
 
 ```typescript
 map.delete("key");
-```
-
-或者
-
-```typescript
-//
-// 不建議使用這種方法
-//
-// 保留這種方法只是為了 @colyseus/schema 的版本向下兼容
-// 未來會舍棄這種方法.
-//
-delete map["key"];
 ```
 
 ---
@@ -448,7 +412,7 @@ console.log(map.size);
 
 #### `map.forEach()`
 
-叠代 map 中的鍵值對, 以元素插入順序.
+以元素插入順序叠代 map 中的鍵值對.
 
 ```typescript fct_label="TypeScript"
 this.state.players.forEach((value, key) => {
@@ -706,16 +670,17 @@ collection.forEach((value, at) => {
 });
 ```
 
-## 每個客戶端過濾數據
+## 按客戶端過濾數據
 
 !!! Warning "此功能為實驗性質"
     `@filter()` / `@filterChildren()` 為實驗性質, 可能不適合快節奏遊戲.
 
 過濾用來為指定客戶端隱藏部分狀態數據, 防止作弊, 防止玩家獲取全部數據.
 
-數據過濾器回調, 可以針對 **每個客戶端** 的 **每個字段** 進行觸發 (如果使用了 `@filterChildren`, 還可在每個子結構觸發). 如果過濾器回調返回 `true`, 則該字段數據將會發送給那個指定的客戶端, 否則不發送.
+數據過濾器回調, 可以針對 **每個客戶端** 的 **每個字段** 進行觸發 (如果使用了 `@filterChildren`, 還可針對每個子結構觸發). 如果過濾器回調返回 `true`, 則該字段數據將會發送給那個指定的客戶端, 否則不發送.
 
-請註意, 只有被過濾字段 (或其子字段) 數據更新時, 過濾器回調才能被觸發. 要想手動觸發請參考 [此問題](https://github.com/colyseus/schema/issues/102) 裏描述的方法.
+請註意, 只有被過濾字段 (或其子字段) 數據更新時, 過濾器回調才能被觸發.
+要想手動觸發請參考 [此問題](https://github.com/colyseus/schema/issues/102) 裏描述的方法.
 
 ### `@filter()` 屬性修飾器
 
@@ -753,26 +718,26 @@ schema.defineTypes(State, {
 });
 
 schema.filter(function(client, value, root) {
-    // client is:
+    // client 參數是:
     //
-    // the current client that's going to receive this data. you may use its
-    // client.sessionId, or other information to decide whether this value is
-    // going to be synched or not.
+    // 當前將要接受數據的客戶端. 可以通過其
+    // client.sessionId, 及其他信息判定是否
+    // 要把數據同步給這個客戶端.
 
-    // value is:
-    // the value of the field @filter() is being applied to
+    // value 參數是:
+    // 被 @filter() 標記過濾的字段值
 
-    // root is:
-    // the root instance of your room state. you may use it to access other
-    // structures in the process of decision whether this value is going to be
-    // synched or not.
+    // root 參數是:
+    // 房間 Schema 實例引用. 方便在是否過濾的
+    // 決策過程中
+    // 訪問房間狀態.
     return true;
 })(State.prototype, "field");
 ```
 
 ### `@filterChildren()` 屬性修飾器
 
-`@filterChildren()` 屬性修飾器可用於過濾掉數組, 地圖, 集合等內的項目. 它的簽名與 `@filter()` 基本相同, 但是在 `value` 之前添加了 `key` 參數 - 表示 [ArraySchema](#arrayschema), [MapSchema](#mapschema), [CollectionSchema](#collectionschema) 等中的每個項目.
+`@filterChildren()` 屬性修飾器可用於過濾掉 array, map, set等集合類型的內容. 它的簽名與 `@filter()` 基本相同, 但是在 `value` 之前添加了 `key` 參數 - 表示 [ArraySchema](#arrayschema), [MapSchema](#mapschema), [CollectionSchema](#collectionschema) 等內容的索引.
 
 ```typescript fct_label="TypeScript"
 class State extends Schema {
@@ -782,9 +747,12 @@ class State extends Schema {
         // 當前將要接受數據的客戶端. 可以通過其
         // client.sessionId, 及其他信息判定是否
         // 要把數據同步給這個客戶端.
+        
+        // key 參數是:
+        // 集合內容的當前索引
 
         // value 參數是:
-        // 被 @filter() 標記過濾的字段值
+        // 集合內容當前索引處的值
 
         // root 參數是:
         // 房間 Schema 實例引用. 方便在是否過濾的
@@ -809,12 +777,12 @@ schema.filterChildren(function(client, key, value, root) {
     // 當前將要接受數據的客戶端. 可以通過其
     // client.sessionId, 及其他信息判定是否
     // 要把數據同步給這個客戶端.
-
+    
     // key 參數是:
-    // 子字段名
+    // 集合內容的當前索引
 
     // value 參數是:
-    // 被 @filter() 標記過濾的字段值
+    // 集合內容當前索引處的值
 
     // root 參數是:
     // 房間 Schema 實例引用. 方便在是否過濾的
@@ -877,62 +845,121 @@ schema.filter(function(client, value, root) {
 
 ### 回調
 
-服務器狀態變更應用到客戶端時, 會根據變更的類型自動觸發本地實例上的回調.
+服務器狀態數據更新應用到客戶端時, 會根據變更的類型自動觸發本地實例上的回調.
 
 回調通過房間狀態實例觸發. 使用前要確保該實例上已實現回調函數.
 
+- [listen()](#listenprop-callback)
 - [onAdd (instance, key)](#onadd-instance-key)
 - [onRemove (instance, key)](#onremove-instance-key)
-- [onChange (changes)](#onchange-changes-datachange) (觸發於 `Schema` 實例)
 - [onChange (instance, key)](#onchange-instance-key) (觸發於集合實例: `MapSchema`, `ArraySchema` 等等.)
-- [listen()](#listenprop-callback)
+- [onChange (changes)](#onchange-changes-datachange) (觸發於 `Schema` 實例)
+
+#### `.listen(prop, callback)`
+
+偵聽單個屬性更新.
+
+**參數:**
+
+- `property`: 想要偵聽更新的屬性名稱.
+- `callback`: 當 `property` 更新時觸發的回調.
+
+```typescript fct_label="TypeScript"
+state.listen("currentTurn", (currentValue, previousValue) => {
+    console.log(`currentTurn is now ${currentValue}`);
+    console.log(`previous value was: ${previousValue}`);
+});
+```
+
+```csharp fct_label="C#"
+state.OnCurrentTurnChange((currentValue, previousValue) => {
+    Debug.Log(currentValue);
+    Debug.Log(previousValue);
+})
+```
+
+```lua fct_label="LUA"
+state:listen("currentTurn", function (current_value, previous_value)
+    pprint(current_value);
+    pprint(previous_value);
+end)
+```
+
+```haxe fct_label="Haxe"
+state.listen("currentTurn", (currentValue, previousValue) => {
+    trace(currentValue);
+    trace(previousValue);
+});
+```
+
+`.listen()` 返回的句柄可用於移除偵聽器
+
+
+```typescript
+const removeListener = state.listen("currentTurn", (currentValue, previousValue) => {
+    // ...
+});
+
+// 之後, 如果不需要偵聽器了, 可以調用 `removeListener()` 來移除對 `"currentTurn"` 的偵聽.
+removeListener();
+```
+
+**`listen` 和 `onChange` 有什麽區別?**
+
+`.listen()` 方法是專為監聽單個屬性的 `onChange` 的簡化版本. 下面是把 `.listen()` 寫成 `onChange` 的樣子:
+
+```typescript
+state.onChange = function(changes) {
+    changes.forEach((change) => {
+        if (change.field === "currentTurn") {
+            console.log(`currentTurn is now ${change.value}`);
+            console.log(`previous value was: ${change.previousValue}`);
+        }
+    })
+}
+```
+---
 
 #### `onAdd (instance, key)`
 
-只有集合 (`MapSchema`, `ArraySchema` 等) 可以使用 `onAdd` 回調. 集合更新後觸發 `onAdd` 回調, 外加已更新集合的鍵作為參數.
+只有集合 (`MapSchema`, `ArraySchema` 等) 可以使用 `onAdd` 回調. 集合更新後觸發 `onAdd` 回調, 外加已更新內容的鍵作為參數.
 
 ```javascript fct_label="JavaScript"
-room.state.players.onAdd = (player, key) => {
+room.state.players.onAdd((player, key) => {
     console.log(player, "has been added at", key);
 
     // 在遊戲中加入player!
 
     // 要想跟蹤地圖上物體的移動, 通常要這麽做:
-    player.onChange = function(changes) {
+    player.onChange(function(changes) {
         changes.forEach(change => {
             console.log(change.field);
             console.log(change.value);
             console.log(change.previousValue);
         })
-    };
-
-    // 手動強製觸發 "onChange"
-    player.triggerAll();
-};
+    });
+});
 ```
 
 ```lua fct_label="LUA"
-room.state.players['on_add'] = function (player, key)
+room.state.players:on_add(function (player, key)
     print("player has been added at", key);
 
     -- 在遊戲中加入player!
 
     -- 要想跟蹤地圖上物體的移動, 通常要這麽做:
-    player['on_change'] = function(changes)
+    player:on_change(function(changes)
         for i, change in ipairs(changes) do
             print(change.field)
             print(change.value)
             print(change.previousValue)
         end
-    end
-
-    -- 手動強製觸發 "onChange"
-    player.trigger_all()
-end
+    end)
+end)
 ```
 
 ```csharp fct_label="C#"
-room.State.players.OnAdd += (Player player, string key) =>
+room.State.players.OnAdd((string key, Player player) =>
 {
     Debug.Log("player has been added at " + key);
 
@@ -948,54 +975,50 @@ room.State.players.OnAdd += (Player player, string key) =>
             Debug.Log(obj.PreviousValue);
         });
     };
-
-    // 手動強製觸發 "onChange"
-    e.Value.TriggerAll();
-};
+});
 ```
 
 ---
 
 #### `onRemove (instance, key)`
 
-只有圖 (`MapSchema`) 和數組 (`ArraySchema`) 可以使用 `onRemove` 回調. 集合更新後觸發 `onRemove` 回調, 外加已更新集合的鍵作為參數.
+只有映射 (`MapSchema`) 和數組 (`ArraySchema`) 可以使用 `onRemove` 回調. 集合更新後觸發 `onRemove` 回調, 外加已移除內容的鍵作為參數.
 
 ```javascript fct_label="JavaScript"
-room.state.players.onRemove = (player, key) => {
+room.state.players.onRemove((player, key) => {
     console.log(player, "has been removed at", key);
 
     // 從遊戲中移除player!
-};
+});
 ```
 
 ```lua fct_label="LUA"
-room.state.players['on_remove'] = function (player, key)
+room.state.players:on_remove(function (player, key)
     print("player has been removed at " .. key);
 
     -- 從遊戲中移除player!
-end
+end)
 ```
 
 ```csharp fct_label="C#"
-room.State.players.OnRemove += (Player player, string key) =>
+room.State.players.OnRemove((string key, Player player) =>
 {
     Debug.Log("player has been removed at " + key);
 
     // 從遊戲中移除player!
-};
+});
 ```
 
 ---
 
 #### `onChange (changes:DataChange[])`
 
-> `Schema` 上的 `onChange` 和集合結構上的不一樣. 對於 [集合結構(數組, 映射等)的 `onChange` 請參考這裏](#onchange-instance-key).
+> `Schema` 上的 `onChange` 和集合上的不一樣. 對於 [集合結構(數組, 映射等)的 `onChange` 請參考這裏](#onchange-instance-key).
 
 可以註冊 `onChange` 以跟蹤 `Schema` 實例屬性的變更. `onChange` 的參數數組包含已變更的屬性以及變更前的值.
 
-
 ```javascript fct_label="JavaScript"
-room.state.onChange = (changes) => {
+room.state.onChange((changes) => {
     changes.forEach(change => {
         console.log(change.field);
         console.log(change.value);
@@ -1005,17 +1028,17 @@ room.state.onChange = (changes) => {
 ```
 
 ```lua fct_label="LUA"
-room.state['on_change'] = function (changes)
+room.state:on_change(function (changes)
     for i, change in ipairs(changes) do
         print(change.field)
         print(change.value)
-        print(change.previousValue)
+        print(change.previous_value)
     end
-end
+end)
 ```
 
 ```csharp fct_label="C#"
-room.State.OnChange += (changes) =>
+room.State.OnChange((changes) =>
 {
     changes.ForEach((obj) =>
     {
@@ -1026,33 +1049,33 @@ room.State.OnChange += (changes) =>
 };
 ```
 
-沒有同步過的客戶端不能註冊 `onChange` 回調.
+沒與客戶端同步過的狀態上不能註冊 `onChange` 回調.
 
 ---
 
 #### `onChange (instance, key)`
 
-> `Schema` 上的 `onChange` 和集合結構上的不一樣. 對於 [`Schema` 的 `onChange` 請參考這裏](#onchange-changes-datachange).
+> `Schema` 上的 `onChange` 和集合上的不一樣. 對於 [`Schema` 的 `onChange` 請參考這裏](#onchange-changes-datachange).
 
 當集合裏的 **基本** 類型 (`string`, `number`, `boolean` 等) 值更新時, 將觸發此回調.
 
 ```javascript fct_label="JavaScript"
-room.state.players.onChange = (player, key) => {
+room.state.players.onChange((player, key) => {
     console.log(player, "have changes at", key);
 };
 ```
 
 ```lua fct_label="LUA"
-room.state.players['on_change'] = function (player, key)
+room.state.players:on_change(function (player, key)
     print("player have changes at " .. key);
-end
+end)
 ```
 
 ```csharp fct_label="C#"
-room.State.players.OnChange += (Player player, string key) =>
+room.State.players.OnChange((string key, Player player) =>
 {
     Debug.Log("player have changes at " + key);
-};
+});
 ```
 
 對於 **非基本** 類型 (各種 `Schema` 集合), 請先註冊 [`onAdd`](#onadd-instance-key) 再註冊 [`onChange`](#onchange-changes-datachange).
@@ -1064,54 +1087,6 @@ room.State.players.OnChange += (Player player, string key) =>
 
 ---
 
-#### `.listen(prop, callback)`
-
-偵聽單個屬性更新.
-
-> `.listen()` 目前僅可用於 JavaScript/TypeScript.
-
-**參數:**
-
-- `property`: 想要偵聽更新的屬性名稱.
-- `callback`: 當 `property` 更新時觸發的回調.
-
-
-```typescript
-state.listen("currentTurn", (currentValue, previousValue) => {
-    console.log(`currentTurn is now ${currentValue}`);
-    console.log(`previous value was: ${previousValue}`);
-});
-```
-
-`.listen()` 返回的函數可用於移除偵聽器
-
-
-```typescript
-const removeListener = state.listen("currentTurn", (currentValue, previousValue) => {
-    // ...
-});
-
-// 之後, 如果不需要偵聽器了, 可以調用 `removeListener()` 來移除對 `"currentTurn"` 的偵聽.
-removeListener();
-```
-
-**`listen` 和 `onChange` 有什麽區別?**
-
-`.listen()` 方法是專為監聽單個屬性 `onChange` 的簡化版本. 下面是把 `.listen()` 寫成 `onChange` 的樣子:
-
-```typescript
-state.onChange = function(changes) {
-    changes.forEach((change) => {
-        if (change.field === "currentTurn") {
-            console.log(`currentTurn is now ${change.value}`);
-            console.log(`previous value was: ${change.previousValue}`);
-        }
-    })
-}
-```
-
----
-
 ## 生成客戶端 schema 的方法
 
 `schema-codegen` 是一個轉譯工具, 用於把服務器端的 schema 定義文件轉換為客戶端可以使用的版本:
@@ -1119,7 +1094,7 @@ state.onChange = function(changes) {
 要在客戶端正確解碼 state, 客戶端的 schema 定義文件必須與服務器端相兼容.
 
 !!! Warning "在使用 [JavaScript SDK](/getting-started/javascript-client/) 時不必使用此工具"
-    只有在客戶端使用強類型語言, 如 C#, Haxe 等時, 才需要使用 `schema-codegen`.
+    只有在客戶端使用強類型語言, 如 C#, Haxe 等時, 才必須使用 `schema-codegen`.
 
 **使用方法**
 
@@ -1162,7 +1137,7 @@ generated: State.cs
 
 **使用 `npm` 腳本:**
 
-簡言之, 推薦您把 `schema-codegen` 的參數保存在 `package.json` 文件中的 `npm` 腳本裏:
+方便起見, 推薦您把 `schema-codegen` 的參數保存在 `package.json` 文件中的 `npm` 腳本裏:
 
 ```json
 "scripts": {
