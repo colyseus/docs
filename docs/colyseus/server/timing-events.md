@@ -65,7 +65,7 @@ export class MyRoom extends Room {
         // this will *stop and destroy* the timeout completely
         this.clock.setTimeout(() => {
             this.delayedInterval.clear();
-        }, 10_000);
+        }, 10000);
     }
 }
 ```

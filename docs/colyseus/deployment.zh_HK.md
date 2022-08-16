@@ -173,8 +173,8 @@ if (process.env.NODE_ENV === "production") {
         cluster: false
       };
     })
-      .ready(function (glx) {
-          const app = express();
+    .ready(function (glx) {
+        const app = express();
 
       // 服務於 80 和 443 端口
       // 神奇地自動獲取 SSL 證書!
@@ -215,6 +215,7 @@ ENV PORT 8080
 WORKDIR /usr/src/app
 
 # 使用通配符確保 package.json 和 package-lock.json 文件都能被復製
+
 COPY package*.json ./
 
 RUN npm ci

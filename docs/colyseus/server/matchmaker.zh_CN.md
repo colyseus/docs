@@ -1,4 +1,4 @@
-# Server API &raquo; Match-maker API
+# 服务器 API &raquo; 房间匹配 API
 
 !!! Warning "一般不需要用到本章内容!"
     本章介绍的是高级用法. 一般情况下只要使用 [客户端方法](/client/#methods) 就够了. 如果客户端方法不能满足需求, 再考虑使用本章介绍的方法.

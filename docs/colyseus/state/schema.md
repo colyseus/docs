@@ -504,22 +504,6 @@ set.add(3);
 
 ---
 
-#### `set.at()`
-
-Gets an item at the specified `index`.
-
-```typescript
-const set = new SetSchema<string>();
-set.add("one");
-set.add("two");
-set.add("three");
-
-set.at(1);
-// output: "two"
-```
-
----
-
 #### `set.delete()`
 
 Delete an item by its value.
