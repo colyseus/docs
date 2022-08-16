@@ -2,7 +2,7 @@
 
 至於何時執行拒絕操作則取決於您的用例.
 
-下面這個例子是驗證 [@colyseus/social](/tools/colyseus-social/#server-side-api) 身份認證令牌, 然後通過用戶 id 獲取相關聯的 `Hero` 記錄.
+下方是驗證 [@colyseus/social](/tools/colyseus-social/#server-side-api) 身份驗證令牌, 以及檢索與用戶 id 關聯的 `Hero` 記錄.
 
 ```typescript
 export class BattleRoom extends Room {
@@ -29,12 +29,12 @@ export class BattleRoom extends Room {
 }
 ```
 
-客戶端在嘗試加入房間時會收到錯誤提示:
+客戶端在嘗試加入房間時會收錯誤提示:
 
 ```typescript
 client.joinOrCreate("battle", {}).then(room => {
   // ...
 }).catch(e => {
-  console.log(e) // "數據庫沒找到 'Hero' 數據!"
+  console.log(e) // "'Hero' not found in the database!"
 })
 ```

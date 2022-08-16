@@ -1,6 +1,6 @@
 # 概述
 
-## 訪問 / 查看伺服器和服務
+## 訪問/查看伺服器和服務
 在應用儀表板上選擇 ***Deployments***, 可以查看您的 Arena Cloud 應用關聯的各個伺服器和服務.
 
 ![部署按鈕](../../images/deployments-button.jpg)

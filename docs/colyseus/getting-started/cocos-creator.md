@@ -36,8 +36,6 @@ Make sure you have `"esModuleInterop": true` under `"compilerOptions"`:
   // ...
 ```
 
-Reboot your Cocos Creator editor.
-
 ## 3. Importing from the extension
 
 You must import Colyseus from its extension path:
@@ -101,7 +99,6 @@ You can now attach `NetworkManager` as a Component on any Node from Cocos Creato
 Because we're using the `@property` decorator above, you can edit the `hostname`, `port` and `useSSL` from Cocos Creator editor:
 
 ![Colyseus SDK on TypeScript Component](cocos-creator-component.png)
-![login](logged_in.jpg)
 
 
 ---

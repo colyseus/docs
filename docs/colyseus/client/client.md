@@ -1,17 +1,16 @@
-# Colyseus 客户端 SDK
+# Colyseus SDK &raquo; Usage
 
-目前 Colyseus 有以下平台的客户端 SDK:
+Colyseus currently has client-side SDK's available for the following platforms:
 
-- [Unity](/getting-started/unity3d-client) ([查看源代码](https://github.com/colyseus/colyseus-unity3d))
-- [JavaScript/TypeScript](/getting-started/javascript-client) ([查看源代码](https://github.com/colyseus/colyseus.js))
-- [Defold Engine](/getting-started/defold-client) ([查看源代码](https://github.com/colyseus/colyseus-defold))
-- [Haxe](/getting-started/haxe-client) ([查看源代码](https://github.com/colyseus/colyseus-hx))
-- [Construct3](/getting-started/construct3-client) ([查看源代码](https://github.com/colyseus/colyseus-construct3))
-- [Cocos Creator](/getting-started/cocos-creator)
+- [Unity](/getting-started/unity3d-client) ([view source-code](https://github.com/colyseus/colyseus-unity3d))
+- [JavaScript/TypeScript](/getting-started/javascript-client) ([view source-code](https://github.com/colyseus/colyseus.js))
+- [Defold Engine](/getting-started/defold-client) ([view source-code](https://github.com/colyseus/colyseus-defold))
+- [Haxe](/getting-started/haxe-client) ([view source-code](https://github.com/colyseus/colyseus-hx))
+- [Construct3](/getting-started/construct3-client) ([view source-code](https://github.com/colyseus/colyseus-construct3))
 
-## 客户端实例:
+## The Client Instance:
 
-`客户端` 实例用于执行匹配调用, 而后连接到一个或多个房间.
+The `Client` instance is used to perform matchmaking calls, and later connect to one or many rooms. 
 
 ```typescript fct_label="JavaScript"
 import Colyseus from "colyseus.js";
@@ -41,19 +40,19 @@ import io.colyseus.Client;
 var client = new Client("ws://localhost:2567");
 ```
 
-创建好 `Client` 实例不代表已经建立起与服务器的连接.
+No connection with the server is established yet by creating a `Client` instance.
 
-### 方法
+### Methods
 
 #### `joinOrCreate (roomName: string, options: any)`
 
-通过提供 `roomName` 和 `options` 参数加入现有房间或创建新房间.
+Join an existing room or create a new one, by provided `roomName` and `options`.
 
-该函数忽略已锁定房间和私人房间.
+Locked or private rooms are ignored by this method.
 
 ```typescript fct_label="TypeScript"
 try {
-  const room = await client.joinOrCreate("battle", {/* 参数 */});
+  const room = await client.joinOrCreate("battle", {/* options */});
   console.log("joined successfully", room);
 
 } catch (e) {
@@ -62,7 +61,7 @@ try {
 ```
 
 ```typescript fct_label="JavaScript"
-client.joinOrCreate("battle", {/* 参数 */}).then(room => {
+client.joinOrCreate("battle", {/* options */}).then(room => {
   console.log("joined successfully", room);
 }).catch(e => {
   console.error("join error", e);
@@ -71,7 +70,7 @@ client.joinOrCreate("battle", {/* 参数 */}).then(room => {
 
 ```csharp fct_label="C#"
 try {
-  Room<YourStateClass> room = await client.JoinOrCreate<YourStateClass>("battle", /* 参数字典 */);
+  Room<YourStateClass> room = await client.JoinOrCreate<YourStateClass>("battle"/* , Dictionary of options */);
   Debug.Log("joined successfully");
 
 } catch (ex) {
@@ -81,7 +80,7 @@ try {
 ```
 
 ```lua fct_label="lua"
-client:join_or_create("battle", {--[[参数]]}, function(err, room)
+client:join_or_create("battle", {--[[options]]}, function(err, room)
   if (err ~= nil) then
     print("join error: " .. err)
     return
@@ -92,7 +91,7 @@ end)
 ```
 
 ```haxe fct_label="Haxe"
-client.joinOrCreate("battle", [/* 参数 */], YourStateClass, function(err, room) {
+client.joinOrCreate("battle", [/* options */], YourStateClass, function(err, room) {
   if (err != null) {
     trace("join error: " + err);
     return;
@@ -103,7 +102,7 @@ client.joinOrCreate("battle", [/* 参数 */], YourStateClass, function(err, room
 ```
 
 ```cpp fct_label="C++"
-client->joinOrCreate<YourStateClass>("battle", {/* 参数 */}, [=](std::string err, Room<State>* room) {
+client->joinOrCreate<YourStateClass>("battle", {/* options */}, [=](std::string err, Room<State>* room) {
   if (err != "") {
     std::cout << "join error: " << err << std::endl;
     return;
@@ -117,11 +116,11 @@ client->joinOrCreate<YourStateClass>("battle", {/* 参数 */}, [=](std::string e
 
 #### `create (roomName: string, options: any)`
 
-通过提供 `roomName` 和 `options` 参数创建新房间.
+Creates a new room by provided `roomName` and `options`.
 
 ```typescript fct_label="TypeScript"
 try {
-  const room = await client.create("battle", {/* 参数 */});
+  const room = await client.create("battle", {/* options */});
   console.log("joined successfully", room);
 
 } catch (e) {
@@ -130,7 +129,7 @@ try {
 ```
 
 ```typescript fct_label="JavaScript"
-client.create("battle", {/* 参数 */}).then(room => {
+client.create("battle", {/* options */}).then(room => {
   console.log("joined successfully", room);
 }).catch(e => {
   console.error("join error", e);
@@ -139,7 +138,7 @@ client.create("battle", {/* 参数 */}).then(room => {
 
 ```csharp fct_label="C#"
 try {
-  Room<YourStateClass> room = await client.Create<YourStateClass>("battle", /* 参数字典 */);
+  Room<YourStateClass> room = await client.Create<YourStateClass>("battle", /* Dictionary of options */);
   Debug.Log("joined successfully");
 
 } catch (ex) {
@@ -149,7 +148,7 @@ try {
 ```
 
 ```lua fct_label="lua"
-client:create("battle", {--[[参数]]}, function(err, room)
+client:create("battle", {--[[options]]}, function(err, room)
   if (err ~= nil) then
     print("join error: " .. err)
     return
@@ -160,7 +159,7 @@ end)
 ```
 
 ```haxe fct_label="Haxe"
-client.create("battle", [/* 参数 */], YourStateClass, function(err, room) {
+client.create("battle", [/* options */], YourStateClass, function(err, room) {
   if (err != null) {
     trace("join error: " + err);
     return;
@@ -171,7 +170,7 @@ client.create("battle", [/* 参数 */], YourStateClass, function(err, room) {
 ```
 
 ```cpp fct_label="C++"
-client->create<YourStateClass>("battle", {/* 参数 */}, [=](std::string err, Room<State>* room) {
+client->create<YourStateClass>("battle", {/* options */}, [=](std::string err, Room<State>* room) {
   if (err != "") {
     std::cout << "join error: " << err << std::endl;
     return;
@@ -185,13 +184,13 @@ client->create<YourStateClass>("battle", {/* 参数 */}, [=](std::string err, Ro
 
 #### `join (roomName: string, options: any)`
 
-通过提供 `roomName` 和 `options` 加入现有房间.
+Joins an existing room by provided `roomName` and `options`.
 
-该方法忽略已锁定房间和私人房间.
+Locked or private rooms are ignored by this method.
 
 ```typescript fct_label="TypeScript"
 try {
-  const room = await client.join("battle", {/* 参数 */});
+  const room = await client.join("battle", {/* options */});
   console.log("joined successfully", room);
 
 } catch (e) {
@@ -200,7 +199,7 @@ try {
 ```
 
 ```typescript fct_label="JavaScript"
-client.join("battle", {/* 参数 */}).then(room => {
+client.join("battle", {/* options */}).then(room => {
   console.log("joined successfully", room);
 }).catch(e => {
   console.error("join error", e);
@@ -209,7 +208,7 @@ client.join("battle", {/* 参数 */}).then(room => {
 
 ```csharp fct_label="C#"
 try {
-  Room<YourStateClass> room = await client.Join<YourStateClass>("battle", /* 参数字典 */);
+  Room<YourStateClass> room = await client.Join<YourStateClass>("battle", /* Dictionary of options */);
   Debug.Log("joined successfully");
 
 } catch (ex) {
@@ -219,7 +218,7 @@ try {
 ```
 
 ```lua fct_label="lua"
-client:join("battle", {--[[参数]]}, function(err, room)
+client:join("battle", {--[[options]]}, function(err, room)
   if (err ~= nil) then
     print("join error: " .. err)
     return
@@ -230,7 +229,7 @@ end)
 ```
 
 ```haxe fct_label="Haxe"
-client.join("battle", [/* 参数 */], YourStateClass, function(err, room) {
+client.join("battle", [/* options */], YourStateClass, function(err, room) {
   if (err != null) {
     trace("join error: " + err);
     return;
@@ -241,7 +240,7 @@ client.join("battle", [/* 参数 */], YourStateClass, function(err, room) {
 ```
 
 ```cpp fct_label="C++"
-client->join<YourStateClass>("battle", {/* 参数 */}, [=](std::string err, Room<State>* room) {
+client->join<YourStateClass>("battle", {/* options */}, [=](std::string err, Room<State>* room) {
   if (err != "") {
     std::cout << "join error: " << err << std::endl;
     return;
@@ -255,11 +254,11 @@ client->join<YourStateClass>("battle", {/* 参数 */}, [=](std::string err, Room
 
 #### `joinById (roomId: string, options: any)`
 
-通过提供 `roomId` 参数加入该房间. 私人房间也可凭房间 id 加入.
+Joins an existing room by its `roomId`. Private rooms can be joined by id.
 
 ```typescript fct_label="TypeScript"
 try {
-  const room = await client.joinById("KRYAKzRo2", {/* 参数 */});
+  const room = await client.joinById("KRYAKzRo2", {/* options */});
   console.log("joined successfully", room);
 
 } catch (e) {
@@ -268,7 +267,7 @@ try {
 ```
 
 ```typescript fct_label="JavaScript"
-client.joinById("KRYAKzRo2", {/* 参数 */}).then(room => {
+client.joinById("KRYAKzRo2", {/* options */}).then(room => {
   console.log("joined successfully", room);
 }).catch(e => {
   console.error("join error", e);
@@ -277,7 +276,7 @@ client.joinById("KRYAKzRo2", {/* 参数 */}).then(room => {
 
 ```csharp fct_label="C#"
 try {
-  Room<YourStateClass> room = await client.JoinById<YourStateClass>("battle", /* 参数字典 */);
+  Room<YourStateClass> room = await client.JoinById<YourStateClass>("battle", /* Dictionary of options */);
   Debug.Log("joined successfully");
 
 } catch (ex) {
@@ -287,7 +286,7 @@ try {
 ```
 
 ```lua fct_label="lua"
-client:join_by_id("battle", {--[[参数]]}, function(err, room)
+client:join_by_id("battle", {--[[options]]}, function(err, room)
   if (err ~= nil) then
     print("join error: " .. err)
     return
@@ -298,7 +297,7 @@ end)
 ```
 
 ```haxe fct_label="Haxe"
-client.joinById("battle", [/* 参数 */], YourStateClass, function(err, room) {
+client.joinById("battle", [/* options */], YourStateClass, function(err, room) {
   if (err != null) {
     trace("join error: " + err);
     return;
@@ -309,7 +308,7 @@ client.joinById("battle", [/* 参数 */], YourStateClass, function(err, room) {
 ```
 
 ```cpp fct_label="C++"
-client->joinById<YourStateClass>("battle", {/* 参数 */}, [=](std::string err, Room<State>* room) {
+client->joinById<YourStateClass>("battle", {/* options */}, [=](std::string err, Room<State>* room) {
   if (err != "") {
     std::cout << "join error: " << err << std::endl;
     return;
@@ -319,21 +318,20 @@ client->joinById<YourStateClass>("battle", {/* 参数 */}, [=](std::string err, 
 });
 ```
 
-!!! Tip "获取可加入房间的 `roomId`"
-    使用 [`getAvailableRooms()`](#getavailablerooms-roomname-string) 来查找可加入房间的列表和各房间的 `roomId`, 及其 metadata.
-
+!!! Tip "Getting available `roomId`'s you can join"
+    See [`getAvailableRooms()`](#getavailablerooms-roomname-string) to retrieve a list of rooms with their respective `roomId`'s available for joining, along with their metadata.
+    
 ---
 
-#### `reconnect (reconnectionToken)`
+#### `reconnect (roomId: string, sessionId: string)`
 
-将断线客户端重新接入原来的房间.
+Reconnects the client into a room he was previously connected with.
 
-- 必须在连接有效时提前保存 / 缓存好 `room.reconnectionToken` 以便以后断线重连.
-- 为了让指定客户端断线重连, 服务器端需调用该 client 实例上的 [.`allowReconnection()`](/server/room#allowreconnection-client-seconds) 方法.
+Must be used along with [`allowReconnection()`](/server/room#allowreconnection-client-seconds) in the server-side.
 
 ```typescript fct_label="TypeScript"
 try {
-  const room = await client.reconnect(cachedReconnectionToken);
+  const room = await client.reconnect("wNHTX5qik", "SkNaHTazQ");
   console.log("joined successfully", room);
 
 } catch (e) {
@@ -342,7 +340,7 @@ try {
 ```
 
 ```typescript fct_label="JavaScript"
-client.reconnect(cachedReconnectionToken).then(room => {
+client.reconnect("wNHTX5qik", "SkNaHTazQ").then(room => {
   console.log("joined successfully", room);
 }).catch(e => {
   console.error("join error", e);
@@ -351,7 +349,7 @@ client.reconnect(cachedReconnectionToken).then(room => {
 
 ```csharp fct_label="C#"
 try {
-  Room<YourStateClass> room = await client.Reconnect<YourStateClass>(cachedReconnectionToken);
+  Room<YourStateClass> room = await client.Reconnect<YourStateClass>("wNHTX5qik", "SkNaHTazQ");
   Debug.Log("joined successfully");
 
 } catch (ex) {
@@ -361,7 +359,7 @@ try {
 ```
 
 ```lua fct_label="lua"
-client:reconnect(cached_reconnection_token, function(err, room)
+client:reconnect("wNHTX5qik", "SkNaHTazQ", function(err, room)
   if (err ~= nil) then
     print("join error: " .. err)
     return
@@ -372,7 +370,7 @@ end)
 ```
 
 ```haxe fct_label="Haxe"
-client.reconnect(cachedReconnectionToken, YourStateClass, function(err, room) {
+client.reconnect("wNHTX5qik", "SkNaHTazQ", YourStateClass, function(err, room) {
   if (err != null) {
     trace("join error: " + err);
     return;
@@ -382,8 +380,8 @@ client.reconnect(cachedReconnectionToken, YourStateClass, function(err, room) {
 });
 ```
 
-<!-- ```haxe fct_label="C++"
-client->reconnect<YourStateClass>(cachedReconnectionToken, [=](std::string err, Room<State>* room) {
+```haxe fct_label="C++"
+client->reconnect<YourStateClass>("wNHTX5qik", "SkNaHTazQ", [=](std::string err, Room<State>* room) {
   if (err != "") {
     std::cout << "join error: " << err << std::endl;
     return;
@@ -391,16 +389,16 @@ client->reconnect<YourStateClass>(cachedReconnectionToken, [=](std::string err, 
 
   std::cout << "joined successfully" << std::endl;
 });
-``` -->
+```
 
 ---
 
 #### `getAvailableRooms (roomName?: string)`
 
-查询所有可接入的房间.
+Queries for all available rooms to connect.
 
-- 已锁定及私人房间不包含在返回列表中.
-- 若 `roomName` 参数被省略, 则对所有房间进行查询.
+- Locked and private rooms won't be listed. 
+- If the `roomName` parameter is ommitted, all rooms are going to be queried.
 
 ```typescript fct_label="JavaScript"
 client.getAvailableRooms("battle").then(rooms => {
@@ -495,7 +493,7 @@ client.getAvailableRooms("battle", [=](std::string err, nlohmann::json rooms) {
 
 #### `consumeSeatReservation (reservation)`
 
-手动调用 "席位预定" 功能加入房间.
+Join a room by manually consuming a "seat reservation".
 
 ```typescript fct_label="TypeScript"
 try {
@@ -559,37 +557,39 @@ client->consumeSeatReservation<YourStateClass>(reservation, [=](std::string err,
 });
 ```
 
-!!! Tip "高级用法"
-    参见 [Match-maker API](/server/matchmaker/#reserveseatforroom-options) 了解如何在房间内为某个客户端预留席位.
+!!! Tip "Advanced usage"
+    See [Match-maker API](/server/matchmaker/#reserveseatforroom-options) to learn how to manually reserve a seat for a client within a room.
 
-## Room 实例:
+## The Room Instance:
 
-### 属性
+### Properties
 
 #### `state: any`
 
-当前房间状态. 该变量始终与服务器端的最新 `state` 同步. 要想侦听整体状态的更新情况, 参见
-[`onStateChange`](#onstatechange) 事件.
+The current room's state. This variable is always synched with the latest
+`state` from the server-side. To listen for updates on the whole state, see
+[`onStateChange`](#onstatechange) event.
 
-您还可将回调监听于 state 内的某指定内容上. [参见 schema 回调](/state/schema/#client-side).
+You may attach callbacks to specific structures inside your state. [See schema callbacks](/state/schema/#client-side).
 
 ---
 
 #### `sessionId: string`
 
-当前已接入客户端的唯一标识. 该属性与服务器端的 [`client.sessionId`](/server/client/#sessionid-string) 一致.
+Unique identifier for the current connected client. This property matches the [`client.sessionId`](/server/client/#sessionid-string) from the server-side.
 
 ---
 
 #### `id: string`
 
-房间的唯一标识. 您可将此 id 分享出去, 以便其他客户端可直接连入该房间.
+The unique idenfitier of the room. You can share this id with other clients in
+order to allow them to connect directly to this room.
 
 ```typescript fct_label="JavaScript"
-// 从搜索字符串中提取 `roomId`
+// get `roomId` from the query string
 let roomId = location.href.match(/roomId=([a-zA-Z0-9\-_]+)/)[1];
 
-// 通过该 id 加入房间
+// joining a room by its id
 client.joinById(roomId).then(room => {
   // ...
 });
@@ -599,147 +599,126 @@ client.joinById(roomId).then(room => {
 
 #### `name: string`
 
-房间类别名称. 比如: `"battle"`.
+Name of the room handler. Ex: `"battle"`.
 
 ---
 
-### 方法
+### Methods
 
 #### `send (type, message)`
 
-向房间程序发送某类型的消息. 消息使用 MsgPack 编码并支持包含任何 JSON-serializable 的数据结构.
+Send a type of message to the room handler. Messages are encoded with MsgPack and can hold any JSON-seriazeable data structure.
 
 ```typescript fct_label="JavaScript"
 //
-// 发送字符串类型的消息
+// sending message with string type
 //
 room.send("move", { direction: "left"});
 
 //
-// 发送数字类型的消息
+// sending message with number type
 //
 room.send(0, { direction: "left"});
 ```
 
 ```csharp fct_label="C#"
 //
-// 发送字符串类型的消息
+// sending message with string type
 //
 await room.Send("move", new { direction = "left" });
 
 //
-// 发送数字类型的消息
+// sending message with number type
 //
 await room.Send(0, new { direction = "left" });
 ```
 
 ```lua fct_label="lua"
 --
--- 发送字符串类型的消息
+-- sending message with string type
 --
 room:send("move", { direction = "left" })
 
 --
--- 发送数字类型的消息
+-- sending message with number type
 --
 room:send(0, { direction = "left" })
 ```
 
 ```haxe fct_label="Haxe"
 //
-// 发送字符串类型的消息
+// sending message with string type
 //
 room.send("move", { direction: "left" });
 
 //
-// 发送数字类型的消息
+// sending message with number type
 //
 room.send(0, { direction: "left" });
 ```
 
-!!! tip "使用服务器端的 `Room#onMessage()` 来接收消息"
-    参见 [Server-side API » Room - onMessage()](/server/room/#onmessage-type-callback) 章节.
-
----
-
-#### `sendBytes (type, bytes)`
-
-发送纯字节数组数据消息到服务器. 字节数组就是元素为 `0` 到 `255` 数字的数组.
-
-这在需要自定义编码, 而不使用默认编码 (MsgPack) 的需求下很有用.
-
-```typescript fct_label="JavaScript"
-//
-// 发送数字类型的消息
-//
-room.send(0, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
-
-
-//
-// 发送字符串类型的消息
-//
-room.send("some-bytes", [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
-```
+!!! tip "Use `Room#onMessage()` from the server-side to receive the messages"
+    Check out [Server-side API &raquo; Room - onMessage()](/server/room/#onmessage-type-callback) section.
 
 ---
 
 #### `leave (consented: boolean)`
 
-断开客户端与房间的连接.
+Disconnect client from the room.
 
-**参数**
+**Parameters**
 
-- `consented`: 离开动作是否 "符合预期" (默认为 `true`)
+- `consented`: Whether the act of leaving has been "consented" or not (Default is `true`)
 
 ```typescript fct_label="JavaScript"
-// 正常离开
+// consented leave
 room.leave();
 
-// 异常离开
+// unconsented leave
 room.leave(false);
 ```
 
 ```csharp fct_label="C#"
-// 正常离开
+// consented leave
 room.Leave();
 
-// 异常离开
+// unconsented leave
 room.Leave(false);
 ```
 
 ```lua fct_label="lua"
--- 正常离开
+-- consented leave
 room:leave()
 
--- 异常离开
+-- unconsented leave
 room:leave(false)
 ```
 
 ```haxe fct_label="Haxe"
-// 正常离开
+// consented leave
 room.leave();
 
-// 异常离开
+// unconsented leave
 room.leave(false);
 ```
 
 !!! Tip
-    服务端使用 [Room#onLeave()](/server/room/#onleave-client-consented) 来处理客户端离开事件.
+    Use [Room#onLeave()](/server/room/#onleave-client-consented) to handle the disconnection from the server-side.
 
 ---
 
 #### `removeAllListeners()`
 
-移除 `onMessage`, `onStateChange`, `onLeave` 和 `onError` 侦听器.
+Removes `onMessage`, `onStateChange`, `onLeave` and `onError` listeners.
 
-### 事件
+### Events
 
 #### onStateChange
 
-!!! Tip "您可为 Schema 结构指定内容设置回调"
-    更多详情请见 [状态处理 » Schema » 客户端](/state/schema/#client-side) 章节.
+!!! Tip "You may trigger callbacks for specific Schema structures"
+    Check out the [State Handling » Schema » Client-side](/state/schema/#client-side) section for more details.
 
-服务器状态更新时触发该事件.
+This event is triggered when the server updates its state.
 
 ```typescript fct_label="JavaScript"
 room.onStateChange.once((state) => {
@@ -784,7 +763,7 @@ room.onStateChange = [=](State>* state) {
 
 #### onMessage
 
-服务器直接或广播向客户端发送消息时触发该事件.
+This event is triggered when the server sends a message directly to the client, or via broadcast.
 
 ```typescript fct_label="JavaScript"
 room.onMessage("powerup", (message) => {
@@ -826,15 +805,15 @@ room.onMessage("powerup", [=](msgpack::object message) -> void {
 ```
 
 !!! Tip
-    若要从服务器向客户端发送消息, 您需要调用
-    [client.send()](/server/client/#sendtype-message) 或
-    [room.broadcast()](/server/room/#broadcast-type-message-options) 方法.
+    To send a message from the server directly to the clients you'll need to use
+    either [client.send()](/server/client/#sendtype-message) or
+    [room.broadcast()](/server/room/#broadcast-type-message-options)
 
 ---
 
 #### onLeave
 
-客户端离开房间时触发该事件.
+This event is triggered when the client leave the room.
 
 ```typescript fct_label="JavaScript"
 room.onLeave((code) => {
@@ -866,18 +845,18 @@ room.onLeave = [=]() -> void {
 };
 ```
 
-**可能出现的套接字断开 `代码` 及其含义:**
+**Possible closing `code`s and their meaning:**
 
-- `1000` - 正常关闭套接字
-- `1001` 到 `1015` - 异常关闭套接字
-- `4000` 到 `4999` - 自定义关闭套接字代码 (参考 [更多详细信息](/server/room/#table-of-websocket-close-codes))
+- `1000` - Regular socket shutdown
+- Between `1001` and `1015` - Abnormal socket shutdown 
+- Between `4000` and `4999` - Custom socket close code (See [more details](/server/room/#table-of-websocket-close-codes))
 
 
 ---
 
 #### onError
 
-房间处理程序发生错误时触发该事件.
+This event is triggered when some error occurs in the room handler.
 
 ```typescript fct_label="JavaScript"
 room.onError((code, message) => {

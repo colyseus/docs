@@ -1,6 +1,6 @@
-您可能發現總有惡意用戶利用 Colyseus 的 matchmaking 服務進行攻擊, 導致您的服務器在不斷創建和刪除房間卻不是為正式玩家服務.
+最後您可能發現會有惡意用戶利用 Colyseus 的房間匹配程序來淹沒您的伺服器, 導致您的伺服器在沒有真實玩家使用的情況下一直在創建和刪除房間.
 
-這種情況下建議使用 `express-rate-limit` 中間件來攔截來自同一來源的大量請求. 更多詳情參見 [`express-rate-limit` 的 README](https://github.com/nfriedly/express-rate-limit).
+這種情況下我們建議使用 `express-rate-limit` 中間件來攔截來自同一來源的大量請求. 更多詳情可查看 [`express-rate-limit` 的 README](https://github.com/nfriedly/express-rate-limit);
 
 ```
 npm install --save express-rate-limit
@@ -12,7 +12,7 @@ npm install --save express-rate-limit
 import rateLimit from "express-rate-limit";
 
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 分鐘
+  windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100
 });
 app.use("/matchmake/", apiLimiter);
@@ -22,15 +22,15 @@ app.use("/matchmake/", apiLimiter);
 const rateLimit = require("express-rate-limit");
 
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 分鐘
+  windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100
 });
 app.use("/matchmake/", apiLimiter);
 ```
 
-若您使用了反向代理 (如 Heroku, Bluemix, AWS ELB, Nginx 等), 則必須同時開啟 `"trust proxy"`
+若您使用了反向代理(如 Heroku, Bluemix, AWS ELB, Nginx 等), 則必須同時啟用 `"trust proxy"`
 
 ```javascript
-// 參見 https://expressjs.com/en/guide/behind-proxies.html
+// see https://expressjs.com/en/guide/behind-proxies.html
 app.set('trust proxy', 1);
 ```

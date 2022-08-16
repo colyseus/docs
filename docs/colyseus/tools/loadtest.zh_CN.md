@@ -27,60 +27,55 @@ npm install --save-dev @colyseus/loadtest
 
 ```typescript fct_label="TypeScript"
 // script.ts
-import { Client, Room } from "colyseus.js";
-import { Options } from "@colyseus/loadtest";
+import { Room, Client } from "colyseus.js";
 
-export async function main(options: Options) {
-    const client = new Client(options.endpoint);
-    const room: Room = await client.joinOrCreate(options.roomName, {
-        // 这里是加入房间的参数...
-    });
+export function requestJoinOptions (this: Client, i: number) {
+    return { requestNumber: i };
+}
 
-    console.log("joined successfully!");
+export function onJoin(this: Room) {
+    console.log(this.sessionId, "joined.");
 
-    room.onMessage("*", (type, message) => {
+    this.onMessage("*", (type, message) => {
         console.log("onMessage:", type, message);
     });
+}
 
-    room.onStateChange((state) => {
-        console.log(room.sessionId, "new state:", state);
-    });
+export function onLeave(this: Room) {
+    console.log(this.sessionId, "left.");
+}
 
-    room.onError((err) => {
-        console.log(room.sessionId, "!! ERROR !!", err.message);
-    })
+export function onError(this: Room, err) {
+    console.error(this.sessionId, "!! ERROR !!", err.message);
+}
 
-    room.onLeave((code) => {
-        console.log(room.sessionId, "left.");
-    });
+export function onStateChange(this: Room, state) {
 }
 ```
 
 ```typescript fct_label="JavaScript"
 // script.js
-exports.main = function (options) {
-    const client = new Client(options.endpoint);
-    const room = await client.joinOrCreate(options.roomName, {
-        // 这里是加入房间的参数...
-    });
+exports.requestJoinOptions = function (i) {
+    return { requestNumber: i };
+}
 
-    console.log("joined successfully!");
+exports.onJoin = function () {
+    console.log(this.sessionId, "joined.");
 
-    room.onMessage("*", (type, message) => {
+    this.onMessage("*", (type, message) => {
         console.log("onMessage:", type, message);
     });
+}
 
-    room.onStateChange((state) => {
-        console.log(room.sessionId, "new state:", state);
-    });
+exports.onLeave = function () {
+    console.log(this.sessionId, "left.");
+}
 
-    room.onError((err) => {
-        console.log(room.sessionId, "!! ERROR !!", err.message);
-    })
+exports.onError = function (err) {
+    console.log(this.sessionId, "!! ERROR !!", err.message);
+}
 
-    room.onLeave((code) => {
-        console.log(room.sessionId, "left.");
-    });
+exports.onStateChange = function (state) {
 }
 ```
 

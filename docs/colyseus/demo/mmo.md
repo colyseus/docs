@@ -41,7 +41,7 @@ If you are running a local server, the default settings should be sufficient, ho
 
 ## Playing the Demo
 
-Start the player in the scene “MMOLoginScene” located at `ColyseusTechDemo-MMO\Assets\Scenes\MMOLoginScene`. If this is your first time, you'll need to create an account. Input your e-mail, password and then login to begin. If you are successful, the client will load the “TowerScene” scene and place a NetworkedEntity in it. At any point you can press the escape key to view the controls, customize your avatar or exit to the main menu. You will be transferred into a different room by walking into the grey cubes that are located on sides of rooms.
+Start the player in the scene “MMOLoginScene” located at `ColyseusTechDemo-MMO\Assets\Scenes\MMOLoginScene`. If this is your first time, you'll need to create  an account. Input your e-mail, password and then login to begin. If you are successful, the client will load the “TowerScene” scene and place a NetworkedEntity in it. At any point you can press the escape key to view the controls, customize your avatar or exit to the main menu. You will be transferred into a different room by walking into the grey cubes that are located on sides of rooms.
 
 ### Controls
 The controls for this demo are visible in the Escape menu at any time and are as follows:
@@ -101,7 +101,7 @@ This demo comes with 4 different types of interactables that you can find in the
 - Coin Op
     - A small ride that will disable your controls temporarily and bounce your NetworkedEntity around. Costs 1 coin per use
 - Teleporter
-    - A small platform that will teleport a user to its "exit platform". Costs 2 coins to use
+    - A small platform that will teleport a user to it's "exit platform". Costs 2 coins to use
 - FX Swirl
     - An alternate to the Button Podium that costs nothing and gives nothing, but displays a cool effect when pressed (uses the DEFAULT server type)
 

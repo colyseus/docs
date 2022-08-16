@@ -54,7 +54,7 @@ app.listen(8080);
 
 ## 服务器端 API
 
-在 `@colyseus/social` 里提供了 MongoDB 模块, 以及令牌验证功能.
+`@colyseus/social` 里提供了 MongoDB 模块,以及令牌验证功能.
 
 ```
 typescript import { User, FriendRequest, verifyToken } from "@colyseus/social";
@@ -82,7 +82,7 @@ class MyRoom extends Room {
 }
 ```
 
-### 触发器
+### 触发点
 
 #### `hooks.beforeAuthenticate`
 

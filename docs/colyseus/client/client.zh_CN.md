@@ -1,17 +1,16 @@
-# Client-side SDK
+# Colyseus SDK &raquo; 用法
 
-Colyseus currently has client-side SDK's available for the following platforms:
+目前 Colyseus 有以下平台的客户端 SDK:
 
-- [Unity](/getting-started/unity3d-client) ([view source-code](https://github.com/colyseus/colyseus-unity3d))
-- [JavaScript/TypeScript](/getting-started/javascript-client) ([view source-code](https://github.com/colyseus/colyseus.js))
-- [Defold Engine](/getting-started/defold-client) ([view source-code](https://github.com/colyseus/colyseus-defold))
-- [Haxe](/getting-started/haxe-client) ([view source-code](https://github.com/colyseus/colyseus-hx))
-- [Construct3](/getting-started/construct3-client) ([view source-code](https://github.com/colyseus/colyseus-construct3))
-- [Cocos Creator](/getting-started/cocos-creator)
+- [Unity](/getting-started/unity3d-client) ([查看源代码](https://github.com/colyseus/colyseus-unity3d))
+- [JavaScript/TypeScript](/getting-started/javascript-client) ([查看源代码](https://github.com/colyseus/colyseus.js))
+- [Defold Engine](/getting-started/defold-client) ([查看源代码](https://github.com/colyseus/colyseus-defold))
+- [Haxe](/getting-started/haxe-client) ([查看源代码](https://github.com/colyseus/colyseus-hx))
+- [Construct3](/getting-started/construct3-client) ([查看源代码](https://github.com/colyseus/colyseus-construct3))
 
-## The Client Instance:
+## 客户端实例:
 
-The `Client` instance is used to perform matchmaking calls, and later connect to one or many rooms.
+`客户端` 实例用于执行匹配调用, 而后连接到一个或多个房间.
 
 ```typescript fct_label="JavaScript"
 import Colyseus from "colyseus.js";
@@ -41,15 +40,15 @@ import io.colyseus.Client;
 var client = new Client("ws://localhost:2567");
 ```
 
-No connection with the server is established yet by creating a `Client` instance.
+尚未通过创建 `客户端` 实例建立起与服务器的连接.
 
-### Methods
+### 方法
 
 #### `joinOrCreate (roomName: string, options: any)`
 
-Join an existing room or create a new one, by provided `roomName` and `options`.
+通过提供的 `roomName` 和 `options` 加入现有房间或创建新房间.
 
-Locked or private rooms are ignored by this method.
+该方法不包括已锁定房间或私人房间.
 
 ```typescript fct_label="TypeScript"
 try {
@@ -71,7 +70,7 @@ client.joinOrCreate("battle", {/* options */}).then(room => {
 
 ```csharp fct_label="C#"
 try {
-  Room<YourStateClass> room = await client.JoinOrCreate<YourStateClass>("battle", /* Dictionary of options */);
+  Room<YourStateClass> room = await client.JoinOrCreate<YourStateClass>("battle"/* , Dictionary of options */);
   Debug.Log("joined successfully");
 
 } catch (ex) {
@@ -117,7 +116,7 @@ client->joinOrCreate<YourStateClass>("battle", {/* options */}, [=](std::string 
 
 #### `create (roomName: string, options: any)`
 
-Creates a new room by provided `roomName` and `options`.
+通过提供的 `roomName` 和 `options` 创建新房间.
 
 ```typescript fct_label="TypeScript"
 try {
@@ -185,9 +184,9 @@ client->create<YourStateClass>("battle", {/* options */}, [=](std::string err, R
 
 #### `join (roomName: string, options: any)`
 
-Joins an existing room by provided `roomName` and `options`.
+通过提供的 `roomName` 和 `options` 加入现有房间.
 
-Locked or private rooms are ignored by this method.
+该方法不包括已锁定房间或私人房间.
 
 ```typescript fct_label="TypeScript"
 try {
@@ -255,7 +254,7 @@ client->join<YourStateClass>("battle", {/* options */}, [=](std::string err, Roo
 
 #### `joinById (roomId: string, options: any)`
 
-Joins an existing room by its `roomId`. Private rooms can be joined by id.
+通过 `roomId` 加入现有房间. 私人房间可凭 id 进入私人房间.
 
 ```typescript fct_label="TypeScript"
 try {
@@ -319,21 +318,20 @@ client->joinById<YourStateClass>("battle", {/* options */}, [=](std::string err,
 });
 ```
 
-!!! Tip "Getting available `roomId`'s you can join"
-    See [`getAvailableRooms()`](#getavailablerooms-roomname-string) to retrieve a list of rooms with their respective `roomId`'s available for joining, along with their metadata.
+!!! Tip "获取您可加入的房间的 `roomId`"
+    参见 [`getAvailableRooms()`](#getavailablerooms-roomname-string) 来检索可加入房间的列表和各房间的 `roomId`,以及其元数据.
 
 ---
 
-#### `reconnect (reconnectionToken)`
+#### `reconnect (roomId: string, sessionId: string)`
 
-Reconnects the client back into a previously connected room.
+将客户端重新接入原先接入过的房间.
 
-- You must store/cache the `room.reconnectionToken` from an active room connection to be able to reconnect.
-- To enable the reconnection of a particular client, the server-side needs to call [`.allowReconnection()`](/server/room#allowreconnection-client-seconds) for that client instance.
+必须与服务器端中的 [`allowReconnection()`](/server/room#allowreconnection-client-seconds) 一起使用.
 
 ```typescript fct_label="TypeScript"
 try {
-  const room = await client.reconnect(cachedReconnectionToken);
+  const room = await client.reconnect("wNHTX5qik", "SkNaHTazQ");
   console.log("joined successfully", room);
 
 } catch (e) {
@@ -342,7 +340,7 @@ try {
 ```
 
 ```typescript fct_label="JavaScript"
-client.reconnect(cachedReconnectionToken).then(room => {
+client.reconnect("wNHTX5qik", "SkNaHTazQ").then(room => {
   console.log("joined successfully", room);
 }).catch(e => {
   console.error("join error", e);
@@ -351,7 +349,7 @@ client.reconnect(cachedReconnectionToken).then(room => {
 
 ```csharp fct_label="C#"
 try {
-  Room<YourStateClass> room = await client.Reconnect<YourStateClass>(cachedReconnectionToken);
+  Room<YourStateClass> room = await client.Reconnect<YourStateClass>("wNHTX5qik", "SkNaHTazQ");
   Debug.Log("joined successfully");
 
 } catch (ex) {
@@ -361,7 +359,7 @@ try {
 ```
 
 ```lua fct_label="lua"
-client:reconnect(cached_reconnection_token, function(err, room)
+client:reconnect("wNHTX5qik", "SkNaHTazQ", function(err, room)
   if (err ~= nil) then
     print("join error: " .. err)
     return
@@ -372,7 +370,7 @@ end)
 ```
 
 ```haxe fct_label="Haxe"
-client.reconnect(cachedReconnectionToken, YourStateClass, function(err, room) {
+client.reconnect("wNHTX5qik", "SkNaHTazQ", YourStateClass, function(err, room) {
   if (err != null) {
     trace("join error: " + err);
     return;
@@ -382,8 +380,8 @@ client.reconnect(cachedReconnectionToken, YourStateClass, function(err, room) {
 });
 ```
 
-<!-- ```haxe fct_label="C++"
-client->reconnect<YourStateClass>(cachedReconnectionToken, [=](std::string err, Room<State>* room) {
+```haxe fct_label="C++"
+client->reconnect<YourStateClass>("wNHTX5qik", "SkNaHTazQ", [=](std::string err, Room<State>* room) {
   if (err != "") {
     std::cout << "join error: " << err << std::endl;
     return;
@@ -391,16 +389,16 @@ client->reconnect<YourStateClass>(cachedReconnectionToken, [=](std::string err, 
 
   std::cout << "joined successfully" << std::endl;
 });
-``` -->
+```
 
 ---
 
 #### `getAvailableRooms (roomName?: string)`
 
-Queries for all available rooms to connect.
+查询所有可接入的房间.
 
-- Locked and private rooms won't be listed.
-- If the `roomName` parameter is ommitted, all rooms are going to be queried.
+- 已锁定及私人房间不包含在列表中.
+- 若 `roomName` 参数被省略, 则对所有房间进行查询.
 
 ```typescript fct_label="JavaScript"
 client.getAvailableRooms("battle").then(rooms => {
@@ -495,7 +493,7 @@ client.getAvailableRooms("battle", [=](std::string err, nlohmann::json rooms) {
 
 #### `consumeSeatReservation (reservation)`
 
-Join a room by manually consuming a "seat reservation".
+通过手动使用 "席位预定" 功能加入房间.
 
 ```typescript fct_label="TypeScript"
 try {
@@ -559,33 +557,30 @@ client->consumeSeatReservation<YourStateClass>(reservation, [=](std::string err,
 });
 ```
 
-!!! Tip "Advanced usage"
-    See [Match-maker API](/server/matchmaker/#reserveseatforroom-options) to learn how to manually reserve a seat for a client within a room.
+!!! Tip "高级用法"
+    参见 [Match-maker API](/server/matchmaker/#reserveseatforroom-options) 了解如何在房间内为某个客户端预留席位.
 
-## The Room Instance:
+## 房间实例:
 
-### Properties
+### 属性
 
 #### `state: any`
 
-The current room's state. This variable is always synched with the latest
-`state` from the server-side. To listen for updates on the whole state, see
-[`onStateChange`](#onstatechange) event.
+当前房间状态.该变量始终与服务器端的最新 `状态` 同步. 要想侦听整体状态的更新情况,参见 [`onStateChange`](#onstatechange) 事件.
 
-You may attach callbacks to specific structures inside your state. [See schema callbacks](/state/schema/#client-side).
+您可将回调附加到您状态内的特定架构上. [参见架构回调](/state/schema/#client-side).
 
 ---
 
 #### `sessionId: string`
 
-Unique identifier for the current connected client. This property matches the [`client.sessionId`](/server/client/#sessionid-string) from the server-side.
+当前已接入客户端的唯一标识.该属性与服务器端中的 [`client.sessionId`](/server/client/#sessionid-string) 互相匹配.
 
 ---
 
 #### `id: string`
 
-The unique idenfitier of the room. You can share this id with other clients in
-order to allow them to connect directly to this room.
+房间的唯一标识将本 id 分享给其他客户端, 则其他客户端可直接接入本房间.
 
 ```typescript fct_label="JavaScript"
 // get `roomId` from the query string
@@ -601,15 +596,15 @@ client.joinById(roomId).then(room => {
 
 #### `name: string`
 
-Name of the room handler. Ex: `"battle"`.
+房间处理程序的名称.示例: `"battle"`.
 
 ---
 
-### Methods
+### 方法
 
 #### `send (type, message)`
 
-Send a type of message to the room handler. Messages are encoded with MsgPack and can hold any JSON-serializable data structure.
+向房间处理程序发送一种类型的消息. 消息使用 MsgPack 编码, 仅含有可序列化 JSON 数据结构.
 
 ```typescript fct_label="JavaScript"
 //
@@ -659,35 +654,14 @@ room.send("move", { direction: "left" });
 room.send(0, { direction: "left" });
 ```
 
-!!! tip "Use `Room#onMessage()` from the server-side to receive the messages"
-    Check out [Server-side API &raquo; Room - onMessage()](/server/room/#onmessage-type-callback) section.
+!!! tip "使用服务器端的 `Room#onMessage()` 进行信息检索"
+    查看[Server-side API » Room - onMessage()](/server/room/#onmessage-type-callback)章节
 
 ---
 
-#### `sendBytes (type, bytes)`
+#### `leave ()`
 
-Send a raw byte array as a message to the server. A byte array is an array of numbers from `0` to `255`.
-
-This is useful if you'd like to manually encode a message, rather than the default encoding (MsgPack).
-
-```typescript fct_label="JavaScript"
-//
-// sending message with number type
-//
-room.send(0, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
-
-
-//
-// sending message with string type
-//
-room.send("some-bytes", [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
-```
-
----
-
-#### `leave (consented: boolean)`
-
-Disconnect client from the room.
+断开与房间的连接.
 
 **Parameters**
 
@@ -726,24 +700,22 @@ room.leave(false);
 ```
 
 !!! Tip
-    Use [Room#onLeave()](/server/room/#onleave-client-consented) to handle the disconnection from the server-side.
+    使用 [Room#onLeave()](/server/room/#onleave-client-consented) 来处理与服务器端的断连.
 
 ---
 
 #### `removeAllListeners()`
 
-Removes `onMessage`, `onStateChange`, `onLeave` and `onError` listeners.
+移除 `onMessage`, `onStateChange`, `onLeave` 和 `onError` 侦听程序.
 
----
-
-### Events
+### 事件
 
 #### onStateChange
 
-!!! Tip "You may trigger callbacks for specific Schema structures"
-    Check out the [State Handling » Schema » Client-side](/state/schema/#client-side) section for more details.
+!!! Tip "您可为特定的 Schema 架构设置触发回调"
+    更多详情可查看 [状态处理» Schema »客户端](/state/schema/#client-side) 章节.
 
-This event is triggered when the server updates its state.
+服务器状态更新时触发该事件.
 
 ```typescript fct_label="JavaScript"
 room.onStateChange.once((state) => {
@@ -788,7 +760,7 @@ room.onStateChange = [=](State>* state) {
 
 #### onMessage
 
-This event is triggered when the server sends a message directly to the client, or via broadcast.
+服务器直接或通过广播向客户端发送消息时触发该事件.
 
 ```typescript fct_label="JavaScript"
 room.onMessage("powerup", (message) => {
@@ -830,15 +802,13 @@ room.onMessage("powerup", [=](msgpack::object message) -> void {
 ```
 
 !!! Tip
-    To send a message from the server directly to the clients you'll need to use
-    either [client.send()](/server/client/#sendtype-message) or
-    [room.broadcast()](/server/room/#broadcast-type-message-options)
+    若要从服务器直接发送消息至客户端,您需要使用 [client.send()](/server/client/#sendtype-message) 或 [room.broadcast()](/server/room/#broadcast-type-message-options) 进行操作.
 
 ---
 
 #### onLeave
 
-This event is triggered when the client leave the room.
+客户端离开房间时触发该事件.
 
 ```typescript fct_label="JavaScript"
 room.onLeave((code) => {
@@ -870,18 +840,18 @@ room.onLeave = [=]() -> void {
 };
 ```
 
-**Possible closing `code`s and their meaning:**
+**可能出现的关闭 `代码` 及其含义:**
 
-- `1000` - Regular socket shutdown
-- Between `1001` and `1015` - Abnormal socket shutdown
-- Between `4000` and `4999` - Custom socket close code (See [more details](/server/room/#table-of-websocket-close-codes))
+- `1000` - 定期关闭套接字
+- `1001` 到 `1015` 之间 - 套接字异常关闭
+- `4000` 到 `4999` 之间 - 自定义套接字关闭代码(查看 [更多详细信息](/server/room/#table-of-websocket-close-codes))
 
 
 ---
 
 #### onError
 
-This event is triggered when some error occurs in the room handler.
+房间处理程序发生错误时触发该事件.
 
 ```typescript fct_label="JavaScript"
 room.onError((code, message) => {
