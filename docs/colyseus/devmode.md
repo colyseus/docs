@@ -6,12 +6,9 @@ Whenever you update your server code, before the server restarts, all active roo
 
 The clients are going to try to reconnect as soon as the server goes down, and keep trying a few times until they are successful, or the attempt limit is reached.
 
-_(The client-side code is not reloaded, only the connection is re-established)_
-
 ![devMode flow](devmode_flow.png)
 
-!!! Note
-    You must use `ts-node-dev` along with `devMode: true` to enable this feature. (it's the default if you've created the server using `npm init colyseus-app`)
+_(The client-side code is not reloaded, only the connection is re-established)_
 
 ### Enabling `devMode`
 
