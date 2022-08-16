@@ -10,6 +10,8 @@ The clients are going to try to reconnect as soon as the server goes down, and k
 
 _(The client-side code is not reloaded, only the connection is re-established)_
 
+---
+
 ### Enabling `devMode`
 
 The devMode is **disabled** by default and it can be enabled via server options.
@@ -35,18 +37,20 @@ export default Arena({
 });
 ```
 
-!!! Warning "Never use `devMode` in production!"
+!!! Warning "Do not use `devMode` in production!"
     This feature is very costly and is not optimized for a large amount of rooms. Use it for local development only. (Arena hosting does not support this feature)
+
+---
 
 ### Restoring data outside the room's `state`
 
-By default, only the `state` of the room is cached and restored when the server restarts.
+- By default, only the `state` of the room is cached and restored when the server restarts.
+- You can restore data outside the room's `state` by implementing the `onCacheRoom()` and `onRestoreRoom()` hooks.
+- Only JSON-serializable data is allowed.
 
-You can restore data outside the room's `state` by implementing the `onCacheRoom()` and `onRestoreRoom()` hooks.
+---
 
-Only JSON-serializable data is allowed.
-
-**`onCacheRoom`:**
+#### `onCacheRoom`:
 
 The `onCacheRoom` will be executed before the room is cached and disposed.
 
@@ -60,7 +64,9 @@ export class MyRoom extends Room<MyRoomState> {
 }
 ```
 
-**`onRestoreRoom`:**
+---
+
+#### `onRestoreRoom`:
 
 The `onRestoreRoom` will be executed after the room has been restored and the restored state is available.
 
