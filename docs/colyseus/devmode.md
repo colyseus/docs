@@ -37,6 +37,10 @@ export default Arena({
 });
 ```
 
+!!! Note "Attention on the client-side"
+    Upon re-establishing a connection on devMode, the `onAdd` schema callback will be triggered again on the client-side.
+    Be prepared to possibly ignore it during development.
+
 !!! Warning "Do not use `devMode` in production!"
     This feature is very costly and is not optimized for a large amount of rooms. Use it for local development only. (Arena hosting does not support this feature)
 
@@ -87,7 +91,3 @@ export class MyRoom extends Room<MyRoomState> {
   }
 }
 ```
-
-!!! Warning "Attention on the client-side"
-    Upon re-establishing a connection on devMode, the `onAdd` schema callback will be triggered again on the client-side.
-    Be prepared to possibly ignore it during development.
