@@ -45,7 +45,7 @@ export default Arena({
 ### Restoring data outside the room's `state`
 
 - By default, only the `state` of the room is cached and restored when the server restarts.
-- You can restore data outside the room's `state` by implementing the `onCacheRoom()` and `onRestoreRoom()` hooks.
+- You can restore data outside the room's `state` by implementing the `onCacheRoom()` and `onRestoreRoom()` methods.
 - Only JSON-serializable data is allowed.
 
 ---
@@ -70,7 +70,7 @@ export class MyRoom extends Room<MyRoomState> {
 
 The `onRestoreRoom` will be executed after the room has been restored and the restored state is available.
 
-The argument provided for the `onRestoreRoom` is the data provided by the `onCacheRoom` hook.
+The argument provided for the `onRestoreRoom` is the data previously returned by the `onCacheRoom` method.
 
 No clients are connected yet at this point.
 
