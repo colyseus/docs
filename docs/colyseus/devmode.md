@@ -14,7 +14,7 @@ _(The client-side code is not reloaded, only the connection is re-established)_
 
 ### Enabling `devMode`
 
-The devMode is **disabled** by default and it can be enabled via server options.
+The `devMode` is **disabled** by default and it can be enabled via [Server option](/colyseus/server/api/#optionsdevmode):
 
 ```typescript fct_label="Self-hosted"
 import { Server } from "colyseus";

@@ -57,7 +57,7 @@ manually in your shutdown process.
 ### `options.devMode`
 
 Restore previous rooms and states upon server restarting when engaging in iterative development.
-Default is false. See more in [`devMode`](/colyseus/devmode).
+Default is `false`. See more in [`devMode`](/colyseus/devmode).
 
 ---
 
