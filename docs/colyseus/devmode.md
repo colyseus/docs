@@ -1,40 +1,61 @@
-**How it works? **
+### How it works?
 
-When engaging in iterative development, `ts-node-dev` is forcing the application to restart.
-By default, the restart is going to flush application data by disposing every room, disconnecting clients and after the restart there will be an empty new server without any room in it.
+The `devMode` option has been introduced to speed up **local development** when you're updating your server code.
 
-To make the iterative development easier the `devMode` is introduced.
-The `devMode` works as,
+Whenever you update your server code, before the server restarts, all active rooms are cached locally, including their state and sessionId's of previously connected clients (seat reservations). After the restart, all rooms are recreated and the cached state is restored.
+
+The clients are going to try to reconnect as soon as the server goes down, and keep trying a few times until they are successful, or the attempt limit is reached.
+
+_(The client-side code is not reloaded, only the connection is re-established)_
 
 ![devMode flow](devmode_flow.png)
 
-As soon as seat reservations are ready for previous clients, Colyseus client-side SDKs(JavaScript SDK, Unity SDK, Defold SDK and Haxe SDK) will re-establish the connection automatically with the server.
+!!! Note
+    You must use `ts-node-dev` along with `devMode: true` to enable this feature. (it's the default if you've created the server using `npm init colyseus-app`)
 
+### Enabling `devMode`
 
-### Enabling devMode
+The devMode is **disabled** by default and it can be enabled via server options.
 
-The devMode is disabled by default and it can be enabled via server options.
-This operation costs heavily and it is recommended not to use it in a production environment.
+```typescript fct_label="Self-hosted"
+import { Server } from "colyseus";
 
-```typescript fct_label="JavaScript"
-const colyseus = require("colyseus");
-
-const gameServer = new colyseus.Server({
+const gameServer = new Server({
   // ...
   devMode: true
 });
 ```
 
-### Restoring data outside the room’s `state`
+```typescript fct_label="arena.config.ts"
+import Arena from "@colyseus/arena";
 
-When `devMode` is enabled, [Room](/colyseus/server/room) instance can be enriched with caching and restoring custom
-data using `onCacheRoom` and `onRestoreRoom` callbacks.
+export default Arena({
+    // ...
+    options: {
+        devMode: true
+    },
+    // ...
+});
+```
 
-* `onCacheRoom` will be executed during a graceful shutdown and the developers have the ability to store external data.
+!!! Warning "Never use `devMode` in production!"
+    This feature is very costly and is not optimized for a large amount of rooms. Use it for local development only. (Arena hosting does not support this feature)
+
+### Restoring data outside the room's `state`
+
+By default, only the `state` of the room is cached and restored when the server restarts.
+
+You can restore data outside the room's `state` by implementing the `onCacheRoom()` and `onRestoreRoom()` hooks.
+
+Only JSON-serializable data is allowed.
+
+**`onCacheRoom`:**
+
+The `onCacheRoom` will be executed before the room is cached and disposed.
 
 ```typescript fct_label="JavaScript"
 export class MyRoom extends Room<MyRoomState> {
-  ...
+  // ...
 
   onCacheRoom() {
     return { foo: "bar" };
@@ -42,14 +63,20 @@ export class MyRoom extends Room<MyRoomState> {
 }
 ```
 
-* `onRestoreRoom` will be executed during process startup, upon restoring cached data with using the returned data from `onCacheRoom` method which has been saved during previous graceful shutdown.
+**`onRestoreRoom`:**
+
+The `onRestoreRoom` will be executed after the room has been restored and the restored state is available.
+
+The argument provided for the `onRestoreRoom` is the data provided by the `onCacheRoom` hook.
+
+No clients are connected yet at this point.
 
 ```typescript fct_label="JavaScript"
 export class MyRoom extends Room<MyRoomState> {
-  ...
+  // ...
 
   onRestoreRoom(cachedData: any): void {
-    console.log("ROOM HAS BEEN RESTORED!", cachedData);
+    console.log("restoring room", cachedData);
 
     this.state.players.forEach(player => {
       player.method(cachedData["foo"]);
@@ -58,7 +85,6 @@ export class MyRoom extends Room<MyRoomState> {
 }
 ```
 
-:warning: **Attention **
-
-Upon devMode connection re-establishing, schema-callbacks(`onAdd`) will be triggered again.
-It is advised to be prepared!
+!!! Warning "Attention on the client-side"
+    Upon re-establishing a connection on devMode, the `onAdd` schema callback will be triggered again on the client-side.
+    Be prepared to possibly ignore it during development.

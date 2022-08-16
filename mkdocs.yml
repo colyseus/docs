@@ -283,6 +283,7 @@ nav:
     - 'Match-maker API': 'colyseus/server/matchmaker.md'
     - 'Presence': 'colyseus/server/presence.md'
     - 'Transport': 'colyseus/server/transport.md'
+    - 'Dev Mode': 'colyseus/devmode.md'
     - 'Graceful shutdown': 'colyseus/server/graceful-shutdown.md'
     # - 'Custom State Serialization': 'server/state-serialization.md'
 
@@ -306,7 +307,6 @@ nav:
   - 'Debugging': 'colyseus/debugging.md'
   - 'Deployment': 'colyseus/deployment.md'
   - 'Scalability': 'colyseus/scalability.md'
-  - 'Dev Mode': 'colyseus/devmode.md'
 
   - "How-to":
     - 'Customize room id': 'colyseus/how-to/custom-room-id.md'
