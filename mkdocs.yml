@@ -291,13 +291,6 @@ nav:
     - 'Overview': 'colyseus/state/overview.md'
     - 'Schema': 'colyseus/state/schema.md'
 
-  - 'Best practices':
-    - 'colyseus/best-practices/index.md'
-
-  - 'Built-in Rooms':
-    - 'Lobby room': 'colyseus/builtin-rooms/lobby.md'
-    - 'Relay room': 'colyseus/builtin-rooms/relay.md'
-
   - "Tools":
     - "Unit Testing": 'colyseus/tools/unit-testing.md'
     - "Monitoring Panel": 'colyseus/tools/monitor.md'
@@ -308,29 +301,37 @@ nav:
   - 'Deployment': 'colyseus/deployment.md'
   - 'Scalability': 'colyseus/scalability.md'
 
-  - "How-to":
-    - 'Customize room id': 'colyseus/how-to/custom-room-id.md'
-    - 'Password-protect a room': 'colyseus/how-to/password-protect-room.md'
-    - 'Deny a player joining a room': 'colyseus/how-to/deny-player-join-a-room.md'
-    - 'Custom CORS headers': 'colyseus/how-to/custom-cors-headers.md'
-    - 'Setup server from scratch (TS)': 'colyseus/how-to/setup-server-from-scratch-typescript.md'
-    - 'Rate-limit': 'colyseus/how-to/rate-limit.md'
+  - 'Built-in Rooms':
+    - 'Lobby room': 'colyseus/builtin-rooms/lobby.md'
+    - 'Relay room': 'colyseus/builtin-rooms/relay.md'
 
-  - "Tech Demos":
-    - 'Shooting Gallery': 'colyseus/demo/shooting-gallery.md'
-    - 'StarBoss': 'colyseus/demo/starboss.md'
-    - 'Tanks': 'colyseus/demo/turn-based-tanks.md'
-    - 'MMO': 'colyseus/demo/mmo.md'
+  - More:
+    - 'Best practices':
+        - 'colyseus/best-practices/index.md'
 
-  - 'Migrating':
-    - '0.15': 'colyseus/migrating/0.15.md'
-    - '0.14.18': 'colyseus/migrating/0.14.18.md'
-    - '0.14': 'colyseus/migrating/0.14.md'
-    - '0.13': 'colyseus/migrating/0.13.md'
-    - '0.12': 'colyseus/migrating/0.12.md'
-    - '0.11': 'colyseus/migrating/0.11.md'
-    - '0.10': 'colyseus/migrating/0.10.md'
-    - '0.9': 'colyseus/migrating/0.9.md'
+    - "How-to":
+        - 'Customize room id': 'colyseus/how-to/custom-room-id.md'
+        - 'Password-protect a room': 'colyseus/how-to/password-protect-room.md'
+        - 'Deny a player joining a room': 'colyseus/how-to/deny-player-join-a-room.md'
+        - 'Custom CORS headers': 'colyseus/how-to/custom-cors-headers.md'
+        - 'Setup server from scratch (TS)': 'colyseus/how-to/setup-server-from-scratch-typescript.md'
+        - 'Rate-limit': 'colyseus/how-to/rate-limit.md'
+
+    - "Tech Demos":
+        - 'Shooting Gallery': 'colyseus/demo/shooting-gallery.md'
+        - 'StarBoss': 'colyseus/demo/starboss.md'
+        - 'Tanks': 'colyseus/demo/turn-based-tanks.md'
+        - 'MMO': 'colyseus/demo/mmo.md'
+
+    - Migrating to version:
+        - '0.15': 'colyseus/migrating/0.15.md'
+        - '0.14.18': 'colyseus/migrating/0.14.18.md'
+        - '0.14': 'colyseus/migrating/0.14.md'
+        - '0.13': 'colyseus/migrating/0.13.md'
+        - '0.12': 'colyseus/migrating/0.12.md'
+        - '0.11': 'colyseus/migrating/0.11.md'
+        - '0.10': 'colyseus/migrating/0.10.md'
+        - '0.9': 'colyseus/migrating/0.9.md'
 
   - 'FAQ': 'colyseus/faq.md'
 
