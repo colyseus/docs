@@ -283,6 +283,7 @@ nav:
     - 'Match-maker API': 'colyseus/server/matchmaker.md'
     - 'Presence': 'colyseus/server/presence.md'
     - 'Transport': 'colyseus/server/transport.md'
+    - 'Dev Mode': 'colyseus/devmode.md'
     - 'Graceful shutdown': 'colyseus/server/graceful-shutdown.md'
     # - 'Custom State Serialization': 'server/state-serialization.md'
 

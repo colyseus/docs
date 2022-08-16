@@ -407,6 +407,44 @@ onBeforePatch() {
 
 ---
 
+### `onCacheRoom (): any`
+
+An optional hook to cache external data when [`devMode`](/colyseus/devmode) is enabled.
+(See [restoring data outside the room's state](/colyseus/devmode/#restoring-data-outside-the-rooms-state))
+
+```typescript fct_label="JavaScript"
+export class MyRoom extends Room<MyRoomState> {
+  ...
+
+  onCacheRoom() {
+    return { foo: "bar" };
+  }
+}
+```
+
+---
+
+### `onRestoreData (cachedData: any): void`
+
+An optional hook to reprocess/restore data which was returned and stored from the previous hook [`onCacheRoom`](/colyseus/server/room/#oncacheroom-any) when [`devMode`](/colyseus/devmode) is enabled.
+(See [restoring data outside the room's state](/colyseus/devmode/#restoring-data-outside-the-rooms-state))
+
+```typescript fct_label="JavaScript"
+export class MyRoom extends Room<MyRoomState> {
+  ...
+
+  onRestoreRoom(cachedData: any): void {
+    console.log("ROOM HAS BEEN RESTORED!", cachedData);
+
+    this.state.players.forEach(player => {
+      player.method(cachedData["foo"]);
+    });
+  }
+}
+```
+
+---
+
 ## Public methods
 
 Room handlers have these methods available.
