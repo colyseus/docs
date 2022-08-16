@@ -29,6 +29,24 @@ npm init colyseus-app ./my-colyseus-app
 ```
     getId: () => "Your Colyseus App",
 
+    initializeTransport: (options) => {
+        /**
+         * 定義服務器傳輸層為 uWS (新版)
+         */
+        return new uWebSocketsTransport({});
+
+        /**
+         * 定義服務器傳輸層為 WS (舊版)
+         * 本地開發時如果使用舊版 WS 需提供如下配置,
+         * Arena 上並不需要這些配置
+         */
+        // return new WebSocketTransport({
+        //     ...options,
+        //     pingInterval: 5000,
+        //     pingMaxRetries: 3,
+        // });
+    },
+    
     initializeGameServer: (gameServer) => {
         /**
          * 定義房間句柄:

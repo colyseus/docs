@@ -167,7 +167,7 @@ Start the player in the scene &quot;TanksLobby&quot; located at `Assets\TurnBase
 
 - There is an &quot;online indicator&quot; next to your opponents name to signal whether they are in the room at the same time with you.
 	- **Red** = offline
-	- **Green** = online.
+	- **Green** = online
 
 - You have the option to skip your remaining turn by pressing the SPACEBAR.
 

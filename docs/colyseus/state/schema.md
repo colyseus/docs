@@ -372,18 +372,6 @@ const map = new MapSchema<string>();
 const item = map.get("key");
 ```
 
-OR
-
-```typescript
-//
-// NOT RECOMMENDED
-//
-// This is a compatibility layer with previous versions of @colyseus/schema
-// This is going to be deprecated in the future.
-//
-const item = map["key"];
-```
-
 ---
 
 #### `map.set()`
@@ -395,18 +383,6 @@ const map = new MapSchema<string>();
 map.set("key", "value");
 ```
 
-OR
-
-```typescript
-//
-// NOT RECOMMENDED
-//
-// This is a compatibility layer with previous versions of @colyseus/schema
-// This is going to be deprecated in the future.
-//
-map["key"] = "value";
-```
-
 ---
 
 #### `map.delete()`
@@ -415,18 +391,6 @@ Removes a map item by key:
 
 ```typescript
 map.delete("key");
-```
-
-OR
-
-```typescript
-//
-// NOT RECOMMENDED
-//
-// This is a compatibility layer with previous versions of @colyseus/schema
-// This is going to be deprecated in the future.
-//
-delete map["key"];
 ```
 
 ---
@@ -885,58 +849,117 @@ When applying state changes coming from the server, the client-side is going to 
 
 The callbacks are triggered based on instance reference. Make sure to attach the callback on the instances that are actually changing on the server.
 
+- [listen()](#listenprop-callback)
 - [onAdd (instance, key)](#onadd-instance-key)
 - [onRemove (instance, key)](#onremove-instance-key)
-- [onChange (changes)](#onchange-changes-datachange) (on `Schema` instance)
 - [onChange (instance, key)](#onchange-instance-key) (on collections: `MapSchema`, `ArraySchema`, etc.)
-- [listen()](#listenprop-callback)
+- [onChange (changes)](#onchange-changes-datachange) (on `Schema` instance)
+
+#### `.listen(prop, callback)`
+
+Listens for a single property change.
+
+**Parameters:**
+
+- `property`: the property name you'd like to listen for changes.
+- `callback`: the callback that is going to be triggered when `property` changes.
+
+```typescript fct_label="TypeScript"
+state.listen("currentTurn", (currentValue, previousValue) => {
+    console.log(`currentTurn is now ${currentValue}`);
+    console.log(`previous value was: ${previousValue}`);
+});
+```
+
+```csharp fct_label="C#"
+state.OnCurrentTurnChange((currentValue, previousValue) => {
+    Debug.Log(currentValue);
+    Debug.Log(previousValue);
+})
+```
+
+```lua fct_label="LUA"
+state:listen("currentTurn", function (current_value, previous_value)
+    pprint(current_value);
+    pprint(previous_value);
+end)
+```
+
+```haxe fct_label="Haxe"
+state.listen("currentTurn", (currentValue, previousValue) => {
+    trace(currentValue);
+    trace(previousValue);
+});
+```
+
+The `.listen()` method returns a function that, when called, removes the attached callback:
+
+
+```typescript
+const unbindCallback = state.listen("currentTurn", (currentValue, previousValue) => {
+    // ...
+});
+
+// later on, if you don't need the listener anymore, you can call `unbindCallback()` to stop listening for `"currentTurn"` changes.
+unbindCallback();
+```
+
+**What's the difference between `listen` and `onChange`?**
+
+The `.listen()` method is a shorthand for `onChange` on a single property. Below is a rewrite from `.listen()` to `onChange`:
+
+```typescript
+state.onChange(function(changes) {
+    changes.forEach((change) => {
+        if (change.field === "currentTurn") {
+            console.log(`currentTurn is now ${change.value}`);
+            console.log(`previous value was: ${change.previousValue}`);
+        }
+    })
+});
+```
+---
 
 #### `onAdd (instance, key)`
 
 The `onAdd` callback can only be used in collection of items (`MapSchema`, `ArraySchema`, etc.). The `onAdd` callback is called with the new instance and its key on holder object as argument.
 
 ```javascript fct_label="JavaScript"
-room.state.players.onAdd = (player, key) => {
+room.state.players.onAdd((player, key) => {
     console.log(player, "has been added at", key);
 
     // add your player entity to the game world!
 
     // If you want to track changes on a child object inside a map, this is a common pattern:
-    player.onChange = function(changes) {
+    player.onChange(function(changes) {
         changes.forEach(change => {
             console.log(change.field);
             console.log(change.value);
             console.log(change.previousValue);
         })
-    };
-
-    // force "onChange" to be called immediatelly
-    player.triggerAll();
-};
+    });
+});
 ```
 
 ```lua fct_label="LUA"
-room.state.players['on_add'] = function (player, key)
+room.state.players:on_add(function (player, key)
     print("player has been added at", key);
 
     -- add your player entity to the game world!
 
     -- If you want to track changes on a child object inside a map, this is a common pattern:
-    player['on_change'] = function(changes)
+    player:on_change(function(changes)
         for i, change in ipairs(changes) do
             print(change.field)
             print(change.value)
             print(change.previousValue)
         end
-    end
-
-    -- force "on_change" to be called immediatelly
-    player.trigger_all()
-end
+    end)
+end)
 ```
 
 ```csharp fct_label="C#"
-room.State.players.OnAdd += (Player player, string key) =>
+room.State.players.OnAdd((string key, Player player) =>
 {
     Debug.Log("player has been added at " + key);
 
@@ -952,10 +975,7 @@ room.State.players.OnAdd += (Player player, string key) =>
             Debug.Log(obj.PreviousValue);
         });
     };
-
-    // force "OnChange" to be called immediatelly
-    e.Value.TriggerAll();
-};
+});
 ```
 
 ---
@@ -965,28 +985,28 @@ room.State.players.OnAdd += (Player player, string key) =>
 The `onRemove` callback can only be used in maps (`MapSchema`) and arrays (`ArraySchema`). The `onRemove` callback is called with the removed instance and its key on holder object as argument.
 
 ```javascript fct_label="JavaScript"
-room.state.players.onRemove = (player, key) => {
+room.state.players.onRemove((player, key) => {
     console.log(player, "has been removed at", key);
 
     // remove your player entity from the game world!
-};
+});
 ```
 
 ```lua fct_label="LUA"
-room.state.players['on_remove'] = function (player, key)
+room.state.players:on_remove(function (player, key)
     print("player has been removed at " .. key);
 
     -- remove your player entity from the game world!
-end
+end)
 ```
 
 ```csharp fct_label="C#"
-room.State.players.OnRemove += (Player player, string key) =>
+room.State.players.OnRemove((string key, Player player) =>
 {
     Debug.Log("player has been removed at " + key);
 
     // remove your player entity from the game world!
-};
+});
 ```
 
 ---
@@ -998,27 +1018,27 @@ room.State.players.OnRemove += (Player player, string key) =>
 You can register the `onChange` to track a `Schema` instance's property changes. The `onChange` callback is triggered with an array of changed properties, along with its previous values.
 
 ```javascript fct_label="JavaScript"
-room.state.onChange = (changes) => {
+room.state.onChange((changes) => {
     changes.forEach(change => {
         console.log(change.field);
         console.log(change.value);
         console.log(change.previousValue);
     });
-};
+});
 ```
 
 ```lua fct_label="LUA"
-room.state['on_change'] = function (changes)
+room.state:on_change(function (changes)
     for i, change in ipairs(changes) do
         print(change.field)
         print(change.value)
-        print(change.previousValue)
+        print(change.previous_value)
     end
-end
+end)
 ```
 
 ```csharp fct_label="C#"
-room.State.OnChange += (changes) =>
+room.State.OnChange((changes) =>
 {
     changes.ForEach((obj) =>
     {
@@ -1026,7 +1046,7 @@ room.State.OnChange += (changes) =>
         Debug.Log(obj.Value);
         Debug.Log(obj.PreviousValue);
     });
-};
+});
 ```
 
 You cannot register the `onChange` callback on objects that haven't been synchronized with the client-side yet.
@@ -1040,22 +1060,22 @@ You cannot register the `onChange` callback on objects that haven't been synchro
 This callback is triggered whenever a collection of **primitive** types (`string`, `number`, `boolean`, etc.) updates some of its values.
 
 ```javascript fct_label="JavaScript"
-room.state.players.onChange = (player, key) => {
+room.state.players.onChange((player, key) => {
     console.log(player, "have changes at", key);
-};
+});
 ```
 
 ```lua fct_label="LUA"
-room.state.players['on_change'] = function (player, key)
+room.state.players:on_change(function (player, key)
     print("player have changes at " .. key);
-end
+end)
 ```
 
 ```csharp fct_label="C#"
-room.State.players.OnChange += (Player player, string key) =>
+room.State.players.OnChange((string key, Player player) =>
 {
     Debug.Log("player have changes at " + key);
-};
+});
 ```
 
 If you'd like to detect changes inside a collection of **non-primitive** types (holding `Schema` instances),use [`onAdd`](#onadd-instance-key) and register [`onChange`](#onchange-changes-datachange) on them.
@@ -1064,54 +1084,6 @@ If you'd like to detect changes inside a collection of **non-primitive** types (
     The `onChange` callback is not triggered during [`onAdd`](#onadd-instance-key) or [`onRemove`](#onremove-instance-key).
 
     Consider registering `onAdd` and `onRemove` if you need to detect changes during these steps too.
-
----
-
-#### `.listen(prop, callback)`
-
-Listens for a single property change.
-
-> `.listen()` is currently only available for JavaScript/TypeScript.
-
-**Parameters:**
-
-- `property`: the property name you'd like to listen for changes.
-- `callback`: the callback that is going to be triggered when `property` changes.
-
-
-```typescript
-state.listen("currentTurn", (currentValue, previousValue) => {
-    console.log(`currentTurn is now ${currentValue}`);
-    console.log(`previous value was: ${previousValue}`);
-});
-```
-
-The `.listen()` method returns a function that is meant to unregister the listener:
-
-
-```typescript
-const removeListener = state.listen("currentTurn", (currentValue, previousValue) => {
-    // ...
-});
-
-// later on, if you don't need the listener anymore, you can call `removeListener()` to stop listening for `"currentTurn"` changes.
-removeListener();
-```
-
-**What's the difference between `listen` and `onChange`?**
-
-The `.listen()` method is a shorthand for `onChange` on a single property. Below is a rewrite from `.listen()` to `onChange`:
-
-```typescript
-state.onChange = function(changes) {
-    changes.forEach((change) => {
-        if (change.field === "currentTurn") {
-            console.log(`currentTurn is now ${change.value}`);
-            console.log(`previous value was: ${change.previousValue}`);
-        }
-    })
-}
-```
 
 ---
 
