@@ -81,3 +81,25 @@ room.onLeave((code) => {
   console.log(client.id, "left", room.name);
 });
 ```
+
+### Schema Types
+
+When using TypeScript Schema type can be mentioned for leveraging the types on the client side.
+
+This is applicable for methods: `joinOrCreate`, `create`, `join`, `joinById`, `reconnect` and `consumeSeatReservation`.
+
+Example:
+
+```
+import { MyState } from "../path/MyState"
+
+client.joinOrCreate<MyState>(...)
+```
+
+Or,
+
+```
+import { MyState } from "../path/MyState"
+
+client.joinOrCreate("my_room", {}, MyState);
+```
