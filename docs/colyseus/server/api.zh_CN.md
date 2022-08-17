@@ -54,6 +54,13 @@ const gameServer = new colyseus.Server({
 
 ---
 
+### `options.devMode`
+
+迭代开发阶段基于服务器重启恢复先前房间.
+默认值为 `false`. 详情参见 [`devMode`](/colyseus/devmode).
+
+---
+
 ### `options.server`
 
 !!! Warning "该配置参数将被弃用"

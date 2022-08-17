@@ -49,7 +49,7 @@ plugins:
 
       languages:
         en: "English"
-        zh_CN: "简体中文" #Simplified Chinese
+        zh_CN: "简体中文" # Simplified Chinese
         zh_HK: "繁體中文" # Traditional Chinese
         # pt: "Português" # Portuguese
         # de: "Deutsch" # German
@@ -120,6 +120,7 @@ plugins:
           MMO: "MMO"
           Migrating: "更新记录"
           FAQ: "常见问题"
+          Dev Mode: "开发模式"
 
         zh_HK:
           getting started: "開始"
@@ -169,6 +170,7 @@ plugins:
           MMO: "MMO"
           Migrating: "更新記錄"
           FAQ: "常見問題"
+          Dev Mode: "開發模式"
 
         # pt:
         #   getting started: "Introdução"

@@ -1,8 +1,8 @@
 ### 工作原理?
 
-The `devMode` option has been introduced to speed up **local development** when you're updating your server code.
+引入称作 `devMode` 的参数以便您在 **本地开发** 更新服务端代码时, 能更加方便快捷地迭代.
 
-Whenever you update your server code, before the server restarts, all active rooms are cached locally, including their state and sessionId's of previously connected clients (seat reservations). After the restart, all rooms are recreated and the cached state is restored.
+当更新你的服务端代码时, 在服务器重启之前, 所有活动房间都被保存在本地缓存中, 包括它们的 state 和之前已连接客户端的 sessionId (seat reservations). 服务器重启之后, 所有房间和缓存的 state 都会自动重建.
 
 The clients are going to try to reconnect as soon as the server goes down, and keep trying a few times until they are successful, or the attempt limit is reached.
 
