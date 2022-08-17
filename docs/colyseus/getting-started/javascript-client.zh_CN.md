@@ -2,7 +2,7 @@
 
 JavaScript/TypeScript SDK 几乎与所有平台兼容:
 
-- 浏览器(Google Chrome, Firefox, Safari, Opera, Brave等.)
+- 浏览器 (Google Chrome, Firefox, Safari, Opera, Brave等.)
 - [Node.js](https://nodejs.org/)
 - [Electron](https://github.com/electron/electron)
 - [React Native](https://github.com/facebook/react-native)
@@ -10,7 +10,7 @@ JavaScript/TypeScript SDK 几乎与所有平台兼容:
 
 ## 用法
 
-### 将 JavaScript SDK 包括在您的项目中
+### 将 JavaScript SDK 引入您的项目
 
 如果您在使用构建工具(`webpack`, `rollup` 或类似工具), 这是最佳方式
 
@@ -18,13 +18,13 @@ JavaScript/TypeScript SDK 几乎与所有平台兼容:
 npm install --save colyseus.js
 ```
 
-若您不使用生成工具, 推荐从 [GitHub Releases](https://github.com/colyseus/colyseus.js/releases) 下载发布的二进制文件.
+若您不使用构建工具, 推荐从 [GitHub Releases](https://github.com/colyseus/colyseus.js/releases) 下载发布的二进制文件.
 
 ```html
 <script src="colyseus.js"></script>
 ```
 
-或者您也可以直接使用 unpkg 加载分布式文件. 记得将其中的 `@x.x.x` 内容替换为与您服务器兼容的版本.
+或者您也可以直接使用 unpkg 加载分布式文件. 记得将其中的 `@x.x.x` 替换为与您的服务器兼容的版本.
 
 ```html
 <script src="https://unpkg.com/colyseus.js@^0.14.0/dist/colyseus.js"></script>
@@ -33,7 +33,7 @@ npm install --save colyseus.js
 ### 连接至服务器:
 
 ```ts
-import * as Colyseus from "colyseus.js"; // not necessary if included via <script> tag.
+import * as Colyseus from "colyseus.js"; // 用 <script> 载入的话不用写这句.
 
 var client = new Colyseus.Client('ws://localhost:2567');
 ```
@@ -50,7 +50,7 @@ client.joinOrCreate("room_name").then(room => {
 
 ### 房间事件
 
-房间状态已更新:
+房间 state 更新:
 
 ```ts
 room.onStateChange((state) => {
@@ -58,7 +58,7 @@ room.onStateChange((state) => {
 });
 ```
 
-从服务器广播的消息或直接发给本客户端的消息:
+从服务器广播或直接发给该客户端的消息:
 
 ```ts
 room.onMessage("message_type", (message) => {
@@ -74,7 +74,7 @@ room.onError((code, message) => {
 });
 ```
 
-服务器离开房间:
+客户端离开房间:
 
 ```ts
 room.onLeave((code) => {

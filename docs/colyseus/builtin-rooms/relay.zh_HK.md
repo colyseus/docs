@@ -1,29 +1,29 @@
-# 內建房間 &raquo; 轉送房間
+# 內置房間 &raquo; 中繼房間
 
-內建 `RelayRoom` 對於簡易使用的案例相當實用, 除了連線其中的用戶端外, 您不需要在伺服器端保持任何狀態.
+內置的中繼室 `RelayRoom` 對於簡單的需求很有用: 除了保存與服務器連接的客戶端之外, 您無需在服務器上保存任何 state.
 
-只要透過轉送訊息(將其自用戶端轉寄給其他所有人)－伺服器端無法驗證任何訊息－伺服器端為執行驗證者.
+通過簡單的消息轉發 (將消息從一個客戶端轉發給所有其他客戶端) - 服務器端並不進行驗證操作 - 驗證的任務完全交給客戶端.
 
 !!! tip
-    [`RelayRoom` 的原始程式碼](https://github.com/colyseus/colyseus/blob/master/src/rooms/RelayRoom.ts) 非常簡單. 一般建議是在您看到時, 便使用伺服器端驗證來建置您自己的版本.
+    [`RelayRoom` 的源代碼](https://github.com/colyseus/colyseus/blob/master/src/rooms/RelayRoom.ts) 非常簡單. 我們建議在您在服務器端加入自己的驗證機製.
 
-## 伺服器端
+## 服務器端
 
 ```typescript
 import { RelayRoom } from "colyseus";
 
-// Expose your relayed room
+// 定義中繼房間
 gameServer.define("your_relayed_room", RelayRoom, {
   maxClients: 4,
   allowReconnectionTime: 120
 });
 ```
 
-## 用戶端
+## 客戶端
 
-查看如何為玩家自轉送房間的加入, 離開和接收訊息來登錄回呼.
+了解如何為玩家的加入, 離開, 發送和接收中繼室消息註冊回調.
 
-### 正在連線至房間
+### 連入房間
 
 ```typescript
 import { Client } from "colyseus.js";
@@ -31,19 +31,19 @@ import { Client } from "colyseus.js";
 const client = new Client("ws://localhost:2567");
 
 //
-// Join the relayed room
+// 加入中繼室
 //
 const relay = await client.joinOrCreate("your_relayed_room", {
   name: "This is my name!"
 });
 ```
 
-### 在玩家加入和離開時登錄回呼
+### 為玩家的加入和離開註冊回調
 
 
 ```typescript
 //
-// Detect when a player joined the room
+// 監測到玩家加入房間
 //
 relay.state.players.onAdd = (player, sessionId) => {
   if (relay.sessionId === sessionId) {
@@ -55,15 +55,15 @@ relay.state.players.onAdd = (player, sessionId) => {
 }
 
 //
-// Detect when a player leave the room
+// 監測到玩家離開房間
 //
 relay.state.players.onRemove = (player, sessionId) => {
   console.log("Opponent left!", player, sessionId);
 }
 
 //
-// Detect when the connectivity of a player has changed
-// (only available if you provided `allowReconnection: true` in the server-side)
+// 監測到玩家斷線 / 重連
+// (要在服務端設置 `allowReconnection: true` 才有效)
 //
 relay.state.players.onChange = (player, sessionId) => {
   if (player.connected) {
@@ -75,12 +75,12 @@ relay.state.players.onChange = (player, sessionId) => {
 }
 ```
 
-### 傳送接收訊息
+### 發送接收消息
 
 ```typescript
 //
-// By sending a message, all other clients will receive it under the same name
-// Messages are only sent to other connected clients, never the current one.
+// 發送一個消息, 所有其他玩家客戶端就會收到同名消息
+// 註意是連入房間的所有其他客戶端, 不包括發送者本身.
 //
 relay.send("fire", {
   x: 100,
@@ -88,17 +88,17 @@ relay.send("fire", {
 });
 
 //
-// Register a callback for messages you're interested in from other clients.
+// 針對某消息註冊回調.
 //
 relay.onMessage("fire", ([sessionId, message]) => {
 
   //
-  // The `sessionId` from who sent the message
+  // 發送者的 `sessionId`.
   //
   console.log(sessionId, "sent a message!");
 
   //
-  // The actual message sent by the other client
+  // 發送者發出的消息內容
   //
   console.log("fire at", message);
 });

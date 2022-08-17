@@ -1,17 +1,17 @@
-# 服務器 API &raquo; 傳輸
+# 服務器 API &raquo; 傳輸層
 
-Colyseus 目前提供兩個 WebSocket 實現以作為其傳輸之用.
+Colyseus 目前提供兩種 WebSocket 實現方案作為傳輸層使用.
 
-每種套接字都有自己的一組自定義選項.
+每種傳輸層都有自己的一套自定義配置選項.
 
-- [默認 WebSocket 傳輸 (`ws`)](#default-websocket-transport-via-ws)
-- [原生 C++ WebSocket 傳輸 (`uWebSockets.js`)](#native-c-websocket-transport-via-uwebsocketsjs)
+- [默認 WebSocket 傳輸層 (`ws`)](#default-websocket-transport-via-ws)
+- [原生 C++ WebSocket 傳輸層 (`uWebSockets.js`)](#native-c-websocket-transport-via-uwebsocketsjs)
 
 ---
 
-##  默認 WebSocket 傳輸 (協議為 `ws`)
+##  默認 WebSocket 傳輸層 (基於 `ws`)
 
-默認 WebSocket 傳輸使用 [`websockets/ws`](https://github.com/websockets/ws) 協議.
+默認 WebSocket 傳輸使用 [`websockets/ws`](https://github.com/websockets/ws) 實現方案.
 
 如果沒有在 [`Server`](/server/api/#new-server-options) 的構造函數中提供 `transport` 參數, 則默認使用自帶的 `WebSocketTransport`.
 
@@ -32,7 +32,7 @@ import { Server } from "@colyseus/core";
 import { WebSocketTransport } from "@colyseus/ws-transport"
 
 const gameServer = new Server({
-    transport: new WebSocketTransport({ /* 傳輸選項 */ })
+    transport: new WebSocketTransport({ /* 配置選項 */ })
 })
 ```
 
@@ -45,7 +45,7 @@ export default Arena({
 
   initializeTransport: function() {
     return new WebSocketTransport({
-      /* ...選項 */
+      /* ...配置 */
     });
   },
 
@@ -53,7 +53,7 @@ export default Arena({
 });
 ```
 
-### 可用選項:
+### 可用配置選項:
 
 #### `options.server`:
 
@@ -113,7 +113,8 @@ const gameServer = new Server({
 
 #### `options.verifyClient`
 
-在 WebSocket 握手之前進行客戶端驗證. 如果 `verifyClient` 未設置, 則默認客戶端通過驗證.
+在 WebSocket 握手之前進行客戶端驗證. 如果 `verifyClient` 未設置,
+則默認客戶端通過驗證.
 
 - `info` (Object)
     - `origin` (String) 客戶端指定的 Origin header.
@@ -175,8 +176,7 @@ const gameServer = new Server({
 
 #### `options.compression`
 
-使用何種消息壓縮方法.
-`uWS.DISABLED`, `uWS.SHARED_COMPRESSOR` 或自定義 `uWS.DEDICATED_COMPRESSOR_xxxKB`.
+使用何種消息壓縮方法. `uWS.DISABLED`, `uWS.SHARED_COMPRESSOR` 或任意 `uWS.DEDICATED_COMPRESSOR_xxxKB`.
 
 默認 `uWS.DISABLED`
 
@@ -192,19 +192,19 @@ const gameServer = new Server({
 
 #### `options.key_file_name`
 
-SSL 密鑰文件的路徑 (通過 Node.js 程式作用於 SSL 終端.)
+SSL 密鑰文件的路徑 (通過 Node.js 程序作用於 SSL 終端.)
 
 ---
 
 #### `options.cert_file_name`
 
-SSL 證書文件的路徑 (通過 Node.js 程式作用於 SSL 終端.)
+SSL 證書文件的路徑 (通過 Node.js 程序作用於 SSL 終端.)
 
 ---
 
 #### `options.passphrase`
 
-SSL 文件的密碼 (通過 Node.js 程式作用於 SSL 終端.)
+SSL 文件的密碼 (通過 Node.js 程序作用於 SSL 終端.)
 
 ---
 
@@ -223,7 +223,7 @@ const transport = new uWebSocketsTransport({
     /* ...選項 */
 });
 
-// 异步路由
+// 異步路由
 transport.app.get("/async_route", (res, req) => {
     /* 沒有響應或者中斷處理的話, 不應從這裏 return 或者 yield */
     res.onAborted(() => {
@@ -274,7 +274,7 @@ app.use(express.json());
 app.use('/', serveIndex(path.join(__dirname, ".."), { icons: true, hidden: true }))
 app.use('/', express.static(path.join(__dirname, "..")));
 
-// register routes
+// 註冊路由
 app.get("/hello", (req, res) => {
   res.json({ hello: "world!" });
 });
@@ -302,7 +302,7 @@ export default Arena({
     app.use('/', serveIndex(path.join(__dirname, ".."), { icons: true, hidden: true }))
     app.use('/', express.static(path.join(__dirname, "..")));
 
-    // register routes
+    // 註冊路由
     app.get("/hello", (req, res) => {
       res.json({ hello: "world!" });
     });

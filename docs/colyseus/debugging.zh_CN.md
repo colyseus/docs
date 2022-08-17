@@ -46,25 +46,10 @@ ssh -L 9229:localhost:9229 root@remote.example.com
 DEBUG=colyseus:* npm start
 ```
 
-或者, 您也可以按类别记录调试日志.
-
-### `colyseus:patch`
-
-记录补丁字节数和发送到客户端的补丁间隔时间.
-
-```
-colyseus:patch "chat" (roomId: "ryWiL5rLTZ") is sending 28 bytes: +57ms
-```
-
-### `colyseus:errors`
-
-记录服务器端发生的意外(或者是意料之中的, 亦或是内部的)错误.
-
-### `colyseus:matchmaking`
-
-记录房间的创建和释放情况.
-
-```
-colyseus:matchmaking spawning 'chat' on worker 77218 +52s
-colyseus:matchmaking disposing 'chat' on worker 77218 +2s
-```
+- `colyseus:errors`: 记录服务端发生异常的 (或者故意的, 内部的) 错误.
+- `colyseus:matchmaking`: 记录房间被新建或销毁.
+- `colyseus:message`: 记录流入/流出的房间消息.
+- `colyseus:patch`: 记录广播至客户端的数据补丁的字节大小和间隔时间.
+- `colyseus:connection`: 记录客户端与服务器的连接.
+<!-- - `colyseus:driver`:  -->
+<!-- - `colyseus:presence`:  -->

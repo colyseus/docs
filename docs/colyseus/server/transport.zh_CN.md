@@ -113,7 +113,8 @@ const gameServer = new Server({
 
 #### `options.verifyClient`
 
-在 WebSocket 握手之前进行客户端验证. 如果 `verifyClient` 未设置, 则默认客户端通过验证.
+在 WebSocket 握手之前进行客户端验证. 如果 `verifyClient` 未设置,
+则默认客户端通过验证.
 
 - `info` (Object)
     - `origin` (String) 客户端指定的 Origin header.
@@ -175,8 +176,7 @@ const gameServer = new Server({
 
 #### `options.compression`
 
-使用何种消息压缩方法.
-`uWS.DISABLED`, `uWS.SHARED_COMPRESSOR` 或自定义 `uWS.DEDICATED_COMPRESSOR_xxxKB`.
+使用何种消息压缩方法. `uWS.DISABLED`, `uWS.SHARED_COMPRESSOR` 或任意 `uWS.DEDICATED_COMPRESSOR_xxxKB`.
 
 默认 `uWS.DISABLED`
 
@@ -274,7 +274,7 @@ app.use(express.json());
 app.use('/', serveIndex(path.join(__dirname, ".."), { icons: true, hidden: true }))
 app.use('/', express.static(path.join(__dirname, "..")));
 
-// register routes
+// 注册路由
 app.get("/hello", (req, res) => {
   res.json({ hello: "world!" });
 });
@@ -302,7 +302,7 @@ export default Arena({
     app.use('/', serveIndex(path.join(__dirname, ".."), { icons: true, hidden: true }))
     app.use('/', express.static(path.join(__dirname, "..")));
 
-    // register routes
+    // 注册路由
     app.get("/hello", (req, res) => {
       res.json({ hello: "world!" });
     });
