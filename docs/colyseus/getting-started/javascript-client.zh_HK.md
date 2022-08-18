@@ -1,8 +1,8 @@
 # JavaScript/TypeScript SDK
 
-JavaScript/TypeScript SDK 幾乎與所有平臺兼容:
+JavaScript/TypeScript SDK 幾乎與所有平台兼容:
 
-- 瀏覽器 (Google Chrome, Firefox, Safari, Opera, Brave等.)
+- 浏覽器 (Google Chrome, Firefox, Safari, Opera, Brave等.)
 - [Node.js](https://nodejs.org/)
 - [Electron](https://github.com/electron/electron)
 - [React Native](https://github.com/facebook/react-native)
@@ -18,13 +18,13 @@ JavaScript/TypeScript SDK 幾乎與所有平臺兼容:
 npm install --save colyseus.js
 ```
 
-若您不使用構建工具, 推薦從 [GitHub Releases](https://github.com/colyseus/colyseus.js/releases) 下載發布的二進製文件.
+若您不使用構建工具, 推薦從 [GitHub Releases](https://github.com/colyseus/colyseus.js/releases) 下載發布的二進制文件.
 
 ```html
 <script src="colyseus.js"></script>
 ```
 
-或者您也可以直接使用 unpkg 加載分布式文件. 記得將其中的 `@x.x.x` 替換為與您的服務器兼容的版本.
+或者您也可以直接使用 unpkg 加載分布式文件. 記得將其中的 `@x.x.x` 替換爲與您的服務器兼容的版本.
 
 ```html
 <script src="https://unpkg.com/colyseus.js@^0.14.0/dist/colyseus.js"></script>
@@ -80,4 +80,34 @@ room.onError((code, message) => {
 room.onLeave((code) => {
   console.log(client.id, "left", room.name);
 });
+```
+
+---
+
+### 強類型 State / 自動補全
+
+使用 TypeScript, 您能得益于強類型泛型和編輯器對 [state](/colyseus/state/schema/) 的自動補全.
+
+可以只引用 state 本身的類型, 也可以引用其具體類型實現.
+
+_(以下示例把 state 類型應用于 `joinOrCreate`, `create`, `join`, `joinById`, `reconnect` 和 `consumeSeatReservation` 函數.)_
+
+#### 只導入 `type`:
+
+可以用 `import type` 只導入服務器端 state 的類型.
+
+```ts
+import type { MyState } from "../server/path/MyState";
+
+client.joinOrCreate<MyState>(...)
+```
+
+#### 導入具體類型實現:
+
+某些情況下, 您可能需要具體的類型實現, 以便在客戶端重用服務器端 state 裏面實現的函數.
+
+```ts
+import { MyState } from "../server/path/MyState"
+
+client.joinOrCreate("my_room", {}, MyState);
 ```
