@@ -30,7 +30,7 @@ Alternatively, you may include the distribution file directly by using unpkg. Ma
 <script src="https://unpkg.com/colyseus.js@^0.14.0/dist/colyseus.js"></script>
 ```
 
-### Connecting to server:
+### Connecting to server
 
 ```ts
 import * as Colyseus from "colyseus.js"; // not necessary if included via <script> tag.
@@ -38,7 +38,7 @@ import * as Colyseus from "colyseus.js"; // not necessary if included via <scrip
 var client = new Colyseus.Client('ws://localhost:2567');
 ```
 
-### Joining to a room:
+### Joining to a room
 
 ```ts
 client.joinOrCreate("room_name").then(room => {
@@ -80,4 +80,34 @@ The client left the room:
 room.onLeave((code) => {
   console.log(client.id, "left", room.name);
 });
+```
+
+---
+
+### Strongly Typed State / Auto-completion
+
+When using TypeScript, you can leverage strong types and editor auto-completion for the [state](/colyseus/state/schema/).
+
+You may include only the type of the state itself or the concrete implementation.
+
+_(The following examples are applicable to `joinOrCreate`, `create`, `join`, `joinById`, `reconnect` and `consumeSeatReservation` methods.)_
+
+#### Importing only the `type`:
+
+You may use `import type` to import only the type of the state from your server code.
+
+```ts
+import type { MyState } from "../server/path/MyState";
+
+client.joinOrCreate<MyState>(...)
+```
+
+#### Importing the concrete implementation:
+
+In some cases, you may want to import the concrete implementation, to be able to re-use methods implemented in the server in the client.
+
+```ts
+import { MyState } from "../server/path/MyState"
+
+client.joinOrCreate("my_room", {}, MyState);
 ```
