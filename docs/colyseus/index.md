@@ -1,9 +1,5 @@
 # Welcome to Colyseus
 
-!!! tip "Important Notices"
-    - Documentation is currently being updated and improved.
-    - Translation of the documentation is in progress.
-
 ## Introduction
 
 Colyseus is an Authoritative Multiplayer Framework for writing your own game servers using JavaScript/TypeScript and Node.js.
@@ -49,6 +45,14 @@ This server template is ready to be used locally, self-hosted, or on [Colyseus A
 
 ---
 
+## Presentation: JS GameDev Summit 2022
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/KnN6nRtfL44" title="Making Multiplayer Games with Colyseus, Node.js and TypeScript" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+[Slides](https://docs.google.com/presentation/d/e/2PACX-1vTbM8frwpFb1DhqeFw3hNAEl-awUHs6gU-cCZti4Ec8bvFx-Oa6-qRYlaopwi44uqrXFZoPgMgd64sG/pub?start=false&loop=false&delayms=3000) | [GitNation](https://portal.gitnation.org/contents/making-multiplayer-games-with-colyseus-nodejs-and-typescript)
+
+---
+
 ### Examples to explore
 
 You are encouraged to check out existing projects to explore and understand how Colyseus works.
@@ -60,20 +64,13 @@ You are encouraged to check out existing projects to explore and understand how 
 - [The Open-Source IO Shooter](https://github.com/halftheopposite/TOSIOS)
 - [Colyseus + PixiJS Boilerplate (Agar.io simplistic adaptation)](https://github.com/endel/colyseus-pixijs-boilerplate)
 
-**Official Unity Tech Demos**
+**Official Tech Demos**
 
-- [Shooting Gallery](/colyseus/demo/shooting-gallery/)
-- [Starboss](/colyseus/demo/starboss/)
-- [Turn Based Tanks](/colyseus/demo/turn-based-tanks/)
-- [MMO](/colyseus/demo/mmo/)
-
----
-
-## Presentation: JS GameDev Summit 2022
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/KnN6nRtfL44" title="Making Multiplayer Games with Colyseus, Node.js and TypeScript" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-[Slides](https://docs.google.com/presentation/d/e/2PACX-1vTbM8frwpFb1DhqeFw3hNAEl-awUHs6gU-cCZti4Ec8bvFx-Oa6-qRYlaopwi44uqrXFZoPgMgd64sG/pub?start=false&loop=false&delayms=3000) | [GitNation](https://portal.gitnation.org/contents/making-multiplayer-games-with-colyseus-nodejs-and-typescript)
+- [Unity: Shooting Gallery](/colyseus/demo/shooting-gallery/)
+- [Unity: Starboss](/colyseus/demo/starboss/)
+- [Unity: Turn Based Tanks](/colyseus/demo/turn-based-tanks/)
+- [Unity: MMO](/colyseus/demo/mmo/)
+- [Cocos Creator: MMO](/colyseus/demo/cocos/mmo/)
 
 ---
 
