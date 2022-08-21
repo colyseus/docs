@@ -81,3 +81,33 @@ room.onLeave((code) => {
   console.log(client.id, "left", room.name);
 });
 ```
+
+---
+
+### 强类型 State / 自动补全
+
+使用 TypeScript, 您能得益于强类型泛型和编辑器对 [state](/colyseus/state/schema/) 的自动补全.
+
+可以只引用 state 本身的类型, 也可以引用其具体类型实现.
+
+_(以下示例把 state 类型应用于 `joinOrCreate`, `create`, `join`, `joinById`, `reconnect` 和 `consumeSeatReservation` 函数.)_
+
+#### 只导入 `type`:
+
+可以用 `import type` 只导入服务器端 state 的类型.
+
+```ts
+import type { MyState } from "../server/path/MyState";
+
+client.joinOrCreate<MyState>(...)
+```
+
+#### 导入具体类型实现:
+
+某些情况下, 您可能需要具体的类型实现, 以便在客户端重用服务器端 state 里面实现的函数.
+
+```ts
+import { MyState } from "../server/path/MyState"
+
+client.joinOrCreate("my_room", {}, MyState);
+```

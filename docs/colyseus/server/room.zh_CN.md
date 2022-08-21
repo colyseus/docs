@@ -407,6 +407,44 @@ onBeforePatch() {
 
 ---
 
+### `onCacheRoom (): any`
+
+当 [`devMode`](/colyseus/devmode) 开启时, 作为外部数据缓存的可选回调函数.
+(详见 [恢复房间 state 之外的数据](/colyseus/devmode/#restoring-data-outside-the-rooms-state))
+
+```typescript fct_label="JavaScript"
+export class MyRoom extends Room<MyRoomState> {
+  ...
+
+  onCacheRoom() {
+    return { foo: "bar" };
+  }
+}
+```
+
+---
+
+### `onRestoreData (cachedData: any): void`
+
+当 [`devMode`](/colyseus/devmode) 开启时, 用来恢复/重建从上一个回调 [`onCacheRoom`](/colyseus/server/room/#oncacheroom-any) 返回并保存的数据的可选回调函数.
+(详见 [恢复房间 state 之外的数据](/colyseus/devmode/#restoring-data-outside-the-rooms-state))
+
+```typescript fct_label="JavaScript"
+export class MyRoom extends Room<MyRoomState> {
+  ...
+
+  onRestoreRoom(cachedData: any): void {
+    console.log("ROOM HAS BEEN RESTORED!", cachedData);
+
+    this.state.players.forEach(player => {
+      player.method(cachedData["foo"]);
+    });
+  }
+}
+```
+
+---
+
 ## 公开方法
 
 房间公开了以下方法.

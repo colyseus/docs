@@ -1,9 +1,5 @@
 # 欢迎使用 Colyseus
 
-!!! Tip "重要提示"
-    - 文档正在更新和改进中.
-    - 文档翻译正在进行中.
-
 ## 介绍
 
 Colyseus 是基于 Node.js 的, 使用 JavaScript/TypeScript 语言进行开发的, 权威性多平台游戏服务系统.
@@ -49,6 +45,14 @@ npm init colyseus-app ./my-first-game-server
 
 ---
 
+## 隆重介绍: JS GameDev Summit 2022
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/KnN6nRtfL44" title="Making Multiplayer Games with Colyseus, Node.js and TypeScript" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+[Slides](https://docs.google.com/presentation/d/e/2PACX-1vTbM8frwpFb1DhqeFw3hNAEl-awUHs6gU-cCZti4Ec8bvFx-Oa6-qRYlaopwi44uqrXFZoPgMgd64sG/pub?start=false&loop=false&delayms=3000) | [GitNation](https://portal.gitnation.org/contents/making-multiplayer-games-with-colyseus-nodejs-and-typescript)
+
+---
+
 ### 一些实例项目
 
 建议您参考下面的实例项目探索和学习 Colyseus.
@@ -60,20 +64,13 @@ npm init colyseus-app ./my-first-game-server
 - [The Open-Source IO Shooter](https://github.com/halftheopposite/TOSIOS)
 - [Colyseus + PixiJS Boilerplate (Agar.io simplistic adaptation)](https://github.com/endel/colyseus-pixijs-boilerplate)
 
-**官方 Unity 实例项目**
+**官方技术展示**
 
-- [Shooting Gallery](/colyseus/demo/shooting-gallery/)
-- [Starboss](/colyseus/demo/starboss/)
-- [Turn Based Tanks](/colyseus/demo/turn-based-tanks/)
-- [MMO](/colyseus/demo/mmo/)
-
----
-
-## 附赠: JS GameDev Summit 2022
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/KnN6nRtfL44" title="Making Multiplayer Games with Colyseus, Node.js and TypeScript" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-[Slides](https://docs.google.com/presentation/d/e/2PACX-1vTbM8frwpFb1DhqeFw3hNAEl-awUHs6gU-cCZti4Ec8bvFx-Oa6-qRYlaopwi44uqrXFZoPgMgd64sG/pub?start=false&loop=false&delayms=3000) | [GitNation](https://portal.gitnation.org/contents/making-multiplayer-games-with-colyseus-nodejs-and-typescript)
+- [Unity: Shooting Gallery](/colyseus/demo/shooting-gallery/)
+- [Unity: Starboss](/colyseus/demo/starboss/)
+- [Unity: Turn Based Tanks](/colyseus/demo/turn-based-tanks/)
+- [Unity: MMO](/colyseus/demo/mmo/)
+- [Cocos Creator: MMO](/colyseus/demo/cocos/mmo/)
 
 ---
 

@@ -4,7 +4,7 @@ Colyseus 的 `Server` 實例保存著服務器的配置選項, 比如傳輸層�
 
 - **Transport** 是實現服務器和客戶端之間雙向通信的邏輯層.
 - **Presence** 實現房間之間通信以及多 Node.js 進程間通信.
-- **Driver** 是存儲驅動程序, 用於房間的存儲以及 matchmaking 期間的房間檢索.
+- **Driver** 是存儲驅動程序, 用于房間的存儲以及 matchmaking 期間的房間檢索.
 
 ## `new Server (options)`
 
@@ -14,7 +14,7 @@ Colyseus 默認使用其內置 WebSocket 傳輸. 詳見 [自定義傳輸層](/se
 
 ### `options.driver`
 
-房間 matchmaking 驅動. 用於房間緩存和檢索的地方. 需要考慮服務擴展時不要使用 `LocalDriver`.
+房間 matchmaking 驅動. 用于房間緩存和檢索的地方. 需要考慮服務擴展時不要使用 `LocalDriver`.
 
 **配置參數可以是:**
 
@@ -24,7 +24,7 @@ Colyseus 默認使用其內置 WebSocket 傳輸. 詳見 [自定義傳輸層](/se
 
 ### `options.presence`
 
-通過多進程/機器擴展 Colyseus 時, 您需要提供一個 presence 服務. 詳見 [擴展性](/scalability/) 和 [`Presence API`](/server/presence/#api).
+通過多進程/機器擴展 Colyseus 時, 您需要提供壹個 presence 服務. 詳見 [擴展性](/scalability/) 和 [`Presence API`](/server/presence/#api).
 
 ```typescript fct_label="TypeScript"
 import { Server, RedisPresence } from "colyseus";
@@ -48,9 +48,16 @@ const gameServer = new colyseus.Server({
 
 ### `options.gracefullyShutdown`
 
-註冊關閉自動處理程序. 默認值是 `true`.
+注冊關閉自動處理程序. 默認值是 `true`.
 如果被禁用, 您需要在關閉服務時手動
 調用 [`gracefullyShutdown()`](#gracefullyshutdown-exit-boolean) 方法.
+
+---
+
+### `options.devMode`
+
+叠代開發階段基于服務器重啓恢複先前房間.
+默認值爲 `false`. 詳情參見 [`devMode`](/colyseus/devmode).
 
 ---
 
@@ -117,7 +124,7 @@ gameServer.listen(port);
 
 ## `define (roomName: string, room:Room, options?: any)`
 
-為 matchmaker 定義一種房間類型.
+爲 matchmaker 定義壹種房間類型.
 
 - `.define()` 時房間 **並未被創建**
 - 房間的創建視客戶端請求 ([參見客戶端方法](/client/#methods)) 而定
@@ -139,8 +146,8 @@ gameServer.define("battle", BattleRoom);
 gameServer.define("battle_woods", BattleRoom, { map: "woods" });
 ```
 
-!!! Tip "多次定義同一個房間類型"
-    允許使用不同的 `房間參數` 多次定義相同類型的房間. 當 [Room#onCreate()](/server/room/#oncreate-options) 被觸發時, 最終的 `房間參數` 為 [Server#define()](/server/api/#define-roomname-string-room-room-options-any) 上定義的房間參數 + 房間創建時提供的參數的混合體.
+!!! Tip "多次定義同壹個房間類型"
+    允許使用不同的 `房間參數` 多次定義相同類型的房間. 當 [Room#onCreate()](/server/room/#oncreate-options) 被觸發時, 最終的 `房間參數` 爲 [Server#define()](/server/api/#define-roomname-string-room-room-options-any) 上定義的房間參數 + 房間創建時提供的參數的混合體.
 
 ---
 
@@ -152,7 +159,7 @@ gameServer.define("battle_woods", BattleRoom, { map: "woods" });
 
 **參數:**
 
-- `options: string[]` - 一組參數的名字
+- `options: string[]` - 壹組參數的名字
 
 
 **示例:** 允許不同的 "game modes".
@@ -188,7 +195,7 @@ class BattleRoom extends Room {
 
 **示例:** 用內置房間參數 `maxClients` 進行房間篩選
 
-`maxClients` 是一個內置的房間參數, 可用於 matchmaking 和房間過濾.
+`maxClients` 是壹個內置的房間參數, 可用于 matchmaking 和房間過濾.
 
 ```typescript
 gameServer
@@ -207,13 +214,13 @@ client.joinOrCreate("battle", { maxClients: 20 }).then(room => {/* ... */});
 
 #### `sortBy(options)`
 
-基於房間創建時的屬性, 可以為房間設置優先級.
+基于房間創建時的屬性, 可以爲房間設置優先級.
 
-`options` 是一個鍵值對象, 鍵是屬性名, 值是排序方法. 排序方法可以是: `-1`, `"desc"`, `"descending"`, `1`, `"asc"` 或 `"ascending"`.
+`options` 是壹個鍵值對象, 鍵是屬性名, 值是排序方法. 排序方法可以是: `-1`, `"desc"`, `"descending"`, `1`, `"asc"` 或 `"ascending"`.
 
-**示例:** 基於內置屬性 `clients` 排序
+**示例:** 基于內置屬性 `clients` 排序
 
-`clients` 是一個房間內置變量, 用於 matchmaking, 變量值表示當前已連接到該房間的客戶端的數量. 在下面的示例中, 擁有最多客戶端連接數的房間最優先. 使用 `-1`, `"desc"` 或 `"descending"` 進行降序排序:
+`clients` 是壹個房間內置變量, 用于 matchmaking, 變量值表示當前已連接到該房間的客戶端的數量. 在下面的示例中, 擁有最多客戶端連接數的房間最優先. 使用 `-1`, `"desc"` 或 `"descending"` 進行降序排序:
 
 ```typescript
 gameServer
@@ -221,7 +228,7 @@ gameServer
   .sortBy({ clients: -1 });
 ```
 
-想要以最少玩家數量為最優先排序, 把參數值反向即可. 即使用 `1`, `"asc"` 或 `"ascending"` 進行升序排序:
+想要以最少玩家數量爲最優先排序, 把參數值反向即可. 即使用 `1`, `"asc"` 或 `"ascending"` 進行升序排序:
 
 ```typescript
 gameServer
@@ -233,7 +240,7 @@ gameServer
 
 #### 大廳實時房間列表
 
-要讓 `LobbyRoom` 接收到某指定類型房間的更新信息, 就要在房間定義的時候開啟實時列表功能:
+要讓 `LobbyRoom` 接收到某指定類型房間的更新信息, 就要在房間定義的時候開啓實時列表功能:
 
 ```typescript
 gameServer
@@ -272,10 +279,10 @@ gameServer
 
 ## `simulateLatency (milliseconds: number)`
 
-這是一種在本地開發中模擬客戶端 "延遲" 的好方法.
+這是壹種在本地開發中模擬客戶端 "延遲" 的好方法.
 
 ```typescript
-// 記得不要在生產環境中使用 `simulateLatency()` 方法.
+// 記得不要在生産環境中使用 `simulateLatency()` 方法.
 if (process.env.NODE_ENV !== "production") {
 
   // 模擬服務器與客戶端之間 200ms 的延遲.
@@ -293,13 +300,13 @@ if (process.env.NODE_ENV !== "production") {
 
 ## `onShutdown (callback:Function)`
 
-註冊一個回調, 在處理服務系統關閉之前被調用. 詳情請見 [優雅關閉](/server/graceful-shutdown/).
+注冊壹個回調, 在處理服務系統關閉之前被調用. 詳情請見 [優雅關閉](/server/graceful-shutdown/).
 
 ---
 
 ## `gracefullyShutdown (exit: boolean)`
 
 關閉所有房間並清理其緩存數據.
-當清理完成時, 返回一個已完成的 promise.
+當清理完成時, 返回壹個已完成的 promise.
 
 該方法會自動被調用, 除非在 `Server` 構造函數中寫明 `gracefullyShutdown: false`.
