@@ -18,7 +18,7 @@
 - 下載最新的 [Colyseus Unity SDK](https://github.com/colyseus/colyseus-unity3d/releases/latest/download/Colyseus_Plugin.unitypackage)
 - 將 `Colyseus_Plugin.unitypackage` 內容導入到您的項目中.
 
-`Colyseus_Plugin.unitypackage` 內含一個示例項目, 位於 `Assets/Colyseus/Example`, 以供您用作參考.
+`Colyseus_Plugin.unitypackage` 內含壹個示例項目, 位于 `Assets/Colyseus/Example`, 以供您用作參考.
 
 # 安裝
 
@@ -44,84 +44,42 @@ npm install
 npm start
 ```
 
-內置的演示文件帶有一個 [房間處理程序](https://github.com/colyseus/colyseus-unity3d/blob/master/Server/src/rooms/MyRoom.ts), 內含處理遊戲實體和玩家的標準方法. 您可隨意修改任何內容來滿足自定義需求!
+內置的演示文件帶有壹個 [房間處理程序](https://github.com/colyseus/colyseus-unity3d/blob/master/Server/src/rooms/MyRoom.ts), 內含處理遊戲實體和玩家的標准方法. 您可隨意修改任何內容來滿足自定義需求!
 
-## 創建 Colyseus 配置對象:
+## 初始化客戶端
 
-- 在項目目錄任意位置點擊鼠標右鍵, 選擇 "Create", 選擇 "Colyseus", 然後點擊 "Generate ColyseusSettings Scriptable Object"
-- 根據需要填寫字段.
-    - **Server Address**
-        - 您的 Colyseus 服務器地址
-    - **Server Port**
-        - 您的 Colyseus 服務器端口
-    - **Use secure protocol**
-        - 如果需要服務器發送請求和信息時使用 "https" 和 "wss" 協議, 請勾選此項.
-    - **Default headers**
-        - 您可以為服務器的非 web socket 請求添加無限個默認 header.
-        - 默認 header 由 `ColyseusRequest` 類使用.
-        - 比如一個 header 可以包含一個 `"Content-Type"` 的 `"Name"` 和一個 `"application/json"` 的 `"Value"`.
-
-## Colyseus Manager:
-
-- 您可以創建自己的管理器腳本, 記得繼承 `ColyseusManager` 類; 也可以修改並使用自帶的 `ExampleManager`.
+客戶端實例必須在初始場景裏用服務器的 WebSocket 地址 / 安全 websocket(wss) 地址進行初始化.
 ```csharp
-public class ExampleManager : ColyseusManager<ExampleManager>
-```
-- 創建放置於場景內的管理器對象以執行自定義管理器腳本.
-- 在場景檢查器中為 Colyseus Settings 對象提供一個管理器引用.
-
-## 客戶端:
-
-- 調用管理器中的 `InitializeClient()` 方法來創建一個 `ColyseusClient` 對象, 該對象將儲存在 `ColyseusManager` 的變量 `client` 中. 它將被用來創建/加入房間以及建立與服務器的連接.
-```csharp
-ExampleManager.Instance.InitializeClient();
-```
-- 如果您有其他類需要引用這個 `ColyseusClient`, 您可以覆蓋 `InitializeClient` 方法, 並在其中提交客戶端引用.
-```csharp
-//文件 ExampleManager.cs
-public override void InitializeClient()
-{
-    base.InitializeClient();
-    //向 RoomController 提交新建立的客戶端引用
-    _roomController.SetClient(client);
-}
-```
-- 如果需要多個 `ColyseusClient`, 或者想為 `ColyseusClient` 提供另一個 `endpoint` / `ColyseusSettings` 對象, 那麽您可以不調用 `base.InitializeClient()`.
-    - 在重寫的 `InitializeClient()` 函數中, 您可以把地址手動提交給新創建的 `ColyseusClient`, 或者使用 `ColyseusSettings` 對象和一個 `bool` 值來構造新的 `ColyseusClient`, 其中那個布爾值表示是否使用 websocket 協議代替不是 http 協議. 如果您用 `字符串` 地址創建了一個新的 `Client`, 那麽其構造函數中會創建一個 `ColyseusSettings` 對象並從地址字符串裏推斷該使用的傳輸協議.
-```csharp
-public override void InitializeClient()
-{
-    chatClient = new ColyseusClient(chatSettings, true);                //地址為 chatClient.WebSocketEndpoint
-    deathmatchClient = new ColyseusClient(deathmatchSettings, false);   //地址為 deathmatchSettings.WebRequestEndpoint
-    guildClient = new ColyseusClient(guildHostURLEndpoint);             //手動傳入字符串地址以創建 guildClient 對象
-}
-```
-- 可以通過調用 `ColyseusClient` 的 `GetAvailableRooms` 函數以獲取服務器上可用的房間:
-```csharp
-return await GetAvailableRooms<ColyseusRoomAvailable>(roomName, headers);
-```
-## 連入房間
-
-- 有多種創建/加入房間的方法.
-- 調用 `ColyseusClient` 的 `Create` 方法將在服務器上創建房間並自動進入該房間:
-```csharp
-ExampleRoomState room = await client.Create<ExampleRoomState>(roomName);
+ColyseusClient client = new ColyseusClient("ws://localhost:2567");
 ```
 
-- 調用 `JoinById` 以加入指定房間:
+## 連接到房間:
+
+- 有很多辦法創建並加入房間.
+- 可以調用 `ColyseusClient` 的 `Create` 方法創建房間, 這樣會在服務器端自動創建房間實例並把客戶端加入進去:
 ```csharp
-ExampleRoomState room = await client.JoinById<ExampleRoomState>(roomId);
+ColyseusRoom<MyRoomState> room = await client.Create<MyRoomState>(roomName);
 ```
 
-- 調用 `ColyseusClient` 的 `JoinOrCreate`, 會自動匹配並接入可用房間. 必要情況下也會在服務端上創建一個新房間並加入其中:
+- 可以調用 `join` 方法加入已存在的房間, 服務端會找到壹個可用的房間並把客戶端加入進去:
 ```csharp
-ExampleRoomState room = await client.JoinOrCreate<ExampleRoomState>(roomName);
+ColyseusRoom<MyRoomState> room = await client.Join<MyRoomState>(roomName);
+```
+
+- 還可以通過調用 `JoinById` 方法加入指定房間:
+```csharp
+ColyseusRoom<MyRoomState> room = await client.JoinById<MyRoomState>(roomId);
+```
+
+- 通過調用 `ColyseusClient` 的 `JoinOrCreate` 方法加入房間, 服務端首先進行 matchmake, 沒有匹配到房間的話, 服務端會創建壹個房間並把客戶端加入進去:
+```csharp
+ColyseusRoom<MyRoomState> room = await client.JoinOrCreate<MyRoomState>(roomName);
 ```
 
 ## 房間參數:
 
-- 創建新房間時可以傳入一個房間參數字典, 比如開始遊戲的最少人數要求, 或是要在服務器上運行的自定義腳本文件名.
-- 這些參數都是 `object` 類型的, 並由 `string` 類型的鍵作為索引:
+- 創建新房間時可以傳入壹個房間參數字典, 比如開始遊戲的最少人數要求, 或是要在服務器上運行的自定義腳本文件名.
+- 這些參數都是 `object` 類型的, 並由 `string` 類型的鍵作爲索引:
 ```csharp
 Dictionary<string, object> roomOptions = new Dictionary<string, object>
 {
@@ -140,8 +98,8 @@ ExampleRoomState room = await ExampleManager.Instance.JoinOrCreate<ExampleRoomSt
 - 客戶端成功接入房間後觸發.
 
 ### onLeave
-!!! tip "於 0.14.7 版本更新"
-    為處理自定義 websocket 關閉代碼, 代理函數現在從傳遞 `WebSocketCloseCode` 值改為傳遞 `int` 關閉代碼.
+!!! tip "于 0.14.7 版本更新"
+    爲處理自定義 websocket 關閉代碼, 代理函數現在從傳遞 `WebSocketCloseCode` 值改爲傳遞 `int` 關閉代碼.
 
 - 客戶端與房間斷連後觸發.
 - 包括解釋斷連原因的 `int` 參數.
@@ -177,7 +135,7 @@ private static void OnStateChangeHandler(ExampleRoomState state, bool isFirstSta
 
 ### onMessage
 - 可以調用 `OnMessage` 並傳入消息類型和回調函數來添加監聽器, 客戶端收到該信息後會觸發該監聽器.
-- 消息很有助於了解服務器房間中發生了什麽事. (參考 [技術演示](https://docs.colyseus.io/demo/shooting-gallery/), 了解 `OnMessage` 的使用案例)
+- 消息很有助于了解服務器房間中發生了什麽事. (參考 [技術演示](https://docs.colyseus.io/demo/shooting-gallery/), 了解 `OnMessage` 的使用案例)
 
 ```csharp
 room.OnMessage<ExampleNetworkedUser>("onUserJoin", currentNetworkedUser =>
@@ -198,31 +156,47 @@ room.Send("createEntity", new EntityCreationMessage() { creationId = creationId,
 > 了解如何使用 [State Handling](/state/schema/#client-side-schema-generation) 生成您的 `RoomState`
 
 - 每個房間都有自己的 state. 房間 state 的變化會自動同步給所有已連接的客戶端.
-- 關於房間狀態同步:
+- 關于房間狀態同步:
     - 當用戶成功加入房間時, 將從服務器接收到全部 state.
-    - 每隔一個 `patchRate` 的時間, 狀態的二進製補丁都會被發送給各個客戶端 (默認 50ms)
+    - 每隔壹個 `patchRate` 的時間, 狀態的二進制補丁都會被發送給各個客戶端 (默認 50ms)
     - 客戶端每次收到服務器發來的補丁都觸發 `onStateChange`.
     - 每個序列化方法都分別以自己的邏輯來處理收到的 state 補丁.
 - `ColyseusRoomState` 是基類, 自定義房間 state 要繼承它.
 - 查看我們的技術示例, 了解房間狀態數據同步的實現方法, 包括網遊實體, 聯網用戶或房間屬性等. [Shooting Gallery 技術演示](https://docs.colyseus.io/demo/shooting-gallery/)
 
 ```csharp
-public class ExampleRoomState : Schema
+public partial class MyRoomState : Schema
 {
-    [Type(0, "map", typeof(MapSchema<ExampleNetworkedEntity>))]
-    public MapSchema<ExampleNetworkedEntity> networkedEntities = new MapSchema<ExampleNetworkedEntity>();
-
-    [Type(1, "map", typeof(MapSchema<ExampleNetworkedUser>))]
-    public MapSchema<ExampleNetworkedUser> networkedUsers = new MapSchema<ExampleNetworkedUser>();
-
-    [Type(2, "map", typeof(MapSchema<string>), "string")]
-    public MapSchema<string> attributes = new MapSchema<string>();
+	[Type(0, "map", typeof(MapSchema<Player>))]
+	public MapSchema<Player> players = new MapSchema<Player>();
 }
+```
+
+使用 MapSchema 或者 ArraySchema 時, 與服務器進行 state 同步也可以使用如下的方式.
+
+```csharp
+// Something has been added to Schema
+room.State.players.OnAdd += (key, player) =>
+{
+    Debug.Log($"{key} has joined the Game!");
+};
+
+// Something has changed in Schema
+room.State.players.OnChange += (key, player) =>
+{
+    Debug.Log($"{key} has been changed!");
+};
+
+// Something has been removed from Schema
+room.State.players.OnRemove += (key, player) =>
+{
+    Debug.Log($"{key} has left the Game!");
+};
 ```
 
 ## 調試
 
-若您在 WebSocket 連接狀態下對應用設置了斷點, 則連接將在客戶端失活 3 秒後自動斷開. 為防止 Websocket 斷連, 請在開發過程中使用 `pingInterval:0`:
+若您在 WebSocket 連接狀態下對應用設置了斷點, 則連接將在客戶端失活 3 秒後自動斷開. 爲防止 Websocket 斷連, 請在開發過程中使用 `pingInterval:0`:
 
 ```typescript
 import { Server, RedisPresence } from "colyseus";
@@ -233,4 +207,4 @@ const gameServer = new Server({
 });
 ```
 
-請確保在生產環境中使用大於 `0` 的 `pingInterval`. 默認的 `pingInterval` 值為 `3000`.
+請確保在生産環境中使用大于 `0` 的 `pingInterval`. 默認的 `pingInterval` 值爲 `3000`.
