@@ -46,76 +46,34 @@ npm start
 
 内置的演示文件带有一个 [房间处理程序](https://github.com/colyseus/colyseus-unity3d/blob/master/Server/src/rooms/MyRoom.ts), 内含处理游戏实体和玩家的标准方法. 您可随意修改任何内容来满足自定义需求!
 
-## 创建 Colyseus 配置对象:
+## 初始化客户端
 
-- 在项目目录任意位置点击鼠标右键, 选择 "Create", 选择 "Colyseus", 然后点击 "Generate ColyseusSettings Scriptable Object"
-- 根据需要填写字段.
-    - **Server Address**
-        - 您的 Colyseus 服务器地址
-    - **Server Port**
-        - 您的 Colyseus 服务器端口
-    - **Use secure protocol**
-        - 如果需要服务器发送请求和信息时使用 "https" 和 "wss" 协议, 请勾选此项.
-    - **Default headers**
-        - 您可以为服务器的非 web socket 请求添加无限个默认 header.
-        - 默认 header 由 `ColyseusRequest` 类使用.
-        - 比如一个 header 可以包含一个 `"Content-Type"` 的 `"Name"` 和一个 `"application/json"` 的 `"Value"`.
-
-## Colyseus Manager:
-
-- 您可以创建自己的管理器脚本, 记得继承 `ColyseusManager` 类; 也可以修改并使用自带的 `ExampleManager`.
+客户端实例必须在初始场景里用服务器的 WebSocket 地址 / 安全 websocket(wss) 地址进行初始化.
 ```csharp
-public class ExampleManager : ColyseusManager<ExampleManager>
-```
-- 创建放置于场景内的管理器对象以执行自定义管理器脚本.
-- 在场景检查器中为 Colyseus Settings 对象提供一个管理器引用.
-
-## 客户端:
-
-- 调用管理器中的 `InitializeClient()` 方法来创建一个 `ColyseusClient` 对象, 该对象将储存在 `ColyseusManager` 的变量 `client` 中. 它将被用来创建/加入房间以及建立与服务器的连接.
-```csharp
-ExampleManager.Instance.InitializeClient();
-```
-- 如果您有其他类需要引用这个 `ColyseusClient`, 您可以覆盖 `InitializeClient` 方法, 并在其中提交客户端引用.
-```csharp
-//文件 ExampleManager.cs
-public override void InitializeClient()
-{
-    base.InitializeClient();
-    //向 RoomController 提交新建立的客户端引用
-    _roomController.SetClient(client);
-}
-```
-- 如果需要多个 `ColyseusClient`, 或者想为 `ColyseusClient` 提供另一个 `endpoint` / `ColyseusSettings` 对象, 那么您可以不调用 `base.InitializeClient()`.
-    - 在重写的 `InitializeClient()` 函数中, 您可以把地址手动提交给新创建的 `ColyseusClient`, 或者使用 `ColyseusSettings` 对象和一个 `bool` 值来构造新的 `ColyseusClient`, 其中那个布尔值表示是否使用 websocket 协议代替不是 http 协议. 如果您用 `字符串` 地址创建了一个新的 `Client`, 那么其构造函数中会创建一个 `ColyseusSettings` 对象并从地址字符串里推断该使用的传输协议.
-```csharp
-public override void InitializeClient()
-{
-    chatClient = new ColyseusClient(chatSettings, true);                //地址为 chatClient.WebSocketEndpoint
-    deathmatchClient = new ColyseusClient(deathmatchSettings, false);   //地址为 deathmatchSettings.WebRequestEndpoint
-    guildClient = new ColyseusClient(guildHostURLEndpoint);             //手动传入字符串地址以创建 guildClient 对象
-}
-```
-- 可以通过调用 `ColyseusClient` 的 `GetAvailableRooms` 函数以获取服务器上可用的房间:
-```csharp
-return await GetAvailableRooms<ColyseusRoomAvailable>(roomName, headers);
-```
-## 连入房间
-
-- 有多种创建/加入房间的方法.
-- 调用 `ColyseusClient` 的 `Create` 方法将在服务器上创建房间并自动进入该房间:
-```csharp
-ExampleRoomState room = await client.Create<ExampleRoomState>(roomName);
+ColyseusClient client = new ColyseusClient("ws://localhost:2567");
 ```
 
-- 调用 `JoinById` 以加入指定房间:
+## 连接到房间:
+
+- 有很多办法创建并加入房间.
+- 可以调用 `ColyseusClient` 的 `Create` 方法创建房间, 这样会在服务器端自动创建房间实例并把客户端加入进去:
 ```csharp
-ExampleRoomState room = await client.JoinById<ExampleRoomState>(roomId);
+ColyseusRoom<MyRoomState> room = await client.Create<MyRoomState>(roomName);
 ```
 
-- 调用 `ColyseusClient` 的 `JoinOrCreate`, 会自动匹配并接入可用房间. 必要情况下也会在服务端上创建一个新房间并加入其中:
+- 可以调用 `join` 方法加入已存在的房间, 服务端会找到一个可用的房间并把客户端加入进去:
 ```csharp
-ExampleRoomState room = await client.JoinOrCreate<ExampleRoomState>(roomName);
+ColyseusRoom<MyRoomState> room = await client.Join<MyRoomState>(roomName);
+```
+
+- 还可以通过调用 `JoinById` 方法加入指定房间:
+```csharp
+ColyseusRoom<MyRoomState> room = await client.JoinById<MyRoomState>(roomId);
+```
+
+- 通过调用 `ColyseusClient` 的 `JoinOrCreate` 方法加入房间, 服务端首先进行 matchmake, 没有匹配到房间的话, 服务端会创建一个房间并把客户端加入进去:
+```csharp
+ColyseusRoom<MyRoomState> room = await client.JoinOrCreate<MyRoomState>(roomName);
 ```
 
 ## 房间参数:
@@ -207,17 +165,33 @@ room.Send("createEntity", new EntityCreationMessage() { creationId = creationId,
 - 查看我们的技术示例, 了解房间状态数据同步的实现方法, 包括网游实体, 联网用户或房间属性等. [Shooting Gallery 技术演示](https://docs.colyseus.io/demo/shooting-gallery/)
 
 ```csharp
-public class ExampleRoomState : Schema
+public partial class MyRoomState : Schema
 {
-    [Type(0, "map", typeof(MapSchema<ExampleNetworkedEntity>))]
-    public MapSchema<ExampleNetworkedEntity> networkedEntities = new MapSchema<ExampleNetworkedEntity>();
-
-    [Type(1, "map", typeof(MapSchema<ExampleNetworkedUser>))]
-    public MapSchema<ExampleNetworkedUser> networkedUsers = new MapSchema<ExampleNetworkedUser>();
-
-    [Type(2, "map", typeof(MapSchema<string>), "string")]
-    public MapSchema<string> attributes = new MapSchema<string>();
+	[Type(0, "map", typeof(MapSchema<Player>))]
+	public MapSchema<Player> players = new MapSchema<Player>();
 }
+```
+
+使用 MapSchema 或者 ArraySchema 时, 与服务器进行 state 同步也可以使用如下的方式.
+
+```csharp
+// Something has been added to Schema
+room.State.players.OnAdd += (key, player) =>
+{
+    Debug.Log($"{key} has joined the Game!");
+};
+
+// Something has changed in Schema
+room.State.players.OnChange += (key, player) =>
+{
+    Debug.Log($"{key} has been changed!");
+};
+
+// Something has been removed from Schema
+room.State.players.OnRemove += (key, player) =>
+{
+    Debug.Log($"{key} has left the Game!");
+};
 ```
 
 ## 调试
