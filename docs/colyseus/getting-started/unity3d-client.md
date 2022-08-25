@@ -46,76 +46,34 @@ npm start
 
 The built-in demonstration comes with a single [room handler](https://github.com/colyseus/colyseus-unity3d/blob/master/Server/src/rooms/MyRoom.ts), containing a suggested way of handling entities and players. Feel free to change all of it to fit your needs!
 
-## Creating a Colyseus Settings Object:
+## Initializing Client
 
-- Right-click anywhere in the Project folder, select "Create", select "Colyseus", and click "Generate ColyseusSettings Scriptable Object"
-- Fill in the fields as necessary.
-  - **Server Address**
-    - The address to your Colyseus server.
-  - **Server Port**
-    - The port to your Colyseus server.
-  - **Use secure protocol**
-    - Check this if requests and messages to your server should use the "https" and "wss" protocols.
-  - **Default headers**
-    - You can add an unlimited number of default headers for non web socket requests to your server.
-    - The default headers are used by the `ColyseusRequest` class.
-    - An example header could have a `"Name"` of `"Content-Type"` and a `"Value"` of `"application/json"`
+Client instance must be initalized with the server's WebSocket address/Secure websocket(wss) address in the initial stage.
+```csharp
+ColyseusClient client = new ColyseusClient("ws://localhost:2567");
+```
 
-## Colyseus Manager:
-
-- You will need to create your own Manager script that inherits from `ColyseusManager` or use and modify the provided `ExampleManager`.
-```csharp
-public class ExampleManager : ColyseusManager<ExampleManager>
-```
-- Make an in-scene manager object to host your custom Manager script.
-- Provide your Manager with a reference to your Colyseus Settings object in the scene inspector.
-
-## Client:
-
-- Call the `InitializeClient()` method of your Manager to create a `ColyseusClient` object which is stored in the `client` variable of `ColyseusManager`. This will be used to create/join rooms and form a connection with the server.
-```csharp
-ExampleManager.Instance.InitializeClient();
-```
-- If your Manager has additional classes that need reference to your `ColyseusClient`, you can override `InitializeClient` and make those connections in there.
-```csharp
-//In ExampleManager.cs
-public override void InitializeClient()
-{
-    base.InitializeClient();
-    //Pass the newly created Client reference to our RoomController
-    _roomController.SetClient(client);
-}
-```
-- If you wish to have multiple `ColyseusClient` references in your manager, or if you want to provide an alternate `endpoint`/`ColyseusSettings` object for your `ColyseusClient` you can skip the call to `base.InitializeClient()`.
-    - Within your overridden `InitializeClient()` function, you can now either pass an endpoint to any additional new `ColyseusClient`s that you create or you can create a new `ColyseusClient` with a `ColyseusSettings` object and a `bool` to indicate if it should use websocket protocol rather than http when creating a connection. If you create a new `Client` with a `string` endpoint, it'll create a `ColyseusSettings` object in it's constructor and infer the protocol from the endpoint.
-```csharp
-public override void InitializeClient()
-{
-    chatClient = new ColyseusClient(chatSettings, true);                //Endpoint will be chatClient.WebSocketEndpoint
-    deathmatchClient = new ColyseusClient(deathmatchSettings, false);   //Endpoint will be deathmatchSettings.WebRequestEndpoint
-    guildClient = new ColyseusClient(guildHostURLEndpoint);             //Create the guildClient with only a string endpoint
-}
-```
-- You can get available rooms on the server by calling `GetAvailableRooms` of `ColyseusClient`:
-```csharp
-return await GetAvailableRooms<ColyseusRoomAvailable>(roomName, headers);
-```
 ## Connecting to a Room:
 
 - There are several ways to create and/or join a room.
 - You can create a room by calling the `Create` method of `ColyseusClient` which will automatically create an instance of the room on the server and join it:
 ```csharp
-ExampleRoomState room = await client.Create<ExampleRoomState>(roomName);
+ColyseusRoom<MyRoomState> room = await client.Create<MyRoomState>(roomName);
 ```
 
-- You can join a specific room by calling `JoinById`:
+- You can join an existing room if there is any available slot in the room by calling `join`:
 ```csharp
-ExampleRoomState room = await client.JoinById<ExampleRoomState>(roomId);
+ColyseusRoom<MyRoomState> room = await client.Join<MyRoomState>(roomName);
+```
+
+- Also you can join a an available room by calling `JoinById`:
+```csharp
+ColyseusRoom<MyRoomState> room = await client.JoinById<MyRoomState>(roomId);
 ```
 
 - You can call the `JoinOrCreate` method of `ColyseusClient` which will matchmake into an available room, if able to, or will create a new instance of the room and then join it on the server:
 ```csharp
-ExampleRoomState room = await client.JoinOrCreate<ExampleRoomState>(roomName);
+ColyseusRoom<MyRoomState> room = await client.JoinOrCreate<MyRoomState>(roomName);
 ```
 
 ## Room Options:
@@ -129,7 +87,7 @@ Dictionary<string, object> roomOptions = new Dictionary<string, object>
     ["YOUR_ROOM_OPTION_2"] = "option 2"
 };
 
-ExampleRoomState room = await ExampleManager.Instance.JoinOrCreate<ExampleRoomState>(roomName, roomOptions);
+ColyseusRoom<MyRoomState> room = await client.JoinOrCreate<ExampleRoomState>(roomName, roomOptions);
 ```
 
 ## Room Events:
@@ -180,9 +138,9 @@ You have the ability to listen for or to send custom messages from/to a room ins
 - Messages are useful for events that occur in the room on the server. (Take a look at our [tech demos](https://docs.colyseus.io/demo/shooting-gallery/) for use case examples of using `OnMessage`)
 
 ```csharp
-room.OnMessage<ExampleNetworkedUser>("onUserJoin", currentNetworkedUser =>
+room.OnMessage<MyMessageType>("welcomeMessage", message =>
 {
-    _currentNetworkedUser = currentNetworkedUser;
+    Debug.Log(message);
 });
 ```
 
@@ -191,7 +149,7 @@ room.OnMessage<ExampleNetworkedUser>("onUserJoin", currentNetworkedUser =>
 - Specify the `type` and an optional `message` parameters to send to your room.
 
 ```csharp
-room.Send("createEntity", new EntityCreationMessage() { creationId = creationId, attributes = attributes });
+room.Send("position", new { x = 1.3, y = -1.4 });
 ```
 
 ### Room State:
@@ -203,21 +161,37 @@ room.Send("createEntity", new EntityCreationMessage() { creationId = creationId,
   - At every `patchRate`, binary patches of the state are sent to every client (default is 50ms)
   - `onStateChange` is called on the client-side after every patch received from the server.
   - Each serialization method has its own particular way to handle incoming state patches.
-- `ColyseusRoomState` is the base room state you will want your room state to inherit from.
+- `MyRoomState` is the base room state you will want your room state to inherit from.
 - Take a look at our tech demos for implementation examples of synchronizable data in a room&#39;s state such as networked entities, networked users, or room attributes. ([Shooting Gallery Tech Demo](https://docs.colyseus.io/demo/shooting-gallery/))
 
 ```csharp
-public class ExampleRoomState : Schema
+public partial class MyRoomState : Schema
 {
-    [Type(0, "map", typeof(MapSchema<ExampleNetworkedEntity>))]
-    public MapSchema<ExampleNetworkedEntity> networkedEntities = new MapSchema<ExampleNetworkedEntity>();
-    
-    [Type(1, "map", typeof(MapSchema<ExampleNetworkedUser>))]
-    public MapSchema<ExampleNetworkedUser> networkedUsers = new MapSchema<ExampleNetworkedUser>();
-    
-    [Type(2, "map", typeof(MapSchema<string>), "string")]
-    public MapSchema<string> attributes = new MapSchema<string>();
+	[Type(0, "map", typeof(MapSchema<Player>))]
+	public MapSchema<Player> players = new MapSchema<Player>();
 }
+```
+
+When you are using MapSchema or ArraySchema, the state sychronizations from the server can be used as below as well.
+
+```csharp
+// Something has been added to Schema
+room.State.players.OnAdd += (key, player) =>
+{
+    Debug.Log($"{key} has joined the Game!");
+};
+
+// Something has changed in Schema
+room.State.players.OnChange += (key, player) =>
+{
+    Debug.Log($"{key} has been changed!");
+};
+
+// Something has been removed from Schema
+room.State.players.OnRemove += (key, player) =>
+{
+    Debug.Log($"{key} has left the Game!");
+};
 ```
 
 ## Debugging
