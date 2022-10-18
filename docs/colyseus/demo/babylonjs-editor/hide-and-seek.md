@@ -14,15 +14,16 @@ The purpose of this technical demo is to show how to use Colyseus with the Babyl
 ## Getting Started
 
 ### Installing & Launching a local server
-
 You need to install and launch the server from the **provided Server directory** for this demo to function properly. Simply follow the instructions found underneath [“Running the server locally” in the Unity3d section of these docs](/getting-started/unity3d-client/#running-the-server-locally). 
 
 !!! note "Note"
     - The server needs to be installed first before attempting to run or open the project in the editor otherwise errors will result during the compilation process. This is due to client code referencing class types from the server code for development convenience.
     - When opening the demo in the Babylon.js Editor some `.js` files will be generated in the **Server** folder alongside their original `.ts` source files. When launching the server locally (via `npm start`) those `.js` files are removed to prevent runtime issues.
 
-### Colyseus Server Settings
+### Installing Colyseus Client SDK
+To install the Colyseus client SDK in the Babylon.js Editor open a terminal and navigate to the root of the folder that is the workspace of the Babylon.js Editor. [Follow the first set of instructions to install with npm under the "Usage" section.](/getting-started/javascript-client/#usage)
 
+### Colyseus Server Settings
 All server settings are defined in `.env` files located in the Babylon.js Editor workspace here:
 
 ![Server Settings](hide-and-seek/server-settings.png)
@@ -31,7 +32,6 @@ If you are running a local server, the `local` settings should be sufficient. Ho
 By default the editor will load server settings from the `local.env` file.
 
 ## Playing the Demo
-
 There is only one scene and the editor should load it automatically when opening the workspace. You can click the "Play" button at the top left of the editor and that will open a player window. To create or join an existing room you can simply click the "Quick Play" button. An overlay displaying "Joining..." should appear and if successful it will disappear revealing the lobby UI. **If you cannot reach the lobby UI confirm your local server is working properly and check the editor logs for errors.**
 By default a minimum of three players is required to start a match, but you can adjust that if desired as noted in the section below.
 
