@@ -20,9 +20,6 @@ You need to install and launch the server from the **provided Server directory**
     - The server needs to be installed first before attempting to run or open the project in the editor otherwise errors will result during the compilation process. This is due to client code referencing class types from the server code for development convenience.
     - When opening the demo in the Babylon.js Editor some `.js` files will be generated in the **Server** folder alongside their original `.ts` source files. When launching the server locally (via `npm start`) those `.js` files are removed to prevent runtime issues.
 
-### Installing Colyseus Client SDK
-To install the Colyseus client SDK in the Babylon.js Editor open a terminal and navigate to the root of the folder that is the workspace of the Babylon.js Editor. [Follow the first set of instructions to install with npm under the "Usage" section.](/getting-started/javascript-client/#usage)
-
 ### Colyseus Server Settings
 All server settings are defined in `.env` files located in the Babylon.js Editor workspace here:
 
