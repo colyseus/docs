@@ -272,6 +272,7 @@ nav:
                       - "Cocos Creator": "colyseus/getting-started/cocos-creator.md"
                       # - 'Cocos2d-x': 'getting-started/cocos2dx-client.md'
                       - "Construct3": "colyseus/getting-started/construct3-client.md"
+                      - "Babylon.js Editor": "colyseus/getting-started/babylonjs-editor.md"
                 - "Usage": "colyseus/client/client.md"
 
           - "Server API":
