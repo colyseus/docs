@@ -3,6 +3,7 @@
 ## Technical Requirements
 - Node.js v14.0 or higher
 - Colyseus 0.14.20
+- Colyseus Client SDK 0.14.13
 - Babylon.js Editor 4.4.0 or higher
     
 ## Introduction
@@ -42,7 +43,7 @@ By default the editor will load server settings from the `local.env` file.
 ## Playing the Demo
 ![Editor](hide-and-seek/editor.png)
 
-There is only one scene and the editor should load it automatically when opening the workspace. You can click the "Run" button at the top left of the editor (highlighted in green) and that will open a player window. To create or join an existing room you can simply click the "Quick Play" button. An overlay displaying "Joining..." should appear and if successful it will disappear revealing the lobby UI.
+There is only one scene and the editor should load it automatically when opening the workspace. You can click the `Run` button at the top left of the editor (highlighted in green) and that will open a player window. To create or join an existing room you can simply click the `Quick Play` button. An overlay displaying `Joining...` should appear and if successful it will disappear revealing the lobby UI.
 By default a minimum of three players is required to start a match, but you can adjust that if desired as noted in the section below. If necessary you can open multiple client instances to satisfy the player requirement.
 
 !!! tip "Tip"
