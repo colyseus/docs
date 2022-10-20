@@ -1,26 +1,38 @@
 # Hide and Seek Tech Demo
 
-!!! requirement "Requirements"
-    - Node.js v14.0 or higher
-    - Colyseus 0.14.20
-    - Babylon.js Editor 4.4.0 or higher
+## Technical Requirements
+- Node.js v14.0 or higher
+- Colyseus 0.14.20
+- Colyseus Client SDK 0.14.13
+- Babylon.js Editor 4.4.0 or higher
+    
+## Introduction
+The purpose of this technical demo is to show how to use Colyseus with the Babylon.js Editor. The following documentation covers installing and using the Colyseus client SDK, as well as locally running a Colyseus server. The demo is designed to work with Colyseus version 0.14.20 and [Babylon.js Editor version 4.4.0](http://editor.babylonjs.com/){target=_blank}.
+This demo is called "Hide and Seek" and is a simple game where players are assigned roles at random to either be Hiders (ghosts) or the lone Seeker (pumpkin head). In order for the Hiders to win they need to evade the Seeker until time runs out.
 
-The purpose of this technical demo is to show how to use Colyseus with the Babylon.js Editor. Following documentation covers installing and using the Colyseus client SDK as well as locally running a Colyseus server. The demo is designed to work with Colyseus version 0.14.20 and [Babylon.js Editor version 4.4.0](http://editor.babylonjs.com/).
+**[Download Demo](https://github.com/colyseus/babylonjs-hide-and-seek/archive/master.zip)** ([View source code](https://github.com/colyseus/babylonjs-hide-and-seek/){target=_blank})
 
-**[Download demo](https://github.com/colyseus/babylonjs-hide-and-seek/archive/master.zip)** ([View source code](https://github.com/colyseus/babylonjs-hide-and-seek/))
+**[Play Live Demo](https://bppuwh.colyseus.dev/){target=_blank}**
 
 ![Title](hide-and-seek/title.png)
 
 ## Getting Started
 
-### Installing & Launching a local server
-You need to install and launch the server from the **provided Server directory** for this demo to function properly. Simply follow the instructions found underneath [“Running the server locally” in the Unity3d section of these docs](/getting-started/unity3d-client/#running-the-server-locally). 
+### Colyseus SDK/Framework
+You need to install and launch the server from the **provided Server directory** for this demo to function properly. 
+To run the demonstration server locally, run the following commands in your terminal:
+
+```
+cd Server
+npm install
+npm start
+``` 
 
 !!! note "Note"
     - The server needs to be installed first before attempting to run or open the project in the editor otherwise errors will result during the compilation process. This is due to client code referencing class types from the server code for development convenience.
     - When opening the demo in the Babylon.js Editor some `.js` files will be generated in the **Server** folder alongside their original `.ts` source files. When launching the server locally (via `npm start`) those `.js` files are removed to prevent runtime issues.
 
-### Colyseus Server Settings
+#### Colyseus Server Settings
 All server settings are defined in `.env` files located in the Babylon.js Editor workspace here:
 
 ![Server Settings](hide-and-seek/server-settings.png)
@@ -29,8 +41,17 @@ If you are running a local server, the `local` settings should be sufficient. Ho
 By default the editor will load server settings from the `local.env` file.
 
 ## Playing the Demo
-There is only one scene and the editor should load it automatically when opening the workspace. You can click the "Play" button at the top left of the editor and that will open a player window. To create or join an existing room you can simply click the "Quick Play" button. An overlay displaying "Joining..." should appear and if successful it will disappear revealing the lobby UI. **If you cannot reach the lobby UI confirm your local server is working properly and check the editor logs for errors.**
-By default a minimum of three players is required to start a match, but you can adjust that if desired as noted in the section below.
+![Editor](hide-and-seek/editor.png)
+
+There is only one scene and the editor should load it automatically when opening the workspace. You can click the `Run` button at the top left of the editor (highlighted in green) and that will open a player window. To create or join an existing room you can simply click the `Quick Play` button. An overlay displaying `Joining...` should appear and if successful it will disappear revealing the lobby UI.
+By default a minimum of three players is required to start a match, but you can adjust that if desired as noted in the section below. If necessary you can open multiple client instances to satisfy the player requirement.
+
+!!! tip "Tip"
+    - For better performance you may try running the client in your browser rather than the integrated browser of the editor (accessed by right clicking the "Run" button) 
+
+    ![Run](hide-and-seek/run.png)
+
+    - If you cannot reach the lobby UI confirm your local server is working properly and check the editor logs for errors.
 
 ![Gameplay](hide-and-seek/gameplay.png)
 
@@ -39,15 +60,19 @@ Player movement: W, A, S, & D keys.
 
 ### Demo Gameplay Mechanics
 - All players start near the center of the arena in front of the mausoleum
-- Hiders have 3 seconds to scatter before the Seeker is able to seek
 - A round of play lasts 60 seconds. Time left in the round is viewable in the top left corner of the screen
-- Hiders win if one or more stay hidden at the end of the round
+
+#### Seeker:
 - The Seeker wins if they find all the Hiders within the countdown
 - The Seeker cannot directly see the Hiders until they are captured
 - There are various traps, that betray a Hider’s position to the Seeker, spread out over the arena
     - Mud puddles will cause you to leave a trail of muddy footprints for a short period of time
     - Spirits may be disturbed from their abodes
     - Bats may be startled from their resting places
+
+#### Hider:
+- Hiders have 3 seconds to scatter before the Seeker is able to seek
+- Hiders win if one or more stay hidden at the end of the round
 - A Hider is captured when they are within the FOV of the Seeker or are too close to the Seeker in any direction within a unit or so
     - Current FOV is 60 degrees out for 7 units
 - When captured a Hider cannot move
@@ -74,6 +99,8 @@ There are two values involved with rescuing Hiders. That is the `rescueDistance`
 
 ### Various Countdowns
 There are various countdowns that can be adjusted; all are denoted with a `Countdown` suffix and affect the time between game states. All values are assumed to be in milliseconds:
+
+![Countdowns](hide-and-seek/countdowns.png)
 
 - `preRoundCountdown`: time spent in lobby before the room locks and a game begins; begins when the minimum number of players have joined. 
 - `initializedCountdown`: a brief pause after the server has initialized the room for a round of play to allow clients to receive updated schemas and to handle spawning before moving to the prologue state.
