@@ -272,6 +272,7 @@ nav:
                       - "Cocos Creator": "colyseus/getting-started/cocos-creator.md"
                       # - 'Cocos2d-x': 'getting-started/cocos2dx-client.md'
                       - "Construct3": "colyseus/getting-started/construct3-client.md"
+                      - "Babylon.js Editor": "colyseus/getting-started/babylonjs-editor.md"
                 - "Usage": "colyseus/client/client.md"
 
           - "Server API":
@@ -319,6 +320,8 @@ nav:
                       - "MMO": "colyseus/demo/mmo.md"
                 - Cocos Creator:
                       - "MMO": "colyseus/demo/cocos/mmo.md"
+                - Babylon.js Editor:
+                      - "Hide and Seek": "colyseus/demo/babylonjs-editor/hide-and-seek.md"
 
           - "Migrating":
                 - "0.14.18": "colyseus/migrating/0.14.18.md"
