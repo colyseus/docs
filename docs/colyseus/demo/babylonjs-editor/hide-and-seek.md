@@ -14,7 +14,7 @@ This demo is called "Hide and Seek" and is a simple game where players are assig
 
 **[Play Live Demo](https://bppuwh.colyseus.dev/){target=_blank}**
 
-![Title](hide-and-seek/title.PNG)
+![Title](hide-and-seek/title-screenshot.png)
 
 ## Getting Started
 
