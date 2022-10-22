@@ -7,14 +7,14 @@
 - Babylon.js Editor 4.4.0 or higher
     
 ## Introduction
-The purpose of this technical demo is to show how to use Colyseus with the Babylon.js Editor. The following documentation covers installing and using the Colyseus client SDK, as well as locally running a Colyseus server. The demo is designed to work with Colyseus version 0.14.20 and [Babylon.js Editor version 4.4.0](http://editor.babylonjs.com/){target=_blank}.
+The purpose of this technical demo is to show how to use Colyseus with the Babylon.js Editor. The following documentation covers installing and using the Colyseus SDK, as well as locally running a Colyseus server. The demo is designed to work with Colyseus version 0.14.20 and [Babylon.js Editor version 4.4.0](http://editor.babylonjs.com/){target=_blank}.
 This demo is called "Hide and Seek" and is a simple game where players are assigned roles at random to either be Hiders (ghosts) or the lone Seeker (pumpkin head). In order for the Hiders to win they need to evade the Seeker until time runs out.
 
 **[Download Demo](https://github.com/colyseus/babylonjs-hide-and-seek/archive/master.zip)** ([View source code](https://github.com/colyseus/babylonjs-hide-and-seek/){target=_blank})
 
 **[Play Live Demo](https://bppuwh.colyseus.dev/){target=_blank}**
 
-![Title](hide-and-seek/title.png)
+![Title](hide-and-seek/title-screenshot.png)
 
 ## Getting Started
 
@@ -31,6 +31,9 @@ npm start
 !!! note "Note"
     - The server needs to be installed first before attempting to run or open the project in the editor otherwise errors will result during the compilation process. This is due to client code referencing class types from the server code for development convenience.
     - When opening the demo in the Babylon.js Editor some `.js` files will be generated in the **Server** folder alongside their original `.ts` source files. When launching the server locally (via `npm start`) those `.js` files are removed to prevent runtime issues.
+
+#### Colyseus Client SDK
+For this demo you do not need to worry about manually installing the Colyseus client SDK as the Babylon.js Editor will do so automatically as it is included as a dependency in the `package.json` of the project workspace. If needed, manual instructions on how to install the Colyseus client SDK in the Babylon.js Editor can be found [here](../../getting-started/babylonjs-editor.md){target=_blank}.
 
 #### Colyseus Server Settings
 All server settings are defined in `.env` files located in the Babylon.js Editor workspace here:
