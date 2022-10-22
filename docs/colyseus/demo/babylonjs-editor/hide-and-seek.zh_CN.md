@@ -14,7 +14,7 @@
 
 **[玩玩看](https://bppuwh.colyseus.dev/){target=_blank}**
 
-![封面](hide-and-seek/title.png)
+![封面](hide-and-seek/title-screenshot.png)
 
 ## 开始
 
@@ -31,6 +31,9 @@ npm start
 !!! note "注意"
     - 必须先安装服务器再从编辑器中打开或运行游戏项目不然项目编译会报错. 这是因为出于开发便捷的目的, 客户端代码要从服务端引用一些类.
     - 在用 Babylon.js Editor 打开游戏项目时, 在 **Server** 文件夹里会自动从 `.ts` 源文件生成相应的 `.js` 文件. 而当本地服务器 (使用用 `npm start`) 启动时, 这些 `.js` 文件会被删除以免造成运行时报错.
+
+#### Colyseus 客户端 SDK
+对于本例而言您无需关心 Colyseus 客户端 SDK 的安装问题, 因为 Babylon.js Editor 会依据其工作目录下的 `package.json` 文件自动安装. 需要的话, 在 Babylon.js Editor 里手动安装 Colyseus 客户端 SDK 的方法详见 [这里](../../getting-started/babylonjs-editor.md){target=_blank}.
 
 ### Colyseus 服务器配置
 存放服务器配置的 `.env` 文件位于 Babylon.js Editor 工作目录下:

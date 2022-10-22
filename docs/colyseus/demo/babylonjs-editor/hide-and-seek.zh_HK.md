@@ -14,7 +14,7 @@
 
 **[玩玩看](https://bppuwh.colyseus.dev/){target=_blank}**
 
-![封面](hide-and-seek/title.png)
+![封面](hide-and-seek/title-screenshot.png)
 
 ## 開始
 
@@ -31,6 +31,9 @@ npm start
 !!! note "注意"
     - 必須先安裝服務器再從編輯器中打開或運行遊戲項目不然項目編譯會報錯. 這是因爲出于開發便捷的目的, 客戶端代碼要從服務端引用壹些類.
     - 在用 Babylon.js Editor 打開遊戲項目時, 在 **Server** 文件夾裏會自動從 `.ts` 源文件生成相應的 `.js` 文件. 而當本地服務器 (使用用 `npm start`) 啓動時, 這些 `.js` 文件會被刪除以免造成運行時報錯.
+
+#### Colyseus 客戶端 SDK
+對于本例而言您無需關心 Colyseus 客戶端 SDK 的安裝問題, 因爲 Babylon.js Editor 會依據其工作目錄下的 `package.json` 文件自動安裝. 需要的話, 在 Babylon.js Editor 裏手動安裝 Colyseus 客戶端 SDK 的方法詳見 [這裏](../../getting-started/babylonjs-editor.md){target=_blank}.
 
 ### Colyseus 服務器配置
 存放服務器配置的 `.env` 文件位于 Babylon.js Editor 工作目錄下:
