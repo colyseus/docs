@@ -7,7 +7,7 @@
 - Babylon.js Editor 4.4.0 或更高版本
 
 ## Introduction
-本技术演示旨在展示 Colyseus 如何与 Babylon.js Editor 配合使用. 以下文档涵盖从安装到使用 Colyseus 客户端 SDK 连接本地 Colyseus 服务器的方法. 本演示使用 Colyseus 0.14.20 版本以及 [Babylon.js Editor 版本 4.4.0](http://editor.babylonjs.com/){target=_blank}.
+本技术演示旨在展示 Colyseus 如何与 Babylon.js Editor 配合使用. 以下文档涵盖从安装到使用 Colyseus SDK 连接本地 Colyseus 服务器的方法. 本演示使用 Colyseus 0.14.20 版本以及 [Babylon.js Editor 版本 4.4.0](http://editor.babylonjs.com/){target=_blank}.
 演示游戏名叫 "Hide and Seek", 游戏中玩家被随机赋予躲藏者 (幽灵) 或者追捕者 (南瓜头) 的角色. 躲藏者躲避追捕者的追捕直到游戏倒计时结束即可获得胜利.
 
 **[下载演示](https://github.com/colyseus/babylonjs-hide-and-seek/archive/master.zip)** ([查看源码](https://github.com/colyseus/babylonjs-hide-and-seek/){target=_blank})
