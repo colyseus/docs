@@ -262,7 +262,7 @@ client.joinOrCreate("world", {
 
 ### `onLeave (client, consented)`
 
-當客戶端離開房間時會調用此函數. 如果是由 [客戶端主動離開](/client/room/#leave), 則 `consented` 參數是 `true`, 否則是 `false`.
+當客戶端離開房間時會調用此函數. 如果是由 [客戶端主動離開](/client/client/#leave-consented-boolean), 則 `consented` 參數是 `true`, 否則是 `false`.
 
 可以將此函數定義爲 `async`. 參見 [優雅關閉](/server/graceful-shutdown).
 
