@@ -262,7 +262,7 @@ Is called when the client successfully joins the room, after `requestJoin` and `
 
 ### `onLeave (client, consented)`
 
-Is called when a client leaves the room. If the disconnection was [initiated by the client](/client/room/#leave), the `consented` parameter will be `true`, otherwise, it will be `false`.
+Is called when a client leaves the room. If the disconnection was [initiated by the client](/client/client/#leave-consented-boolean), the `consented` parameter will be `true`, otherwise, it will be `false`.
 
 You can define this function as `async`. See [graceful shutdown](/server/graceful-shutdown)
 
