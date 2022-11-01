@@ -1,4 +1,4 @@
-You may eventually find malicious users to take advantage of Colyseus' matchmaking to flood your server will rooms, causing your server to be creating and removing rooms without real player usage.
+You may eventually find malicious users to take advantage of Colyseus' matchmaking to flood your server with rooms, causing your server to be creating and removing rooms without real player usage.
 
 It's recommened to use the `express-rate-limit` middleware to block too many requests from the same source. See more details on [`express-rate-limit`'s README](https://github.com/nfriedly/express-rate-limit);
 
