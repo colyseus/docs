@@ -262,7 +262,7 @@ client.joinOrCreate("world", {
 
 ### `onLeave (client, consented)`
 
-当客户端离开房间时会调用此函数. 如果是由 [客户端主动离开](/client/room/#leave), 则 `consented` 参数是 `true`, 否则是 `false`.
+当客户端离开房间时会调用此函数. 如果是由 [客户端主动离开](/client/client/#leave-consented-boolean), 则 `consented` 参数是 `true`, 否则是 `false`.
 
 可以将此函数定义为 `async`. 参见 [优雅关闭](/server/graceful-shutdown).
 
