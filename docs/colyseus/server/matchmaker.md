@@ -191,8 +191,13 @@ It is possible to restrict matchmaker method invoking for the client-side.
 ```typescript
 import { matchmaker } from "colyseus;
 
-
-matchMaker.controller.exposedMethods = ['joinOrCreate', 'create', 'join', 'joinById', 'reconnect'];
+matchMaker.controller.exposedMethods = ['join', 'joinById', 'reconnect'];
 ```
 
-From the exposed method list remove the method to restrict.
+Include only the methods which are accessible to the client-side from below methods.
+
+- create
+- join
+- joinById
+- joinOrCreate
+- reconnect
