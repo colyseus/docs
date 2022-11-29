@@ -185,3 +185,19 @@ console.log(room);
 await matchMaker.remoteRoomCall("xxxxxxxxx", "lock");
 ```
 
+## 限制客戶端創建房間
+
+可以限制客戶端只能調用指定的 matchmaking 方法.
+
+**示例:**
+
+只暴露 "join", "joinById", 和 "reconnect" 方法.
+
+```typescript
+import { matchmaker } from "colyseus;
+
+matchMaker.controller.exposedMethods = ['join', 'joinById', 'reconnect'];
+```
+
+可供操作的方法有: `'create'`, `'join'`, `'joinById'`, `'joinOrCreate'`, `'reconnect'`,
+
