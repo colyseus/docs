@@ -194,7 +194,7 @@ You can restrict the client-side to be allowed to call only specific matchmaking
 Exposing only "join", "joinById", and "reconnect" methods.
 
 ```typescript
-import { matchmaker } from "colyseus;
+import { matchmaker } from "colyseus";
 
 matchMaker.controller.exposedMethods = ['join', 'joinById', 'reconnect'];
 ```
