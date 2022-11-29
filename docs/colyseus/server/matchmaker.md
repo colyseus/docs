@@ -185,3 +185,19 @@ Call a method or return a property on a remote room.
 await matchMaker.remoteRoomCall("xxxxxxxxx", "lock");
 ```
 
+## Restricting the client-side from creating rooms
+
+You can restrict the client-side to be allowed to call only specific matchmaking methods.
+
+**Example:**
+
+Exposing only "join", "joinById", and "reconnect" methods.
+
+```typescript
+import { matchmaker } from "colyseus;
+
+matchMaker.controller.exposedMethods = ['join', 'joinById', 'reconnect'];
+```
+
+Methods available are: `'create'`, `'join'`, `'joinById'`, `'joinOrCreate'`, `'reconnect'`,
+
