@@ -1207,6 +1207,7 @@ This is particularly useful for native-compiled targets, such as C#, C++, Haxe, 
     - Both encoder (server) and decoder (client) must have same schema definition.
     - The order of the fields must be the same.
 - When using the concrete implementation of schemas on the client-side (`.joinOrCreate("room", {}, ConcreteSchema)`), the order the schema structures are imported on the client-side matters, and may cause issues during decoding, including `"refId" not found`.
+- The `sort` function of `ArraySchema` uses the `Array.sort` function. While [`Array.sort`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort) in play, this function removes and adds elements to the schema when sorting elements and this may cause triggering of `onAdd` and `onRemove` callbacks on the client-side.
 
 ### Collections
 
