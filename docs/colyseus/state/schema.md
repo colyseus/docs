@@ -1206,6 +1206,7 @@ This is particularly useful for native-compiled targets, such as C#, C++, Haxe, 
 - `@colyseus/schema` encoding order is based on field definition order.
     - Both encoder (server) and decoder (client) must have same schema definition.
     - The order of the fields must be the same.
+- When using the concrete implementation of schemas on the client-side (`.joinOrCreate("room", {}, ConcreteSchema)`), the order the schema structures are imported on the client-side matters, and may cause issues during decoding, including `"refId" not found`.
 
 ### Collections
 
