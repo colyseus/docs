@@ -32,3 +32,8 @@ Make sure you have `es2015` or higher in your `tsconfig.json`:
     // ...
 }
 ```
+
+### I'm getting this error: `Uncaught Error: "refId" not found`.
+
+This error might occur when the loading order of schema files are different in client and the server.
+Please refer to [Schema limitations and best practices](/state/schema/#limitations-and-best-practices) and [the GitHub issue](https://github.com/colyseus/schema/issues/128) for more information.
