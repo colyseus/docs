@@ -6,19 +6,11 @@ Colyseus is an Authoritative Multiplayer Framework for writing your own game ser
 
 Colyseus is agnostic regarding the technology you choose for the client-side. You can use one of the official client-side SDK's available, such as [Unity](/colyseus/getting-started/unity3d-client/), [JavaScript/TypeScript](/colyseus/getting-started/javascript-client/), [Defold Engine](/colyseus/getting-started/defold-client/), [Haxe](/colyseus/getting-started/haxe-client/), [Cocos Creator](/colyseus/getting-started/cocos-creator/) and [Construct3](/colyseus/getting-started/construct3-client/).
 
-**What Colyseus provides to you:**
-
-- WebSocket-based realtime communication
-- Simple API in the server-side and client-side.
-- Automatic state synchronization between server and client.
-- Matchmaking clients into game sessions
-- Scale vertically or horizontally
-
 ---
 
 ## Getting started
 
-Before we start, let's make sure we have the necessary system requirements installed in your local machine.
+Before we start, let's make sure you have the necessary system requirements installed in your local machine.
 
 **Requirements**:
 
@@ -28,13 +20,11 @@ Before we start, let's make sure we have the necessary system requirements insta
 
 ### Creating your server
 
-Open your system terminal, and use the command below to set up a barebones server locally.
+From your system terminal, use the command below to set up an empty server locally.
 
 ```
 npm init colyseus-app ./my-first-game-server
 ```
-
-This server template is ready to be used locally, self-hosted, or on [Colyseus Arena](/arena/).
 
 #### Next steps
 
@@ -53,11 +43,12 @@ This server template is ready to be used locally, self-hosted, or on [Colyseus A
 
 ---
 
-### Examples to explore
+### More examples to explore
 
 You are encouraged to check out existing projects to explore and understand how Colyseus works.
 
-- [Official examples](https://github.com/colyseus/colyseus-examples)
+- [Basic examples](https://github.com/colyseus/colyseus-examples)
+- [Phaser Tutorial](https://learn.colyseus.io/phaser/)
 - [PlayCanvas Tutorial](https://developer.playcanvas.com/en/tutorials/real-time-multiplayer-colyseus/)
 - [BabylonJS Tutorial](https://doc.babylonjs.com/guidedLearning/multiplayer/Colyseus)
 - [PixiJS Tic-Tac-Toe](https://github.com/endel/colyseus-tic-tac-toe)
