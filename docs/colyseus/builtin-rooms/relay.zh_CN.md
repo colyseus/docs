@@ -1,18 +1,18 @@
 # 内置房间 &raquo; 中继房间
 
-内置的中继室 `RelayRoom` 对简单的用例很有用: 除了与服务器连接的客户端之外, 您无需在服务器上保存任何状态.
+内置的中继室 `RelayRoom` 对于简单的需求很有用: 除了保存与服务器连接的客户端之外, 您无需在服务器上保存任何 state.
 
-仅需通过简单的消息转发(将消息从一个客户端转发给其他客户端), 客户端即可验证这些消息, 而服务器端则无法进行验证操作.
+通过简单的消息转发 (将消息从一个客户端转发给所有其他客户端) - 服务器端并不进行验证操作 - 验证的任务完全交给客户端.
 
 !!! tip
-    [`RelayRoom`的源代码](https://github.com/colyseus/colyseus/blob/master/src/rooms/RelayRoom.ts) 非常简单. 我们一般建议在您认为适当的时候在服务器端的验证下执行自己的版本.
+    [`RelayRoom` 的源代码](https://github.com/colyseus/colyseus/blob/master/src/rooms/RelayRoom.ts) 非常简单. 我们建议在您在服务器端加入自己的验证机制.
 
 ## 服务器端
 
 ```typescript
 import { RelayRoom } from "colyseus";
 
-// Expose your relayed room
+// 定义中继房间
 gameServer.define("your_relayed_room", RelayRoom, {
   maxClients: 4,
   allowReconnectionTime: 120
@@ -21,9 +21,9 @@ gameServer.define("your_relayed_room", RelayRoom, {
 
 ## 客户端
 
-了解如何为加入, 离开, 发送和接收中继室消息的玩家注册回调.
+了解如何为玩家的加入, 离开, 发送和接收中继室消息注册回调.
 
-### 接入房间
+### 连入房间
 
 ```typescript
 import { Client } from "colyseus.js";
@@ -31,19 +31,19 @@ import { Client } from "colyseus.js";
 const client = new Client("ws://localhost:2567");
 
 //
-// Join the relayed room
+// 加入中继室
 //
 const relay = await client.joinOrCreate("your_relayed_room", {
   name: "This is my name!"
 });
 ```
 
-### 在玩家加入和离开时注册回调
+### 为玩家的加入和离开注册回调
 
 
 ```typescript
 //
-// Detect when a player joined the room
+// 监测到玩家加入房间
 //
 relay.state.players.onAdd = (player, sessionId) => {
   if (relay.sessionId === sessionId) {
@@ -55,15 +55,15 @@ relay.state.players.onAdd = (player, sessionId) => {
 }
 
 //
-// Detect when a player leave the room
+// 监测到玩家离开房间
 //
 relay.state.players.onRemove = (player, sessionId) => {
   console.log("Opponent left!", player, sessionId);
 }
 
 //
-// Detect when the connectivity of a player has changed
-// (only available if you provided `allowReconnection: true` in the server-side)
+// 监测到玩家断线 / 重连
+// (要在服务端设置 `allowReconnection: true` 才有效)
 //
 relay.state.players.onChange = (player, sessionId) => {
   if (player.connected) {
@@ -79,8 +79,8 @@ relay.state.players.onChange = (player, sessionId) => {
 
 ```typescript
 //
-// By sending a message, all other clients will receive it under the same name
-// Messages are only sent to other connected clients, never the current one.
+// 发送一个消息, 所有其他玩家客户端就会收到同名消息
+// 注意是连入房间的所有其他客户端, 不包括发送者本身.
 //
 relay.send("fire", {
   x: 100,
@@ -88,17 +88,17 @@ relay.send("fire", {
 });
 
 //
-// Register a callback for messages you're interested in from other clients.
+// 针对某消息注册回调.
 //
 relay.onMessage("fire", ([sessionId, message]) => {
 
   //
-  // The `sessionId` from who sent the message
+  // 发送者的 `sessionId`.
   //
   console.log(sessionId, "sent a message!");
 
   //
-  // The actual message sent by the other client
+  // 发送者发出的消息内容
   //
   console.log("fire at", message);
 });

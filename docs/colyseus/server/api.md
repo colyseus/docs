@@ -12,6 +12,16 @@ The Colyseus `Server` instance holds the server configuration options, such as t
 
 Colyseus uses its built-in WebSocket transport by default. See how to [customize the transport layer here](/server/transport/).
 
+### `options.driver`
+
+The matchmaking driver. This is where rooms are going to be cached and queried. You must provide a different value than `LocalDriver` when considering scalability.
+
+**Options available are:**
+
+- `LocalDriver` - default.
+- `RedisDriver` - available from `@colyseus/redis-driver`
+- `MongooseDriver` - available from `@colyseus/mongoose-driver`
+
 ### `options.presence`
 
 When scaling Colyseus through multiple processes / machines, you need to provide a presence server. Read more about [scalability](/scalability/), and the [`Presence API`](/server/presence/#api).
@@ -34,10 +44,6 @@ const gameServer = new colyseus.Server({
 });
 ```
 
-The currently available Presence servers are currently:
-
-- `RedisPresence` (scales on a single server and multiple servers)
-
 ---
 
 ### `options.gracefullyShutdown`
@@ -45,6 +51,13 @@ The currently available Presence servers are currently:
 Register shutdown routine automatically. Default is `true`. If disabled, you
 should call [`gracefullyShutdown()`](#gracefullyshutdown-exit-boolean) method
 manually in your shutdown process.
+
+---
+
+### `options.devMode`
+
+Restore previous rooms and states upon server restarting when engaging in iterative development.
+Default is `false`. See more in [`devMode`](/colyseus/devmode).
 
 ---
 
@@ -109,82 +122,12 @@ gameServer.listen(port);
 
 ---
 
-### `options.pingInterval`
-
-!!! Warning "This option is going to be deprecated"
-    See [WebSocket Transport Options](/server/transport/#optionspinginterval)
-
-Number of milliseconds for the server to "ping" the clients. Default: `3000`
-
-The clients are going to be forcibly disconnected if they can't respond after [pingMaxRetries](/server/api/#optionspingMaxRetries) retries.
-
----
-
-### `options.pingMaxRetries`
-
-!!! Warning "This option is going to be deprecated"
-    See [WebSocket Transport Options](/server/transport/#optionspingmaxretries)
-
-Maximum allowed number of pings without a response. Default: `2`.
-
----
-
-### `options.verifyClient`
-
-!!! Warning "This option is going to be deprecated"
-    See [WebSocket Transport Options](/server/transport/#optionsverifyclient)
-
-This method happens before WebSocket handshake. If `verifyClient` is not set
-then the handshake is automatically accepted.
-
-- `info` (Object)
-    - `origin` (String) The value in the Origin header indicated by the client.
-    - `req` (http.IncomingMessage) The client HTTP GET request.
-    - `secure` (Boolean) `true` if `req.connection.authorized` or `req.connection.encrypted` is set.
-
-- `next` (Function) A callback that must be called by the user upon inspection of the `info` fields. Arguments in this callback are:
-    - `result` (Boolean) Whether or not to accept the handshake.
-    - `code` (Number) When `result` is `false` this field determines the HTTP error status code to be sent to the client.
-    - `name` (String) When `result` is `false` this field determines the HTTP reason phrase.
-
-```typescript fct_label="TypeScript"
-import { Server } from "colyseus";
-
-const gameServer = new Server({
-  // ...
-
-  verifyClient: function (info, next) {
-    // validate 'info'
-    //
-    // - next(false) will reject the websocket handshake
-    // - next(true) will accept the websocket handshake
-  }
-});
-```
-
-```typescript fct_label="JavaScript"
-const colyseus = require("colyseus");
-
-const gameServer = new colyseus.Server({
-  // ...
-
-  verifyClient: function (info, next) {
-    // validate 'info'
-    //
-    // - next(false) will reject the websocket handshake
-    // - next(true) will accept the websocket handshake
-  }
-});
-```
-
----
-
 ## `define (roomName: string, room: Room, options?: any)`
 
 Define a new type of room for the matchmaker.
 
 - Rooms are **not created** during `.define()`
-- Rooms are created upon client request ([See client-side methods](/client/client/#methods))
+- Rooms are created upon client request ([See client-side methods](/client/#methods))
 
 **Parameters:**
 
@@ -347,59 +290,19 @@ if (process.env.NODE_ENV !== "production") {
 }
 ```
 
-## `attach (options: any)`
-
-> You usually do not need to call this. Use it only if you have a very specific reason to do so.
-
-Attaches or creates the WebSocket server.
-
-- `options.server`: The HTTP server to attach the WebSocket server on.
-- `options.ws`: An existing WebSocket server to be re-used.
-
-```javascript fct_label="Express"
-import express from "express";
-import { Server } from "colyseus";
-
-const app = new express();
-const gameServer = new Server();
-
-gameServer.attach({ server: app });
-```
-
-```javascript fct_label="http.createServer"
-import http from "http";
-import { Server } from "colyseus";
-
-const httpServer = http.createServer();
-const gameServer = new Server();
-
-gameServer.attach({ server: httpServer });
-```
-
-```javascript fct_label="WebSocket.Server"
-import http from "http";
-import express from "express";
-import ws from "ws";
-import { Server } from "colyseus";
-
-const app = express();
-const server = http.createServer(app);
-const wss = new WebSocket.Server({
-    // your custom WebSocket.Server setup.
-});
-
-const gameServer = new Server();
-gameServer.attach({ ws: wss });
-```
-
+---
 
 ## `listen (port: number)`
 
 Binds the WebSocket server into the specified port.
 
+---
+
 ## `onShutdown (callback: Function)`
 
 Register a callback that should be called before the process shut down. See [graceful shutdown](/server/graceful-shutdown/) for more details.
+
+---
 
 ## `gracefullyShutdown (exit: boolean)`
 

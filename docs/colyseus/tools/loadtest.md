@@ -27,60 +27,65 @@ This is an example scripting file. Based on the room lifecycle events for each c
 
 ```typescript fct_label="TypeScript"
 // script.ts
-import { Room, Client } from "colyseus.js";
+import { Client, Room } from "colyseus.js";
+import { Options } from "@colyseus/loadtest";
 
-export function requestJoinOptions (this: Client, i: number) {
-    return { requestNumber: i };
-}
+export async function main(options: Options) {
+    const client = new Client(options.endpoint);
+    const room: Room = await client.joinOrCreate(options.roomName, {
+        // your join options here...
+    });
 
-export function onJoin(this: Room) {
-    console.log(this.sessionId, "joined.");
+    console.log("joined successfully!");
 
-    this.onMessage("*", (type, message) => {
+    room.onMessage("*", (type, message) => {
         console.log("onMessage:", type, message);
     });
-}
 
-export function onLeave(this: Room) {
-    console.log(this.sessionId, "left.");
-}
+    room.onStateChange((state) => {
+        console.log(room.sessionId, "new state:", state);
+    });
 
-export function onError(this: Room, err) {
-    console.error(this.sessionId, "!! ERROR !!", err.message);
-}
+    room.onError((err) => {
+        console.log(room.sessionId, "!! ERROR !!", err.message);
+    })
 
-export function onStateChange(this: Room, state) {
+    room.onLeave((code) => {
+        console.log(room.sessionId, "left.");
+    });
 }
 ```
 
 ```typescript fct_label="JavaScript"
 // script.js
-exports.requestJoinOptions = function (i) {
-    return { requestNumber: i };
-}
+exports.main = function (options) {
+    const client = new Client(options.endpoint);
+    const room = await client.joinOrCreate(options.roomName, {
+        // your join options here...
+    });
 
-exports.onJoin = function () {
-    console.log(this.sessionId, "joined.");
+    console.log("joined successfully!");
 
-    this.onMessage("*", (type, message) => {
+    room.onMessage("*", (type, message) => {
         console.log("onMessage:", type, message);
     });
-}
 
-exports.onLeave = function () {
-    console.log(this.sessionId, "left.");
-}
+    room.onStateChange((state) => {
+        console.log(room.sessionId, "new state:", state);
+    });
 
-exports.onError = function (err) {
-    console.log(this.sessionId, "!! ERROR !!", err.message);
-}
+    room.onError((err) => {
+        console.log(room.sessionId, "!! ERROR !!", err.message);
+    })
 
-exports.onStateChange = function (state) {
+    room.onLeave((code) => {
+        console.log(room.sessionId, "left.");
+    });
 }
 ```
 
 ### Connecting 50 clients into a `"battle"` room
 
 ```
-npx colyseus-loadtest script.ts --room battle --numClients 50 --endpoint ws://localhost:2567 
+npx colyseus-loadtest script.ts --room battle --numClients 50 --endpoint ws://localhost:2567
 ```
