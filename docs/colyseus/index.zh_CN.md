@@ -26,7 +26,7 @@ Colyseus 对于客户端技术和语言一视同仁. 您可以使用任何一种
 
 **必要软件**
 
-- [下载并安装 Node.js](https://nodejs.org/) V14.0 或更高版本
+- [下载并安装 Node.js](https://nodejs.org/) LTS 或更高版本
 - [下载并安装 Git SCM](https://git-scm.com/downloads)
 - [下载并安装 Visual Studio Code](https://code.visualstudio.com/) (或者您喜欢的其他编辑器)
 
