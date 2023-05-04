@@ -3,6 +3,7 @@ var header = (document.querySelector('.md-header-nav__topic') || document.queryS
 var select = document.createElement('select');
 var versions = [
   'latest',
+  '0.14.x',
   '0.13.x',
   '0.12.x',
   '0.11.x',
