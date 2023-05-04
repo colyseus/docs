@@ -11,7 +11,7 @@ The `@colyseus/monitor` is a handy tool that allows you to view and inspect the 
     - Send/broadcast messages for a client
     - Force to disconnect a client.
 
-<img src="https://github.com/colyseus/colyseus/raw/master/packages/monitor/media/demo.gif?raw=true" />
+<img src="https://github.com/colyseus/colyseus-monitor/blob/master/media/demo.gif?raw=1" />
 
 ## Installation
 
