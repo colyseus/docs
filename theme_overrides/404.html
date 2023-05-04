@@ -2,29 +2,14 @@
 
 {% block content %}
     <script type="text/javascript">
-        var segmentsForRedirect = [
-            '/best-practices',
-            '/builtin-rooms',
-            '/client',
-            '/demo',
-            '/getting-started',
-            '/how-to',
-            '/migrating',
-            '/server',
-            '/state',
-            '/tools',
-            '/debugging',
-            '/deployment',
-            '/faq',
-            '/scalability',
-        ];
 
-        segmentsForRedirect.forEach(function(segmentForRedirect) {
+        // redirects /colyseus/ -> /
+        if (window.location.pathname.startsWith("/colyseus/")) {
             if (window.location.pathname.startsWith(segmentForRedirect)) {
-                // keep old links redirecting to new page
-                window.location.href = '/colyseus' + window.location.pathname + window.location.hash;
+                window.location.href = window.location.pathname.replace("/colyseus/", "/") + window.location.hash;
             }
-        });
+        }
+
     </script>
 
     <h1>404 - Not found</h1>
