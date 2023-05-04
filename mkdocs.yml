@@ -78,14 +78,14 @@ plugins:
         - de
         - pt
 
-  - i18n:
-      default_language: 'en'
-
   - git-revision-date-localized:
       enable_creation_date: true
   - git-committers:
       repository: colyseus/docs
       branch: master
+
+  # - i18n:
+  #     default_language: 'en'
 
       # languages:
       #   en: "English"
