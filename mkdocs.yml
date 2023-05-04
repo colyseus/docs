@@ -81,13 +81,19 @@ plugins:
   - i18n:
       default_language: 'en'
 
-      languages:
-        en: "English"
-        zh_CN: "简体中文" #Simplified Chinese
-        # pt: "Português" # Portuguese
-        # de: "Deutsch" # German
-        # hi: "हिंदी" # Hindi
-        # fr: "Français" # French
+  - git-revision-date-localized:
+      enable_creation_date: true
+  - git-committers:
+      repository: colyseus/docs
+      branch: master
+
+      # languages:
+      #   en: "English"
+      #   zh_CN: "简体中文" #Simplified Chinese
+      #   # pt: "Português" # Portuguese
+      #   # de: "Deutsch" # German
+      #   # hi: "हिंदी" # Hindi
+      #   # fr: "Français" # French
 
   # TODO: enable this only on production (takes too much time)
   #     nav_translations:
@@ -153,12 +159,6 @@ plugins:
   #         MMO: "MMO"
   #         Migrating: "更新记录"
   #         FAQ: "常见问题"
-  #
-  # - git-revision-date-localized:
-  #     enable_creation_date: true
-  # - git-committers:
-  #     repository: colyseus/docs
-  #     branch: master
 
 
 extra_css:
