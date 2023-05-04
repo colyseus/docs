@@ -1,6 +1,8 @@
 # Project information
-site_name: 'Colyseus Documentation'
-site_description: 'Colyseus Documentation - Multiplayer Framework for Node.js'
+site_name: Colyseus Multiplayer Framework
+site_description: >-
+    Open-source Multiplayer Framework for Node.js.
+    JavaScript on the server - SDKs available for major platforms.
 site_author: 'Endel Dreyer'
 site_url: 'https://colyseus.io/'
 edit_uri: 'https://github.com/colyseus/docs/edit/master/docs/'
@@ -11,12 +13,10 @@ remote_branch: 'gh-pages'
 
 # Repository
 repo_name: 'colyseus/colyseus'
-repo_url: 'https://github.com/colyseus/colyseus'
+repo_url: https://github.com/colyseus/colyseus
 
 # Copyright
 copyright: 'Copyright &copy; 2023 Endel Dreyer'
-google_analytics: ['UA-108278048-3', 'docs.colyseus.io']
-# G-WGT1KNDKM7
 
 # Documentation and theme
 theme:
@@ -24,21 +24,55 @@ theme:
   custom_dir: theme_overrides
   language: 'en'
   logo: 'images/logo-white.png'
-  favicon: 'images/favicon.png'
+  favicon: 'images/logo-white.png'
+  icon:
+    repo: fontawesome/brands/github
   palette:
-    primary: 'indigo'
-    accent: 'indigo'
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
   font:
-    text: 'Roboto'
+    # text: 'Inter'
+    text: 'Inter'
     code: 'Roboto Mono'
   features:
     - navigation.indexes
     - navigation.sections
     - navigation.top
-    # - navigation.tabs
+    - navigation.tabs
+    - navigation.footer
+    # - navigation.instant # "instant" is causing the page to scroll when clicking on code tabs
+    - navigation.prune
+    - navigation.tracking
+    # - navigation.tabs.sticky
+    - announce.dismiss
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    # - content.tabs.link
+    - content.tooltips
+    # - header.autohide
+    # - navigation.expand
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
 
 plugins:
   - search:
+      # separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
       lang:
         - en
         - de
@@ -55,261 +89,264 @@ plugins:
         # hi: "हिंदी" # Hindi
         # fr: "Français" # French
 
-      nav_translations:
-        en:
-          getting started: 'Getting started'
-          Client-side SDKs: "Client-side SDKs"
-          Installation: "Installation"
-          Unity: "Unity"
-          Deployment: "Deployment"
-          Production Deployments: "Production Deployments"
-          Managing Deployments: "Managing Deployments"
-          Reference: "Reference"
-          Tech Demos: "Tech Demos"
-          Shooting Gallery: "Shooting Gallery"
-          Tanks: "Tanks"
-          StarBoss: "StarBoss"
-          MMO: "MMO"
-          Migrating: "Migrating"
-
-        zh_CN:
-          getting started: "开始"
-          Client-side SDKs: "客户端 SDK"
-          Installation: "安装"
-          Unity: "Unity"
-          Deployment: "部署"
-          Production Deployments: "生产部署"
-          Managing Deployments: "管理部署"
-          Reference: "参考资料"
-          Colyseus for Arena Cloud: "托管于 Arena Cloud 之上的 Colyseus"
-          Uploading Server Code: "上传服务器代码"
-          Server API: "服务器 API"
-          Server: "服务器"
-          Room: "房间"
-          Timing events: "计时事件"
-          Match-maker API: "房间匹配 API"
-          Presence: "Presence"
-          Transport: "传输"
-          Graceful shutdown: "优雅关闭"
-          State Synchronization: "状态数据同步"
-          Overview: "概览"
-          Schema: "Schema"
-          Best practices: "最佳实践"
-          Built-in Rooms: "内置房间"
-          Lobby room: "大厅房间"
-          Relay room: "中继房间"
-          Tools: "工具"
-          Unit Testing: "单元测试"
-          Monitoring Panel: "监控面板"
-          Load Testing: "负载测试"
-          Authentication + Social: "身份认证 + 社交"
-          Debugging: "调试"
-          Scalability: "可扩展性"
-          How-to: "操作说明"
-          Customize room id: "自定义房间 ID"
-          Password-protect a room: "使用密码保护房间"
-          Deny a player joining a room: "拒绝玩家加入房间"
-          Custom CORS headers: "自定义 CORS 标头"
-          Rate-limit: "速率限制"
-          Setup server from scratch (TS): "从头开始搭建服务器 (TS)"
-          Tech Demos: "技术演示"
-          Shooting Gallery: "Shooting Gallery"
-          Tanks: "Tanks"
-          StarBoss: "StarBoss"
-          MMO: "MMO"
-          Migrating: "更新记录"
-          FAQ: "常见问题"
-
-        # pt:
-        #   getting started: "Introdução"
-        #   Client-side SDKs: "Client-side SDKs"
-        #   Installation: "Instalação"
-        #   Unity: "TBD"
-        #   Deployment: "TBD"
-        #   Production Deployments: "TBD"
-        #   Managing Deployments: "TBD"
-        #   Reference: "TBD"
-
-        # de:
-        #   getting started: 'Einstieg'
-        #   Client-side SDKs: "Clientseitiges SDK"
-        #   Installation: "Installation"
-        #   Unity: "TBD"
-        #   Deployment: "Einsatz"
-        #   Production Deployments: "TBD"
-        #   Managing Deployments: "TBD"
-        #   Reference: "TBD"
-
-        # hi:
-        #   getting started: "TBD"
-        #   Client-side SDKs: "TBD"
-        #   Installation: "TBD"
-        #   Unity: "TBD"
-        #   Deployment: "TBD"
-        #   Production Deployments: "TBD"
-        #   Managing Deployments: "TBD"
-        #   Reference: "TBD"
-
-        # fr:
-        #   getting started: "TBD"
-        #   Client-side SDKs: "TBD"
-        #   Installation: "TBD"
-        #   Unity: "TBD"
-        #   Deployment: "TBD"
-        #   Production Deployments: "TBD"
-        #   Managing Deployments: "TBD"
-        #   Reference: "TBD"
+  # TODO: enable this only on production (takes too much time)
+  #     nav_translations:
+  #       en:
+  #         Getting started: 'Getting started'
+  #         Client-side SDKs: "Client-side SDKs"
+  #         Installation: "Installation"
+  #         Unity: "Unity"
+  #         Deployment: "Deployment"
+  #         Production Deployments: "Production Deployments"
+  #         Managing Deployments: "Managing Deployments"
+  #         Reference: "Reference"
+  #         Tech Demos: "Tech Demos"
+  #         Shooting Gallery: "Shooting Gallery"
+  #         Tanks: "Tanks"
+  #         StarBoss: "StarBoss"
+  #         MMO: "MMO"
+  #         Migrating: "Migrating"
+  #
+  #       zh_CN:
+  #         Getting started: "开始"
+  #         Client-side SDKs: "客户端 SDK"
+  #         Installation: "安装"
+  #         Unity: "Unity"
+  #         Deployment: "部署"
+  #         Production Deployments: "生产部署"
+  #         Managing Deployments: "管理部署"
+  #         Reference: "参考资料"
+  #         Colyseus for Arena Cloud: "托管于 Arena Cloud 之上的 Colyseus"
+  #         Uploading Server Code: "上传服务器代码"
+  #         Server API: "服务器 API"
+  #         Server: "服务器"
+  #         Room: "房间"
+  #         Timing events: "计时事件"
+  #         Match-maker API: "房间匹配 API"
+  #         Presence: "Presence"
+  #         Transport: "传输"
+  #         Graceful shutdown: "优雅关闭"
+  #         State Synchronization: "状态数据同步"
+  #         Overview: "概览"
+  #         Schema: "Schema"
+  #         Best practices: "最佳实践"
+  #         Built-in Rooms: "内置房间"
+  #         Lobby room: "大厅房间"
+  #         Relay room: "中继房间"
+  #         Tools: "工具"
+  #         Unit Testing: "单元测试"
+  #         Monitoring Panel: "监控面板"
+  #         Load Testing: "负载测试"
+  #         Authentication + Social: "身份认证 + 社交"
+  #         Debugging: "调试"
+  #         Scalability: "可扩展性"
+  #         How-to: "操作说明"
+  #         Customize room id: "自定义房间 ID"
+  #         Password-protect a room: "使用密码保护房间"
+  #         Deny a player joining a room: "拒绝玩家加入房间"
+  #         Custom CORS headers: "自定义 CORS 标头"
+  #         Setup server from scratch (TS): "从头开始搭建服务器 (TS)"
+  #         Tech Demos: "技术演示"
+  #         Shooting Gallery: "Shooting Gallery"
+  #         Tanks: "Tanks"
+  #         StarBoss: "StarBoss"
+  #         MMO: "MMO"
+  #         Migrating: "更新记录"
+  #         FAQ: "常见问题"
+  #
+  # - git-revision-date-localized:
+  #     enable_creation_date: true
+  # - git-committers:
+  #     repository: colyseus/docs
+  #     branch: master
 
 
 extra_css:
   - 'stylesheets/custom.css'
 #   - 'stylesheets/ads.css'
 #   - 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/styles/github.min.css' # syntax highlight
-  - 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/styles/github-dark.min.css' # syntax highlight
-
+#   - 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/styles/github-dark.min.css' # syntax highlight
 
 extra_javascript:
   # - 'javascripts/ads.js'
-  - 'javascripts/main.js'
   - 'https://docs.colyseus.io/javascripts/previous_versions.js'
-#   - 'javascripts/previous_versions.js'
-  # syntax highlight
-  - 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js'
-  - 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/javascript.min.js'
-  - 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/languages/typescript.min.js'
-  - 'javascripts/config.js'
+  # - 'javascripts/previous_versions.js'
+  # - 'javascripts/config.js' # hotfix for translation links
 
 # Options
 extra:
+  generator: false
 #   search:
 #     language: 'en'
+  annotate:
+    json: [.s2]
+
+  analytics:
+    provider: google
+    property: G-WGT1KNDKM7
+
   social:
-  - icon: 'fontawesome/solid/circle-dollar-to-slot'
-    link: 'https://github.com/sponsors/endel'
-  - icon: 'fontawesome/solid/comment'
-    link: 'https://discuss.colyseus.io'
   - icon: 'fontawesome/brands/github'
     link: 'https://github.com/colyseus'
+  - icon: 'fontawesome/brands/linkedin'
+    link: 'https://www.linkedin.com/company/colyseus/'
   - icon: 'fontawesome/brands/twitter'
     link: 'https://twitter.com/colyseus'
   - icon: 'fontawesome/brands/discord'
-    link: 'https://discord.gg/RY8rRS7'
+    link: 'http://chat.colyseus.io'
+  - icon: 'fontawesome/solid/circle-dollar-to-slot'
+    link: 'https://github.com/sponsors/endel'
 
 # Extensions
 markdown_extensions:
+  # - tables
+  - abbr
   - admonition
-  - pymdownx.highlight:
-      use_pygments: false
-  - codehilite:
-      linenums: False
-      guess_lang: False
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
   - toc:
-      permalink: True
-  - markdown_fenced_code_tabs:
-      single_block_as_tab: False
-      active_class: 'active'
-      template: 'default'
+      # toc_depth: 3
+      # title: On this page
+      # slugify: !!python/object/apply:pymdownx.slugs.slugify
+      #   kwds:
+      #     case: lower
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:materialx.emoji.twemoji
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: squidfunk
+      repo: mkdocs-material
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+# >>> OLD CONFIG
+#   - admonition
+#   - pymdownx.highlight:
+#       use_pygments: false
+#   - codehilite:
+#       linenums: False
+#       guess_lang: False
+#   - toc:
+#       permalink: True
+#   - markdown_fenced_code_tabs:
+#       single_block_as_tab: False
+#       active_class: 'active'
+#       template: 'default'
+#   # Tooltips
+#   - abbr
+#   - attr_list
+#   - pymdownx.snippets
 
 # Nav menu
 nav:
-- getting started:
-  - 'colyseus/index.md'
-- Client-side SDKs:
-  - 'colyseus/client/index.md'
-  - Installation:
-    - 'Unity': 'colyseus/getting-started/unity3d-client.md'
-    - 'JavaScript': 'colyseus/getting-started/javascript-client.md'
-    - 'Defold Engine': 'colyseus/getting-started/defold-client.md'
-    - 'Haxe': 'colyseus/getting-started/haxe-client.md'
-    - 'Cocos Creator': 'colyseus/getting-started/cocos-creator.md'
-    # - 'Cocos2d-x': 'getting-started/cocos2dx-client.md'
-    - 'Construct3': 'colyseus/getting-started/construct3-client.md'
-    - "Babylon.js Editor": "colyseus/getting-started/babylonjs-editor.md"
-- 'Server API':
-  - 'Server': 'colyseus/server/api.md'
-  - 'Room': 'colyseus/server/room.md'
-  - 'Timing events': 'colyseus/server/timing-events.md'
-  - 'Match-maker API': 'colyseus/server/matchmaker.md'
-  - 'Presence': 'colyseus/server/presence.md'
-  - 'Transport': 'colyseus/server/transport.md'
-  - 'Dev Mode': 'colyseus/devmode.md'
-  - 'Graceful shutdown': 'colyseus/server/graceful-shutdown.md'
-  # - 'Custom State Serialization': 'server/state-serialization.md'
+- Documentation & SDKs:
+  - Home:
+    - 'index.md'
 
-- 'State Synchronization':
-  - 'Overview': 'colyseus/state/overview.md'
-  - 'Schema': 'colyseus/state/schema.md'
+  - Client-side SDKs:
+    - 'client/index.md'
+    - Installation:
+      - Unity: 'getting-started/unity-sdk.md'
+      - JavaScript: 'getting-started/javascript-client.md'
+      - Defold Engine: 'getting-started/defold-client.md'
+      - Haxe: 'getting-started/haxe-client.md'
+      - Cocos Creator: 'getting-started/cocos-creator.md'
+      - Construct3: 'getting-started/construct3-client.md'
+      - Babylon.js Editor: "getting-started/babylonjs-editor.md"
 
-- "Tools":
-  - "Unit Testing": 'colyseus/tools/unit-testing.md'
-  - "Monitoring Panel": 'colyseus/tools/monitor.md'
-  - "Load Testing": 'colyseus/tools/loadtest.md'
-  # - "Authentication + Social": 'colyseus/tools/colyseus-social.md'
+  - Server API:
+    # - 'server/index.md'
+    - Server: 'server/api.md'
+    - Room: 'server/room.md'
+    - Timing events: 'server/timing-events.md'
+    - Match-maker API: 'server/matchmaker.md'
+    - Presence: 'server/presence.md'
+    - Transport: 'server/transport.md'
+    - Dev Mode: 'devmode.md'
+    - Graceful shutdown: 'server/graceful-shutdown.md'
+    # - Custom State Serialization': 'server/state-serialization.md'
+    - Debugging: 'debugging.md'
 
-- 'Debugging': 'colyseus/debugging.md'
-- 'Deployment': 'colyseus/deployment.md'
-- 'Scalability': 'colyseus/scalability.md'
+  - State Synchronization:
+    - 'state/index.md'
+    - Schema Definition: 'state/schema.md'
+    - Client-side Sync Callbacks: 'state/schema-callbacks.md'
 
-- 'Built-in Rooms':
-  - 'Lobby room': 'colyseus/builtin-rooms/lobby.md'
-  - 'Relay room': 'colyseus/builtin-rooms/relay.md'
+  - Infrastructure:
+    - Deployment: 'deployment.md'
+    - Scalability: 'scalability.md'
 
-- More:
-  - 'Best practices':
-      - 'colyseus/best-practices/index.md'
+  - Tools:
+    - Unit Testing: 'tools/unit-testing.md'
+    - Monitoring Panel: 'tools/monitor.md'
+    - Load Testing: 'tools/loadtest.md'
+    # - Authentication + Social: 'tools/colyseus-social.md'
 
-  - "How-to":
-      - 'Customize room id': 'colyseus/how-to/custom-room-id.md'
-      - 'Password-protect a room': 'colyseus/how-to/password-protect-room.md'
-      - 'Deny a player joining a room': 'colyseus/how-to/deny-player-join-a-room.md'
-      - 'Custom CORS headers': 'colyseus/how-to/custom-cors-headers.md'
-      - 'Setup server from scratch (TS)': 'colyseus/how-to/setup-server-from-scratch-typescript.md'
-      - 'Rate-limit': 'colyseus/how-to/rate-limit.md'
+  - Built-in Rooms:
+    - Lobby room: 'builtin-rooms/lobby.md'
+    - Relay room: 'builtin-rooms/relay.md'
 
-  - "Tech Demos":
-      - Unity:
-          - "Shooting Gallery": "colyseus/demo/shooting-gallery.md"
-          - "StarBoss": "colyseus/demo/starboss.md"
-          - "Tanks": "colyseus/demo/turn-based-tanks.md"
-          - "MMO": "colyseus/demo/mmo.md"
-      - Cocos Creator:
-          - "MMO": "colyseus/demo/cocos/mmo.md"
-      - Babylon.js Editor:
-          - "Hide and Seek": "colyseus/demo/babylonjs-editor/hide-and-seek.md"
+  - More:
+    - 'Best practices':
+        - 'best-practices/index.md'
 
-  - Migrating to version:
-      - '0.15': 'colyseus/migrating/0.15.md'
-      - '0.14.18': 'colyseus/migrating/0.14.18.md'
-      - '0.14': 'colyseus/migrating/0.14.md'
-      - '0.13': 'colyseus/migrating/0.13.md'
-      - '0.12': 'colyseus/migrating/0.12.md'
-      - '0.11': 'colyseus/migrating/0.11.md'
-      - '0.10': 'colyseus/migrating/0.10.md'
-      - '0.9': 'colyseus/migrating/0.9.md'
+    - Migrating to version:
+        - '0.15': 'migrating/0.15.md'
+        - '0.14.18': 'migrating/0.14.18.md'
+        - '0.14': 'migrating/0.14.md'
+        - '0.13': 'migrating/0.13.md'
+        - '0.12': 'migrating/0.12.md'
+        - '0.11': 'migrating/0.11.md'
+        - '0.10': 'migrating/0.10.md'
+        - '0.9': 'migrating/0.9.md'
 
-- 'FAQ': 'colyseus/faq.md'
+- Collaborative Content:
+  - 'community/index.md'
+  - Tutorials: 'community/tutorials.md'
+  - Videos: 'community/videos.md'
+  - Guides:
+    - 'Customize room id': 'community/custom-room-id.md'
+    - 'Password-protect a room': 'community/password-protect-room.md'
+    - 'Deny a player joining a room': 'community/deny-player-join-a-room.md'
+    - 'Custom CORS headers': 'community/custom-cors-headers.md'
+    - 'Setup server from scratch (TS)': 'community/setup-server-from-scratch-typescript.md'
+  - Example Projects:
+    - Home: 'examples/index.md'
+    - Unity:
+        - "Shooting Gallery": "demo/shooting-gallery.md"
+        - "StarBoss": "demo/starboss.md"
+        - "Tanks": "demo/turn-based-tanks.md"
+        - "MMO": "demo/mmo.md"
+    - Cocos Creator:
+        - "MMO": "demo/cocos/mmo.md"
+    - Babylon.js Editor:
+        - "Hide and Seek": "demo/babylonjs-editor/hide-and-seek.md"
 
-# - 'Arena | Cloud Hosting':
-#   - 'arena/index.md'
-#   - getting started:
-#     - Colyseus for Arena Cloud:
-#       - 'arena/getting-started/create-colyseus-server.md'
-#       - 'arena/getting-started/modify-colyseus-server.md'
-#     - 'arena/getting-started/create-application.md'
-#     - 'arena/getting-started/managing-application.md'
-#     - Uploading Server Code:
-#       - 'arena/getting-started/upload-application.md'
-#       - 'arena/getting-started/upload-application-via-gitsync.md'
-#     - 'arena/getting-started/deploy-application.md'
-#     - Managing Deployments:
-#       - 'arena/getting-started/managing-deployments.md'
-#       - 'arena/getting-started/deployment-logs.md'
-#   - Reference:
-#     - 'arena/reference/npmrc-custom.md'
-#     - 'arena/reference/root-folder.md'
-#     - 'arena/reference/upload-application-via-gitsync.md'
-#   - Application Deployments:
-#     - 'arena/production/deploy-prod-application.md'
-#     - 'arena/troubleshooting/troubleshoot.md'
-#   - Add-on Services:
-#     - 'arena/addons/arena-servers-api.md'
+- FAQ: 'faq.md'
+

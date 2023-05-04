@@ -2,8 +2,9 @@
  * custom header background
  */
 .md-header, .md-tabs {
-  background: rgb(67,134,255);
-  background: linear-gradient(90deg, rgba(67,134,255,1) 0%, rgba(154,86,255,1) 100%);
+  background: #7540f0;
+  /* background: rgb(67,134,255);
+  background: linear-gradient(90deg, rgba(67,134,255,1) 0%, rgba(154,86,255,1) 100%); */
 }
 
 /*
@@ -45,7 +46,6 @@ article.md-content__inner img {
 
 /*
  * code tabs
- */
 .md-fenced-code-tabs * {
   box-sizing: border-box;
 }
@@ -72,7 +72,6 @@ article.md-content__inner img {
 
   position: relative;
   display: inline-block;
-  /* border-top: 2px solid #ebebeb; */
   border-bottom: 2px solid #ebebeb;
   max-width: 200px;
   margin: 0 4px 0 0;
@@ -104,3 +103,4 @@ article.md-content__inner img {
   width: 100%;
   margin: 0px;
 }
+ */

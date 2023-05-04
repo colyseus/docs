@@ -1,3 +1,5 @@
+https://squidfunk.github.io/mkdocs-material/reference/admonitions/
+
 !!! Warning "Important"
     This is a warning
 
