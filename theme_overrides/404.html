@@ -5,9 +5,7 @@
 
         // redirects /colyseus/ -> /
         if (window.location.pathname.startsWith("/colyseus/")) {
-            if (window.location.pathname.startsWith(segmentForRedirect)) {
-                window.location.href = window.location.pathname.replace("/colyseus/", "/") + window.location.hash;
-            }
+            window.location.href = window.location.pathname.replace("/colyseus/", "/") + window.location.hash;
         }
 
     </script>
