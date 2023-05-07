@@ -1,6 +1,6 @@
 # Server configuration
 
-When initializing your server with `npm create colyseus-app`, you
+When initializing your server with `npm create colyseus-app@latest`, you
 
 ``` typescript
 import config from "@colyseus/tools";

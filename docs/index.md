@@ -34,7 +34,7 @@ Use the command below to set up a new Colyseus server project:
 === ":octicons-terminal-16: Terminal"
 
 ``` bash
-npm init colyseus-app ./my-first-game-server
+npm create colyseus-app@latest ./my-first-game-server
 ```
 
 ---
