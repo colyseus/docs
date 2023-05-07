@@ -10,8 +10,8 @@ You will need to add [colyseus-defold](https://github.com/colyseus/colyseus-defo
 
 Open your `game.project` file, and add the following URLs to the `Dependencies` section (under `Project -> Dependencies`):
 
-    https://github.com/colyseus/colyseus-defold/archive/0.14.zip
-    https://github.com/defold/extension-websocket/archive/refs/tags/3.1.0.zip
+    https://github.com/colyseus/colyseus-defold/archive/0.15.zip
+    https://github.com/defold/extension-websocket/archive/master.zip
 
 Read more about [Defold library dependencies](http://www.defold.com/manuals/libraries/)
 
