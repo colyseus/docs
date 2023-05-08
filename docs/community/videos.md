@@ -2,6 +2,7 @@
 
 A selection of videos made by community members for you:
 
+- M. S. Farzan → [2D Multiplayer Card Game Templates with Colyseus, Unity, Phaser, & Defold](https://www.youtube.com/watch?v=NylOh_PVCsc)
 - Ourcade → [Multiplayer Tic-Tac-Toe in Colyseus & Phaser 3.50](https://www.youtube.com/playlist?list=PLNwtXgWIx3rhOmsJOkUFRiFQg8pPFPDqy)
 - Burtons Media Group → [Multiplayer Game Design Colyseus and Unity](https://www.youtube.com/playlist?list=PLxgtJR7f0RBK_yGDSbPuspqMR-oEi1S25)
 
