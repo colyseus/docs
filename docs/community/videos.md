@@ -2,6 +2,7 @@
 
 A selection of videos made by community members for you:
 
+- Richard Oliver Bray → Building an online multiplayer browser game with Haxe and Colyseus [Part 1](https://www.youtube.com/watch?v=5XaGzRH5Y7I) | [Part 2](https://www.youtube.com/watch?v=vaiJM5Y_z7U)
 - M. S. Farzan → [2D Multiplayer Card Game Templates with Colyseus, Unity, Phaser, & Defold](https://www.youtube.com/watch?v=NylOh_PVCsc)
 - Ourcade → [Multiplayer Tic-Tac-Toe in Colyseus & Phaser 3.50](https://www.youtube.com/playlist?list=PLNwtXgWIx3rhOmsJOkUFRiFQg8pPFPDqy)
 - Burtons Media Group → [Multiplayer Game Design Colyseus and Unity](https://www.youtube.com/playlist?list=PLxgtJR7f0RBK_yGDSbPuspqMR-oEi1S25)
