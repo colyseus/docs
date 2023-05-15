@@ -36,9 +36,11 @@ npm install --save @colyseus/ws-transport
     export default config({
       // ...
 
-      initializeTransport: function() {
+      initializeTransport: function(opts) {
         return new WebSocketTransport({
-          /* ...options */
+          ...opts,
+          pingInterval: 6000,
+          pingMaxRetries: 4,
         });
       },
 
@@ -53,7 +55,10 @@ npm install --save @colyseus/ws-transport
     import { WebSocketTransport } from "@colyseus/ws-transport"
 
     const gameServer = new Server({
-        transport: new WebSocketTransport({ /* transport options */ })
+        transport: new WebSocketTransport({
+            pingInterval: 6000,
+            pingMaxRetries: 4,
+        })
     })
     ```
 
@@ -74,7 +79,7 @@ A Node.js http server instance to re-use for the WebSocket server. Useful when y
 
     const gameServer = new Server({
       transport: new WebSocketTransport({
-          server // provide the custom server for `WebSocketTransport`
+        server // provide the custom server for `WebSocketTransport`
       })
     });
     ```
@@ -92,7 +97,7 @@ A Node.js http server instance to re-use for the WebSocket server. Useful when y
 
     const gameServer = new Server({
       transport: new WebSocketTransport({
-          server // provide the custom server for `WebSocketTransport`
+        server // provide the custom server for `WebSocketTransport`
       })
     });
     ```
