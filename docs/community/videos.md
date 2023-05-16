@@ -2,8 +2,66 @@
 
 A selection of videos made by community members for you:
 
-- Richard Oliver Bray → Building an online multiplayer browser game with Haxe and Colyseus [Part 1](https://www.youtube.com/watch?v=5XaGzRH5Y7I) | [Part 2](https://www.youtube.com/watch?v=vaiJM5Y_z7U)
-- M. S. Farzan → [2D Multiplayer Card Game Templates with Colyseus, Unity, Phaser, & Defold](https://www.youtube.com/watch?v=NylOh_PVCsc)
-- Ourcade → [Multiplayer Tic-Tac-Toe in Colyseus & Phaser 3.50](https://www.youtube.com/playlist?list=PLNwtXgWIx3rhOmsJOkUFRiFQg8pPFPDqy)
-- Burtons Media Group → [Multiplayer Game Design Colyseus and Unity](https://www.youtube.com/playlist?list=PLxgtJR7f0RBK_yGDSbPuspqMR-oEi1S25)
-- Endel Dreyer → [Making Multiplayer Games with Colyseus, Node.js and TypeScript](https://www.youtube.com/watch?v=KnN6nRtfL44) | [Raw Slides](https://docs.google.com/presentation/d/e/2PACX-1vTbM8frwpFb1DhqeFw3hNAEl-awUHs6gU-cCZti4Ec8bvFx-Oa6-qRYlaopwi44uqrXFZoPgMgd64sG/pub?start=false&loop=false&delayms=3000) | [GitNation](https://portal.gitnation.org/contents/making-multiplayer-games-with-colyseus-nodejs-and-typescript)
+<div class="grid cards" markdown>
+
+-   [![](https://i3.ytimg.com/vi/5XaGzRH5Y7I/hqdefault.jpg)](https://www.youtube.com/watch?v=5XaGzRH5Y7I)
+
+    ---
+
+    Building an online multiplayer browser game with Haxe and Colyseus
+
+    <small>:octicons-feed-person-16: Richard Oliver Bray</small>
+
+-   [![](https://i3.ytimg.com/vi/NylOh_PVCsc/hqdefault.jpg)](https://www.youtube.com/watch?v=NylOh_PVCsc)
+
+    ---
+
+    2D Multiplayer Card Game Templates with Colyseus, Unity, Phaser, & Defold
+
+    <small>:octicons-feed-person-16: M. S. Farzan</small>
+
+-   [![](https://i3.ytimg.com/vi/5HESa0Ibq8E/hqdefault.jpg)](https://www.youtube.com/playlist?list=PLNwtXgWIx3rhOmsJOkUFRiFQg8pPFPDqy)
+
+    ---
+
+    Multiplayer Game Development with Tic-Tac-Toe using Colyseus
+
+    <small>:octicons-feed-person-16: Ourcade</small>
+
+-   [![](https://i3.ytimg.com/vi/mQ-rTccCTiw/hqdefault.jpg)](https://www.youtube.com/playlist?list=PLxgtJR7f0RBK_yGDSbPuspqMR-oEi1S25)
+
+    ---
+
+    Multiplayer Game Design Colyseus and Unity
+
+    <small>:octicons-feed-person-16: Brian Burton</small>
+
+-   [![](https://placehold.co/480x360)](#)
+
+    ---
+
+    your content title
+
+    <small>:octicons-feed-person-16: your name</small>
+
+<!-- Add your content above this line -->
+
+</div>
+
+## How to add your video here
+
+1. Click on the "Edit this page" button at the top right of this page.
+
+2. Copy this template, and place it next to the last element of the list
+
+```markdown
+-   [![](thumb url)](video url)
+
+    ---
+
+    content title
+
+    <small>:octicons-feed-person-16: your name</small>
+```
+
+3. If you're not familiar with Markdown syntax, see how previous items are formatted.
