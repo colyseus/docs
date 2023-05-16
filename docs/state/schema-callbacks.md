@@ -14,11 +14,23 @@ When applying state changes coming from the server, the client-side is going to 
 
 The callbacks are triggered based on instance reference. Make sure to attach the callback on the instances that are actually changing on the server.
 
-- [listen()](#listenprop-callback)
-- [onAdd (instance, key)](#onadd-instance-key)
-- [onRemove (instance, key)](#onremove-instance-key)
-- [onChange (instance, key)](#onchange-instance-key) (on collections: `MapSchema`, `ArraySchema`, etc.)
-- [onChange (changes)](#onchange-changes-datachange) (on `Schema` instance)
+**On `Schema` instances**
+
+- [listen()](#listenprop-callback) for properties
+- [onChange ()](#onchange)
+
+**On collections of items**
+
+- [onAdd (item, key)](#onadd-item-key)
+- [onRemove (item, key)](#onremove-item-key)
+- [onChange (item, key)](#onchange-item-key)
+
+!!! Note "What are collections?"
+    Collections are `MapSchema`, `ArraySchema`, etc. See how to [define collections of items](/state/schema/#collections-of-items).
+
+---
+
+### On `Schema` instances
 
 #### `.listen(prop, callback)`
 
@@ -76,26 +88,52 @@ const unbindCallback = state.listen("currentTurn", (currentValue, previousValue)
 unbindCallback();
 ```
 
-**What's the difference between `listen` and `onChange`?**
+---
 
-The `.listen()` method is a shorthand for `onChange` on a single property. Below is a rewrite from `.listen()` to `onChange`:
+#### `onChange ()`
 
-``` typescript
-state.onChange(function(changes) {
-    changes.forEach((change) => {
-        if (change.field === "currentTurn") {
-            console.log(`currentTurn is now ${change.value}`);
-            console.log(`previous value was: ${change.previousValue}`);
-        }
-    })
-});
-```
+You can register the `onChange` to track whenever a `Schema` had its properties changed. When the callback is triggered, changes have already been applied.
+
+=== "JavaScript"
+
+    ``` typescript
+    room.state.onChange(() => {
+        // something changed on .state
+        console.log(room.state.xxx)
+    });
+    ```
+
+=== "Lua"
+
+    ``` lua
+    room.state:on_change(function ()
+        -- something changed on .state
+        print(room.state.xxx)
+    end)
+
+    ```
+
+=== "C#"
+
+    ``` csharp
+    room.State.OnChange(() =>
+    {
+        // something changed on .state
+        Debug.Log(room.State.xxx)
+    });
+    ```
+
+!!! Note "Use `.listen()` to detect changes on particular properties"
+    Since version 0.15, the `.onChange()` does not provide the full list of
+    properties changed. See [`.listen()`](#listenprop-callback)
 
 ---
 
-#### `onAdd (instance, key)`
+### On collections of items
 
-The `onAdd` callback can only be used in collection of items (`MapSchema`, `ArraySchema`, etc.). The `onAdd` callback is called with the new instance and its key on holder object as argument.
+#### `onAdd (item, key)`
+
+The `onAdd` callback is called with the new instance and its key on holder object as argument.
 
 === "JavaScript"
 
@@ -105,34 +143,12 @@ The `onAdd` callback can only be used in collection of items (`MapSchema`, `Arra
 
         // add your player entity to the game world!
 
-        // If you want to track changes on a child object inside a map, this is a common pattern:
-        player.onChange(function(changes) {
-            changes.forEach(change => {
-                console.log(change.field);
-                console.log(change.value);
-                console.log(change.previousValue);
-            })
+        // detecting changes on object properties
+        player.listen("field_name", (value, previousValue) => {
+            console.log(change.value);
+            console.log(change.previousValue);
         });
     });
-    ```
-
-=== "Lua"
-
-    ``` lua
-    room.state.players:on_add(function (player, key)
-        print("player has been added at", key);
-
-        -- add your player entity to the game world!
-
-        -- If you want to track changes on a child object inside a map, this is a common pattern:
-        player:on_change(function(changes)
-            for i, change in ipairs(changes) do
-                print(change.field)
-                print(change.value)
-                print(change.previousValue)
-            end
-        end)
-    end)
     ```
 
 === "C#"
@@ -144,30 +160,51 @@ The `onAdd` callback can only be used in collection of items (`MapSchema`, `Arra
 
         // add your player entity to the game world!
 
-        // If you want to track changes on a child object inside a map, this is a common pattern:
-        player.OnChange += (changes) =>
-        {
-            changes.ForEach((obj) =>
-            {
-                Debug.Log(obj.Field);
-                Debug.Log(obj.Value);
-                Debug.Log(obj.PreviousValue);
-            });
+        // detecting changes on object properties
+        player.OnFieldNameChange += (value, previousValue) => {
+            // property "fieldName" has changed!
         };
     });
     ```
 
+=== "Lua"
+
+    ``` lua
+    room.state.players:on_add(function (player, key)
+        print("player has been added at", key);
+
+        -- add your player entity to the game world!
+
+        -- detecting changes on object properties
+        player:listen("field_name", function(value, previous_value)
+            print(change.value)
+            print(change.previousValue)
+        end)
+    end)
+    ```
+
 ---
 
-#### `onRemove (instance, key)`
+#### `onRemove (item, key)`
 
-The `onRemove` callback can only be used in maps (`MapSchema`) and arrays (`ArraySchema`). The `onRemove` callback is called with the removed instance and its key on holder object as argument.
+The `onRemove` callback is called with the removed item and its key on holder object as argument.
 
 === "JavaScript"
 
     ``` javascript
     room.state.players.onRemove((player, key) => {
         console.log(player, "has been removed at", key);
+
+        // remove your player entity from the game world!
+    });
+    ```
+
+=== "C#"
+
+    ``` csharp
+    room.State.players.OnRemove((string key, Player player) =>
+    {
+        Debug.Log("player has been removed at " + key);
 
         // remove your player entity from the game world!
     });
@@ -183,105 +220,41 @@ The `onRemove` callback can only be used in maps (`MapSchema`) and arrays (`Arra
     end)
     ```
 
-=== "C#"
-
-    ``` csharp
-    room.State.players.OnRemove((string key, Player player) =>
-    {
-        Debug.Log("player has been removed at " + key);
-
-        // remove your player entity from the game world!
-    });
-    ```
-
 ---
 
-#### `onChange (changes: DataChange[])`
+#### `onChange (item, key)`
 
-> `onChange` works differently for direct `Schema` references and collection structures. For [`onChange` on collection structures (array, map, etc.), check here](#onchange-instance-key).
-
-You can register the `onChange` to track a `Schema` instance's property changes. The `onChange` callback is triggered with an array of changed properties, along with its previous values.
-
-=== "JavaScript"
-
-    ``` typescript
-    room.state.onChange((changes) => {
-        changes.forEach(change => {
-            console.log(change.field);
-            console.log(change.value);
-            console.log(change.previousValue);
-        });
-    });
-    ```
-
-=== "Lua"
-
-    ``` lua
-    room.state:on_change(function (changes)
-        for i, change in ipairs(changes) do
-            print(change.field)
-            print(change.value)
-            print(change.previous_value)
-        end
-    end)
-
-    ```
-
-=== "C#"
-
-    ``` csharp
-    room.State.OnChange((changes) =>
-    {
-        changes.ForEach((obj) =>
-        {
-            Debug.Log(obj.Field);
-            Debug.Log(obj.Value);
-            Debug.Log(obj.PreviousValue);
-        });
-    });
-    ```
-
-You cannot register the `onChange` callback on objects that haven't been synchronized with the client-side yet.
-
----
-
-#### `onChange (instance, key)`
-
-> `onChange` works differently for direct `Schema` references and collection structures. For [`onChange` on `Schema` structures, check here](#onchange-changes-datachange).
-
-This callback is triggered whenever a collection of **primitive** types (`string`, `number`, `boolean`, etc.) updates some of its values.
+This callback is triggered whenever a collection of **primitive** types (`string`, `number`, `boolean`, etc.) updates its values at the same key.
 
 === "JavaScript"
 
     ``` javascript
-    room.state.players.onChange((player, key) => {
-        console.log(player, "have changes at", key);
+    room.state.mapOfStrings.onChange((value, key) => {
+        console.log(key, "changed to", value);
     });
     ```
 
 === "Lua"
 
     ``` lua
-    room.state.players:on_change(function (player, key)
-        print("player have changes at " .. key);
+    room.state.mapOfStrings:on_change(function (value, key)
+        print(key .. " changed to " .. value);
     end)
     ```
 
 === "C#"
 
     ``` csharp
-    room.State.players.OnChange((string key, Player player) =>
+    room.State.mapOfStrings.OnChange((string key, string value) =>
     {
-        Debug.Log("player have changes at " + key);
+        Debug.Log(key + " changed to" + value);
     });
     ```
 
-If you'd like to detect changes inside a collection of **non-primitive** types (holding `Schema` instances),use [`onAdd`](#onadd-instance-key) and register [`onChange`](#onchange-changes-datachange) on them.
-
-!!! Warning "`onChange`, `onAdd` and `onRemove` are **exclusive**"
-    The `onChange` callback is not triggered during [`onAdd`](#onadd-instance-key) or [`onRemove`](#onremove-instance-key).
-
-    Consider registering `onAdd` and `onRemove` if you need to detect changes during these steps too.
+!!! Warning "Collection of `Schema` instances?"
+    If you'd like to get the changes of a child `Schema` instance inside a
+    collection, you need to attach either `.listen()` or `.onChange()` callbacks
+    to the child instance directly during `.onAdd()`
 
 ---
 

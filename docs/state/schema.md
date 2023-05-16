@@ -126,6 +126,16 @@ Complex types consist of `Schema` instances within other schema instances. They 
 
 ## Collections of items
 
+Collections can hold multiple items that share the same type. Inheritance of
+`Schema` instances is supported.
+
+Collections available:
+
+- [`ArraySchema`](#arrayschema)
+- [`MapSchema`](#mapschema)
+- [`SetSchema`](#setschema)
+- [`CollectionSchema`](#collectionschema)
+
 ### ArraySchema
 
 The `ArraySchema` is a synchronizeable version of the built-in JavaScript [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) type.
