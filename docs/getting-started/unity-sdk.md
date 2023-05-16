@@ -173,35 +173,51 @@ When you are using MapSchema or ArraySchema, the state sychronizations from the 
 
 ```csharp
 // Something has been added to Schema
-room.State.players.OnAdd += (key, player) =>
+room.State.players.OnAdd((key, player) =>
 {
     Debug.Log($"{key} has joined the Game!");
-};
+});
 
 // Something has changed in Schema
-room.State.players.OnChange += (key, player) =>
+room.State.players.OnChange((key, player) =>
 {
     Debug.Log($"{key} has been changed!");
-};
+});
 
 // Something has been removed from Schema
-room.State.players.OnRemove += (key, player) =>
+room.State.players.OnRemove((key, player) =>
 {
     Debug.Log($"{key} has left the Game!");
-};
+});
 ```
 
 ## Debugging
 
 If you set a breakpoint in your application while the WebSocket connection is open, the connection will be closed automatically after 3 seconds due to inactivity. To prevent the WebSocket connection from dropping, use `pingInterval: 0` during development:
 
-```typescript
-import { Server, RedisPresence } from "colyseus";
+=== "app.config.ts"
 
-const gameServer = new Server({
-  // ...
-  pingInterval: 0 // HERE
-});
-```
+    ``` typescript
+    import config from "@colyseus/tools";
+
+    export default config({
+        // ...
+        options: {
+            pingInterval: 0 // HERE
+        },
+        // ...
+    });
+    ```
+
+=== "app.config.ts"
+
+    ```typescript
+    import { Server, RedisPresence } from "colyseus";
+
+    const gameServer = new Server({
+      // ...
+      pingInterval: 0 // HERE
+    });
+    ```
 
 Make sure to have a `pingInterval` higher than `0` on production. The default `pingInterval` value is `3000`.
