@@ -126,6 +126,16 @@ Posts a message to given `topic`.
 this.presence.publish("global-event", { any: 1, data: 2, here: "3" });
 ```
 
+### `set(key: string, value: string)`
+
+Set key to hold the string value.
+
+**Example:** Setting a `"global-key"` to hold `"a string value"`.
+
+``` typescript
+this.presence.setex("global-key", "a string value");
+```
+
 ### `setex(key: string, value: string, seconds: number)`
 
 Set key to hold the string value and set key to timeout after a given number of seconds.
