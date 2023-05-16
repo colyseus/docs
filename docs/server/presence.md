@@ -7,9 +7,13 @@ When you need to scale your server on multiple processes and/or machines, you'd 
 
 The `presence` instance is also available on every `Room` handler. You may use its [API](#api) to persist data and communicate between rooms via PUB/SUB.
 
+---
+
 ### `LocalPresence`
 
 This is the default option. It's meant to be used when you're running Colyseus in a single process.
+
+---
 
 ### `RedisPresence (clientOpts?)`
 
@@ -65,6 +69,8 @@ Use this option when you're running Colyseus on multiple processes and/or machin
     gameServer.listen(2567);
     ```
 
+---
+
 ## API
 
 The `Presence` API is highly based on Redis's API, which is a key-value database.
@@ -87,6 +93,8 @@ import { matchMaker } from "colyseus";
 matchMaker.presence // full Presence API is available from here
 ```
 
+---
+
 ### `subscribe(topic: string, callback: Function)`
 
 Subscribes to the given `topic`. The `callback` will be triggered whenever a message is [published](#publishtopic-string-data-any) on `topic`.
@@ -96,6 +104,8 @@ this.presence.subscribe("global-event", (data) => {
     console.log("received message:", data);
 });
 ```
+
+---
 
 ### `unsubscribe(topic: string, callback?: Function)`
 
@@ -118,6 +128,8 @@ this.presence.subscribe("global-event", callback);
 this.presence.unsubscribe("global-event", callback);
 ```
 
+---
+
 ### `publish(topic: string, data: any)`
 
 Posts a message to given `topic`.
@@ -125,6 +137,8 @@ Posts a message to given `topic`.
 ``` typescript
 this.presence.publish("global-event", { any: 1, data: 2, here: "3" });
 ```
+
+---
 
 ### `set(key: string, value: string)`
 
@@ -136,6 +150,8 @@ Set key to hold the string value.
 this.presence.setex("global-key", "a string value");
 ```
 
+---
+
 ### `setex(key: string, value: string, seconds: number)`
 
 Set key to hold the string value and set key to timeout after a given number of seconds.
@@ -146,6 +162,8 @@ Set key to hold the string value and set key to timeout after a given number of 
 this.presence.setex("global-key", "a string value", 120);
 ```
 
+---
+
 ### `get(key: string)`
 
 Get the value of key.
@@ -153,6 +171,8 @@ Get the value of key.
 ``` typescript
 const globalKeyValue = await this.presence.get("global-key");
 ```
+
+---
 
 ### `del(key: string): void`
 
@@ -162,6 +182,8 @@ Removes the specified key.
 await this.presence.del("global-key");
 ```
 
+---
+
 ### `exists(key: string): Promise<boolean>`
 
 Returns if key exists.
@@ -169,6 +191,8 @@ Returns if key exists.
 ``` typescript
 const globalKeyExists = await this.presence.exists("global-key");
 ```
+
+---
 
 ### `incr(key: string)`
 
@@ -190,6 +214,8 @@ const count = await this.presence.get("global-count");
 console.log(count) // => 3
 ```
 
+---
+
 ### `decr(key: string)`
 
 Decrements the number stored at key by one.
@@ -210,6 +236,8 @@ const count = await this.presence.get("global-count");
 console.log(count) // => 33
 ```
 
+---
+
 ### `sadd(key: string, value: any)`
 
 Add the specified members to the set stored at key.
@@ -225,6 +253,8 @@ await this.presence.sadd("global-set1", "member-two");
 await this.presence.sadd("global-set1", "member-three");
 ```
 
+---
+
 ### `smembers(key: string)`
 
 Returns all the members of the set value stored at key.
@@ -233,6 +263,8 @@ Returns all the members of the set value stored at key.
 const globalSetMembers = await this.presence.del("global-set1");
 console.log(globalSetMembers) // => ["member-one", "member-two", "member-three"]
 ```
+
+---
 
 ### `sismember(key: string, member: string)`
 
@@ -254,6 +286,8 @@ if (isMember) {
 }
 ```
 
+---
+
 ### `srem(key: string, value: any)`
 
 Remove the specified members from the set stored at key.
@@ -266,6 +300,8 @@ If key does not exist, it is treated as an empty set and this command returns `0
 await this.presence.srem("global-set1", "member-three");
 ```
 
+---
+
 ### `scard(key: string)`
 
 Returns the set number of elements (cardinality) of the set stored at key.
@@ -274,6 +310,8 @@ Returns the set number of elements (cardinality) of the set stored at key.
 const cardinality = await this.presence.scard("global-set1");
 console.log(cardinality) // => 2
 ```
+
+---
 
 ### `sinter(...keys: string[])`
 
@@ -293,6 +331,8 @@ const intersection = await this.presence.sinter("global-set1", "global-set2");
 console.log(intersection); // => ["member-two"]
 ```
 
+---
+
 ### `hset(key: string, field: string, value: string)`
 
 Sets field in the hash stored at key to value.
@@ -305,6 +345,8 @@ If field already exists in the hash, it is overwritten.
 await this.presence.hset("global-hashmap1", "key1", "1");
 await this.presence.hset("global-hashmap1", "key2", "2");
 ```
+
+---
 
 ### `hincrby(key: string, field: string, value: number)`
 
@@ -320,6 +362,8 @@ const incr = await this.presence.hincrby("global-hashmap1", "key1", "5");
 console.log(incr) // => "7"
 ```
 
+---
+
 ### `hget(key: string, field: string): Promise<string>`
 
 Returns the value associated with field in the hash stored at key.
@@ -329,6 +373,8 @@ await this.presence.hset("global-hashmap1", "key", "value");
 const value = await this.presence.hget("global-hashmap1", "key");
 console.log(value) // => "value"
 ```
+
+---
 
 ### `hgetall(key: string): Promise<{[field: string]: string}>`
 
@@ -341,6 +387,8 @@ await this.presence.hset("global-hashmap1", "key2", "2");
 const value = await this.presence.hgetall("global-hashmap1");
 console.log(value) // => {"key1": "1", "key2": "2"}
 ```
+
+---
 
 ### `hdel(key: string, field: string)`
 
@@ -357,6 +405,8 @@ await this.presence.hset("global-hashmap1", "key2", "2");
 // delete "key2" from "global-hashmap1".
 await this.presence.hset("global-hashmap1", "key2");
 ```
+
+---
 
 ### `hlen(key: string): Promise<number>`
 
