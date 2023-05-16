@@ -96,5 +96,5 @@ This is an example scripting file. Based on the room lifecycle events for each c
 ### Connecting 50 clients into a `"battle"` room
 
 ``` bash
-npx ts-node loadtest/example.ts --room battle --numClients 50 --endpoint ws://localhost:2567
+npx tsx loadtest/example.ts --room battle --numClients 50 --endpoint ws://localhost:2567
 ```
