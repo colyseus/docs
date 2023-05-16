@@ -328,8 +328,8 @@ nav:
 
 - Collaborative Content:
   - 'community/index.md'
-  - Tutorials: 'community/tutorials.md'
   - Videos: 'community/videos.md'
+  - Tutorials: 'community/tutorials.md'
   - Games: 'community/games.md'
   - Guides:
     - 'Customize room id': 'community/custom-room-id.md'

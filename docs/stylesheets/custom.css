@@ -1,3 +1,10 @@
+/**
+ * 3 column grids on community content
+ */
+.grid.col-3 {
+  grid-template-columns: auto auto auto;
+}
+
 /*
  * custom header background
  */

@@ -1,8 +1,13 @@
+---
+hide:
+  - toc
+---
+
 # Videos made by the community ❤️
 
 A selection of videos made by community members for you:
 
-<div class="grid cards" markdown>
+<div class="grid col-3 cards" markdown>
 
 -   [![](https://i3.ytimg.com/vi/5XaGzRH5Y7I/hqdefault.jpg)](https://www.youtube.com/watch?v=5XaGzRH5Y7I)
 

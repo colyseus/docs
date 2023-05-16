@@ -2,15 +2,10 @@
 
 This tab is a community space where you can find content created by the community for the community 💖
 
-!!! Note "Add yours!"
-    Did you know this page is [open source](https://github.com/colyseus/docs/blob/master/docs/community/index.md)? And you can contribute with your own guides and recipes.
-
 !!! Tip "Contribute"
     You are encouraged to contribute to any page by clicking the "Edit this page" link at the top right of each page.
 
-    **Formatting standards need to be established here!**
-
-    The formatting of content here need improvement. Lists of tutorials and videos are too bland. Ideas are very welcome. Documentation on formatting options available [can be found here](https://squidfunk.github.io/mkdocs-material/reference/grids/#using-card-grids).
+    Ideas are very welcome to improve formatting standards. Documentation on formatting options available [can be found here](https://squidfunk.github.io/mkdocs-material/reference/grids/#using-card-grids).
 
 ## SDKs made by the community ❤️
 

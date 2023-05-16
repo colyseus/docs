@@ -1,6 +1,31 @@
+---
+hide:
+  - toc
+---
+
 # Games made by the community ❤️
 
-<div class="grid cards" markdown>
+<div class="grid cards col-3" markdown>
+
+-   [![](https://placehold.co/480x360)](#)
+
+    ---
+
+    your game title
+
+    :octicons-repo-16: [user/repo](https://github.com/colyseus/colyseus)
+
+    :octicons-mark-github-16: [@username](https://github.com/username)
+
+-   [![](https://placehold.co/480x360)](#)
+
+    ---
+
+    your game title
+
+    :octicons-repo-16: [user/repo](https://github.com/colyseus/colyseus)
+
+    :octicons-mark-github-16: [@username](https://github.com/username)
 
 -   [![](https://placehold.co/480x360)](#)
 
