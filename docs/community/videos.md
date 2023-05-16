@@ -41,14 +41,6 @@ A selection of videos made by community members for you:
 
     <small>:octicons-feed-person-16: Brian Burton</small>
 
--   [![](https://placehold.co/480x360)](#)
-
-    ---
-
-    your content title
-
-    <small>:octicons-feed-person-16: your name</small>
-
 <!-- Add your content above this line -->
 
 </div>
