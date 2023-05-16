@@ -340,6 +340,14 @@ Iterates over each element of the array.
 !!! Note "More methods available for Array"
     Have a look at the [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/).
 
+---
+
+#### `array.clear()`
+
+Empties the array. (Client-side will trigger `onRemove` for each element.)
+
+---
+
 ### MapSchema
 
 The `MapSchema` is a synchronizeable version of the built-in JavaScript [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) type.
@@ -481,6 +489,13 @@ Iterates over each key/value pair of the map, in insertion order.
 !!! Note "More methods available for Map"
      Have a look at the [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/).
 
+---
+
+#### `map.clear()`
+
+Empties the Map. (Client-side will trigger `onRemove` for each element.)
+
+---
 
 ### SetSchema
 
@@ -586,6 +601,14 @@ console.log(set.size);
 !!! Note "More methods available for Set"
      Have a look at the [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
 
+
+---
+
+#### `set.clear()`
+
+Empties the Set. (Client-side will trigger `onRemove` for each element.)
+
+---
 
 ### CollectionSchema
 
@@ -714,6 +737,14 @@ collection.forEach((value, at) => {
     console.log("value =>", value)
 });
 ```
+
+---
+
+#### `collection.clear()`
+
+Empties the Collection. (Client-side will trigger `onRemove` for each element.)
+
+---
 
 ## Filtering data per client
 
