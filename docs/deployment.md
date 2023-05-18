@@ -1,13 +1,12 @@
 - [Colyseus Cloud](#colyseus-cloud)
 - [Deploying on Nginx (recommended)](#nginx-recommended)
-- [Deploying on Heroku](#heroku)
 - [Deploying on Apache](#apache)
 - [Docker](#docker)
+- [Deploying on Heroku](#heroku)
 
 Deploying Colyseus for a single-process environment is no different than deploying a regular Node.js application ([see a good article here](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-20-04)).
 
 However, deploying Colyseus for a multi-process environment requires some [extra steps](/scalability/).
-
 
 ## Colyseus Cloud
 
@@ -15,6 +14,56 @@ The easiest way to deploy your Colyseus server is to use the [Colyseus Cloud](ht
 
 Colyseus Cloud uses NGINX, PM2, and requires you to use the `@colyseus/tools`
 package for easy integration with its infrastructure.
+
+See the configuration required for deploying on Colyseus Cloud:
+
+=== "`index.ts`"
+
+    ```typescript
+    import { listen } from "@colyseus/tools";
+
+    // Import Colyseus config
+    import app from "./app.config";
+
+    // Create and listen on 2567 (or PORT environment variable.)
+    listen(app);
+    ```
+
+=== "`app.config.ts`"
+
+    ```typescript
+    import config from "@colyseus/tools";
+    import { MyRoom } from "./rooms/MyRoom";
+
+    export default config({
+        initializeGameServer: (gameServer) => {
+            // gameServer.define("my_room", MyRoom)
+        },
+    });
+    ```
+
+=== "`ecosystem.config.js`"
+
+    ```typescript
+    const os = require('os');
+
+    module.exports = {
+      apps : [{
+        name: "colyseus-app",
+        script: 'build/index.js',
+        time: true,
+        watch: false,
+        instances: os.cpus().length,
+        exec_mode: 'fork',
+        wait_ready: true,
+        env_production: {
+          NODE_ENV: 'production'
+        }
+      }],
+    };
+    ```
+
+The [`create-colyseus-app` templates](https://github.com/colyseus/create-colyseus-app/tree/master/templates) are ready for deployment on Colyseus Cloud.
 
 ---
 
@@ -81,19 +130,6 @@ server {
     }
 }
 ```
-
----
-
-## Heroku
-
-Heroku _can_ be used for prototyping. You can deploy the [colyseus-examples](https://github.com/colyseus/colyseus-examples) project on it by hitting this button:
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/colyseus/colyseus-examples)
-
-Scaling Colyseus on Heroku is not practical. We do not recommend using Heroku with Colyseus in production.
-
-**Important:** Make sure to set the environment variable `NPM_CONFIG_PRODUCTION=false` in order to use dev-dependencies in your deployment, such as `ts-node`, `ts-node-dev`, etc.
-
 
 ---
 
@@ -286,3 +322,16 @@ More informations:
 - [Official Node.js Docker Image](https://hub.docker.com/_/node/)
 
 - [Node.js Docker Best Practices Guide](https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md)
+
+---
+
+## Heroku
+
+Heroku can be used for prototyping. You can deploy the [colyseus-examples](https://github.com/colyseus/colyseus-examples) project on it by hitting this button:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/colyseus/colyseus-examples)
+
+Scaling Colyseus on Heroku is not practical. We do not recommend using Heroku with Colyseus in production.
+
+**Important:** Make sure to set the environment variable `NPM_CONFIG_PRODUCTION=false` in order to use dev-dependencies in your deployment, such as `ts-node`, `ts-node-dev`, etc.
+
