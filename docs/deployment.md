@@ -1,5 +1,5 @@
 - [Colyseus Cloud](#colyseus-cloud)
-- [Deploying on Nginx (recommended)](#nginx-recommended)
+- [Deploying on Nginx](#nginx)
 - [Deploying on Apache](#apache)
 - [Docker](#docker)
 - [Deploying on Heroku](#heroku)
@@ -67,9 +67,9 @@ The [`create-colyseus-app` templates](https://github.com/colyseus/create-colyseu
 
 ---
 
-## Nginx (recommended)
+## Nginx
 
-It's recommended to use `pm2` and `nginx` in your production environment.
+When self-hosting, it is recommended to use `nginx` and `pm2` in your production environment.
 
 ### PM2
 
