@@ -11,13 +11,13 @@ hide:
 
     ---
 
-    your game title
+    Pokemon Auto Chess
 
-    :octicons-repo-16: [user/repo](https://github.com/colyseus/colyseus)
+    :octicons-repo-16: [user/repo](https://github.com/keldaanInteractive/pokemonAutoChess)
 
-    :octicons-mark-github-16: [@username](https://github.com/username)
+    :octicons-mark-github-16: [@keldaan-ag](https://github.com/keldaan-ag)
 
--   [![](https://placehold.co/480x360)](#)
+-   [![](https://raw.githubusercontent.com/keldaanInteractive/pokemonAutoChess/master/app/public/dist/client/assets/ui/pokemon_autochess_final.png](#)
 
     ---
 
