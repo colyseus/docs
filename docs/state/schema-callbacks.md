@@ -1,4 +1,4 @@
-# [State Sync](/state/overview) &raquo; Client-side Callbacks
+# [State Sync](/state/) &raquo; Client-side Callbacks
 
 The schema callbacks are triggered only in the client-side, right after the
 latest state patches sent by the server were received and applied on the client.

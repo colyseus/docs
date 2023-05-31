@@ -44,5 +44,5 @@ npm create colyseus-app@latest ./my-first-game-server
 - See how to connect to the server through one of the available [client-side SDKs](/client/).
 - Implement your own [Room definition](/server/room) to handle your game sessions.
 - Learn how to [exchange messages](/server/room/#onmessage-type-callback) between client and server.
-- Learn how the [state synchronization](/state/overview/) works.
+- Learn how the [state synchronization](/state/) works.
 - Experiment, play, and have fun!

@@ -456,7 +456,7 @@ onCreate () {
 
 ### `setState (object)`
 
-设置房间同步状态. 参见 [State Synchronization](/state/overview/) 和 [Schema](/state/schema/) 以了解更多信息.
+设置房间同步状态. 参见 [State Synchronization](/state/) 和 [Schema](/state/schema/) 以了解更多信息.
 
 !!! Tip
     设置同步状态通常只需在 [`onCreate()`](#onCreate-options) 时调用一次即可

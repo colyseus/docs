@@ -1,4 +1,4 @@
-# [State Sync](/state/overview) &raquo; Schema Definition
+# [State Sync](/state/) &raquo; Schema Definition
 
 ## How to define synchronizable structures
 

@@ -44,7 +44,7 @@ npm init colyseus-app ./my-first-game-server
 
 - 选择一种 [客户端 SDK](/client/) 来连接服务器.
 - 学习如何在服务器与客户端之间 [交换信息](/server/room/#onmessage-type-callback).
-- 了解 [自动状态数据同步](/state/overview/) 的工作原理
+- 了解 [自动状态数据同步](/state/) 的工作原理
 - 尽情实验! 探索, 体验乐趣!
 
 ---

@@ -1,4 +1,4 @@
-# [State Handling](/state/overview) » Fossil Delta
+# [State Handling](/state/) » Fossil Delta
 
 ## FossilDelta is going to be deprecated on future versions of Colyseus. Make sure to use the [Schema Serializer](/state/schema).
 

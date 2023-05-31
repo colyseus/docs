@@ -518,7 +518,7 @@ onCreate () {
 
 ### `setState (object)`
 
-Set the synchronizable room state. See [State Synchronization](/state/overview/) and [Schema](/state/schema/) for more details.
+Set the synchronizable room state. See [State Synchronization](/state/) and [Schema](/state/schema/) for more details.
 
 !!! Tip
     You usually call this method only once during [`onCreate()`](#onCreate-options)

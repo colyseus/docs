@@ -1,4 +1,4 @@
-# [状态数据同步](/state/overview) &raquo; Schema
+# [状态数据同步](/state/) &raquo; Schema
 
 !!! Tip "还没使用 TypeScript?"
     强烈建议您使用 TypeScript 以便更好地定义 Schema 结构并提高整体开发体验. TypeScript 支持的 "实验性修饰器" 会在本手册内大量使用.
@@ -747,7 +747,7 @@ class State extends Schema {
         // 当前将要接受数据的客户端. 可以通过其
         // client.sessionId, 及其他信息判定是否
         // 要把数据同步给这个客户端.
-        
+
         // key 参数是:
         // 集合内容的当前索引
 
@@ -777,7 +777,7 @@ schema.filterChildren(function(client, key, value, root) {
     // 当前将要接受数据的客户端. 可以通过其
     // client.sessionId, 及其他信息判定是否
     // 要把数据同步给这个客户端.
-    
+
     // key 参数是:
     // 集合内容的当前索引
 
