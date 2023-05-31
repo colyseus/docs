@@ -7,15 +7,15 @@ hide:
 
 <div class="grid cards col-3" markdown>
 
--   [![](https://placehold.co/480x360)](#)
+-   [![Pokemon Auto Chess Icon](https://raw.githubusercontent.com/keldaanCommunity/pokemonAutoChess/master/app/public/dist/client/assets/ui/colyseus-icon.png)](#)
 
     ---
 
-    your game title
+    Pokemon Auto Chess fan game
 
-    :octicons-repo-16: [user/repo](https://github.com/colyseus/colyseus)
+    :octicons-repo-16: [keldaanCommunity/pokemonAutoChess](https://github.com/keldaanCommunity/pokemonAutoChess)
 
-    :octicons-mark-github-16: [@username](https://github.com/username)
+    :octicons-mark-github-16: [@keldaan-ag](https://github.com/keldaan-ag)
 
 -   [![](https://placehold.co/480x360)](#)
 
