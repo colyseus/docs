@@ -17,13 +17,15 @@ connections with the server, and inspect its communication with the server.
 
 ## Installation
 
-The playground tool is installed by default on new projects.
+The playground tool is installed by default on new projects created via `npm create colyseus-app`.
+
+To manually install on an existing project, please do:
 
 ```bash
 npm install --save @colyseus/playground
 ```
 
-Import it, and bind it to your express app instance:
+Then, import and bind it to your express app instance:
 
 ```typescript
 // import the route
@@ -38,5 +40,6 @@ app.use("/playground", playground);
 This tool is built using React and TailwindCSS, making it easier for community
 members to contribute.
 
-Feel free to [submit your ideas on GitHub Discussions](https://github.com/orgs/colyseus/discussions/categories/ideas), and
-contribute with pull-requests!
+You are welcome to use the [feedback thread](https://github.com/orgs/colyseus/discussions/585) to share ideas for features and/or improvements.
+
+Pull-requests are also welcome!
