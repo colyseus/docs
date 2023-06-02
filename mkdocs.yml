@@ -303,8 +303,9 @@ nav:
     - Scalability: 'scalability.md'
 
   - Tools:
-    - Unit Testing: 'tools/unit-testing.md'
+    - Playground: 'tools/playground.md'
     - Monitoring Panel: 'tools/monitor.md'
+    - Unit Testing: 'tools/unit-testing.md'
     - Load Testing: 'tools/loadtest.md'
     # - Authentication + Social: 'tools/colyseus-social.md'
 
