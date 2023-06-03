@@ -1,7 +1,6 @@
 # Playground
 
-The client-side playground tool allows to easily create multiple client
-connections with the server, and inspect its communication with the server.
+The client-side playground allows to easily create connections with rooms and inspect how they communicate with the server.
 
 ![](https://cdn.jsdelivr.net/npm/@colyseus/playground@latest/screenshot.png)
 
@@ -15,9 +14,11 @@ connections with the server, and inspect its communication with the server.
 - Table of raw events from the framework
 - Allow the client to send messages by type (auto-detected)
 
+You can also interactively test how your room behaves during a dropped connection versus when a client leaves the room consensually.
+
 ## Installation
 
-The playground tool is installed by default on new projects created via `npm create colyseus-app`.
+The playground is installed by default on new projects created via `npm create colyseus-app`.
 
 To manually install on an existing project, please do:
 
