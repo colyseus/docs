@@ -844,7 +844,7 @@ onCreate() {
 每个会话的唯一 id.
 
 !!! Note
-    在客户端, 可以在 [`room` 实例中找到 `sessionId`](/client/room/#sessionid-string).
+    在客户端, 可以在 [`room` 实例中找到 `sessionId`](/client/#sessionid-string).
 
 ---
 

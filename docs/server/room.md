@@ -906,7 +906,7 @@ You operate on `client` instances from [`this.clients`](#clients-client), [`Room
 Unique id per session.
 
 !!! Note
-    In the client-side, you can find the [`sessionId` in the `room` instance](/client/room/#sessionid-string).
+    In the client-side, you can find the [`sessionId` in the `room` instance](/client/#sessionid-string).
 
 ---
 
