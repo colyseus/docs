@@ -277,7 +277,7 @@ nav:
       - Defold Engine: 'getting-started/defold-client.md'
       - Haxe: 'getting-started/haxe-client.md'
       - Cocos Creator: 'getting-started/cocos-creator.md'
-      - Construct3: 'getting-started/construct3-client.md'
+      - Construct3: 'getting-started/construct3-sdk.md'
       - Babylon.js Editor: "getting-started/babylonjs-editor.md"
 
   - Server API:
