@@ -5,6 +5,13 @@ initial settings.
 
 ```typescript
 import { logger } from "@colyseus/core";
+// ...
+
+logger.debug("this is debug");
+logger.log("this is a log");
+logger.info("this is information");
+logger.warn("this is a warning");
+logger.error("this is an error");
 ```
 
 By default, the `logger` instance is just an alias to `console`. You may want to
