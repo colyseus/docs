@@ -287,6 +287,7 @@ nav:
     - Timing events: 'server/timing-events.md'
     - Match-maker API: 'server/matchmaker.md'
     - Presence: 'server/presence.md'
+    - Logging: 'server/logging.md'
     - Transport: 'server/transport.md'
     - Dev Mode: 'devmode.md'
     - Graceful shutdown: 'server/graceful-shutdown.md'
