@@ -845,6 +845,12 @@ The state instance you provided to [`setState()`](#setstate-object).
 
 The array of connected clients. See [Client instance](#client).
 
+#### **Example:** Getting a client by its `sessionId`.
+
+```typescript
+const client = this.clients.getById("UEsBFUBhK");
+```
+
 ---
 
 ### `maxClients: number`
@@ -895,9 +901,6 @@ The `presence` instance. Check [Presence API](/server/presence) for more details
 The `client` instance from the server-side is responsible for the **transport** layer between the server and the client. It should not be confused with the [`Client` from the client-side SDK](/client/), as they have completely different purposes.
 
 You operate on `client` instances from [`this.clients`](#clients-client), [`Room#onJoin()`](#onjoin-client-options-auth), [`Room#onLeave()`](#onleave-client-consented) and [`Room#onMessage()`](#onmessage-type-callback).
-
-!!! Note
-    This is the raw WebSocket connection coming from the [`ws`](https://www.npmjs.com/package/ws) package. There are more methods available which aren't encouraged to use along with Colyseus.
 
 ### Properties
 
