@@ -289,6 +289,15 @@ gameServer
 !!! Warning
     It's completely discouraged to manipulate a room's state through these events. Use the [abstract methods](/server/room/#abstract-methods) in your room handler instead.
 
+---
+
+## `removeRoomType (roomName: string)`
+
+Revert a `.define()` call. Makes a `roomName` unavailable for matchmaking. This
+method is not recommended but may be helpful in some scenarios.
+
+---
+
 ## `simulateLatency (milliseconds: number)`
 
 This is a convenience method for simulating "lagged" clients during local development.
