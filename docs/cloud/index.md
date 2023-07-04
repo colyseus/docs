@@ -72,11 +72,6 @@ You will be redirected to your browser, where you will be asked to select which 
 
 This will generate a `.colyseus-cloud.json` file at the root of your project with credentials capable of deploying your application in the future. Keep this file safe!
 
-### Deploying to a different environment
-
-You may want to use a
-
-
 ---
 
 ## Customizing build steps
