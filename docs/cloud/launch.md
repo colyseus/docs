@@ -1,0 +1,1 @@
+TODO: tell about planning soft launch / global launch to test out infrastructure
