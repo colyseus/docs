@@ -147,7 +147,7 @@ Set key to hold the string value.
 **Example:** Setting a `"global-key"` to hold `"a string value"`.
 
 ``` typescript
-this.presence.setex("global-key", "a string value");
+this.presence.set("global-key", "a string value");
 ```
 
 ---
