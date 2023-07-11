@@ -3,7 +3,7 @@ icon: octicons/alert-16
 title: TypeScript compilation errors
 ---
 
-If you haven't created your Colyseus application via `npm create colyseus-app@latest`, make sure you have the following configurations in your `tsconfig.json`:
+If you haven't created your Colyseus application via `npm create colyseus-app@latest`, make sure your `tsconfig.json` is configured as follows:
 
 === ":octicons-file-code-16: `tsconfig.json`"
 
