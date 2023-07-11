@@ -1,7 +1,6 @@
 ---
 icon: material/cloud
-hide:
-  - navigation
+title: Overview
 ---
 
 # Welcome to Colyseus Cloud

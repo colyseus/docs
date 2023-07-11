@@ -354,5 +354,5 @@ nav:
 - FAQ: 'faq.md'
 
 - 'Colyseus Cloud':
-  - Home:
     - 'cloud/index.md'
+    - 'cloud/typescript-compilation-errors.md'
