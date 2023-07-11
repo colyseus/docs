@@ -57,7 +57,7 @@ This is not recommend as it will make your application more prone to runtime err
 
 ---
 
-## Complex monorepo setup
+## Monorepo setup (advanced)
 
 If you are using a monorepo setup, we recommend using the `pnpm` package manager instead of `npm`. (See [pnpm docs](https://pnpm.io/workspaces) for more information)
 
