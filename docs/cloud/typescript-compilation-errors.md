@@ -41,7 +41,7 @@ npm run build
 
 ## Disabling TypeScript strict mode (not recommended)
 
-This is not recommend as it will make your application more prone to runtime errors, but you can disable TypeScript strict mode by modifying the following configuration to your `tsconfig.json`:
+You can disable TypeScript strict mode by modifying the following configuration to your `tsconfig.json`. (This is not recommend as it will make your application more prone to runtime errors.)
 
 === ":octicons-file-code-16: `tsconfig.json`"
 
