@@ -34,6 +34,25 @@ The key important configurations the template provide are:
     listen(app);
     ```
 
+=== ":octicons-file-code-16: `src/app.config.ts`"
+
+    ```typescript
+    import config from "@colyseus/tools";
+    import { MyRoom } from "./rooms/MyRoom";
+
+    export default config({
+        initializeGameServer: (gameServer) => {
+            gameServer.define('my_room', MyRoom);
+        },
+        initializeExpress: (app) => {
+            // ...
+        },
+        beforeListen: () => {
+            // ...
+        }
+    });
+    ```
+
 === ":octicons-file-code-16: `ecosystem.config.js`"
 
     ```typescript hl_lines="6"
