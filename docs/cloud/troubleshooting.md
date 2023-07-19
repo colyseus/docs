@@ -98,8 +98,7 @@ Then, try to deploy again.
 **Possible solutions:**
 
 1. Move your server files to the git root path.
-2. From the Application's "Settings" page, update the "Root Directory" under
-   "Build settings":
+2. Alternatively, update the "Root Directory" from your Application's "Settings" page, under "Build settings":
 
 ![](images/troubleshoot-build-settings.png)
 
