@@ -356,3 +356,4 @@ nav:
 - 'Colyseus Cloud':
     - 'cloud/index.md'
     - 'cloud/typescript-compilation-errors.md'
+    - 'cloud/troubleshooting.md'
