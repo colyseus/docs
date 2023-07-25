@@ -44,7 +44,7 @@ Listens for a single property change.
 === "TypeScript"
 
     ``` typescript
-    state.listen("currentTurn", (currentValue, previousValue) => {
+    room.state.listen("currentTurn", (currentValue, previousValue) => {
         console.log(`currentTurn is now ${currentValue}`);
         console.log(`previous value was: ${previousValue}`);
     });
@@ -53,7 +53,7 @@ Listens for a single property change.
 === "C#"
 
     ``` csharp
-    state.OnCurrentTurnChange((currentValue, previousValue) => {
+    room.state.OnCurrentTurnChange((currentValue, previousValue) => {
         Debug.Log(currentValue);
         Debug.Log(previousValue);
     })
@@ -62,7 +62,7 @@ Listens for a single property change.
 === "Lua"
 
     ``` lua
-    state:listen("currentTurn", function (current_value, previous_value)
+    room.state:listen("currentTurn", function (current_value, previous_value)
         pprint(current_value);
         pprint(previous_value);
     end)
@@ -71,7 +71,7 @@ Listens for a single property change.
 === "Haxe"
 
     ``` haxe
-    state.listen("currentTurn", (currentValue, previousValue) => {
+    room.state.listen("currentTurn", (currentValue, previousValue) => {
         trace(currentValue);
         trace(previousValue);
     });
@@ -80,7 +80,7 @@ Listens for a single property change.
 The `.listen()` method returns a function that, when called, removes the attached callback:
 
 ``` typescript
-const unbindCallback = state.listen("currentTurn", (currentValue, previousValue) => {
+const unbindCallback = room.state.listen("currentTurn", (currentValue, previousValue) => {
     // ...
 });
 
