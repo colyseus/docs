@@ -104,6 +104,54 @@ Then, try to deploy again.
 
 ---
 
+## Missing, or bad `ecosystem.config.js` file
+
+**Symptom:**
+
+=== ":octicons-x-16: `Process list empty, cannot save empty list`"
+
+    ``` hl_lines="7"
+    Error: Process list empty, cannot save empty list
+        at fin (/usr/lib/node_modules/pm2/lib/API/Startup.js:448:23)
+        at ex (/usr/lib/node_modules/pm2/lib/API/Startup.js:492:30)
+        at /usr/lib/node_modules/pm2/lib/API/Startup.js:500:9
+        at /usr/lib/node_modules/pm2/node_modules/pm2-axon-rpc/lib/client.js:45:10
+        at Parser.<anonymous> (/usr/lib/node_modules/pm2/node_modules/pm2-axon/lib/sockets/req.js:67:8)
+        at Parser.emit (node:events:514:28)
+        at Parser._write (/usr/lib/node_modules/pm2/node_modules/amp/lib/stream.js:91:16)
+        at writeOrBuffer (node:internal/streams/writable:392:12)
+        at _write (node:internal/streams/writable:333:10)
+        at Writable.write (node:internal/streams/writable:337:10)
+    ```
+
+**Solution:**
+
+Make sure you have an `ecosystem.config.js` (or `ecosystem.config.cjs`) file at the root of the project - with the `"script"` pointing to your application's entrypoint.
+
+
+=== ":octicons-file-code-16: `ecosystem.config.js`"
+
+    ```typescript hl_lines="6"
+    const os = require('os');
+
+    module.exports = {
+        apps : [{
+            name: "colyseus-app",
+            script: 'build/index.js',
+            time: true,
+            watch: false,
+            instances: os.cpus().length,
+            exec_mode: 'fork',
+            wait_ready: true,
+            env_production: {
+                NODE_ENV: 'production'
+            }
+        }],
+    };
+    ```
+
+---
+
 ## TypeScript compilation errors
 
 If you are seeing TypeScript compilation errors such as the example below, please read the
