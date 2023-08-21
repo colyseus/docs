@@ -110,7 +110,7 @@ Then, try to deploy again.
 
 === ":octicons-x-16: `Process list empty, cannot save empty list`"
 
-    ``` hl_lines="7"
+    ``` hl_lines="1"
     Error: Process list empty, cannot save empty list
         at fin (/usr/lib/node_modules/pm2/lib/API/Startup.js:448:23)
         at ex (/usr/lib/node_modules/pm2/lib/API/Startup.js:492:30)
