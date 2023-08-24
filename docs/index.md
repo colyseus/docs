@@ -31,11 +31,17 @@ Before we start, let's make sure you have the necessary system requirements inst
 
 Use the command below to set up a new Colyseus server project:
 
-=== ":octicons-terminal-16: Terminal"
+=== ":octicons-terminal-16: Terminal: Node.js"
 
-``` bash
-npm create colyseus-app@latest ./my-first-game-server
-```
+    ``` bash
+    npm create colyseus-app@latest ./my-server
+    ```
+
+=== ":octicons-terminal-16: Terminal: Bun"
+
+    ``` bash
+    bunx create-colyseus-app@latest ./my-server
+    ```
 
 ---
 
