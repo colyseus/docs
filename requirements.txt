@@ -1,10 +1,10 @@
 # Requirements for core
-jinja2>=3.0
-markdown<3.4,>=3.2.1
-mkdocs>=1.4.2
-mkdocs-material-extensions>=1.1
-pygments>=2.14
-pymdown-extensions>=9.9.1
+jinja2~=3.1
+markdown~=3.4
+mkdocs~=1.5
+mkdocs-material-extensions~=1.1
+pygments~=2.16
+pymdown-extensions~=10.3
 
 # Plugins
 mkdocs-git-revision-date-localized-plugin>=1.2.0
@@ -14,3 +14,4 @@ mkdocs-git-committers-plugin-2>=1.1.2
 colorama>=0.4
 regex>=2022.4.24
 requests>=2.26
+lxml~=4.9.2
