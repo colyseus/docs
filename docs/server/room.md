@@ -107,7 +107,7 @@ The `onAuth()` method will be executed before `onJoin()`. It can be used to veri
 If left non-implemented, it always returns `true` - allowing any client to connect.
 
 !!! Tip "Getting player's IP address"
-    You can use the `request` variable to retrieve the user's IP address, http headers, and more. E.g.: `request.headers['x-forwarded-for'] || request.connection.remoteAddress`
+    You can use the `request` variable to retrieve the user's IP address, http headers, and more. E.g.: `request.headers['x-forwarded-for'] || request.socket.remoteAddress`
 
 **Implementations examples**
 
