@@ -9,7 +9,7 @@ The Colyseus SDK for Cocos Creator works in the same way as the [JavaScript SDK]
 
 ## 1. Install the extension
 
-- [Open the Cocos Store](https://store.cocos.com/app/en/detail/2937/) (Menu: "Extension" &raquo; "Store")
+- [Open the Cocos Store](https://store.cocos.com/app/en/detail/5086) (Menu: "Extension" &raquo; "Store")
 - Search for "Colyseus SDK"
 - Download the extension
 - Decompress the zip file to <path_to_your_project>/extensions/
