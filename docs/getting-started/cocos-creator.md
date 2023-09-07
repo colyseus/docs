@@ -108,8 +108,8 @@ Because we're using the `@property` decorator above, you can edit the `hostname`
 
 ## Alternative: How to manually add the `colyseus.js` file into your project (without the extension)
 
-- [Download the latest `colyseus-js-client.zip` release from GitHub](https://github.com/colyseus/colyseus.js/releases).
-- Unzip the `colyseus-js-client.zip` file into the `assets/` folder.
+- [Download the latest `colyseus-sdk.zip` release from GitHub](https://github.com/colyseus/colyseus.js/releases).
+- Unzip the `colyseus-sdk.zip` file into the `assets/` folder.
 - Move both `colyseus-cocos-creator.js` and `colyseus.d.ts` files into your Cocos Creator project's `scripts` folder.
 - Click on the `colyseus-cocos-creator.js` file from the Assets panel, and enable to "Import As Plugin" (see image below)
 - **TypeScript**: require it using `import Colyseus from "./colyseus-cocos-creator.js";`
