@@ -6,10 +6,11 @@ Each Transport has its own set of options for customization.
 
 - [Default WebSocket Transport (`ws`)](#default-websocket-transport-via-ws)
 - [Native C++ WebSocket Transport (`uWebSockets.js`)](#native-c-websocket-transport-via-uwebsocketsjs)
+- [Bun WebSockets](#bun-websockets)
 
 ---
 
-##  Default WebSocket Transport (via `ws`)
+## Default WebSocket Transport (via `ws`)
 
 The default WebSocket transport uses the [`websockets/ws`](https://github.com/websockets/ws) implementation.
 
@@ -329,3 +330,61 @@ npm install --save uwebsockets-express
     });
     ```
 
+---
+
+## Bun WebSockets
+
+Bun support on Colyseus is still experimental. Please report any issues you may find.
+
+**Installation**
+
+``` bash
+bun add @colyseus/bun-websockets
+```
+
+=== "app.config.ts"
+
+    ``` typescript
+    import config from "@colyseus/tools";
+    import { BunWebSockets } from "@colyseus/bun-websockets"
+
+    export default config({
+      // ...
+      initializeTransport: function() {
+        return new BunWebSockets({
+            /* Bun.serve options */
+        });
+      },
+
+      //
+      // BunWebSockets comes with Express compatibility layer.
+      //
+      initializeExpress: (app) => {
+        // register routes
+        app.get("/hello", (req, res) => {
+          res.json({ hello: "world!" });
+        });
+      },
+      // ...
+    })
+    ```
+
+=== "Server constructor"
+
+    ``` typescript
+    import { Server } from "@colyseus/core";
+    import { BunWebSockets } from "@colyseus/bun-websockets"
+
+    const gameServer = new Server({
+        transport: new BunWebSockets({
+            /* Bun.serve options */
+        })
+    })
+
+    const app = gameServer.transport['expressApp'];
+
+    // register routes
+    app.get("/hello", (req, res) => {
+        res.json({ hello: "world!" });
+    });
+    ```

@@ -31,18 +31,32 @@ Before we start, let's make sure you have the necessary system requirements inst
 
 Use the command below to set up a new Colyseus server project:
 
-<!-- === ":octicons-terminal-16: Terminal: Node.js" -->
-=== ":octicons-terminal-16: Terminal"
+=== ":octicons-terminal-16: Terminal: Node.js"
 
     ``` bash
+    # Create a new Colyseus project
     npm create colyseus-app@latest ./my-server
+
+    # Enter the project directory
+    cd my-server
+
+    # Run the server
+    npm start
     ```
 
-<!-- === ":octicons-terminal-16: Terminal: Bun" -->
-<!--  -->
-<!--     ``` bash -->
-<!--     bunx create-colyseus-app@latest ./my-server -->
-<!--     ``` -->
+=== ":octicons-terminal-16: Terminal: Bun"
+
+    ``` bash
+    # Create a new Colyseus project
+    bunx create-colyseus-app@latest ./my-server
+
+    # Enter the project directory
+    cd my-server
+
+    # Install Bun transport & Run the server
+    bun add @colyseus/bun-websockets
+    bun run src/index.ts
+    ```
 
 ---
 
