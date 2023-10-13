@@ -9,7 +9,6 @@ latest state patches sent by the server were received and applied on the client.
     When using statically typed languages, you need to generate the client-side schema files based on your TypeScript schema definitions. [See generating schema on the client-side](#client-side-schema-generation).
 
 ### Callbacks
-<img width="576" alt="image" src="https://github.com/colyseus/docs/assets/1211779/89a66dca-3ea9-4552-9bec-06656bd2330c">
 
 When applying state changes coming from the server, the client-side is going to trigger callbacks on local instances according to the change being applied.
 
