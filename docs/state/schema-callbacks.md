@@ -1,3 +1,4 @@
+<img width="576" alt="image" src="https://github.com/colyseus/docs/assets/1211779/d01f7684-0dd9-4d47-b970-9bae7061add4">
 # [State Sync](/state/) &raquo; Client-side Callbacks
 
 The schema callbacks are triggered only in the client-side, right after the
@@ -145,8 +146,8 @@ The `onAdd` callback is called with the new instance and its key on holder objec
 
         // detecting changes on object properties
         player.listen("field_name", (value, previousValue) => {
-            console.log(change.value);
-            console.log(change.previousValue);
+            console.log(value);
+            console.log(previousValue);
         });
     });
     ```
