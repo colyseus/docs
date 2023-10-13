@@ -1,4 +1,3 @@
-<img width="576" alt="image" src="https://github.com/colyseus/docs/assets/1211779/d01f7684-0dd9-4d47-b970-9bae7061add4">
 # [State Sync](/state/) &raquo; Client-side Callbacks
 
 The schema callbacks are triggered only in the client-side, right after the
