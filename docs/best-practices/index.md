@@ -14,7 +14,7 @@ This section provides general recommendations and best practices to keep your co
 
 ## Unit Testing
 
-See how to [Unit Test](tools/unit-testing/) your application. Applications created via `npm init colyseus-app` already start with a small testing boilerplate you can modify to meet your needs.
+See how to [Unit Test](/tools/unit-testing/) your application. Applications created via `npm init colyseus-app` already start with a small testing boilerplate you can modify to meet your needs.
 
 ## Design Patterns
 
