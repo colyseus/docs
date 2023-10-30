@@ -17,6 +17,13 @@ The default "file descriptor limit" (amount of open connections you can have) of
 
 This error means that the client was not able to establish connection with the room in a timely fashion. Usually in production environment you may see this error happening from time to time. [You may increase limit](/server/room/#setseatreservationtime-seconds).
 
+**This error may appear in a mis-configuration scenarios, such as:**
+
+- Mixed package versions between `0.14.x` and `0.15.x` in your `package.json`.
+  Make sure you only have packages either under `0.15.x` (if you are using version 0.15),
+  OR `0.14.x` (if you are using version 0.14)
+- If using multiple Node.js processes, your [scalability configuration](/scalability/) may not be correct.
+
 ### Why is my room state not synchronizing with the client?
 
 If you are using TypeScript to target ES2022/ESNext, you need to provide `"useDefineForClassFields": false` on your tsconfig to make sure `@type()` decorators are defining property accessors property.
