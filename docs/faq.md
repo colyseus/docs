@@ -13,16 +13,17 @@ The maximum number of concurrent users (CCU) a Colyseus server can handle will v
 
 The default "file descriptor limit" (amount of open connections you can have) of Linux servers is around 1024 - this value can be increased at your own risk. So, you can safely assume the cheapest cloud server is capable of holding 1024 concurrent connections. There are reports of people managing to have up to [600k open WebSocket connections](https://blog.jayway.com/2015/04/13/600k-concurrent-websocket-connections-on-aws-using-node-js/), even though they're idle connections, without transferring data - it proves you can potentially handle more than 1024 concurrent connections by fine tuning the server specs and configuration.
 
-### What does the `"Error: seat reservation expired"` mean??
+### I'm getting `"Error: seat reservation expired"`, what does it mean?
 
-This error means that the client was not able to establish connection with the room in a timely fashion. Usually in production environment you may see this error happening from time to time. [You may increase limit](/server/room/#setseatreservationtime-seconds).
+This error originally means that the client was not able to effectively connect with the server in time.
 
-**This error may appear in a mis-configuration scenarios, such as:**
-
-- Mixed package versions between `0.14.x` and `0.15.x` in your `package.json`.
-  Make sure you only have packages either under `0.15.x` (if you are using version 0.15),
-  OR `0.14.x` (if you are using version 0.14)
-- If using multiple Node.js processes, your [scalability configuration](/scalability/) may not be correct.
+This error may appear in a few scenarios:
+- Server is under heavy load and by the time it can respond to a WebSocket connection request, the "seat reservation" code has already expired. [You may increase the seat reservation time limit](/server/room/#setseatreservationtime-seconds) to remedy this.
+- You have mixed Colyseus package versions in your `package.json`. (between `0.14.x` and `0.15.x`, for example)
+  Make sure to only use packages under `0.15.x` (if you are using version 0.15),
+  OR `0.14.x` (if you are using version 0.14) - the exact patch version does not
+  matter, but major and minor matters.
+- When using multiple Node.js processes, your [scalability configuration](/scalability/) may not be correct. Make sure to follow scalability instructions.
 
 ### Why is my room state not synchronizing with the client?
 
