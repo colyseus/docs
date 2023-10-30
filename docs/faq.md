@@ -15,9 +15,10 @@ The default "file descriptor limit" (amount of open connections you can have) of
 
 ### I'm getting `"Error: seat reservation expired"`, what does it mean?
 
-This error originally means that the client was not able to effectively connect with the server in time.
+This error originally means that the client was not able to effectively connect with the server's room in time.
 
-This error may appear in a few scenarios:
+**This error may appear in a few scenarios:**
+
 - Server is under heavy load and by the time it can respond to a WebSocket connection request, the "seat reservation" code has already expired. [You may increase the seat reservation time limit](/server/room/#setseatreservationtime-seconds) to remedy this.
 - You have mixed Colyseus package versions in your `package.json`. (between `0.14.x` and `0.15.x`, for example)
   Make sure to only use packages under `0.15.x` (if you are using version 0.15),
