@@ -73,6 +73,7 @@ The [`create-colyseus-app` templates](https://github.com/colyseus/create-colyseu
 A pre-configured Colyseus server is available on [Vultr Marketplace](https://www.vultr.com/marketplace/apps/colyseus/?ref=8013231). It's a great option if you want to self-host your Colyseus server.
 
 This server is configured with:
+
 - Node.js LTS
 - PM2
 - Nginx
