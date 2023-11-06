@@ -1,14 +1,15 @@
 - [Colyseus Cloud](#colyseus-cloud)
-- [Deploying on Nginx](#nginx)
-- [Deploying on Apache](#apache)
+- [Self-host on Vultr](#self)
+- [Nginx configuration](#nginx)
+- [Apache configuration](#apache)
 - [Docker](#docker)
-- [Deploying on Heroku](#heroku)
+- [Heroku](#heroku)
 
 Deploying Colyseus for a single-process environment is no different than deploying a regular Node.js application ([see a good article here](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-20-04)).
 
 However, deploying Colyseus for a multi-process environment requires some [extra steps](/scalability/).
 
-## Colyseus Cloud
+## Colyseus Cloud - Managed Hosting
 
 The easiest way to deploy your Colyseus server is to use the [Colyseus Cloud](https://cloud.colyseus.io). It should take less than 15 minutes to get your server up and ready for production.
 
@@ -67,23 +68,23 @@ The [`create-colyseus-app` templates](https://github.com/colyseus/create-colyseu
 
 ---
 
-## Nginx
+## Self-host on [Vultr](https://www.vultr.com/?ref=8013231)
+
+A pre-configured Colyseus server is available on [Vultr Marketplace](https://www.vultr.com/marketplace/apps/colyseus/?ref=8013231). It's a great option if you want to self-host your Colyseus server.
+
+This server is configured with:
+- Node.js LTS
+- PM2
+- Nginx
+- FREE `colyseus.dev` subdomain with SSL (Let's Encrypt)
+
+Follow the instructions at Vultr Marketplace to get your server up and running.
+
+---
+
+## Nginx configuration
 
 When self-hosting, it is recommended to use `nginx` and `pm2` in your production environment.
-
-### PM2
-
-Install `pm2` in your environment.
-
-``` bash
-npm install -g pm2
-```
-
-Then start your server using it:
-
-``` bash
-pm2 start your-server.js
-```
 
 ### Nginx configuration
 
@@ -133,7 +134,7 @@ server {
 
 ---
 
-## Apache
+## Apache configuration
 
 Here's how to use Apache as a proxy to your Node.js Colyseus app. (Thanks [tomkleine](https://github.com/tomkleine)!)
 
@@ -187,65 +188,6 @@ Virtual host configuration:
 
 </VirtualHost>
 ```
-
-<!--
-
-## greenlock-express
-
-Greenlock is a great tool if you want to quickly have SSL configured on your server, without the need to configure a reverse-proxy.
-
-When using [`greenlock-express`](https://www.npmjs.com/package/greenlock-express), you should **not** have any reverse-proxy configured behind it, such as [Nginx](#nginx-recommended) or [Apache](#apache).
-
-```
-npm install --save greenlock-express
-```
-
-Please follow [greenlock-express's README section first](https://www.npmjs.com/package/greenlock-express#1-create-your-project).
-
-Here's the recommended way to handle both development and production environments:
-
-```typescript
-import http from "http";
-import express from "express";
-import { Server } from "colyseus";
-
-function setup(app: express.Application, server: http.Server) {
-  const gameServer = new Server({ server });
-
-  // TODO: configure `app` and `gameServer` accourding to your needs.
-  // gameServer.define("room", YourRoom);
-
-  return app;
-}
-
-if (process.env.NODE_ENV === "production") {
-  require('greenlock-express')
-    .init(function () {
-      return {
-        greenlock: require('./greenlock'),
-        cluster: false
-      };
-    })
-    .ready(function (glx) {
-      const app = express();
-
-      // Serves on 80 and 443
-      // Get's SSL certificates magically!
-      glx.serveApp(setup(app, glx.httpsServer(undefined, app)));
-    });
-
-} else {
-  // development port
-  const PORT = process.env.PORT || 2567;
-
-  const app = express();
-  const server = http.createServer(app);
-
-  setup(app, server);
-  server.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`));
-}
-```
--->
 
 ---
 
@@ -329,9 +271,9 @@ More informations:
 
 Heroku can be used for prototyping. You can deploy the [colyseus-examples](https://github.com/colyseus/colyseus-examples) project on it by hitting this button:
 
+Keep in mind that scaling to multiple processes and/or nodes on Heroku is not supported out of the box, therefore we don't recommend using it in a production environment.
+
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/colyseus/colyseus-examples)
 
-Scaling Colyseus on Heroku is not practical. We do not recommend using Heroku with Colyseus in production.
-
-**Important:** Make sure to set the environment variable `NPM_CONFIG_PRODUCTION=false` in order to use dev-dependencies in your deployment, such as `ts-node`, `ts-node-dev`, etc.
+**Important:** Make sure to set the environment variable `NPM_CONFIG_PRODUCTION=false` in order to use dev-dependencies in your deployment.
 
