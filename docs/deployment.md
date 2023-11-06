@@ -1,5 +1,5 @@
 - [Colyseus Cloud](#colyseus-cloud)
-- [Self-host on Vultr](#self)
+- [Self-host on Vultr](#self-host-on-vultr)
 - [Nginx configuration](#nginx)
 - [Apache configuration](#apache)
 - [Docker](#docker)
