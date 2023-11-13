@@ -1,5 +1,21 @@
-- [Inspector (`--inspect` flag)](#inspector)
 - [Debug messages](#debug-messages)
+- [Inspector (`--inspect` flag)](#inspector)
+
+## Debug messages
+
+To enable all debug logs, run your server using the `DEBUG=colyseus:*` environment variable:
+
+``` bash
+DEBUG=colyseus:* npm start
+```
+
+| Name | Description |
+|------|-------------|
+| `colyseus:errors` | Whenever unexpected (or expected, internally) errors happens on the server-side. |
+| `colyseus:matchmaking` | Whenever a room is spanwed or disposed. |
+| `colyseus:message` | Incoming and outgoing room messages |
+| `colyseus:patch` | The number of bytes and interval between patches broadcasted to all clients. |
+| `colyseus:connection` | Incoming and outgoing connections |
 
 ## Inspector
 
@@ -38,18 +54,3 @@ ssh -L 9229:localhost:9229 root@remote.example.com
 
 Your production server should now appear on [`chrome://inspect`](`chrome://inspect`).
 
-## Debug messages
-
-To enable all debug logs, run your server using the `DEBUG=colyseus:*` environment variable:
-
-``` bash
-DEBUG=colyseus:* npm start
-```
-
-- `colyseus:errors`: Whenever unexpected (or expected, internally) errors happens on the server-side.
-- `colyseus:matchmaking`: Whenever a room is spanwed or disposed.
-- `colyseus:message`: Incoming and outgoing room messages
-- `colyseus:patch`: The number of bytes and interval between patches broadcasted to all clients.
-- `colyseus:connection`: Incoming and outgoing connections
-<!-- - `colyseus:driver`:  -->
-<!-- - `colyseus:presence`:  -->
