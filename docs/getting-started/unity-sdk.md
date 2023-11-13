@@ -191,6 +191,11 @@ room.State.players.OnRemove((key, player) =>
 });
 ```
 
+## Testing locally
+
+The [ParrelSync](https://github.com/VeriorPies/ParrelSync) is a tool that has been proven useful for quickly testing
+multiplayer from Unity's editor, without the need to build the application.
+
 ## Debugging
 
 If you set a breakpoint in your application while the WebSocket connection is open, the connection will be closed automatically after 3 seconds due to inactivity. To prevent the WebSocket connection from dropping, use `pingInterval: 0` during development:
