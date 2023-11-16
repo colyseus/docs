@@ -767,21 +767,22 @@ Here's how the `@filter()` signature looks like:
 === "TypeScript"
 
     ``` typescript
+    import { Schema, type, filter } from '@colyseus/schema';
+    import { Client } from '@colyseus/core';
+    
     class State extends Schema {
-        @filter(function(client, value, root) {
-            // client is:
-            //
-            // the current client that's going to receive this data. you may use its
-            // client.sessionId, or other information to decide whether this value is
-            // going to be synched or not.
-
-            // value is:
-            // the value of the field @filter() is being applied to
-
-            // root is:
-            // the root instance of your room state. you may use it to access other
-            // structures in the process of decision whether this value is going to be
-            // synched or not.
+        /**
+         * DO NOT USE ARROW FUNCTION INSIDE `@filter`
+         * (IT WILL FORCE A DIFFERENT `this` SCOPE)
+         */
+        @filter(function(
+            this: State, // the instance of this class (instance of `State`)
+            client: Client, // the Room's `client` instance which this data is going to be filtered to
+            value: string, // the value of the field to be filtered.
+            root: Schema // the root state Schema instance
+        ) {
+            // always returns a boolean
+            return true;
         })
         @type("string") field: string;
     }
@@ -822,24 +823,23 @@ The `@filterChildren()` property decorator can be used to filter out items insid
 === "TypeScript"
 
     ``` typescript
+    import { Schema, type, filterChildren } from '@colyseus/schema';
+    import { Client } from '@colyseus/core';
+    
     class State extends Schema {
-        @filterChildren(function(client, key, value, root) {
-            // client is:
-            //
-            // the current client that's going to receive this data. you may use its
-            // client.sessionId, or other information to decide whether this value is
-            // going to be synched or not.
-
-            // key is:
-            // the key of the current value inside the structure
-
-            // value is:
-            // the current value inside the structure
-
-            // root is:
-            // the root instance of your room state. you may use it to access other
-            // structures in the process of decision whether this value is going to be
-            // synched or not.
+        /**
+         * DO NOT USE ARROW FUNCTION INSIDE `@filterChildren`
+         * (IT WILL FORCE A DIFFERENT `this` SCOPE)
+         */
+        @filterChildren(function(
+            this: State, // the instance of this class (instance of `State`)
+            client: Client, // the Room's `client` instance which this data is going to be filtered to
+            key: string, // the key of the current value inside the structure
+            value: Card, // the value of the field to be filtered.
+            root: Schema // the root state Schema instance
+        ) {
+            // always returns a boolean
+            return true;
         })
         @type([Cards]) cards = new ArraySchema<Card>();
     }
@@ -875,7 +875,9 @@ The `@filterChildren()` property decorator can be used to filter out items insid
     })(State.prototype, "cards");
     ```
 
-**Example:** In a card game, the relevant data of each card should be available only for the owner of the card, or on certain conditions (e.g. card has been discarded)
+### Example
+
+In a card game, the relevant data of each card should be available only for the owner of the card, or on certain conditions (e.g. card has been discarded)
 
 See `@filter()` callback signature:
 
@@ -888,10 +890,6 @@ See `@filter()` callback signature:
         @type("string") owner: string; // contains the sessionId of Card owner
         @type("boolean") discarded: boolean = false;
 
-        /**
-         * DO NOT USE ARROW FUNCTION INSIDE `@filter`
-         * (IT WILL FORCE A DIFFERENT `this` SCOPE)
-         */
         @filter(function(
             this: Card, // the instance of the class `@filter` has been defined (instance of `Card`)
             client: Client, // the Room's `client` instance which this data is going to be filtered to
