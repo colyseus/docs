@@ -32,6 +32,9 @@ The callbacks are triggered based on instance reference. Make sure to attach the
 
 ### On `Schema` instances
 
+!!! Warning "TypeScript"
+    When your `tsconfig.json` targets `ES2022` or higher (e.g. `ESNext`), the `@type()` schema decorators may fail to work because TS moves property declarations to the constructor. Set `"useDefineForClassFields": false` in your `tsconfig.json` to fix this. See [#510](https://github.com/colyseus/colyseus/issues/510#issuecomment-1507828422) for the discussion.
+
 #### `.listen(prop, callback)`
 
 Listens for a single property change.

@@ -32,7 +32,7 @@
     ```
 
 !!! Tip "_"What is this `@type()` keyword? I've never seen this before!"_"
-    The `@type()` you see heavily used on this page is an upcoming JavaScript feature that is yet to be formally established by TC39. `type` is actually just a function imported from `@colyseus/schema` module. By calling `type` with the `@` prefix at the property level means we're calling it as a _property decorator_. [See the decorators proposal here](https://github.com/tc39/proposal-decorators).
+    The `@type()` you see heavily used on this page is an upcoming JavaScript feature that is yet to be formally established by TC39. `type` is actually just a function imported from `@colyseus/schema` module. By calling `type` with the `@` prefix at the property level means we're calling it as a _property decorator_. [See the decorators proposal here](https://github.com/tc39/proposal-decorators). Make sure your `tsconfig.json` includes `"experimentalDecorators": true`, and `"useDefineForClassFields": false` when using target `ES2022` or higher (see [#510](https://github.com/colyseus/colyseus/issues/510#issuecomment-1507828422) for discussion).
 
 !!! Tip "Not using TypeScript yet?"
     It is highly recommended that you use TypeScript to have a better experience defining the state schema structures, and for your development experience in general. TypeScript supports the "experimental decorators" that is heavily used on this section.
