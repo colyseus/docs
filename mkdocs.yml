@@ -284,6 +284,7 @@ nav:
     # - 'server/index.md'
     - Server: 'server/api.md'
     - Room: 'server/room.md'
+    - Authentication: 'authentication/index.md'
     - Timing events: 'server/timing-events.md'
     - Match-maker API: 'server/matchmaker.md'
     - Custom HTTP Routes: 'server/custom-http-routes.md'
