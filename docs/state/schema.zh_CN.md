@@ -1223,6 +1223,6 @@ class Inventory extends Schema {
 }
 
 const inventory = new Inventory();
-inventory.set("left", new Weapon());
-inventory.set("right", new Shield());
+inventory.items.set("left", new Weapon());
+inventory.items.set("right", new Shield());
 ```

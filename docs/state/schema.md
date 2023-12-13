@@ -769,7 +769,7 @@ Here's how the `@filter()` signature looks like:
     ``` typescript
     import { Schema, type, filter } from '@colyseus/schema';
     import { Client } from '@colyseus/core';
-    
+
     class State extends Schema {
         /**
          * DO NOT USE ARROW FUNCTION INSIDE `@filter`
@@ -825,7 +825,7 @@ The `@filterChildren()` property decorator can be used to filter out items insid
     ``` typescript
     import { Schema, type, filterChildren } from '@colyseus/schema';
     import { Client } from '@colyseus/core';
-    
+
     class State extends Schema {
         /**
          * DO NOT USE ARROW FUNCTION INSIDE `@filterChildren`
@@ -988,8 +988,8 @@ class Inventory extends Schema {
 }
 
 const inventory = new Inventory();
-inventory.set("left", new Weapon());
-inventory.set("right", new Shield());
+inventory.items.set("left", new Weapon());
+inventory.items.set("right", new Shield());
 ```
 
 ---
