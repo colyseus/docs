@@ -186,6 +186,9 @@ The `onAdd` callback is called with the new instance and its key on holder objec
     end)
     ```
 
+!!! Note "Avoiding doubled-up callbacks"
+    You may notice that `onAdd` is called multiple times when an entry is inserted. This is because the "add" callback is called immediately by default for existing items in the collection. When the collection is nested within another schema instance, this can cause doubling. To fix this, set the second argument of `onAdd` to false (e.g. `.onAdd(callback, false)`). See [#147](https://github.com/colyseus/schema/issues/147#issuecomment-1538684941).
+
 ---
 
 #### `onRemove (item, key)`
