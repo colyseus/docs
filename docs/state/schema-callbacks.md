@@ -134,9 +134,14 @@ You can register the `onChange` to track whenever a `Schema` had its properties 
 
 ### On collections of items
 
-#### `onAdd (item, key)`
+#### `onAdd (fn (item, key), triggerAll = true)`
 
-The `onAdd` callback is called with the new instance and its key on holder object as argument.
+Register the `onAdd` callback is called whenever a new instance is added to a collection.
+
+By default, the callback is called immediately for existing items in the collection.
+
+!!! Note "Avoiding doubled-up callbacks"
+    You may notice that `onAdd` is called multiple times when an entry is inserted. This is because the "add" callback is called immediately by default for existing items in the collection. When the collection is nested within another schema instance, this can cause doubling. To fix this, set the second argument of `onAdd` to false (e.g. `.onAdd(callback, false)`). See [#147](https://github.com/colyseus/schema/issues/147#issuecomment-1538684941).
 
 === "JavaScript"
 
@@ -185,9 +190,6 @@ The `onAdd` callback is called with the new instance and its key on holder objec
         end)
     end)
     ```
-
-!!! Note "Avoiding doubled-up callbacks"
-    You may notice that `onAdd` is called multiple times when an entry is inserted. This is because the "add" callback is called immediately by default for existing items in the collection. When the collection is nested within another schema instance, this can cause doubling. To fix this, set the second argument of `onAdd` to false (e.g. `.onAdd(callback, false)`). See [#147](https://github.com/colyseus/schema/issues/147#issuecomment-1538684941).
 
 ---
 
