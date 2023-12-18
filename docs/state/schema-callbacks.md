@@ -140,9 +140,6 @@ Register the `onAdd` callback is called whenever a new instance is added to a co
 
 By default, the callback is called immediately for existing items in the collection.
 
-!!! Note "Avoiding doubled-up callbacks"
-    You may notice that `onAdd` is called multiple times when an entry is inserted. This is because the "add" callback is called immediately by default for existing items in the collection. When the collection is nested within another schema instance, this can cause doubling. To fix this, set the second argument of `onAdd` to false (e.g. `.onAdd(callback, false)`). See [#147](https://github.com/colyseus/schema/issues/147#issuecomment-1538684941).
-
 === "JavaScript"
 
     ``` typescript
@@ -190,6 +187,9 @@ By default, the callback is called immediately for existing items in the collect
         end)
     end)
     ```
+
+!!! Note "Avoiding doubled-up callbacks"
+    You may notice that `onAdd` is called multiple times when an entry is inserted. This is because the "add" callback is called immediately by default for existing items in the collection. When the collection is nested within another schema instance, this can cause doubling. To fix this, set the second argument of `onAdd` to false (e.g. `.onAdd(callback, false)`). See [#147](https://github.com/colyseus/schema/issues/147#issuecomment-1538684941).
 
 ---
 
