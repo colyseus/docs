@@ -1,13 +1,19 @@
 # Authentication
 
-## The `onAuth` method
+To authenticate clients, you can bring your own token validation logic by implementing the `onAuth()` method in your room.
 
-#### `static onAuth (client, options, request)` (preferred)
+- [Room `onAuth` method]()
+- [The `@colyseus/auth` module](/authentication/module/)
 
-#### `onAuth (client, options, request)` (soon to be deprecated)
+## Room `onAuth` method
+
+#### `static onAuth (token, request)` _- Preferred_
+
+
+#### `onAuth (client, options, request)` _- Soon to be deprecated_
 
 !!! Warning "Deprecation Notice"
-    The `onAuth(client, options, request)` as instance method will be deprecated in favor of the static `static onAuth(token, request)` method in the next major release (v1.0).
+    The `onAuth(client, options, request)` as instance method will be deprecated in future versions, please use its static alternative: `static onAuth(token, request)`
 
 The `onAuth()` method will be executed before `onJoin()`. It can be used to verify authenticity of a client joining the room.
 
@@ -179,9 +185,3 @@ From the client-side, you may call the matchmaking method (`join`, `joinOrCreate
 
 !!! Note "These APIs are currently in beta."
     Only the JavaScript SDK implements these APIs.
-
-## `@colyseus/auth` Overview
-
-###
-
-### OAuth providers (Discord, Google, X/Twitter, etc)
