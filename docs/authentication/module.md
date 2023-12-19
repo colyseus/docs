@@ -28,6 +28,34 @@ npm install --save @colyseus/auth
 
 This module is highly configurable, and you may decide to leave some features disabled.
 
+---
+
+### Environment Secrets and Security Concerns
+
+It is required to provide the following environment secrets:
+
+- `AUTH_SALT` - used to hash the user's password (`scrypt` algorithm by default)
+- `JWT_SECRET` - used to sign the JWT token
+- `SESSION_SECRET` - used to sign the session cookie (only used during OAuth)
+
+!!! Note "How to generate a random string"
+    You may use the following command to generate a random string `openssl rand -base64 32`. Alternatively, you can use [an online strong password generator](https://1password.com/password-generator/).
+
+#### Keep your secrets safe
+
+The exposure of these secrets may lead to security breaches on your application. Make sure to never expose them publicly, and limit the number of people in your team who have access to them.
+
+If any of these secrets are compromised, you must rotate them immediately. The implications of rotating them are:
+
+- Rotating `AUTH_SALT` will invalidate all user's passwords. Users will need to reset their password.
+- Rotating `JWT_SECRET` will invalidate all JWT tokens. Users will need to login again.
+- Rotating `SESSION_SECRET` will invalidate all session cookies.
+
+!!! Note "Using Colyseus Cloud?"
+    If you're using [Colyseus Cloud](https://colyseus.io/cloud-managed-hosting/), it is recommended to fill your secrets on the "Environment Variables" section of your project's dashboard.
+
+---
+
 ### Email/Password Authentication
 
 In order to allow email/password authentication, you must implement the following callbacks:
