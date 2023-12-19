@@ -1,28 +1,28 @@
-# Auth Settings (`@colyseus/auth`)
+# Auth Module (`@colyseus/auth`)
 
-This page contains the settings available from the `@colyseus/auth` module.
+The `@colyseus/auth` module is highly configurable and allows you to implement your own authentication backend.
 
-The `@colyseus/auth` module is a highly configurable authentication provider to allow you to implement your own authentication. By owning your data you won't rely on third-party services.
+### Features
 
-!!! Tip "Example Project using `@colyseus/auth`"
-    The [colyseus/webgame-template](https://github.com/colyseus/webgame-template) repository has a complete usage example for both server-side and client-side usage of `@colyseus/auth`.
-
-### `@colyseus/auth` features includes:
-
+- Client-side APIs (via `client.auth` - _currently only available for JavaScript SDK_)
 - Email/Password authentication
 - Anonymous authentication
-- OAuth 2.0 providers (200+ supported providers, including Discord, Google, Twitter, etc.)
 - Forgot password + Password reset
-- Client-side API to login, logout, register, etc. **(Only available in the JavaScript SDK for now)**
+- OAuth 2.0 providers (_200+ supported providers, including Discord, Google, Twitter, etc._)
 
-### Configs **you need to provide**
+### Backend configuration **you need to provide**
 
 - Environment secrets
 - Storing and querying users from/into your database
 - Sending emails (for "Email Verification" and "Password Reset")
 - OAuth 2.0 providers (for OAuth authentication)
 
+!!! Tip "Example Project using `@colyseus/auth`"
+    The [Webgame Template](https://github.com/colyseus/webgame-template) repository contains a complete usage example for both server-side and client-side.
+
 ## Installation
+
+Install the `@colyseus/auth` module:
 
 ```bash
 npm install --save @colyseus/auth
@@ -30,9 +30,172 @@ npm install --save @colyseus/auth
 
 ## Usage
 
-This module is highly configurable, and you may decide to leave some features disabled.
+It is required to bind the authentication routes to Express.
+
+=== "app.config.ts"
+
+    ```typescript
+    import { auth } from "@colyseus/auth";
+
+    export default config({
+    // ...
+        initializeExpress: (app) => {
+            // ...
+            app.use(auth.prefix, auth.routes());
+            // ...
+        },
+    // ...
+    });
+    ```
 
 ---
+
+### Client-side API (`client.auth`)
+
+!!! Warning "Backend configuration required"
+    None of the client-side APIs below will work unless you [configure your backend](#backend-configuration).
+
+#### → `client.auth.registerWithEmailAndPassword()`
+
+Register a new user with email/password. The user will be automatically logged in after registration.
+
+If the registration is successful, the user's data will be returned.
+
+| Argument | Description |
+|------|-------------|
+| `email` | new user's email address  |
+| `password` | new user's password in plaintext |
+| `options` | _(Optional)_ new user's profile registration data  |
+
+=== "JavaScript"
+
+    ```typescript
+    try {
+        const userdata = await client.auth.registerWithEmailAndPassword(email, password);
+        console.log(userdata);
+
+    } catch (e) {
+        console.error(e.message);
+    }
+    ```
+
+#### → `client.auth.signInWithEmailAndPassword(email, password)`
+
+=== "JavaScript"
+
+    ```typescript
+    try {
+        const userdata = await client.auth.signInWithEmailAndPassword(email, password);
+        console.log(userdata);
+
+    } catch (e) {
+        console.error(e.message);
+    }
+    ```
+
+#### → `client.auth.signInAnonymously(options?)`
+
+=== "JavaScript"
+
+    ```typescript
+    try {
+        const userdata = await client.auth.signInAnonymously();
+        console.log(userdata);
+
+    } catch (e) {
+        console.error(e.message);
+    }
+    ```
+
+#### → `client.auth.signInWithProvider(provider)`
+
+=== "JavaScript"
+
+    ```typescript
+    try {
+        const userdata = await client.auth.signInWithProvider('discord');
+        console.log(userdata);
+
+    } catch (e) {
+        console.error(e.message);
+    }
+    ```
+
+#### → `client.auth.sendPasswordResetEmail()`
+
+=== "JavaScript"
+
+    ```typescript
+    try {
+        const result = await client.auth.sendPasswordResetEmail('user@domain.io');
+        console.log(result);
+
+    } catch (e) {
+        console.error(e.message);
+    }
+    ```
+
+#### → `client.auth.getUserData()`
+
+=== "JavaScript"
+
+    ```typescript
+    try {
+        const userdata = await client.auth.getUserData();
+        console.log(userdata);
+
+    } catch (e) {
+        console.error(e.message);
+    }
+    ```
+
+#### → `client.auth.onChange()`
+
+=== "JavaScript"
+
+    ```typescript
+    client.auth.onChange(function(authData) {
+        console.log(authData.user);
+        console.log(authData.token);
+    });
+    ```
+
+#### → `client.auth.signOut()`
+
+=== "JavaScript"
+
+    ```typescript
+    client.auth.signOut()
+    ```
+
+#### → `client.auth.token`
+
+Operations that result in a user being logged in will set the `client.auth.token` property, which is a JWT token containing the user's data. This token is automatically sent to the server on every request.
+
+=== "JavaScript"
+
+    ```typescript
+    client.auth.token = "xxxx";
+    console.log(client.auth.token);
+    ```
+
+!!! Note "The JWT token is cached and reloaded on page refresh."
+    The JWT token is stored in the `localStorage` of the browser.
+
+
+#### Protecting an HTTP route
+
+You may protect an HTTP route by using the `auth.middleware()` middleware. Only authenticated users will be able to access the route.
+
+```typescript
+app.get("/protected", auth.middleware(), (req: Request, res) => {
+    res.json(req.auth);
+});
+```
+
+---
+
+## Backend configuration
 
 ### Environment Secrets and Security Concerns
 
@@ -64,7 +227,7 @@ In order to allow email/password authentication, you must implement the followin
 - `auth.settings.onFindUserByEmail`: to query your database for the user's by its email address
 - `auth.settings.onRegisterWithEmailAndPassword`: to insert a new user into your database
 
-#### Callback: `auth.settings.onFindUserByEmail`
+#### → `onFindUserByEmail` setting
 
 Use this callback to query your database for the user's by its email address. (The database module is not provided by this module, you must provide your own.)
 
@@ -78,7 +241,7 @@ auth.settings.onFindUserByEmail = async function (email) {
 }
 ```
 
-#### Callback: `auth.settings.onRegisterWithEmailAndPassword`
+#### → `onRegisterWithEmailAndPassword` setting
 
 Use this callback to insert a new user into your database. The password is already hashed.
 
@@ -107,7 +270,7 @@ By default, the anonymous user will have the following fields on its JWT token p
 }
 ```
 
-#### Callback: `auth.settings.onRegisterAnonymously`
+#### → `onRegisterAnonymously` setting
 
 You may use this callback to customize the JWT token payload for anonymous users. The fields returned by this callback will be available in the JWT token as payload.
 
@@ -127,21 +290,22 @@ auth.settings.onRegisterAnonymously = async function (options) {
 
 ### Email Verification
 
-Email verification is optional. Users are allowed to login without verifying their email address.
-
 You may enable email verification by providing both `onSendEmailConfirmation` and `onEmailConfirmed` callbacks.
 
 It is your responsibility to limit the user access to your application until their email is verified.
 
-### Callback: `auth.settings.onSendEmailConfirmation`
+!!! Note "Email verification is not mandatory"
+    Users are allowed to login without verifying their email address. If you require email verification, you must validate if the user's email is verified on your application.
+
+#### → `onSendEmailConfirmation` setting
 
 Use this callback to send the email verification to the user.
 
-***Arguments:***
-
-- `email` - the email address of the user
-- `html` - the HTML contents of the email (uses the `address-confirmation-email.html` template)
-- `link` - the URL to confirm the email address (optional, the template already includes this URL)
+| Argument | Description |
+|------|-------------|
+| `email` | the email address of the user |
+| `html` | the HTML contents of the email (uses the `address-confirmation-email.html` template) |
+| `link` | the URL to confirm the email address (optional, the template already includes this URL) |
 
 ```typescript
 import { auth } from "@colyseus/auth";
@@ -157,13 +321,13 @@ auth.settings.onSendEmailConfirmation = async function(email, html, link) {
 }
 ```
 
-#### Callback: `auth.settings.onEmailConfirmed`
+#### → `onEmailConfirmed` setting
 
 This this callback to update the user's database record as verified.
 
-***Arguments:***
-
-- `email` - the email address of the user
+| Argument | Description |
+|------|-------------|
+| `email` | the email address of the user |
 
 ```typescript
 import { auth } from "@colyseus/auth";
@@ -186,7 +350,7 @@ To enable "Forgot Password" feature, you must provide the following callbacks:
 !!! Note "How it works"
     The link to reset the password is sent to the user's email address. The link contains a JWT token with the user's email address as payload. The user is then redirected to a page where they can enter a new password. The token expires in 30 minutes and can't be re-used.
 
-#### Callback: `auth.settings.onForgotPassword`
+#### → `onForgotPassword` setting
 
 Use this callback to send the "forgot password" email to the user. The email template used is `reset-password-email.html`.
 
@@ -203,7 +367,7 @@ auth.settings.onForgotPassword = async function (email: string, html: string/* ,
 }
 ```
 
-#### Callback: `auth.settings.onResetPassword`
+#### → `onResetPassword` setting
 
 Use this callback to update the user's password. The password is already hashed.
 
@@ -219,20 +383,17 @@ auth.settings.onResetPassword = async function (email: string, password: string)
 
 ### OAuth providers (Discord, Google, X/Twitter, etc)
 
-In order to enable OAuth authentication, you must provide the following callbacks:
-
-- `auth.oauth.addProvider`: to configure the OAuth provider with your application key/secret
-- `auth.oauth.onCallback`: to handle the OAuth callback and create the user's account
+In order to enable OAuth authentication, you must add at least one OAuth provider, and implement the `auth.oauth.onCallback` callback.
 
 !!! Note "This module supports 200+ OAuth 2.0 providers"
     This module leverages the hard work of [simov](https://github.com/simov/) on his [grant](https://github.com/simov/grant) open-source module, which supports 200+ OAuth 2.0 providers.
 
-#### Add OAuth provider (`auth.oauth.addProvider`)
+#### Add OAuth Provider (via `auth.oauth.addProvider()`)
 
-***Arguments:***
-
-- `providerId` - the provider ID (e.g. "discord", "google", "twitter", etc)
-- `options` - the provider options, may vary depending on the provider (see below)
+| Argument | Description |
+|------|-------------|
+| `providerId` | the provider ID (e.g. "discord", "google", "twitter", etc) |
+| `options` | the provider options, may vary depending on the provider (see below) |
 
 ```typescript
 import { auth } from "@colyseus/auth";
@@ -244,7 +405,7 @@ auth.oauth.addProvider('[PROVIDER-ID]', {
 });
 ```
 
-#### Provider Callback (`auth.oauth.onCallback`)
+#### OAuth Provider Callback (`auth.oauth.onCallback`)
 
 Use this callback to create the user's account after the OAuth provider redirects the user back to your application.
 
@@ -254,17 +415,18 @@ You must configure the "Redirect URL" on the OAuth provider's dashboard to point
 https://[YOUR-DOMAIN]/auth/provider/[PROVIDER-ID]/callback
 ```
 
-During development, you can use `http://localhost:2567/auth/provider/[PROVIDER-ID]/callback` as the "Redirect URL".
+!!! Tip "Redirect URL on different environments"
+    It is recommended that you create a different OAuth application for development and production environments. This way you can configure the "Redirect URL" to point to `http://localhost:2567/auth/provider/[PROVIDER-ID]/callback` during development, and `https://[YOUR-DOMAIN]/auth/provider/[PROVIDER-ID]/callback` on production.
 
-***Arguments:***
-
-- `data` - the OAuth data (e.g. `profile`, `access_token`, etc)
-- `providerId` - the provider ID (e.g. "discord", "google", "twitter", etc)
+| Argument | Description |
+|------|-------------|
+| `data` | the OAuth data (e.g. `profile`, `access_token`, etc) |
+| `providerId` | the provider ID (e.g. `"discord"`, `"google"`, `"twitter"`, etc) |
 
 ```typescript
 import { auth } from "@colyseus/auth";
 
-auth.oauth.onCallback(async function (data, provider) {
+auth.oauth.onCallback(async (data, provider) => {
     const profile = data.profile;
     return await User.upsert({
         discord_id: profile.id,
@@ -279,7 +441,7 @@ auth.oauth.onCallback(async function (data, provider) {
 
 To enable Discord authentication, you must create a new application at [Discord Developer Portal](https://discord.com/developers/applications).
 
-Under the "Settings -> OAuth2" you will find the Client ID (`key`) and Client Secret (`secret`), that must be used to configure the provider:
+Under the _"Settings -> OAuth2"_ you will find the Client ID (`key`) and Client Secret (`secret`), that must be used to configure the provider:
 
 ```typescript
 auth.oauth.addProvider('discord', {
@@ -294,8 +456,6 @@ You will also need to configure the "Redirect URL" so Discord can redirect the u
 ```
 https://[YOUR-DOMAIN]/auth/provider/discord/callback
 ```
-
-During development, you may use `http://localhost:2567/auth/provider/discord/callback` as the "Redirect URL".
 
 ---
 
@@ -330,7 +490,7 @@ You may customize the following settings:
 - `auth.settings.onGenerateToken`: to generate the auth token
 - `auth.settings.onHashPassword`: to hash the user's password
 
-#### Callback: `auth.settings.onParseToken`
+#### → `onParseToken` setting
 
 Use this callback to parse the token provided by the client-side. The token is already verified and decoded.
 
@@ -342,7 +502,7 @@ auth.settings.onParseToken = async function (jwt) {
 }
 ```
 
-#### Callback: `auth.settings.onGenerateToken`
+#### → `onGenerateToken` setting
 
 Use this callback to generate the token from the user's data. The token is already verified and decoded.
 
@@ -354,7 +514,7 @@ auth.settings.onGenerateToken = async function (userdata) {
 }
 ```
 
-#### Callback: `auth.settings.onHashPassword`
+#### → `onHashPassword` setting
 
 Use this callback to hash the user's password.
 

@@ -3,7 +3,7 @@
 To authenticate clients, you can bring your own token validation logic by implementing the `onAuth()` method in your room.
 
 - [Room `onAuth` method]()
-- [The `@colyseus/auth` module](/authentication/module/)
+- [The Authentication module](/authentication/module/)
 
 ## Room `onAuth` method
 

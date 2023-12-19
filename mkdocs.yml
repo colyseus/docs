@@ -297,7 +297,7 @@ nav:
 
   - Authentication:
     - 'authentication/index.md'
-    -  Auth Settings: 'authentication/settings.md'
+    -  Auth Module: 'authentication/module.md'
 
   - State Synchronization:
     - 'state/index.md'
