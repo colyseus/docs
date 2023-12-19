@@ -1,19 +1,23 @@
-# The `@colyseus/auth` module
+# Auth Settings (`@colyseus/auth`)
 
-The `@colyseus/auth` module is a highly configurable authentication provider to allow you to implement your own authentication. You own your data, and won't rely on third-party services.
+This page contains the settings available from the `@colyseus/auth` module.
 
-!!! Tip "Full API Usage Example"
-    For a complete example, check out the [colyseus/webgame-template](https://github.com/colyseus/webgame-template) repository.
+The `@colyseus/auth` module is a highly configurable authentication provider to allow you to implement your own authentication. By owning your data you won't rely on third-party services.
 
-**The main features of this module are:**
+!!! Tip "Example Project using `@colyseus/auth`"
+    The [colyseus/webgame-template](https://github.com/colyseus/webgame-template) repository has a complete usage example for both server-side and client-side usage of `@colyseus/auth`.
+
+### `@colyseus/auth` features includes:
 
 - Email/Password authentication
 - Anonymous authentication
 - OAuth 2.0 providers (200+ supported providers, including Discord, Google, Twitter, etc.)
 - Forgot password + Password reset
+- Client-side API to login, logout, register, etc. **(Only available in the JavaScript SDK for now)**
 
-Configurations **you need to provide** in order to work with this module:
+### Configs **you need to provide**
 
+- Environment secrets
 - Storing and querying users from/into your database
 - Sending emails (for "Email Verification" and "Password Reset")
 - OAuth 2.0 providers (for OAuth authentication)
@@ -51,9 +55,6 @@ If any of these secrets are compromised, you must rotate them immediately. The i
 - Rotating `JWT_SECRET` will invalidate all JWT tokens. Users will need to login again.
 - Rotating `SESSION_SECRET` will invalidate all session cookies.
 
-!!! Note "Using Colyseus Cloud?"
-    If you're using [Colyseus Cloud](https://colyseus.io/cloud-managed-hosting/), it is recommended to fill your secrets on the "Environment Variables" section of your project's dashboard.
-
 ---
 
 ### Email/Password Authentication
@@ -63,7 +64,7 @@ In order to allow email/password authentication, you must implement the followin
 - `auth.settings.onFindUserByEmail`: to query your database for the user's by its email address
 - `auth.settings.onRegisterWithEmailAndPassword`: to insert a new user into your database
 
-#### `auth.settings.onFindUserByEmail` callback
+#### Callback: `auth.settings.onFindUserByEmail`
 
 Use this callback to query your database for the user's by its email address. (The database module is not provided by this module, you must provide your own.)
 
@@ -77,7 +78,7 @@ auth.settings.onFindUserByEmail = async function (email) {
 }
 ```
 
-#### `auth.settings.onRegisterWithEmailAndPassword` callback
+#### Callback: `auth.settings.onRegisterWithEmailAndPassword`
 
 Use this callback to insert a new user into your database. The password is already hashed.
 
@@ -106,7 +107,7 @@ By default, the anonymous user will have the following fields on its JWT token p
 }
 ```
 
-#### `auth.settings.onRegisterAnonymously` callback
+#### Callback: `auth.settings.onRegisterAnonymously`
 
 You may use this callback to customize the JWT token payload for anonymous users. The fields returned by this callback will be available in the JWT token as payload.
 
@@ -132,7 +133,7 @@ You may enable email verification by providing both `onSendEmailConfirmation` an
 
 It is your responsibility to limit the user access to your application until their email is verified.
 
-### `auth.settings.onSendEmailConfirmation`
+### Callback: `auth.settings.onSendEmailConfirmation`
 
 Use this callback to send the email verification to the user.
 
@@ -156,7 +157,7 @@ auth.settings.onSendEmailConfirmation = async function(email, html, link) {
 }
 ```
 
-#### `auth.settings.onEmailConfirmed`
+#### Callback: `auth.settings.onEmailConfirmed`
 
 This this callback to update the user's database record as verified.
 
@@ -185,7 +186,7 @@ To enable "Forgot Password" feature, you must provide the following callbacks:
 !!! Note "How it works"
     The link to reset the password is sent to the user's email address. The link contains a JWT token with the user's email address as payload. The user is then redirected to a page where they can enter a new password. The token expires in 30 minutes and can't be re-used.
 
-#### `auth.settings.onForgotPassword`
+#### Callback: `auth.settings.onForgotPassword`
 
 Use this callback to send the "forgot password" email to the user. The email template used is `reset-password-email.html`.
 
@@ -202,7 +203,7 @@ auth.settings.onForgotPassword = async function (email: string, html: string/* ,
 }
 ```
 
-#### `auth.settings.onResetPassword`
+#### Callback: `auth.settings.onResetPassword`
 
 Use this callback to update the user's password. The password is already hashed.
 
@@ -226,7 +227,7 @@ In order to enable OAuth authentication, you must provide the following callback
 !!! Note "This module supports 200+ OAuth 2.0 providers"
     This module leverages the hard work of [simov](https://github.com/simov/) on his [grant](https://github.com/simov/grant) open-source module, which supports 200+ OAuth 2.0 providers.
 
-#### `auth.oauth.addProvider`
+#### Add OAuth provider (`auth.oauth.addProvider`)
 
 ***Arguments:***
 
@@ -243,7 +244,7 @@ auth.oauth.addProvider('[PROVIDER-ID]', {
 });
 ```
 
-#### `auth.oauth.onCallback`
+#### Provider Callback (`auth.oauth.onCallback`)
 
 Use this callback to create the user's account after the OAuth provider redirects the user back to your application.
 
@@ -329,7 +330,7 @@ You may customize the following settings:
 - `auth.settings.onGenerateToken`: to generate the auth token
 - `auth.settings.onHashPassword`: to hash the user's password
 
-#### `auth.settings.onParseToken`
+#### Callback: `auth.settings.onParseToken`
 
 Use this callback to parse the token provided by the client-side. The token is already verified and decoded.
 
@@ -341,7 +342,7 @@ auth.settings.onParseToken = async function (jwt) {
 }
 ```
 
-#### `auth.settings.onGenerateToken`
+#### Callback: `auth.settings.onGenerateToken`
 
 Use this callback to generate the token from the user's data. The token is already verified and decoded.
 
@@ -353,7 +354,7 @@ auth.settings.onGenerateToken = async function (userdata) {
 }
 ```
 
-#### `auth.settings.onHashPassword`
+#### Callback: `auth.settings.onHashPassword`
 
 Use this callback to hash the user's password.
 
