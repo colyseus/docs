@@ -190,6 +190,8 @@ To enable "Forgot Password" feature, you must provide the following callbacks:
 Use this callback to send the "forgot password" email to the user. The email template used is `reset-password-email.html`.
 
 ```typescript
+import { auth } from "@colyseus/auth";
+
 auth.settings.onForgotPassword = async function (email: string, html: string/* , resetLink: string */) {
   await resend.emails.send({
     to: email,
@@ -205,6 +207,8 @@ auth.settings.onForgotPassword = async function (email: string, html: string/* ,
 Use this callback to update the user's password. The password is already hashed.
 
 ```typescript
+import { auth } from "@colyseus/auth";
+
 auth.settings.onResetPassword = async function (email: string, password: string) {
   await User.update({ password }).where("email", "=", email).execute();
 }
@@ -230,6 +234,8 @@ In order to enable OAuth authentication, you must provide the following callback
 - `options` - the provider options, may vary depending on the provider (see below)
 
 ```typescript
+import { auth } from "@colyseus/auth";
+
 auth.oauth.addProvider('[PROVIDER-ID]', {
   key: "XXXXXXXXXXXXXXXXXX", // Client ID
   secret: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", // Client Secret
@@ -255,6 +261,8 @@ During development, you can use `http://localhost:2567/auth/provider/[PROVIDER-I
 - `providerId` - the provider ID (e.g. "discord", "google", "twitter", etc)
 
 ```typescript
+import { auth } from "@colyseus/auth";
+
 auth.oauth.onCallback(async function (data, provider) {
     const profile = data.profile;
     return await User.upsert({
@@ -310,3 +318,49 @@ It is recommended to copy the default templates from the `@colyseus/auth` packag
 - [html/address-confirmation.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation.html)
 - [html/reset-password-email.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-email.html)
 - [html/reset-password-form.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-form.html)
+
+---
+
+### Advanced Settings
+
+You may customize the following settings:
+
+- `auth.settings.onParseToken`: to parse JWT token provided by the client-side
+- `auth.settings.onGenerateToken`: to generate the auth token
+- `auth.settings.onHashPassword`: to hash the user's password
+
+#### `auth.settings.onParseToken`
+
+Use this callback to parse the token provided by the client-side. The token is already verified and decoded.
+
+```typescript
+import { auth } from "@colyseus/auth";
+
+auth.settings.onParseToken = async function (jwt) {
+    return jwt;
+}
+```
+
+#### `auth.settings.onGenerateToken`
+
+Use this callback to generate the token from the user's data. The token is already verified and decoded.
+
+```typescript
+import { auth } from "@colyseus/auth";
+
+auth.settings.onGenerateToken = async function (userdata) {
+    return JWT.sign(userdata);
+}
+```
+
+#### `auth.settings.onHashPassword`
+
+Use this callback to hash the user's password.
+
+```typescript
+import { auth } from "@colyseus/auth";
+
+auth.settings.onHashPassword = async function (password: string) {
+    return Hash.make(password);
+};
+```

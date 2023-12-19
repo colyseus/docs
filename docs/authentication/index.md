@@ -10,6 +10,8 @@ To authenticate clients, you can bring your own token validation logic by implem
 #### `static onAuth (token, request)` _- Preferred_
 
 
+
+
 #### `onAuth (client, options, request)` _- Soon to be deprecated_
 
 !!! Warning "Deprecation Notice"
