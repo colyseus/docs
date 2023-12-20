@@ -64,7 +64,7 @@ The authentication token set on `client.auth.token` will be sent as `Authorizati
 #### `onAuth (client, options, request)` _- Soon to be deprecated_
 
 !!! Warning "`onAuth` as instance method will be deprecated"
-    Since version `0.15.14`, it is preferred to use the static version `onAuth()` method. You can still use it as instance method, but it will be deprecated in future versions. See the reasoning behind this change on [colyseus/colyseus#657](https://github.com/colyseus/colyseus/pull/657)
+    Since version `0.15.14`, it is preferred to use the static version `onAuth()` method. You can still the `onAuth` as instance method, but it will be deprecated in the future. See the reasoning behind this change on [colyseus/colyseus#657](https://github.com/colyseus/colyseus/pull/657)
 
 The `onAuth()` method will be executed before `onJoin()`. It can be used to verify authenticity of a client joining the room.
 
