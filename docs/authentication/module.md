@@ -8,9 +8,9 @@ The `@colyseus/auth` module is highly configurable and allows you to implement y
 ### Features
 
 - Client-side APIs (via `client.auth` - _currently only available for JavaScript SDK_)
-- Email/Password authentication
-- Anonymous authentication
-- Forgot password + Password reset
+- Email/Password Authentication
+- Anonymous Authentication
+- Forgot Password + Password Reset
 - OAuth 2.0 providers (_200+ supported providers, including Discord, Google, Twitter, etc._)
 
 ### Backend configuration **you need to provide**
@@ -50,16 +50,6 @@ It is required to bind the authentication routes to Express.
     // ...
     });
     ```
-
-#### Protecting an HTTP route
-
-You may protect an HTTP route by using the `auth.middleware()` middleware. Only authenticated users will be able to access the route.
-
-```typescript
-app.get("/protected", auth.middleware(), (req: Request, res) => {
-    res.json(req.auth);
-});
-```
 
 ---
 
@@ -503,6 +493,20 @@ auth.settings.onHashPassword = async function (password: string) {
     return Hash.make(password);
 };
 ```
+
+---
+
+### Protecting an HTTP route (via `auth.middleware()`)
+
+You may protect an HTTP route by using the `auth.middleware()` middleware. Only authenticated users will be able to access the route.
+
+```typescript
+app.get("/protected", auth.middleware(), (req: Request, res) => {
+    res.json(req.auth);
+});
+```
+
+---
 
 ### Customize Email Templates
 
