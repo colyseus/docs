@@ -48,24 +48,28 @@ It is required to bind the authentication routes to Express.
     });
     ```
 
+#### Protecting an HTTP route
+
+You may protect an HTTP route by using the `auth.middleware()` middleware. Only authenticated users will be able to access the route.
+
+```typescript
+app.get("/protected", auth.middleware(), (req: Request, res) => {
+    res.json(req.auth);
+});
+```
+
 ---
 
 ### Client-side API (`client.auth`)
 
 !!! Warning "Backend configuration required"
-    None of the client-side APIs below will work unless you [configure your backend](#backend-configuration).
+    None of the client-side APIs below will work unless you [configure your backend](#backend-configuration). See [example configuration from the Webgame Template](https://github.com/colyseus/webgame-template/blob/main/packages/backend/src/config/auth.ts) project.
 
-#### → `client.auth.registerWithEmailAndPassword()`
+#### → `client.auth.registerWithEmailAndPassword(email, password, options?)`
 
-Register a new user with email/password. The user will be automatically logged in after registration.
+Register a new user with email/password and return userdata. The user will be automatically logged in after registration. This method modifies the `client.auth.token` property.
 
-If the registration is successful, the user's data will be returned.
-
-| Argument | Description |
-|------|-------------|
-| `email` | new user's email address  |
-| `password` | new user's password in plaintext |
-| `options` | _(Optional)_ new user's profile registration data  |
+The `options` argument is optional and may contain data you can use when creating the user's account.
 
 === "JavaScript"
 
@@ -81,6 +85,8 @@ If the registration is successful, the user's data will be returned.
 
 #### → `client.auth.signInWithEmailAndPassword(email, password)`
 
+Sign in with email/password and return userdata. This method modifies the `client.auth.token` property.
+
 === "JavaScript"
 
     ```typescript
@@ -94,6 +100,8 @@ If the registration is successful, the user's data will be returned.
     ```
 
 #### → `client.auth.signInAnonymously(options?)`
+
+Sign in anonymously and return anonymous userdata. This method modifies the `client.auth.token` property.
 
 === "JavaScript"
 
@@ -109,6 +117,8 @@ If the registration is successful, the user's data will be returned.
 
 #### → `client.auth.signInWithProvider(provider)`
 
+Sign in with OAuth provider and return userdata. This method modifies the `client.auth.token` property.
+
 === "JavaScript"
 
     ```typescript
@@ -120,6 +130,14 @@ If the registration is successful, the user's data will be returned.
         console.error(e.message);
     }
     ```
+
+!!! Note "The OAuth authentication flow"
+    - A popup window to is opened `/auth/provider/[PROVIDER-ID]`
+    - The user is redirected to the OAuth provider's website
+    - The user authenticates with the OAuth provider
+    - The user is redirected back to `/auth/provider/[PROVIDER-ID]/callback` (see [OAuth Provider Callback](#oauth-provider-callback-authoauthoncallback))
+    - The popup window is closed and userdata is returned
+
 
 #### → `client.auth.sendPasswordResetEmail()`
 
@@ -182,17 +200,6 @@ Operations that result in a user being logged in will set the `client.auth.token
 !!! Note "The JWT token is cached and reloaded on page refresh."
     The JWT token is stored in the `localStorage` of the browser.
 
-
-#### Protecting an HTTP route
-
-You may protect an HTTP route by using the `auth.middleware()` middleware. Only authenticated users will be able to access the route.
-
-```typescript
-app.get("/protected", auth.middleware(), (req: Request, res) => {
-    res.json(req.auth);
-});
-```
-
 ---
 
 ## Backend configuration
@@ -217,8 +224,6 @@ If any of these secrets are compromised, you must rotate them immediately. The i
 - Rotating `AUTH_SALT` will invalidate all user's passwords. Users will need to reset their password.
 - Rotating `JWT_SECRET` will invalidate all JWT tokens. Users will need to login again.
 - Rotating `SESSION_SECRET` will invalidate all session cookies.
-
----
 
 ### Email/Password Authentication
 
@@ -255,8 +260,6 @@ auth.settings.onRegisterWithEmailAndPassword = async function (email, password, 
 }
 ```
 
----
-
 ### Anonymous Authentication
 
 Anonymous authentication is enabled by default. You may customize how the anonymous user is created by providing the `onRegisterAnonymously` callback.
@@ -285,8 +288,6 @@ auth.settings.onRegisterAnonymously = async function (options) {
     return { userId };
 }
 ```
-
----
 
 ### Email Verification
 
@@ -338,8 +339,6 @@ auth.settings.onEmailConfirmed = async function(email) {
 }
 ```
 
----
-
 ### Forgot Password
 
 To enable "Forgot Password" feature, you must provide the following callbacks:
@@ -378,8 +377,6 @@ auth.settings.onResetPassword = async function (email: string, password: string)
   await User.update({ password }).where("email", "=", email).execute();
 }
 ```
-
----
 
 ### OAuth providers (Discord, Google, X/Twitter, etc)
 
@@ -457,31 +454,6 @@ You will also need to configure the "Redirect URL" so Discord can redirect the u
 https://[YOUR-DOMAIN]/auth/provider/discord/callback
 ```
 
----
-
-### Customize Email Templates
-
-You can customize the email templates by providing your own templates under the `html` directory.
-
-```
-my-colyseus-app/
-├─ html/
-│  ├─ address-confirmation-email.html
-│  ├─ address-confirmation.html
-│  ├─ reset-password-email.html
-│  ├─ reset-password-form.html
-├─ package.json
-```
-
-It is recommended to copy the default templates from the `@colyseus/auth` package, and customize them to your needs:
-
-- [html/address-confirmation-email.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation-email.html)
-- [html/address-confirmation.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation.html)
-- [html/reset-password-email.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-email.html)
-- [html/reset-password-form.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-form.html)
-
----
-
 ### Advanced Settings
 
 You may customize the following settings:
@@ -525,3 +497,24 @@ auth.settings.onHashPassword = async function (password: string) {
     return Hash.make(password);
 };
 ```
+
+### Customize Email Templates
+
+You can customize the email templates by providing your own templates under the `html` directory.
+
+```
+my-colyseus-app/
+├─ html/
+│  ├─ address-confirmation-email.html
+│  ├─ address-confirmation.html
+│  ├─ reset-password-email.html
+│  ├─ reset-password-form.html
+├─ package.json
+```
+
+It is recommended to copy the default templates from the `@colyseus/auth` package, and customize them to your needs:
+
+- [html/address-confirmation-email.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation-email.html)
+- [html/address-confirmation.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation.html)
+- [html/reset-password-email.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-email.html)
+- [html/reset-password-form.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-form.html)
