@@ -7,7 +7,7 @@ To authenticate clients, you can bring your own token validation logic by implem
 
 ## Room authentication
 
-To authenticate clients into a room, you must implement the static `onAuth()` method in your room. This method is called before `onCreate` or `onJoin`, and it is responsible for validating the client's authentication token.
+To authenticate clients into a room, you must implement the static `onAuth()` method in your room. This method is called before `onCreate()` or `onJoin()`, and it is responsible for validating the client's authentication token.
 
 #### Client-side
 
