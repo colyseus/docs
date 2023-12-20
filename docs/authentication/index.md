@@ -2,20 +2,69 @@
 
 To authenticate clients, you can bring your own token validation logic by implementing the `onAuth()` method in your room.
 
-- [Room `onAuth` method]()
-- [The Authentication module](/authentication/module/)
+!!! Tip "Authentication module"
+    The new [Authentication module](/authentication/module/) provides a set of tools to help you authenticate your players into your application. (Currently in beta, feedback is welcome on [colyseus/colyseus#657](https://github.com/colyseus/colyseus/issues/660))
 
-## Room `onAuth` method
+## Room authentication
 
-#### `static onAuth (token, request)` _- Preferred_
+To authenticate clients into a room, you must implement the static `onAuth()` method in your room. This method is called before `onCreate` or `onJoin`, and it is responsible for validating the client's authentication token.
+
+#### Client-side
+
+The authentication token set on `client.auth.token` will be sent as `Authorization` header in all http requests to the server, including matchmaking requests.
+
+=== "JavaScript"
+
+    ```typescript
+    // set the auth token
+    client.auth.token = "YOUR AUTH TOKEN";
+
+    // matchmaking requests will contain the auth token
+    client.joinOrCreate("my_room").then((room) => {
+        console.log(room);
+    });
+
+    // http requests will contain the auth token
+    client.http.get("/profile").then((response) => {
+      console.log(response.data);
+    });
+    ```
 
 
+#### Server-side
+
+=== "Using `@colyseus/auth`"
+
+    ```typescript
+    import { Room } from "colyseus";
+    import { JWT } from "@colyseus/auth";
+
+    class MyRoom extends Room {
+        static async onAuth (token, request) {
+            return await JWT.verify(token);
+        }
+    }
+    ```
+
+
+=== "Using `firebase-admin`"
+
+    ```typescript
+    import { Room } from "colyseus";
+    import { DecodedIdToken, getAuth } from "firebase-admin/auth";
+
+    class MyRoom extends Room {
+        static onAuth(token, req) {
+            return getAuth().verifyIdToken(token);
+        }
+    }
+    ```
 
 
 #### `onAuth (client, options, request)` _- Soon to be deprecated_
 
-!!! Warning "Deprecation Notice"
-    The `onAuth(client, options, request)` as instance method will be deprecated in future versions, please use its static alternative: `static onAuth(token, request)`
+!!! Warning "`onAuth` as instance method will be deprecated"
+    Since version `0.15.14`, it is preferred to use the static version `onAuth()` method. You can still use it as instance method, but it will be deprecated in future versions. See the reasoning behind this change on [colyseus/colyseus#657](https://github.com/colyseus/colyseus/pull/657)
 
 The `onAuth()` method will be executed before `onJoin()`. It can be used to verify authenticity of a client joining the room.
 

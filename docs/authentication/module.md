@@ -2,6 +2,9 @@
 
 The `@colyseus/auth` module is highly configurable and allows you to implement your own authentication backend.
 
+!!! Note "This module is currently in beta"
+    Feedback is welcome on [colyseus/colyseus#660](https://github.com/colyseus/colyseus/issues/660).
+
 ### Features
 
 - Client-side APIs (via `client.auth` - _currently only available for JavaScript SDK_)
@@ -169,6 +172,8 @@ Sign in with OAuth provider and return userdata. This method modifies the `clien
 
 #### → `client.auth.onChange()`
 
+Define a callback that is triggered when internal auth state changes. It only triggers as a response from `client.auth` method calls - this is not a realtime subscription.
+
 === "JavaScript"
 
     ```typescript
@@ -180,6 +185,8 @@ Sign in with OAuth provider and return userdata. This method modifies the `clien
 
 #### → `client.auth.signOut()`
 
+Clear the authentication token from the client-side.
+
 === "JavaScript"
 
     ```typescript
@@ -188,13 +195,12 @@ Sign in with OAuth provider and return userdata. This method modifies the `clien
 
 #### → `client.auth.token`
 
-Operations that result in a user being logged in will set the `client.auth.token` property, which is a JWT token containing the user's data. This token is automatically sent to the server on every request.
+The authentication token is automatically sent to the server on every request. Operations that result in a user being logged in will set the `client.auth.token` property, which is a JWT token containing the user's data. The contents of this token are
 
 === "JavaScript"
 
     ```typescript
     client.auth.token = "xxxx";
-    console.log(client.auth.token);
     ```
 
 !!! Note "The JWT token is cached and reloaded on page refresh."
@@ -514,7 +520,7 @@ my-colyseus-app/
 
 It is recommended to copy the default templates from the `@colyseus/auth` package, and customize them to your needs:
 
-- [html/address-confirmation-email.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation-email.html)
-- [html/address-confirmation.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation.html)
-- [html/reset-password-email.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-email.html)
-- [html/reset-password-form.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-form.html)
+- [html/address-confirmation-email.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation-email.html) → The email sent to the user to confirm their email address
+- [html/address-confirmation.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation.html) → The page where the user is redirected to confirm their email address
+- [html/reset-password-email.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-email.html) → The email sent to the user to reset their password
+- [html/reset-password-form.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-form.html) → The page where the user is redirected to reset their password
