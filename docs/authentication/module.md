@@ -381,6 +381,8 @@ In order to enable OAuth authentication, you must add at least one OAuth provide
 !!! Note "This module supports 200+ OAuth 2.0 providers"
     This module leverages the hard work of [simov](https://github.com/simov/) on his [grant](https://github.com/simov/grant) open-source module, which supports 200+ OAuth 2.0 providers.
 
+    You may check the original [Grant Playground](https://grant.outofindex.com/) to experiment with scopes and OAuth configuration.
+
 #### Add OAuth Provider (via `auth.oauth.addProvider()`)
 
 | Argument | Description |
