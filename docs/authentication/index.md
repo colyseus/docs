@@ -233,6 +233,3 @@ From the client-side, you may call the matchmaking method (`join`, `joinOrCreate
       // success
     });
     ```
-
-!!! Note "These APIs are currently in beta."
-    Only the JavaScript SDK implements these APIs.
