@@ -204,9 +204,9 @@ The authentication token is automatically sent to the server on every request. O
 
 It is required to provide the following environment secrets:
 
-- `AUTH_SALT` - used to hash the user's password (`scrypt` algorithm by default)
-- `JWT_SECRET` - used to sign the JWT token
-- `SESSION_SECRET` - used to sign the session cookie (only used during OAuth)
+- `AUTH_SALT` - Used to hash the user's password. (`scrypt` algorithm by default)
+- `JWT_SECRET` - Used to sign the JWT token.
+- `SESSION_SECRET` - Used to sign the session cookie. (only used during OAuth flow)
 
 !!! Note "How to generate a random string"
     You may use the following command to generate a random string `openssl rand -base64 32`. Alternatively, you can use [an online strong password generator](https://1password.com/password-generator/).
@@ -219,7 +219,7 @@ If any of these secrets are compromised, you must rotate them immediately. The i
 
 - Rotating `AUTH_SALT` will invalidate all user's passwords. Users will need to reset their password.
 - Rotating `JWT_SECRET` will invalidate all JWT tokens. Users will need to login again.
-- Rotating `SESSION_SECRET` will invalidate all session cookies.
+- Rotating `SESSION_SECRET` will invalidate all session cookies. (only used during OAuth flow)
 
 ### Email/Password Authentication
 
