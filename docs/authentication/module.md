@@ -535,9 +535,12 @@ It is recommended to copy the default templates from the `@colyseus/auth` packag
 
 ## Upgrading and linking user accounts
 
-You may upgrade an anonymous user to a permanent account by linking their account with an email/password or OAuth provider.
+You may use the contents of the previous active token `upgradingToken` when registering an user via email/password or OAuth.
 
-You can access the previous token (`upgradingToken`) during these callbacks:
+- Upgrade an anonymous user to an email/password or OAuth account
+- Link multiple OAuth providers to the same account
+
+**Example**
 
 === `auth.settings.onRegisterWithEmailAndPassword`
 
@@ -563,5 +566,6 @@ You can access the previous token (`upgradingToken`) during these callbacks:
          * data.upgradingToken contains the previous token payload
          * you can use its contents to link the user's account
          */
+        data.upgradingToken
     });
     ```
