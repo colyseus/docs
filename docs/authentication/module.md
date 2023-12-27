@@ -530,3 +530,38 @@ It is recommended to copy the default templates from the `@colyseus/auth` packag
 - [html/address-confirmation.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation.html) → The page where the user is redirected to confirm their email address
 - [html/reset-password-email.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-email.html) → The email sent to the user to reset their password
 - [html/reset-password-form.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-form.html) → The page where the user is redirected to reset their password
+
+---
+
+## Upgrading and linking user accounts
+
+You may upgrade an anonymous user to a permanent account by linking their account with an email/password or OAuth provider.
+
+You can access the previous token (`upgradingToken`) during these callbacks:
+
+=== `auth.settings.onRegisterWithEmailAndPassword`
+
+    ```typescript
+    import { auth } from "@colyseus/auth";
+
+    auth.settings.onRegisterWithEmailAndPassword = async function (email, password, options) {
+        /**
+         * options.upgradingToken contains the previous token payload
+         * you can use its contents to link the user's account
+         */
+        options.upgradingToken
+    }
+    ```
+
+=== `auth.oauth.onCallback`
+
+    ```typescript
+    import { auth } from "@colyseus/auth";
+
+    auth.oauth.onCallback(async (data, provider) => {
+        /**
+         * data.upgradingToken contains the previous token payload
+         * you can use its contents to link the user's account
+         */
+    });
+    ```
