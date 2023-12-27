@@ -542,7 +542,7 @@ You may use the contents of the previous active token `upgradingToken` when regi
 
 **Example**
 
-=== `auth.settings.onRegisterWithEmailAndPassword`
+=== "`auth.settings.onRegisterWithEmailAndPassword`"
 
     ```typescript
     import { auth } from "@colyseus/auth";
@@ -556,7 +556,7 @@ You may use the contents of the previous active token `upgradingToken` when regi
     }
     ```
 
-=== `auth.oauth.onCallback`
+=== "`auth.oauth.onCallback`"
 
     ```typescript
     import { auth } from "@colyseus/auth";
