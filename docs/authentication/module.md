@@ -535,7 +535,7 @@ It is recommended to copy the default templates from the `@colyseus/auth` packag
 
 ## Upgrading and linking user accounts
 
-You may use the contents of the previous active token `upgradingToken` when registering an user via email/password or OAuth.
+You may use the contents of the previous active token (`upgradingToken`) when registering an user via email/password or OAuth.
 
 - Upgrade an anonymous user to an email/password or OAuth account
 - Link multiple OAuth providers to the same account
