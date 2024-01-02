@@ -232,9 +232,9 @@ In order to allow email/password authentication, you must implement the followin
 
 Use this callback to query your database for the user's by its email address. (The database module is not provided by this module, you must provide your own.)
 
-The fields returned by this callback will be available in the JWT token as payload.
+**Return value**: It must return the user entry from the database, with `password` field included. All values, except from the `password` will be encoded in the JWT token. It is recommended to return at least the user's `id` + `password` from your database, although you can store more fields for convenience sake.
 
-It must `throw` if user was not found. The error message will be sent to the client.
+**Error**: If `null` or `undefined` is returned, user will receive `invalid_credentials` error message. You may throw yourself a different error by using `throw new Error("your_error_message")`.
 
 ```typescript
 import { auth } from "@colyseus/auth";
