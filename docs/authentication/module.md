@@ -234,6 +234,8 @@ Use this callback to query your database for the user's by its email address. (T
 
 The fields returned by this callback will be available in the JWT token as payload.
 
+It must `throw` if user was not found. The error message will be sent to the client.
+
 ```typescript
 import { auth } from "@colyseus/auth";
 
