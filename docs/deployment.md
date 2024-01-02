@@ -1,4 +1,4 @@
-- [Colyseus Cloud](#colyseus-cloud)
+- [Colyseus Cloud](#colyseus-cloud-managed-hosting)
 - [Self-host on Vultr](#self-host-on-vultr)
 - [Nginx configuration](#nginx)
 - [Apache configuration](#apache)

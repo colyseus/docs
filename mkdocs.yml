@@ -295,14 +295,18 @@ nav:
     # - Custom State Serialization': 'server/state-serialization.md'
     - Debugging: 'debugging.md'
 
-  - Authentication:
-    - 'authentication/index.md'
-    -  Auth Module: 'authentication/module.md'
-
   - State Synchronization:
     - 'state/index.md'
     - Schema Definition: 'state/schema.md'
     - Client-side Sync Callbacks: 'state/schema-callbacks.md'
+
+  - Authentication:
+    - 'authentication/index.md'
+    -  Auth Module: 'authentication/module.md'
+
+  - 'Database & Persistance':
+    - 'database/index.md'
+    -  Database Module: 'database/module.md'
 
   - Infrastructure:
     - Deployment: 'deployment.md'
