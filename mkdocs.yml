@@ -281,8 +281,7 @@ nav:
       - Babylon.js Editor: "getting-started/babylonjs-editor.md"
 
   - Server API:
-    # - 'server/index.md'
-    - Server: 'server/api.md'
+    - 'server/index.md'
     - Room: 'server/room.md'
     - Timing events: 'server/timing-events.md'
     - Match-maker API: 'server/matchmaker.md'
@@ -306,7 +305,7 @@ nav:
 
   - 'Database & Persistance':
     - 'database/index.md'
-    -  Database Module: 'database/module.md'
+    # -  Database Module: 'database/module.md'
 
   - Infrastructure:
     - Deployment: 'deployment.md'

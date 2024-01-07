@@ -2,24 +2,21 @@
 
 Colyseus is agnostic to the database you use. You can use your preferred Node.js tool for working with databases.
 
-## Recommendation: `@colyseus/database`
-
-We are working on our own database tools built on top of [Kysely](https://kysely.dev/).
-
-See how to use it at [:octicons-database-16: Database Module (`@colyseus/database`)](/database/module).
+!!! Note "We're considering implementing our own database tool: `@colyseus/database`"
+    We are internally experimenting with our own database tools built on top of [Kysely](https://kysely.dev/). If you're interested in helping/contributing, please [join the discussion](https://github.com/colyseus/colyseus/issues/594) and let us know!
 
 ---
 
-## Alternative modules
+## Recommended database tools
 
 You can use your preferred Node.js tool for working with databases. Query builders are known for their simplicity and flexibility, while ORMs are known for abstracting the database layer and providing a more object-oriented approach.
 
 ### ORMs (Object-Relational Mappers)
 
 - [DrizzleORM](https://orm.drizzle.team/)
+- [MikroORM](https://mikro-orm.io/)
 - [Sequelize](https://sequelize.org/)
 - [TypeORM](https://typeorm.io/)
-- [MikroORM](https://mikro-orm.io/)
 - [Prisma](http://www.prisma.io/)
 
 ### Query builders
