@@ -3,7 +3,7 @@
 Colyseus is agnostic to the database you use. You can use your preferred Node.js tool for working with databases.
 
 !!! Note "We're considering implementing our own database tool: `@colyseus/database`"
-    We are internally experimenting with our own database tools built on top of [Kysely](https://kysely.dev/). If you're interested in helping/contributing, please [join the discussion](https://github.com/colyseus/colyseus/issues/594) and let us know!
+    We'd love to ship Colyseus 1.0 with our own database solution. We've been experimenting with our own tool built on top of [Kysely](https://kysely.dev/). If you're interested in helping/contributing, please [join the discussion](https://github.com/colyseus/colyseus/issues/594) and let us know!
 
 ---
 
