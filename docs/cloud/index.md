@@ -90,6 +90,14 @@ You will be redirected to your browser, where you will be asked to select which 
 
 This will generate a `.colyseus-cloud.json` file at the root of your project with credentials capable of deploying your application in the future. Keep this file safe!
 
+### Available command-line options:
+
+- `--env [env]`: The deployment environment. Default is `production`. (The `.colyseus-cloud.json` file stores the configuration per environment.)
+- `--remote [remote]`: Force a specific git remote to deploy from. Value is stored on `.colyseus-cloud.json`
+- `--branch [branch]`: Force a specific git branch to deploy from. Value is stored on `.colyseus-cloud.json`
+- `--reset`: Reset application selection for deployment
+- `--preview`: Open web interface to preview the deployment.
+
 ---
 
 ## Customizing build steps
