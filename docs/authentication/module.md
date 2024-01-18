@@ -7,7 +7,7 @@ The `@colyseus/auth` module is highly configurable and allows you to implement y
 
 ### Features
 
-- Client-side APIs (via `client.auth` - _currently only available for JavaScript SDK_)
+- Client-side APIs (via `client.auth`)
 - Email/Password Authentication
 - Anonymous Authentication
 - Forgot Password + Password Reset
