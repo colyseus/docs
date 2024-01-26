@@ -21,7 +21,7 @@ The callbacks are triggered based on instance reference. Make sure to attach the
 
 **On collections of items**
 
-- [onAdd (item, key)](#onadd-item-key)
+- [onAdd (item, key)](#onadd-fn-item-key-triggerall-true)
 - [onRemove (item, key)](#onremove-item-key)
 - [onChange (item, key)](#onchange-item-key)
 
