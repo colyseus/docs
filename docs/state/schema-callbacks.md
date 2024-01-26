@@ -304,7 +304,7 @@ Optional:
     --namespace: generate namespace on output code
 ```
 
-### Example: Unity / C#
+### Example: Unity / C\#
 
 Below is a real example to generate the C# schema files from the [demo Unity project](https://github.com/colyseus/colyseus-unity3d/blob/aa9a722a50b2958ce01785969cd8ecb8aee24fd0/Server/package.json#L12).
 
