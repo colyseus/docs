@@ -12,7 +12,7 @@ icon: material/sync
 
 </div>
 
-## How state synchronization works?
+## How state synchronization works
 
 - When the client joins a room, it receives the full encoded state from the server.
 - State mutations on the server-side are enqueued at a per-property level. (Only the last mutation of each property is kept)
