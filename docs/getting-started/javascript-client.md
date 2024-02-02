@@ -27,7 +27,7 @@ If you're not using a build tool, it is recommended to download the release bina
 Alternatively, you may include the distribution file directly by using unpkg. Make sure to replace the `@x.x.x` portion of it with a version compatible with your server.
 
 ```html
-<script src="https://unpkg.com/colyseus.js@^0.14.0/dist/colyseus.js"></script>
+<script src="https://unpkg.com/colyseus.js@^0.15.0/dist/colyseus.js"></script>
 ```
 
 ### Connecting to server
