@@ -323,9 +323,10 @@ onCreate () {
 }
 ```
 
-**Callback for ALL messages**
+**Fallback for ALL messages**
 
 You can register a single callback to handle all other types of messages.
+Fallback can only registered as one callback, if registered twice, it will OVERRIDE the previous one
 
 ``` typescript
 onCreate () {
