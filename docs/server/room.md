@@ -311,7 +311,8 @@ Room handlers have these methods available.
 
 Register a callback to process a type of message sent by the client-side.
 
-The `type` argument can be either `string` or `number`.
+- The `type` argument can be either `string` or `number`.
+- You can only define a single callback per message type. (Defining a callback more than once will result in overriding the previous one)
 
 **Callback for specific type of message**
 
@@ -325,8 +326,7 @@ onCreate () {
 
 **Fallback for ALL messages**
 
-You can register a single callback to handle all other types of messages.
-Fallback can only registered as one callback, if registered twice, it will OVERRIDE the previous one
+You can register a single callback as a fallback to handle **other** types of messages.
 
 ``` typescript
 onCreate () {
