@@ -1,7 +1,7 @@
 - [Colyseus Cloud](#colyseus-cloud-managed-hosting)
 - [Self-host on Vultr](#self-host-on-vultr)
-- [Nginx configuration](#nginx)
-- [Apache configuration](#apache)
+- [Nginx configuration](#nginx-configuration)
+- [Apache configuration](#apache-configuration)
 - [Docker](#docker)
 - [Heroku](#heroku)
 
