@@ -151,6 +151,83 @@ manually in your shutdown process.
 
 ---
 
+### `options.selectProcessIdToCreateRoom`
+
+A callback that allows you to customize which processs the new rooms should be created at, when you use
+multiple Colyseus processes.
+
+By default, the process with the **least amount of rooms** is selected:
+
+=== "Server constructor"
+
+    ```typescript
+    import { Server, RedisPresence } from "colyseus";
+
+    const gameServer = new Server({
+        // ...
+        selectProcessIdToCreateRoom = async function (roomName: string, clientOptions: any) {
+            return (await matchMaker.stats.fetchAll())
+                .sort((p1, p2) => p1.roomCount > p2.roomCount ? 1 : -1)[0]
+                .processId;
+        }
+    });
+    ```
+
+=== "`app.config.ts`"
+
+    ```typescript
+    import config from "@colyseus/tools";
+
+    export default config({
+        // ...
+        options: {
+            selectProcessIdToCreateRoom = async function (roomName: string, clientOptions: any) {
+                return (await matchMaker.stats.fetchAll())
+                    .sort((p1, p2) => p1.roomCount > p2.roomCount ? 1 : -1)[0]
+                    .processId;
+            }
+        },
+        // ...
+    });
+    ```
+
+A common alternative is to use the process with least amount of **connections**:
+
+=== "Server constructor"
+
+    ```typescript
+    import { Server, RedisPresence } from "colyseus";
+
+    const gameServer = new Server({
+        // ...
+        selectProcessIdToCreateRoom = async function (roomName: string, clientOptions: any) {
+            return (await matchMaker.stats.fetchAll())
+                .sort((p1, p2) => p1.ccu > p2.ccu ? 1 : -1)[0]
+                .processId;
+        }
+    });
+    ```
+
+=== "`app.config.ts`"
+
+    ```typescript
+    import config from "@colyseus/tools";
+
+    export default config({
+        // ...
+        options: {
+            selectProcessIdToCreateRoom = async function (roomName: string, clientOptions: any) {
+                return (await matchMaker.stats.fetchAll())
+                    .sort((p1, p2) => p1.ccu > p2.ccu ? 1 : -1)[0]
+                    .processId;
+            }
+        },
+        // ...
+    });
+    ```
+
+---
+
 ### `options.devMode`
 
 Restore previous rooms and states upon server restarting when engaging in iterative development.
