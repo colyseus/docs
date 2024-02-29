@@ -200,7 +200,7 @@ A common alternative is to use the process with least amount of **connections**:
 
     const gameServer = new Server({
         // ...
-        selectProcessIdToCreateRoom = async function (roomName: string, clientOptions: any) {
+        selectProcessIdToCreateRoom: async function (roomName: string, clientOptions: any) {
             return (await matchMaker.stats.fetchAll())
                 .sort((p1, p2) => p1.ccu > p2.ccu ? 1 : -1)[0]
                 .processId;
@@ -216,7 +216,7 @@ A common alternative is to use the process with least amount of **connections**:
     export default config({
         // ...
         options: {
-            selectProcessIdToCreateRoom = async function (roomName: string, clientOptions: any) {
+            selectProcessIdToCreateRoom: async function (roomName: string, clientOptions: any) {
                 return (await matchMaker.stats.fetchAll())
                     .sort((p1, p2) => p1.ccu > p2.ccu ? 1 : -1)[0]
                     .processId;
