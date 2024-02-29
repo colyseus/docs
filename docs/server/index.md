@@ -165,7 +165,7 @@ By default, the process with the **least amount of rooms** is selected:
 
     const gameServer = new Server({
         // ...
-        selectProcessIdToCreateRoom = async function (roomName: string, clientOptions: any) {
+        selectProcessIdToCreateRoom: async function (roomName: string, clientOptions: any) {
             return (await matchMaker.stats.fetchAll())
                 .sort((p1, p2) => p1.roomCount > p2.roomCount ? 1 : -1)[0]
                 .processId;
@@ -181,7 +181,7 @@ By default, the process with the **least amount of rooms** is selected:
     export default config({
         // ...
         options: {
-            selectProcessIdToCreateRoom = async function (roomName: string, clientOptions: any) {
+            selectProcessIdToCreateRoom: async function (roomName: string, clientOptions: any) {
                 return (await matchMaker.stats.fetchAll())
                     .sort((p1, p2) => p1.roomCount > p2.roomCount ? 1 : -1)[0]
                     .processId;
