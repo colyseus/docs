@@ -33,7 +33,7 @@ The topics should be enough for you to set up a basic client on your own, howeve
 
 ## Running the server locally
 
-To run the demonstration server locally, run the following commands in your terminal:
+To run the demonstration server locally, you will first need to download the Server code to your machine.  The Server code for the Unity SDK lives at https://github.com/colyseus/colyseus-unity-sdk/tree/master. Download that repo, and open a terminal in the repo folder, then run the following commands in your terminal:
 
 ```
 cd Server
