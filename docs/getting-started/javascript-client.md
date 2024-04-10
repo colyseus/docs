@@ -62,7 +62,7 @@ Message broadcasted from server or directly to this client:
 
 ```ts
 room.onMessage("message_type", (message) => {
-  console.log(client.id, "received on", room.name, message);
+  console.log(room.sessionId, "received on", room.name, message);
 });
 ```
 
@@ -70,7 +70,7 @@ Server error occurred:
 
 ```ts
 room.onError((code, message) => {
-  console.log(client.id, "couldn't join", room.name);
+  console.log(room.sessionId, "couldn't join", room.name);
 });
 ```
 
@@ -78,7 +78,7 @@ The client left the room:
 
 ```ts
 room.onLeave((code) => {
-  console.log(client.id, "left", room.name);
+  console.log(room.sessionId, "left", room.name);
 });
 ```
 
