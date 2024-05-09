@@ -52,6 +52,11 @@ When running on localhost, make sure you don't have any service running on port
 
 Alternatively, you can bind the Colyseus server to port 80.
 
+**WSL2 Users**
+
+When running the colyseus server inside WSL2, you won't be able to use `localhost` as the hostname.
+You'll need to get the WSL2 machine's IP by using `wsl hostname -I` and use that IP.
+
 ### "`reconnect()` is not working on iOS!"
 
 If you lock your phone, all WebSocket connections will be closed. You can call `reconnect()` to reestablish the session, which needs a workaround for iOS:
