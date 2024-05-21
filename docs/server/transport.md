@@ -42,6 +42,7 @@ npm install --save @colyseus/ws-transport
           ...opts,
           pingInterval: 6000,
           pingMaxRetries: 4,
+          maxPayload: 1024 * 1024 * 1, // 1MB Max Payload
         });
       },
 
@@ -125,6 +126,14 @@ Default: `2`
 
 ---
 
+#### `options.maxPayload`
+
+Maximum payload clients can send per message to the server.
+
+Default: `4096` (4kb)
+
+---
+
 #### `options.verifyClient`
 
 This method happens before WebSocket handshake. If `verifyClient` is not set
@@ -174,7 +183,7 @@ const gameServer = new Server({
 
 Maximum length of received message. If a client tries to send you a message larger than this, the connection is immediately closed.
 
-Defaults to `1024 * 1024`.
+Defaults to `4096` (4kb)
 
 ---
 
@@ -184,7 +193,15 @@ Maximum amount of seconds that may pass without sending or getting a message. Co
 
 Disable by using `0`.
 
-Defaults to `120`.
+Defaults to `120`
+
+---
+
+#### `options.sendPingsAutomatically`
+
+Whether or not we should automatically send pings to uphold a stable connection given `idleTimeout`.
+
+Defaults to `true`
 
 ---
 
@@ -200,7 +217,7 @@ Defaults to `uWS.DISABLED`
 
 Maximum length of allowed backpressure per socket when publishing or sending messages. Slow receivers with too high backpressure will be skipped until they catch up or timeout.
 
-Defaults to `1024 * 1024`.
+Defaults to `1024 * 1024`
 
 ---
 
