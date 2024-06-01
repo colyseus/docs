@@ -13,6 +13,8 @@ Open your `game.project` file, and add the following URLs to the `Dependencies` 
     https://github.com/colyseus/colyseus-defold/archive/0.15.zip
     https://github.com/defold/extension-websocket/archive/master.zip
 
+Now, select `Project ▸ Fetch Libraries` to update library dependencies, two folders with the libraries name should pop up on your Defold project. This means the libraries have been imported correctly.
+
 Read more about [Defold library dependencies](http://www.defold.com/manuals/libraries/)
 
 You can also specify a [specific release](https://github.com/colyseus/colyseus-defold/releases) of the SDK, by copying its respective zip archive URL.
