@@ -1,8 +1,5 @@
 # Server API &raquo; Match-maker API
 
-!!! Warning "You may not need this!"
-    This section is for advanced usage. You're usually good to go by using the [client-side methods](/client/#methods). If you think you can't achieve your goal with the client-side methods, you should consider using the ones described on this page.
-
 The methods described below are provided by the `matchMaker` singleton, which can be imported from the `"colyseus"` package:
 
 === "TypeScript"
@@ -17,7 +14,55 @@ The methods described below are provided by the `matchMaker` singleton, which ca
     const matchMaker = require("colyseus").matchMaker;
     ```
 
-## `.createRoom(roomName, options)`
+!!! Warning "You may not need this!"
+    This section is for advanced usage. You're usually good to go by using the [client-side methods](/client/#methods). If you think you can't achieve your goal with the client-side methods, you should consider using the ones described on this page.
+
+## Stats
+
+Colyseus internally keeps track of statistics for the matchmaker.
+
+### `.stats.fetchAll()`
+
+Fetch all stats from all processes. Returns an array of objects with the following properties:
+
+- **`processId`**: the id of the process.
+- **`roomCount`**: the number of rooms on the process.
+- **`ccu`**: the number of connected clients on the process.
+
+```typescript
+import { matchMaker } from "colyseus";
+const stats = await matchMaker.stats.fetchAll();
+
+console.log(stats);
+// => [
+//    { processId: "xxx", roomCount: 10, ccu: 100 },
+//    { processId: "yyy", roomCount: 9, ccu: 90 },
+// ]
+```
+
+### `.stats.getGlobalCCU()`
+
+Get the total number of connected clients across all processes.
+
+```typescript
+import { matchMaker } from "colyseus";
+const globalCCU = await matchMaker.stats.getGlobalCCU();
+
+console.log(globalCCU);
+// => 190
+```
+
+### `.stats.local.ccu`
+
+Holds the number of connected clients on the current process.
+
+### `.stats.local.roomCount`
+
+Holds the number of rooms on the current process.
+
+## Match-making
+
+### `.createRoom(roomName, options)`
 Create a new room
 
 **Parameters:**
@@ -33,7 +78,7 @@ console.log(room);
 */
 ```
 
-## `.joinOrCreate(roomName, options)`
+### `.joinOrCreate(roomName, options)`
 
 Join or create a room and return a client seat reservation.
 
@@ -56,7 +101,7 @@ console.log(reservation);
 !!! Tip "Consuming the seat reservation"
     You can use [`consumeSeatReservation()` from the client-side](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 
-## `.reserveSeatFor(room, options)`
+### `.reserveSeatFor(room, options)`
 Reserve a seat for a client in a room.
 
 **Parameters:**
@@ -78,7 +123,7 @@ console.log(reservation);
 !!! Tip "Consuming the seat reservation"
     You can use [`consumeSeatReservation()` from the client-side](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 
-## `.join(roomName, options)`
+### `.join(roomName, options)`
 Join a room and return seat reservation. An exception is thrown if there are no rooms available for `roomName`.
 
 **Parameters:**
@@ -100,7 +145,7 @@ console.log(reservation);
 !!! Tip "Consuming the seat reservation"
     You can use [`consumeSeatReservation()` from the client-side](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 
-## `.joinById(roomId, options)`
+### `.joinById(roomId, options)`
 Join a room by id and return client seat reservation. An exception is thrown if a room is not found for `roomId`.
 
 **Parameters:**
@@ -122,7 +167,7 @@ console.log(reservation);
 !!! Tip "Consuming the seat reservation"
     You can use [`consumeSeatReservation()` from the client-side](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 
-## `.create(roomName, options)`
+### `.create(roomName, options)`
 Create a new room and return client seat reservation.
 
 **Parameters:**
@@ -144,7 +189,7 @@ console.log(reservation);
 !!! Tip "Consuming the seat reservation"
     You can use [`consumeSeatReservation()` from the client-side](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 
-## `.query(conditions)`
+### `.query(conditions)`
 Perform a query against cached rooms.
 
 ``` typescript
@@ -159,7 +204,7 @@ console.log(rooms);
 */
 ```
 
-## `.findOneRoomAvailable(roomName, options)`
+### `.findOneRoomAvailable(roomName, options)`
 Find for a public and unlocked room available.
 
 **Parameters:**
@@ -175,7 +220,7 @@ console.log(room);
 */
 ```
 
-## `.remoteRoomCall(roomId, method, args)`
+### `.remoteRoomCall(roomId, method, args)`
 Call a method or return a property on a remote room.
 
 **Parameters:**
