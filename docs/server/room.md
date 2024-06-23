@@ -13,7 +13,7 @@ The `Room` class is meant to implement a game session, and/or serve as the commu
 
     export class MyRoom extends Room {
         // (optional) Validate client auth token before joining/creating the room
-        static async onAuth (token: Client, request: http.IncomingMessage) { }
+        static async onAuth (token: string, request: http.IncomingMessage) { }
 
         // When room is initialized
         onCreate (options: any) { }
