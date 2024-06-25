@@ -12,7 +12,9 @@ By simply relaying messages (forwarding them from a client to everyone else) - t
 ```typescript
 import { RelayRoom } from "colyseus";
 
-// Expose your relayed room
+//
+// Expose your relayed room.
+//
 gameServer.define("your_relayed_room", RelayRoom, {
   maxClients: 4,
   allowReconnectionTime: 120
@@ -31,7 +33,7 @@ import { Client } from "colyseus.js";
 const client = new Client("ws://localhost:2567");
 
 //
-// Join the relayed room
+// Join the relayed room.
 //
 const relay = await client.joinOrCreate("your_relayed_room", {
   name: "This is my name!"
@@ -43,7 +45,7 @@ const relay = await client.joinOrCreate("your_relayed_room", {
 
 ```typescript
 //
-// Detect when a player joined the room
+// Detect when a player joined the room.
 //
 relay.state.players.onAdd((player, sessionId) => {
   if (relay.sessionId === sessionId) {
@@ -55,14 +57,14 @@ relay.state.players.onAdd((player, sessionId) => {
 })
 
 //
-// Detect when a player leave the room
+// Detect when a player left the room.
 //
 relay.state.players.onRemove((player, sessionId) => {
   console.log("Opponent left!", player, sessionId);
 })
 
 //
-// Detect when the connectivity of a player has changed
+// Detect when the connectivity of a player has changed.
 // (only available if you provided `allowReconnection: true` in the server-side)
 //
 relay.state.players.onChange((player, sessionId) => {
@@ -75,11 +77,11 @@ relay.state.players.onChange((player, sessionId) => {
 })
 ```
 
-### Sending an receiving messages
+### Sending and receiving messages
 
 ```typescript
 //
-// By sending a message, all other clients will receive it under the same name
+// By sending a message, all other clients will receive it under the same name.
 // Messages are only sent to other connected clients, never the current one.
 //
 relay.send("fire", {
