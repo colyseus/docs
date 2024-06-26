@@ -765,6 +765,8 @@ import { StateView } from "@colyseus/schema";
     }
 ```
 
+Each `StateView` instance is going to add a new encoding step for state serialization. You may re-use the same `StateView` instance for multiple clients, or create a new one for each client.
+
 ### `@view()` tagged fields
 
 The `@view()` decorator is used to mark a field as only visible to a `StateView` that has added this `Schema` instance.
