@@ -46,9 +46,7 @@ import { Room } from "colyseus";
 import { MyState } from "./MyState";
 
 export class MyRoom extends Room<MyState> {
-    onCreate() {
-        this.setState(new MyState());
-    }
+    state = new MyState()
 }
 ```
 
@@ -746,182 +744,59 @@ Empties the Collection. (Client-side will trigger `onRemove` for each element.)
 
 ---
 
-## Filtering data per client
+## `StateView`
 
-!!! Warning "This feature is experimental"
-    The `@filter()`/`@filterChildren()` are experimental and are not optimized for fast-paced games.
+!!! Warning "The old `@filter()` and `@filterChildren()` are now deprecated!"
+    See the [migration guide](/migrating/0.16/#filter-and-filterchildren-are-now-deprecated) for more information.
 
-Filtering is meant to hide portions of your state for a particular client, to avoid cheating in case a player decides to inspect data coming from the network and seeing the unfiltered state information.
+The `StateView` must be assigned to the `client.view`. The room serializer is going to use the `client.view` to serialize the state before sending it to the client.
 
-The data filters are callbacks that are going to be triggered **per client** and **per field** (or per child structure, in case of `@filterChildren`). If the filter callback returns `true` the field data is going to be sent for that particular client, otherwise, the data is not going to be sent for that client.
+```typescript
+import { StateView } from "@colyseus/schema";
 
-Note that the filter function does not re-run automatically if its dependencies change, but only if the filtered field (or its children) are updated.
-See [this issue](https://github.com/colyseus/schema/issues/102) for a workaround.
+// ...
+    onJoin(client, options) {
+        const player = new Player();
 
-### `@filter()` property decorator
+        client.view = new StateView();
+        client.view.add(player);
 
-The `@filter()` property decorator can be used to filter out entire Schema fields.
-
-Here's how the `@filter()` signature looks like:
-
-=== "TypeScript"
-
-    ``` typescript
-    import { Schema, type, filter } from '@colyseus/schema';
-    import { Client } from '@colyseus/core';
-
-    class State extends Schema {
-        /**
-         * DO NOT USE ARROW FUNCTION INSIDE `@filter`
-         * (IT WILL FORCE A DIFFERENT `this` SCOPE)
-         */
-        @filter(function(
-            this: State, // the instance of this class (instance of `State`)
-            client: Client, // the Room's `client` instance which this data is going to be filtered to
-            value: string, // the value of the field to be filtered.
-            root: Schema // the root state Schema instance
-        ) {
-            // always returns a boolean
-            return true;
-        })
-        @type("string") field: string;
+        this.state.players.set(client.sessionId, player);
     }
-    ```
+```
 
-=== "JavaScript"
+### `@view()` tagged fields
 
-    ``` typescript
-    const schema = require('@colyseus/schema');
-    class State extends schema.Schema {}
+The `@view()` decorator is used to mark a field as only visible to a `StateView` that has added this `Schema` instance.
 
-    schema.defineTypes(State, {
-        field: "string"
-    });
+```typescript
+class Player extends Schema {
+    // this property is visible to all
+    @type("string") name: string;
 
-    schema.filter(function(client, value, root) {
-        // client is:
-        //
-        // the current client that's going to receive this data. you may use its
-        // client.sessionId, or other information to decide whether this value is
-        // going to be synched or not.
+    // this property is only visible a `StateView` that has added this Player instance.
+    @view() @type("number") position: number;
+}
+```
 
-        // value is:
-        // the value of the field @filter() is being applied to
+You may also add a tag number, to allow multiple views to access different fields:
 
-        // root is:
-        // the root instance of your room state. you may use it to access other
-        // structures in the process of decision whether this value is going to be
-        // synched or not.
-        return true;
-    })(State.prototype, "field");
-    ```
+```typescript
+class Player extends Schema {
+    // this property is visible to all
+    @type("string") name: string;
 
-### `@filterChildren()` property decorator
+    // any `.add(player)` will see this field
+    @view() @type("number") position: number;
 
-The `@filterChildren()` property decorator can be used to filter out items inside arrays, maps, sets, etc. Its signature is pretty much the same as `@filter()`, with the addition of the `key` parameter before the `value` - representing each item inside a [ArraySchema](#arrayschema), [MapSchema](#mapschema), [CollectionSchema](#collectionschema), etc.
+    // only `.add(player, 1)` will see this field
+    @view(1) @type({ map: "string" }) attributes: MapSchema<string>;
+}
+```
 
-=== "TypeScript"
 
-    ``` typescript
-    import { Schema, type, filterChildren } from '@colyseus/schema';
-    import { Client } from '@colyseus/core';
+---
 
-    class State extends Schema {
-        /**
-         * DO NOT USE ARROW FUNCTION INSIDE `@filterChildren`
-         * (IT WILL FORCE A DIFFERENT `this` SCOPE)
-         */
-        @filterChildren(function(
-            this: State, // the instance of this class (instance of `State`)
-            client: Client, // the Room's `client` instance which this data is going to be filtered to
-            key: string, // the key of the current value inside the structure
-            value: Card, // the value of the field to be filtered.
-            root: Schema // the root state Schema instance
-        ) {
-            // always returns a boolean
-            return true;
-        })
-        @type([Cards]) cards = new ArraySchema<Card>();
-    }
-    ```
-=== "JavaScript"
-
-    ``` typescript
-    const schema = require('@colyseus/schema');
-    class State extends schema.Schema {}
-
-    schema.defineTypes(State, {
-        cards: [Card]
-    });
-
-    schema.filterChildren(function(client, key, value, root) {
-        // client is:
-        //
-        // the current client that's going to receive this data. you may use its
-        // client.sessionId, or other information to decide whether this value is
-        // going to be synched or not.
-
-        // key is:
-        // the key of the current value inside the structure
-
-        // value is:
-        // the current value inside the structure
-
-        // root is:
-        // the root instance of your room state. you may use it to access other
-        // structures in the process of decision whether this value is going to be
-        // synched or not.
-        return true;
-    })(State.prototype, "cards");
-    ```
-
-### Example
-
-In a card game, the relevant data of each card should be available only for the owner of the card, or on certain conditions (e.g. card has been discarded)
-
-See `@filter()` callback signature:
-
-=== "TypeScript"
-
-    ``` typescript
-    import { Client } from "colyseus";
-
-    class Card extends Schema {
-        @type("string") owner: string; // contains the sessionId of Card owner
-        @type("boolean") discarded: boolean = false;
-
-        @filter(function(
-            this: Card, // the instance of the class `@filter` has been defined (instance of `Card`)
-            client: Client, // the Room's `client` instance which this data is going to be filtered to
-            value: Card['number'], // the value of the field to be filtered. (value of `number` field)
-            root: Schema // the root state Schema instance
-        ) {
-            return this.discarded || this.owner === client.sessionId;
-        })
-        @type("uint8") number: number;
-    }
-    ```
-
-=== "JavaScript"
-
-    ``` typescript
-    const schema = require('@colyseus/schema');
-
-    class Card extends schema.Schema {}
-    schema.defineTypes(Card, {
-        owner: "string",
-        discarded: "boolean",
-        number: "uint8"
-    });
-
-    /**
-     * DO NOT USE ARROW FUNCTION INSIDE `@filter`
-     * (IT WILL FORCE A DIFFERENT `this` SCOPE)
-     */
-    schema.filter(function(client, value, root) {
-        return this.discarded || this.owner === client.sessionId;
-    })(Card.prototype, "number");
-    ```
 
 ### Versioning and backwards/forwards compability
 
