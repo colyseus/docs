@@ -327,6 +327,7 @@ nav:
         - 'best-practices/index.md'
 
     - Migrating to version:
+        - '0.16': 'migrating/0.16.md'
         - '0.15': 'migrating/0.15.md'
         - '0.14.18': 'migrating/0.14.18.md'
         - '0.14': 'migrating/0.14.md'
