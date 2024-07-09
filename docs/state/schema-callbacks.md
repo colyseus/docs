@@ -1,4 +1,4 @@
-# [State Sync](/state/) &raquo; Client-side Callbacks
+# [State Sync](/state/) &raquo; Client-side Schema Callbacks
 
 The schema callbacks are triggered only in the client-side, right after the
 latest state patches sent by the server were received and applied on the client.
@@ -17,6 +17,7 @@ The callbacks are triggered based on instance reference. Make sure to attach the
 **On `Schema` instances**
 
 - [listen()](#listenprop-callback) for properties
+- [bindTo()](#bindto-callback) for properties
 - [onChange ()](#onchange)
 
 **On collections of items**
@@ -47,7 +48,7 @@ Listens for a single property change.
 === "TypeScript"
 
     ``` typescript
-    room.state.listen("currentTurn", (currentValue, previousValue) => {
+    $(room.state).listen("currentTurn", (currentValue, previousValue) => {
         console.log(`currentTurn is now ${currentValue}`);
         console.log(`previous value was: ${previousValue}`);
     });
@@ -83,13 +84,35 @@ Listens for a single property change.
 The `.listen()` method returns a function that, when called, removes the attached callback:
 
 ``` typescript
-const unbindCallback = room.state.listen("currentTurn", (currentValue, previousValue) => {
+const unbindCallback = $(room.state).listen("currentTurn", (currentValue, previousValue) => {
     // ...
 });
 
 // later on, if you don't need the listener anymore, you can call `unbindCallback()` to stop listening for `"currentTurn"` changes.
 unbindCallback();
 ```
+
+---
+
+#### `.bindTo(targetObject, properties?)`
+
+Bind properties directly to `targetObject`, whenever the server send updates.
+
+**Parameters:**
+
+- `targetObject`: the object that will receive updates
+- `properties`: (optional) list of properties that will be assigned to
+  `targetObject`. By default, every `@type()`'d property will be used.
+
+=== "TypeScript"
+
+    ``` typescript
+    $(room.state).players.onAdd((player, sessionId) => {
+        const playerVisual = PIXI.Sprite.from('player');
+        $(player).bindTo(playerVisual);
+    });
+    ```
+
 
 ---
 
@@ -100,7 +123,7 @@ You can register the `onChange` to track whenever a `Schema` had its properties 
 === "JavaScript"
 
     ``` typescript
-    room.state.onChange(() => {
+    $(room.state).onChange(() => {
         // something changed on .state
         console.log(room.state.xxx)
     });
@@ -143,13 +166,13 @@ By default, the callback is called immediately for existing items in the collect
 === "JavaScript"
 
     ``` typescript
-    room.state.players.onAdd((player, key) => {
+    $(room.state).players.onAdd((player, key) => {
         console.log(player, "has been added at", key);
 
         // add your player entity to the game world!
 
         // detecting changes on object properties
-        player.listen("field_name", (value, previousValue) => {
+        $(player).listen("field_name", (value, previousValue) => {
             console.log(value);
             console.log(previousValue);
         });
@@ -200,7 +223,7 @@ The `onRemove` callback is called with the removed item and its key on holder ob
 === "JavaScript"
 
     ``` javascript
-    room.state.players.onRemove((player, key) => {
+    $(room.state).players.onRemove((player, key) => {
         console.log(player, "has been removed at", key);
 
         // remove your player entity from the game world!
@@ -237,7 +260,7 @@ This callback is triggered whenever a collection of **primitive** types (`string
 === "JavaScript"
 
     ``` javascript
-    room.state.mapOfStrings.onChange((value, key) => {
+    $(room.state).mapOfStrings.onChange((value, key) => {
         console.log(key, "changed to", value);
     });
     ```
