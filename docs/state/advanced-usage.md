@@ -3,10 +3,10 @@
 Since `@colyseus/schema` 3.0, experimental APIs are available allowing you to
 customize:
 
-- Change tracking
-- Byte-level encoding
-- Byte-level decoding
-- Encoding non-`Schema` structures
+- [Change tracking](#change-tracking)
+- [Byte-level encoding](#byte-level-encoding)
+- [Byte-level decoding](#byte-level-decoding)
+- [Encoding non-`Schema` structures](#encoding-non-schema-structures)
 
 ## Change Tracking
 
