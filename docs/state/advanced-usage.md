@@ -31,6 +31,9 @@ See [`ChangeTree`](https://github.com/colyseus/schema/blob/f755b94c5e618cfd6cdf2
 
 ## Byte-level encoding
 
+At the `$encoder` method call, you may customize how a particular structure gets
+encoded into the buffer that is sent over the wire for the client.
+
 ```typescript
 import { $encoder, Schema } from "@colyseus/schema";
 
@@ -52,6 +55,9 @@ Vec[$encoder] = function (encoder, buffer, changeTree, index, operation, it, isE
 See [`EncodeOperation`](https://github.com/colyseus/schema/blob/f755b94c5e618cfd6cdf2182199ec87b68fdae47/src/encoder/EncodeOperation.ts#L16-L25) method signature for full list of arguments.
 
 ## Byte-level decoding
+
+At the `$decoder` method call, you may customize how a particular structure gets
+decoded, and how to interact with the callback system.
 
 ```typescript
 import { $decoder, Schema } from "@colyseus/schema";
@@ -109,22 +115,38 @@ See [`DecodeOperation`](https://github.com/colyseus/schema/blob/f755b94c5e618cfd
 
 ## Encoding non-`Schema` structures
 
+In order to encode 3rd party structures, there are 2 steps to take:
+
+1. Use `Metadata.setFields()` to define the properties to be encoded.
+2. Initialize each instance with `Schema.initialize()` as soon as the 3rd party
+   structure has been instantiated.
+
+!!! Warning "Experimental feature"
+    This may not work as expected for every 3rd party structure, as
+    `Schema.initialize()` is going to assign a property descriptor per property
+    defined by `Metadata.setFields()`. If the 3rd party library also relies on
+    their own property descriptors, or getters/setters, it would result in
+    conflicts between them.
+
 ```typescript
 import { Schema, Metadata } from "@colyseus/schema";
 
+// the 3rd party structure...
 class Vec3 {
     x: number;
     y: number;
     z: number;
-
-    constructor() {
-        Schema.initialize(this);
-    }
 }
 
+// define how to encode the properties
 Metadata.setFields(Vec3, {
     x: "number",
     y: "number",
     z: "number",
 });
+
+// initialize it!
+const vec3 = new Vec3();
+Schema.initialize(vec3);
+
 ```
