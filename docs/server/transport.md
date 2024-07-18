@@ -267,7 +267,7 @@ npm install --save @colyseus/h3-transport
 === "Raw usage"
 
     ``` typescript
-    import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
+    import { H3Transport } from "@colyseus/h3-transport"
 
     const transport = new H3Transport({
         /* ...options */
