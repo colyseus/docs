@@ -156,9 +156,6 @@ then the handshake is automatically accepted.
 
 The [`uWebSockets.js`](https://github.com/uNetworking/uWebSockets.js) implementation generally performs better than the default, in terms of number of CCU it can hold, and memory consumption.
 
-!!! Warning "HTTP Routing works differently with `uWebSockets.js`"
-    The major disadvantage of using `uWebSockets.js` is that their HTTP/routing system works completely different than regular Node.js/express routes. See more about this on [Custom HTTP routes with `uWebSockets.js`](#custom-http-routes-with-uwebsocketsjs)
-
 **Installation**
 
 ``` bash
