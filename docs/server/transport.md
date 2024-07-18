@@ -6,6 +6,7 @@ Each Transport has its own set of options for customization.
 
 - [Default WebSocket Transport (`ws`)](#default-websocket-transport-via-ws)
 - [Native C++ WebSocket Transport (`uWebSockets.js`)](#native-c-websocket-transport-via-uwebsocketsjs)
+- [WebTransport](#webtransport)
 - [Bun WebSockets](#bun-websockets)
 
 ---
@@ -166,134 +167,9 @@ npm install --save @colyseus/uwebsockets-transport
 
 **Usage**
 
-``` typescript
-import { Server } from "@colyseus/core";
-import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
-
-const gameServer = new Server({
-    transport: new uWebSocketsTransport({
-        /* options */
-    })
-})
-```
-
-### Available options:
-
-#### `options.maxPayloadLength`
-
-Maximum length of received message. If a client tries to send you a message larger than this, the connection is immediately closed.
-
-Defaults to `4096` (4kb)
-
----
-
-#### `options.idleTimeout`
-
-Maximum amount of seconds that may pass without sending or getting a message. Connection is closed if this timeout passes. Resolution (granularity) for timeouts are typically 4 seconds, rounded to closest.
-
-Disable by using `0`.
-
-Defaults to `120`
-
----
-
-#### `options.sendPingsAutomatically`
-
-Whether or not we should automatically send pings to uphold a stable connection given `idleTimeout`.
-
-Defaults to `true`
-
----
-
-#### `options.compression`
-
-What permessage-deflate compression to use. `uWS.DISABLED`, `uWS.SHARED_COMPRESSOR` or any of the `uWS.DEDICATED_COMPRESSOR_xxxKB`.
-
-Defaults to `uWS.DISABLED`
-
----
-
-#### `options.maxBackpressure`
-
-Maximum length of allowed backpressure per socket when publishing or sending messages. Slow receivers with too high backpressure will be skipped until they catch up or timeout.
-
-Defaults to `1024 * 1024`
-
----
-
-#### `options.key_file_name`
-
-Path to the SSL key file. (for SSL termination through the Node.js application.)
-
----
-
-#### `options.cert_file_name`
-
-Path to the SSL certificate file. (for SSL termination through the Node.js application.)
-
----
-
-#### `options.passphrase`
-
-Password for the SSL file. (for SSL termination through the Node.js application.)
-
----
-
-### Custom HTTP routes with `uWebSockets.js`
-
-#### Native `uWebSockets.js` routing:
-
-The `uWebSocketsTransport` exposes the variable `app` as a reference to the raw `uws.App` or `uws.SSLApp` from `uWebSockets.js` library.
-
-You can use `transport.app` directly to bind http routes using the `uWebSockets.js` API, see below:
-
-``` typescript
-import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
-
-const transport = new uWebSocketsTransport({
-    /* ...options */
-});
-
-// ASYNC route
-transport.app.get("/async_route", (res, req) => {
-    /* Can't return or yield from here without responding or attaching an abort handler */
-    res.onAborted(() => {
-        res.aborted = true;
-    });
-
-    /* Awaiting will yield and effectively return to C++, so you need to have called onAborted */
-    let result = await someAsyncTask();
-
-    /* If we were aborted, you cannot respond */
-    if (!res.aborted) {
-        res.writeStatus('200 OK').writeHeader('IsExample', 'Yes').end(result);
-    }
-});
-
-// SYNC route
-transport.app.get("/sync_route", (res, req) => {
-    res.writeStatus('200 OK').writeHeader('IsExample', 'Yes').end('Hello there!');
-});
-```
-
-See [`uWebSockets.js` examples](https://github.com/uNetworking/uWebSockets.js/tree/master/examples) for more information.
-
-#### Alternative: express compatibility layer
-
-Alternatively, we've built a thin express compatibility layer that aims to provide the same functionality from Express, but using `uWebSockets.js` under the hood.
-
-**Installation**
-
-``` bash
-npm install --save uwebsockets-express
-```
-
-**Usage**
-
 === "app.config.ts"
 
     ``` typescript
-    import express from "express";
     import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
     import config from "@colyseus/tools";
 
@@ -306,15 +182,10 @@ npm install --save uwebsockets-express
       },
 
       //
-      // when using `@colyseus/tools`, the `uwebsockets-express` is loaded automatically.
-      // you get the expressify(transport.app) as argument here.
+      // bind express routes
       //
       initializeExpress: (app) => {
-        // use existing middleware implementations!
-        app.use('/', serveIndex(path.join(__dirname, ".."), { icons: true, hidden: true }))
-        app.use('/', express.static(path.join(__dirname, "..")));
 
-        // register routes
         app.get("/hello", (req, res) => {
           res.json({ hello: "world!" });
         });
@@ -327,25 +198,98 @@ npm install --save uwebsockets-express
 === "Raw usage"
 
     ``` typescript
-    import express from "express";
-    import expressify from "uwebsockets-express"
     import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
 
     const transport = new uWebSocketsTransport({
         /* ...options */
     });
-    const app = expressify(transport.app);
+    const app = transport['expressApp'];
 
-    // use existing middleware implementations!
-    app.use(express.json());
-    app.use('/', serveIndex(path.join(__dirname, ".."), { icons: true, hidden: true }))
-    app.use('/', express.static(path.join(__dirname, "..")));
+    // bind express routes
+    app.get("/hello", (req, res) => {
+      res.json({ hello: "world!" });
+    });
+    ```
+
+### Available options:
+
+- `options.maxPayloadLength`: (default: `4096`) Maximum length of received message. If a client tries to send you a message larger than this, the connection is immediately closed.
+- `options.idleTimeout`: (default: `120`) Maximum amount of seconds that may pass without sending or getting a message. Connection is closed if this timeout passes. Resolution (granularity) for timeouts are typically 4 seconds, rounded to closest. Disable by using `0`.
+- `options.sendPingsAutomatically`: (default: `true`) Whether or not we should automatically send pings to uphold a stable connection given `idleTimeout`.
+- `options.compression`: (default: `uWS.DISABLED`) What permessage-deflate compression to use. `uWS.DISABLED`, `uWS.SHARED_COMPRESSOR` or any of the `uWS.DEDICATED_COMPRESSOR_xxxKB`.
+- `options.maxBackpressure`: (default: `1024 * 1024`) Maximum length of allowed backpressure per socket when publishing or sending messages. Slow receivers with too high backpressure will be skipped until they catch up or timeout.
+- `options.key_file_name`: Path to the SSL key file. (for SSL termination through the Node.js application.)
+- `options.cert_file_name`: Path to the SSL certificate file. (for SSL termination through the Node.js application.)
+- `options.passphrase`: Password for the SSL file. (for SSL termination through the Node.js application.)
+
+---
+
+## WebTransport
+
+WebTransport support is experimental, and currently and relies on the [`@fails-components/webtransport`](https://github.com/fails-components/webtransport) open-source library.
+
+!!! Warning "Experimental"
+
+
+```bash
+npm install --save @colyseus/h3-transport
+```
+
+**Usage**
+
+=== "app.config.ts"
+
+    ``` typescript
+    import config from "@colyseus/tools";
+    import { H3Transport } from "@colyseus/h3-transport"
+
+    export default config({
+      // ...
+      initializeTransport: function(options) {
+        return new H3Transport({
+          // more H3Transport options
+          ...options,
+        });
+      },
+
+      //
+      // bind express routes
+      //
+      initializeExpress: (app) => {
+
+        app.get("/hello", (req, res) => {
+          res.json({ hello: "world!" });
+        });
+
+      },
+      // ...
+    })
+    ```
+
+=== "Raw usage"
+
+    ``` typescript
+    import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
+
+    const transport = new H3Transport({
+        /* ...options */
+    });
+    const app = transport['expressApp'];
 
     // register routes
     app.get("/hello", (req, res) => {
       res.json({ hello: "world!" });
     });
     ```
+
+### Available options:
+
+- `app`: The Express app.
+- `cert`: Certificate contents (cert.pem)
+- `key`: Private key contents (key.pem)
+- `secret`: (?)
+- `server`: The `http.Server` instance to be used.
+- `localProxy`: (optional) Fallback every URL through the this local proxy.
 
 ---
 
