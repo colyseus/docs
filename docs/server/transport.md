@@ -65,7 +65,7 @@ npm install --save @colyseus/ws-transport
     })
     ```
 
-### Available options:
+### Available options
 
 #### `options.server`
 
@@ -211,7 +211,7 @@ npm install --save @colyseus/uwebsockets-transport
     });
     ```
 
-### Available options:
+### Available options
 
 - `options.maxPayloadLength`: (default: `4096`) Maximum length of received message. If a client tries to send you a message larger than this, the connection is immediately closed.
 - `options.idleTimeout`: (default: `120`) Maximum amount of seconds that may pass without sending or getting a message. Connection is closed if this timeout passes. Resolution (granularity) for timeouts are typically 4 seconds, rounded to closest. Disable by using `0`.
@@ -282,7 +282,7 @@ npm install --save @colyseus/h3-transport
     });
     ```
 
-### Available options:
+### Available options
 
 - `app`: The Express app.
 - `cert`: Certificate contents (cert.pem)
