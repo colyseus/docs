@@ -223,7 +223,7 @@ npm install --save @colyseus/uwebsockets-transport
 
 ## WebTransport
 
-WebTransport support is experimental, and currently and relies on the [`@fails-components/webtransport`](https://github.com/fails-components/webtransport) open-source library.
+WebTransport support is experimental, and currently on the [`@fails-components/webtransport`](https://github.com/fails-components/webtransport) server-side implementation of HTTP3/WebTransport.
 
 !!! Warning "Experimental"
     This WebTransport implementation hasn't been battle tested. Feedback is very welcome - WebTransport is still an emerging technology and [not available by every browser](https://caniuse.com/webtransport).
