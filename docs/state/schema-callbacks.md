@@ -1,7 +1,67 @@
 # [State Sync](/state/) &raquo; Client-side Schema Callbacks
 
-The schema callbacks are triggered only in the client-side, right after the
-latest state patches sent by the server were received and applied on the client.
+When applying state changes coming from the server, the client-side is going to trigger callbacks on local instances according to the changes being applied.
+
+In order to register callbacks to Schema instances, you must access the instances through a "proxy":
+
+=== "TypeScript"
+
+    ``` typescript
+    import { getStateCallbacks } from "colyseus.js";
+
+    const room = await client.joinOrCreate("my_room");
+    const $ = getStateCallbacks(room);
+
+    $(room.state).listen("currentTurn", (currentValue, previousValue) => {
+        // ...
+    });
+
+    // when an entity was added (ArraySchema or MapSchema)
+    $(room.state).entities.onAdd((entity, sessionId) => {
+        // ...
+        console.log("entity added", entity);
+
+        $(entity).listen("hp", (currentHp, previousHp) => {
+            console.log("entity", sessionId, "changed hp to", currentHp);
+        })
+    });
+
+    // when an entity was removed (ArraySchema or MapSchema)
+    $(room.state).entities.onRemove((entity, sessionId) => {
+        // ...
+        console.log("entity removed", entity);
+    });
+    ```
+
+=== "C#"
+
+    ``` csharp
+    // TODO: NOT IMPLEMENTED / NOT FINAL
+    $(room.state).OnCurrentTurnChange((currentValue, previousValue) => {
+        Debug.Log(currentValue);
+        Debug.Log(previousValue);
+    })
+    ```
+
+=== "Lua"
+
+    ``` lua
+    -- TODO: NOT IMPLEMENTED / NOT FINAL
+    $(room.state):listen("currentTurn", function (current_value, previous_value)
+        pprint(current_value);
+        pprint(previous_value);
+    end)
+    ```
+
+=== "Haxe"
+
+    ``` haxe
+    // TODO: NOT IMPLEMENTED / NOT FINAL
+    $(room.state).listen("currentTurn", (currentValue, previousValue) => {
+        trace(currentValue);
+        trace(previousValue);
+    });
+    ```
 
 ## Schema callbacks
 
@@ -9,10 +69,6 @@ latest state patches sent by the server were received and applied on the client.
     When using statically typed languages, you need to generate the client-side schema files based on your TypeScript schema definitions. [See generating schema on the client-side](#client-side-schema-generation).
 
 ### Callbacks
-
-When applying state changes coming from the server, the client-side is going to trigger callbacks on local instances according to the change being applied.
-
-The callbacks are triggered based on instance reference. Make sure to attach the callback on the instances that are actually changing on the server.
 
 **On `Schema` instances**
 
@@ -57,7 +113,7 @@ Listens for a single property change.
 === "C#"
 
     ``` csharp
-    room.state.OnCurrentTurnChange((currentValue, previousValue) => {
+    $(room.state).OnCurrentTurnChange((currentValue, previousValue) => {
         Debug.Log(currentValue);
         Debug.Log(previousValue);
     })
@@ -66,7 +122,7 @@ Listens for a single property change.
 === "Lua"
 
     ``` lua
-    room.state:listen("currentTurn", function (current_value, previous_value)
+    $(room.state):listen("currentTurn", function (current_value, previous_value)
         pprint(current_value);
         pprint(previous_value);
     end)
@@ -75,7 +131,7 @@ Listens for a single property change.
 === "Haxe"
 
     ``` haxe
-    room.state.listen("currentTurn", (currentValue, previousValue) => {
+    $(room.state).listen("currentTurn", (currentValue, previousValue) => {
         trace(currentValue);
         trace(previousValue);
     });
@@ -132,7 +188,7 @@ You can register the `onChange` to track whenever a `Schema` had its properties 
 === "Lua"
 
     ``` lua
-    room.state:on_change(function ()
+    $(room.state):on_change(function ()
         -- something changed on .state
         print(room.state.xxx)
     end)
@@ -142,7 +198,7 @@ You can register the `onChange` to track whenever a `Schema` had its properties 
 === "C#"
 
     ``` csharp
-    room.State.OnChange(() =>
+    $(room.State).OnChange(() =>
     {
         // something changed on .state
         Debug.Log(room.State.xxx)
@@ -182,7 +238,7 @@ By default, the callback is called immediately for existing items in the collect
 === "C#"
 
     ``` csharp
-    room.State.players.OnAdd((string key, Player player) =>
+    $(room.State).players.OnAdd((string key, Player player) =>
     {
         Debug.Log("player has been added at " + key);
 
@@ -198,7 +254,7 @@ By default, the callback is called immediately for existing items in the collect
 === "Lua"
 
     ``` lua
-    room.state.players:on_add(function (player, key)
+    $(room.state).players:on_add(function (player, key)
         print("player has been added at", key);
 
         -- add your player entity to the game world!
@@ -233,7 +289,7 @@ The `onRemove` callback is called with the removed item and its key on holder ob
 === "C#"
 
     ``` csharp
-    room.State.players.OnRemove((string key, Player player) =>
+    $(room.State).players.OnRemove((string key, Player player) =>
     {
         Debug.Log("player has been removed at " + key);
 
@@ -244,7 +300,7 @@ The `onRemove` callback is called with the removed item and its key on holder ob
 === "Lua"
 
     ``` lua
-    room.state.players:on_remove(function (player, key)
+    $(room.state).players:on_remove(function (player, key)
         print("player has been removed at " .. key);
 
         -- remove your player entity from the game world!
@@ -268,7 +324,7 @@ This callback is triggered whenever a collection of **primitive** types (`string
 === "Lua"
 
     ``` lua
-    room.state.mapOfStrings:on_change(function (value, key)
+    $(room.state).mapOfStrings:on_change(function (value, key)
         print(key .. " changed to " .. value);
     end)
     ```
@@ -276,7 +332,7 @@ This callback is triggered whenever a collection of **primitive** types (`string
 === "C#"
 
     ``` csharp
-    room.State.mapOfStrings.OnChange((string key, string value) =>
+    $(room.State).mapOfStrings.OnChange((string key, string value) =>
     {
         Debug.Log(key + " changed to" + value);
     });
