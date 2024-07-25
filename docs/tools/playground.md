@@ -33,7 +33,7 @@ Then, import and bind it to your express app instance:
 import { playground } from "@colyseus/playground";
 
 // bind it as an express middleware
-app.use("/playground", playground);
+app.use("/playground", playground());
 ```
 
 ## Contribute
