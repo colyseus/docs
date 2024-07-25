@@ -63,12 +63,10 @@ In order to register callbacks to Schema instances, you must access the instance
     });
     ```
 
-## Schema callbacks
-
 !!! Warning "C#, C++, Haxe"
     When using statically typed languages, you need to generate the client-side schema files based on your TypeScript schema definitions. [See generating schema on the client-side](#client-side-schema-generation).
 
-### Callbacks
+### Methods
 
 **On `Schema` instances**
 
@@ -410,3 +408,39 @@ npm run schema-codegen
 generated: Player.cs
 generated: State.cs
 ```
+
+---
+
+# Advanced: Add your custom callback system
+
+The `@colyseus/schema` version `3.0` introduced a way to bring your own callback system during decoding.
+
+The standard way of attaching callbacks uses the same "flavor" as Colyseus is used to from previous versions. However, you can bring your own callback system by overriding the `Decoder`'s `triggerChanges` method.
+
+This is an example of how you can bring your own callback system:
+
+``` typescript
+import { Room, DataChange } from "@colyseus/schema";
+
+function getRawChangesCallback(room: Room, callback: (changes: DataChange[]) => void) {
+    room['serializer']['decoder'].triggerChanges = callback;
+
+    // .refs => contains a map of all Schema instances
+    room['serializer']['decoder'].root.refs
+
+    // .refIds => contains a map of all refIds by Schema instances
+    room['serializer']['decoder'].root.refIds
+
+    // .refCounts => contains a map of all reference counts by refId
+    room['serializer']['decoder'].root.refCounts
+}
+
+const room = await client.joinOrCreate("my_room");
+getRawChangesCallback(room, (changes) => {
+    console.log("raw list of changes", changes);
+});
+```
+
+On the above example, the raw list of changes is being printed to the console.
+
+You can see how the standard callback system is implemented [here](https://github.com/colyseus/schema/blob/3.0/src/decoder/strategy/StateCallbacks.ts).
