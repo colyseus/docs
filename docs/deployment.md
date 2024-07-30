@@ -68,9 +68,12 @@ The [`create-colyseus-app` templates](https://github.com/colyseus/create-colyseu
 
 ---
 
-## Self-host on [Vultr](https://www.vultr.com/?ref=8013231)
+## Self-host on [Vultr](https://www.vultr.com/?ref=9632185-9J)
 
-A pre-configured Colyseus server is available on [Vultr Marketplace](https://www.vultr.com/marketplace/apps/colyseus/?ref=8013231). It's a great option if you want to self-host your Colyseus server.
+<!-- https://www.vultr.com/?ref=8013231 -->
+<!-- https://www.vultr.com/marketplace/apps/colyseus/?ref=8013231 -->
+
+A pre-configured Colyseus server is available on [Vultr Marketplace](https://www.vultr.com/marketplace/apps/colyseus/?ref=9632185-9J). It's a great option if you want to self-host your Colyseus server.
 
 This server is configured with:
 
