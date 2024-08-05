@@ -35,7 +35,7 @@ Use the command below to set up a new Colyseus server project:
 
     ``` bash
     # Create a new Colyseus project
-    npm create colyseus-app@latest ./my-server
+    npx create colyseus-app@latest ./my-server
 
     # Enter the project directory
     cd my-server
