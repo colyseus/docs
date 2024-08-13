@@ -363,6 +363,9 @@ nav:
 
 - 'Colyseus Cloud':
     - 'cloud/index.md'
-    - 'cloud/typescript-compilation-errors.md'
-    - 'cloud/troubleshooting.md'
-    - 'cloud/ddos-protection.md'
+    - Add-ons:
+        - 'cloud/ddos-protection.md'
+    - Deployment:
+        - 'cloud/continuous-deployment.md'
+        - 'cloud/typescript-compilation-errors.md'
+        - 'cloud/troubleshooting.md'

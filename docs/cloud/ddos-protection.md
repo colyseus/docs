@@ -3,7 +3,7 @@ icon: octicons/shield-check-16
 title: DDoS Protection
 ---
 
-# DDoS Protection
+# Add-on: DDoS Protection
 
 Colyseus Cloud native DDoS mitigation system adds an extra layer of protection to keep your hosting infrastructure online and operating even when they are the target of attacks. You can secure your website from DDoS attacks in minutes with our automatic DDoS mitigation service, which is available in all our worldwide locations. Our system monitors network traffic and routes malicious activity to our attack mitigation farm after a DDoS event is detected, generally within 60 seconds.
 
