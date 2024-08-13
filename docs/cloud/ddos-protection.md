@@ -5,9 +5,11 @@ title: DDoS Protection
 
 # Add-on: DDoS Protection
 
-Colyseus Cloud native DDoS mitigation system adds an extra layer of protection to keep your hosting infrastructure online and operating even when they are the target of attacks. You can secure your website from DDoS attacks in minutes with our automatic DDoS mitigation service, which is available in all our worldwide locations. Our system monitors network traffic and routes malicious activity to our attack mitigation farm after a DDoS event is detected, generally within 60 seconds.
+Adds an extra layer of protection to keep your hosting infrastructure online and operating even when they are the target of attacks.
 
-Colyseus Cloud native DDoS mitigation system protects your cloud server without increased latency or routing your traffic to a third party. DDoS protection adds 10Gbps of mitigation capacity per instance and safeguards all attached IPv4 addresses.
+When enabled, our DDoS Protection system monitors network traffic and routes malicious activity to our attack mitigation farm after a DDoS event is detected, generally within 60 seconds.
+
+The DDoS mitigation system protects your cloud server at both Layer 3 and Layer 4, ensuring no increased latency or routing of your traffic to a third party. It adds 10 Gbps of mitigation capacity per instance and safeguards all attached IPv4 addresses
 
 ---
 
