@@ -365,3 +365,4 @@ nav:
     - 'cloud/index.md'
     - 'cloud/typescript-compilation-errors.md'
     - 'cloud/troubleshooting.md'
+    - 'cloud/ddos-protection.md'
