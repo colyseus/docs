@@ -186,8 +186,15 @@ console.log(reservation);
 !!! Tip "Consuming the seat reservation"
     You can use [`consumeSeatReservation()` from the client-side](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 
-### `.query(conditions)`
+### `.query(conditions, sortOptions?)`
 Perform a query against cached rooms.
+
+**Parameters:**
+
+- **`conditions`**: key-value conditions object.
+- **`sortOptions`**: key-value sort object.
+
+Example querying with conditions:
 
 ``` typescript
 const rooms = await matchMaker.query({ name: "battle", mode: "duo" });
@@ -199,6 +206,12 @@ console.log(rooms);
     { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
   ]
 */
+```
+
+Example querying with sort options and conditions:
+
+``` typescript
+const rooms = await matchMaker.query({ name: "battle", mode: "duo" }, { clients: -1});
 ```
 
 ### `.findOneRoomAvailable(roomName, options)`

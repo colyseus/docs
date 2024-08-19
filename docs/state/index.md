@@ -23,7 +23,7 @@ icon: material/sync
 
 - Only the server-side is responsible for mutating schema structures
 - The client-side must have the same `Schema` definitions generated through [`schema-codegen`](#client-side-schema-generation). _(Optional if you're using the [JavaScript SDK](/getting-started/javascript-client/))_
-- In order to get updates from the server, you need to [attach callbacks on schema instances in the client-side](#callbacks).
+- In order to get updates from the server, you need to [attach callbacks on schema instances in the client-side](/state/schema-callbacks).
 - The client-side should never perform mutations on schema - as they are going to be replaced as soon as the next change come from the server.
 
 ![State Synchronization Diagram](state-sync.png)
