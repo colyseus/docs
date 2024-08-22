@@ -256,7 +256,7 @@ node                            14         1934b0b038d1    About a minute ago
 <your username>/colseus-server    latest     d64d3505b0d2    About a minute ago
 ```
 
-**Step 6** Run the Docker Image wiht following command:
+**Step 6** Run the Docker Image with following command:
 ```
 docker run -p 8080:8080 -d <your username>/colyseus-server
 ```
