@@ -48,7 +48,7 @@ Use the command below to set up a new Colyseus server project:
 
     ``` bash
     # Create a new Colyseus project
-    bunx create-colyseus-app@latest ./my-server
+    bunx create colyseus-app@latest ./my-server
 
     # Enter the project directory
     cd my-server
