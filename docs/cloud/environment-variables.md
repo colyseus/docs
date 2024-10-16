@@ -1,9 +1,9 @@
 ---
 icon: octicons/code-16
-title: Environment Variables and Secret
+title: Environment Variables and Secrets
 ---
 
-## Environment Variables and Secrets
+# Environment Variables and Secrets
 
 Colyseus Cloud allows you to safely store your secrets and environment variables via Application Settings page:
 
