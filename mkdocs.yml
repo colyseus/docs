@@ -362,9 +362,10 @@ nav:
 - FAQ: 'faq.md'
 
 - 'Colyseus Cloud':
-    - 'cloud/index.md'
-    - Deployment:
+    - Overview:
+        - 'cloud/index.md'
         - 'cloud/compute-plans.md'
+    - Deployment:
         - 'cloud/continuous-deployment.md'
         - 'cloud/environment-variables.md'
     - Troubleshooting:
