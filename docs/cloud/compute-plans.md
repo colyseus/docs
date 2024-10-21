@@ -9,17 +9,19 @@ title: Compute Plans
 
 The Low Performance is powered by previous generation Intel CPUs and regular SSD.
 
+_(Recommended for development environments.)_
+
 ## High Frequency (Recommended)
 
 The High Frequency (Recommended) is powered by 3GHz+ Intel Xeon CPUs and NVMe SSD
 
-_This is the recommended plan for most production environments._
+_(The recommended plan for most production environments.)_
 
 ## High Performance
 
 The High Performance is powered by new generations of Intel Xeon CPUs and NVMe SSD.
 
-_(Availability of High Frequency and High Performane plans vary according to the region selected)_
+_(Availability of High Frequency and High Performane plans vary according to the region selected.)_
 
 
 ## Dedicated (Enterprise)
