@@ -593,16 +593,20 @@ async onLeave (client: Client, consented: boolean) {
     // game loop logic
     //
     const currentRound = this.state.currentRound;
-    const interval = setInterval(() => {
+    const interval = this.clock.setInterval(() => {
       if ((this.state.currentRound - currentRound) > 2) {
         // manually reject the client reconnection
         reconnection.reject();
-        clearInterval(interval);
+        interval.clear();
       }
     }, 1000);
 
     // now it's time to `await` for the reconnection
     await reconnection;
+
+    // clear the interval after successful reconnection.
+    // not doing so may lead to dangling intervals.
+    interval.clear();
 
     // client returned! let's re-activate it.
     this.state.players.get(client.sessionId).connected = true;
