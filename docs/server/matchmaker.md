@@ -98,16 +98,19 @@ console.log(reservation);
 !!! Tip "Consuming the seat reservation"
     You can use [`consumeSeatReservation()` from the client-side](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 
-### `.reserveSeatFor(room, options)`
-Reserve a seat for a client in a room.
+### `.reserveSeatFor(room, clientOptions, authData)`
+
+Creates a seat reservation in a specific room.
 
 **Parameters:**
 
 - **`room`**: room data (result from `createRoom()`, etc).
-- **`options`**: options for `onCreate`.
+- **`clientOptions`**: options for `onJoin`.
+- **`authData`**: authentication data (available during `onJoin` as `client.auth`)
 
 ``` typescript
-const reservation = await matchMaker.reserveSeatFor("battle", { mode: "duo" });
+const room = await matchMaker.findOneRoomAvailable("battle", { mode: "duo" });
+const reservation = await matchMaker.reserveSeatFor(room);
 console.log(reservation);
 /*
   {
