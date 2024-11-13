@@ -290,6 +290,7 @@ nav:
     - Logging: 'server/logging.md'
     - Transport: 'server/transport.md'
     - Dev Mode: 'devmode.md'
+    - Exception Handling: 'server/exception-handling.md'
     - Graceful shutdown: 'server/graceful-shutdown.md'
     # - Custom State Serialization': 'server/state-serialization.md'
     - Debugging: 'debugging.md'

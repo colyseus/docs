@@ -250,6 +250,22 @@ This example demonstrates an entire room implementing the `onCreate`, `onJoin` a
 
 ---
 
+### `onUnhandledException (err, methodName)`
+
+Opt-in to catch unhandled exceptions in your room. This method is called when an unhandled exception occurs in any of the lifecycle methods.
+
+``` typescript
+onUncaughtException (err: Error, methodName: string) {
+    console.error("An error ocurred in", methodName, ":", err);
+    err.cause // original unhandled error
+    err.message // original error message
+}
+```
+
+See [Exception Handling](/server/exception-handling) for more details.
+
+---
+
 ### `onBeforePatch ()`
 
 The `onBeforePatch` lifecycle hook is triggered before state synchronization, at patch rate frequency. (see [setPatchRate()](#setpatchrate-milliseconds))
