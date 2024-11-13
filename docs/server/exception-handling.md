@@ -7,6 +7,20 @@ By default, if an uncaught exception occurs inside a room, the server is shut do
 
 You can now handle these uncaught exceptions by implementing the `onUncaughtException()` method in your room class. By this method, all user-facing methods will be wrapped in try/catch blocks, and exceptions will be forwarded to your `onUncaughtException()` implementation.
 
+```typescript
+import { Room } from "colyseus";
+
+class MyRoom extends Room {
+    // ...
+    onUncaughtException (err: Error, methodName: string) {
+        console.error("An error ocurred in", methodName, ":", err);
+        err.cause // original unhandled error
+        err.message // original error message
+    }
+    // ...
+}
+```
+
 Methods that can throw exceptions are:
 
 - `onCreate()`
@@ -21,20 +35,6 @@ Methods that can throw exceptions are:
 
 !!! Note "Exceptions in `onAuth` and `onJoin`"
     Any uncaught exception thrown during `onAuth` or `onJoin` will still result in a failure to join the room, even if caught by `onUncaughtException`. If needed, you may have your own try/catch block in `onAuth` or `onJoin` to ensure clients can join even in case of an exception.
-
-```typescript
-import { Room } from "colyseus";
-
-class MyRoom extends Room {
-    // ...
-    onUncaughtException (err: Error, methodName: string) {
-        console.error("An error ocurred in", methodName, ":", err);
-        err.cause // original unhandled error
-        err.message // original error message
-    }
-    // ...
-}
-```
 
 ---
 
