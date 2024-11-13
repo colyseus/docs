@@ -303,6 +303,30 @@ export class MyRoom extends Room<MyRoomState> {
 
 ---
 
+### `onBeforeShutdown ()`
+
+The `onBeforeShutdown` lifecycle hook is called as part of the [Graceful Shutdown](/server/graceful-shutdown/) process. The process will only truly shutdown after all rooms have been disposed.
+
+By default, the room will disconnect all clients and dispose itself immediately.
+
+You may customize how the room should behave during the shutdown process:
+
+``` typescript
+onBeforeShutdown() {
+    //
+    // Notify users that process is shutting down, they may need to save their progress and join a new room
+    //
+    this.broadcast("going-down", "Server is shutting down. Please save your progress and join a new room.");
+
+    //
+    // Disconnect all clients after 5 minutes
+    //
+    this.clock.setTimeout(() => this.disconnect(), 5 * 60 * 1000);
+}
+```
+
+---
+
 ## Public methods
 
 Room handlers have these methods available.
