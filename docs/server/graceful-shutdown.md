@@ -3,7 +3,7 @@
 Colyseus listens for `SIGTERM` and `SIGINT` signals to gracefully shut down the process.
 
 !!! Note "The Graceful Shutdown behaviour has been improved on `@colyseus/core` version `0.15.55`"
-    The room locking + custom `room.onBeforeShutdown()` method has been introduced on version `@colyseus/core@0.15.55`.
+    The step to exclude from matchmaking, lock rooms and calling a custom `room.onBeforeShutdown()` method has been introduced on version `@colyseus/core@0.15.55`.
 
 These actions will be performed, in order, before the process is killed:
 
