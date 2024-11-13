@@ -5,7 +5,7 @@
 
 By default, if an uncaught exception occurs inside a room, the server is shut down ungracefully. This means all clients will be disconnected and the server will restart, or stop running (depending on how it's configured).
 
-You can now handle these uncaught exceptions by implementing the `onUncaughtException` method in your room class. By implementing `onUncaughtException`, all your room's methods will be wrapped in a try/catch block, and exceptions will be forwarded to this method.
+You can now handle these uncaught exceptions by implementing the `onUncaughtException()` method in your room class. By this method, all user-facing methods will be wrapped in try/catch blocks, and exceptions will be forwarded to your `onUncaughtException()` implementation.
 
 Methods that can throw exceptions are:
 
