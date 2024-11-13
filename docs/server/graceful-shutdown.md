@@ -1,4 +1,4 @@
-# Server API &raquo; Graceful Shutdown
+# Graceful Shutdown Process
 
 Colyseus listens for `SIGTERM` and `SIGINT` signals to gracefully shut down the process.
 
