@@ -121,12 +121,11 @@ In order to encode 3rd party structures, there are 2 steps to take:
 2. Initialize each instance with `Schema.initialize()` as soon as the 3rd party
    structure has been instantiated.
 
-!!! Warning "Experimental feature"
-    This may not work as expected for every 3rd party structure, as
+!!! Warning "Possible conflicts with 3rd party libraries"
     `Schema.initialize()` is going to assign a property descriptor per property
-    defined by `Metadata.setFields()`. If the 3rd party library also relies on
-    their own property descriptors, or getters/setters, it would result in
-    conflicts between them.
+    defined by `Metadata.setFields()`. If the 3rd party library you use also
+    defines their own property descriptors (or use getters/setters for such
+    properties), synchronization will not work as expected.
 
 ```typescript
 import { Schema, Metadata } from "@colyseus/schema";

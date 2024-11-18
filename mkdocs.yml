@@ -298,6 +298,7 @@ nav:
     - 'state/index.md'
     - Schema Definition: 'state/schema.md'
     - Client-side Sync Callbacks: 'state/schema-callbacks.md'
+    - 'StateView: Per-client Visibility': 'state/state-view.md'
     - Advanced Usage: 'state/advanced-usage.md'
 
   - Authentication:
