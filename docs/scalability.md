@@ -17,7 +17,7 @@
 !!! Note "Redis is required"
     [Redis](https://redis.io/topics/quickstart) is required for both strategies. Make sure to have it running on your server.
 
-## Step 1: Use a shared `Presence` and `Driver`
+## Step 1: Use set-up `Presence` and a shared `Driver`
 
 === "TypeScript"
 
@@ -47,7 +47,7 @@
     });
     ```
 
-The `presence` is used to call room "seat reservation" functions from one process to another. See [Presence API](/server/presence/#api).
+The `presence` is used to call room "seat reservation" functions from one process to another. If you are using servers with different IPs, make sure each server uses its own distinct database id for the presence. See [Presence API](/server/presence/#api).
 
 The `driver` is responsible for keeping a shared cache of available rooms, and room querying by any of the active Colyseus processes.
 
