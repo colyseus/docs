@@ -1,4 +1,4 @@
-# [State Sync](/state/) &raquo; Client-side Schema Callbacks
+# Client-side Schema Callbacks
 
 When applying state changes coming from the server, the client-side is going to trigger callbacks on local instances according to the changes being applied.
 
