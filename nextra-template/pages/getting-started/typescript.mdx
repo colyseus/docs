@@ -1,0 +1,50 @@
+---
+title: TypeScript
+---
+import _js_ts_header from "./_js_ts_header.mdx"
+import Image from 'next/image'
+
+# <Image src={require('../../images/icons/typescript.png')} width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block' }} alt="TypeScript" /> TypeScript SDK
+
+<_js_ts_header />
+
+---
+
+### Adding the TypeScript SDK to your project
+
+This is the preffered method if you're using a build tool (`vite`, `webpack`, `rollup`, or similar)
+
+```sh npm2yarn
+npm install --save colyseus.js
+```
+
+### Room's `.state` type safety and auto-completion
+
+The TypeScript SDK provides type safety and auto-completion for your state structures. There are two ways to enable this feature:
+
+#### 1. **Recommended:** import only the type directly from the server code:
+
+You may use `import type` to import only the type of the state from your server code.
+
+```ts {2,6-10}
+import { Client } from "colyseus.js";
+import type { MyState } from "../server/path/MyState";
+
+const client = new Client("http://localhost:2567");
+
+client.joinOrCreate<MyState>(...)
+client.create<MyState>(...)
+client.join<MyState>(...)
+client.joinById<MyState>(...)
+client.reconnect<MyState>(...)
+```
+
+#### 2. Providing the concrete class reference:
+
+In some cases, you may want to import the concrete implementation, to be able to re-use methods implemented in the server in the client.
+
+```ts
+import { MyState } from "../server/path/MyState"
+
+client.joinOrCreate("my_room", {}, MyState);
+```

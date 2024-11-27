@@ -1,0 +1,30 @@
+---
+title: JavaScript
+---
+import _js_ts_header from "./_js_ts_header.mdx"
+
+# JavaScript SDK
+
+<_js_ts_header />
+
+---
+
+### Adding the JavaScript SDK to your project
+
+This is the preffered method if you're using a build tool (`vite`, `webpack`, `rollup`, or similar)
+
+```sh npm2yarn
+npm install --save colyseus.js
+```
+
+If you're not using a build tool, it is recommended to download the release binaries from [GitHub Releases](https://github.com/colyseus/colyseus.js/releases)
+
+```html
+<script src="colyseus.js"></script>
+```
+
+Alternatively, you may include the distribution file directly by using unpkg. Make sure to replace the `@x.x.x` portion of it with a version compatible with your server.
+
+```html
+<script src="https://unpkg.com/colyseus.js@^0.16.0/dist/colyseus.js"></script>
+```
