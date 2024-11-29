@@ -1,5 +1,7 @@
+import { RowsIcon } from "@primer/octicons-react"
+
 export default {
-    "room": "",
+    "room": { title: <span><RowsIcon/> Room API</span> },
     "matchmaker": "",
     "presence": "",
     "transport": "",
