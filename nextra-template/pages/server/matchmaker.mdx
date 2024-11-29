@@ -1,0 +1,345 @@
+import { Callout, Tabs } from 'nextra/components'
+
+# Match-maker API
+
+The methods described below are provided by the `matchMaker` singleton, which can be imported from the `"colyseus"` package:
+
+<Tabs items={["TypeScript", "JavaScript"]}>
+    <Tabs.Tab>
+    ``` typescript
+    import { matchMaker } from "colyseus";
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ``` javascript
+    const matchMaker = require("colyseus").matchMaker;
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+## Stats
+
+Colyseus internally keeps track of statistics for the matchmaker.
+
+### Fetch All
+
+Fetch all stats from all processes.
+
+Returns an array of objects with the following properties:
+
+- **`processId`**: the id of the process.
+- **`roomCount`**: the number of rooms on the process.
+- **`ccu`**: the number of connected clients on the process.
+
+```typescript
+import { matchMaker } from "colyseus";
+const stats = await matchMaker.stats.fetchAll();
+
+console.log(stats);
+// => [
+//    { processId: "xxx", roomCount: 10, ccu: 100 },
+//    { processId: "yyy", roomCount: 9, ccu: 90 },
+// ]
+```
+
+### Get Global CCU
+
+Get the total number of connected clients across all processes.
+
+```typescript
+import { matchMaker } from "colyseus";
+const globalCCU = await matchMaker.stats.getGlobalCCU();
+
+console.log(globalCCU);
+// => 190
+```
+
+### Get Local CCU
+
+Get the number of connected clients on the current process.
+
+```ts filename="server.ts"
+matchMaker.stats.local.ccu
+```
+
+### Get Local Room Count
+
+Get the number of rooms on the current process.
+
+```ts filename="server.ts"
+matchMaker.stats.local.roomCount
+```
+
+## Match-making
+
+### Create a Room
+
+Creates a new room and return its cached data.
+
+```ts filename="Signature"
+matchMaker.createRoom(roomName, options)
+```
+
+**Parameters:**
+
+- **`roomName`**: the identifier you defined on `gameServer.define()`.
+- **`options`**: options for `onCreate`.
+
+```typescript
+const room = await matchMaker.createRoom("battle", { mode: "duo" });
+console.log(room);
+/*
+  { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+*/
+```
+
+<Callout type="info">
+    The Room may be created on a different process. The `processId` to create the room is selected via `selectProcessIdToCreateRoom` method.
+</Callout>
+
+### Join or Create a Room
+
+Join or create a room and return a client seat reservation.
+
+```ts filename="Signature"
+matchMaker.joinOrCreate(roomName, options)
+```
+
+**Parameters:**
+
+- **`roomName`**: the identifier you defined on `gameServer.define()`.
+- **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`).
+
+```ts filename="server.ts"
+const reservation = await matchMaker.joinOrCreate("battle", { mode: "duo" });
+console.log(reservation);
+/*
+  {
+    "sessionId": "zzzzzzzzz",
+    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+  }
+*/
+```
+
+<Callout type="info">
+    **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the client-side](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
+</Callout>
+
+### Reserve A Seat For
+
+Creates a seat reservation in a specific room.
+
+```ts filename="Signature"
+matchMaker.reserveSeatFor(room, clientOptions, authData)
+```
+
+**Parameters:**
+
+- **`room`**: room data (result from `createRoom()`, etc).
+- **`clientOptions`**: options for `onJoin`.
+- **`authData`**: authentication data (available during `onJoin` as `client.auth`)
+
+```ts filename="server.ts"
+const room = await matchMaker.findOneRoomAvailable("battle", { mode: "duo" });
+const reservation = await matchMaker.reserveSeatFor(room);
+console.log(reservation);
+/*
+  {
+    "sessionId": "zzzzzzzzz",
+    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+  }
+*/
+```
+
+<Callout type="info">
+    **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the client-side](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
+</Callout>
+
+### Join existing Room
+
+Join a room and return seat reservation. An exception is thrown if there are no rooms available for `roomName`.
+
+```ts filename="Signature"
+matchMaker.join(roomName, options)
+```
+
+**Parameters:**
+
+- **`roomName`**: the identifier you defined on `gameServer.define()`.
+- **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`).
+
+```ts filename="server.ts"
+const reservation = await matchMaker.join("battle", { mode: "duo" });
+console.log(reservation);
+/*
+  {
+    "sessionId": "zzzzzzzzz",
+    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+  }
+*/
+```
+
+<Callout type="info">
+    **Consuming the seat reservation** . -You can use [`consumeSeatReservation()` from the client-side](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
+</Callout>
+
+### Join Room by ID
+
+Join a room by id and return client seat reservation. An exception is thrown if a room is not found for `roomId`.
+
+```ts filename="Signature"
+matchMaker.joinById(roomId, options)
+```
+
+**Parameters:**
+
+- **`roomId`**: the id of a specific room instance.
+- **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`).
+
+```ts filename="server.ts"
+const reservation = await matchMaker.joinById("xxxxxxxxx", {});
+console.log(reservation);
+/*
+  {
+    "sessionId": "zzzzzzzzz",
+    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+  }
+*/
+```
+
+<Callout type="info">
+    **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the client-side](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
+</Callout>
+
+### Create and Reserve a Seat
+
+Create a new room and return client seat reservation.
+
+```ts filename="Signature"
+matchMaker.create(roomName, options)
+```
+
+**Parameters:**
+
+- **`roomName`**: the identifier you defined on `gameServer.define()`.
+- **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`).
+
+``` typescript
+const reservation = await matchMaker.create("battle", { mode: "duo" });
+console.log(reservation);
+/*
+  {
+    "sessionId": "zzzzzzzzz",
+    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+  }
+*/
+```
+
+<Callout type="info">
+    **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the client-side](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
+</Callout>
+
+### Search for Rooms
+
+Perform a query against cached rooms.
+
+```ts filename="Signature"
+matchMaker.query(conditions, sortOptions?)
+```
+
+**Parameters:**
+
+- **`conditions`**: key-value conditions object.
+- **`sortOptions`**: key-value sort object.
+
+<Tabs items={["Query with conditions", "Query with sorting"]}>
+
+    <Tabs.Tab>
+    Example querying with conditions:
+
+    ``` typescript
+    const rooms = await matchMaker.query({ name: "battle", mode: "duo" });
+    console.log(rooms);
+    /*
+    [
+        { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false },
+        { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false },
+        { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+    ]
+    */
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    Example querying with sort options and conditions:
+
+    ``` typescript
+    const rooms = await matchMaker.query({ name: "battle", mode: "duo" }, { clients: -1});
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+### Find One Room Available
+
+Find for a public and unlocked room available.
+
+```ts filename="Signature"
+matchMaker.findOneRoomAvailable(roomName, options)
+```
+
+**Parameters:**
+
+- **`roomName`**: the id of a specific room instance.
+- **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`).
+
+``` typescript
+const room = await matchMaker.findOneRoomAvailable("battle", { mode: "duo" });
+console.log(room);
+/*
+  { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+*/
+```
+
+### Remote Room Call
+
+Call a method or return a property on a remote room.
+
+```ts filename="Signature"
+matchMaker.remoteRoomCall(roomId, method, args)
+```
+
+**Parameters:**
+
+- **`roomId`**: the id of a specific room instance.
+- **`method`**: method or attribute to call or retrieve.
+- **`args`**: array of arguments.
+
+``` typescript
+// call lock() on a remote room by id
+await matchMaker.remoteRoomCall("xxxxxxxxx", "lock");
+```
+
+---
+
+## Restricting the client-side from creating rooms
+
+You can restrict the client-side to be allowed only to call specific matchmaking methods.
+
+**Example:** by exposing only `join`, `joinById`, and `reconnect` methods, the client-side is
+not going to be able to perform `create` or `joinOrCreate` calls.
+
+``` typescript
+import { matchmaker } from "colyseus";
+
+matchMaker.controller.exposedMethods = ['join', 'joinById', 'reconnect'];
+```
+
+Possible values for `exposedMethods` are:
+
+- `'create'`
+- `'join'`
+- `'joinById'`
+- `'joinOrCreate'`
+- `'reconnect'`
+

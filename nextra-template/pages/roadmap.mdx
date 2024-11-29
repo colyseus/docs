@@ -1,0 +1,42 @@
+# Roadmap Towards v1.0
+
+_This page has a list of features and improvements for both Colyseus (Multiplayer Framework) and Colyseus Cloud (paid managed infrastructure/hosting)_
+
+- Timeline is open. This list is not exhaustive.
+- The order of items may not reflect their priority or importance
+- Feel free to discuss any of these items on [Discord](http://chat.colyseus.io/) or [GitHub Discussions](https://github.com/orgs/colyseus/discussions)
+
+## Colyseus Framework
+
+- ~database~ ([paused until 2025](https://github.com/colyseus/colyseus/issues/594#issuecomment-1881050527)) + ~user auth system~ (introduced in [0.15.15](https://github.com/colyseus/colyseus/releases/tag/0.15.15), [see docs](https://docs.colyseus.io/authentication/module/)).
+- Improvements on the state synchronization structures (`@colyseus/schema`):
+  - introduce a “data ownership” model; deprecate filters
+  - improve/fix synching arrays ([#641](https://github.com/colyseus/colyseus/issues/641))
+  - research/experiment how to improve encoding speed (try to use a similar approach as [msgpackr](https://github.com/kriszyp/msgpackr))
+  - research/experiment better memory usage - similar to how entity-component systems handle memory
+  - fix callbacks when reusing instances ([colyseus/schema#151](https://github.com/colyseus/schema/issues/151))
+- add request/response methods to rooms ([requested by @dengzhaofun](https://github.com/colyseus/colyseus/issues/331))
+- client input validation (`onMessage` in the server)
+- matchmaking: introduce a new “queue” type
+    - a queue would keep more clients than needed before starting a match;
+    - user specifies logic that combines clients into a new room
+    - reserve seats for selected clients and redirect them to the newly created room
+- introduce "version check" to allow native SDKs to communicate with newer versions of the server
+- support [experimental WebTransport](https://github.com/fails-components/webtransport) transport option
+- fork and support a Godot SDK ([gsioteam/godot-colyseus](https://github.com/gsioteam/godot-colyseus))
+- wild idea: support RPC calls via schema instances [? elaborate]
+- deprecate schema-encoded **messages** (this feature [was added](https://github.com/colyseus/colyseus/issues/315) because Unity once lacked typed messages)
+- provide a SQL driver as alternative to `@colyseus/redis-driver` (must support SQLite + PostgreSQL, possibly on top of Kysely)
+- allow "full stack" TypeScript types for room messages and room types (like trpc)
+
+## Colyseus Cloud
+
+- ~Allow horizontal scalability + load balancer~
+    - ~Allow to increase/decrease the number of instances~
+    - Allow automatic scaling up/down
+- No downtime deployments (need 2+ instances per region)
+- Allow client SDK to auto-select region based on lowest ping
+- Provide mass load-testing orchestration (spawn multiple nodes that run loadtest scripts)
+- Support subscribing to add-ons per application:
+    - Database (small, medium, large)
+    - Object Storage (aka S3)

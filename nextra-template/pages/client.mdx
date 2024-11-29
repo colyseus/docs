@@ -1,0 +1,1147 @@
+import { Callout, Cards, Tabs } from "nextra/components";
+import { ZapIcon, SyncIcon } from "@primer/octicons-react";
+
+# Client-side SDK
+
+<Cards>
+    <Cards.Card icon={<ZapIcon/>} title="Getting Started" href="/getting-started" />
+    <Cards.Card icon={<SyncIcon />} title="State Synchronization" href="/state" />
+</Cards>
+
+## Client
+
+The `Client` instance is used to perform matchmaking calls, and later connect to one or many rooms.
+
+No connection with the server is established yet by creating a `Client` instance. Communication with the server only happens when you join a room.
+
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    import Colyseus from "colyseus.js";
+    // ...
+
+    let client = new Colyseus.Client("ws://localhost:2567");
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    using Colyseus;
+    // ...
+
+    ColyseusClient client = new ColyseusClient("ws://localhost:2567");
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    local ColyseusClient = require("colyseus.client")
+    // ...
+
+    local client = ColyseusClient.new("ws://localhost:2567");
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    import io.colyseus.Client;
+    // ...
+
+    var client = new Client("ws://localhost:2567");
+    ```
+    </Tabs.Tab>
+
+</Tabs>
+
+### Methods
+
+#### Join or Create a Room
+
+Join an existing room or create a new one, by provided `roomName` and `options`.
+
+```ts filename="Signature"
+client.joinOrCreate (roomName: string, options: any)
+```
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    try {
+      const room = await client.joinOrCreate("battle", {/* options */});
+      console.log("joined successfully", room);
+
+    } catch (e) {
+      console.error("join error", e);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    client.joinOrCreate("battle", {/* options */}).then(room => {
+      console.log("joined successfully", room);
+    }).catch(e => {
+      console.error("join error", e);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    try {
+      Room<YourStateClass> room = await client.JoinOrCreate<YourStateClass>("battle", /* Dictionary of options */);
+      Debug.Log("joined successfully");
+
+    } catch (ex) {
+      Debug.Log("join error");
+      Debug.Log(ex.Message);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    client:join_or_create("battle", {--[[options]]}, function(err, room)
+      if (err ~= nil) then
+        print("join error: " .. err)
+        return
+      end
+
+      print("joined successfully")
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    client.joinOrCreate("battle", [/* options */], YourStateClass, function(err, room) {
+      if (err != null) {
+        trace("join error: " + err);
+        return;
+      }
+
+      trace("joined successfully");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cpp filename="client.cpp"
+    client->joinOrCreate<YourStateClass>("battle", {/* options */}, [=](std::string err, Room<State>* room) {
+      if (err != "") {
+        std::cout << "join error: " << err << std::endl;
+        return;
+      }
+
+      std::cout << "joined successfully" << std::endl;
+    });
+    ```
+    </Tabs.Tab>
+
+</Tabs>
+
+<Callout type="info">
+    Locked or private rooms are ignored by this method.
+</Callout>
+
+#### Create a Room
+
+Creates a new room by provided `roomName` and `options`.
+
+```ts filename="Signature"
+client.create (roomName: string, options: any)
+```
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    try {
+      const room = await client.create("battle", {/* options */});
+      console.log("joined successfully", room);
+
+    } catch (e) {
+      console.error("join error", e);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    client.create("battle", {/* options */}).then(room => {
+      console.log("joined successfully", room);
+    }).catch(e => {
+      console.error("join error", e);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    try {
+      Room<YourStateClass> room = await client.Create<YourStateClass>("battle", /* Dictionary of options */);
+      Debug.Log("joined successfully");
+
+    } catch (ex) {
+      Debug.Log("join error");
+      Debug.Log(ex.Message);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    client:create("battle", {--[[options]]}, function(err, room)
+      if (err ~= nil) then
+        print("join error: " .. err)
+        return
+      end
+
+      print("joined successfully")
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    client.create("battle", [/* options */], YourStateClass, function(err, room) {
+      if (err != null) {
+        trace("join error: " + err);
+        return;
+      }
+
+      trace("joined successfully");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cpp filename="client.cpp"
+    client->create<YourStateClass>("battle", {/* options */}, [=](std::string err, Room<State>* room) {
+      if (err != "") {
+        std::cout << "join error: " << err << std::endl;
+        return;
+      }
+
+      std::cout << "joined successfully" << std::endl;
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+#### Join existing Room
+
+Joins an existing room by provided `roomName` and `options`.
+
+```ts filename="Signature"
+client.join (roomName: string, options: any)
+```
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    try {
+      const room = await client.join("battle", {/* options */});
+      console.log("joined successfully", room);
+
+    } catch (e) {
+      console.error("join error", e);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    client.join("battle", {/* options */}).then(room => {
+      console.log("joined successfully", room);
+    }).catch(e => {
+      console.error("join error", e);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    try {
+      Room<YourStateClass> room = await client.Join<YourStateClass>("battle", /* Dictionary of options */);
+      Debug.Log("joined successfully");
+
+    } catch (ex) {
+      Debug.Log("join error");
+      Debug.Log(ex.Message);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    client:join("battle", {--[[options]]}, function(err, room)
+      if (err ~= nil) then
+        print("join error: " .. err)
+        return
+      end
+
+      print("joined successfully")
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    client.join("battle", [/* options */], YourStateClass, function(err, room) {
+      if (err != null) {
+        trace("join error: " + err);
+        return;
+      }
+
+      trace("joined successfully");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cpp filename="client.cpp"
+    client->join<YourStateClass>("battle", {/* options */}, [=](std::string err, Room<State>* room) {
+      if (err != "") {
+        std::cout << "join error: " << err << std::endl;
+        return;
+      }
+
+      std::cout << "joined successfully" << std::endl;
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    Locked or private rooms are ignored by this method.
+</Callout>
+
+#### Join Room by ID
+
+Joins an existing room by its `roomId`. Private rooms can be joined by id.
+
+```ts filename="Signature"
+client.joinById (roomId: string, options: any)
+```
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    try {
+      const room = await client.joinById("KRYAKzRo2", {/* options */});
+      console.log("joined successfully", room);
+
+    } catch (e) {
+      console.error("join error", e);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    client.joinById("KRYAKzRo2", {/* options */}).then(room => {
+      console.log("joined successfully", room);
+    }).catch(e => {
+      console.error("join error", e);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    try {
+      Room<YourStateClass> room = await client.JoinById<YourStateClass>("battle", /* Dictionary of options */);
+      Debug.Log("joined successfully");
+
+    } catch (ex) {
+      Debug.Log("join error");
+      Debug.Log(ex.Message);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    client:join_by_id("battle", {--[[options]]}, function(err, room)
+      if (err ~= nil) then
+        print("join error: " .. err)
+        return
+      end
+
+      print("joined successfully")
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    client.joinById("battle", [/* options */], YourStateClass, function(err, room) {
+      if (err != null) {
+        trace("join error: " + err);
+        return;
+      }
+
+      trace("joined successfully");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cpp filename="client.cpp"
+    client->joinById<YourStateClass>("battle", {/* options */}, [=](std::string err, Room<State>* room) {
+      if (err != "") {
+        std::cout << "join error: " << err << std::endl;
+        return;
+      }
+
+      std::cout << "joined successfully" << std::endl;
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    **Getting available `roomId`'s you can join**
+
+    See [`getAvailableRooms()`](#getavailablerooms-roomname-string) to retrieve a list of rooms with their respective `roomId`'s available for joining, along with their metadata.
+</Callout>
+
+#### Reconnect into a Room
+
+Reconnects the client back into a previously connected room.
+
+- You must store/cache the `room.reconnectionToken` from an active room connection to be able to reconnect.
+- To enable the reconnection of a particular client, the server-side needs to call [`.allowReconnection()`](/server/room#allowreconnection-client-seconds) for that client instance.
+
+```ts filename="Signature"
+client.reconnect (reconnectionToken)
+```
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    try {
+      const room = await client.reconnect(cachedReconnectionToken);
+      console.log("joined successfully", room);
+
+    } catch (e) {
+      console.error("join error", e);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    client.reconnect(cachedReconnectionToken).then(room => {
+      console.log("joined successfully", room);
+    }).catch(e => {
+      console.error("join error", e);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    try {
+      Room<YourStateClass> room = await client.Reconnect<YourStateClass>(cachedReconnectionToken);
+      Debug.Log("joined successfully");
+
+    } catch (ex) {
+      Debug.Log("join error");
+      Debug.Log(ex.Message);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    client:reconnect(cached_reconnection_token, function(err, room)
+      if (err ~= nil) then
+        print("join error: " .. err)
+        return
+      end
+
+      print("joined successfully")
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    client.reconnect(cachedReconnectionToken, YourStateClass, function(err, room) {
+      if (err != null) {
+        trace("join error: " + err);
+        return;
+      }
+
+      trace("joined successfully");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cpp filename="client.cpp"
+    client->reconnect<YourStateClass>(cachedReconnectionToken, [=](std::string err, Room<State>* room) {
+    if (err != "") {
+        std::cout << "join error: " << err << std::endl;
+        return;
+    }
+
+    std::cout << "joined successfully" << std::endl;
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+#### Get Available Rooms
+
+Queries for all available rooms to connect.
+
+- Locked and private rooms won't be listed.
+- If the `roomName` parameter is ommitted, all rooms are going to be queried.
+
+```ts filename="Signature"
+client.getAvailableRooms (roomName?: string)
+```
+
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    client.getAvailableRooms("battle").then(rooms => {
+      rooms.forEach((room) => {
+        console.log(room.roomId);
+        console.log(room.clients);
+        console.log(room.maxClients);
+        console.log(room.metadata);
+      });
+    }).catch(e => {
+      console.error(e);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    try {
+      var rooms = await client.GetAvailableRooms("battle");
+      for (int i = 0; i < rooms.Length; i++) {
+        Debug.Log(rooms[i].roomId);
+        Debug.Log(rooms[i].clients);
+        Debug.Log(rooms[i].maxClients);
+        Debug.Log(rooms[i].metadata);
+      }
+    } catch (ex) {
+      Debug.Log(ex.Message)
+    }
+
+    /**
+     * Retrieving custom metadata
+     */
+    [Serializable]
+    class Metadata
+    {
+        public string mode;
+        public string name;
+    }
+
+    [Serializable]
+    class CustomRoomAvailable : RoomAvailable
+    {
+        public Metadata metadata;
+    }
+
+    var rooms = await client.GetAvailableRooms<CustomRoomAvailable>("battle");
+    Debug.Log(rooms[0].metadata.mode);
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    client:get_available_rooms("battle", function(err, rooms)
+      if (err) then
+        console.error(err);
+        return
+      end
+
+      for i, room in pairs(rooms) do
+        print(room.roomId)
+        print(room.clients)
+        print(room.maxClients)
+        print(room.metadata)
+      end
+    end);
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    client.getAvailableRooms("battle", function(err, rooms) {
+      if (err != null) {
+        trace(err);
+        return;
+      }
+
+      for (room in rooms) {
+        trace(room.roomId);
+        trace(room.clients);
+        trace(room.maxClients);
+        trace(room.metadata);
+      }
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cpp filename="client.cpp"
+    client.getAvailableRooms("battle", [=](std::string err, nlohmann::json rooms) {
+      if (err != "") {
+        std::cout << "error: " << err << std::endl;
+        return;
+      }
+
+      // rooms
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+#### Consume Seat Reservation
+
+Join a room by manually consuming a "seat reservation".
+
+```ts filename="Signature"
+client.consumeSeatReservation (reservation)
+```
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    try {
+      const room = await client.consumeSeatReservation(reservation);
+      console.log("joined successfully", room);
+
+    } catch (e) {
+      console.error("join error", e);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    client.consumeSeatReservation(reservation).then(room => {
+      console.log("joined successfully", room);
+    }).catch(e => {
+      console.error("join error", e);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    try {
+      Room<YourStateClass> room = await client.ConsumeSeatReservation<YourStateClass>(reservation);
+      Debug.Log("joined successfully");
+
+    } catch (ex) {
+      Debug.Log("join error");
+      Debug.Log(ex.Message);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    client:consume_seat_reservation(reservation, function(err, room)
+      if (err ~= nil) then
+        print("join error: " .. err)
+        return
+      end
+
+      print("joined successfully")
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    client.consumeSeatReservation(reservation, YourStateClass, function(err, room) {
+      if (err != null) {
+        trace("join error: " + err);
+        return;
+      }
+
+      trace("joined successfully");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cpp filename="client.cpp"
+    client->consumeSeatReservation<YourStateClass>(reservation, [=](std::string err, Room<State>* room) {
+      if (err != "") {
+        std::cout << "join error: " << err << std::endl;
+        return;
+      }
+
+      std::cout << "joined successfully" << std::endl;
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    **Advanced usage** - See [Match-maker API](/server/matchmaker/#reserveseatforroom-options) to learn how to manually reserve a seat for a client within a room.
+</Callout>
+
+## Room
+
+### Properties
+
+#### `state: any`
+
+The current room's state. This variable is always synched with the latest
+`state` from the server-side. To listen for updates on the whole state, see
+[`onStateChange`](#onstatechange) event.
+
+You may attach callbacks to specific structures inside your state. [See schema callbacks](/state/schema/#client-side).
+
+---
+
+#### `sessionId: string`
+
+Unique identifier for the current connected client. This property matches the [`client.sessionId`](/server/client/#sessionid-string) from the server-side.
+
+---
+
+#### `id: string`
+
+The unique idenfitier of the room. You can share this id with other clients in
+order to allow them to connect directly to this room.
+
+```ts filename="client.ts"
+// get `roomId` from the query string
+let roomId = location.href.match(/roomId=([a-zA-Z0-9\-_]+)/)[1];
+
+// joining a room by its id
+client.joinById(roomId).then(room => {
+  // ...
+});
+```
+
+---
+
+#### `name: string`
+
+Name of the room handler. Ex: `"battle"`.
+
+---
+
+### Methods
+
+#### Send Message
+
+Send a type of message to the room handler. Messages are encoded with MsgPack and can hold any JSON-serializable data structure.
+
+```ts filename="Signature"
+room.send (type, message)
+```
+
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    //
+    // sending message with string type
+    //
+    room.send("move", { direction: "left"});
+
+    //
+    // sending message with number type
+    //
+    room.send(0, { direction: "left"});
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    //
+    // sending message with string type
+    //
+    await room.Send("move", new { direction = "left" });
+
+    //
+    // sending message with number type
+    //
+    await room.Send(0, new { direction = "left" });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    --
+    -- sending message with string type
+    --
+    room:send("move", { direction = "left" })
+
+    --
+    -- sending message with number type
+    --
+    room:send(0, { direction = "left" })
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    //
+    // sending message with string type
+    //
+    room.send("move", { direction: "left" });
+
+    //
+    // sending message with number type
+    //
+    room.send(0, { direction: "left" });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    **Use `Room#onMessage()` from the server-side to receive the messages** - Check out [Server-side API &raquo; Room - onMessage()](/server/room/#onmessage-type-callback) section.
+</Callout>
+
+---
+
+#### Send Message (in bytes)
+
+Send a raw byte array as a message to the server. A byte array is an array of numbers from `0` to `255`.
+
+This is useful if you'd like to manually encode a message, rather than the default encoding (MsgPack).
+
+```ts filename="Signature"
+client.sendBytes (type, bytes)
+```
+
+    ```ts filename="client.ts"
+    //
+    // sending message with number type
+    //
+    room.sendBytes(0, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
+
+
+    //
+    // sending message with string type
+    //
+    room.sendBytes("some-bytes", [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
+    ```
+
+---
+
+#### Leave Room
+
+Disconnect client from the room.
+
+```ts filename="Signature"
+room.leave (consented: boolean)
+```
+
+**Parameters**
+
+- `consented`: Whether the act of leaving has been "consented" or not (Default is `true`)
+
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    // consented leave
+    room.leave();
+
+    // unconsented leave
+    room.leave(false);
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    // consented leave
+    room.Leave();
+
+    // unconsented leave
+    room.Leave(false);
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    -- consented leave
+    room:leave()
+
+    -- unconsented leave
+    room:leave(false)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    // consented leave
+    room.leave();
+
+    // unconsented leave
+    room.leave(false);
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    Use [Room#onLeave()](/server/room/#onleave-client-consented) to handle the disconnection from the server-side.
+</Callout>
+
+---
+
+#### Remove All Listeners
+
+Removes `onMessage`, `onStateChange`, `onLeave` and `onError` listeners.
+
+```ts filename="Signature"
+room.removeAllListeners()
+```
+
+---
+
+### Events
+
+#### onStateChange
+
+<Callout type="info">
+    Check out the [State Synchronization » Client-side Callbacks](/state/schema/#client-side) section for more details.
+</Callout>
+
+This event is triggered when the server updates its state.
+
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.onStateChange.once((state) => {
+      console.log("this is the first room state!", state);
+    });
+
+    room.onStateChange((state) => {
+      console.log("the room state has been updated:", state);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    room.OnStateChange += (state, isFirstState) => {
+      if (isFirstState) {
+        Debug.Log ("this is the first room state!");
+      }
+
+      Debug.Log ("the room state has been updated");
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    room:on("statechange", function(state)
+      print("new state:", state)
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    room.onStateChange += function(state) {
+      trace("new state:" + Std.string(state));
+    };
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cpp filename="client.cpp"
+    room.onStateChange = [=](State>* state) {
+      std::cout << "new state" << std::endl;
+      // ...
+    };
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+---
+
+#### onMessage
+
+This event is triggered when the server sends a message directly to the client, or via broadcast.
+
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.onMessage("powerup", (message) => {
+      console.log("message received from server");
+      console.log(message);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    class PowerUpMessage {
+      string kind;
+    }
+
+    room.OnMessage<PowerUpMessage>("powerup", (message) => {
+      Debug.Log ("message received from server");
+      Debug.Log(message);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    room:on_message("powerup", function(message)
+      print("message received from server")
+      print(message)
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    room.onMessage("powerup", function(message) {
+      trace("message received from server");
+      trace(Std.string(message));
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cpp filename="client.cpp"
+    room.onMessage("powerup", [=](msgpack::object message) -> void {
+        std::cout << "message received from server" << std::endl;
+        std::cout << message << std::endl;
+    });
+    ```
+    </Tabs.Tab>
+
+</Tabs>
+
+<Callout type="info">
+    To send a message from the server directly to the clients you'll need to use either [client.send()](/server/client/#sendtype-message) or [room.broadcast()](/server/room/#broadcast-type-message-options)
+</Callout>
+
+---
+
+#### onLeave
+
+This event is triggered when the client leave the room.
+
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.onLeave((code) => {
+      console.log("client left the room");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    room.OnLeave += (code) => {
+      Debug.Log ("client left the room");
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    room:on("leave", function()
+      print("client left the room")
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    room.onLeave += function () {
+      trace("client left the room");
+    };
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cpp filename="client.cpp"
+    room.onLeave = [=]() -> void {
+      std::cout << "client left the room" << std::endl;
+    };
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+**Possible closing `code`s and their meaning:**
+
+- `1000` - Regular socket shutdown
+- Between `1001` and `1015` - Abnormal socket shutdown
+- Between `4000` and `4999` - Custom socket close code (See [more details](/server/room/#table-of-websocket-close-codes))
+
+
+---
+
+#### onError
+
+This event is triggered when some error occurs in the room handler.
+
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.onError((code, message) => {
+      console.log("oops, error ocurred:");
+      console.log(message);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    room.OnError += (code, message) => {
+      Debug.Log ("oops, error ocurred:");
+      Debug.Log(message);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    room:on("error", function(code, message)
+      print("oops, error ocurred:")
+      print(message)
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    room.onError += function(code, message) {
+      trace("oops, error ocurred:");
+      trace(message);
+    };
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cpp filename="client.cpp"
+    room.onError = [=] (int code, std::string message) => void {
+      std::cout << "oops, error ocurred: " << message << std::endl;
+    };
+    ```
+    </Tabs.Tab>
+</Tabs>
