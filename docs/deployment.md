@@ -68,9 +68,12 @@ The [`create-colyseus-app` templates](https://github.com/colyseus/create-colyseu
 
 ---
 
-## Self-host on [Vultr](https://www.vultr.com/?ref=8013231)
+## Self-host on [Vultr](https://www.vultr.com/?ref=9632185-9J)
 
-A pre-configured Colyseus server is available on [Vultr Marketplace](https://www.vultr.com/marketplace/apps/colyseus/?ref=8013231). It's a great option if you want to self-host your Colyseus server.
+<!-- https://www.vultr.com/?ref=8013231 -->
+<!-- https://www.vultr.com/marketplace/apps/colyseus/?ref=8013231 -->
+
+A pre-configured Colyseus server is available on [Vultr Marketplace](https://www.vultr.com/marketplace/apps/colyseus/?ref=9632185-9J). It's a great option if you want to self-host your Colyseus server.
 
 This server is configured with:
 
@@ -99,11 +102,11 @@ server {
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
         proxy_read_timeout 86400s;
         proxy_send_timeout 86400s;
+        include proxy_params;
     }
 }
 ```
@@ -126,11 +129,11 @@ server {
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Host $host;
         proxy_cache_bypass $http_upgrade;
         proxy_read_timeout 86400s;
         proxy_send_timeout 86400s;
+        include proxy_params;
     }
 }
 ```
@@ -253,7 +256,7 @@ node                            14         1934b0b038d1    About a minute ago
 <your username>/colseus-server    latest     d64d3505b0d2    About a minute ago
 ```
 
-**Step 6** Run the Docker Image wiht following command:
+**Step 6** Run the Docker Image with following command:
 ```
 docker run -p 8080:8080 -d <your username>/colyseus-server
 ```

@@ -1,8 +1,17 @@
 # Load Testing / Stress Testing (`@colyseus/loadtest`)
 
-The `@colyseus/loadtest` tool is useful when you'd like to battle test your server and see how it is going to perform on a live environment.
+The `@colyseus/loadtest` is a tool for simulating multiple client connections with your Colyseus server, using the [JavaScript SDK](/getting-started/javascript-client/) itself.
 
 [![asciicast](https://asciinema.org/a/229378.svg)](https://asciinema.org/a/229378)
+
+## Caveats
+
+- As this tool is single-threaded, it will struggle to keep too many WebSocket connections open from a single process.
+- Usually 200 connections per process is a good number.
+- In order to test more connections, you need to use more processes.
+- Keep in mind that simulating so many connections is going to stress testing the
+  client-side as well as the server.
+- It is recommended to distribute the clients on multiple VMs. (_[Colyseus Cloud](https://colyseus.io/cloud-managed-hosting/) plans to offer a stress testing service in the future. Please reach out if you are interested in this._)
 
 ## Installation
 
@@ -20,6 +29,7 @@ The `colyseus-loadtest` command requires a few arguments to work:
 - `--endpoint`: Your server endpoint (by default uses `ws://localhost:2567`)
 - `--room`: Name of the room you'd like to connect to
 - `--numClients`: Number of clients you'd like to connect into the room.
+
 
 ### Example
 
@@ -93,7 +103,7 @@ This is an example scripting file. Based on the room lifecycle events for each c
     cli(main);
     ```
 
-### Connecting 50 clients into a `"battle"` room
+#### Connecting 50 clients into a `"battle"` room
 
 ``` bash
 npx tsx loadtest/example.ts --room battle --numClients 50 --endpoint ws://localhost:2567

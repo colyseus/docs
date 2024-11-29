@@ -1,13 +1,25 @@
-# Server API &raquo; Graceful Shutdown
+# Graceful Shutdown Process
 
-Colyseus provides a graceful shutting down mechanism by default. These actions will be performed before the process kill itself:
+Colyseus listens for `SIGTERM` and `SIGINT` signals to gracefully shut down the process.
 
-- Disconnect all connected clients asynchronously (`Room#onLeave`)
-- Dispose all spawned rooms asynchronously (`Room#onDispose`)
-- Perform optional asynchronous callback before shutting down the process `Server#onShutdown`
+!!! Note "The Graceful Shutdown behaviour has been improved on `@colyseus/core` version `0.15.55`"
+    The step to exclude from matchmaking, lock rooms and calling a custom `room.onBeforeShutdown()` method has been introduced on version `@colyseus/core@0.15.55`.
 
-If you're performing async tasks on `onLeave` / `onDispose`, you should return a `Promise`, and resolve it when the task is ready. The same applies to `onShutdown(callback)`.
+These actions will be performed, in order, before the process is killed:
 
+1. The custom [`gameServer.onBeforeShutdown()`](/server/#onbeforeshutdown-callback-function) is called, if defined.
+2. The process is excluded from match-making.
+3. All existing rooms are locked  ([`room.lock()`](/server/room/#lock)),
+4. All rooms [`room.onBeforeShutdown()`](/server/room/#onbeforeshutdown) is called.
+    - You may override `room.onBeforeShutdown()` to perform custom actions before the room is disposed.
+    - By default, `room.onBeforeShutdown()` simply calls `room.disconnect()`, which will trigger `room.onLeave()` for all clients, and then `room.onDispose()`.
+5. The server waits for all rooms to be disposed (room count must be zero).
+6. The Transport, Presence, and Driver are closed and disconnected.
+7. The custom [`gameServer.onShutdown()`](/server/#onshutdown-callback-function) is called, if defined.
+
+You may use `async` functions or return a `Promise` to perform asynchronous operations on `onLeave` and `onDispose` methods, as well as `gameServer.onBeforeShutdown()` and `gameServer.onShutdown()`.
+
+---
 
 ## Returning a `Promise`
 
@@ -45,7 +57,7 @@ class MyRoom extends Room {
 
 ## Using `async`
 
-The `async` keyword will make your function return a `Promise` under the hood. [Read more about Async / Await](https://basarat.gitbooks.io/typescript/content/docs/async-await.html).
+The `async` keyword will make your function return a `Promise` under the hood. [Read more about Async / Await](https://basarat.gitbook.io/typescript/future-javascript/async-await).
 
 ``` typescript
 import { Room } from "colyseus";
@@ -68,9 +80,9 @@ You can also listen for process shutdown by setting a `onShutdown` callback.
 ``` typescript
 import { Server } from "colyseus";
 
-let server = new Server();
+const gameServer = new Server();
 
-server.onShutdown(function () {
-    console.log("master process is being shut down!");
+gameServer.onShutdown(function () {
+    console.log("process has shut down!");
 });
 ```

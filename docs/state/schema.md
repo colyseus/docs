@@ -2,7 +2,7 @@
 
 ## How to define synchronizable structures
 
-- `Schema` structures are defined the server-side to be used in the room state.
+- `Schema` structures are defined server-side to be used in the room state.
 - Only fields decorated with `@type()` are going to be considered for synchronization.
 - _(Synchronizable schema structures should only be used for data related to your state.)_
 

@@ -1,6 +1,6 @@
 ---
 icon: octicons/alert-16
-title: TypeScript compilation errors
+title: TypeScript/Compilation errors
 ---
 
 If you haven't created your Colyseus application via `npm create colyseus-app@latest`, make sure your `tsconfig.json` is configured as follows:

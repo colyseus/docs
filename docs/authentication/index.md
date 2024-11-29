@@ -7,7 +7,7 @@ To authenticate clients, you can bring your own token validation logic by implem
 
 ## Room authentication
 
-To authenticate clients into a room, you must implement the static `onAuth()` method in your room. This method is called before `onCreate()` or `onJoin()`, and it is responsible for validating the client's authentication token.
+To authenticate clients into a room, you must implement the `onAuth()` method in your room. This method is called before `onCreate()` or `onJoin()`, and it is responsible for validating the client's authentication token.
 
 #### Client-side
 
@@ -61,10 +61,10 @@ The authentication token set on `client.auth.token` will be sent as `Authorizati
     ```
 
 
-#### `onAuth (client, options, request)` _- Soon to be deprecated_
+#### `onAuth (client, options, request)`
 
-!!! Warning "`onAuth` as instance method will be deprecated"
-    Since version `0.15.14`, it is preferred to use the static version `onAuth()` method. You can still the `onAuth` as instance method, but it will be deprecated in the future. See the reasoning behind this change on [colyseus/colyseus#657](https://github.com/colyseus/colyseus/pull/657)
+!!! Warning "`onAuth` may be implemented either as `static` or instance method."
+    Since version `0.15.14`, it is recommended to use the static version `onAuth()` method, though you may still use the `onAuth` as instance method. We're getting feedback about new authentication module here: [colyseus/colyseus#660](https://github.com/colyseus/colyseus/issues/660)
 
 The `onAuth()` method will be executed before `onJoin()`. It can be used to verify authenticity of a client joining the room.
 

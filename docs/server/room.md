@@ -13,7 +13,7 @@ The `Room` class is meant to implement a game session, and/or serve as the commu
 
     export class MyRoom extends Room {
         // (optional) Validate client auth token before joining/creating the room
-        static async onAuth (token: Client, request: http.IncomingMessage) { }
+        static async onAuth (token: string, request: http.IncomingMessage) { }
 
         // When room is initialized
         onCreate (options: any) { }
@@ -250,6 +250,22 @@ This example demonstrates an entire room implementing the `onCreate`, `onJoin` a
 
 ---
 
+### `onUnhandledException (err, methodName)`
+
+Opt-in to catch unhandled exceptions in your room. This method is called when an unhandled exception occurs in any of the lifecycle methods.
+
+``` typescript
+onUncaughtException (err: Error, methodName: string) {
+    console.error("An error ocurred in", methodName, ":", err);
+    err.cause // original unhandled error
+    err.message // original error message
+}
+```
+
+See [Exception Handling](/server/exception-handling) for more details.
+
+---
+
 ### `onBeforePatch ()`
 
 The `onBeforePatch` lifecycle hook is triggered before state synchronization, at patch rate frequency. (see [setPatchRate()](#setpatchrate-milliseconds))
@@ -298,6 +314,30 @@ export class MyRoom extends Room<MyRoomState> {
       player.method(cachedData["foo"]);
     });
   }
+}
+```
+
+---
+
+### `onBeforeShutdown ()`
+
+The `onBeforeShutdown` lifecycle hook is called as part of the [Graceful Shutdown](/server/graceful-shutdown/) process. The process will only truly shutdown after all rooms have been disposed.
+
+By default, the room will disconnect all clients and dispose itself immediately.
+
+You may customize how the room should behave during the shutdown process:
+
+``` typescript
+onBeforeShutdown() {
+    //
+    // Notify users that process is shutting down, they may need to save their progress and join a new room
+    //
+    this.broadcast("going-down", "Server is shutting down. Please save your progress and join a new room.");
+
+    //
+    // Disconnect all clients after 5 minutes
+    //
+    this.clock.setTimeout(() => this.disconnect(), 5 * 60 * 1000);
 }
 ```
 
@@ -593,16 +633,20 @@ async onLeave (client: Client, consented: boolean) {
     // game loop logic
     //
     const currentRound = this.state.currentRound;
-    const interval = setInterval(() => {
+    const interval = this.clock.setInterval(() => {
       if ((this.state.currentRound - currentRound) > 2) {
         // manually reject the client reconnection
         reconnection.reject();
-        clearInterval(interval);
+        interval.clear();
       }
     }, 1000);
 
     // now it's time to `await` for the reconnection
     await reconnection;
+
+    // clear the interval after successful reconnection.
+    // not doing so may lead to dangling intervals.
+    interval.clear();
 
     // client returned! let's re-activate it.
     this.state.players.get(client.sessionId).connected = true;

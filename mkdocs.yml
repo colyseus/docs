@@ -16,7 +16,7 @@ repo_name: 'colyseus/colyseus'
 repo_url: https://github.com/colyseus/colyseus
 
 # Copyright
-copyright: 'Copyright &copy; 2023 Endel Dreyer'
+copyright: 'Copyright &copy; 2024 Endel Dreyer'
 
 # Documentation and theme
 theme:
@@ -290,6 +290,7 @@ nav:
     - Logging: 'server/logging.md'
     - Transport: 'server/transport.md'
     - Dev Mode: 'devmode.md'
+    - Exception Handling: 'server/exception-handling.md'
     - Graceful shutdown: 'server/graceful-shutdown.md'
     # - Custom State Serialization': 'server/state-serialization.md'
     - Debugging: 'debugging.md'
@@ -365,6 +366,15 @@ nav:
 - FAQ: 'faq.md'
 
 - 'Colyseus Cloud':
-    - 'cloud/index.md'
-    - 'cloud/typescript-compilation-errors.md'
-    - 'cloud/troubleshooting.md'
+    - Overview:
+        - 'cloud/index.md'
+        - 'cloud/compute-plans.md'
+    - Deployment:
+        - 'cloud/continuous-deployment.md'
+        - 'cloud/environment-variables.md'
+    - Troubleshooting:
+        - 'cloud/typescript-compilation-errors.md'
+        - 'cloud/troubleshooting.md'
+    - Add-ons:
+        - 'cloud/ddos-protection.md'
+        # - 'cloud/postgresql.md'

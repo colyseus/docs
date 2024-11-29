@@ -1,0 +1,48 @@
+---
+icon: octicons/play-16
+title: Continuous Deployment
+---
+
+# Continuous Deployment with GitHub Actions
+
+When you make your first deployment from your development environment to the Colyseus Cloud, you will receive a `.colyseus-cloud.json` file. This file contains the `applicationId` and `token` that you will use to deploy your server from your CI/CD pipeline.
+
+It is **not recommended** to push `.colyseus-cloud.json` to your repository, as it contains sensitive information. Instead, you can use GitHub Secrets to store this information and use it in your GitHub Actions workflow:
+
+- `APPLICATION_ID`: The `applicationId` from your `.colyseus-cloud.json` file.
+- `TOKEN`: The `token` from your `.colyseus-cloud.json` file.
+
+![Repository Settings](images/continuous-deployment.png)
+
+## Example Workflow
+
+Here is an example of a GitHub Actions workflow that deploys your server to the Colyseus Cloud when you push to the `main` branch.
+
+=== ":octicons-file-added-16: `.github/workflows/colyseus-cloud-deploy.yml`"
+
+    ``` yaml
+    name: Deploy to Colyseus Cloud
+
+    on:
+      push:
+        branches:
+          - main
+
+    jobs:
+      deploy:
+        runs-on: ubuntu-latest
+        env:
+          applicationId: ${{ secrets.APPLICATION_ID }}
+          token: ${{ secrets.TOKEN }}
+        steps:
+        - uses: actions/checkout@v4
+        - name: Use Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version: '20.x'
+            registry-url: 'https://registry.npmjs.org'
+        - name: Trigger deployment
+          run: |
+            npm install -g @colyseus/cloud
+            npx @colyseus/cloud deploy --applicationId $applicationId --token $token
+    ```

@@ -485,9 +485,27 @@ Binds the WebSocket server into the specified port.
 
 ---
 
+## `onBeforeShutdown (callback: Function)`
+
+Register a custom callback that is called **before** the graceful shutdown routine starts. See [graceful shutdown](/server/graceful-shutdown/).
+
+```typescript
+gameServer.onBeforeShutdown(async () => {
+    // ... custom logic
+});
+```
+
+---
+
 ## `onShutdown (callback: Function)`
 
-Register a callback that should be called before the process shut down. See [graceful shutdown](/server/graceful-shutdown/) for more details.
+Register a custom callback that is called **after** the graceful shutdown is fully complete. See [graceful shutdown](/server/graceful-shutdown/).
+
+```typescript
+gameServer.onShutdown(async () => {
+    // ... custom logic
+});
+```
 
 ---
 

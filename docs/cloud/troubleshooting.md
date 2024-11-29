@@ -1,6 +1,7 @@
 ---
 icon: octicons/x-16
-title: Troubleshooting "Deploy failed"
+title: >
+  "Deploy failed" errors
 ---
 
 # Troubleshooting "Deploy failed" errors
