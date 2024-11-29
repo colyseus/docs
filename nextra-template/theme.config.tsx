@@ -1,6 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { DocsThemeConfig, useConfig } from 'nextra-theme-docs'
+import { SponsorsSidebar } from './components/sponsors-sidebar';
 
 const logo = <Image src={require('./images/logo.svg')} width={0} height={0} style={{ width: 'auto', height: '28px' }} alt="Colyseus" />;
 
@@ -13,9 +14,21 @@ const config: DocsThemeConfig = {
         link: 'http://chat.colyseus.io/',
     },
     docsRepositoryBase: 'https://github.com/colyseus/docs',
+
+    sidebar: {
+        defaultMenuCollapseLevel: 1,
+        toggleButton: true
+    },
+
+    toc: {
+        // float: false,
+        extraContent: <SponsorsSidebar />,
+    },
+
     footer: {
         content: '2024 © Endel Dreyer',
     },
+
     head: function useHead() {
         const config = useConfig()
         const title = `${config.title} – Colyseus`

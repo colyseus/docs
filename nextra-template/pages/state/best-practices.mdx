@@ -1,0 +1,16 @@
+# Best Practices
+
+1. On the server-side, always mutate existing instances instead of creating new ones when possible. Each new instance will need to be fully encoded.
+
+```ts filename="MyRoom.ts"
+```
+
+2. Another thing
+
+``` ts filename="MyRoom.ts"
+```
+
+- When the client joins a room, it receives the full encoded state from the server.
+- State mutations on the server-side are enqueued at a per-property level. Only the _last mutation_ of each property will be transmitted.
+- Enqueued mutations are binary-encoded and sent to clients at every [patchRate](/server/room/#patchrate-number) interval, and then cleared.
+- The [schema callbacks](/state/callbacks) are triggered on the client-side **after** patches have been applied locally.

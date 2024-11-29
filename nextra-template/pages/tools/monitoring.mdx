@@ -1,0 +1,102 @@
+---
+title: "Monitoring Panel"
+---
+import { Tabs } from 'nextra/components'
+
+# Monitoring Panel
+
+The `@colyseus/monitor` is a handy tool that allows you to view and inspect the current list of rooms spawned by the server.
+
+**Features**
+
+- List all active rooms
+    - Force to dispose a specific room
+- Inspect a specific room
+    - View room's state
+    - Send/broadcast messages for a client
+    - Force to disconnect a client.
+
+<img src="https://github.com/colyseus/colyseus-monitor/blob/master/media/demo.gif?raw=1" />
+
+## Install the package
+
+This package is installed by default on new projects created via `npm create colyseus-app`.
+
+```sh npm2yarn
+npm install --save @colyseus/monitor
+```
+
+Include it in your project:
+
+<Tabs items={['TypeScript', 'JavaScript']}>
+
+    <Tabs.Tab>
+
+    ```ts {1,5} filename="app.config.ts"
+    import { monitor } from "@colyseus/monitor";
+    // ...
+        initializeExpress: (app) => {
+            // bind it as an express middleware
+            app.use("/monitor", monitor());
+        }
+    // ...
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+
+    ```js {1,5} filename="app.config.js"
+    const monitor = require("@colyseus/monitor").monitor;
+    // ...
+        initializeExpress: (app) => {
+            // bind it as an express middleware
+            app.use("/monitor", monitor());
+        }
+    // ...
+    ```
+    </Tabs.Tab>
+
+</Tabs>
+
+## Restrict access to the panel using a password
+
+You can use an express middleware to enable authentication on the monitor route, such as `express-basic-middleware`:
+
+```sh npm2yarn
+npm install --save express-basic-auth
+```
+
+Create a user and password using `express-basic-auth`.
+
+``` typescript
+import basicAuth from "express-basic-auth";
+
+const basicAuthMiddleware = basicAuth({
+    // list of users and passwords
+    users: {
+        "admin": "admin",
+    },
+    // sends WWW-Authenticate header, which will prompt the user to fill
+    // credentials in
+    challenge: true
+});
+
+app.use("/monitor", basicAuthMiddleware, monitor());
+```
+
+## Setting custom room listing columns
+
+``` typescript
+app.use("/monitor", basicAuthMiddleware, monitor({
+  columns: [
+    'roomId',
+    'name',
+    'clients',
+    { metadata: "spectators" }, // display 'spectators' from metadata
+    'locked',
+    'elapsedTime'
+  ]
+}));
+```
+
+If unspecified, the default room listing columns are: `['roomId', 'name', 'clients', 'maxClients', 'locked', 'elapsedTime']`.

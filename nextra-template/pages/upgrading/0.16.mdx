@@ -1,0 +1,138 @@
+import { Callout } from 'nextra/components'
+
+# Upgrading to version 0.16 (from 0.15)
+
+> Version 0.16 is still under "preview" tag and may receive more updates.
+> This guide is still being updated and is intended for early adopters and contributors.
+
+Use this guide to migrate your existing 0.15 projects to version 0.16.
+
+<Callout type="info">
+    See [version 0.16 release announcement](https://github.com/colyseus/colyseus/releases/tag/0.16.0).
+</Callout>
+
+Make sure `colyseus` versions on `package.json` are pointing to `^0.16.0-preview.0`:
+
+**Server-side:**
+
+```json filename="package.json"
+    "@colyseus/schema": "^3.0.0-alpha.22",
+    "colyseus": "^0.16.0-preview.1",
+    "@colyseus/core": "^0.16.0-preview.30",
+    "@colyseus/monitor": "^0.16.0-preview.4",
+    "@colyseus/playground": "^0.16.0-preview.13",
+    "@colyseus/tools": "^0.16.0-preview.3",
+    "@colyseus/uwebsockets-transport": "^0.16.0-preview.12",
+```
+
+**Client-side:**
+
+```json filename="package.json"
+    "colyseus.js": "^0.16.0-preview.20",
+```
+
+Make sure you don't have any packages under `0.15.x`, neither `@colyseus/schema` under `2.0.x`. You may need to remove `node_modules` and `package-lock.json` before running `npm install`.
+
+---
+
+## Schema callbacks and `$(instance)` proxy
+
+As the callback methods have been extracted out of the `Schema` instances, you now have to get a proxied version of your `Schema` instances via `$(yourInstance)` in order to attach callbacks into them.
+
+```ts filename="client.ts"
+import { getStateCallbacks } from "colyseus.js";
+
+const room = await client.joinOrCreate("my_room");
+const $ = getStateCallbacks(room);
+
+$(room.state).players.onAdd((player, sessionId) => {
+    // this is the raw Schema instance
+    console.log(player);
+
+    // this is the proxied version, where you can attach the callbacks
+    $(player).listen("x", (value, previousValue) => {
+        console.log("player.x has been updated!", value, previousValue);
+    });
+});
+```
+
+The proxy is capable of entering nested objects, even if they're not available at the time you're attaching the callback.
+
+```ts filename="client.ts"
+$(room.state)
+    .yourInstance // this is a Schema instance (may not be immediately available)
+    .yourItems // this is a MapSchema or ArraySchema (may also not be immediately available)
+    .onAdd((item, index) => {
+        console.log("item added at index", index);
+    });
+```
+
+
+> For more context on why these changes are being applied, see [colyseus/colyseus#709](https://github.com/colyseus/colyseus/issues/709)
+
+
+## `@filter()` and `@filterChildren()` are now deprecated!
+
+The `StateView` feature has been introduced in version 0.16, which allows you to create a view of your state with a subset of the data.
+
+```ts filename="MyState.ts"
+import { view, type, Schema, MapSchema } from "@colyseus/schema";
+
+class MyState extends Schema {
+    @type({ map: Player }) players = new MapSchema<Player>();
+}
+
+class Player extends Schema {
+    // this property is visible to all
+    @type("string") name: string;
+
+    // this property is only visible a `StateView` that has added this Player instance.
+    @view() @type("number") position: number;
+}
+```
+
+The `StateView` must be assigned to the `client.view`. The room serializer is going to use the `client.view` to serialize the state before sending it to the client.
+
+```ts filename="MyRoom.ts"
+import { StateView } from "@colyseus/schema";
+
+// ...
+    onJoin(client, options) {
+        const player = new Player();
+
+        client.view = new StateView();
+        client.view.add(player);
+
+        this.state.players.set(client.sessionId, player);
+    }
+```
+
+Each `StateView` instance is going to add a new encoding step for state serialization. You may re-use the same `StateView` instance for multiple clients, or create a new one for each client.
+
+See more in the [`StateView` documentation](/state/state-view).
+
+## Breaking change: Attaching `playground` routes:
+
+The `playground` routes are now returned from a method call instead:
+
+```diff filename="src/app.config.ts"
+import { playground } from "@colyseus/playground";
+
+// ...
+if (process.env.NODE_ENV !== "production") {
+-   app.use("/", playground);
++   app.use("/", playground());
+}
+```
+
+This change was necessary to avoid the internal monkey-patching coming from the playground module when using in production environment.
+
+## Breaking change: `matchMaker.getRoomById()`
+
+- `matchMaker.getRoomById()` now returns the cached room data. This method will return properly when called from any process.
+- `matchMaker.getLocalRoomById()` returns the room instance itself, if it's available in the current process.
+
+
+## Sending schema-encoded messages is now deprecated
+
+Sending schema instances as messages via `client.send(instance)` or `this.broadcast(instance)` is now deprecated. This feature it was introduced in previous versions due to lack of strong types in C# for messages.

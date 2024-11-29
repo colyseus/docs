@@ -1,0 +1,85 @@
+import { defold } from "../../components/icons/platforms"
+import { Callout } from 'nextra/components'
+
+# {defold} Defold Engine
+
+The Colyseus SDK for Defold supports all major platforms, including:
+
+- HTML5,
+- iOS,
+- Android
+- Native (Mac, and Windows.)
+
+## Installation
+
+From your `game.project` file, and add the following Dependencies to your project:
+
+```txt copy
+https://github.com/colyseus/colyseus-defold/archive/0.16.zip
+```
+
+```txt copy
+https://github.com/defold/extension-websocket/archive/master.zip
+```
+
+Now, select **Project** ▸ **Fetch Libraries** to update library dependencies, two folders with the libraries name should pop up on your Defold project. This means the libraries have been imported correctly.
+
+<Callout type="info">
+    Read more about [Setting up library dependencies](https://defold.com/manuals/libraries/#setting-up-library-dependencies) on Defold documentation.
+</Callout>
+
+
+## Usage
+
+```lua filename="main.lua"
+local ColyseusClient = require "colyseus.client"
+
+local client
+local room
+
+function init(self)
+    -- Add initialization code here
+    client = ColyseusClient.new("ws://localhost:2567")
+
+    -- join chat room
+    client:join_or_create("chat", {}, function(err, _room)
+      if err then
+        print("JOIN ERROR: " .. err)
+        return
+      end
+
+      room = _room
+    end)
+end
+```
+
+See [client-side documentation](/client/).
+
+## FAQ
+
+### "I can't connect to the local server!"
+
+When running on localhost, make sure you don't have any service running on port
+80, otherwise the client won't connect into the specified port number.
+
+Alternatively, you can bind the Colyseus server to port 80.
+
+**WSL2 Users**
+
+When running the colyseus server inside WSL2, you won't be able to use `localhost` as the hostname.
+You'll need to get the WSL2 machine's IP by using `wsl hostname -I` and use that IP.
+
+### "`reconnect()` is not working on iOS!"
+
+If you lock your phone, all WebSocket connections will be closed. You can call `reconnect()` to reestablish the session, which needs a workaround for iOS:
+
+```lua
+function window_callback(self, event, data)
+    if event == window.WINDOW_EVENT_FOCUS_GAINED then
+        -- iOS workaround to re-active WebSocket connection after phone is unlocked
+        room:send("whatever")
+    end
+end
+
+window.set_listener(window_callback)
+```

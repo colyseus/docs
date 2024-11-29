@@ -1,0 +1,102 @@
+---
+title: State Synchronization
+---
+import { Cards, Steps } from 'nextra/components'
+import { SyncIcon, CodeSquareIcon, FileBinaryIcon, EyeIcon, StarIcon } from '@primer/octicons-react'
+
+## Guides
+
+<Cards>
+    <Cards.Card icon={<FileBinaryIcon />} title="State Schema" href="/state/schema" />
+    <Cards.Card icon={<SyncIcon />} title="State Synchronization" href="/state/sync" />
+    <Cards.Card icon={<CodeSquareIcon />} title="Client-side Callbacks" href="/state/callbacks" />
+    <Cards.Card icon={<EyeIcon />} title="State View" href="/state/state-view" />
+    <Cards.Card icon={<StarIcon />} title="Best Practices" href="/state/best-practices" />
+</Cards>
+
+## Overview: How State Synchronization Works?
+
+- When the client joins a room, it receives the full encoded state from the server.
+- State mutations on the server-side are enqueued at a per-property level. Only the _last mutation_ of each property will be transmitted.
+- Enqueued mutations are binary-encoded and sent to clients at every [patchRate](/server/room/#patchrate-number) interval, and then cleared.
+- The [schema callbacks](/state/callbacks) are triggered on the client-side **after** patches have been applied locally.
+
+<Steps>
+	### State is defined on the server-side
+
+    Define your state structures by extending `Schema` class from `@colyseus/schema`:
+
+    ```ts filename="MyState.ts"
+    import { Schema, type } from "@colyseus/schema";
+
+    export class Player extends Schema {
+        @type("string") name: string;
+        @type("number") x: number;
+        @type("number") y: number;
+    }
+
+    export class MyState extends Schema {
+        @type({ map: Player }) players = new MapSchema<Player>();
+    }
+    ```
+
+    ### State is set on the Room
+
+    Set the state on the Room instance:
+
+    ```ts filename="MyRoom.ts"
+    import { Room } from "colyseus";
+    import { MyState } from "./MyState";
+
+    export class MyRoom extends Room<MyState> {
+        state = new MyState();
+    }
+    ```
+
+    ### State is synchronized with clients
+
+    Whenever a mutation occurs in the server-side, the state is automatically synchronized with all clients in the room. Clients receive the full state when they join the room.
+
+    ```ts copy filename="client.ts"
+    import { Client, getStateCallbacks } from 'colyseus.js';
+
+    // ...
+    const client = new Client('http://localhost:2567');
+    const room = await client.joinOrCreate('my_room', {/* */});
+    const $ = getStateCallbacks(room);
+
+    // Listen to 'player' instance additions
+    $(room.state).players.onAdd((player, sessionId) => {
+        console.log('Player joined:', player);
+    });
+
+    // Listen to 'player' instance removals
+    $(room.state).players.onRemove((player, sessionId) => {
+        console.log('Player left:', player);
+    });
+    ```
+
+</Steps>
+
+---
+
+TODO: review this section
+
+- [**Schema definitions**](/state/schema) – define your state structure using Colyseus' `Schema` class.
+- [**Client-side callbacks**](/state/callbacks) – listen to state changes on the client-side.
+
+## How state synchronization works
+
+- When the client joins a room, it receives the full encoded state from the server.
+- State mutations on the server-side are enqueued at a per-property level. (Only the last mutation of each property is kept)
+- Enqueued mutations are binary-encoded and sent to **all clients** at every [patchRate](/server/room/#patchrate-number) interval, and then cleared.
+- Client-side [schema callbacks](/state/callbacks) are triggered after patches were applied.
+
+## Working with schema structures
+
+- Only the server-side is responsible for mutating schema structures
+- The client-side must have the same `Schema` definitions generated through [`schema-codegen`](#client-side-schema-generation). _(Optional if you're using the [JavaScript SDK](/getting-started/javascript-client/))_
+- In order to get updates from the server, you need to [attach callbacks on schema instances in the client-side](/state/callbacks).
+- The client-side should never perform mutations on schema - as they are going to be replaced as soon as the next change come from the server.
+
+![State Synchronization Diagram](/diagrams/state-sync.png) -->
