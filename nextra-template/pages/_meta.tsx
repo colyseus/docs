@@ -1,4 +1,4 @@
-import { HomeIcon, ServerIcon, DevicesIcon, DatabaseIcon, ToolsIcon, QuestionIcon, VersionsIcon, HeartFillIcon, DownloadIcon, CodeIcon, ZapIcon, BookIcon, SyncIcon, PasskeyFillIcon, RocketIcon } from '@primer/octicons-react';
+import { HomeIcon, FileCodeIcon, ServerIcon, DevicesIcon, DatabaseIcon, ToolsIcon, QuestionIcon, VersionsIcon, HeartFillIcon, DownloadIcon, CodeIcon, ZapIcon, BookIcon, SyncIcon, PasskeyFillIcon, RocketIcon } from '@primer/octicons-react';
 
 export default {
     '-- Intro': {
@@ -14,6 +14,7 @@ export default {
 
     "getting-started": { title: <span><ZapIcon/> Getting Started</span> }, // "Getting Started"
     "concepts": "",
+    "tutorial": { title: <span><FileCodeIcon/> Tutorials</span>},
     // "recipes": "",
 
     '-- API Reference': { type: 'separator', title: 'API Reference' },

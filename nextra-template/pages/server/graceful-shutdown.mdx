@@ -25,7 +25,7 @@ You may use `async` functions or return a `Promise` to perform asynchronous oper
 
 By returning a `Promise`, the server will wait for them to be completed before killing the worker process.
 
-``` typescript
+```ts filename="MyRoom.ts"
 import { Room } from "colyseus";
 
 class MyRoom extends Room {
@@ -59,7 +59,7 @@ class MyRoom extends Room {
 
 The `async` keyword will make your function return a `Promise` under the hood. [Read more about Async / Await](https://basarat.gitbook.io/typescript/future-javascript/async-await).
 
-``` typescript
+```ts filename="MyRoom.ts"
 import { Room } from "colyseus";
 
 class MyRoom extends Room {
@@ -77,7 +77,7 @@ class MyRoom extends Room {
 
 You can also listen for process shutdown by setting a `onShutdown` callback.
 
-``` typescript
+```ts filename="server.ts"
 import { Server } from "colyseus";
 
 const gameServer = new Server();

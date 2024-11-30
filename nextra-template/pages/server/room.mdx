@@ -861,6 +861,16 @@ client.sendBytes(1, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 
 
 ---
 
+#### Send Error
+
+Send an error with code and message to the client. The client can handle it on [`onError`](/client/room/#onerror)
+
+```ts filename="Signature"
+client.error(code, message)
+```
+
+---
+
 #### Leave Room
 
 Force disconnection of the `client` with the room. You may send a custom `code` when closing the connection, with values betweeen `4000` and `4999` (see [table of WebSocket close codes](#websocket-close-codes-table))
@@ -870,10 +880,10 @@ client.leave(code?: number)
 ```
 
 <Callout type="info">
-    This will trigger [`room.onLeave`](/client/room/#onleave) event on the client-side.
+    This will trigger [`room.onLeave`](/client/#onleave) event on the client-side.
 </Callout>
 
-##### Table of WebSocket close codes
+**Table of WebSocket close codes**
 
 | Close code (uint16) | Codename               | Internal | Customizable | Description |
 |---------------------|------------------------|----------|--------------|-------------|
@@ -898,13 +908,3 @@ client.leave(code?: number)
 | `2000` - `2999`         |                        | Yes      | Yes          | Reserved for use by WebSocket extensions |
 | `3000` - `3999`         |                        | No       | Yes          | 	Available for use by libraries and frameworks. May not be used by applications. Available for registration at the IANA via first-come, first-serve. |
 | `4000` - `4999`         |                        | No       | Yes          | **Available for applications** |
-
----
-
-#### Send Error
-
-Send an error with code and message to the client. The client can handle it on [`onError`](/client/room/#onerror)
-
-```ts filename="Signature"
-client.error(code, message)
-```

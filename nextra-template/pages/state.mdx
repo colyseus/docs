@@ -10,7 +10,7 @@ import { CodeSquareIcon, FileBinaryIcon, EyeIcon, StarIcon } from '@primer/octic
     <Cards.Card icon={<StarIcon />} title="Best Practices" href="/state/best-practices" />
 </Cards>
 
-## Overview: How State Synchronization Works?
+## How State Synchronization Works?
 
 - When the client joins a room, it receives the full encoded state from the server.
 - State mutations on the server-side are enqueued at a per-property level. Only the _last mutation_ of each property will be transmitted.
