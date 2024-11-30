@@ -1,3 +1,6 @@
+---
+title: "PlayCanvas"
+---
 import { Bleed } from 'nextra-theme-docs'
 import { Callout, Cards, Tabs } from "nextra/components";
 import { LinkIcon } from '@primer/octicons-react'
@@ -150,7 +153,9 @@ export class MyRoomState extends Schema {
 }
 ```
 
-> See more about the [Schema structures](https://docs.colyseus.io/colyseus/state/schema/).
+<Callout type="info">
+    See [State Synchronization → Schema Definition](/state/schema/).
+</Callout>
 
 Now, still in the server-side, let's modify our `onJoin()` method to create a `Player` instance whenever a new connection is established with the room.
 
