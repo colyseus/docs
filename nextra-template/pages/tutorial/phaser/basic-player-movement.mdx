@@ -223,7 +223,9 @@ export class GameScene extends Phaser.Scene {
 }
 ```
 
-> Note that we're using the local `ws://localhost:2567` endpoint here. You need to [deploy your server](https://docs.colyseus.io/arena/getting-started/create-application/) to the public internet in order to play with others online. You can also use [Glitch](https://glitch.com/edit/#!/colyseus-phaser-tutorial) to host your server publicly.
+<Callout type="info">
+    Note that we're using the local `ws://localhost:2567` endpoint here. You need to [deploy your server](/deployment) to the public internet in order to play with others online. You can also use [Glitch](https://glitch.com/edit/#!/colyseus-phaser-tutorial) to host your server publicly.
+</Callout>
 
 When you refresh your browser now, your client is going to establish a connection with the server, and the server is going to create the room `my_room` on demand for you.
 

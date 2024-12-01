@@ -2,8 +2,8 @@ import { Tabs, Steps, Cards } from "nextra/components"
 import { CloudIcon, RocketIcon, StackIcon } from "@primer/octicons-react"
 
 <Cards>
-    <Cards.Card icon={<StackIcon/>} title="Scalability" href="/infrastructure/scalability" />
-    <Cards.Card icon={<CloudIcon/>} title="Colyseus Cloud" href="/infrastructure/cloud" />
+    <Cards.Card icon={<StackIcon/>} title="Scalability" href="/deployment/scalability" />
+    <Cards.Card icon={<CloudIcon/>} title="Colyseus Cloud" href="/deployment/cloud" />
 </Cards>
 
 # Deploying your Colyseus server
@@ -15,9 +15,9 @@ import { CloudIcon, RocketIcon, StackIcon } from "@primer/octicons-react"
 - [Docker](#docker)
 - [Heroku](#heroku)
 
-Deploying Colyseus for a single-process environment is no different than deploying a regular Node.js application ([see a good article here](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-20-04)).
+Deploying Colyseus is no different than deploying a regular Node.js application - [see a good article here](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-20-04).
 
-However, deploying Colyseus for a multi-process environment requires some [extra steps](/scalability/).
+However, scaling Colyseus to use multiple processes requires [extra steps](/deployment/scalability).
 
 ## Colyseus Cloud - Managed Hosting
 
