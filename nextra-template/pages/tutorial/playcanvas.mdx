@@ -32,11 +32,6 @@ import { LinkIcon } from '@primer/octicons-react'
 - Basic JavaScript/TypeScript understanding ([See TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html))
 - Basic Node.js understanding ([See Introduction to Node.js](https://nodejs.dev/learn/))
 
-### Software requirements
-
-<span class="icon download"></span> [Node.js LTS](https://nodejs.org/en/download/)
-<span class="icon download"></span> [Visual Studio Code](https://code.visualstudio.com/download)
-
 ## Creating the Server
 
 We will be making a basic server, hosted locally on your computer for keeping player states. Changes will be synchronized with clients accordingly.
@@ -108,7 +103,9 @@ NetworkManager.prototype.initialize = function () {
 }
 ```
 
-> Note that we're using the local `ws://localhost:2567` endpoint here. You need to [deploy your server](https://docs.colyseus.io/arena/getting-started/create-application/) to the public internet in order to play with others online. You can also use [Glitch](https://glitch.com/edit/#!/tutorial-playcanvas-server) to host your server publicly.
+<Callout type="info">
+    Note that we're using the local `ws://localhost:2567` endpoint here. You need to [deploy your server](/deployment) to the public internet in order to play with others online. You can also use [Glitch](https://glitch.com/edit/#!/tutorial-playcanvas-server) to host your server publicly.
+</Callout>
 
 When you **"Launch"** your PlayCanvas project now, your client is going to establish a connection with the server, and the server is going to create the room `my_room` on demand for you.
 

@@ -1,0 +1,66 @@
+import { Callout, Steps } from "nextra/components";
+
+- [Debug messages](#debug-messages)
+- [Inspector (`--inspect` flag)](#inspector)
+
+## Debug messages
+
+To enable all debug logs, run your server using the `DEBUG=colyseus:*` environment variable:
+
+```sh filename="Terminal"
+DEBUG=colyseus:* npm start
+```
+
+| Name | Description |
+|------|-------------|
+| `colyseus:errors` | Whenever unexpected (or expected, internally) errors happens on the server-side. |
+| `colyseus:matchmaking` | Whenever a room is spanwed or disposed. |
+| `colyseus:message` | Incoming and outgoing room messages |
+| `colyseus:patch` | The number of bytes and interval between patches broadcasted to all clients. |
+| `colyseus:connection` | Incoming and outgoing connections |
+
+## Inspector
+
+You can use the the built-in inspector from Node.js to debug your application.
+
+<Callout type="info">
+    See [Debugging Node.js Applications](https://nodejs.org/en/docs/inspector/) for more information.
+</Callout>
+
+### Attaching the Node.js Inspector on a Remote Server
+
+Be careful when using the inspector on production. Using memory snapshots and breakpoints will impact the experience of your users directly.
+
+<Steps>
+#### SSH into the Remote Server
+
+```sh filename="Terminal (local)"
+ssh root@remote.example.com
+```
+
+#### Check the PID of the Node process
+
+```sh filename="Terminal (remote)"
+ps aux | grep node
+```
+
+#### Attach the inspector on the Node.js process
+
+The `kill` command will send the `SIGUSR1` signal to the Node.js process, which will start the inspector. It does not kill the process.
+
+```sh filename="Terminal (remote)"
+kill -usr1 PID
+```
+
+#### Create a SSH tunnel to access the inspector
+
+From a new terminal window, create a SSH tunnel to access the inspector:
+
+```sh filename="Terminal (local)"
+ssh -L 9229:localhost:9229 root@remote.example.com
+```
+
+#### Open Chrome and access the inspector
+
+Open Chrome and access the inspector by navigating to `chrome://inspect`. It will show the remote server as a target.
+</Steps>

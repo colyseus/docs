@@ -5,7 +5,7 @@ toc: false
 
 import Image from 'next/image'
 import { Bleed } from 'nextra-theme-docs'
-import { Callout, Steps, Tabs } from 'nextra/components'
+import { Callout, Steps, Tabs, Cards } from 'nextra/components'
 import { CodeIcon, PeopleIcon, SyncIcon, ServerIcon, CloudIcon, DownloadIcon } from '@primer/octicons-react'
 
 <Image src={require('../images/hero.png')} width={0} height={0} style={{ width: '100%', height: 'auto' }} alt="Colyseus Hero Image" />
@@ -16,7 +16,7 @@ Colyseus is a framework for writing your own authoritative multiplayer game serv
 
 -  [**<PeopleIcon /> Match-making into Rooms**](/server/room) – From a single Room definition, clients are matched into multiple Room instances.
 - [**<SyncIcon /> State Synchronization**](/state) – Automatically synchronize the state from the server with connected clients.
-- [**<ServerIcon /> Scalable**](/scalability) – Built for horizontal and/or vertical scalability.
+- [**<ServerIcon /> Scalable**](/deployment/scalability) – Built for horizontal and/or vertical scalability.
 - [**<CloudIcon /> Cloud agnostic**](/deployment) – You may self-host it on your own servers for free, or use our commercial [Colyseus Cloud](https://cloud.colyseus.io/) service.
 
 ## System Requirements

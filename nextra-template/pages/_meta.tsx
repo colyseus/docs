@@ -15,7 +15,6 @@ export default {
     "getting-started": { title: <span><ZapIcon/> Getting Started</span> }, // "Getting Started"
     "concepts": "",
     "tutorial": { title: <span><FileCodeIcon/> Tutorials</span>},
-    // "recipes": "",
 
     '-- API Reference': { type: 'separator', title: 'API Reference' },
     "server": { title: <span><ServerIcon/> Server</span> },

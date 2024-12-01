@@ -7,5 +7,7 @@ export default {
     "transport": "",
     "custom-http-routes": "",
     "logging": "",
+    "devmode": "",
+    "debugging": "",
     "graceful-shutdown": "",
 }
