@@ -1,0 +1,78 @@
+---
+title: "WebTransport"
+---
+import { Callout, Cards, Tabs } from "nextra/components";
+
+## WebTransport
+
+WebTransport is a new transport protocol that allows for low-latency, bidirectional, and multiplexed communication between a client and a server. It is built on top of HTTP/3 and QUIC - QUIC is a new transport protocol that is built on top of UDP, which is designed to be more efficient than TCP.
+
+<Callout type="warning">
+    **Experimental** - This WebTransport implementation hasn't been battle tested. Please report any issues you may find - WebTransport is still an emerging technology and [not widely available yet](https://caniuse.com/webtransport).
+</Callout>
+
+<Callout type="info">
+    The underlying library is [`@fails-components/webtransport`](https://github.com/fails-components/webtransport) - a server-side implementation of HTTP3/WebTransport.
+</Callout>
+
+```sh npm2yarn
+npm install --save @colyseus/h3-transport
+```
+
+**Usage**
+
+<Tabs items={["app.config.ts", "Raw usage"]}>
+    <Tabs.Tab>
+    ```ts {2,6-11} filename="app.config.ts"
+    import config from "@colyseus/tools";
+    import { H3Transport } from "@colyseus/h3-transport"
+
+    export default config({
+      // ...
+      initializeTransport: function(options) {
+        return new H3Transport({
+          // more H3Transport options
+          ...options,
+        });
+      },
+
+      //
+      // bind express routes
+      //
+      initializeExpress: (app) => {
+
+        app.get("/hello", (req, res) => {
+          res.json({ hello: "world!" });
+        });
+
+      },
+      // ...
+    })
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts {1,3-5} filename="server.ts"
+    import { H3Transport } from "@colyseus/h3-transport"
+
+    const transport = new H3Transport({
+        /* ...options */
+    });
+    const app = transport['expressApp'];
+
+    // register routes
+    app.get("/hello", (req, res) => {
+      res.json({ hello: "world!" });
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+### Available options
+
+- `app`: The Express app.
+- `cert`: Certificate contents (cert.pem)
+- `key`: Private key contents (key.pem)
+- `secret`: (?)
+- `server`: The `http.Server` instance to be used.
+- `localProxy`: (optional) Fallback every URL through the this local proxy.

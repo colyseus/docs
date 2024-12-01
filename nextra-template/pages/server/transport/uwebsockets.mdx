@@ -1,0 +1,109 @@
+---
+title: "uWebSockets.js"
+---
+import { Callout, Cards, Tabs } from "nextra/components";
+
+## `uWebSockets.js`- A Native C++ WebSocket Transport
+
+The uWebSockets.js generally performs better than the default WebSockets implementation, and is capable of handling more connections with less memory consumption.
+
+<Callout type="info">
+    The underlying library is [`uNetworking/uWebSockets.js`](https://github.com/uNetworking/uWebSockets.js), which is a C++ implementation of WebSockets for Node.js. It is a high performance WebSocket library for Node.js, which focuses on performance and low memory consumption.
+</Callout>
+
+### Installation
+
+```sh npm2yarn
+npm install --save @colyseus/uwebsockets-transport
+```
+
+**Usage**
+
+<Tabs items={["app.config.ts", "Raw usage"]}>
+    <Tabs.Tab>
+    ```ts {1,6-10} filename="app.config.ts"
+    import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
+    import config from "@colyseus/tools";
+
+    export default config({
+      // ...
+      initializeTransport: function() {
+        return new uWebSocketsTransport({
+          /* ...options */
+        });
+      },
+
+      //
+      // bind express routes
+      //
+      initializeExpress: (app) => {
+
+        app.get("/hello", (req, res) => {
+          res.json({ hello: "world!" });
+        });
+
+      },
+      // ...
+    })
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts {1,3-5} filename="server.ts"
+    import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
+
+    const transport = new uWebSocketsTransport({
+        /* ...options */
+    });
+    const app = transport['expressApp'];
+
+    // bind express routes
+    app.get("/hello", (req, res) => {
+      res.json({ hello: "world!" });
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+### Available options
+
+#### `options.maxPayloadLength`
+Maximum length of received message. If a client tries to send you a message larger than this, the connection is immediately closed.
+
+Default: `4096`
+
+#### `options.idleTimeout`
+Maximum amount of seconds that may pass without sending or getting a message. Connection is closed if this timeout passes. Resolution (granularity) for timeouts are typically 4 seconds, rounded to closest. Disable by using `0`.
+
+Default: `120`
+
+#### `options.sendPingsAutomatically`
+
+Whether or not we should automatically send pings to uphold a stable connection given `idleTimeout`.
+
+Default: `true`
+
+#### `options.compression`
+
+What permessage-deflate compression to use. `uWS.DISABLED`, `uWS.SHARED_COMPRESSOR` or any of the `uWS.DEDICATED_COMPRESSOR_xxxKB`.
+
+Default: `uWS.DISABLED`
+
+#### `options.maxBackpressure`
+
+Maximum length of allowed backpressure per socket when publishing or sending messages. Slow receivers with too high backpressure will be skipped until they catch up or timeout.
+
+Default: `1024 * 1024`
+
+#### `options.key_file_name`
+
+Path to the SSL key file. (for SSL termination through the Node.js application.)
+
+#### `options.cert_file_name`
+
+Path to the SSL certificate file. (for SSL termination through the Node.js application.)
+
+#### `options.passphrase`
+
+Password for the SSL file. (for SSL termination through the Node.js application.)
+
