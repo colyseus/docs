@@ -1,8 +1,14 @@
 import { Callout, Steps, Tabs } from 'nextra/components'
+import { ServerIcon, DevicesIcon } from "@primer/octicons-react";
 
 # Unit Testing Your Server
 
-The `@colyseus/testing` package provides a few utility methods for testing your Colyseus application. It can be used along with your favorite testing framework, such as [Mocha](https://mochajs.org/), or [Jest](https://jestjs.io/).
+The `@colyseus/testing` package provides utility methods for testing your Colyseus application. It uses the JavaScript SDK to simulate client connections and send messages to the server.
+
+<Callout type="info">
+    Use it with your favorite testing framework, such as [Mocha](https://mochajs.org/), or [Jest](https://jestjs.io/).
+</Callout>
+
 
 ## Recommendations and best practices
 
@@ -32,7 +38,7 @@ The `@colyseus/testing` package provides a few utility methods for testing your 
         // `room` is the server-side Room instance reference.
         const room = await colyseus.createRoom("my_room", {});
 
-        // `client1` is the client-side `Room` instance reference (same as JavaScript SDK)
+        // `client1` is the client-side `Room` instance reference (from the JavaScript SDK)
         const client1 = await colyseus.connectTo(room);
 
         // make your assertions
@@ -63,7 +69,7 @@ The `@colyseus/testing` package provides a few utility methods for testing your 
         // `room` is the server-side Room instance reference.
         const room = await colyseus.createRoom("my_room", {});
 
-        // `client1` is the client-side `Room` instance reference (same as JavaScript SDK)
+        // `client1` is the client-side `Room` instance reference (from the JavaScript SDK)
         const client1 = await colyseus.connectTo(room);
 
         // make your assertions
@@ -77,11 +83,17 @@ The `@colyseus/testing` package provides a few utility methods for testing your 
 
 ## Waiting for asynchronous actions to process
 
-### `room.waitForMessage(type)`
+When sending messages between server and client, it's important to wait for the server to process the message before making assertions.
+
+### Wait For Message Type
 
 Wait for a particular message `type` to arrive in the server.
 
-``` typescript
+```ts filename="Signature"
+room.waitForMessage(type): Promise<[Client, any]>
+```
+
+```ts {8} filename="App.test.ts"
 it("should receive message", async() => {
     const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
@@ -97,15 +109,19 @@ it("should receive message", async() => {
 });
 ```
 
-### `room.waitForNextMessage()`
+### Wait For Next Message
 
 Wait for any next message to arrive in the server.
 
+```ts filename="Signature"
+room.waitForNextMessage(delay?: number): Promise<[Client, any]>
+```
+
 **Parameters**
 
-- `additionalDelay: number` - additional delay after `onMessage` has been called in the server-side, in milliseconds (optional)
+- `delay: number` - additional delay after `onMessage` has been called in the server-side, in milliseconds (optional)
 
-``` typescript
+```ts {11} filename="App.test.ts"
 it("should receive message", async() => {
     const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
@@ -122,11 +138,15 @@ it("should receive message", async() => {
 });
 ```
 
-### `room.waitForNextPatch()`
+### Wait For Next Patch
 
 Wait for the server to send the latest patched state to all clients.
 
-``` typescript
+```ts filename="Signature"
+room.waitForNextPatch(): Promise<void>
+```
+
+```ts {5} filename="App.test.ts"
 it("client state must match server's after patch is received", async() => {
     const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
@@ -138,11 +158,15 @@ it("client state must match server's after patch is received", async() => {
 });
 ```
 
-### `room.waitForNextSimulationTick()`
+### Wait For Next Simulation Tick
 
 Wait for the next simulation tick to complete.
 
-``` typescript
+```ts filename="Signature"
+room.waitForNextSimulationTick(): Promise<void>
+```
+
+```ts {5} filename="App.test.ts"
 it("should assert something after room's simulation tick", async() => {
     const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
@@ -175,11 +199,15 @@ it("should connect into battle_room with options x, y, z", async () => {
 });
 ```
 
-### `client.waitForNextPatch()`
+### Wait for Next Patch
 
 Wait for client state to be in sync with the server.
 
-```ts filename="App.test.ts"
+```ts filename="Signature"
+client.waitForNextPatch(): Promise<void>
+```
+
+```ts {3} filename="App.test.ts"
 it("should do xyz after receiving message 'x'", async () => {
     const client = await colyseus.sdk.joinOrCreate("battle_room");
     await client.waitForNextPatch();
@@ -187,11 +215,15 @@ it("should do xyz after receiving message 'x'", async () => {
 });
 ```
 
-### `client.waitForMessage(type)`
+### Wait for Message Type
 
 Wait for a particular message `type` to arrive in the client-side.
 
-```ts filename="App.test.ts"
+```ts filename="Signature"
+client.waitForMessage(type): Promise<any>
+```
+
+```ts {5} filename="App.test.ts"
 it("should do xyz after receiving message 'x'", async () => {
     const client = await colyseus.sdk.joinOrCreate("battle_room");
     client.send("ask-for-x");
@@ -201,11 +233,15 @@ it("should do xyz after receiving message 'x'", async () => {
 });
 ```
 
-### `client.waitForNextMessage()`
+### Wait for Next Message
 
 Wait for any next message to arrive in the client.
 
-```ts filename="App.test.ts"
+```ts filename="Signature"
+client.waitForNextMessage(): Promise<any>
+```
+
+```ts {5} filename="App.test.ts"
 it("should do xyz after receiving message 'x'", async () => {
     const client = await colyseus.sdk.joinOrCreate("battle_room");
     client.send("ask-for-x");
