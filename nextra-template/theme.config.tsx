@@ -20,14 +20,14 @@ const config: DocsThemeConfig = {
         toggleButton: true
     },
 
-    color: {
-        hue: 265,
-        saturation: 100,
-        lightness: {
-            dark: 72,
-            light: 60,
-        }
-    },
+    // color: {
+    //     hue: 265,
+    //     saturation: 100,
+    //     lightness: {
+    //         dark: 72,
+    //         light: 60,
+    //     }
+    // },
 
     toc: {
         // float: false,
