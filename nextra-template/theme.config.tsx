@@ -21,10 +21,10 @@ const config: DocsThemeConfig = {
     },
 
     color: {
-        hue: 254,
+        hue: 265,
         saturation: 100,
         lightness: {
-            dark: 75,
+            dark: 72,
             light: 60,
         }
     },
