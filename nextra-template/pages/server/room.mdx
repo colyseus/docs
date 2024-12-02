@@ -66,15 +66,20 @@ The `Room` class is meant to implement a game session, and/or serve as the commu
 
 ### onCreate
 
-Called once, when the room is created by the matchmaker.
+Called once, when the room is created by the matchmaker. `options` is the merged values specified on [Server#define()](/server/#define-room-type) with the options provided the client on [`client.join()`](/client#join-or-create-a-room).
 
-```ts filename="Signature"
-onCreate (options)
+```ts filename="MyRoom.ts"
+onCreate (options) {
+    /**
+     * This is a good place to initialize your room state.
+     */
+}
 ```
+
+The server may overwrite options during [`.define()`](/server/#define-room-type) for authortity over client-provided options:
 
 <Tabs items={["Server-side", "Client-side"]}>
     <Tabs.Tab>
-        The server may overwrite options during [`.define()`](/server/api/#define-roomname-string-room-room-options-any) for authortity over client-provided options:
 
         ```ts filename="app.config.ts"
         // (server-side)
@@ -107,9 +112,28 @@ On this example, the `map` option is `"cs_assault"` during `onCreate()`, and `"d
 
 See the [Authentication](/authentication) section for more details.
 
-```ts filename="Signature"
-onAuth (token, request)
-```
+<Tabs items={["Instance onAuth", "Static onAuth"]}>
+    <Tabs.Tab>
+    ```ts filename="MyRoom.ts"
+    async onAuth (client, options, request) {
+        /**
+         * This is a good place to validate the client's auth token.
+         */
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts filename="MyRoom.ts"
+    static async onAuth (token, request) {
+        /**
+         * This is a good place to validate the client's auth token.
+         */
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
+
 
 ---
 
@@ -117,15 +141,19 @@ onAuth (token, request)
 
 Triggered when a client successfully joins the room, after a successful `onAuth`.
 
-```ts filename="Signature"
-onJoin (client, options, auth?)
-```
-
 **Parameters:**
 
 - `client`: The [`client`](/server/client) instance.
 - `options`: merged values specified on [Server#define()](/server/api/#define-roomname-string-room-room-options-any) with the options provided the client on [`client.join()`](/client/#join-roomname-string-options-any)
 - `auth`: (optional) auth data returned by [`onAuth`](#onauth-client-options-request) method.
+
+```ts filename="MyRoom.ts"
+async onJoin (client, options, auth?) {
+    /**
+     * This is a good place to add the client to the state.
+     */
+}
+```
 
 ---
 
@@ -133,8 +161,12 @@ onJoin (client, options, auth?)
 
 Triggered when a client leaves the room. If the disconnection was [initiated by the client](/client/client/#leave-consented-boolean), the `consented` parameter will be `true`, otherwise, it will be `false`.
 
-```ts filename="Signature"
-onLeave (client, consented)
+```ts filename="MyRoom.s"
+async onLeave (client, consented) {
+    /**
+     * This is a good place to remove the client from the state.
+     */
+}
 ```
 
 You may define this function as `async`:
@@ -161,7 +193,7 @@ You may define this function as `async`:
 </Tabs>
 
 <Callout type="info">
-    At [graceful shutdown](/server/graceful-shutdown), `onLeave` is called with `consented` set to `true` for all clients.
+    At [Graceful Shutdown](/server/graceful-shutdown), `onLeave` is called with `consented` set to `true` for all clients.
 </Callout>
 
 ---
@@ -174,17 +206,17 @@ The `onDispose()` method is called before the room is destroyed, which happens w
 - you manually call [`.disconnect()`](#disconnect).
 
 ```ts filename="MyRoom.ts"
-onDispose() {
-    //
-    // ...
-    //
+async onDispose() {
+    /**
+     * This is a good place to perform cleanup tasks.
+     */
 }
 ```
 
 You may define `async onDispose()` an asynchronous method in order to persist some data in the database. In fact, this is a great place to persist player's data in the database after a game match ends.
 
 <Callout type="info">
-    At [graceful shutdown](/server/graceful-shutdown), `onDispose` is called for all rooms.
+    At [Graceful Shutdown](/server/graceful-shutdown), `onDispose` is called for all rooms.
 </Callout>
 
 ---
@@ -213,10 +245,10 @@ The `onBeforePatch` lifecycle hook is triggered before state synchronization, at
 
 ```ts filename="MyRoom.ts"
 onBeforePatch() {
-    //
-    // here you can mutate something in the state just before it is encoded &
-    // synchronized with all clients
-    //
+    /*
+     * Here you can mutate something in the state just before it is encoded &
+     * synchronized with all clients
+     */
 }
 ```
 
@@ -244,7 +276,7 @@ export class MyRoom extends Room<MyRoomState> {
 An optional hook to reprocess/restore data which was returned and stored from the previous hook [`onCacheRoom`](/server/room/#oncacheroom-any) when [`devMode`](devmode) is enabled.
 (See [restoring data outside the room's state](devmode/#restoring-data-outside-the-rooms-state))
 
-``` typescript
+```ts filename="MyRoom.ts"
 export class MyRoom extends Room<MyRoomState> {
   // ...
 
@@ -268,7 +300,7 @@ By default, the room will disconnect all clients and dispose itself immediately.
 
 You may customize how the room should behave during the shutdown process:
 
-``` typescript
+```ts filename="MyRoom.ts"
 onBeforeShutdown() {
     //
     // Notify users that process is shutting down, they may need to save their progress and join a new room
@@ -357,7 +389,7 @@ Set the synchronizable room state. See [State Synchronization](/state/) and [Sch
 
 ### Set Simulation Interval
 
-(Optional) Set a simulation interval that can change the state of the game. The simulation interval is your game loop. Default simulation interval: 16.6ms (60fps)
+_Optional:_ Set a simulation interval that can change the state of the game. The simulation interval is your game loop. Default simulation interval: 16.6ms (60fps)
 
 ```ts filename="Signature"
 this.setSimulationInterval (callback[, milliseconds=16.6])
@@ -389,27 +421,28 @@ this.setPatchRate (milliseconds)
 
 ### Set Private
 
-Set the room listing as private (or revert to public, if `false` is provided).
+Set the room listing as private - or revert it to public, if `false` is provided.
 
 ```ts filename="Signature"
 this.setPrivate (bool)
 ```
 
-Private rooms are not listed in the [`getAvailableRooms()`](/client/#getavailablerooms-roomname-string) method.
+Private Rooms are not listed during [`getAvailableRooms()`](/client/#getavailablerooms-roomname-string) method.
 
 ---
 
 ### Set Metadata
 
-Set metadata to this room. Each room instance may have metadata attached to it - the only purpose for attaching metadata is to differentiate one room from another when getting the list of available rooms from the client-side, to connect to it by its `roomId`, using [`client.getAvailableRooms()`](/client/#getavailablerooms-roomname).
+Set metadata to this room. Each room instance may have metadata attached to it - the only purpose for attaching metadata is to differentiate one room from another when getting the list of available rooms from the client-side, to connect to it by its `roomId`, using [`client.getAvailableRooms()`](/client#get-available-rooms).
 
 ```ts filename="Signature"
 this.setMetadata (metadata)
 ```
 
 ```ts filename="MyRoom.ts"
-// server-side
-this.setMetadata({ friendlyFire: true });
+onCreate(options) {
+    this.setMetadata({ friendlyFire: options.friendlyFire });
+}
 ```
 
 Now that a room has metadata attached to it, the client-side can check which room has `friendlyFire`, for example, and connect directly to it via its `roomId`:

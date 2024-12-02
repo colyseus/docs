@@ -1,7 +1,8 @@
 ---
 title: "Database & Persistance"
 ---
-import { Callout } from 'nextra/components'
+import { Cards, Callout } from 'nextra/components'
+import { LinkExternalIcon } from '@primer/octicons-react'
 
 # Database & Persistance
 
@@ -19,13 +20,50 @@ You can use your preferred Node.js tool for working with databases. Query builde
 
 ### ORMs (Object-Relational Mappers)
 
-- [DrizzleORM](https://orm.drizzle.team/)
-- [MikroORM](https://mikro-orm.io/)
-- [Sequelize](https://sequelize.org/)
-- [TypeORM](https://typeorm.io/)
-- [Prisma](http://www.prisma.io/)
+<Cards>
+    <Cards.Card icon={<LinkExternalIcon/>} title="DrizzleORM" href="https://orm.drizzle.team/" />
+    <Cards.Card icon={<LinkExternalIcon/>} title="MikroORM" href="https://mikro-orm.io/" />
+    <Cards.Card icon={<LinkExternalIcon/>} title="Sequelize" href="https://sequelize.org/" />
+    <Cards.Card icon={<LinkExternalIcon/>} title="TypeORM" href="https://typeorm.io/" />
+    <Cards.Card icon={<LinkExternalIcon/>} title="Prisma" href="http://www.prisma.io/" />
+</Cards>
 
 ### Query builders
 
-- [Kysely](https://kysely.dev/)
-- [Knex](https://knexjs.org/)
+<Cards>
+    <Cards.Card icon={<LinkExternalIcon/>} title="Kysely" href="https://kysely.dev/" />
+    <Cards.Card icon={<LinkExternalIcon/>} title="Knex" href="https://knexjs.org/" />
+</Cards>
+
+---
+
+## Common Usage Patterns
+
+### Query the database on `onAuth` method
+
+You may fetch user data based on the `options` passed to the client on connection, or based on the authentication token.
+
+```ts filename="src/rooms/MyRoom.ts"
+// ...
+async onAuth(client, options) {
+    const user = await db.query('SELECT * FROM users WHERE id = ?', [options.userId]);
+    return user;
+}
+
+onJoin (client, options) {
+    // ...
+    await db.query('UPDATE users SET online = true WHERE id = ?', [client.auth.id]);
+}
+```
+
+### Update the database on `onLeave` method
+
+You may update the database when the client leaves the room.
+
+```ts filename="src/rooms/MyRoom.ts"
+// ...
+async onLeave(client, consented) {
+    // ...
+    await db.query('UPDATE users SET online = false WHERE id = ?', [client.auth.id]);
+}
+```
