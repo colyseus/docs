@@ -1,4 +1,5 @@
 import { Callout, Tabs } from 'nextra/components'
+import { SyncIcon } from '@primer/octicons-react'
 
 # Room API
 
@@ -682,9 +683,9 @@ onCreate() {
 
 ## Public properties
 
-### `roomId: string`
+### `roomId`
 
-A unique, auto-generated, 9-character-long id of the room.
+A unique, auto-generated, 9-character-long identifier of the room.
 
 You may replace `this.roomId` during `onCreate()`.
 
@@ -696,23 +697,39 @@ You may replace `this.roomId` during `onCreate()`.
 
 ---
 
-### `roomName: string`
+### `roomName`
 
 The name of the room you provided as first argument for [`gameServer.define()`](/server/api/#define-roomname-string-room-room-options-any).
 
 ---
 
-### `state: T`
+### `state`
 
-The state instance you provided to [`setState()`](#setstate-object).
+The synchronized state of the room.
+
+<Callout type="info">
+    See [State Synchronization](/state/).
+</Callout>
 
 ---
 
-### `clients: Client[]`
+### `clients`
 
 The array of connected clients. See [Client instance](#client).
 
-#### **Example:** Getting a client by its `sessionId`.
+#### Sending a message to a specific clients.
+
+```ts filename="MyRoom.ts"
+// ...
+this.clients.forEach((client) => {
+    if (client.userData.team === "red") {
+        client.send("hello", "world");
+    }
+});
+// ...
+```
+
+#### Getting a client by `sessionId`.
 
 ```ts filename="MyRoom.ts"
 // ...
@@ -722,7 +739,7 @@ const client = this.clients.getById("UEsBFUBhK");
 
 ---
 
-### `maxClients: number`
+### `maxClients`
 
 Maximum number of clients allowed to connect into the room. When room reaches
 this limit, it is locked automatically. Unless the room was explicitly locked by
@@ -731,19 +748,19 @@ disconnects from it.
 
 ---
 
-### `patchRate: number`
+### `patchRate`
 
 Frequency to send the room state to connected clients, in milliseconds. Default is `50`ms (20fps)
 
 ---
 
-### `autoDispose: boolean`
+### `autoDispose`
 
 Automatically dispose the room when last client disconnects. Default is `true`
 
 ---
 
-### `locked: boolean` (read-only)
+### `locked` (read-only)
 
 This property will change on these situations:
 
@@ -752,16 +769,56 @@ This property will change on these situations:
 
 ---
 
-### `clock: ClockTimer`
+### `clock`
 
-A [`ClockTimer`](https://github.com/gamestdio/timer#api) instance, used for
-[timing events](/server/timing-events).
+It is recommended to use the `clock` instance for `setTimeout` and `setInterval` methods, as timers and intervals are automatically cleared when the room is disposed - preventing memory leaks.
+
+```ts filename="MyRoom.ts"
+// ...
+onCreate() {
+    this.clock.setTimeout(() => {
+        console.log("This message will be printed after 5 seconds");
+    }, 5000);
+
+    this.clock.setInterval(() => {
+        console.log("Current time:", this.clock.currentTime);
+    }, 1000);
+}
+// ...
+```
+
+<Callout type="info">
+    See [Timing Events](/server/room/timing-events).
+</Callout>
 
 ---
 
-### `presence: Presence`
+### `presence`
 
-The `presence` instance. Check [Presence API](/server/presence) for more details.
+The `presence` is used as a shared in-memory database for your cluster, and for pub/sub operations between rooms.
+
+You may access the global `presence` instance from your Room code.
+
+```ts filename="MyRoom.ts"
+// ...
+onCreate() {
+    // publish an event to all rooms listening to "event-from-another-room"
+    this.presence.publish("event-name-from-another-room", { hello: "world" });
+
+    // subscribe to events from another room
+    this.presence.subscribe("event-name-from-another-room", (payload) => {
+        console.log("Received event from another room!", payload);
+    });
+
+    // set arbitrary value to the presence
+    this.presence.set("arbitrary-key", "value");
+}
+// ...
+```
+
+<Callout type="info">
+    See [Presence API](/server/presence).
+</Callout>
 
 ---
 
@@ -773,9 +830,17 @@ You operate on `client` instances from [`this.clients`](#clients-client), [`Room
 
 ### Properties
 
-#### `sessionId: string`
+#### `sessionId`
 
-Unique id per session.
+Unique identifier of the client connection.
+
+```ts filename="MyRoom.ts"
+// ...
+onJoin(client, options) {
+    console.log(client.sessionId);
+}
+// ...
+```
 
 <Callout type="info">
     In the client-side, you can find the [`sessionId` in the `room` instance](/client/#sessionid-string).
@@ -783,25 +848,40 @@ Unique id per session.
 
 ---
 
-#### `userData: any`
+#### `userData`
 
-Can be used to store custom data about the client's connection. `userData` is **not** synchronized with the client, and should be used only to keep player-specific with its connection.
+The `client.userData` can be used to store player-specific data easily accessible via the `client` instance. This property is meant for convenience.
 
 ```ts filename="MyRoom.ts"
+// ...
 onJoin(client, options) {
-  client.userData = { playerNumber: this.clients.length };
+  client.userData = { team: (this.clients.length % 2 === 0) ? "red" : "blue" };
 }
-
 onLeave(client)  {
   console.log(client.userData.playerNumber);
 }
+// ...
 ```
 
 ---
 
-#### `auth: any`
+#### `auth`
 
-Custom data you return during [`onAuth()`](/server/room/#onauth-client-options-request).
+The `client.auth` property holds the data returned by the [`onAuth()`](#onauth-client-options-request) method.
+
+```ts filename="MyRoom.ts"
+onAuth(token, request) {
+    return { userId: "123" };
+}
+
+onJoin(client, options) {
+    console.log(client.auth.userId);
+}
+```
+
+<Callout type="info">
+    See [Authentication](/authentication) for more details.
+</Callout>
 
 ---
 

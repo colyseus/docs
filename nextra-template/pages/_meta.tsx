@@ -17,7 +17,7 @@ export default {
     "tutorial": { title: <span><FileCodeIcon/> Tutorials</span>},
 
     '-- API Reference': { type: 'separator', title: 'API Reference' },
-    "server": { title: <span><ServerIcon/> Server</span> },
+    "server": { title: <span><ServerIcon/> Server API</span> },
     "client": { title: <span><DevicesIcon/> Client SDK</span>},
     "state": { title: <span><SyncIcon/> State Synchronization</span> },
     "authentication": { title: <span><PasskeyFillIcon/> Authentication</span> },

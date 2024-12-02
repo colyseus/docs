@@ -1,6 +1,3 @@
----
-title: "Server"
----
 import { Callout, Cards, Tabs } from "nextra/components";
 
 # Server
@@ -13,13 +10,15 @@ The Colyseus `Server` instance holds the server configuration options, such as t
 
 ## Overview
 
-The recommended structure to initialize a new Colyseus server is created using `npm create colyseus-app@latest` command:
+The recommended structure to initialize a new Colyseus server is created using `npm create colyseus-app@latest` command.
+
+It includes a basic structure with Express and an empty room handler, ready to be customized.
 
 ```sh filename="Terminal"
 npm create colyseus-app@latest ./my-server
 ```
 
-Customize the server configuration, available room handlers, and API routes:
+You may add your own [Room Definitions](/server/room/), and [API routes](/server/custom-http-routes) to your server:
 
 <Tabs items={["Recommended usage", "Raw usage with Express", "Raw usage"]}>
 
@@ -106,23 +105,107 @@ Customize the server configuration, available room handlers, and API routes:
 
 ---
 
-## `new Server (options)`
+## Constructor
 
-### `options.transport`
+When using the recommended structure from the template project, the `Server` instance is created automatically. You may customize the server options by editing the `app.config.ts` file.
 
-Colyseus uses its built-in WebSocket transport by default. See how to [customize the transport layer here](/server/transport/).
+<Tabs items={["Recommended", "Raw usage"]}>
+    <Tabs.Tab>
+    ```ts filename="app.config.ts"
+    import config from "@colyseus/tools";
 
-### `options.driver`
+    export default config({
+        options: {
+            /*
+             * Server options here
+             */
+        },
+        initializeGameServer: (gameServer) => {
+            /**
+             * Define your room handlers:
+             */
+        },
+    });
+    ```
+    </Tabs.Tab>
 
-The matchmaking driver. This is where rooms are going to be cached and queried. You must provide a different value than `LocalDriver` when considering scalability.
+    <Tabs.Tab>
+    ```ts filename="server.ts"
+    import { Server } from "colyseus";
 
-**Options available are:**
+    const gameServer = new Server({
+        /*
+         * Server options here
+         */
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
 
-- `LocalDriver` - default.
-- `RedisDriver` - available from `@colyseus/redis-driver`
-- `MongooseDriver` - available from `@colyseus/mongoose-driver`
+### Server `options`
 
-### `options.presence`
+#### Transport (`transport`)
+
+The Transport Layer is responsible for the networked communication between the server and the client.
+Colyseus uses TCP/WebSockets for communication by default.
+
+Each Transport has its own options you may customize.
+
+<Callout type="info">
+    The default transport is `WebSocketTransport`. See [Transport → WebSocket Transport (ws)](/server/transport/ws) for more details.
+</Callout>
+
+<Tabs items={["Recommended", "Raw usage"]}>
+    <Tabs.Tab>
+    ```ts {2,5-10} filename="app.config.ts"
+    import config from "@colyseus/tools";
+    import { WebSocketTransport } from "@colyseus/ws-transport";
+
+    export default config({
+        initializeTransport: (options) => {
+            return new WebSocketTransport({
+                ...options,
+                pingInterval: 10000
+            });
+        },
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts {2,11-14} filename="server.ts"
+    import { Server } from "colyseus";
+    import { WebSocketTransport } from "@colyseus/ws-transport";
+    import express from "express";
+
+    const app = express();
+    app.use(express.json());
+
+    const server = createServer(app);
+
+    const gameServer = new Server({
+        transport: new WebSocketTransport({
+            server,
+            // ... other options
+        })
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    See [Transport](/server/transport/) for more details.
+</Callout>
+
+#### Driver (`driver`)
+
+The match-making driver. Rooms are cached and queried against a Driver implementation. When scaling your Colyseus servers, you may need to provide a `driver` option that fits your needs.
+
+<Callout type="info">
+    See [Driver](/server/driver) for more details.
+</Callout>
+
+#### Presence (`presence`)
 
 When scaling Colyseus through multiple processes / machines, you need to provide a presence server. Read more about [scalability](/scalability/), and the [`Presence API`](/server/presence/#api).
 
@@ -152,22 +235,13 @@ When scaling Colyseus through multiple processes / machines, you need to provide
 
 ---
 
-### `options.gracefullyShutdown`
+#### Select Process ID to Create Room
 
-Register shutdown routine automatically. Default is `true`. If disabled, you
-should call [`gracefullyShutdown()`](#gracefullyshutdown-exit-boolean) method
-manually in your shutdown process.
+The `selectProcessIdToCreateRoom` is a callback that allows you to customize which processs the new rooms should be created at, when your deployment uses multiple Colyseus processes.
 
----
+By default, the process with the **least amount of rooms** is selected to create a new room.
 
-### `options.selectProcessIdToCreateRoom`
-
-A callback that allows you to customize which processs the new rooms should be created at, when you use
-multiple Colyseus processes.
-
-By default, the process with the **least amount of rooms** is selected:
-
-<Tabs items={["app.config.ts", "Server constructor"]}>
+<Tabs items={["Recommended", "Raw usage"]}>
 
     <Tabs.Tab>
     ```ts filename="app.config.ts"
@@ -205,7 +279,7 @@ By default, the process with the **least amount of rooms** is selected:
 
 A common alternative is to use the process with least amount of **connections**:
 
-<Tabs items={["app.config.ts", "Server constructor"]}>
+<Tabs items={["Recommended", "Raw usage"]}>
 
     <Tabs.Tab>
     ```ts filename="app.config.ts"
@@ -243,20 +317,64 @@ A common alternative is to use the process with least amount of **connections**:
 
 ---
 
-### `options.devMode`
+#### Development Mode
 
-Restore previous rooms and states upon server restarting when engaging in iterative development.
-Default is `false`. See more in [`devMode`](/devmode).
+When `devMode` is enabled, it is capable of restoring previous Rooms and Room State when the server restarts due to a code change, when iteratively updating your room code in a local environment.
+
+Default is `false`.
+
+<Tabs items={["Recommended", "Raw usage"]}>
+    <Tabs.Tab>
+    ```ts {5-7} filename="app.config.ts"
+    import config from "@colyseus/tools";
+
+    export default config({
+        // ...
+        options: {
+            devMode: true
+        },
+        // ...
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts {5} filename="server.ts"
+    import { Server, RedisPresence } from "colyseus";
+
+    const gameServer = new Server({
+        // ...
+        devMode: true
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    See [Development Mode](/server/devmode).
+</Callout>
 
 ---
 
-### `options.server`
+#### Gracefully Shutdown (`gracefullyShutdown`)
 
-The HTTP server to bind the WebSocket Server into. You may use [`express`](https://www.npmjs.com/package/express) for your server too.
+Wether to register shutdown routine automatically. Default is `true`.
+
+If disabled, you should call [`gracefullyShutdown()`](#gracefullyshutdown-exit-boolean) method manually in your shutdown process.
+
+<Callout type="info">
+    See [Graceful Shutdown](/server/graceful-shutdown/).
+</Callout>
+
+---
+
+#### `options.server`
 
 <Callout type="warning">
-    This option will be deprecated - See [WebSocket Transport Options](/server/transport/#optionsserver)
+    This option should be provided for the **Transport** instead - See [WebSocket Transport Options](/server/transport/ws#optionsserver)
 </Callout>
+
+The HTTP server to bind the WebSocket Server into. You may use [`express`](https://www.npmjs.com/package/express) for your server too.
 
 <Tabs items={["TypeScript", "TypeScript (barebones)", "JavaScript", "JavaScript (barebones)"]}>
 
@@ -319,12 +437,18 @@ The HTTP server to bind the WebSocket Server into. You may use [`express`](https
 
 ---
 
-## `define (roomName: string, room: Room, options?: any)`
+## Methods
 
-Define a new type of room for the matchmaker.
+### Define Room Type
+
+Define a new type of room for the match-maker.
 
 - Rooms are **not created** during `.define()`
 - Rooms are created upon client request ([See client-side methods](/client/#methods))
+
+```ts filename="Signature"
+gameServer.define (roomName: string, room: Room, options?: any)
+```
 
 **Parameters:**
 
@@ -332,7 +456,7 @@ Define a new type of room for the matchmaker.
 - `room: Room` - The `Room` class
 - `options?: any` - Custom options for room initialization
 
-```typescript
+```ts
 // Define "chat" room
 gameServer.define("chat", ChatRoom);
 
@@ -344,99 +468,123 @@ gameServer.define("battle_woods", BattleRoom, { map: "woods" });
 ```
 
 <Callout type="info">
-    You may define the same room handler multiple times with different `options`. When [Room#onCreate()](/server/room/#oncreate-options) is called, the `options` will contain the merged values you specified on [Server#define()](/server/api/#define-roomname-string-room-room-options-any) + the options provided when the room is created.
+    You may define the same room handler multiple times with different `options`. When [Room#onCreate()](/server/room/#oncreate-options) is called, the `options` will contain the merged values you specified on [Server#define()](/server/api/#define-roomname-string-room-room-options-any) with the options provided by the client SDK.
 </Callout>
 
 ---
 
-### Room definition options
+#### Definition Options
 
-#### `filterBy(options)`
+##### Filter By (`.filterBy()`)
 
 Whenever a room is created by the `create()` or `joinOrCreate()` methods, only the `options` defined by the `filterBy()` method are going to be stored internally, and used to filter out rooms in further `join()` or `joinOrCreate()` calls.
+
+```ts filename="Signature"
+gameServer
+    .define(roomName, RoomClass)
+    .filterBy(options);
+```
 
 **Parameters**
 
 - `options: string[]` - a list of option names
 
+**Examples**
 
-**Example:** allowing different "game modes".
+<Tabs items={['Filter by "mode" provided by the client', 'Filter by "maxClients" server config']}>
+    <Tabs.Tab>
+    Filter match-making by `mode` option.
 
-```typescript
-gameServer
-  .define("battle", BattleRoom)
-  .filterBy(['mode']);
-```
+    ```ts filename="server.ts"
+    gameServer
+        .define("battle", BattleRoom)
+        .filterBy(['mode']);
+    ```
 
-Whenever the room is created, the `mode` option is going to be stored internally.
+    Whenever the room is created, the `mode` option is going to be stored internally.
 
-```typescript
-client.joinOrCreate("battle", { mode: "duo" }).then(room => {/* ... */});
-```
+    ```js filename="client.js"
+    client.joinOrCreate("battle", { mode: "duo" }).then(room => {/* ... */});
+    ```
 
-You can handle the provided option in the `onCreate()` and/or `onJoin()` to implement the requested feature inside your room implementation.
+    You can handle the provided option in the `onCreate()` and/or `onJoin()` to implement the requested feature inside your room implementation.
 
-```typescript
-class BattleRoom extends Room {
-  onCreate(options) {
-    if (options.mode === "duo") {
-      // do something!
+    ```ts filename="BattleRoom.ts"
+    class BattleRoom extends Room {
+        onCreate(options) {
+            if (options.mode === "duo") {
+                // do something!
+            }
+        }
+        onJoin(client, options) {
+            if (options.mode === "duo") {
+                // put this player into a team!
+            }
+        }
     }
-  }
-  onJoin(client, options) {
-    if (options.mode === "duo") {
-      // put this player into a team!
-    }
-  }
-}
-```
+    ```
+    </Tabs.Tab>
 
-**Example:** filtering by built-in `maxClients`
+    <Tabs.Tab>
+    Filter match-making by built-in `maxClients` value.
 
-The `maxClients` is an internal variable stored for matchmaking, and can be used for filtering too.
+    The `maxClients` is an internal variable stored for matchmaking, and can be used for filtering too.
 
-```typescript
-gameServer
-  .define("battle", BattleRoom)
-  .filterBy(['maxClients']);
-```
+    ```ts filename="server.ts"
+    gameServer
+        .define("battle", BattleRoom)
+        .filterBy(['maxClients']);
+    ```
 
-The client can then ask to join a room capable of handling a certain number of players.
+    The client can then ask to join a room capable of handling a certain number of players.
 
-```typescript
-client.joinOrCreate("battle", { maxClients: 10 }).then(room => {/* ... */});
-client.joinOrCreate("battle", { maxClients: 20 }).then(room => {/* ... */});
-```
+    ```js filename="client.js"
+    client.joinOrCreate("battle", { maxClients: 10 }).then(room => {/* ... */});
+    client.joinOrCreate("battle", { maxClients: 20 }).then(room => {/* ... */});
+    ```
+    </Tabs.Tab>
+</Tabs>
 
 ---
 
-#### `sortBy(options)`
+##### Sort By (`.sortBy()`)
 
 You can also give a different priority for joining rooms depending on their information upon creation.
 
+```ts filename="Signature"
+gameServer
+    .define(roomName, RoomClass)
+    .sortBy(options);
+```
+
 The `options` parameter is a key-value object containing the field name in the left, and the sorting direction in the right. Sorting direction can be one of these values: `-1`, `"desc"`, `"descending"`, `1`, `"asc"` or `"ascending"`.
 
-**Example:** sorting by the built-in `clients`
+**Example**
 
-The `clients` is an internal variable stored for matchmaking, which contains the current number of connected clients. On the example below, the rooms with the highest amount of clients connected will have priority. Use `-1`, `"desc"` or `"descending"` for descending order:
+<Tabs items={['Sorting by the built-in "clients"']}>
+    <Tabs.Tab>
+    The `clients` is an internal variable stored for matchmaking, which contains the current number of connected clients. On the example below, the rooms with the highest amount of clients connected will have priority. Use `-1`, `"desc"` or `"descending"` for descending order:
 
-```typescript
-gameServer
-  .define("battle", BattleRoom)
-  .sortBy({ clients: -1 });
-```
+    ```typescript
+    gameServer
+        .define("battle", BattleRoom)
+        .sortBy({ clients: -1 });
+    ```
 
-To sort by the fewest amount of players, you can do the opposite. Use `1`, `"asc"` or `"ascending"` for ascending order:
+    To sort by the fewest amount of players, you can do the opposite. Use `1`, `"asc"` or `"ascending"` for ascending order:
 
-```typescript
-gameServer
-  .define("battle", BattleRoom)
-  .sortBy({ clients: 1 });
-```
+    ```typescript
+    gameServer
+        .define("battle", BattleRoom)
+        .sortBy({ clients: 1 });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
 
 ---
 
-#### Realtime listing for Lobby
+##### Realtime Listing for Lobby
 
 To allow the `LobbyRoom` to receive updates from a specific room type, you should define them with realtime listing enabled:
 
@@ -446,11 +594,13 @@ gameServer
   .enableRealtimeListing();
 ```
 
-> [See more about the `LobbyRoom`](/builtin-rooms/lobby/)
+<Callout type="info">
+    See [Built-in Rooms → LobbyRoom](/server/room/built-in/lobby) for more details.
+</Callout>
 
 ---
 
-#### Public lifecycle events
+##### Lifecycle Events
 
 You can listen for matchmaking events from outside the room instance scope, such as:
 
@@ -478,18 +628,26 @@ gameServer
 
 ---
 
-## `removeRoomType (roomName: string)`
+### Remove Room Type
 
 Revert a `.define()` call. Makes a `roomName` unavailable for matchmaking. This
-method is not recommended but may be helpful in some scenarios.
+method is usually not recommended but it may be useful in some scenarios.
+
+```ts filename="Signature"
+gameServer.removeRoomType (roomName: string): void
+```
 
 ---
 
-## `simulateLatency (milliseconds: number)`
+### Simulate Latency
 
-This is a convenience method for simulating "lagged" clients during local development.
+Colyseus allows you to simulate latency between the server and the client. This is a convenience method for simulating clients with high latency during development.
 
-```typescript
+```ts filename="Signature"
+gameServer.simulateLatency (milliseconds: number)
+```
+
+```ts filename="server.ts"
 // Make sure to never call the `simulateLatency()` method in production.
 if (process.env.NODE_ENV !== "production") {
 
@@ -498,29 +656,63 @@ if (process.env.NODE_ENV !== "production") {
 }
 ```
 
+<Callout type="warning">
+    Make sure to never enable this feature in production environments.
+</Callout>
+
 ---
 
-## `listen (port: number)`
+### Listen
 
 Binds the WebSocket server into the specified port.
 
+<Tabs items={["Recommended", "Raw usage"]}>
+    <Tabs.Tab>
+    ```ts {5} filename="src/index.ts"
+    import { listen } from "@colyseus/tools";
+    import app from "./app.config";
+    listen(app, 2567);
+    ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+    ```ts {5} filename="src/index.ts"
+    import { Server } from "colyseus";
+
+    const gameServer = new Server();
+    gameServer.listen(2567);
+    ```
+    </Tabs.Tab>
+</Tabs>
+
 ---
 
-## `onBeforeShutdown (callback: Function)`
+### onBeforeShutdown
 
 Register a custom callback that is called **before** the graceful shutdown routine starts. See [graceful shutdown](/server/graceful-shutdown/).
 
-```typescript
+```ts filename="Signature"
+gameServer.onBeforeShutdown (callback: Function)
+```
+
+```ts filename="server.ts"
 gameServer.onBeforeShutdown(async () => {
     // ... custom logic
 });
 ```
 
+<Callout type="info">
+    See [Graceful Shutdown](/server/graceful-shutdown/).
+</Callout>
+
 ---
 
-## `onShutdown (callback: Function)`
+### onShutdown
 
-Register a custom callback that is called **after** the graceful shutdown is fully complete. See [graceful shutdown](/server/graceful-shutdown/).
+Register a custom callback that is called **after** the graceful shutdown is fully complete.
+
+```ts filename="Signature"
+gameServer.onShutdown (callback: Function)
+```
 
 ```typescript
 gameServer.onShutdown(async () => {
@@ -528,11 +720,23 @@ gameServer.onShutdown(async () => {
 });
 ```
 
+<Callout type="info">
+    See [Graceful Shutdown](/server/graceful-shutdown/).
+</Callout>
+
 ---
 
-## `gracefullyShutdown (exit: boolean)`
+### Gracefully Shutdown
 
 Shutdown all rooms and clean-up its cached data. Returns a promise that fulfils
 whenever the clean-up has been complete.
 
+```ts filename="Signature"
+gameServer.gracefullyShutdown (exit: boolean)
+```
+
 This method is called automatically unless `gracefullyShutdown: false` has been provided on `Server` constructor.
+
+<Callout type="info">
+    See [Graceful Shutdown](/server/graceful-shutdown/).
+</Callout>
