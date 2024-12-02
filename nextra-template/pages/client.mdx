@@ -918,11 +918,13 @@ room.removeAllListeners()
 
 #### onStateChange
 
-<Callout type="info">
-    Check out the [State Synchronization » Client-side Callbacks](/state/schema/#client-side) section for more details.
-</Callout>
+This event is triggered whenever the server's state is synchronized with the client. It occurs both when the client first connects to the room and when state updates are sent by the server
 
-This event is triggered when the server updates its state.
+For fine-grained control over state updates, you should use the [schema callbacks](/state/callbacks).
+
+<Callout type="info">
+    Check out the [State Synchronization » Client-side Callbacks](/state/callbacks) section for more details.
+</Callout>
 
 <Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
     <Tabs.Tab>

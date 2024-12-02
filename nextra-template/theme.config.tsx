@@ -20,6 +20,15 @@ const config: DocsThemeConfig = {
         toggleButton: true
     },
 
+    color: {
+        hue: 254,
+        saturation: 100,
+        lightness: {
+            dark: 75,
+            light: 60,
+        }
+    },
+
     toc: {
         // float: false,
         extraContent: <SponsorsSidebar />,
