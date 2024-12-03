@@ -47,4 +47,18 @@ export default {
         type: "page",
     },
 
+    versions: {
+        type: 'menu',
+        title: 'Versions',
+        items: [
+            { title: '0.15 ↗', href: 'https://0-15-x.docs.colyseus.io/', newWindow: true },
+            { title: '0.14 ↗', href: 'https://0-14-x.docs.colyseus.io/', newWindow: true },
+            { title: '0.13 ↗', href: 'https://0-13-x.docs.colyseus.io/', newWindow: true },
+            { title: '0.12 ↗', href: 'https://0-12-x.docs.colyseus.io/', newWindow: true },
+            { title: '0.11 ↗', href: 'https://0-11-x.docs.colyseus.io/', newWindow: true },
+            { title: '0.10 ↗', href: 'https://0-10-x.docs.colyseus.io/', newWindow: true }
+
+        ]
+    },
+
 }
