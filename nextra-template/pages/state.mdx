@@ -1,4 +1,4 @@
-import { Cards, Steps } from 'nextra/components'
+import { Cards, Steps, Tabs } from 'nextra/components'
 import { CodeSquareIcon, FileBinaryIcon, EyeIcon, StarIcon } from '@primer/octicons-react'
 
 ## Guides
@@ -22,38 +22,73 @@ import { CodeSquareIcon, FileBinaryIcon, EyeIcon, StarIcon } from '@primer/octic
 
     Define your state structures by extending `Schema` class from `@colyseus/schema`:
 
-    ```ts filename="MyState.ts"
-    import { Schema, type } from "@colyseus/schema";
+    <Tabs items={["TypeScript", "JavaScript"]}>
+        <Tabs.Tab>
+        ```ts filename="MyState.ts"
+        import { Schema, type } from "@colyseus/schema";
 
-    export class Player extends Schema {
-        @type("string") name: string;
-        @type("number") x: number;
-        @type("number") y: number;
-    }
+        export class Player extends Schema {
+            @type("string") name: string;
+            @type("number") x: number;
+            @type("number") y: number;
+        }
 
-    export class MyState extends Schema {
-        @type({ map: Player }) players = new MapSchema<Player>();
-    }
-    ```
+        export class MyState extends Schema {
+            @type({ map: Player }) players = new MapSchema<Player>();
+        }
+        ```
+        </Tabs.Tab>
+        <Tabs.Tab>
+        ```js filename="MyState.js"
+        const schema = require("@colyseus/schema");
+
+        exports.Player = schema.schema({
+            name: "string",
+            x: "number",
+            y: "number",
+        })
+
+        exports.MyState = schema.schema({
+            players: { map: Player }
+        })
+        ```
+        </Tabs.Tab>
+    </Tabs>
+
 
     ### State is set on the Room
 
     Set the state on the Room instance:
 
-    ```ts filename="MyRoom.ts"
-    import { Room } from "colyseus";
-    import { MyState } from "./MyState";
+    <Tabs items={["TypeScript", "JavaScript"]}>
+        <Tabs.Tab>
+        ```ts filename="MyRoom.ts"
+        import { Room } from "colyseus";
+        import { MyState } from "./MyState";
 
-    export class MyRoom extends Room<MyState> {
-        state = new MyState();
-    }
-    ```
+        export class MyRoom extends Room<MyState> {
+            state = new MyState();
+        }
+        ```
+        </Tabs.Tab>
+
+        <Tabs.Tab>
+        ```js filename="MyRoom.js"
+        const colyseus = require('colyseus');
+        const MyState = require("./MyState");
+
+        exports.MyRoom = class MyRoom extends colyseus.Room {
+            state = new MyState.MyState();
+        }
+        ```
+        </Tabs.Tab>
+    </Tabs>
 
     ### State is synchronized with clients
 
     Whenever a mutation occurs in the server-side, the state is automatically synchronized with all clients in the room. Clients receive the full state when they join the room.
 
-    ```ts copy filename="client.ts"
+    ```js copy filename="client.js"
     import { Client, getStateCallbacks } from 'colyseus.js';
 
     // ...
