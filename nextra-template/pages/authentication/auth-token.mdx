@@ -8,7 +8,7 @@ import { Callout, Tabs } from 'nextra/components'
 To authenticate clients, you can bring your own token validation logic by implementing the `onAuth()` method in your room.
 
 <Callout type="info">
-    The new [Authentication module](/authentication/module/) provides a set of tools to help you authenticate your players into your application. (Currently in beta, feedback is welcome on [colyseus/colyseus#657](https://github.com/colyseus/colyseus/issues/660))
+    The new [Authentication module](/authentication/module/) provides a set of tools to help you authenticate your players into your application.
 </Callout>
 
 ## The Room `onAuth` method
@@ -37,7 +37,6 @@ client.http.get("/profile").then((response) => {
 ### Server-side
 
 <Tabs items={['Using `@colyseus/auth`', 'Using `firebase-admin`']}>
-
     <Tabs.Tab>
 
         ```ts filename="MyRoom.ts"

@@ -8,16 +8,22 @@ import { ZapIcon, SyncIcon } from "@primer/octicons-react";
     <Cards.Card icon={<SyncIcon />} title="State Synchronization" href="/state" />
 </Cards>
 
+## Overview
+
+No connection with the server is established yet by creating a `Client` instance. Bidirectional communication is established by joining a `Room` instance.
+
+- [Client](#client)
+- [Room](#room)
+- [HTTP Client](#http-client)
+
 ## Client
 
 The `Client` instance is used to perform matchmaking calls, and later connect to one or many rooms.
 
-No connection with the server is established yet by creating a `Client` instance. Communication with the server only happens when you join a room.
-
 <Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
 
     <Tabs.Tab>
-    ```ts filename="client.ts"
+    ```js filename="client.js"
     import Colyseus from "colyseus.js";
     // ...
 
@@ -37,7 +43,7 @@ No connection with the server is established yet by creating a `Client` instance
     <Tabs.Tab>
     ```lua filename="client.lua"
     local ColyseusClient = require("colyseus.client")
-    // ...
+    -- ...
 
     local client = ColyseusClient.new("ws://localhost:2567");
     ```
@@ -67,7 +73,7 @@ client.joinOrCreate (roomName: string, options: any)
 <Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
 
     <Tabs.Tab>
-    ```ts filename="client.ts"
+    ```js filename="client.js"
     try {
       const room = await client.joinOrCreate("battle", {/* options */});
       console.log("joined successfully", room);
@@ -157,7 +163,7 @@ client.create (roomName: string, options: any)
 <Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
 
     <Tabs.Tab>
-    ```ts filename="client.ts"
+    ```js filename="client.js"
     try {
       const room = await client.create("battle", {/* options */});
       console.log("joined successfully", room);
@@ -242,7 +248,7 @@ client.join (roomName: string, options: any)
 <Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
 
     <Tabs.Tab>
-    ```ts filename="client.ts"
+    ```js filename="client.js"
     try {
       const room = await client.join("battle", {/* options */});
       console.log("joined successfully", room);
@@ -331,7 +337,7 @@ client.joinById (roomId: string, options: any)
 <Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
 
     <Tabs.Tab>
-    ```ts filename="client.ts"
+    ```js filename="client.js"
     try {
       const room = await client.joinById("KRYAKzRo2", {/* options */});
       console.log("joined successfully", room);
@@ -425,7 +431,7 @@ client.reconnect (reconnectionToken)
 <Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
 
     <Tabs.Tab>
-    ```ts filename="client.ts"
+    ```js filename="client.js"
     try {
       const room = await client.reconnect(cachedReconnectionToken);
       console.log("joined successfully", room);
@@ -513,7 +519,7 @@ client.getAvailableRooms (roomName?: string)
 <Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
 
     <Tabs.Tab>
-    ```ts filename="client.ts"
+    ```js filename="client.js"
     client.getAvailableRooms("battle").then(rooms => {
       rooms.forEach((room) => {
         console.log(room.roomId);
@@ -623,7 +629,7 @@ client.consumeSeatReservation (reservation)
 <Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
 
     <Tabs.Tab>
-    ```ts filename="client.ts"
+    ```js filename="client.js"
     try {
       const room = await client.consumeSeatReservation(reservation);
       console.log("joined successfully", room);
@@ -726,7 +732,7 @@ Unique identifier for the current connected client. This property matches the [`
 The unique idenfitier of the room. You can share this id with other clients in
 order to allow them to connect directly to this room.
 
-```ts filename="client.ts"
+```js filename="client.js"
 // get `roomId` from the query string
 let roomId = location.href.match(/roomId=([a-zA-Z0-9\-_]+)/)[1];
 
@@ -756,7 +762,7 @@ room.send (type, message)
 
 <Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
     <Tabs.Tab>
-    ```ts filename="client.ts"
+    ```js filename="client.js"
     //
     // sending message with string type
     //
@@ -813,7 +819,7 @@ room.send (type, message)
 </Tabs>
 
 <Callout type="info">
-    **Use `Room#onMessage()` from the server-side to receive the messages** - Check out [Server-side API &raquo; Room - onMessage()](/server/room/#onmessage-type-callback) section.
+    **Use `Room#onMessage()` from the server-side to receive the messages** - Check out [Room API → onMessage](/server/room/#onmessage) section.
 </Callout>
 
 ---
@@ -828,7 +834,7 @@ This is useful if you'd like to manually encode a message, rather than the defau
 client.sendBytes (type, bytes)
 ```
 
-    ```ts filename="client.ts"
+    ```js filename="client.js"
     //
     // sending message with number type
     //
@@ -858,7 +864,7 @@ room.leave (consented: boolean)
 <Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
 
     <Tabs.Tab>
-    ```ts filename="client.ts"
+    ```js filename="client.js"
     // consented leave
     room.leave();
 
@@ -899,7 +905,7 @@ room.leave (consented: boolean)
 </Tabs>
 
 <Callout type="info">
-    Use [Room#onLeave()](/server/room/#onleave-client-consented) to handle the disconnection from the server-side.
+    Use [Room API → onLeave](/server/room/#onmessage) to handle the disconnection from the server-side.
 </Callout>
 
 ---
@@ -928,7 +934,7 @@ For fine-grained control over state updates, you should use the [schema callback
 
 <Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
     <Tabs.Tab>
-    ```ts filename="client.ts"
+    ```js filename="client.js"
     room.onStateChange.once((state) => {
       console.log("this is the first room state!", state);
     });
@@ -986,7 +992,7 @@ This event is triggered when the server sends a message directly to the client, 
 <Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
 
     <Tabs.Tab>
-    ```ts filename="client.ts"
+    ```js filename="client.js"
     room.onMessage("powerup", (message) => {
       console.log("message received from server");
       console.log(message);
@@ -1049,7 +1055,7 @@ This event is triggered when the client leave the room.
 <Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
 
     <Tabs.Tab>
-    ```ts filename="client.ts"
+    ```js filename="client.js"
     room.onLeave((code) => {
       console.log("client left the room");
     });
@@ -1104,7 +1110,7 @@ This event is triggered when some error occurs in the room handler.
 
 <Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
     <Tabs.Tab>
-    ```ts filename="client.ts"
+    ```js filename="client.js"
     room.onError((code, message) => {
       console.log("oops, error ocurred:");
       console.log(message);
@@ -1144,6 +1150,121 @@ This event is triggered when some error occurs in the room handler.
     room.onError = [=] (int code, std::string message) => void {
       std::cout << "oops, error ocurred: " << message << std::endl;
     };
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+---
+
+## HTTP Client
+
+The `Client` instance provides the `client.http` utility to perform HTTP requests to your server endpoint.
+
+<Callout type="info">
+    The `client.auth.token` property is sent automatically as `Authorization` header in all HTTP requests. See [Authentication → Auth Token](/authentication/auth-token) for more details.
+</Callout>
+
+### GET
+
+Perform a GET request to the server-side.
+
+<Tabs items={["Client-side", "Server-side"]}>
+    <Tabs.Tab>
+    ```js filename="client.js"
+    client.http.get("/profile").then((response) => {
+        console.log(response.data);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts filename="src/app.config.ts"
+    // ...
+        initializeExpress: (app) => {
+            app.get("/profile", (req, res) => {
+                res.json({ name: "Jake Badlands" });
+            });
+        },
+    // ...
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+### POST
+
+Perform a POST request to the server-side.
+
+<Tabs items={["Client-side", "Server-side"]}>
+    <Tabs.Tab>
+    ```js filename="client.js"
+    client.http.post("/profile", { name: "Jake Badlands" }).then((response) => {
+        console.log(response.data);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts filename="src/app.config.ts"
+    // ...
+        initializeExpress: (app) => {
+            app.post("/profile", (req, res) => {
+                res.json(req.body);
+            });
+        },
+    // ...
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+
+### DELETE
+
+Perform a DELETE request to the server-side.
+
+<Tabs items={["Client-side", "Server-side"]}>
+    <Tabs.Tab>
+    ```js filename="client.js"
+    client.http.delete("/profile").then((response) => {
+        console.log(response.data);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts filename="src/app.config.ts"
+    // ...
+        initializeExpress: (app) => {
+            app.delete("/profile", (req, res) => {
+                res.json({ deleted: true });
+            });
+        },
+    // ...
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+### PUT
+
+Perform a PUT request to the server-side.
+
+<Tabs items={["Client-side", "Server-side"]}>
+    <Tabs.Tab>
+    ```js filename="client.js"
+    client.http.put("/profile", { name: "Jake Badlands" }).then((response) => {
+        console.log(response.data);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts filename="src/app.config.ts"
+    // ...
+        initializeExpress: (app) => {
+            app.put("/profile", (req, res) => {
+                res.json(req.body);
+            });
+        },
+    // ...
     ```
     </Tabs.Tab>
 </Tabs>
