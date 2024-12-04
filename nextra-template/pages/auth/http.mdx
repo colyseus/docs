@@ -1,0 +1,68 @@
+---
+title: HTTP Middleware
+---
+import { Steps, Tabs, Cards, Callout } from "nextra/components"
+import { SignInIcon, ShieldCheckIcon, PackageIcon } from "@primer/octicons-react"
+
+# HTTP Middleware
+
+If you are using the HTTP API, you can authenticate your requests using the `Authorization` header.
+
+<Steps>
+
+## Client-side: Set the auth token
+
+```js filename="client.js"
+// set the auth token
+client.auth.token = "YOUR AUTH TOKEN";
+```
+
+<Callout type="info">
+    If you are using the `@colyseus/auth` module, this token is managed automatically. See [Authentication → Module](/auth/module).
+</Callout>
+
+## Client-side: Make HTTP requests
+
+The HTTP requests contain the auth token in the `Authorization` header.
+
+```js filename="client.js"
+client.http.get("/profile").then((response) => {
+    console.log(response.data);
+});
+```
+
+## Server-side: Validate the auth token
+
+If you are using the `@colyseus/auth` module, you can use the `auth.middleware()` method to validate the authentication token in your routes.
+
+<Tabs items={["Using @colyseus/auth", "Custom authentication"]}>
+    <Tabs.Tab>
+    ```ts filename="src/app.config.ts"
+    import { auth } from "@colyseus/auth";
+    // ...
+        initializeExpress: (app) => {
+            app.use("/profile", auth.middleware(), (req, res) => {
+                console.log("authenticated user:", req.auth);
+                res.json(req.auth);
+            });
+        }
+    // ...
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts filename="src/app.config.ts"
+    function yourAuthMiddleware (req, res, next) {
+        const authorization = req.headers.authorization;
+        // TODO: validate the "authorization" token here
+        next();
+    }
+
+    app.use("/profile", yourAuthMiddleware, (req, res) => {
+        // handle the request
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+</Steps>

@@ -1,0 +1,108 @@
+---
+title: Room Authentication
+---
+import { Steps, Tabs, Cards, Callout } from "nextra/components"
+import { SignInIcon, ShieldCheckIcon, PackageIcon } from "@primer/octicons-react"
+
+# Room Authentication
+
+You can authenticate your users using the `onAuth` method in your room. This method is called before `onJoin`, and it is responsible for validating the client's request to join a room.
+
+- If `onAuth()` returns a [truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) value, `onJoin()` is going to be called with the returned value as the third argument.
+- If `onAuth()` returns a [falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy) value, the client is immediatelly rejected, causing the matchmaking function call from the client-side to fail.
+- You may also throw a `ServerError` to expose a custom error to be handled in the client-side.
+
+If left non-implemented, it always returns `true` - allowing any client to connect.
+
+<Steps>
+
+## Server-side: `onAuth` method
+
+<Tabs items={["Static onAuth (recommended)", "Instance onAuth"]}>
+    <Tabs.Tab>
+    The `static onAuth` is recommended because it does not require the room instance to be created before authenticating the client.
+
+    <Callout type="info">
+        If you need to access the room instance during the authentication process, you can use the instance `onAuth` method instance.
+    </Callout>
+
+    ```ts {5} filename="src/rooms/MyRoom.ts"
+    import { Room } from "colyseus";
+    import { JWT } from "@colyseus/auth";
+
+    class MyRoom extends Room {
+        static async onAuth (token, request) {
+            // validate the token
+            const userdata = await JWT.verify(token);
+
+            // return userdata
+            return userdata;
+        }
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    The instance `onAuth` method is called after the room instance is created. This method is useful when you need to access the room instance properties, such as currently connected clients, or the room state.
+
+    <Callout type="info">
+        If you don't need to access the room instance properties, it's recommended to use the static `onAuth` method instead.
+    </Callout>
+
+    ```ts {5} filename="src/rooms/MyRoom.ts"
+    import { Room } from "colyseus";
+    import { JWT } from "@colyseus/auth";
+
+    class MyRoom extends Room {
+        async onAuth (client, options, request) {
+            // validate the token
+            const authorization = request.headers.authorization;
+            const userdata = await JWT.verify(authorization.substring(7, authorization.length));
+
+            // return userdata
+            return userdata;
+        }
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+## Server-side: `onJoin` method
+
+Get the user data during the `onJoin` method via the `client.auth` property.
+
+```ts {5} filename="src/rooms/MyRoom.ts"
+import { Room } from "colyseus";
+// ...
+class MyRoom extends Room {
+    // ...
+    async onJoin (client, options) {
+        client.auth // contains the userdata
+    }
+}
+```
+
+## Client-side: Setting the auth token
+
+The `client.auth.token` property is used to set the authentication token. This token will be sent as an `Authorization` header in all HTTP requests to the server.
+
+```js filename="client.js"
+// set the auth token
+client.auth.token = "YOUR AUTH TOKEN";
+```
+
+<Callout type="info">
+    If you are using the `@colyseus/auth` module, this token is managed automatically. See [Authentication → Module](/auth/module).
+</Callout>
+
+## Client-side: Requesting to join a Room
+
+Match-making requests will contain the auth token.
+
+```js filename="client.js"
+client.joinOrCreate("my_room").then((room) => {
+    console.log(room);
+});
+```
+
+</Steps>

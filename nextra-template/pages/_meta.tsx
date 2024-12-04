@@ -1,4 +1,4 @@
-import { HomeIcon, PackageIcon, FileCodeIcon, ServerIcon, ThumbsupIcon, DevicesIcon, DatabaseIcon, ToolsIcon, QuestionIcon, VersionsIcon, HeartFillIcon, DownloadIcon, CodeIcon, ZapIcon, BookIcon, SyncIcon, PasskeyFillIcon, RocketIcon } from '@primer/octicons-react';
+import { HomeIcon, FileCodeIcon, ServerIcon, ThumbsupIcon, DevicesIcon, DatabaseIcon, ToolsIcon, QuestionIcon, VersionsIcon, HeartFillIcon, DownloadIcon, CodeIcon, ZapIcon, BookIcon, SyncIcon, PasskeyFillIcon, RocketIcon } from '@primer/octicons-react';
 
 export default {
     '-- Intro': {
@@ -20,7 +20,7 @@ export default {
     "server": { title: <span><ServerIcon/> Server API</span> },
     "client": { title: <span><DevicesIcon/> Client SDK</span>},
     "state": { title: <span><SyncIcon/> State Synchronization</span> },
-    "authentication": { title: <span><PasskeyFillIcon/> Authentication</span> },
+    "auth": { title: <span><PasskeyFillIcon/> Authentication</span> },
     "database": { title: <span><DatabaseIcon/> Database</span> },
     "tools": { title: <span><ToolsIcon/> Tools</span> },
     "deployment": { title: <span><RocketIcon/> Deployment</span> },
