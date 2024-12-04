@@ -1,14 +1,16 @@
+import { Tabs } from 'nextra/components'
 
 ### Example room
+
 This example demonstrates an entire room implementing the `onCreate`, `onJoin` and `onMessage` methods.
 
-=== "TypeScript"
-
-    ``` typescript
+<Tabs items={["TypeScript", "JavaScript"]}>
+    <Tabs.Tab>
+    ```ts filename="MyRoom.ts"
     import { Room, Client } from "colyseus";
     import { Schema, MapSchema, type } from "@colyseus/schema";
 
-    // An abstract player object, demonstrating a potential 2D world position
+    // An abstract player object, e.g. a 2D world position
     export class Player extends Schema {
       @type("number") x: number = 0.11;
       @type("number") y: number = 2.22;
@@ -20,11 +22,11 @@ This example demonstrates an entire room implementing the `onCreate`, `onJoin` a
     }
 
     export class GameRoom extends Room<State> {
+      // initialize empty room state
+      state = new State();
+
       // Colyseus will invoke when creating the room instance
       onCreate(options: any) {
-        // initialize empty room state
-        this.setState(new State());
-
         // Called every time this room receives a "move" message
         this.onMessage("move", (client, data) => {
           const player = this.state.players.get(client.sessionId);
@@ -40,43 +42,30 @@ This example demonstrates an entire room implementing the `onCreate`, `onJoin` a
       }
     }
     ```
+    </Tabs.Tab>
 
-=== "JavaScript"
-
-    ``` typescript
+    <Tabs.Tab>
+    ```js filename="MyRoom.js"
     const colyseus = require('colyseus');
     const schema = require('@colyseus/schema');
 
-    // An abstract player object, demonstrating a potential 2D world position
-    exports.Player = class Player extends schema.Schema {
-        constructor() {
-            super();
-            this.x = 0.11;
-            this.y = 2.22;
-        }
-    }
-    schema.defineTypes(Player, {
+    // An abstract player object, e.g. a 2D world position
+    const Player = schema.schema({
         x: "number",
         y: "number",
     });
 
     // Our custom game state, an ArraySchema of type Player only at the moment
-    exports.State = class State extends schema.Schema {
-        constructor() {
-            super();
-            this.players = new schema.MapSchema();
-        }
-    }
-    defineTypes(State, {
+    const State = schema.schema({
         players: { map: Player }
     });
 
-    exports.GameRoom = class GameRoom extends colyseus.Room {
+    class GameRoom extends colyseus.Room {
+      // initialize empty room state
+      state = new State();
+
       // Colyseus will invoke when creating the room instance
       onCreate(options) {
-        // initialize empty room state
-        this.setState(new State());
-
         // Called every time this room receives a "move" message
         this.onMessage("move", (client, data) => {
           const player = this.state.players.get(client.sessionId);
@@ -91,6 +80,8 @@ This example demonstrates an entire room implementing the `onCreate`, `onJoin` a
         this.state.players.set(client.sessionId, new Player());
       }
     }
-    ```
 
----
+    module.exports = { GameRoom, State, Player };
+    ```
+    </Tabs.Tab>
+</Tabs>
