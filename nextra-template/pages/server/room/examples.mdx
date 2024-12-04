@@ -10,13 +10,13 @@ This example demonstrates an entire room implementing the `onCreate`, `onJoin` a
     import { Room, Client } from "colyseus";
     import { Schema, MapSchema, type } from "@colyseus/schema";
 
-    // An abstract player object, e.g. a 2D world position
+    // State sync: Player structure
     export class Player extends Schema {
       @type("number") x: number = 0.11;
       @type("number") y: number = 2.22;
     }
 
-    // Our custom game state, an ArraySchema of type Player only at the moment
+    // State sync: State structure
     export class State extends Schema {
       @type({ map: Player }) players = new MapSchema<Player>();
     }
@@ -49,13 +49,13 @@ This example demonstrates an entire room implementing the `onCreate`, `onJoin` a
     const colyseus = require('colyseus');
     const schema = require('@colyseus/schema');
 
-    // An abstract player object, e.g. a 2D world position
+    // State sync: Player structure
     const Player = schema.schema({
         x: "number",
         y: "number",
     });
 
-    // Our custom game state, an ArraySchema of type Player only at the moment
+    // State sync: State structure
     const State = schema.schema({
         players: { map: Player }
     });
