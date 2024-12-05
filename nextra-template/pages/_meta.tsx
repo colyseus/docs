@@ -1,4 +1,4 @@
-import { HomeIcon, FileCodeIcon, ServerIcon, ThumbsupIcon, DevicesIcon, DatabaseIcon, ToolsIcon, QuestionIcon, VersionsIcon, HeartFillIcon, DownloadIcon, CodeIcon, ZapIcon, BookIcon, SyncIcon, PasskeyFillIcon, RocketIcon } from '@primer/octicons-react';
+import { HomeIcon, FileCodeIcon, ServerIcon, ThumbsupIcon, DevicesIcon, DatabaseIcon, ToolsIcon, QuestionIcon, VersionsIcon, HeartFillIcon, DownloadIcon, CodeIcon, ZapIcon, BookIcon, SyncIcon, PasskeyFillIcon, RocketIcon, ListOrderedIcon, RepoIcon, TasklistIcon, ListUnorderedIcon, CodeSquareIcon, FlameIcon, LightBulbIcon } from '@primer/octicons-react';
 
 export default {
     '-- Intro': {
@@ -13,7 +13,6 @@ export default {
     },
 
     "getting-started": { title: <span><ZapIcon/> Getting Started</span> }, // "Getting Started"
-    "concepts": "",
     "tutorial": { title: <span><FileCodeIcon/> Tutorials</span>},
 
     '-- API Reference': { type: 'separator', title: 'API Reference' },
@@ -24,6 +23,10 @@ export default {
     "database": { title: <span><DatabaseIcon/> Database</span> },
     "tools": { title: <span><ToolsIcon/> Tools</span> },
     "deployment": { title: <span><RocketIcon/> Deployment</span> },
+
+    '-- More': { type: 'separator', title: 'More' },
+    "recipes": { title: <span><LightBulbIcon /> Recipes</span> },
+    "examples": { title: <span><RepoIcon /> Example Projects</span> },
 
     '-- Extra': { type: 'separator', title: 'Extra' },
     "recommendations": { title: <span><ThumbsupIcon/> Recommendations</span> },
