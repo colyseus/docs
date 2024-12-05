@@ -8,6 +8,8 @@ import { DevicesIcon, GearIcon } from '@primer/octicons-react';
 
 The `@colyseus/auth` module is highly configurable and allows you to implement your own authentication backend.
 
+It does not provide a database or email sending capabilities, but it provides a set of callbacks that you can implement to query your database, send emails, and handle OAuth providers.
+
 <Cards>
     <Cards.Card icon={<DevicesIcon/>} title="Client-side API" href="#client-side-api" arrow />
     <Cards.Card icon={<GearIcon/>} title="Backend API" href="#backend-api" arrow />
@@ -24,13 +26,6 @@ The `@colyseus/auth` module is highly configurable and allows you to implement y
 - Anonymous Authentication
 - Forgot Password + Password Reset
 - OAuth 2.0 providers (_200+ supported providers, including Discord, Google, Twitter, etc._)
-
-## Backend configuration **you need to provide**
-
-- Environment secrets
-- Storing and querying users from/into your database
-- Sending emails (for "Email Verification" and "Password Reset")
-- OAuth 2.0 providers (for OAuth authentication)
 
 <Callout type="info">
     **Example Project** - The [Webgame Template](https://github.com/colyseus/webgame-template) project contains a complete usage example of `@colyseus/auth` for both server-side and client-side.
