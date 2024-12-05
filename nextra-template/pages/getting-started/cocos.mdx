@@ -1,5 +1,5 @@
+import { Callout, Steps } from "nextra/components";
 import { cocos } from "../../components/icons/platforms"
-import { Callout } from "nextra/components";
 
 # {cocos} Cocos Creator 3
 
@@ -8,10 +8,13 @@ import { Callout } from "nextra/components";
 The Colyseus SDK for Cocos Creator works in the same way as the [JavaScript SDK](/getting-started/javascript-client/). The major difference is how to [import it from a TypeScript Component](#importing-from-the-extension) asset from Cocos Creator.
 
 <Callout type="info">
-    **Example project:** Take a look at the [Tic Tac Toe Example](https://github.com/colyseus/cocos-demo-tictactoe).
+    **Example project:** Check out the [Tic Tac Toe Example](https://github.com/colyseus/cocos-demo-tictactoe).
 </Callout>
 
-## 1. Install the extension
+## Installation
+
+<Steps>
+### Install the Extension
 
 - [Open the Cocos Store](https://store.cocos.com/app/en/detail/5086) (Menu: "Extension" &raquo; "Store")
 - Search for "Colyseus SDK"
@@ -24,7 +27,7 @@ The Colyseus SDK for Cocos Creator works in the same way as the [JavaScript SDK]
 ![image](https://user-images.githubusercontent.com/42052366/130320703-74e6ea85-e217-462a-ac77-01e933475257.png)
 
 
-## 2. Update your `tsconfig.json` file
+### Update your `tsconfig.json` file
 
 Make sure you have `"esModuleInterop": true` under `"compilerOptions"`:
 
@@ -42,7 +45,7 @@ Make sure you have `"esModuleInterop": true` under `"compilerOptions"`:
 
 Reboot your Cocos Creator editor.
 
-## 3. Importing from the extension
+### Importing from the extension
 
 You must import Colyseus from its extension path:
 
@@ -106,6 +109,7 @@ Because we're using the `@property` decorator above, you can edit the `hostname`
 
 ![Colyseus SDK on TypeScript Component](/cocos/cocos-creator-component.png)
 ![login](/cocos/logged_in.jpg)
+</Steps>
 
 ---
 
