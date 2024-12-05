@@ -65,9 +65,26 @@ bun run src/index.ts
   </Tabs.Tab>
 </Tabs>
 
-### Create your Room class
+### Define your Room State
 
-Within your Room code, you will define the game logic and how clients interact with the game state:
+The Room state is the data structure that will be synchronized between the server and the connected clients:
+
+```ts copy filename="src/rooms/MyState.ts"
+import { Schema, MapSchema, type } from "@colyseus/schema";
+
+export class Player extends Schema {
+    @type("number") x: number = 0;
+    @type("number") y: number = 0;
+}
+
+export class MyState extends Schema {
+    @type({ map: Player }) players = new MapSchema<Player>();
+}
+```
+
+### Create your Room code
+
+Define the game logic and client interactions with the game state within your Room code.
 
 ```ts copy filename="src/rooms/MyRoom.ts"
 import { Room, Client } from "@colyseus/core";
@@ -97,7 +114,7 @@ export class MyRoom extends Room {
 
 ### Expose the Room identifier
 
-By exposing the room type, you can connect to the server and dynamically create instances of this room type:
+Exposing the room type allows clients to connect to the server and dynamically create instances of it.
 
 ```ts {6} copy filename="src/app.config.ts"
 import config from "@colyseus/tools";
@@ -112,7 +129,7 @@ export default config({
 
 ### Join the Room from the client SDK
 
-Communication between client and server is done via room connections. In the following example, we're using the JavaScript SDK to make the client join a room and listen to state changes:
+Communication between the client and server occurs through room connections. In the example below, the JavaScript SDK is used to let the client join a room and listen for state changes:
 
 ```ts copy filename="client.ts"
 import { Client, getStateCallbacks } from 'colyseus.js';
