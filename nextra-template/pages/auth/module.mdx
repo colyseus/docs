@@ -546,12 +546,16 @@ In order to enable OAuth authentication, you must add at least one OAuth provide
 
     This module leverages the hard work of [simov](https://github.com/simov/) on his [grant](https://github.com/simov/grant) open-source module, which supports 200+ OAuth 2.0 providers.
 
-    You may check the original [Grant Playground](https://grant.outofindex.com/) to experiment with scopes and OAuth configuration.
+    Check out the original [Grant Playground](https://grant.outofindex.com/) to experiment with scopes and OAuth configuration.
 </Callout>
 
 #### Add OAuth Provider
 
-Use the `auth.oauth.addProvider(providerId, config)` method to add an OAuth provider.
+Add an OAuth provider to the authentication module.
+
+```ts filename="Signature"
+auth.oauth.addProvider(providerId: string, config: any) => void
+```
 
 | Argument | Description |
 |------|-------------|
