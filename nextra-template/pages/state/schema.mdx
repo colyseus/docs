@@ -1,7 +1,7 @@
 ---
 title: "Schema Definition"
 ---
-import { Tabs, Callout } from 'nextra/components'
+import { Tabs, Callout, Steps } from 'nextra/components'
 
 # Schema Definition
 
@@ -9,30 +9,36 @@ import { Tabs, Callout } from 'nextra/components'
 - Only fields decorated with `@type()` are going to be considered for synchronization.
 - _(Synchronizable schema structures should only be used for data related to your state.)_
 
+## Overview
+
+<Steps>
 ### Defining a `Schema` structure
 
 <Tabs items={["TypeScript", "JavaScript"]}>
     <Tabs.Tab>
 
-    ```ts filename="MyState.ts"
-    import { Schema, type } from "@colyseus/schema";
+        ```ts filename="MyState.ts"
+        import { Schema, type } from "@colyseus/schema";
 
-    export class MyState extends Schema {
-        @type("string") currentTurn: string;
-    }
-    ```
-
+        export class MyState extends Schema {
+            @type("string") currentTurn: string;
+        }
+        ```
     </Tabs.Tab>
 
     <Tabs.Tab>
+        <Callout type="info">
+            This syntax was introduced in Colyseus 0.16,
+            It is now the recommended syntax for defining state structures when using plain JavaScript
+        </Callout>
 
-    ```js filename="MyState.js"
-    const schema = require('@colyseus/schema');
+        ```js filename="MyState.js"
+        const schema = require('@colyseus/schema');
 
-    const MyState = schema.schema({
-        currentTurn: "string"
-    });
-    ```
+        const MyState = schema.schema({
+            currentTurn: "string"
+        });
+        ```
     </Tabs.Tab>
 
 </Tabs>
@@ -49,6 +55,8 @@ export class MyRoom extends Room<MyState> {
     state = new MyState()
 }
 ```
+</Steps>
+
 
 <Callout type="info">
     **What is this `@type()` keyword? I've never seen this before!**
@@ -801,7 +809,7 @@ This is particularly useful for native-compiled targets, such as C#, C++, Haxe, 
 
 The collection types (`ArraySchema`, `MapSchema`, etc) must hold items of the same type. They support inherited types from the same base instance.
 
-**The following example is supported:**
+The following example is supported:
 
 <Tabs items={["TypeScript", "JavaScript"]}>
     <Tabs.Tab>
@@ -842,18 +850,3 @@ The collection types (`ArraySchema`, `MapSchema`, etc) must hold items of the sa
     ```
     </Tabs.Tab>
 </Tabs>
-
-
----
-
-## Limitations and best practices
-
-- Each `Schema` structure can hold up to `64` fields. If you need more fields, use nested `Schema` structures.
-- `NaN` or `null` numbers are encoded as `0`
-- `null` strings are encoded as `""`
-- `Infinity` numbers are encoded as `Number.MAX_SAFE_INTEGER`
-- Multi-dimensional arrays are not supported. [See how to use 1D arrays as multi-dimensional](https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid/212813#212813)
-- `@colyseus/schema` encoding order is based on field definition order.
-    - Both encoder (server) and decoder (client) must have same schema definition.
-    - The order of the fields must be the same.
-

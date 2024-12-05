@@ -1,7 +1,7 @@
 ---
 title: "Auth Module"
 ---
-import { Callout, Tabs, Steps, Cards } from 'nextra/components'
+import { Callout, Tabs, Steps, Cards, FileTree } from 'nextra/components'
 import { DevicesIcon, GearIcon } from '@primer/octicons-react';
 
 # Auth Module
@@ -96,7 +96,7 @@ client.auth.registerWithEmailAndPassword(email, password, options?) => Promise<U
 
 The `options` argument may contain user data you can use when creating the user's account.
 
-<Tabs items={["Client", "Backend config"]}>
+<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
     <Tabs.Tab>
     ```js
     try {
@@ -134,7 +134,7 @@ Sign in with email/password and return userdata. This method modifies the `clien
 client.auth.signInWithEmailAndPassword(email, password) => Promise<UserData>
 ```
 
-<Tabs items={["Client", "Backend config"]}>
+<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
     <Tabs.Tab>
     ```js filename="client.js"
     try {
@@ -167,7 +167,7 @@ Sign in anonymously and return anonymous userdata. This method modifies the `cli
 client.auth.signInAnonymously(options?) => Promise<UserData>
 ```
 
-<Tabs items={["Client", "Backend config"]}>
+<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
     <Tabs.Tab>
     ```js filename="client.js"
     try {
@@ -201,7 +201,7 @@ Sign in with OAuth provider and return userdata. This method modifies the `clien
 client.auth.signInWithProvider(provider) => Promise<UserData>
 ```
 
-<Tabs items={["Client", "Backend config"]}>
+<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
     <Tabs.Tab>
     ```js filename="client.js"
     try {
@@ -247,7 +247,7 @@ Send an email to the user with a link to reset their password.
 client.auth.sendPasswordResetEmail() => Promise<void>
 ```
 
-<Tabs items={["Client", "Backend config"]}>
+<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
     <Tabs.Tab>
     ```js filename="client.js"
     try {
@@ -285,7 +285,7 @@ Get the current user's data. This method does not modify the `client.auth.token`
 client.auth.getUserData() => Promise<UserData>
 ```
 
-<Tabs items={["Client", "Backend config"]}>
+<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
     <Tabs.Tab>
     Fetch the current user's data from the server.
 
@@ -717,15 +717,21 @@ app.get("/protected", auth.middleware(), (req: Request, res) => {
 
 You can customize the email templates by providing your own templates under the `html` directory.
 
-```
-my-colyseus-app/
-├─ html/
-│  ├─ address-confirmation-email.html
-│  ├─ address-confirmation.html
-│  ├─ reset-password-email.html
-│  ├─ reset-password-form.html
-├─ package.json
-```
+<FileTree>
+  <FileTree.Folder name="my-colyseus-app" defaultOpen>
+    <FileTree.Folder name="src">
+        <FileTree.File name="..." />
+        <FileTree.File name="index.ts" />
+    </FileTree.Folder>
+    <FileTree.Folder name="html" defaultOpen>
+      <FileTree.File name="address-confirmation-email.html" />
+      <FileTree.File name="address-confirmation.html" />
+      <FileTree.File name="reset-password-email.html" />
+      <FileTree.File name="reset-password-form.html" />
+    </FileTree.Folder>
+    <FileTree.File name="package.json" />
+  </FileTree.Folder>
+</FileTree>
 
 It is recommended to copy the default templates from the `@colyseus/auth` package, and customize them to your needs:
 
@@ -743,7 +749,7 @@ You may use the contents of the previous active auth token (`upgradingToken`) wh
 - Upgrade an anonymous user to an email/password or OAuth account
 - Link multiple OAuth providers to the same account
 
-<Tabs items={["When registering with email/password", "When linking an OAuth provider"]}>
+<Tabs items={["Upgrade with email/password", "Upgrade with OAuth provider"]}>
     <Tabs.Tab>
     ```ts filename="src/config/auth.ts"
     import { auth } from "@colyseus/auth";

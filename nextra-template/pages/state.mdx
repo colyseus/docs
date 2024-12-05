@@ -4,27 +4,29 @@ import { CodeSquareIcon, FileBinaryIcon, EyeIcon, StarIcon } from '@primer/octic
 ## Guides
 
 <Cards>
-    <Cards.Card icon={<FileBinaryIcon />} title="Schema Definition" href="/state/schema" />
-    <Cards.Card icon={<CodeSquareIcon />} title="Client-side Callbacks" href="/state/callbacks" />
-    <Cards.Card icon={<EyeIcon />} title="State View" href="/state/view" />
-    <Cards.Card icon={<StarIcon />} title="Best Practices" href="/state/best-practices" />
+    <Cards.Card icon={<FileBinaryIcon/>} title="Schema Definition" href="/state/schema" />
+    <Cards.Card icon={<CodeSquareIcon/>} title="Client-side Callbacks" href="/state/callbacks" />
+    <Cards.Card icon={<EyeIcon/>} title="State View" href="/state/view" />
+    <Cards.Card icon={<StarIcon/>} title="Best Practices" href="/state/best-practices" />
 </Cards>
 
-## How State Synchronization Works?
+## Overview
 
-- When the client joins a room, it receives the full encoded state from the server.
-- State mutations on the server-side are enqueued at a per-property level. Only the _last mutation_ of each property will be transmitted.
-- Enqueued mutations are binary-encoded and sent to clients at every [patchRate](/server/room/#patchrate-number) interval, and then cleared.
-- The [schema callbacks](/state/callbacks) are triggered on the client-side **after** patches have been applied locally.
+Colyseus uses a schema-based approach to define the state of a room. The server is responsible for mutating the state, and the client listens for state changes to keep the user interface in sync.
+
+- The room's state is defined using the `Schema` class from `@colyseus/schema`. Only the server can directly mutate the state.
+- Clients send messages to the server to request state changes. Your room code processes these requests and updates the state.
+- Colyseus optimizes performance and bandwidth by tracking property-level changes. Only the latest mutation of each property is queued and sent to clients during the [patchRate](/server/room/#patchrate) interval.
+- On the client side, you listen for state changes to keep the user interface in sync
 
 <Steps>
-	### State is defined on the server-side
+	### Server-side: Define your state structures
 
     Define your state structures by extending `Schema` class from `@colyseus/schema`:
 
     <Tabs items={["TypeScript", "JavaScript"]}>
         <Tabs.Tab>
-        ```ts filename="MyState.ts"
+        ```ts filename="src/rooms/MyState.ts"
         import { Schema, type } from "@colyseus/schema";
 
         export class Player extends Schema {
@@ -39,7 +41,7 @@ import { CodeSquareIcon, FileBinaryIcon, EyeIcon, StarIcon } from '@primer/octic
         ```
         </Tabs.Tab>
         <Tabs.Tab>
-        ```js filename="MyState.js"
+        ```js filename="src/rooms/MyState.js"
         const schema = require("@colyseus/schema");
 
         exports.Player = schema.schema({
@@ -56,39 +58,55 @@ import { CodeSquareIcon, FileBinaryIcon, EyeIcon, StarIcon } from '@primer/octic
     </Tabs>
 
 
-    ### State is set on the Room
+    ### Server-side: Assign and mutate the state
 
-    Set the state on the Room instance:
+    Setting up the state in your room class, and mutating it when clients join or leave the room:
 
     <Tabs items={["TypeScript", "JavaScript"]}>
         <Tabs.Tab>
-        ```ts filename="MyRoom.ts"
+        ```ts {2,5,8,11} filename="src/rooms/MyRoom.ts"
         import { Room } from "colyseus";
-        import { MyState } from "./MyState";
+        import { MyState, Player } from "./MyState";
 
         export class MyRoom extends Room<MyState> {
             state = new MyState();
+
+            onJoin (client, options) {
+                this.state.players.set(this.sessionId, new Player());
+            }
+            onLeave (client) {
+                this.state.players.delete(this.sessionId);
+            }
         }
         ```
         </Tabs.Tab>
 
         <Tabs.Tab>
-        ```js filename="MyRoom.js"
+        ```js {2,5,8,11} filename="src/rooms/MyRoom.js"
         const colyseus = require('colyseus');
         const MyState = require("./MyState");
 
         exports.MyRoom = class MyRoom extends colyseus.Room {
             state = new MyState.MyState();
+
+            onJoin (client, options) {
+                this.state.players.set(this.sessionId, new Player());
+            }
+            onLeave (client) {
+                this.state.players.delete(this.sessionId);
+            }
         }
         ```
         </Tabs.Tab>
     </Tabs>
 
-    ### State is synchronized with clients
+    ### Client-side: Full state received on join
 
-    Whenever a mutation occurs in the server-side, the state is automatically synchronized with all clients in the room. Clients receive the full state when they join the room.
+    Clients receive the full state when they join the room. Whenever a mutation occurs in the server-side, the state is automatically synchronized with all clients in the room.
 
-    ```js copy filename="client.js"
+    Below is an example of how to listen to player additions and removals on the client-side:
+
+    ```js {9-11,14-16} copy filename="client.js"
     import { Client, getStateCallbacks } from 'colyseus.js';
 
     // ...
@@ -107,27 +125,97 @@ import { CodeSquareIcon, FileBinaryIcon, EyeIcon, StarIcon } from '@primer/octic
     });
     ```
 
+    ### Client-side requests the server to mutate the state
+
+    The client-side is not capable of mutating the state directly. Instead, it sends messages to the server to request state changes.
+
+    ```js {4} filename="client.js"
+    import { Client, getStateCallbacks } from 'colyseus.js';
+
+    // ...
+    room.send("set-position", { x: 16, y: 16 });
+    ```
+
+    The server-side processes these messages and updates the state accordingly:
+
+    ```ts {6-11} filename="src/rooms/MyRoom.ts"
+    // ...
+    export class MyRoom extends Room<MyState> {
+        state = new MyState();
+
+        onCreate() {
+            this.onMessage("set-position", (client, data) => {
+                const player = this.state.players.get(client.sessionId);
+                player.x = data.x;
+                player.y = data.y;
+            });
+        }
+        // ...
+    ```
+
+    ### Client listens to state changes
+
+    The client listens to state changes at the instance level to keep the user interface in sync:
+
+    <Tabs items={["Using .onChange() on instance", "Using .listen() on property"]}>
+        <Tabs.Tab>
+        ```js {10-12} filename="client.js"
+        import { Client, getStateCallbacks } from 'colyseus.js';
+        // ...
+        const client = new Client('http://localhost:2567');
+        const room = await client.joinOrCreate('my_room', {/* */});
+        const $ = getStateCallbacks(room);
+
+        // Listen to 'player' instance additions
+        $(room.state).players.onAdd((player, sessionId) => {
+            // Listening for any change on the player instance
+            $(player).onChange(() => {
+                console.log('Player changed:', player.x, player.y);
+            });
+        });
+        ```
+        </Tabs.Tab>
+
+        <Tabs.Tab>
+        ```js {10-15} filename="client.js"
+        import { Client, getStateCallbacks } from 'colyseus.js';
+        // ...
+        const client = new Client('http://localhost:2567');
+        const room = await client.joinOrCreate('my_room', {/* */});
+        const $ = getStateCallbacks(room);
+
+        // Listen to 'player' instance additions
+        $(room.state).players.onAdd((player, sessionId) => {
+            // Listen to direct property changes
+            $(player).listen("x", (x, prevX) => {
+                console.log('Player changed:', x, "from", prevX);
+            });
+            $(player).listen("y", (x, prevX) => {
+                console.log('Player changed:', x, "from", prevX);
+            });
+        });
+        ```
+        </Tabs.Tab>
+    </Tabs>
 </Steps>
 
 ---
 
-TODO: review this section
+## How does it work, internally?
 
-- [**Schema definitions**](/state/schema) – define your state structure using Colyseus' `Schema` class.
-- [**Client-side callbacks**](/state/callbacks) – listen to state changes on the client-side.
 
-## How state synchronization works
 
-- When the client joins a room, it receives the full encoded state from the server.
-- State mutations on the server-side are enqueued at a per-property level. (Only the last mutation of each property is kept)
-- Enqueued mutations are binary-encoded and sent to **all clients** at every [patchRate](/server/room/#patchrate-number) interval, and then cleared.
-- Client-side [schema callbacks](/state/callbacks) are triggered after patches were applied.
+## Troubleshooting
 
-## Working with schema structures
+### TypeScript Config
 
-- Only the server-side is responsible for mutating schema structures
-- The client-side must have the same `Schema` definitions generated through [`schema-codegen`](#client-side-schema-generation). _(Optional if you're using the [JavaScript SDK](/getting-started/javascript-client/))_
-- In order to get updates from the server, you need to [attach callbacks on schema instances in the client-side](/state/callbacks).
-- The client-side should never perform mutations on schema - as they are going to be replaced as soon as the next change come from the server.
+If you are using TypeScript, make sure to enable the `experimentalDecorators` and disable `useDefineForClassFields` in your `tsconfig.json` file.
 
-![State Synchronization Diagram](/diagrams/state-sync.png) -->
+```json filename="tsconfig.json"
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "useDefineForClassFields": false
+    }
+}
+```
