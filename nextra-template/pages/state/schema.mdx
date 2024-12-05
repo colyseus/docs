@@ -236,6 +236,7 @@ You can't mix types inside arrays.
 
     ```js filename="MyState.js"
     const schema = require('@colyseus/schema');
+
     const MyState = schema.schema({
       animals: [ "string" ]
     });
@@ -415,6 +416,7 @@ Maps are recommended to track your game entities by id, such as players, enemies
 
     ```js filename="MyState.js"
     const schema = require('@colyseus/schema');
+
     const Player = schema.schema({
       x: "number",
       y: "number"
@@ -565,6 +567,7 @@ The usage of `SetSchema` is very similar to [`CollectionSchema`], the biggest di
 
     ```js filename="MyState.js"
     const schema = require('@colyseus/schema');
+
     const Effect = schema.schema({
       radius: "number"
     });
@@ -671,6 +674,7 @@ The `CollectionSchema` works similarly as the `ArraySchema`, with the caveat tha
 
     ```js filename="MyState.js"
     const schema = require('@colyseus/schema');
+
     const Item = schema.schema({
       damage: "number"
     });
