@@ -6,6 +6,10 @@ import { DevicesIcon, GearIcon } from '@primer/octicons-react';
 
 # Auth Module
 
+<Callout type="warning">
+    This module is in beta - Feedback is welcome on [colyseus/colyseus#660](https://github.com/colyseus/colyseus/issues/660).
+</Callout>
+
 The `@colyseus/auth` module is highly configurable and allows you to implement your own authentication backend.
 
 It does not provide a database or email sending capabilities, but it provides a set of callbacks that you can implement to query your database, send emails, and handle OAuth providers.
@@ -14,10 +18,6 @@ It does not provide a database or email sending capabilities, but it provides a 
     <Cards.Card icon={<DevicesIcon/>} title="Client-side API" href="#client-side-api" arrow />
     <Cards.Card icon={<GearIcon/>} title="Backend API" href="#backend-api" arrow />
 </Cards>
-
-<Callout type="warning">
-    This module is in beta - Feedback is welcome on [colyseus/colyseus#660](https://github.com/colyseus/colyseus/issues/660).
-</Callout>
 
 ## Features
 
