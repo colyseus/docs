@@ -30,7 +30,7 @@ const config: DocsThemeConfig = {
     // },
 
     toc: {
-        // float: false,
+        float: true,
         extraContent: <SponsorsSidebar />,
     },
 
