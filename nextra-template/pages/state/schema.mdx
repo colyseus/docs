@@ -1,20 +1,23 @@
 ---
 title: "Schema Definition"
 ---
-import { Tabs, Callout, Steps } from 'nextra/components'
+import { Tabs, Callout, Steps, Cards } from 'nextra/components'
 
 # Schema Definition
 
-- `Schema` structures are defined the server-side to be used in the room state.
+- Schema structures are defined on the server side and represent the state of your game within a room.
 - Only fields decorated with `@type()` are going to be considered for synchronization.
-- _(Synchronizable schema structures should only be used for data related to your state.)_
+
+<Callout type="warning">
+    `Schema` structures should be used within the **state only**. Do not use `Schema` structures for messages, or other data that is not related to your state.
+</Callout>
 
 ## Overview
 
 <Steps>
 ### Defining a `Schema` structure
 
-<Tabs items={["TypeScript", "JavaScript"]}>
+<Tabs items={["TypeScript", "JavaScript", "JavaScript (legacy)"]}>
     <Tabs.Tab>
 
         ```ts filename="MyState.ts"
@@ -41,13 +44,28 @@ import { Tabs, Callout, Steps } from 'nextra/components'
         ```
     </Tabs.Tab>
 
+    <Tabs.Tab>
+        <Callout type="warning">
+            The `defineTypes()` method will be removed in future versions of Colyseus. It is recommended to use the `schema.schema()` method instead.
+        </Callout>
+
+        ```js filename="MyState.js"
+        const schema = require('@colyseus/schema');
+        const Schema = schema.Schema;
+
+        class MyState extends Schema {
+        }
+        schema.defineTypes(MyState, {
+            currentTurn: "string"
+        });
+        ```
+    </Tabs.Tab>
+
 </Tabs>
 
 ### Using the state in your `Room`
 
-The state is set on the Room instance, and it is automatically synchronized with all clients in the room.
-
-```ts filename="MyRoom.ts"
+```ts {2,5} filename="MyRoom.ts"
 import { Room } from "colyseus";
 import { MyState } from "./MyState";
 
@@ -64,42 +82,20 @@ export class MyRoom extends Room<MyState> {
     The `@type()` you see heavily used on this page is an upcoming JavaScript feature that is yet to be formally established by TC39. `type` is actually just a function imported from `@colyseus/schema` module. By calling `type` with the `@` prefix at the property level means we're calling it as a _property decorator_. [See the decorators proposal here](https://github.com/tc39/proposal-decorators). Make sure your `tsconfig.json` includes `"experimentalDecorators": true`, and `"useDefineForClassFields": false` when using target `ES2022` or higher (see [#510](https://github.com/colyseus/colyseus/issues/510#issuecomment-1507828422) for discussion).
 </Callout>
 
-<Callout type="info">
-    **Not using TypeScript yet?**
+## Data Types
 
-    It is highly recommended that you use TypeScript to have a better experience defining the state schema structures, and for your development experience in general. TypeScript supports the "experimental decorators" that is heavily used on this section.
-</Callout>
+<Cards>
+    <Cards.Card title="Schema Type" href="#schema-type" arrow />
+    <Cards.Card title="Primitive Types" href="#primitive-types" arrow />
+    <Cards.Card title="ArraySchema" href="#arrayschema" arrow />
+    <Cards.Card title="MapSchema" href="#mapschema" arrow />
+    <Cards.Card title="SetSchema" href="#setschema" arrow />
+    <Cards.Card title="CollectionSchema" href="#collectionschema" arrow />
+</Cards>
 
-### Primitive types
+### `Schema` type
 
-Primitive types are numbers, strings and boolean.
-
-| Type | Description | Limitation |
-|------|-------------|------------|
-| `"string"` | utf8 strings | maximum byte size of `4294967295` |
-| `"number"` | also known as "varint". Auto-detects the number type to use. (may use one extra byte when encoding) | `0` to `18446744073709551615` |
-| `"boolean"` | `true` or `false` | `0` or `1` |
-
-**Specialized number types:**
-
-| Type | Description | Limitation |
-|------|-------------|------------|
-| `"int8"` | signed 8-bit integer | `-128` to `127` |
-| `"uint8"` | unsigned 8-bit integer | `0` to `255` |
-| `"int16"` | signed 16-bit integer | `-32768` to `32767` |
-| `"uint16"` | unsigned 16-bit integer | `0` to `65535` |
-| `"int32"` | signed 32-bit integer | `-2147483648` to `2147483647` |
-| `"uint32"` | unsigned 32-bit integer | `0` to `4294967295` |
-| `"int64"` | signed 64-bit integer | `-9223372036854775808` to `9223372036854775807` |
-| `"uint64"` | unsigned 64-bit integer | `0` to `18446744073709551615` |
-| `"float32"` | single-precision floating-point number | `-3.40282347e+38` to `3.40282347e+38`|
-| `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |
-
-
-### Complex types
-
-Complex types consist of `Schema` instances within other schema instances. They can also contain [collections of items](#collections-of-items) (array, map, etc.).
-
+A `Schema` type can define properties as primitives, other `Schema` types, or collections (e.g., arrays or maps) that may contain nested types.
 
 <Tabs items={["TypeScript", "JavaScript"]}>
     <Tabs.Tab>
@@ -117,7 +113,6 @@ Complex types consist of `Schema` instances within other schema instances. They 
         @type(World) world: World = new World();
     }
     ```
-
     </Tabs.Tab>
 
     <Tabs.Tab>
@@ -138,20 +133,47 @@ Complex types consist of `Schema` instances within other schema instances. They 
     </Tabs.Tab>
 </Tabs>
 
+<Callout type="info">
+    A `Schema` type may hold up to 64 synchronizable properties.
+</Callout>
 
-## Collections of items
+### Primitive types
 
-Collections can hold multiple items that share the same type. Inheritance of
-`Schema` instances is supported.
+- `string`: utf8 string type
+- `boolean`: `true` or `false`
+- `number`: auto-detects the number type to use. (may use one extra byte when encoding)
+- `uint8`, `uint16`, `uint32`, `uint64`: unsigned number types.
+- `int8`, `int16`,  `int32`, `int64`: signed number types.
+- `float32`, `float64`: floating-point number types.
 
-Collections available:
+<details>
+    <summary>**Table of types and their limitations**</summary>
 
-- [`ArraySchema`](#arrayschema)
-- [`MapSchema`](#mapschema)
-- [`SetSchema`](#setschema)
-- [`CollectionSchema`](#collectionschema)
+    <br />
 
-### ArraySchema
+    | Type | Description | Limitation |
+    |------|-------------|------------|
+    | `"string"` | utf8 strings | maximum byte size of `4294967295` |
+    | `"number"` | also known as "varint". Auto-detects the number type to use. (may use one extra byte when encoding) | `0` to `18446744073709551615` |
+    | `"boolean"` | `true` or `false` | `0` or `1` |
+
+    Specialized number types:
+
+    | Type | Description | Limitation |
+    |------|-------------|------------|
+    | `"int8"` | signed 8-bit integer | `-128` to `127` |
+    | `"uint8"` | unsigned 8-bit integer | `0` to `255` |
+    | `"int16"` | signed 16-bit integer | `-32768` to `32767` |
+    | `"uint16"` | unsigned 16-bit integer | `0` to `65535` |
+    | `"int32"` | signed 32-bit integer | `-2147483648` to `2147483647` |
+    | `"uint32"` | unsigned 32-bit integer | `0` to `4294967295` |
+    | `"int64"` | signed 64-bit integer | `-9223372036854775808` to `9223372036854775807` |
+    | `"uint64"` | unsigned 64-bit integer | `0` to `18446744073709551615` |
+    | `"float32"` | single-precision floating-point number | `-3.40282347e+38` to `3.40282347e+38`|
+    | `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |
+</details>
+
+### Array (`ArraySchema`)
 
 The `ArraySchema` is a synchronizeable version of the built-in JavaScript [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) type.
 
@@ -360,7 +382,7 @@ Empties the array. The client-side will trigger the `onRemove` callback for each
 
 ---
 
-### MapSchema
+### Map (`MapSchema`)
 
 The `MapSchema` is a synchronizeable version of the built-in JavaScript [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) type.
 
@@ -511,10 +533,10 @@ Empties the Map. (Client-side will trigger `onRemove` for each element.)
 
 ---
 
-### SetSchema
+### Set (`SetSchema`)
 
 <Callout type="warning">
-    **`SetSchema` is only available for JavaScript SDK** - Haxe, C# and Lua SDKs are not supported yet.
+    **`SetSchema` is only available for JavaScript SDK** - Haxe, C# and Lua SDKs are not implemented.
 </Callout>
 
 The `SetSchema` is a synchronizeable version of the built-in JavaScript [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) type.
@@ -622,7 +644,7 @@ Empties the Set. (Client-side will trigger `onRemove` for each element.)
 ### CollectionSchema
 
 <Callout type="warning">
-    **`CollectionSchema` is only implemented in JavaScript** - Haxe, C#, Lua and C++ clients are not supported yet.
+    **`CollectionSchema` is only available for JavaScript SDK** - Haxe, C#, Lua and C++ clients are not implemented.
 </Callout>
 
 The `CollectionSchema` works similarly as the `ArraySchema`, with the caveat that you don't have control over its indexes.
