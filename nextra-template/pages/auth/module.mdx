@@ -60,7 +60,7 @@ npm install --save @colyseus/auth
 
 It is required to provide the following environment variables to your application:
 
-- `AUTH_SALT` - Used to hash the user's password. (`scrypt` algorithm by default)
+- `AUTH_SALT` - Used to hash the user's password. ([`scrypt` algorithm is used by default](#on-hash-password))
 - `JWT_SECRET` - Used to sign the JWT token.
 - `SESSION_SECRET` - Used to sign the session cookie. (only used during OAuth flow)
 
@@ -287,6 +287,8 @@ client.auth.getUserData() => Promise<UserData>
 
 <Tabs items={["Client", "Backend config"]}>
     <Tabs.Tab>
+    Fetch the current user's data from the server.
+
     ```js filename="client.js"
     try {
         const userdata = await client.auth.getUserData();
@@ -299,12 +301,14 @@ client.auth.getUserData() => Promise<UserData>
     </Tabs.Tab>
 
     <Tabs.Tab>
+    You may customize the `onParseToken` callback to include additional user data for the client-side.
+
     ```ts filename="src/config/auth.ts"
     import { auth } from "@colyseus/auth";
     // ...
 
-    auth.settings.onParseToken = async function (jwt) {
-        return jwt;
+    auth.settings.onParseToken = async function (userdata) {
+        return userdata;
     }
     ```
     </Tabs.Tab>
@@ -635,30 +639,30 @@ You may customize the following settings:
 
 #### On Parse Token
 
-Use this callback to parse the token provided by the client-side. The token is already verified and decoded.
+Use this callback to modify the user's data before sending it to the client-side during the [Get User Data](#get-user-data) call.
 
 ```ts filename="Signature"
-auth.settings.onParseToken(jwt: string) => Promise<any>
+auth.settings.onParseToken(data: any) => Promise<any>
 ```
 
 ```typescript
 import { auth } from "@colyseus/auth";
 
-auth.settings.onParseToken = async function (jwt) {
-    return jwt;
+auth.settings.onParseToken = async function (data) {
+    return data;
 }
 ```
 
 #### On Generate Token
 
-Use this callback to generate the token from the user's data. The token is already verified and decoded.
+Use this callback to customize the token generation from the user's data.
 
 ```ts filename="Signature"
 auth.settings.onGenerateToken(userdata: any) => Promise<string>
 ```
 
 ```typescript
-import { auth } from "@colyseus/auth";
+import { auth, JWT } from "@colyseus/auth";
 
 auth.settings.onGenerateToken = async function (userdata) {
     return JWT.sign(userdata);
@@ -667,7 +671,7 @@ auth.settings.onGenerateToken = async function (userdata) {
 
 #### On Hash Password
 
-Use this callback to hash the user's password.
+Use this callback to customize how to hash the user's password. The default hashing algorithm is `scrypt`.
 
 ```ts filename="Signature"
 auth.settings.onHashPassword(password: string) => Promise<string>
@@ -679,6 +683,14 @@ import { auth } from "@colyseus/auth";
 auth.settings.onHashPassword = async function (password: string) {
     return Hash.make(password);
 };
+```
+
+You may also use the `Hash` class provided by the `@colyseus/auth` set a different hashing algorithm. The other ones available are `scrypt` and `sha1`.
+
+```ts filename="src/config/auth.ts"
+import { Hash } from "@colyseus/auth";
+
+Hash.algorithm = "scrypt";
 ```
 
 ---
