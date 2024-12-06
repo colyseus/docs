@@ -2,7 +2,7 @@
 title: "Auth Module"
 ---
 import { Callout, Tabs, Steps, Cards, FileTree } from 'nextra/components'
-import { DevicesIcon, GearIcon } from '@primer/octicons-react';
+import { DevicesIcon, GearIcon, LinkIcon, MailIcon, GlobeIcon } from '@primer/octicons-react';
 
 # Auth Module
 
@@ -715,7 +715,7 @@ app.get("/protected", auth.middleware(), (req: Request, res) => {
 
 ### Customizing the Email Templates
 
-You can customize the email templates by providing your own templates under the `html` directory.
+If you need to customize the email templates, you must provide your own templates under the `html` directory. You can copy the default templates from the `@colyseus/auth` package, and modify them as needed.
 
 <FileTree>
   <FileTree.Folder name="my-colyseus-app" defaultOpen>
@@ -733,12 +733,19 @@ You can customize the email templates by providing your own templates under the 
   </FileTree.Folder>
 </FileTree>
 
-It is recommended to copy the default templates from the `@colyseus/auth` package, and customize them to your needs:
+#### Email Confirmation Template
 
-- [html/address-confirmation-email.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation-email.html) → The email sent to the user to confirm their email address
-- [html/address-confirmation.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation.html) → The page where the user is redirected to confirm their email address
-- [html/reset-password-email.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-email.html) → The email sent to the user to reset their password
-- [html/reset-password-form.html](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-form.html) → The page where the user is redirected to reset their password
+This template is used to send the email confirmation link to the user when they register with email/password. When the user clicks on the link, they are redirected to the _Email Confirmation Page_.
+
+- [<MailIcon/> Email Template ↗](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation-email.html) - (`html/address-confirmation-email.html`)
+- [<GlobeIcon/> Web Page Template ↗](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation.html) - (`html/address-confirmation.html`)
+
+#### Reset Password Template
+
+This template is used to send the reset password link to the user when they request to reset their password. When the user clicks on the link, they are redirected to the _Reset Password Page_.
+
+-  [<MailIcon/> Email Template ↗](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-email.html) - (`html/reset-password-email.html` )
+-  [<GlobeIcon/> Web Page Template ↗](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-form.html) - (`html/reset-password-form.html`)
 
 ---
 
