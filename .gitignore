@@ -1,8 +1,4 @@
-site
-src
-.DS_Store
-.vscode
-*.log
-.cache
 .next
+out
 node_modules
+.cache
