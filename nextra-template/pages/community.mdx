@@ -1,12 +1,14 @@
 ---
 title: "Community"
 ---
-import { Cards } from 'nextra/components'
-import { VideoIcon, MarkGithubIcon, CommentDiscussionIcon, CommentIcon, OrganizationIcon, CloudIcon, RocketIcon, StackIcon } from "@primer/octicons-react"
+import { Cards, Callout } from 'nextra/components'
+import { LinkExternalIcon, VideoIcon, MarkGithubIcon, CommentDiscussionIcon, CommentIcon, OrganizationIcon, CloudIcon, RocketIcon, StackIcon } from "@primer/octicons-react"
 
 # Welcome to the Colyseus Community!
 
-This page is under construction. [Help us improve it](/community/help).
+<Callout type="warning">
+    This space is dedicated to community projects and community content. [Help us improve this section](/community/help).
+</Callout>
 
 <Cards>
     <Cards.Card icon={<CommentIcon/>} title="Join Discord" href="http://chat.colyseus.io" target="_blank" />
@@ -15,3 +17,104 @@ This page is under construction. [Help us improve it](/community/help).
     <Cards.Card icon={<OrganizationIcon/>} title="Colyseus on LinkedIn" href="https://www.linkedin.com/company/colyseus/" target="_blank" />
     <Cards.Card icon={<VideoIcon/>} title="Colyseus on YouTube" href="https://www.youtube.com/@colyseus" target="_blank" />
 </Cards>
+
+---
+
+## Games
+
+Games developed by the community. They are open-source and can be used as a reference for your own projects. Feel free to submit yours.
+
+<Cards>
+    <Cards.Card
+        icon={<LinkExternalIcon/>}
+        title="Pokemon Auto Chess"
+        href="https://github.com/keldaanCommunity/pokemonAutoChess"
+        target="_blank">
+        <>![](/community/games/keldaanCommunity-pokemonAutoChess.webp)</>
+    </Cards.Card>
+
+    <Cards.Card
+        icon={<LinkExternalIcon/>}
+        title="Real-Time PvP Battle"
+        href="https://github.com/heronoa/turnbased-pvp-colyseus"
+        target="_blank">
+        <>![](/community/games/heronoa-turnbased-pvp-colyseus.png)</>
+    </Cards.Card>
+
+    <Cards.Card
+        icon={<LinkExternalIcon/>}
+        title="Bomberman Mayhem"
+        href="https://github.com/orion3dgames/bomberman-mayhem"
+        target="_blank">
+        <>![](/community/games/orion3dgames-bomberman-mayhem.webp)</>
+    </Cards.Card>
+
+    <Cards.Card
+        icon={<LinkExternalIcon/>}
+        title="TOSIOS"
+        href="https://github.com/halftheopposite/TOSIOS/"
+        target="_blank">
+        <>![](/community/games/halftheopposite-tosios.jpg)</>
+    </Cards.Card>
+
+    <Cards.Card
+        icon={<LinkExternalIcon/>}
+        title="Multiplayer Blackjack"
+        href="https://github.com/stopnoanime/21-online"
+        target="_blank">
+        <>![](/community/games/stopnoanime-21-online.webp)</>
+    </Cards.Card>
+
+    <Cards.Card
+        icon={<LinkExternalIcon/>}
+        title="Reldens"
+        href="https://github.com/damian-pastorini/reldens"
+        target="_blank">
+        <>![](/community/games/damian-pastorini-reldens.webp)</>
+    </Cards.Card>
+
+    <Cards.Card
+        icon={<LinkExternalIcon/>}
+        title="T5C - The 5th Continent"
+        href="https://github.com/orion3dgames/t5c"
+        target="_blank">
+        <>![](/community/games/orion3dgames-t5c.webp)</>
+    </Cards.Card>
+
+    <Cards.Card
+        icon={<LinkExternalIcon/>}
+        title="Geofind - Guessing Game"
+        href="https://github.com/posixpascal/geofind"
+        target="_blank">
+        <>![](/community/games/posixpascal-geofind.webp)</>
+    </Cards.Card>
+
+
+
+
+
+
+
+</Cards>
+
+
+## Tutorials
+
+<Cards>
+    <Cards.Card
+        icon={<LinkExternalIcon/>}
+        title="dev.to: How I Created an Online Multiplayer Game Using Colyseus"
+        href="https://dev.to/konmaz/how-i-created-an-online-multiplayer-game-using-colyseus-npf"
+        target="_blank">
+        <>![](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/5huesmpv2se53i14246v.png)</>
+    </Cards.Card>
+</Cards>
+
+## Videos
+
+- [<VideoIcon/> 2D Multiplayer Card Game Template with Godot & Colyseus](https://www.youtube.com/watch?v=9QtQ5iXj2U0)
+- [<VideoIcon/> 2D Multiplayer Card Game Templates with Colyseus, Unity, Phaser, & Defold](https://www.youtube.com/watch?v=NylOh_PVCsc)
+- [<VideoIcon/> Building Team Thinking Games At Synthesis](https://gitnation.com/contents/building-team-thinking-games-at-synthesis)
+- [<VideoIcon/> Building an online multiplayer browser game with Haxe and Colyseus](https://www.youtube.com/watch?v=5XaGzRH5Y7I)
+- [<VideoIcon/> Multiplayer Tic-Tac-Toe in Colyseus & Phaser](https://www.youtube.com/playlist?list=PLNwtXgWIx3rhOmsJOkUFRiFQg8pPFPDqy)
+- [<VideoIcon/> Multiplayer Game Design Colyseus and Unity](https://www.youtube.com/playlist?list=PLxgtJR7f0RBK_yGDSbPuspqMR-oEi1S25)
