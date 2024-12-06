@@ -1,19 +1,34 @@
-import { Callout } from 'nextra/components';
+import { Callout, Cards } from 'nextra/components';
+import { MarkGithubIcon } from '@primer/octicons-react'
 
 ## Example Projects
 
 <Callout type="warning">
-    Contributions are welcome! If you have an example project you'd like to share, please [open an issue](https://github.com/colyseus/docs/issues/new?title=Feedback%20for%20%E2%80%9CExample%20Projects%E2%80%9D&labels=feedback) or submit a pull request.
+    Feel free to submit your own examples! See [Community → Help](/community/help).
 </Callout>
 
-Explore examples and open-source projects.
+<Cards>
+    <Cards.Card icon={<MarkGithubIcon/>} title="Basic Usage Examples" href="https://github.com/colyseus/colyseus-examples" target="_blank">
+        <>![](https://opengraph.githubassets.com/f8050752335282b1a1305fad04c3e2b781fd7e99b16eba751430caf098789e04/colyseus/colyseus-examples)</>
+    </Cards.Card>
 
-- [Basic examples](https://github.com/colyseus/colyseus-examples)
-- [Multiplayer Blackjack (Angular)](https://github.com/stopnoanime/21-online/)
-  ([Preview](https://stopnoanime.github.io/21-online/))
-- [PixiJS Tic-Tac-Toe](https://github.com/endel/colyseus-tic-tac-toe)
-- [The Open-Source IO Shooter](https://github.com/halftheopposite/TOSIOS)
-- [Colyseus + PixiJS Boilerplate (Agar.io simplistic adaptation)](https://github.com/endel/colyseus-pixijs-boilerplate)
-- [Collaborative Drawing Prototype](https://colyseus-drawing-prototype.herokuapp.com/) ([source-code](https://github.com/endel/colyseus-collaborative-drawing)) - Collaborative drawing using HTML5 canvas.
-- (Outdated examples: version < 0.8.x): [tanx](https://playcanvas.com/project/367035/overview/tanxcolyseus), [react-example](https://github.com/endel/colyseus-react-example), [LD35 entry: dotower](http://ludumdare.com/compo/ludum-dare-35/?action=preview&uid=50958)
+    <Cards.Card icon={<MarkGithubIcon/>} title="Tic-Tac-Toe" href="https://github.com/endel/colyseus-tic-tac-toe" target="_blank">
+        <>![](https://opengraph.githubassets.com/a490ed845ae9d28a4b6b5ca319216229b895343cd18923431890646ca5c06207/endel/colyseus-tic-tac-toe)</>
+    </Cards.Card>
 
+    <Cards.Card icon={<MarkGithubIcon/>} title="Authentication w/ Firebase" href="https://github.com/colyseus/demo-firebase-authentication" target="_blank">
+        <>![Authentication using Firebase](https://repository-images.githubusercontent.com/663676366/a9f97c00-bebf-499f-9cdd-fdf10de621e2)</>
+    </Cards.Card>
+
+    <Cards.Card icon={<MarkGithubIcon/>} title={`"Push To Talk" Example`} href="https://github.com/colyseus/demo-push-to-talk" target="_blank">
+        <>![](https://opengraph.githubassets.com/0e7113644f21d47c5776a4595b02c1e02a7f77205f7a43c05f6f276910465e5c/colyseus/demo-push-to-talk)</>
+    </Cards.Card>
+
+    <Cards.Card icon={<MarkGithubIcon/>} title="Messaging w/ Protocol Buffers" href="https://github.com/endel/colyseus-0.15-protocol-buffers" target="_blank">
+        <>![](https://opengraph.githubassets.com/0db87b0222acd9f03240fe93d274f01eac82f0f87522cf3823c8d9b202d21a66/endel/colyseus-0.15-protocol-buffers)</>
+    </Cards.Card>
+</Cards>
+
+---
+
+See [Community → Games](/community#games) for more games developed by the community.
