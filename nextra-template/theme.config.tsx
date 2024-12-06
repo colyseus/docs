@@ -6,7 +6,11 @@ import { SponsorsSidebar } from './components/sponsors-sidebar';
 const logo = <Image src={require('./images/logo.svg')} width={0} height={0} style={{ width: 'auto', height: '28px' }} alt="Colyseus" />;
 
 const config: DocsThemeConfig = {
-    logo,
+    logo: <>
+        {logo}
+        <span style={{ fontSize: "0.8em", marginLeft: "0.6em", paddingTop: "0.7em", color: "GrayText" }}>v0.16</span>
+    </>,
+    // logo,
     project: {
         link: 'https://github.com/colyseus/colyseus',
     },

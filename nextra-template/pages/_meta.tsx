@@ -34,6 +34,8 @@ export default {
     "upgrading": { title: <span><VersionsIcon/> Upgrading Versions</span> }, // "Upgrading Versions"
     "faq": {title: <span><QuestionIcon/> FAQ</span>},
 
+    '-- (final) --': { type: 'separator' },
+
     documentation: {
         title: "Documentation",
         type: "page",

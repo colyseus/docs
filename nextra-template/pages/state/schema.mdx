@@ -86,13 +86,45 @@ export class MyRoom extends Room<MyState> {
 ## Data Types
 
 <Cards>
-    <Cards.Card icon={<HashIcon/>} title="Schema Type" href="#schema-type" arrow />
     <Cards.Card icon={<HashIcon/>} title="Primitive Types" href="#primitive-types" arrow />
+    <Cards.Card icon={<HashIcon/>} title="Schema Type" href="#schema-type" arrow />
     <Cards.Card icon={<HashIcon/>} title="ArraySchema" href="#arrayschema" arrow />
     <Cards.Card icon={<HashIcon/>} title="MapSchema" href="#mapschema" arrow />
     <Cards.Card icon={<HashIcon/>} title="SetSchema" href="#setschema" arrow />
     <Cards.Card icon={<HashIcon/>} title="CollectionSchema" href="#collectionschema" arrow />
 </Cards>
+
+### Primitive types
+
+- `string`: utf8 string type
+- `boolean`: `true` or `false`
+- `number`: auto-detects the number type to use. (may use one extra byte when encoding)
+- `uint8`, `uint16`, `uint32`, `uint64`: unsigned number types.
+- `int8`, `int16`,  `int32`, `int64`: signed number types.
+- `float32`, `float64`: floating-point number types.
+
+#### Table of types and their limitations
+
+| Type | Description | Limitation |
+|------|-------------|------------|
+| `"string"` | utf8 strings | maximum byte size of `4294967295` |
+| `"number"` | also known as "varint". Auto-detects the number type to use. (may use one extra byte when encoding) | `0` to `18446744073709551615` |
+| `"boolean"` | `true` or `false` | `0` or `1` |
+
+Specialized number types:
+
+| Type | Description | Limitation |
+|------|-------------|------------|
+| `"int8"` | signed 8-bit integer | `-128` to `127` |
+| `"uint8"` | unsigned 8-bit integer | `0` to `255` |
+| `"int16"` | signed 16-bit integer | `-32768` to `32767` |
+| `"uint16"` | unsigned 16-bit integer | `0` to `65535` |
+| `"int32"` | signed 32-bit integer | `-2147483648` to `2147483647` |
+| `"uint32"` | unsigned 32-bit integer | `0` to `4294967295` |
+| `"int64"` | signed 64-bit integer | `-9223372036854775808` to `9223372036854775807` |
+| `"uint64"` | unsigned 64-bit integer | `0` to `18446744073709551615` |
+| `"float32"` | single-precision floating-point number | `-3.40282347e+38` to `3.40282347e+38`|
+| `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |
 
 ### `Schema` type
 
@@ -137,42 +169,6 @@ A `Schema` type can define properties as primitives, other `Schema` types, or co
 <Callout type="info">
     A `Schema` type may hold up to 64 synchronizable properties.
 </Callout>
-
-### Primitive types
-
-- `string`: utf8 string type
-- `boolean`: `true` or `false`
-- `number`: auto-detects the number type to use. (may use one extra byte when encoding)
-- `uint8`, `uint16`, `uint32`, `uint64`: unsigned number types.
-- `int8`, `int16`,  `int32`, `int64`: signed number types.
-- `float32`, `float64`: floating-point number types.
-
-<details>
-    <summary>**Table of types and their limitations**</summary>
-
-    <br />
-
-    | Type | Description | Limitation |
-    |------|-------------|------------|
-    | `"string"` | utf8 strings | maximum byte size of `4294967295` |
-    | `"number"` | also known as "varint". Auto-detects the number type to use. (may use one extra byte when encoding) | `0` to `18446744073709551615` |
-    | `"boolean"` | `true` or `false` | `0` or `1` |
-
-    Specialized number types:
-
-    | Type | Description | Limitation |
-    |------|-------------|------------|
-    | `"int8"` | signed 8-bit integer | `-128` to `127` |
-    | `"uint8"` | unsigned 8-bit integer | `0` to `255` |
-    | `"int16"` | signed 16-bit integer | `-32768` to `32767` |
-    | `"uint16"` | unsigned 16-bit integer | `0` to `65535` |
-    | `"int32"` | signed 32-bit integer | `-2147483648` to `2147483647` |
-    | `"uint32"` | unsigned 32-bit integer | `0` to `4294967295` |
-    | `"int64"` | signed 64-bit integer | `-9223372036854775808` to `9223372036854775807` |
-    | `"uint64"` | unsigned 64-bit integer | `0` to `18446744073709551615` |
-    | `"float32"` | single-precision floating-point number | `-3.40282347e+38` to `3.40282347e+38`|
-    | `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |
-</details>
 
 ### Array (`ArraySchema`)
 
