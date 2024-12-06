@@ -1,5 +1,6 @@
-import { Cards, Tabs } from 'nextra/components'
+import { Cards, Tabs, Steps } from 'nextra/components'
 import { javascript , typescript , unity , defold , construct3 , cocos , haxe } from '../components/icons/platforms'
+import { SyncIcon, RowsIcon } from '@primer/octicons-react'
 
 # Getting Started
 
@@ -20,6 +21,9 @@ Colyseus is unopinionated on the game engine or framework you use in the client-
 ## Server-side
 
 Creating your local development server is as simple as running a single command.
+
+<Steps>
+### Create your Colyseus server
 
 <Tabs items={['Node.js', 'Bun']}>
 
@@ -51,6 +55,13 @@ bun run src/index.ts
   </Tabs.Tab>
 </Tabs>
 
-### Next Steps
+### Edit your room code
 
-Go to `src/rooms/MyRoom.ts` and start building your game logic!
+Go to `src/rooms/MyRoom.ts` and start building your game logic! See more:
+
+<Cards>
+    <Cards.Card icon={<RowsIcon/>} title="Room API" href="/server/room" />
+    <Cards.Card icon={<SyncIcon/>} title="State Synchronization" href="/state" />
+</Cards>
+
+</Steps>
