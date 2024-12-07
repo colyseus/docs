@@ -1,0 +1,131 @@
+---
+title: Setup Server from Scratch with TypeScript
+---
+import { DownloadIcon } from '@primer/octicons-react'
+
+## Setup Server from Scratch with TypeScript
+
+This is a step by step guide for creating a colyseus server with typescript.
+
+### Requirements
+
+- [<DownloadIcon/> Download and Install Node.js](https://nodejs.org/)
+
+#### Setup
+
+Create a new empty directory.
+
+```sh filename="Terminal"
+mkdir colyseusServer
+```
+
+Go into the directory.
+
+```sh filename="Terminal"
+cd colyseusServer
+```
+
+Initialise npm with default options
+
+```sh npm2yarn
+npm init
+```
+
+Change the `"main"` and `"scripts"` property of the `package.json`.
+
+```json filename="package.json"
+{
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/main.ts",
+    "start:dev": "ts-node-dev --watch \"src/**/*\" --respawn --transpile-only src/main.ts ",
+    "start:prod": "node dist/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+}
+```
+
+Install Dependencies
+
+```sh npm2yarn
+npm i colyseus
+```
+
+Install Dev Dependencies
+
+```sh npm2yarn
+npm i --save-dev typescript ts-node-dev
+```
+
+Create a new file called `tsconfig.json` in the root of the project
+
+```json filename="tsconfig.json"
+{
+    "compilerOptions": {
+        "outDir": "./dist",
+        "module": "commonjs",
+        "lib": ["es6"],
+        "target": "es2016",
+        "declaration": true,
+        "removeComments": true,
+        "noImplicitAny": false,
+        "experimentalDecorators": true,
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "strict": true,
+        "allowJs": true,
+        "strictNullChecks": false,
+        "forceConsistentCasingInFileNames": true,
+        "useDefineForClassFields": false
+    },
+    "include": [
+      "src"
+    ]
+}
+```
+
+Create a new `src` directory
+
+```sh filename="Terminal"
+mkdir src
+```
+
+Create a new file called `main.ts` in the `src` directory
+
+```ts filename="src/main.ts"
+import { Server } from "colyseus"
+const port = parseInt(process.env.PORT, 10) || 3000
+
+const gameServer = new Server()
+gameServer.listen(port)
+console.log(`[GameServer] Listening on Port: ${port}`)
+```
+
+Congrats you finished the setup for a colyseus server.
+
+### Commands
+
+Now you can start the server with:
+
+```sh npm2yarn
+npm start
+```
+
+For development you can use the `start:dev` command. It automatically restarts the server when you change a file.
+
+```sh npm2yarn
+npm run start:dev
+```
+
+For production you first create a build.
+
+```sh npm2yarn
+npm run build
+```
+
+After that you can start the server with the `start:prod` command. This command uses the files which are created from the `build` command in the `dist` folder.
+
+```sh npm2yarn
+npm run start:prod
+```

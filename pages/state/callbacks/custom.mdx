@@ -1,0 +1,37 @@
+---
+title: "Advanced: Implement Your Own Callback System"
+---
+
+# Advanced: Implement Your Own Callback System
+
+The `@colyseus/schema` version `3.0` introduced a way to bring your own callback system during decoding.
+
+The standard way of attaching callbacks uses the same "flavor" as Colyseus is used to from previous versions. However, you can bring your own callback system by overriding the `Decoder`'s `triggerChanges` method.
+
+This is an example of how you can bring your own callback system:
+
+```ts filename="client.ts"
+import { Room, DataChange } from "@colyseus/schema";
+
+function getRawChangesCallback(room: Room, callback: (changes: DataChange[]) => void) {
+    room['serializer']['decoder'].triggerChanges = callback;
+
+    // .refs => contains a map of all Schema instances
+    room['serializer']['decoder'].root.refs
+
+    // .refIds => contains a map of all refIds by Schema instances
+    room['serializer']['decoder'].root.refIds
+
+    // .refCounts => contains a map of all reference counts by refId
+    room['serializer']['decoder'].root.refCounts
+}
+
+const room = await client.joinOrCreate("my_room");
+getRawChangesCallback(room, (changes) => {
+    console.log("raw list of changes", changes);
+});
+```
+
+On the above example, the raw list of changes is being printed to the console.
+
+You can see how the standard callback system is implemented [here](https://github.com/colyseus/schema/blob/3.0/src/decoder/strategy/StateCallbacks.ts).
