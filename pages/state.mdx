@@ -125,7 +125,7 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
     });
     ```
 
-    ### Client-side requests the server to mutate the state
+    ### Client-side: request the server to mutate the state
 
     The client-side is not capable of mutating the state directly. Instead, it sends messages to the server to request state changes.
 
@@ -136,7 +136,9 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
     room.send("set-position", { x: 16, y: 16 });
     ```
 
-    The server-side processes these messages and updates the state accordingly:
+    ### Server-side: listen to client messages
+
+    The server-side processes the client messages and mutates the state. Colyseus will take care of synchronizing the state with all clients in the room.
 
     ```ts {6-11} filename="src/rooms/MyRoom.ts"
     // ...
@@ -153,9 +155,9 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
         // ...
     ```
 
-    ### Client listens to state changes
+    ### Client-side: Listen to state changes
 
-    The client listens to state changes at the instance level to keep the user interface in sync:
+    The client listens to state changes at the direct instance to keep the user interface in sync.
 
     <Tabs items={["Using .onChange() on instance", "Using .listen() on property"]}>
         <Tabs.Tab>
