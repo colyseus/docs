@@ -588,25 +588,25 @@ this.allowReconnection (client, seconds)
 
     ```ts filename="MyRoom.ts"
     async onLeave (client: Client, consented: boolean) {
-    // flag client as inactive for other users
-    this.state.players.get(client.sessionId).connected = false;
+        // flag client as inactive for other users
+        this.state.players.get(client.sessionId).connected = false;
 
-    try {
-        if (consented) {
-            throw new Error("consented leave");
+        try {
+            if (consented) {
+                throw new Error("consented leave");
+            }
+
+            // allow disconnected client to reconnect into this room until 20 seconds
+            await this.allowReconnection(client, 20);
+
+            // client returned! let's re-activate it.
+            this.state.players.get(client.sessionId).connected = true;
+
+        } catch (e) {
+
+            // 20 seconds expired. let's remove the client.
+            this.state.players.delete(client.sessionId);
         }
-
-        // allow disconnected client to reconnect into this room until 20 seconds
-        await this.allowReconnection(client, 20);
-
-        // client returned! let's re-activate it.
-        this.state.players.get(client.sessionId).connected = true;
-
-    } catch (e) {
-
-        // 20 seconds expired. let's remove the client.
-        this.state.players.delete(client.sessionId);
-    }
     }
     ```
     </Tabs.Tab>
@@ -616,54 +616,54 @@ this.allowReconnection (client, seconds)
 
     ```ts filename="MyRoom.ts"
     async onLeave (client: Client, consented: boolean) {
-    // flag client as inactive for other users
-    this.state.players.get(client.sessionId).connected = false;
+        // flag client as inactive for other users
+        this.state.players.get(client.sessionId).connected = false;
 
-    try {
-        if (consented) {
-            throw new Error("consented leave");
-        }
+        try {
+            if (consented) {
+                throw new Error("consented leave");
+            }
 
-        //
-        // Get reconnection token
-        // NOTE: do not use `await` here yet
-        //
-        const reconnection = this.allowReconnection(client, "manual");
+            //
+            // Get reconnection token
+            // NOTE: do not use `await` here yet
+            //
+            const reconnection = this.allowReconnection(client, "manual");
 
-        //
-        // here is the custom logic for rejecting the reconnection.
-        // for demonstration purposes of the API, an interval is created
-        // rejecting the reconnection if the player has missed 2 rounds,
-        // (assuming he's playing a turn-based game)
-        //
-        // in a real scenario, you would store the `reconnection` in
-        // your Player instance, for example, and perform this check during your
-        // game loop logic
-        //
-        const currentRound = this.state.currentRound;
-        const interval = this.clock.setInterval(() => {
-        if ((this.state.currentRound - currentRound) > 2) {
-            // manually reject the client reconnection
-            reconnection.reject();
+            //
+            // here is the custom logic for rejecting the reconnection.
+            // for demonstration purposes of the API, an interval is created
+            // rejecting the reconnection if the player has missed 2 rounds,
+            // (assuming he's playing a turn-based game)
+            //
+            // in a real scenario, you would store the `reconnection` in
+            // your Player instance, for example, and perform this check during your
+            // game loop logic
+            //
+            const currentRound = this.state.currentRound;
+            const interval = this.clock.setInterval(() => {
+            if ((this.state.currentRound - currentRound) > 2) {
+                // manually reject the client reconnection
+                reconnection.reject();
+                interval.clear();
+            }
+            }, 1000);
+
+            // now it's time to `await` for the reconnection
+            await reconnection;
+
+            // clear the interval after successful reconnection.
+            // not doing so may lead to dangling intervals.
             interval.clear();
+
+            // client returned! let's re-activate it.
+            this.state.players.get(client.sessionId).connected = true;
+
+        } catch (e) {
+
+            // reconnection has been rejected. let's remove the client.
+            this.state.players.delete(client.sessionId);
         }
-        }, 1000);
-
-        // now it's time to `await` for the reconnection
-        await reconnection;
-
-        // clear the interval after successful reconnection.
-        // not doing so may lead to dangling intervals.
-        interval.clear();
-
-        // client returned! let's re-activate it.
-        this.state.players.get(client.sessionId).connected = true;
-
-    } catch (e) {
-
-        // reconnection has been rejected. let's remove the client.
-        this.state.players.delete(client.sessionId);
-    }
     }
     ```
     </Tabs.Tab>
