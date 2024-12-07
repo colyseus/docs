@@ -60,5 +60,7 @@ export class MyRoom extends Room<MyRoomState> {
 }
 ```
 
-!!! Warning
+<Callout type="warning">
     There is a small race in this code where two onCreate calls could randomly generate the same code before either of them register it. This will result in two rooms having the same ID. This race is extremely unlikely however (with 1 million active rooms and true randomness, it'd still be 1 in 15 trillion).
+</Callout>
+
