@@ -110,7 +110,7 @@ On this example, the `map` option is `"cs_assault"` during `onCreate()`, and `"d
 
 ### onAuth
 
-See the [Authentication](/auth) section for more details.
+The `onAuth` method is called before `onJoin`, and it is responsible for validating the client's request to join a room.
 
 <Tabs items={["Instance onAuth", "Static onAuth"]}>
     <Tabs.Tab>
@@ -134,6 +134,9 @@ See the [Authentication](/auth) section for more details.
     </Tabs.Tab>
 </Tabs>
 
+<Callout type="info">
+    See [Authentication](/auth/room) for more details.
+</Callout>
 
 ---
 
