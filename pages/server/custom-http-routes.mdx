@@ -1,0 +1,56 @@
+import { Callout, Cards, Tabs } from "nextra/components";
+
+# Custom HTTP/API Routes
+
+Colyseus uses Express as a web server by default.
+
+You may add custom routes to your server by defining them in the `initializeExpress` method of your server configuration.
+
+<Tabs items={["app.config.ts", "Server constructor"]}>
+
+    <Tabs.Tab>
+    ```ts {10-12} filename="app.config.ts"
+    import config from "@colyseus/tools";
+
+    export default config({
+        // ...
+        initializeExpress: (app) => {
+
+            //
+            // Define your custom routes here
+            //
+            app.get("/hello_world", (req, res) => {
+                res.json({ hello: "world" });
+            });
+
+        },
+        // ...
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts {11-13} filename="server.ts"
+    import { Server } from "colyseus";
+    import { createServer } from "http";
+    import express from "express";
+
+    const app = express();
+    app.use(express.json());
+
+    //
+    // Define your custom routes here
+    //
+    app.get("/hello_world", (req, res) => {
+        res.json({ hello: "world" });
+    });
+
+    const gameServer = new Server({ server: createServer(app) });
+    gameServer.listen(2567);
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    For more information about Express, check out the [Express guides](https://expressjs.com/en/guide/routing.html).
+</Callout>

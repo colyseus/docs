@@ -1,22 +1,23 @@
-# Colyseus Documentation
+# Nextra Docs Template 
 
-Documentation for [Colyseus](https://github.com/colyseus/colyseus/).
+This is a template for creating documentation with [Nextra](https://nextra.site).
 
-This project uses Markdown for documentation which is compiled with [mkdocs](http://www.mkdocs.org).
+[**Live Demo →**](https://nextra-docs-template.vercel.app)
 
-## Install and setup
+[![](.github/screenshot.png)](https://nextra-docs-template.vercel.app)
 
-```shell
-pip install -r requirements.txt
-```
+## Quick Start
 
-## Development
+Click the button to clone this repository and deploy it on Vercel:
 
-```
-mkdocs serve
-```
-## Docker
+[![](https://vercel.com/button)](https://vercel.com/new/clone?s=https%3A%2F%2Fgithub.com%2Fshuding%2Fnextra-docs-template&showOptionalTeamCreation=false)
 
-```
-docker run --rm -it -p 8000:8000 -v ${PWD}:/docs lucidsightinc/mkdocs-material
-```
+## Local Development
+
+First, run `pnpm i` to install the dependencies.
+
+Then, run `pnpm dev` to start the development server and visit localhost:3000.
+
+## License
+
+This project is licensed under the MIT License.

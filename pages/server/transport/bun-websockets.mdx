@@ -1,0 +1,63 @@
+---
+title: "Bun WebSockets"
+---
+import { Callout, Cards, Tabs } from "nextra/components";
+
+## Bun WebSockets
+
+Bun support on Colyseus is still experimental. Please report any issues you may find.
+
+### Installation
+
+```sh filename="Terminal"
+bun add @colyseus/bun-websockets
+```
+
+<Tabs items={["app.config.ts", "Server constructor"]}>
+    <Tabs.Tab>
+    ```ts {2,6-10} filename="app.config.ts"
+    import config from "@colyseus/tools";
+    import { BunWebSockets } from "@colyseus/bun-websockets"
+
+    export default config({
+      // ...
+      initializeTransport: function() {
+        return new BunWebSockets({
+            /* Bun.serve options */
+        });
+      },
+
+      //
+      // BunWebSockets comes with Express compatibility layer.
+      //
+      initializeExpress: (app) => {
+        // register routes
+        app.get("/hello", (req, res) => {
+          res.json({ hello: "world!" });
+        });
+      },
+      // ...
+    })
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts {2,5-7} filename="server.ts"
+    import { Server } from "@colyseus/core";
+    import { BunWebSockets } from "@colyseus/bun-websockets"
+
+    const gameServer = new Server({
+        transport: new BunWebSockets({
+            /* Bun.serve options */
+        })
+    })
+
+    const app = gameServer.transport['expressApp'];
+
+    // register routes
+    app.get("/hello", (req, res) => {
+        res.json({ hello: "world!" });
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
