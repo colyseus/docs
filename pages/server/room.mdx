@@ -6,7 +6,7 @@ import { SyncIcon } from '@primer/octicons-react'
 The `Room` class is meant to implement a game session, and/or serve as the communication channel between a group of clients.
 
 - Rooms are created **on demand** during matchmaking by default
-- Room classes must be exposed using [`.define()`](/server/api/#define-roomname-string-room-room-options-any)
+- Room classes must be exposed using [`.define()`](/server/#define-room-type)
 
 
 <Tabs items={["TypeScript", "JavaScript"]}>
@@ -66,7 +66,7 @@ The `Room` class is meant to implement a game session, and/or serve as the commu
 
 ### onCreate
 
-Called once, when the room is created by the matchmaker. `options` is the merged values specified on [Server#define()](/server/#define-room-type) with the options provided the client on [`client.join()`](/client#join-or-create-a-room).
+Called once, when the room is created by the matchmaker. `options` is the merged values specified on [Server#define()](/server/#define-room-type) with the options provided from the SDK at [`.joinOrCreate()`](/client#join-or-create-a-room) or [`.join()`](/client#join-existing-room).
 
 ```ts filename="MyRoom.ts"
 onCreate (options) {
@@ -143,9 +143,9 @@ Triggered when a client successfully joins the room, after a successful `onAuth`
 
 **Parameters:**
 
-- `client`: The [`client`](/server/client) instance.
-- `options`: merged values specified on [Server#define()](/server/api/#define-roomname-string-room-room-options-any) with the options provided the client on [`client.join()`](/client/#join-roomname-string-options-any)
-- `auth`: (optional) auth data returned by [`onAuth`](#onauth-client-options-request) method.
+- `client`: A reference to the client that joined the room.
+- `options`: merged values specified on [Server#define()](/server/#define-roomname-string-room-room-options-any) with the options provided by the SDK.
+- _(optional)_ `auth`: auth data returned by [`onAuth`](#onauth) method.
 
 ```ts filename="MyRoom.ts"
 async onJoin (client, options, auth?) {
@@ -155,11 +155,17 @@ async onJoin (client, options, auth?) {
 }
 ```
 
+<Callout type="info">
+    See Client SDK on [`.joinOrCreate()`](/client#join-or-create-a-room) and [`.join()`](/client#join-existing-room).
+</Callout>
+
 ---
 
 ### onLeave
 
-Triggered when a client leaves the room. If the disconnection was [initiated by the client](/client/client/#leave-consented-boolean), the `consented` parameter will be `true`, otherwise, it will be `false`.
+Triggered when a client leaves the room.
+
+If the client leaves the room by closing the browser tab, the `onLeave` method is called with `consented` set to `false`. If the client leaves the room by calling [`.leave()`](/client#leave-room), the `onLeave` method is called with `consented` set to `true`.
 
 ```ts filename="MyRoom.s"
 async onLeave (client, consented) {
@@ -241,7 +247,7 @@ onUncaughtException (err: Error, methodName: string) {
 
 ### onBeforePatch
 
-The `onBeforePatch` lifecycle hook is triggered before state synchronization, at patch rate frequency. (see [setPatchRate()](#setpatchrate-milliseconds))
+The `onBeforePatch` lifecycle hook is triggered before state synchronization, at patch rate frequency. (see [setPatchRate()](#set-patch-rate))
 
 ```ts filename="MyRoom.ts"
 onBeforePatch() {
@@ -257,7 +263,7 @@ onBeforePatch() {
 ### onCacheRoom (`devMode`)
 
 An optional hook to cache external data when [`devMode`](devmode) is enabled.
-(See [restoring data outside the room's state](devmode/#restoring-data-outside-the-rooms-state))
+(See [restoring data outside the room's state](/server/devmode#restoring-data-outside-the-rooms-state))
 
 ```ts filename="MyRoom.ts"
 export class MyRoom extends Room<MyRoomState> {
@@ -273,8 +279,7 @@ export class MyRoom extends Room<MyRoomState> {
 
 ### onRestoreRoom (`devMode`)
 
-An optional hook to reprocess/restore data which was returned and stored from the previous hook [`onCacheRoom`](/server/room/#oncacheroom-any) when [`devMode`](devmode) is enabled.
-(See [restoring data outside the room's state](devmode/#restoring-data-outside-the-rooms-state))
+An optional hook to reprocess/restore data which was returned and stored from the previous hook [`onCacheRoom`](/server/room/#oncacheroom-devmode) when [Development Mode](devmode) is enabled.
 
 ```ts filename="MyRoom.ts"
 export class MyRoom extends Room<MyRoomState> {
@@ -289,6 +294,10 @@ export class MyRoom extends Room<MyRoomState> {
   }
 }
 ```
+
+<Callout type="info">
+    See [Restoring data outside the room's `state`](/server/devmode#restoring-data-outside-the-rooms-state)
+</Callout>
 
 ---
 
@@ -368,7 +377,7 @@ onCreate () {
 ```
 
 <Callout type="info">
-    Use `room.send()` from the client SDK to send messages
+    Use `room.send()` from the client SDK to send messages to the server.
 </Callout>
 
 ---
@@ -382,7 +391,7 @@ Set the synchronizable room state. See [State Synchronization](/state/) and [Sch
 </Callout>
 
 <Callout type="warning">
-    Do not call `.setState()` for every update in the room state. The binary patch algorithm is reset at every call.
+    The room's `state` is **mutable**. You should not reassign the `state` object, but rather mutate it directly when updating the state.
 </Callout>
 
 ---
@@ -427,13 +436,13 @@ Set the room listing as private - or revert it to public, if `false` is provided
 this.setPrivate (bool)
 ```
 
-Private Rooms are not listed during [`getAvailableRooms()`](/client/#getavailablerooms-roomname-string) method.
+Private Rooms are not listed during [`getAvailableRooms()`](/client/#get-available-rooms) method.
 
 ---
 
 ### Set Metadata
 
-Set metadata to this room. Each room instance may have metadata attached to it - the only purpose for attaching metadata is to differentiate one room from another when getting the list of available rooms from the client-side, to connect to it by its `roomId`, using [`client.getAvailableRooms()`](/client#get-available-rooms).
+Set metadata to this room. Each room instance may have metadata attached to it - the only purpose for attaching metadata is to differentiate one room from another when getting the list of available rooms from the client-side, to connect to it by its `roomId`, using [`client.getAvailableRooms()`](/client/#get-available-rooms).
 
 ```ts filename="Signature"
 this.setMetadata (metadata)
@@ -470,7 +479,7 @@ client.getAvailableRooms("battle").then(rooms => {
 
 ### Set Seat Reservation Time
 
-Set the number of seconds a room can wait for a client to effectively join the room. You should consider how long your [`onAuth()`](#onauth-client-options-request) will have to wait for setting a different seat reservation time. The default value is 15 seconds.
+Set the number of seconds a room can wait for a client to effectively join the room. You should consider how long your [`onAuth()`](#onauth) will have to wait for setting a different seat reservation time. The default value is 15 seconds.
 
 ```ts filename="Signature"
 this.setSeatReservationTime (seconds)
@@ -490,7 +499,7 @@ this.broadcast (type, message, options?)
 
 Available options are:
 
-- **`except`**: a [`Client`](/server/client/), or array of `Client` instances not to send the message to
+- **`except`**: a [`Client`](/server/room#client/), or array of `Client` instances not to send the message to
 - **`afterNextPatch`**: waits until next patch to broadcast the message
 
 <Tabs items={["Broadcast to all", "Broadcast except for sender", "Broadcast after state patch"]}>
@@ -572,7 +581,7 @@ Allow the specified client to [`reconnect`](/client/#reconnect-reconnectiontoken
 this.allowReconnection (client, seconds)
 ```
 
-- **`client`**: the disconnecting [`Client`](/server/client/) instance
+- **`client`**: the disconnecting [`Client`](/server/room#client/) instance
 - **`seconds`**: number of seconds to wait for client to perform [`.reconnect()`](/client/#reconnect-roomid-string-sessionid-string), or `"manual"`, to allow for manual reconnection rejection (see second example)
 
 **Return type:**
@@ -732,7 +741,7 @@ You may replace `this.roomId` during `onCreate()`.
 
 ### `roomName`
 
-The name of the room you provided as first argument for [`gameServer.define()`](/server/api/#define-roomname-string-room-room-options-any).
+The name of the room you provided as first argument for [`gameServer.define()`](/server/#define-roomname-string-room-room-options-any).
 
 ---
 
@@ -859,7 +868,7 @@ onCreate() {
 
 The `client` instance from the server-side is responsible for the **transport** layer between the server and the client. It should not be confused with the [`Client` from the client-side SDK](/client/), as they have completely different purposes.
 
-You operate on `client` instances from [`this.clients`](#clients-client), [`Room#onJoin()`](#onjoin-client-options-auth), [`Room#onLeave()`](#onleave-client-consented) and [`Room#onMessage()`](#onmessage-type-callback).
+You operate on `client` instances from [`this.clients`](#clients), [`Room#onJoin()`](#onjoin), [`Room#onLeave()`](#onleave) and [`Room#onMessage()`](#onmessage).
 
 ### Properties
 
@@ -900,7 +909,7 @@ onLeave(client)  {
 
 #### `auth`
 
-The `client.auth` property holds the data returned by the [`onAuth()`](#onauth-client-options-request) method.
+The `client.auth` property holds the data returned by the [`onAuth()`](#onauth) method.
 
 ```ts filename="MyRoom.ts"
 onAuth(token, request) {
@@ -976,7 +985,7 @@ client.sendBytes(1, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 
 
 #### Send Error
 
-Send an error with code and message to the client. The client can handle it on [`onError`](/client/room/#onerror)
+Send an error with code and message to the client. The client can handle it on [`onError`](/client#onerror)
 
 ```ts filename="Signature"
 client.error(code, message)

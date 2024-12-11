@@ -6,7 +6,7 @@ The Colyseus `Server` instance holds the server configuration options, such as t
 
 - [**Transport**](/server/transport) is the layer for bidirectional communication between server and client.
 - [**Presence**](/server/presence) is the implementation that enables communication between rooms and/or Node.js processes.
-- [**Driver**](#optionsdriver) is the storage driver used for storing and querying rooms during matchmaking.
+- [**Driver**](/server/driver) is the storage driver used for storing and querying rooms during matchmaking.
 
 ## Overview
 
@@ -360,7 +360,34 @@ Default is `false`.
 
 Wether to register shutdown routine automatically. Default is `true`.
 
-If disabled, you should call [`gracefullyShutdown()`](#gracefullyshutdown-exit-boolean) method manually in your shutdown process.
+If disabled, you should call [`gracefullyShutdown()`](#gracefully-shutdown) method manually in your shutdown process.
+
+<Tabs items={["Recommended", "Raw usage"]}>
+    <Tabs.Tab>
+    ```ts {5-7} filename="app.config.ts"
+    import config from "@colyseus/tools";
+
+    export default config({
+        // ...
+        options: {
+            gracefullyShutdown: false
+        },
+        // ...
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts {5} filename="server.ts"
+    import { Server, RedisPresence } from "colyseus";
+
+    const gameServer = new Server({
+        // ...
+        gracefullyShutdown: false
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
 
 <Callout type="info">
     See [Graceful Shutdown](/server/graceful-shutdown/).
@@ -454,7 +481,7 @@ gameServer.define (roomName: string, room: Room, options?: any)
 
 - `roomName: string` - The public name of the room. You'll use this name when joining the room from the client-side
 - `room: Room` - The `Room` class
-- `options?: any` - Custom options for room initialization
+- _(optional)_ `options: any` - Custom options for room initialization
 
 ```ts
 // Define "chat" room
@@ -468,7 +495,7 @@ gameServer.define("battle_woods", BattleRoom, { map: "woods" });
 ```
 
 <Callout type="info">
-    You may define the same room handler multiple times with different `options`. When [Room#onCreate()](/server/room/#oncreate-options) is called, the `options` will contain the merged values you specified on [Server#define()](/server/api/#define-roomname-string-room-room-options-any) with the options provided by the client SDK.
+    You may define the same room handler multiple times with different `options`. When [Room#onCreate()](/server/room/#oncreate) is called, the `options` will contain the merged values you specified on [Server#define()](/server/#define-room-type) with the options provided by the client SDK.
 </Callout>
 
 ---
@@ -623,7 +650,7 @@ gameServer
 ```
 
 <Callout type="warning">
-    It is not encouraged to manipulate a room's state through these events. Use the [abstract methods](/server/room/#abstract-methods) in your room handler instead.
+    Use these events for logging and monitoring purposes only. It is not encouraged to manipulate a room's state through these events. Use the [Room's Lifecycle Events](/server/room#room-lifecycle-events) in your room handler instead.
 </Callout>
 
 ---
@@ -664,7 +691,7 @@ if (process.env.NODE_ENV !== "production") {
 
 ### Listen
 
-Binds the WebSocket server into the specified port.
+Binds the [Transport](/server/transport) layer into the specified port.
 
 <Tabs items={["Recommended", "Raw usage"]}>
     <Tabs.Tab>
@@ -688,7 +715,7 @@ Binds the WebSocket server into the specified port.
 
 ### onBeforeShutdown
 
-Register a custom callback that is called **before** the graceful shutdown routine starts. See [graceful shutdown](/server/graceful-shutdown/).
+Register a custom callback that is called **before** the Graceful Shutdown routine starts.
 
 ```ts filename="Signature"
 gameServer.onBeforeShutdown (callback: Function)

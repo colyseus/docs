@@ -723,7 +723,7 @@ For fine-grained control over state updates, you should use the [Client-side Cal
 
 #### `sessionId: string`
 
-Unique identifier for the current connected client. This property matches the [`client.sessionId`](/server/client/#sessionid-string) from the server-side.
+Unique identifier for the current connected client. This property matches the [`client.sessionId`](/server/room#client/#sessionid-string) from the server-side.
 
 ---
 
@@ -868,7 +868,7 @@ room.leave (consented: boolean)
     // consented leave
     room.leave();
 
-    // unconsented leave
+    // force unconsented leave
     room.leave(false);
     ```
     </Tabs.Tab>
@@ -1043,7 +1043,7 @@ This event is triggered when the server sends a message directly to the client, 
 </Tabs>
 
 <Callout type="info">
-    To send a message from the server directly to the clients you'll need to use either [client.send()](/server/client/#sendtype-message) or [room.broadcast()](/server/room/#broadcast-type-message-options)
+    To send a message from the server directly to the clients you'll need to use either [client.send()](/server/room#client/#sendtype-message) or [room.broadcast()](/server/room/#broadcast-type-message-options)
 </Callout>
 
 ---
