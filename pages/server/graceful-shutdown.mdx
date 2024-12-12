@@ -1,88 +1,127 @@
+import { Callout, Steps, Tabs } from "nextra/components";
+
 # Graceful Shutdown Process
 
 Colyseus listens for `SIGTERM` and `SIGINT` signals to gracefully shut down the process.
 
-!!! Note "The Graceful Shutdown behaviour has been improved on `@colyseus/core` version `0.15.55`"
-    The step to exclude from matchmaking, lock rooms and calling a custom `room.onBeforeShutdown()` method has been introduced on version `@colyseus/core@0.15.55`.
-
 These actions will be performed, in order, before the process is killed:
 
-1. The custom [`gameServer.onBeforeShutdown()`](/server/#onbeforeshutdown-callback-function) is called, if defined.
-2. The process is excluded from match-making.
-3. All existing rooms are locked  ([`room.lock()`](/server/room/#lock)),
-4. All rooms [`room.onBeforeShutdown()`](/server/room/#onbeforeshutdown) is called.
-    - You may override `room.onBeforeShutdown()` to perform custom actions before the room is disposed.
-    - By default, `room.onBeforeShutdown()` simply calls `room.disconnect()`, which will trigger `room.onLeave()` for all clients, and then `room.onDispose()`.
-5. The server waits for all rooms to be disposed (room count must be zero).
-6. The Transport, Presence, and Driver are closed and disconnected.
-7. The custom [`gameServer.onShutdown()`](/server/#onshutdown-callback-function) is called, if defined.
+<Steps>
+    ### Server: On Before Shutdown
 
-You may use `async` functions or return a `Promise` to perform asynchronous operations on `onLeave` and `onDispose` methods, as well as `gameServer.onBeforeShutdown()` and `gameServer.onShutdown()`.
+    The custom `gameServer.onBeforeShutdown()` is called, if defined.
+
+    <Callout type="info">
+        See [Server API → On Before Shutdown](/server/#onbeforeshutdown)
+    </Callout>
+
+    ### Process is excluded from match-making.
+
+    The process is not going to be selected for new room creations anymore.
+
+    <Callout type="info">
+        See [Server API → Select Process ID to Create Room](/server#select-process-id-to-create-room)
+    </Callout>
+
+    ### Rooms are locked
+
+    All existing rooms are locked via `room.lock()`
+
+    <Callout type="info">
+        See [Room API → Lock Room](/server/room/#lock)
+    </Callout>
+
+    ### Room: On Before Shutdown
+
+    All rooms `room.onBeforeShutdown()` is called.
+
+    You may override this method to perform custom actions that will result in the room being disposed in a few minutes. By default, it simply calls `room.disconnect()`, which will trigger `room.onLeave()` for all clients, and then `room.onDispose()` almost immediately.
+
+    <Callout type="info">
+        See [Room API → On Before Shutdown](/server/room/#onbeforeshutdown)
+    </Callout>
+
+    ### (...) wait until all rooms are disposed
+
+    The server waits for local room count to be zero before proceeding to the next step.
+
+    <Callout type="info">
+        See [Matchmaker → Get Local Room Count](/server/matchmaker#get-local-ccu)
+    </Callout>
+
+    ### Close Transport, Presence, and Driver
+
+    The [Transport](/server/transport), [Presence](/server/presence), and [Driver](/server/driver) are closed and disconnected.
+
+    ### Server: On Shutdown
+
+    The custom `gameServer.onShutdown()` is called, if defined.
+
+    At this point there is no more rooms or clients connected to the server.
+
+    <Callout type="info">
+        See [Server API → On Shutdown](/server/#onshutdown)
+    </Callout>
+
+    ### Process is killed
+
+    The process is killed after all the steps above are completed.
+</Steps>
 
 ---
 
-## Returning a `Promise`
+You may use `async` functions or return a `Promise` to perform asynchronous operations on `onLeave` and `onDispose` methods, as well as `gameServer.onBeforeShutdown()` and `gameServer.onShutdown()`.
 
-By returning a `Promise`, the server will wait for them to be completed before killing the worker process.
+<Tabs items={["Returning a Promise", "Using async"]}>
+    <Tabs.Tab>
+        By returning a `Promise`, the server will wait for them to be completed before killing the worker process.
 
-```ts filename="MyRoom.ts"
-import { Room } from "colyseus";
+        ```ts {5,17} filename="MyRoom.ts"
+        import { Room } from "colyseus";
 
-class MyRoom extends Room {
-    onLeave (client) {
-        return new Promise((resolve, reject) => {
-            doDatabaseOperation((err, data) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(data);
-                }
-            });
-        });
-    }
+        class MyRoom extends Room {
+            onLeave (client) {
+                return new Promise((resolve, reject) => {
+                    doDatabaseOperation((err, data) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(data);
+                        }
+                    });
+                });
+            }
 
-    onDispose () {
-        return new Promise((resolve, reject) => {
-            doDatabaseOperation((err, data) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve(data);
-                }
-            });
-        });
-    }
-}
-```
+            onDispose () {
+                return new Promise((resolve, reject) => {
+                    doDatabaseOperation((err, data) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(data);
+                        }
+                    });
+                });
+            }
+        }
+        ```
+    </Tabs.Tab>
 
-## Using `async`
+    <Tabs.Tab>
+        The `async` keyword will make your function return a `Promise` under the hood. [Read more about Async / Await](https://basarat.gitbook.io/typescript/future-javascript/async-await).
 
-The `async` keyword will make your function return a `Promise` under the hood. [Read more about Async / Await](https://basarat.gitbook.io/typescript/future-javascript/async-await).
+        ```ts {4,8} filename="MyRoom.ts"
+        import { Room } from "colyseus";
 
-```ts filename="MyRoom.ts"
-import { Room } from "colyseus";
+        class MyRoom extends Room {
+            async onLeave (client) {
+                await doDatabaseOperation(client);
+            }
 
-class MyRoom extends Room {
-    async onLeave (client) {
-        await doDatabaseOperation(client);
-    }
-
-    async onDispose () {
-        await removeRoomFromDatabase();
-    }
-}
-```
-
-## Process shutdown callback
-
-You can also listen for process shutdown by setting a `onShutdown` callback.
-
-```ts filename="server.ts"
-import { Server } from "colyseus";
-
-const gameServer = new Server();
-
-gameServer.onShutdown(function () {
-    console.log("process has shut down!");
-});
-```
+            async onDispose () {
+                await removeRoomFromDatabase();
+            }
+        }
+        ```
+    </Tabs.Tab>
+</Tabs>
