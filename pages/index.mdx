@@ -6,7 +6,7 @@ toc: false
 import Image from 'next/image'
 import { Bleed } from 'nextra-theme-docs'
 import { Callout, Steps, Tabs, Cards } from 'nextra/components'
-import { CodeIcon, PeopleIcon, SyncIcon, ServerIcon, CloudIcon, DownloadIcon } from '@primer/octicons-react'
+import { CodeIcon, PeopleIcon, SyncIcon, ServerIcon, CloudIcon, DownloadIcon, RepoIcon, FileCodeIcon } from '@primer/octicons-react'
 
 <Image src={require('../images/hero.png')} width={0} height={0} style={{ width: '100%', height: 'auto' }} alt="Colyseus Hero Image" />
 
@@ -157,8 +157,13 @@ async function connect() {
 connect();
 ```
 
-### Explore more features
+### Explore more
 
-...
+Explore more about Colyseus by following the tutorials and example projects:
+
+<Cards>
+    <Cards.Card icon={<FileCodeIcon/>} title="Tutorials" href="/tutorial" arrow />
+    <Cards.Card icon={<RepoIcon/>} title="Example Projects" href="/examples" arrow />
+</Cards>
 
 </Steps>
