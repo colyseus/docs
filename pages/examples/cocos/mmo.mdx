@@ -116,11 +116,12 @@ When a client sends a message, it's added to the ChatRoomState's ChatQueue, trig
 
 ### Player Persistence
 
-!!! tip "User Authentication Note"
+<Callout type="info">
     This demo makes use of a very basic user authentication system with the intent of having
     player persistence for unique user accounts and **should NOT be used as a real
     world example** of how to implement user authentication as a whole.
     **Do NOT use any email and password combination you actually use anywhere else.**
+</Callout>
 
 In this demo, unique player accounts are persisted in a database in order to keep track of a player's progress (which room they are currently in and which room they were in last), position, coin balance, and more.
 A player account is necessary to play this demo. With successful user authentication, a seat reservation for a room is sent back to the client. The session Id of that seat reservation is saved to the player's account entry in the database as a "pendingSessionId". When the client attempts to consume the seat reservation, in order to join the room, a player account look up operation using the "pendingSessionId" is performed in the "onAuth" handler of the room. If no player account with a matching "pendingSessionId" exists, the client will not be allowed to join the room. However, with a successful player account look up, the "pendingSessionId" will become an "activeSessionId" and the client will join the room.

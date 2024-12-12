@@ -85,12 +85,15 @@ This is the implemented grid map for this demo. The non-green grid spaces contai
 ![ChatScreenshot](/examples/unity/mmo/chatScreenshot.PNG)
 An additional ColyseusRoom is used to handle the Chat system: `ChatRoom.ts`. In both the client and the server, anywhere we join or leave an MMORoom we also join or leave a ChatRoom. These ChatRooms are filtered by `roomId` which is the ID of the MMORoom it is connected to.
 When a client sends a message, it's added to the ChatRoomState's ChatQueue, triggering a state change on all connected clients. Every new message that comes in receives a `timeStamp` value, after which it will be removed from the queue.
+
 ### Player Persistence
-!!! tip "User Authentication Note"
-		This demo makes use of a very basic user authentication system with the intent of having
-		player persistence for unique user accounts and should NOT be used as a real
-		world example of how to implement user authentication as a whole.
-		Do NOT use any email and password combination you actually use anywhere else.
+
+<Callout type="info">
+    This demo makes use of a very basic user authentication system with the intent of having
+    player persistence for unique user accounts and should NOT be used as a real
+    world example of how to implement user authentication as a whole.
+    Do NOT use any email and password combination you actually use anywhere else.
+</Callout>
 
 In this demo, unique player accounts are persisted in a database in order to keep track of a player's progress (which room they are currently in and which room they were in last), position, coin balance, and more.
 A player account is necessary to play this demo. With successful user authentication, a seat reservation for a room is sent back to the client.  The session Id of that seat reservation is saved to the player's account entry in the database as a "pendingSessionId". When the client attempts to consume the seat reservation, in order to join the room, a player account look up operation using the "pendingSessionId" is performed in the "onAuth" handler of the room. If no player account with a matching "pendingSessionId" exists, the client will not be allowed to join the room. However, with a successful player account look up, the "pendingSessionId" will become an "activeSessionId" and the client will join the room.
