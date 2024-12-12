@@ -11,6 +11,12 @@ These actions will be performed, in order, before the process is killed:
 
     The custom `gameServer.onBeforeShutdown()` is called, if defined.
 
+    ```ts filename="app.config.ts"
+    gameServer.onBeforeShutdown(async () => {
+        // (...) custom logic
+    });
+    ```
+
     <Callout type="info">
         See [Server API → On Before Shutdown](/server/#onbeforeshutdown)
     </Callout>
@@ -25,7 +31,7 @@ These actions will be performed, in order, before the process is killed:
 
     ### Rooms are locked
 
-    All existing rooms are locked via `room.lock()`
+    The rooms handled by this process are locked via `room.lock()`.
 
     <Callout type="info">
         See [Room API → Lock Room](/server/room/#lock)
@@ -36,6 +42,20 @@ These actions will be performed, in order, before the process is killed:
     All rooms `room.onBeforeShutdown()` is called.
 
     You may override this method to perform custom actions that will result in the room being disposed in a few minutes. By default, it simply calls `room.disconnect()`, which will trigger `room.onLeave()` for all clients, and then `room.onDispose()` almost immediately.
+
+    ```ts filename="MyRoom.ts"
+    onBeforeShutdown() {
+        //
+        // Notify users that process is shutting down, they may need to save their progress and join a new room
+        //
+        this.broadcast("going-down", "Server is shutting down. Please save your progress and join a new room.");
+
+        //
+        // Disconnect all clients after 5 minutes
+        //
+        this.clock.setTimeout(() => this.disconnect(), 5 * 60 * 1000);
+    }
+    ```
 
     <Callout type="info">
         See [Room API → On Before Shutdown](/server/room/#onbeforeshutdown)
@@ -58,6 +78,12 @@ These actions will be performed, in order, before the process is killed:
     The custom `gameServer.onShutdown()` is called, if defined.
 
     At this point there is no more rooms or clients connected to the server.
+
+    ```ts filename="app.config.ts"
+    gameServer.onShutdown(async () => {
+        // (...) custom logic
+    });
+    ```
 
     <Callout type="info">
         See [Server API → On Shutdown](/server/#onshutdown)
