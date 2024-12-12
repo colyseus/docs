@@ -1,86 +1,27 @@
 import { Tabs, Steps, Cards } from "nextra/components"
 import { CloudIcon, RocketIcon, StackIcon } from "@primer/octicons-react"
 
+<Callout type="warning">
+    Consider using [Colyseus Cloud](https://cloud.colyseus.io/) to easily deploy and scale your Colyseus servers.
+</Callout>
+
 <Cards>
     <Cards.Card icon={<StackIcon/>} title="Scalability" href="/deployment/scalability" />
     <Cards.Card icon={<CloudIcon/>} title="Colyseus Cloud" href="/deployment/cloud" />
 </Cards>
 
+Deploying Colyseus is no different than deploying a regular Node.js application - [see a good article here](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-20-04).
+
+However, scaling Colyseus to use multiple processes requires extra steps. See [Deployment → Scalability](/deployment/scalability).
+
 # Deploying your Colyseus server
 
-- [Colyseus Cloud](#colyseus-cloud-managed-hosting)
+- [Colyseus Cloud](/deployment/cloud)
 - [Self-hosting on Vultr](#self-hosting-on-vultr)
 - [Nginx configuration](#nginx-configuration)
 - [Apache configuration](#apache-configuration)
 - [Docker](#docker)
 - [Heroku](#heroku)
-
-Deploying Colyseus is no different than deploying a regular Node.js application - [see a good article here](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-20-04).
-
-However, scaling Colyseus to use multiple processes requires [extra steps](/deployment/scalability).
-
-## Colyseus Cloud - Managed Hosting
-
-The easiest way to deploy your Colyseus server is to use the [Colyseus Cloud](https://cloud.colyseus.io). It should take less than 15 minutes to get your server up and ready for production.
-
-Colyseus Cloud uses NGINX, PM2, and requires you to use the `@colyseus/tools`
-package for easy integration with its infrastructure.
-
-See the configuration required for deploying on Colyseus Cloud:
-
-<Tabs items={["src/index.ts", "src/app.config.ts", "ecosystem.config.js"]}>
-    <Tabs.Tab>
-
-    ```ts filename="src/index.ts"
-    import { listen } from "@colyseus/tools";
-
-    // Import Colyseus config
-    import app from "./app.config";
-
-    // Create and listen on 2567 (or PORT environment variable.)
-    listen(app);
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts filename="src/app.config.ts"
-    import config from "@colyseus/tools";
-    import { MyRoom } from "./rooms/MyRoom";
-
-    export default config({
-        initializeGameServer: (gameServer) => {
-            gameServer.define("my_room", MyRoom)
-        },
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="ecosystem.config.js"
-    const os = require('os');
-
-    module.exports = {
-      apps : [{
-        name: "colyseus-app",
-        script: 'build/index.js',
-        time: true,
-        watch: false,
-        instances: os.cpus().length,
-        exec_mode: 'fork',
-        wait_ready: true,
-        env_production: {
-          NODE_ENV: 'production'
-        }
-      }],
-    };
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-
-The [`create-colyseus-app` templates](https://github.com/colyseus/create-colyseus-app/tree/master/templates) are ready for deployment on Colyseus Cloud.
-
----
 
 ## Self-hosting on [Vultr](https://www.vultr.com/?ref=9632185-9J)
 

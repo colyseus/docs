@@ -1,12 +1,17 @@
 ---
 title: Colyseus Cloud
 ---
-import { Tabs } from "nextra/components"
+import { Tabs, FileTree } from "nextra/components"
 import { Bleed } from "nextra-theme-docs"
 
 # Colyseus Cloud - Premium Managed Hosting
 
-[Colyseus Cloud](https://cloud.colyseus.io/) provides a managed infrastructure for your Colyseus application.
+[Colyseus Cloud](https://cloud.colyseus.io/) provides a managed infrastructure for your Colyseus application, made by the same team behind Colyseus Framework.
+
+It is the easiest way to deploy your Colyseus servers. It should take less than 15 minutes to get your server up and ready for production.
+
+Colyseus Cloud uses NGINX, PM2, and requires you to use the `@colyseus/tools`
+package for easy integration with its infrastructure.
 
 <Bleed>
     ![Colyseus Cloud Dashboard](/cloud/dashboard.png)
@@ -110,6 +115,8 @@ This will generate a `.colyseus-cloud.json` file at the root of your project wit
 
 By default, Colyseus Cloud is going to build your server-side code using the `build` script from your `package.json` file:
 
+You may customize how your server-side is built by updating the **"Build Command"** in your Colyseus Cloud application settings, under **"Build settings"**.
+
 ```json filename="package.json"
 {
   "scripts": {
@@ -117,5 +124,3 @@ By default, Colyseus Cloud is going to build your server-side code using the `bu
   }
 }
 ```
-
-You can customize how your server-side code is built by updating the **"Build Command"** in your Colyseus Cloud application settings, under **"Build settings"**.
