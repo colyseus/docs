@@ -755,14 +755,15 @@ gameServer.onShutdown(async () => {
 
 ### Gracefully Shutdown
 
-Shutdown all rooms and clean-up its cached data. Returns a promise that fulfils
-whenever the clean-up has been complete.
+Triggers the Graceful Shutdown routine.
 
-```ts filename="Signature"
-gameServer.gracefullyShutdown (exit: boolean)
+```ts filename="app.config.ts"
+gameServer.gracefullyShutdown();
 ```
 
-This method is called automatically unless `gracefullyShutdown: false` has been provided on `Server` constructor.
+This method is called automatically when the process received `SIGINT` or `SIGTERM` signal.
+
+If `gracefullyShutdown: false` has been provided on `Server` constructor, you should call this method manually.
 
 <Callout type="info">
     See [Graceful Shutdown](/server/graceful-shutdown/).
