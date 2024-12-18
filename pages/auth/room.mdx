@@ -22,6 +22,8 @@ If left non-implemented, it always returns `true` - allowing any client to conne
     <Tabs.Tab>
     The `static onAuth` is recommended because it does not require the room instance to be created before authenticating the client.
 
+
+
     <Callout type="info">
         If you need to access the room instance during the authentication process, you can use the instance `onAuth` method instance.
     </Callout>
@@ -31,7 +33,7 @@ If left non-implemented, it always returns `true` - allowing any client to conne
     import { JWT } from "@colyseus/auth";
 
     class MyRoom extends Room {
-        static async onAuth (token, request) {
+        static async onAuth (token, options, context) {
             // validate the token
             const userdata = await JWT.verify(token);
 
@@ -54,10 +56,9 @@ If left non-implemented, it always returns `true` - allowing any client to conne
     import { JWT } from "@colyseus/auth";
 
     class MyRoom extends Room {
-        async onAuth (client, options, request) {
+        async onAuth (client, options, context) {
             // validate the token
-            const authorization = request.headers.authorization;
-            const userdata = await JWT.verify(authorization.substring(7, authorization.length));
+            const userdata = await JWT.verify(context.token);
 
             // return userdata
             return userdata;
@@ -66,6 +67,46 @@ If left non-implemented, it always returns `true` - allowing any client to conne
     ```
     </Tabs.Tab>
 </Tabs>
+
+### `onAuth` context parameter
+
+The third argument of the `onAuth` method is the `context` object. Both `static onAuth` and `onAuth` methods receive the same `context` object as the third argument.
+
+The `context` object has the following properties:
+
+- `token` - the authentication token sent by the client.
+- `headers` - the headers sent by the client.
+- `ip` - the IP address of the client.
+
+#### Accessing the Auth Token
+
+```ts {3} filename="src/rooms/MyRoom.ts"
+// ...
+async onAuth(client, options, context) {
+    console.log(context.token);
+}
+// ...
+```
+
+#### Accessing the request headers
+
+```ts {3} filename="src/rooms/MyRoom.ts"
+// ...
+async onAuth(client, options, context) {
+    console.log(context.headers);
+}
+// ...
+```
+
+#### Accessing the client IP address
+
+```ts {3} filename="src/rooms/MyRoom.ts"
+// ...
+async onAuth(client, options, context) {
+    console.log(context.ip);
+}
+// ...
+```
 
 ## Server-side: `onJoin` method
 
