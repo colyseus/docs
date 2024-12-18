@@ -80,6 +80,69 @@ It is required to provide the following environment variables to your applicatio
     - Rotating `SESSION_SECRET` will invalidate all session cookies. (only used during OAuth flow)
 </Callout>
 
+### Backend Configuration
+
+Create a configuration file for the `@colyseus/auth` module. The following example shows how to configure the module to use a fake database. You should replace the methods with your own database queries.
+
+```ts filename="src/config/auth.ts"
+import { auth } from "@colyseus/auth";
+
+auth.backend_url = "http://localhost:2567";
+
+const fakeDatabase = [];
+
+auth.settings.onFindUserByEmail = async function (email) {
+    return fakeDatabase.find((entry) => entry.email === email);
+}
+
+auth.settings.onRegisterWithEmailAndPassword = async function (email, password, options) {
+    const entry = { email, password, ...options };
+    fakeDatabase.push(entry);
+    return entry;
+}
+
+auth.settings.onRegisterAnonymously = async function (options) {
+    const anonymousEntry = { anonymous: true, ...options };
+    return anonymousEntry;
+}
+
+auth.settings.onForgotPassword = async function (email: string, html: string/* , resetLink: string */) {
+    await resend.emails.send({
+        to: email,
+        subject: '[Your project]: Reset password',
+        from: 'xxx@your-game.io',
+        html: html
+    });
+}
+
+auth.settings.onResetPassword = async function (email: string, password: string) {
+    const entry = fakeDatabase.find((entry) => entry.email === email);
+    entry.password = password;
+    return true;
+}
+
+auth.settings.onSendEmailConfirmation = async function(email, html, link) {
+    await resend.emails.send({
+        to: email,
+        subject: '[Your project]: Confirm your email address',
+        from: 'no-reply@your-game.io',
+        html: html
+    });
+}
+
+auth.settings.onEmailConfirmed = async function(email) {
+    const entry = fakeDatabase.find((entry) => entry.email === email);
+    entry.verified = true;
+    return true;
+}
+
+auth.oauth.addProvider('discord', {
+    key: "XXXXXXXXXXXXXXXXXX", // Client ID
+    secret: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", // Client Secret
+    scope: ['identify', 'email'],
+});
+```
+
 </Steps>
 
 ---
@@ -353,6 +416,27 @@ client.auth.token = "xxxx";
 ---
 
 ## Backend API
+
+### Backend URL
+
+The public backend URL. Setting `auth.backend_url` is recommeded for security. The value is auto-detected upon the first request if not set.
+
+The backend URL is used to:
+
+- Redirect the user to reset their password
+- Redirect the user to confirm their email address
+- Build the OAuth provider's callback URL
+
+ ```ts filename="src/config/auth.ts"
+import { auth } from "@colyseus/auth";
+
+if (process.env.NODE_ENV === "production") {
+    auth.backend_url = "https://your-game.io";
+
+} else {
+    auth.backend_url = "http://localhost:2567";
+}
+```
 
 ### Email/Password Authentication
 
