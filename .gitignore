@@ -1,6 +1,5 @@
-site
-src
-.DS_Store
-.vscode
-*.log
+.next
+out
+node_modules
 .cache
+.DS_Store

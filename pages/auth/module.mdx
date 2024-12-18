@@ -1,0 +1,871 @@
+---
+title: "Auth Module"
+---
+import { Callout, Tabs, Steps, Cards, FileTree } from 'nextra/components'
+import { DevicesIcon, GearIcon, LinkIcon, MailIcon, GlobeIcon } from '@primer/octicons-react';
+
+# Auth Module
+
+<Callout type="warning">
+    This module is in beta - Feedback is welcome on [colyseus/colyseus#660](https://github.com/colyseus/colyseus/issues/660).
+</Callout>
+
+The `@colyseus/auth` module is highly configurable and allows you to implement your own authentication backend.
+
+It does not provide a database or email sending capabilities, but it provides a set of callbacks that you can implement to query your database, send emails, and handle OAuth providers.
+
+<Cards>
+    <Cards.Card icon={<DevicesIcon/>} title="Client-side API" href="#client-side-api" arrow />
+    <Cards.Card icon={<GearIcon/>} title="Backend API" href="#backend-api" arrow />
+</Cards>
+
+## Features
+
+- Client-side APIs (via `client.auth`)
+- Email/Password Authentication
+- Anonymous Authentication
+- Forgot Password + Password Reset
+- OAuth 2.0 providers (_200+ supported providers, including Discord, Google, Twitter, etc._)
+
+<Callout type="info">
+    **Example Project** - The [Webgame Template](https://github.com/colyseus/webgame-template) project contains a complete usage example of `@colyseus/auth` for both server-side and client-side.
+</Callout>
+
+## Installation
+
+Install the `@colyseus/auth` module:
+
+```sh npm2yarn
+npm install --save @colyseus/auth
+```
+
+<Steps>
+### Bind the `auth` routes to Express
+
+    ```ts filename="src/app.config.ts"
+    import { auth } from "@colyseus/auth";
+
+    export default config({
+    // ...
+        initializeExpress: (app) => {
+            // ...
+            app.use(auth.prefix, auth.routes());
+            // ...
+        },
+    // ...
+    });
+    ```
+
+### Required Environment Secrets
+
+It is required to provide the following environment variables to your application:
+
+- `AUTH_SALT` - Used to hash the user's password. ([`scrypt` algorithm is used by default](#on-hash-password))
+- `JWT_SECRET` - Used to sign the JWT token.
+- `SESSION_SECRET` - Used to sign the session cookie. (only used during OAuth flow)
+
+<Callout type="info">
+    **How to generate a random string** - You may use the following command to generate a random string `openssl rand -base64 32`. Alternatively, you can use [an online strong password generator](https://1password.com/password-generator/).
+</Callout>
+
+<Callout type="error" emoji="🚨">
+    **Keep Your Secrets Safe!**
+
+    The exposure of these secrets may lead to security breaches on your application. Make sure to never expose them publicly, and limit the number of people in your team who have access to them.
+
+    If any of these secrets are compromised, you must rotate them immediately. The implications of rotating them are:
+
+    - Rotating `AUTH_SALT` will invalidate all user's passwords. Users will need to reset their password.
+    - Rotating `JWT_SECRET` will invalidate all JWT tokens. Users will need to login again.
+    - Rotating `SESSION_SECRET` will invalidate all session cookies. (only used during OAuth flow)
+</Callout>
+
+### Backend Configuration
+
+Create a configuration file for the `@colyseus/auth` module. The following example shows how to configure the module to use a fake database. You should replace the methods with your own database queries.
+
+```ts filename="src/config/auth.ts"
+import { auth } from "@colyseus/auth";
+
+auth.backend_url = "http://localhost:2567";
+
+const fakeDatabase = [];
+
+auth.settings.onFindUserByEmail = async function (email) {
+    return fakeDatabase.find((entry) => entry.email === email);
+}
+
+auth.settings.onRegisterWithEmailAndPassword = async function (email, password, options) {
+    const entry = { email, password, ...options };
+    fakeDatabase.push(entry);
+    return entry;
+}
+
+auth.settings.onRegisterAnonymously = async function (options) {
+    const anonymousEntry = { anonymous: true, ...options };
+    return anonymousEntry;
+}
+
+auth.settings.onForgotPassword = async function (email: string, html: string/* , resetLink: string */) {
+    await resend.emails.send({
+        to: email,
+        subject: '[Your project]: Reset password',
+        from: 'xxx@your-game.io',
+        html: html
+    });
+}
+
+auth.settings.onResetPassword = async function (email: string, password: string) {
+    const entry = fakeDatabase.find((entry) => entry.email === email);
+    entry.password = password;
+    return true;
+}
+
+auth.settings.onSendEmailConfirmation = async function(email, html, link) {
+    await resend.emails.send({
+        to: email,
+        subject: '[Your project]: Confirm your email address',
+        from: 'no-reply@your-game.io',
+        html: html
+    });
+}
+
+auth.settings.onEmailConfirmed = async function(email) {
+    const entry = fakeDatabase.find((entry) => entry.email === email);
+    entry.verified = true;
+    return true;
+}
+
+auth.oauth.addProvider('discord', {
+    key: "XXXXXXXXXXXXXXXXXX", // Client ID
+    secret: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", // Client Secret
+    scope: ['identify', 'email'],
+});
+```
+
+</Steps>
+
+---
+
+## Client-side API
+
+### Register With Email and Password
+
+Register a new user with email/password and return userdata. The user will be automatically logged in after registration. This method modifies the `client.auth.token` property.
+
+```ts filename="Signature"
+client.auth.registerWithEmailAndPassword(email, password, options?) => Promise<UserData>
+```
+
+The `options` argument may contain user data you can use when creating the user's account.
+
+<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
+    <Tabs.Tab>
+    ```js
+    try {
+        const userdata = await client.auth.registerWithEmailAndPassword(email, password);
+        console.log(userdata);
+
+    } catch (e) {
+        console.error(e.message);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts filename="src/config/auth.ts"
+    import { auth } from "@colyseus/auth";
+    // ...
+
+    auth.settings.onFindUserByEmail = async function (email) {
+        return await User.query().selectAll().where("email", "=", email).executeTakeFirst();
+    }
+
+    auth.settings.onRegisterWithEmailAndPassword = async function (email, password, options) {
+        return await User.insert({ name, email, password, });
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+
+### Sign In With Email and Password
+
+Sign in with email/password and return userdata. This method modifies the `client.auth.token` property.
+
+```ts filename="Signature"
+client.auth.signInWithEmailAndPassword(email, password) => Promise<UserData>
+```
+
+<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
+    <Tabs.Tab>
+    ```js filename="client.js"
+    try {
+        const userdata = await client.auth.signInWithEmailAndPassword(email, password);
+        console.log(userdata);
+
+    } catch (e) {
+        console.error(e.message);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts filename="src/config/auth.ts"
+    import { auth } from "@colyseus/auth";
+    // ...
+
+    auth.settings.onFindUserByEmail = async function (email) {
+        return await User.query().selectAll().where("email", "=", email).executeTakeFirst();
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+### Sign In Anonymously
+
+Sign in anonymously and return anonymous userdata. This method modifies the `client.auth.token` property.
+
+```ts filename="Signature"
+client.auth.signInAnonymously(options?) => Promise<UserData>
+```
+
+<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
+    <Tabs.Tab>
+    ```js filename="client.js"
+    try {
+        const userdata = await client.auth.signInAnonymously();
+        console.log(userdata);
+
+    } catch (e) {
+        console.error(e.message);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts filename="src/config/auth.ts"
+    import { auth } from "@colyseus/auth";
+    // ...
+
+    auth.settings.onRegisterAnonymously = async function (options) {
+        const userId = await User.insert({ anonymous: true });
+        return { userId };
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+### Sign In With OAuth Provider
+
+Sign in with OAuth provider and return userdata. This method modifies the `client.auth.token` property.
+
+```ts filename="Signature"
+client.auth.signInWithProvider(provider) => Promise<UserData>
+```
+
+<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
+    <Tabs.Tab>
+    ```js filename="client.js"
+    try {
+        const userdata = await client.auth.signInWithProvider('discord');
+        console.log(userdata);
+
+    } catch (e) {
+        console.error(e.message);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    Each provider requires a different configuration. See the [OAuth providers](#oauth-providers-discord-google-x-twitter-etc) section for more information.
+
+    ```ts filename="src/config/auth.ts"
+    import { auth } from "@colyseus/auth";
+    // ...
+    auth.oauth.addProvider('[PROVIDER-ID]', {
+        key: "XXXXXXXXXXXXXXXXXX", // Client ID
+        secret: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", // Client Secret
+        scope: ['identify', 'email'],
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    **The OAuth Authentication Flow**
+
+    - A popup window to is opened `/auth/provider/[PROVIDER-ID]`
+    - The user is redirected to the OAuth provider's website
+    - The user authenticates with the OAuth provider
+    - The user is redirected back to `/auth/provider/[PROVIDER-ID]/callback` (see [OAuth Provider Callback](#oauth-provider-callback-authoauthoncallback))
+    - The popup window is closed and userdata is returned
+</Callout>
+
+### Send Password Reset Email
+
+Send an email to the user with a link to reset their password.
+
+```ts filename="Signature"
+client.auth.sendPasswordResetEmail() => Promise<void>
+```
+
+<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
+    <Tabs.Tab>
+    ```js filename="client.js"
+    try {
+        const result = await client.auth.sendPasswordResetEmail('user@domain.io');
+        console.log(result);
+
+    } catch (e) {
+        console.error(e.message);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts filename="src/config/auth.ts"
+    import { auth } from "@colyseus/auth";
+    // ...
+
+    auth.settings.onForgotPassword = async function (email: string, html: string/* , resetLink: string */) {
+        await resend.emails.send({
+            to: email,
+            subject: '[Your project]: Reset password',
+            from: 'no-reply@your-domain.io',
+            html: html
+        });
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+### Get User Data
+
+Get the current user's data. This method does not modify the `client.auth.token` property.
+
+```ts filename="Signature"
+client.auth.getUserData() => Promise<UserData>
+```
+
+<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
+    <Tabs.Tab>
+    Fetch the current user's data from the server.
+
+    ```js filename="client.js"
+    try {
+        const userdata = await client.auth.getUserData();
+        console.log(userdata);
+
+    } catch (e) {
+        console.error(e.message);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    You may customize the `onParseToken` callback to include additional user data for the client-side.
+
+    ```ts filename="src/config/auth.ts"
+    import { auth } from "@colyseus/auth";
+    // ...
+
+    auth.settings.onParseToken = async function (userdata) {
+        return userdata;
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+### On Auth State Change
+
+Define a callback that is triggered when internal auth state changes. It only triggers as a response from `client.auth` method calls - this is not a realtime subscription.
+
+```ts filename="Signature"
+client.auth.onChange(callback: (authData: AuthData) => void) => void
+```
+
+
+```ts filename="client.js"
+client.auth.onChange(function(authData) {
+    console.log(authData.user);
+    console.log(authData.token);
+});
+```
+
+### Sign Out
+
+Clear the authentication token from the client-side.
+
+```typescript
+client.auth.signOut();
+```
+
+### Auth Token
+
+The authentication token is automatically sent to the server on every request. Operations that result in a user being logged in will set the `client.auth.token` property, which is a JWT token containing the user's data. The contents of this token are
+
+```ts filename="client.ts"
+client.auth.token = "xxxx";
+```
+
+<Callout type="info">
+    The JWT token is stored in the `localStorage` of the browser.
+</Callout>
+
+---
+
+## Backend API
+
+### Backend URL
+
+The public backend URL. Setting `auth.backend_url` is recommeded for security. The value is auto-detected upon the first request if not set.
+
+The backend URL is used to:
+
+- Redirect the user to reset their password
+- Redirect the user to confirm their email address
+- Build the OAuth provider's callback URL
+
+ ```ts filename="src/config/auth.ts"
+import { auth } from "@colyseus/auth";
+
+if (process.env.NODE_ENV === "production") {
+    auth.backend_url = "https://your-game.io";
+
+} else {
+    auth.backend_url = "http://localhost:2567";
+}
+```
+
+### Email/Password Authentication
+
+In order to allow email/password authentication, you must implement the following callbacks:
+
+- `auth.settings.onFindUserByEmail`: to query your database for the user's by its email address
+- `auth.settings.onRegisterWithEmailAndPassword`: to insert a new user into your database
+
+#### On Find User By Email
+
+Use this callback to query your database for the user's by its email address. (The database module is not provided by this module, you must provide your own.)
+
+```ts filename="Signature"
+auth.settings.onFindUserByEmail(email: string) => Promise<UserData>
+```
+
+**Return value**: The function should return the user entry from the database, including the `password` field. All fields except `password` will be encoded in the JWT token. At minimum, return the user's `id` and `password`, though additional fields can be included for convenience
+
+**Error**: If the function returns `null` or `undefined`, the user will receive an `invalid_credentials` error. Alternatively, you can throw a custom error using `throw new Error("your_error_message")`.
+
+```typescript
+import { auth } from "@colyseus/auth";
+
+auth.settings.onFindUserByEmail = async function (email) {
+    return await User.query().selectAll().where("email", "=", email).executeTakeFirst();
+}
+```
+
+### On Register With Email And Password
+
+Use this callback to insert a new user into your database.
+
+The password provided is already hashed. You may use the [`onHashPassword`](#on-hash-password) callback to hash the password.
+
+If an error is thrown, its message will be sent to the client.
+
+```typescript
+import { auth } from "@colyseus/auth";
+
+auth.settings.onRegisterWithEmailAndPassword = async function (email, password, options) {
+    return await User.insert({ name, email, password, });
+}
+```
+
+### Anonymous Authentication
+
+Anonymous authentication is enabled by default. You may customize how the anonymous user is created by providing the `onRegisterAnonymously` callback.
+
+By default, the anonymous user will have the following fields on its JWT token payload:
+
+```typescript
+{
+  "anonymous": true
+  "anonymousId": "vRSN1FbtZx5uo19hKSqA1", // 21 characters
+}
+```
+
+#### On Register Anonymously
+
+You may use this callback to customize the JWT token payload for anonymous users. The fields returned by this callback will be available in the JWT token as payload.
+
+```ts filename="Signature"
+auth.settings.onRegisterAnonymously(options?) => Promise<UserData>
+```
+
+On the example below the anonymous user is being inserted into the database, and its `userId` is being returned as payload.
+
+```typescript
+import { generateId } from "colyseus";
+import { auth } from "@colyseus/auth";
+
+auth.settings.onRegisterAnonymously = async function (options) {
+    const userId = await User.insert({ anonymous: true });
+    return { userId };
+}
+```
+
+### Email Verification
+
+You may enable email verification by providing both `onSendEmailConfirmation` and `onEmailConfirmed` callbacks.
+
+It is your responsibility to limit the user access to your application until their email is verified.
+
+<Callout type="info">
+    **Email verification is not mandatory** - Users are allowed to login without verifying their email address. If you require email verification, you must validate if the user's email is verified on your application.
+</Callout>
+
+#### On Send Email Confirmation
+
+Use this callback to send the email verification to the user.
+
+```ts filename="Signature"
+auth.settings.onSendEmailConfirmation(email: string, html: string, link: string) => Promise<void>
+```
+
+| Argument | Description |
+|------|-------------|
+| `email` | the email address of the user |
+| `html` | the HTML contents of the email (uses the `address-confirmation-email.html` template) |
+| `link` | the URL to confirm the email address (optional, the template already includes this URL) |
+
+```typescript
+import { auth } from "@colyseus/auth";
+
+auth.settings.onSendEmailConfirmation = async function(email, html, link) {
+    // send email to the user (example using resend.com)
+    await resend.emails.send({
+        to: email,
+        subject: '[Your project]: Confirm your email address',
+        from: 'no-reply@your-domain.io',
+        html: htmlContents,
+    });
+}
+```
+
+#### On Email Confirmed
+
+This this callback to update the user's database record as verified.
+
+```ts filename="Signature"
+auth.settings.onEmailConfirmed(email: string) => Promise<void>
+```
+
+| Argument | Description |
+|------|-------------|
+| `email` | the email address of the user |
+
+```typescript
+import { auth } from "@colyseus/auth";
+
+auth.settings.onEmailConfirmed = async function(email) {
+    // update user database record as verified
+    await User.update({ verified: true }).where("email", "=", email).execute();
+}
+```
+
+### Forgot Password
+
+To enable "Forgot Password" feature, you must provide the following callbacks:
+
+- `auth.settings.onForgotPassword`: to send the email to the user
+- `auth.settings.onResetPassword`: to update the user's password
+
+<Callout type="info">
+    The link to reset the password is sent to the user's email address. The link contains a JWT token with the user's email address as payload. The user is then redirected to a page where they can enter a new password. The token expires in 30 minutes and can't be re-used.
+</Callout>
+
+#### On Forgot Password
+
+Use this callback to send the "forgot password" email to the user. The email template used is `reset-password-email.html`.
+
+```ts filename="Signature"
+auth.settings.onForgotPassword(email: string, html: string, resetLink: string) => Promise<void>
+```
+
+```typescript
+import { auth } from "@colyseus/auth";
+
+auth.settings.onForgotPassword = async function (email: string, html: string/* , resetLink: string */) {
+  await resend.emails.send({
+    to: email,
+    subject: '[Your project]: Reset password',
+    from: 'no-reply@your-domain.io',
+    html: html
+  });
+}
+```
+
+#### On Reset Password
+
+Use this callback to update the user's password. The password is already hashed.
+
+```ts filename="Signature"
+auth.settings.onResetPassword(email: string, password: string) => Promise<void>
+```
+
+```typescript
+import { auth } from "@colyseus/auth";
+
+auth.settings.onResetPassword = async function (email: string, password: string) {
+  await User.update({ password }).where("email", "=", email).execute();
+}
+```
+
+### OAuth Providers (Discord, Google, X, etc)
+
+In order to enable OAuth authentication, you must add at least one OAuth provider, and implement the [OAuth Callback](#oauth-callback) callback.
+
+<Callout type="info">
+    **200+ OAuth 2.0 providers supported**
+
+    This module leverages the hard work of [simov](https://github.com/simov/) on his [grant](https://github.com/simov/grant) open-source module, which supports 200+ OAuth 2.0 providers.
+
+    Check out the original [Grant Playground](https://grant.outofindex.com/) to experiment with scopes and OAuth configuration.
+</Callout>
+
+#### Add OAuth Provider
+
+Add an OAuth provider to the authentication module.
+
+```ts filename="Signature"
+auth.oauth.addProvider(providerId: string, config: any) => void
+```
+
+| Argument | Description |
+|------|-------------|
+| `providerId` | the provider ID (e.g. "discord", "google", "twitter", etc) |
+| `config` | the provider options, may vary depending on the provider (see below) |
+
+```typescript
+import { auth } from "@colyseus/auth";
+
+auth.oauth.addProvider('[PROVIDER-ID]', {
+  key: "XXXXXXXXXXXXXXXXXX", // Client ID
+  secret: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", // Client Secret
+  scope: ['identify', 'email'],
+});
+```
+
+#### OAuth Callback
+
+Register a callback to handle the OAuth provider's response.
+
+The callback should return the user's data, which will be stored in the JWT token.
+
+```ts filename="Signature"
+auth.oauth.onCallback(callback: (data: any, providerId: string) => UserData) => void
+```
+
+| Argument | Description |
+|------|-------------|
+| `data` | the OAuth data (e.g. `profile`, `access_token`, etc) |
+| `providerId` | the provider ID (e.g. `"discord"`, `"google"`, `"twitter"`, etc) |
+
+You must configure the "Redirect URL" on the OAuth provider's dashboard to point to the following URL:
+
+```
+https://[YOUR-DOMAIN]/auth/provider/[PROVIDER-ID]/callback
+```
+
+<Callout type="info">
+    **Redirect URL on different environments** - It is recommended that you create a different OAuth application for development and production environments. This way you can configure the "Redirect URL" to point to `http://localhost:2567/auth/provider/[PROVIDER-ID]/callback` during development, and `https://[YOUR-DOMAIN]/auth/provider/[PROVIDER-ID]/callback` on production.
+</Callout>
+
+```typescript
+import { auth } from "@colyseus/auth";
+
+auth.oauth.onCallback(async (data, provider) => {
+    const profile = data.profile;
+    return await User.upsert({
+        discord_id: profile.id,
+        name: profile.global_name || profile.username,
+        locale: profile.locale,
+        email: profile.email,
+    });
+});
+```
+
+<Tabs items={["Example: Discord"]}>
+    <Tabs.Tab>
+    To enable Discord authentication, you must create a new application at [Discord Developer Portal](https://discord.com/developers/applications).
+
+    Under the _"Settings -> OAuth2"_ you will find the Client ID (`key`) and Client Secret (`secret`), that must be used to configure the provider:
+
+    ```ts filename="src/config/auth.ts"
+    auth.oauth.addProvider('discord', {
+        key: "XXXXXXXXXXXXXXXXXX", // Client ID
+        secret: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", // Client Secret
+        scope: ['identify', 'email'],
+    });
+    ```
+
+    You will also need to configure the "Redirect URL" so Discord can redirect the user back to your application after authentication. The URL must be in the following format:
+
+    ```
+    https://[YOUR-DOMAIN]/auth/provider/discord/callback
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+---
+
+### Advanced Settings
+
+You may customize the following settings:
+
+- `auth.settings.onParseToken`: to parse JWT token provided by the client-side
+- `auth.settings.onGenerateToken`: to generate the auth token
+- `auth.settings.onHashPassword`: to hash the user's password
+
+#### On Parse Token
+
+Use this callback to modify the user's data before sending it to the client-side during the [Get User Data](#get-user-data) call.
+
+```ts filename="Signature"
+auth.settings.onParseToken(data: any) => Promise<any>
+```
+
+```typescript
+import { auth } from "@colyseus/auth";
+
+auth.settings.onParseToken = async function (data) {
+    return data;
+}
+```
+
+#### On Generate Token
+
+Use this callback to customize the token generation from the user's data.
+
+```ts filename="Signature"
+auth.settings.onGenerateToken(userdata: any) => Promise<string>
+```
+
+```typescript
+import { auth, JWT } from "@colyseus/auth";
+
+auth.settings.onGenerateToken = async function (userdata) {
+    return JWT.sign(userdata);
+}
+```
+
+#### On Hash Password
+
+Use this callback to customize how to hash the user's password. The default hashing algorithm is `scrypt`.
+
+```ts filename="Signature"
+auth.settings.onHashPassword(password: string) => Promise<string>
+```
+
+```typescript
+import { auth } from "@colyseus/auth";
+
+auth.settings.onHashPassword = async function (password: string) {
+    return Hash.make(password);
+};
+```
+
+You may also use the `Hash` class provided by the `@colyseus/auth` set a different hashing algorithm. The other ones available are `scrypt` and `sha1`.
+
+```ts filename="src/config/auth.ts"
+import { Hash } from "@colyseus/auth";
+
+Hash.algorithm = "scrypt";
+```
+
+---
+
+### Protecting an HTTP route
+
+You may protect an HTTP route via the `auth.middleware()` middleware. Only authenticated users will be able to access the route.
+
+```typescript
+app.get("/protected", auth.middleware(), (req: Request, res) => {
+    res.json(req.auth);
+});
+```
+
+---
+
+### Customizing the Email Templates
+
+If you need to customize the email templates, you must provide your own templates under the `html` directory. You can copy the default templates from the `@colyseus/auth` package, and modify them as needed.
+
+<FileTree>
+  <FileTree.Folder name="my-colyseus-app" defaultOpen>
+    <FileTree.Folder name="src">
+        <FileTree.File name="..." />
+        <FileTree.File name="index.ts" />
+    </FileTree.Folder>
+    <FileTree.Folder name="html" defaultOpen>
+      <FileTree.File name="address-confirmation-email.html" />
+      <FileTree.File name="address-confirmation.html" />
+      <FileTree.File name="reset-password-email.html" />
+      <FileTree.File name="reset-password-form.html" />
+    </FileTree.Folder>
+    <FileTree.File name="package.json" />
+  </FileTree.Folder>
+</FileTree>
+
+#### Email Confirmation Template
+
+This template is used to send the email confirmation link to the user when they register with email/password. When the user clicks on the link, they are redirected to the _Email Confirmation Page_.
+
+- [<MailIcon/> Email Template ↗](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation-email.html) - (`html/address-confirmation-email.html`)
+- [<GlobeIcon/> Web Page Template ↗](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation.html) - (`html/address-confirmation.html`)
+
+#### Reset Password Template
+
+This template is used to send the reset password link to the user when they request to reset their password. When the user clicks on the link, they are redirected to the _Reset Password Page_.
+
+-  [<MailIcon/> Email Template ↗](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-email.html) - (`html/reset-password-email.html` )
+-  [<GlobeIcon/> Web Page Template ↗](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-form.html) - (`html/reset-password-form.html`)
+
+---
+
+### Upgrading and Linking User Accounts
+
+You may use the contents of the previous active auth token (`upgradingToken`) when registering an user via email/password or OAuth.
+
+- Upgrade an anonymous user to an email/password or OAuth account
+- Link multiple OAuth providers to the same account
+
+<Tabs items={["Upgrade with email/password", "Upgrade with OAuth provider"]}>
+    <Tabs.Tab>
+    ```ts filename="src/config/auth.ts"
+    import { auth } from "@colyseus/auth";
+
+    auth.settings.onRegisterWithEmailAndPassword = async function (email, password, options) {
+        /**
+         * options.upgradingToken contains the previous token payload
+         * you can use its contents to link the user's account
+         */
+        options.upgradingToken
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts filename="src/config/auth.ts"
+    import { auth } from "@colyseus/auth";
+
+    auth.oauth.onCallback(async (data, provider) => {
+        /**
+         * data.upgradingToken contains the previous token payload
+         * you can use its contents to link the user's account
+         */
+        data.upgradingToken
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
