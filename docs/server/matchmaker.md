@@ -1,17 +1,17 @@
 # Server API &raquo; Match-maker API
 
-The methods described below are provided by the `matchMaker` singleton, which can be imported from the `"colyseus"` package:
+The methods described below are provided by the `matchMaker` singleton, which can be imported from the `"@colyseus/core"` package:
 
 === "TypeScript"
 
     ``` typescript
-    import { matchMaker } from "colyseus";
+    import { matchMaker } from "@colyseus/core";
     ```
 
 === "JavaScript"
 
     ``` javascript
-    const matchMaker = require("colyseus").matchMaker;
+    const matchMaker = require("@colyseus/core").matchMaker;
     ```
 
 ## Stats
@@ -27,7 +27,7 @@ Fetch all stats from all processes. Returns an array of objects with the followi
 - **`ccu`**: the number of connected clients on the process.
 
 ```typescript
-import { matchMaker } from "colyseus";
+import { matchMaker } from "@colyseus/core";
 const stats = await matchMaker.stats.fetchAll();
 
 console.log(stats);
@@ -42,7 +42,7 @@ console.log(stats);
 Get the total number of connected clients across all processes.
 
 ```typescript
-import { matchMaker } from "colyseus";
+import { matchMaker } from "@colyseus/core";
 const globalCCU = await matchMaker.stats.getGlobalCCU();
 
 console.log(globalCCU);
@@ -242,7 +242,7 @@ You can restrict the client-side to be allowed only to call specific matchmaking
 not going to be able to perform `create` or `joinOrCreate` calls.
 
 ``` typescript
-import { matchmaker } from "colyseus";
+import { matchmaker } from "@colyseus/core";
 
 matchMaker.controller.exposedMethods = ['join', 'joinById', 'reconnect'];
 ```
