@@ -68,46 +68,6 @@ If left non-implemented, it always returns `true` - allowing any client to conne
     </Tabs.Tab>
 </Tabs>
 
-### `onAuth` context parameter
-
-The third argument of the `onAuth` method is the `context` object. Both `static onAuth` and `onAuth` methods receive the same `context` object as the third argument.
-
-The `context` object has the following properties:
-
-- `token` - the authentication token sent by the client.
-- `headers` - the headers sent by the client.
-- `ip` - the IP address of the client.
-
-#### Accessing the Auth Token
-
-```ts {3} filename="src/rooms/MyRoom.ts"
-// ...
-async onAuth(client, options, context) {
-    console.log(context.token);
-}
-// ...
-```
-
-#### Accessing the request headers
-
-```ts {3} filename="src/rooms/MyRoom.ts"
-// ...
-async onAuth(client, options, context) {
-    console.log(context.headers);
-}
-// ...
-```
-
-#### Accessing the client IP address
-
-```ts {3} filename="src/rooms/MyRoom.ts"
-// ...
-async onAuth(client, options, context) {
-    console.log(context.ip);
-}
-// ...
-```
-
 ## Server-side: `onJoin` method
 
 Get the user data during the `onJoin` method via the `client.auth` property.
@@ -147,3 +107,51 @@ client.joinOrCreate("my_room").then((room) => {
 ```
 
 </Steps>
+
+## `onAuth` Context
+
+The third argument of the `onAuth` method is the `context` object. Both `static onAuth` and `onAuth` methods receive the same `context` object as the third argument.
+
+The `context` object has the following properties:
+
+- `token` - the authentication token sent by the client.
+- `headers` - the headers sent by the client.
+- `ip` - the IP address of the client.
+
+### Accessing the Auth Token
+
+The authentication token is available in the `context.token` property.
+
+```ts {3} filename="src/rooms/MyRoom.ts"
+// ...
+async onAuth(client, options, context) {
+    console.log(context.token);
+}
+// ...
+```
+
+### Accessing the request headers
+
+The request headers are available in the `context.headers` property.
+
+```ts {3} filename="src/rooms/MyRoom.ts"
+// ...
+async onAuth(client, options, context) {
+    console.log(context.headers);
+}
+// ...
+```
+
+### Accessing the client IP address
+
+The client IP address is available in the `context.ip` property.
+
+```ts {3} filename="src/rooms/MyRoom.ts"
+// ...
+async onAuth(client, options, context) {
+    console.log(context.ip);
+}
+// ...
+```
+
+It contains the value of the `X-Real-IP` header, if available. If not, it falls back to the `X-Forwarded-For` header, and finally to the request object's `remoteAddress` property.
