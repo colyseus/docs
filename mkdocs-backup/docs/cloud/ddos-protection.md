@@ -1,0 +1,37 @@
+---
+icon: octicons/shield-check-16
+title: DDoS Protection
+---
+
+# Add-on: DDoS Protection
+
+Adds an extra layer of protection to keep your hosting infrastructure online and operating even when they are the target of attacks.
+
+When enabled, our DDoS Protection system monitors network traffic and routes malicious activity to our attack mitigation farm after a DDoS event is detected, generally within 60 seconds.
+
+The DDoS mitigation system protects your cloud server at both Layer 3 and Layer 4, ensuring no increased latency or routing of your traffic to a third party. It adds 10 Gbps of mitigation capacity per instance and safeguards all attached IPv4 addresses
+
+---
+
+## Frequently Asked Questions
+
+**How does DDoS protection work?**
+
+Colyseus Cloud DDoS system works by dynamically routing traffic from your server when an attack is detected. Attack detection is fully automated based on proprietary detection algorithms, filtering attack traffic while clean traffic can reach your servers.
+
+**How is traffic filtered during a DDoS attack?**
+
+When a DDoS attack is detected, incoming traffic is re-routed to our cloud provider's Attack Mitigation Farm (AMF), which filters traffic based on specific attributes of the current attack. Clean traffic is tunneled directly to your server in the same data center, ensuring that no packets ever leave our premium low-latency network as one might typically encounter with a 3rd party DDoS Mitigation service provider.
+
+**What IP protocol layers are supported by DDoS protection?**
+
+Our DDoS protection works against Layer 3 and Layer 4 attacks.
+
+**Does Colyseus Cloud protect against both TCP and UDP attacks?**
+
+Yes.
+
+**In which locations is DDoS Protection available?**
+
+DDoS Protection is available in all locations.
+

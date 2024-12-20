@@ -1,0 +1,119 @@
+import { Callout, Cards, Tabs } from "nextra/components";
+
+# The Command Pattern
+
+Colyseus has an optional package called `@colyseus/command` that implements the Command Pattern. This pattern is useful when you need to decouple the classes that invoke the operation from the object that knows how to execute it.
+
+The command pattern has several advantages, such as:
+
+- It decouples the classes that invoke the operation from the object that knows how to execute the operation.
+- It allows you to create a sequence of commands by providing a queue system.
+- Implementing extensions to add a new command is easy and can be done without changing the existing code.
+- Have strict control over how and when commands are invoked.
+- Improves code readability and the possibility of unit testing.
+
+## Usage
+
+Installation
+
+```sh npm2yarn
+npm install --save @colyseus/command
+```
+
+Initialize the `dispatcher` in your room implementation:
+
+<Tabs items={["TypeScript", "JavaScript"]}>
+    <Tabs.Tab>
+    ```ts filename="MyRoom.ts"
+    import { Room } from "colyseus";
+    import { Dispatcher } from "@colyseus/command";
+
+    import { OnJoinCommand } from "./OnJoinCommand";
+
+    class MyRoom extends Room<YourState> {
+      dispatcher = new Dispatcher(this);
+
+      onCreate() {
+        this.setState(new YourState());
+      }
+
+      onJoin(client, options) {
+        this.dispatcher.dispatch(new OnJoinCommand(), {
+            sessionId: client.sessionId
+        });
+      }
+
+      onDispose() {
+        this.dispatcher.stop();
+      }
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="MyRoom.js"
+    const colyseus = require("colyseus");
+    const command = require("@colyseus/command");
+
+    const { OnJoinCommand } = require("./OnJoinCommand");
+
+    class MyRoom extends colyseus.Room {
+
+      onCreate() {
+        this.dispatcher = new command.Dispatcher(this);
+        this.setState(new YourState());
+      }
+
+      onJoin(client, options) {
+        this.dispatcher.dispatch(new OnJoinCommand(), {
+            sessionId: client.sessionId
+        });
+      }
+
+      onDispose() {
+        this.dispatcher.stop();
+      }
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+How a command implementation looks like:
+
+<Tabs items={["TypeScript", "JavaScript"]}>
+    <Tabs.Tab>
+    ```ts filename="OnJoinCommand.ts"
+    import { Command } from "@colyseus/command";
+
+    export class OnJoinCommand extends Command<MyRoom, {
+        sessionId: string
+    }> {
+
+      execute({ sessionId }) {
+        this.state.players[sessionId] = new Player();
+      }
+
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="OnJoinCommand.js"
+    const command = require("@colyseus/command");
+
+    exports.OnJoinCommand = class OnJoinCommand extends command.Command {
+
+      execute({ sessionId }) {
+        this.state.players[sessionId] = new Player();
+      }
+
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+## See more
+
+- See [command definitions](https://github.com/colyseus/command/blob/master/test/scenarios/CardGameScenario.ts)
+- See [usage](https://github.com/colyseus/command/blob/master/test/Test.ts)
+- See [implementation](https://github.com/colyseus/command/blob/master/src/index.ts)

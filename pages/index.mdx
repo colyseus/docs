@@ -1,0 +1,169 @@
+---
+title: Introduction
+toc: false
+---
+
+import Image from 'next/image'
+import { Bleed } from 'nextra-theme-docs'
+import { Callout, Steps, Tabs, Cards } from 'nextra/components'
+import { CodeIcon, PeopleIcon, SyncIcon, ServerIcon, CloudIcon, DownloadIcon, RepoIcon, FileCodeIcon } from '@primer/octicons-react'
+
+<Image src={require('../images/hero.png')} width={0} height={0} style={{ width: '100%', height: 'auto' }} alt="Colyseus Hero Image" />
+
+# What is Colyseus Multiplayer Framework?
+
+Colyseus is a framework for writing your own authoritative multiplayer game servers using JavaScript/TypeScript and Node.js, and easily integrating it with your favorite game engine.
+
+-  [**<PeopleIcon /> Match-making into Rooms**](/server/room) – From a single Room definition, clients are matched into multiple Room instances.
+- [**<SyncIcon /> State Synchronization**](/state) – Automatically synchronize the state from the server with connected clients.
+- [**<ServerIcon /> Scalable**](/deployment/scalability) – Built for horizontal and/or vertical scalability.
+- [**<CloudIcon /> Cloud agnostic**](/deployment) – You may self-host it on your own servers for free, or use our commercial [Colyseus Cloud](https://cloud.colyseus.io/) service.
+
+## System Requirements
+
+Before we start, let's make sure you have the necessary system requirements installed in your local machine.
+
+- [<DownloadIcon /> Download and Install Node.js](https://nodejs.org/) LTS version
+- [<DownloadIcon /> Download and Install Git SCM](https://git-scm.com/downloads)
+- [<DownloadIcon /> Download and Install Visual Studio Code](https://code.visualstudio.com/) (or other editor of your choice)
+
+## How does it look like?
+
+<Steps>
+
+### Create a server (Node.js or Bun)
+
+Create and start a new Colyseus server using the following commands:
+
+<Tabs items={['Node.js', 'Bun']}>
+
+  <Tabs.Tab>
+```sh filename="Terminal: Node.js"
+# Create a new Colyseus project
+npm create colyseus-app@latest ./my-server
+
+# Enter the project directory
+cd my-server
+
+# Run the server
+npm start
+```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+```sh filename="Terminal: Bun"
+# Create a new Colyseus project
+bunx create-colyseus-app@latest ./my-server
+
+# Enter the project directory
+cd my-server
+
+# Install Bun transport & Run the server
+bun add @colyseus/bun-websockets
+bun run src/index.ts
+```
+  </Tabs.Tab>
+</Tabs>
+
+### Define your Room State
+
+The Room state is the data structure that will be synchronized between the server and the connected clients:
+
+```ts copy filename="src/rooms/MyState.ts"
+import { Schema, MapSchema, type } from "@colyseus/schema";
+
+export class Player extends Schema {
+    @type("number") x: number = 0;
+    @type("number") y: number = 0;
+}
+
+export class MyState extends Schema {
+    @type({ map: Player }) players = new MapSchema<Player>();
+}
+```
+
+### Create your Room code
+
+Define the game logic and client interactions with the game state within your Room code.
+
+```ts copy filename="src/rooms/MyRoom.ts"
+import { Room, Client } from "@colyseus/core";
+import { MyState, Player } from "./MyState";
+
+export class MyRoom extends Room {
+    maxClients = 4;
+    state = new MyState();
+
+    // Called when the room is created
+    onCreate(options) { }
+
+    // Called when a client joins the room
+    onJoin(client: Client, options: any) {
+        this.state.players.set(client.sessionId, new Player());
+    }
+
+    // Called when a client leaves the room
+    onLeave(client: Client, options: any) {
+        this.state.players.delete(client.sessionId);
+    }
+
+    // Called when the room is disposed
+    onDispose() { }
+}
+```
+
+### Expose the Room identifier
+
+Exposing the room type allows clients to connect to the server and dynamically create instances of it.
+
+```ts {6} copy filename="src/app.config.ts"
+import config from "@colyseus/tools";
+import { MyRoom } from "./MyRoom";
+
+export default config({
+    initializeGameServer: (gameServer) => {
+        gameServer.define('my_room', MyRoom);
+    },
+});
+```
+
+### Join the Room from the client SDK
+
+Communication between the client and server occurs through room connections. In the example below, the JavaScript SDK is used to let the client join a room and listen for state changes:
+
+```ts copy filename="client.ts"
+import { Client, getStateCallbacks } from 'colyseus.js';
+
+async function connect() {
+    const client = new Client('http://localhost:2567');
+    const room = await client.joinOrCreate('my_room', {
+        /* custom join options */
+    });
+    const $ = getStateCallbacks(room);
+
+    // Listen to 'player' instance additions
+    $(room.state).players.onAdd((player, sessionId) => {
+        console.log('Player joined:', player);
+    });
+
+    // Listen to 'player' instance removals
+    $(room.state).players.onRemove((player, sessionId) => {
+        console.log('Player left:', player);
+    });
+
+    return room;
+}
+
+connect();
+```
+
+### Explore more
+
+Explore more about Colyseus by following the tutorials and example projects:
+
+<Cards>
+    <Cards.Card icon={<RepoIcon/>} title="Example Projects" href="/examples" arrow />
+    <Cards.Card icon={<FileCodeIcon/>} title="Tutorials" href="/tutorial" arrow />
+</Cards>
+
+</Steps>
