@@ -1,4 +1,4 @@
-import { Callout, Tabs } from 'nextra/components';
+import { Callout, Tabs, Steps } from 'nextra/components';
 
 <Callout type="warning">
     If you find configuring scalability overwhelming, consider using [Colyseus Cloud](https://cloud.colyseus.io/) to easily deploy and scale your Colyseus servers.
@@ -9,24 +9,21 @@ import { Callout, Tabs } from 'nextra/components';
 - Increasing the number of processes will increase the amount of rooms that can be created.
 - Rooms are equally distributed across the available processes.
 - Each Room belongs to a single Colyseus process.
-- Each process **has a maximum amount of players** it could handle. _(The exact amount depends on many factors. [See our FAQ](/faq/#how-many-ccu-a-colyseus-server-can-handle).)_
+- Each process **has a maximum amount of players** it can handle. _(The exact amount depends on many factors. [See our FAQ](/faq/#how-many-ccu-a-colyseus-server-can-handle).)_
 - Client connections are directly associated with the process that created the room.
 
-### There are two strategies available for scaling:
-
-- **Recommended:** Making every Node.js process accessible to the internet via a public URL. This way clients can connect directly to the process that created the room.
-- Previous recommendation (_not a recommendation since 0.15_): Use `@colyseus/proxy` behind every Node.js process that redirects client traffic to the correct process.
-
 <Callout type="info">
-    **Redis is required** - [Redis](https://redis.io/topics/quickstart) is required for both strategies. Make sure to have it running on your server.
+    [Redis](https://redis.io/topics/quickstart) is required for scaling.
 </Callout>
 
-## Step 1: Use a shared `Presence` and `Driver`
+<Steps>
+
+## Use a shared `Presence` and `Driver`
 
 <Tabs items={["TypeScript", "JavaScript"]}>
     <Tabs.Tab>
 
-    ```ts filename="server.ts"
+    ```ts {7-8} filename="server.ts"
     import { Server } from "colyseus";
     import { RedisPresence } from "@colyseus/redis-presence";
     import { RedisDriver } from "@colyseus/redis-driver";
@@ -41,7 +38,7 @@ import { Callout, Tabs } from 'nextra/components';
 
     <Tabs.Tab>
 
-    ```js filename="server.js"
+    ```js {7-8} filename="server.js"
     const colyseus = require("colyseus");
     const { RedisPresence } = require("@colyseus/redis-presence");
     const { RedisDriver } = require("@colyseus/redis-driver");
@@ -55,83 +52,63 @@ import { Callout, Tabs } from 'nextra/components';
     </Tabs.Tab>
 </Tabs>
 
-The `presence` is used to call room "seat reservation" functions from one process to another. See [Presence API](/server/presence/#api).
+The process to join a Room consists of two requests:
+- **Reserve a seat in the Room**: Any of the Colyseus processes can handle this request. By using a shared `presence` and `driver`, the framework is able to communicate internally via pub/sub to reserve a seat, or create a new room if necessary.
+- **Establish a WebSocket connection with the Room**: The client will use the seat reservation information to connect directly to the process that created the room.
 
-The `driver` is responsible for keeping a shared cache of available rooms, and room querying by any of the active Colyseus processes.
+<Callout type="info">
+    See [Presence API](/server/presence) and [Driver](/server/driver).
+</Callout>
 
-## Step 2: Making your Colyseus processes accessible to the internet
+## Make each Colyseus process publicly accessible
 
-### Recommendation: Using a Load Balancer
+Configure each Colyseus process to use its very own public address, so clients can connect directly to it.
 
-Since version 0.15, you can configure each Colyseus process to use its very own public address, so clients can connect directly to it.
+<Callout type="info">
+    [Colyseus Cloud](https://colyseus.io/cloud-managed-hosting) does not require this configuration, as it automatically handles the public address for you.
+</Callout>
 
-```ts filename="server.ts"
-const server = new Server({
-    // ...
-    presence: new RedisPresence(),
-    driver: new RedisDriver(),
+<Tabs items={["Recommended Usage", "Raw usage"]}>
+    <Tabs.Tab>
 
-    // use a unique public address for each process
-    publicAddress: "server-1.yourdomain.com"
-});
-```
+        ```ts {9-10} filename="app.ts"
+        import config from "@colyseus/tools";
+        // ...
+        export default config({
+            options: {
+                // ...
+                driver: new RedisDriver(),
+                presence: new RedisPresence(),
 
-You can have a regular load balancer sitting behind all the Colyseus processes. The load balancer must be the initial entrypoint for all connections.
+                // use a unique public address for each process
+                publicAddress: `backend.yourdomain.com/${(process.env.PORT + Number(process.env.NODE_APP_INSTANCE))}`
+            },
+            // ...
+        });
+        ```
+    </Tabs.Tab>
 
-### Previous recommendation: Using a Dynamic Proxy
+    <Tabs.Tab>
+        ```ts {6-7} filename="server.ts"
+        const server = new Server({
+            // ...
+            presence: new RedisPresence(),
+            driver: new RedisDriver(),
 
-!!! Warning "Proxy is not a recommendation on version 0.15"
-    Please check the load balancer recommendation above.
+            // use a unique public address for each process
+            publicAddress: `backend.yourdomain.com/${(process.env.PORT + Number(process.env.NODE_APP_INSTANCE))}`
+        });
+        ```
+    </Tabs.Tab>
+</Tabs>
 
-Install the [@colyseus/proxy](https://github.com/colyseus/proxy).
+You may have a regular load balancer sitting behind all the Colyseus processes in order to distribute the incoming connections. The load balancer must be the initial entrypoint.
 
-``` bash
-npm install --save @colyseus/proxy
-```
+## Spawn multiple Colyseus processes
 
-The Dynamic Proxy automatically listens whenever a Colyseus process goes up and down. It is responsible for routing the client requests to the correct Colyseus process.
+To run multiple Colyseus instances in the same server, you need each one of them to listen on a different port number. It's recommended to use ports `2567`, `2568`, `2569`, `2570`, and so on.
 
-All client requests must use the proxy as endpoint. Using this solution, clients do not communicate **directly** with the server, but through the proxy.
-
-The proxy should be bound to port `80` / `443` on a production environment.
-
-**Environment variables**
-
-Configure the following environment variables to meet your needs:
-
-- `PORT` is the port the proxy will be running on.
-- `REDIS_URL` is the path to the same Redis instance you're using on Colyseus' processes.
-
-**Running the proxy**
-
-```
-npx colyseus-proxy
-
-> {"name":"redbird","hostname":"Endels-MacBook-Air.local","pid":33390,"level":30,"msg":"Started a Redbird reverse proxy server on port 80","time":"2019-08-20T15:26:19.605Z","v":0}
-```
-
-## Step 3: Spawning multiple Colyseus processes
-
-To run multiple Colyseus instances in the same server, you need each one of them to listen on a different port number. It's recommended to use ports `3001`, `3002`, `3003`, and so on.
-
-- If you're [using a load balancer (recommendation)](#recommendation-using-a-load-balancer), each Colyseus process **MUST** have its own public address.
-- If you're [using `@colyseus/proxy` (not recommended)](#previous-recommendation-using-a-dynamic-proxy), the Colyseus processes should **NOT** be exposed publicly. But only internally for the proxy.
-
-The [PM2 process manager](http://pm2.keymetrics.io/) is recommended for managing multiple Node.js app instances, although not mandatory.
-
-PM2 provides a `NODE_APP_INSTANCE` environment variable, containing a different number for each process. Use it to define your port number.
-
-```ts filename="server.ts"
-import { Server } from "colyseus";
-
-// binds each instance of the server on a different port.
-const PORT = Number(process.env.PORT) + Number(process.env.NODE_APP_INSTANCE);
-
-const gameServer = new Server({ /* ... */ })
-
-gameServer.listen(PORT);
-console.log("Listening on", PORT);
-```
+The [PM2 Process Manager](http://pm2.keymetrics.io/) is recommended for managing multiple Node.js app instances, but not required.
 
 ```sh npm2yarn
 npm install -g pm2
@@ -140,16 +117,15 @@ npm install -g pm2
 Use the following `ecosystem.config.js` configuration:
 
 ```js filename="ecosystem.config.js"
-// ecosystem.config.js
 const os = require('os');
 module.exports = {
     apps: [{
-        port        : 3000,
+        port        : 2567,
         name        : "colyseus",
-        script      : "lib/index.js", // your entrypoint file
-        watch       : true,           // optional
-        instances   : os.cpus().length,
-        exec_mode   : 'fork',         // IMPORTANT: do not use cluster mode.
+        script      : "lib/index.js",   // your entrypoint file
+        watch       : false,
+        instances   : os.cpus().length, // or manually set the amount of instances
+        exec_mode   : 'fork',           // IMPORTANT: DO NOT use 'cluster' mode.
         env: {
             DEBUG: "colyseus:errors",
             NODE_ENV: "production",
@@ -158,12 +134,108 @@ module.exports = {
 }
 ```
 
+<Tabs items={["Recommended Usage", "Raw usage"]}>
+    <Tabs.Tab>
+        When you use `@colyseus/tools` to configure your server, the `NODE_APP_INSTANCE` from PM2 is automatically used to define the port number.
+
+        If you specified `2567` as port number, the first instance will listen on port `2567`, the second instance on port `2568`, and so on.
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+        By default, PM2 provides a `NODE_APP_INSTANCE` environment variable, containing a different number for each process. You can use it to define your port number.
+
+        ```ts filename="server.ts"
+        import { Server } from "colyseus";
+
+        // binds each instance of the server on a different port.
+        const PORT = Number(process.env.PORT) + Number(process.env.NODE_APP_INSTANCE);
+
+        const gameServer = new Server({ /* ... */ })
+
+        gameServer.listen(PORT);
+        console.log("Listening on", PORT);
+        ```
+    </Tabs.Tab>
+</Tabs>
+
+---
+
 Now you're ready to start multiple Colyseus proceses.
 
 ```sh filename="Terminal"
-pm2 start
+pm2 start ecosystem.config.js
 ```
 
-<Callout type="info">
-    **PM2 and TypeScript** - It's recommended compile your .ts files before running `pm2 start`, via `npx tsc`. Alternatively, you can install the TypeScript interpreter for PM2 (`pm2 install typescript`) and set the `exec_interpreter: "ts-node"` ([read more](http://pm2.keymetrics.io/docs/tutorials/using-transpilers-with-pm2)).
+<Callout type="warning">
+    **TypeScript Users** - It is recommended compile your TypeScript files before running `pm2 start`, via `npx tsc`. Alternatively, you can [install the TypeScript interpreter for PM2](http://pm2.keymetrics.io/docs/tutorials/using-transpilers-with-pm2) (`pm2 install typescript`) and set the `exec_interpreter: "ts-node"`.
 </Callout>
+
+## Use NGINX as a reverse proxy
+
+Install [nginx](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/) and configure it to proxy requests to your Colyseus processes.
+
+The following NGINX config file will:
+- Proxy requests to `backend.yourgame.com` to the Colyseus processes running on ports `2567`, `2568`, `2569`, `2570`, and so on.
+- Dynamically use the port number from the URL, e.g. `backend.yourgame.com/2567/` will proxy to the Colyseus process running on port `2567`.
+
+```sh {3-8,14,20-21,35-36} filename="/etc/nginx/sites-enabled/backend.yourgame.com"
+error_page 502 /error.html;
+
+upstream colyseus_servers {
+    server 127.0.0.1:2567;
+    server 127.0.0.1:2568;
+    server 127.0.0.1:2569;
+    server 127.0.0.1:2570;
+}
+
+server {
+    listen 80 default_server;
+    listen 443 ssl;
+
+    server_name backend.yourgame.com;
+
+    ssl_certificate /root/certs/fullchain.pem;
+    ssl_certificate_key /root/certs/privkey.pem;
+
+    # Proxy to the colyseus_servers upstream
+    location / {
+        proxy_pass http://colyseus_servers/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 86400s;
+        proxy_send_timeout 86400s;
+        proxy_buffering off;
+        proxy_next_upstream error timeout http_502;
+        include proxy_params;
+    }
+
+    # Dynamically use the port number from the URL
+    location ~ "^/(?<PORT>2[0-9]{3})/(.*)" {
+        proxy_pass http://127.0.0.1:$PORT;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 86400s;
+        proxy_send_timeout 86400s;
+        proxy_buffering off;
+        proxy_next_upstream error timeout http_502;
+        include proxy_params;
+    }
+
+    location /error.html {
+        root /var/www/html;
+        internal;
+    }
+}
+```
+
+## Use [Let's Encrypt](https://letsencrypt.org/) or [ZeroSSL](https://zerossl.com/) to get SSL certificates
+
+It is recommended to use SSL certificates to secure the communication between the client and the server. Replace the `ssl_certificate` and `ssl_certificate_key` paths in the NGINX configuration file with your own SSL certificates.
+
+</Steps>
