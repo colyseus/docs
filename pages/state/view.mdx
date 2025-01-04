@@ -105,13 +105,15 @@ By assigning a numeric tag to the `@view()` decorator, that field will only be v
 
 On the example above, the `attributes` field is only visible to clients that contain this `Player` instance on their `StateView` with tag `1`, whereas the `position` field is visible to all clients that contain this `Player` instance on their `StateView`.
 
-Considering the `Player` on the example above, the following table shows the visibility of each field:
+---
 
-| Field name                        | Without `view.add()` | `view.add(player)` | `view.add(player, 1)` |
+The following table shows the relation between type annotations and the visibility of each field on the client-side:
+
+| Annotations              | Without `view.add()` | `view.add(instance)` | `view.add(instance, 1)` |
 |-----------------------------------|----------------------|-------------------------|-----------------|
-| `name`                            | ✅                   | ✅                       | ✅              |
-| `health`                          | ❌                   | ✅                       | ✅              |
-| `position`                        | ❌                   | ❌                       | ✅              |
+| `@type(...)`                      | ✅                   | ✅                       | ✅              |
+| `@view() @type(...)`              | ❌                   | ✅                       | ✅              |
+| `@view(1) @type(...)`             | ❌                   | ❌                       | ✅              |
 
 ## Items of `ArraySchema` and `MapSchema`
 
