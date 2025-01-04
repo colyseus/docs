@@ -10,6 +10,11 @@ export const typescript = <Image
             width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block'  }}
             alt="TypeScript" />
 
+export const react = <Image
+            src={require('../../images/icons/react.png')}
+            width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block'  }}
+            alt="React" />
+
 export const unity = <Image
             src={require('../../images/icons/unity.png')}
             width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block'  }}

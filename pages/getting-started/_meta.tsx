@@ -3,6 +3,7 @@
 export default {
     "typescript": 'TypeScript',
     "javascript": 'JavaScript',
+    "react": 'React',
     "haxe": 'Haxe',
     "unity": 'Unity',
     "defold": 'Defold',

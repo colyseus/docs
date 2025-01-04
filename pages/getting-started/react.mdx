@@ -1,0 +1,137 @@
+---
+title: React
+---
+import _js_ts_header from "./_js_ts_header.mdx"
+import { javascript, react } from "../../components/icons/platforms"
+import { Callout } from 'nextra/components'
+
+# {react} React (JavaScript/TypeScript SDK)
+
+<Callout type="warning">
+    Colyseus aims to provide a tighter integration with React in the future. If you'd like to contribute to this effort, please [check this thread on Discord](https://discord.com/channels/525739117951320081/1274526257270489088/1274526257270489088).
+
+    The objective is to iterate on [@pedr0fontoura](https://github.com/pedr0fontoura/)'s approach from his [`use-colyseus`](https://github.com/pedr0fontoura/use-colyseus/) project.
+</Callout>
+
+## Raw / Simple Usage
+
+The simplest way to use Colyseus in React is by using the `useEffect` hook to join a room and handle its events. Make sure to leave the room when the component is unmounted.
+
+```typescript filename="RoomComponent.tsx"
+import { useEffect } from "react";
+import { Client, Room } from "colyseus.js";
+
+const client = new Client("http://localhost:2567");
+
+function RoomComponent () {
+	const roomRef = useRef<Room>();
+
+    const [ isConnecting, setIsConnecting ] = useState(true);
+    const [ players, setPlayers ] = useState([]);
+
+	useEffect(() => {
+		const req = client.joinOrCreate("my_room", {});
+
+		req.then((room) => {
+			roomRef.current = room;
+
+			setIsConnecting(false);
+
+            // handle room events here
+			room.onStateChange((state) => setPlayers(state.players.toJSON()));
+		});
+
+		return () => {
+            // make sure to leave the room when the component is unmounted
+			req.then((room) => room.leave());
+		};
+	}, []);
+
+    return (
+        <div>
+            {players.map((player) => (
+                <div key={player.id}>{player.name}</div>
+            ))}
+        </div>
+    );
+}
+```
+
+## Using a Context Provider
+
+> TODO: Add a more complex example using a React Context Provider.
+
+Alternatively, you can use a React Context Provider to manage the connection and room state across your application.
+
+```typescript filename="RoomContext.tsx"
+import React, { createContext, useContext } from 'react';
+import { Room } from 'colyseus.js';
+
+interface RoomContextType {
+    isConnecting: boolean;
+    isConnected: boolean;
+    room: Room;
+    join: () => void;
+    joinError: boolean;
+    state: any; // replace `any` with your state type
+}
+
+export const RoomContext = createContext<RoomContextType>({});
+
+export function useRoom() { return useContext(RoomContext); }
+
+let room!: Room;
+
+//
+// Workaround for React.StrictMode, to avoid multiple join requests
+//
+let hasActiveJoinRequest: boolean = false;
+
+export function RoomProvider({ children }: { children: React.ReactNode }) {
+    const [searchParams, _] = useSearchParams();
+
+    const [joinError, setJoinError] = React.useState(false);
+    const [isConnecting, setIsConnecting] = React.useState(false);
+    const [isConnected, setIsConnected] = React.useState(false);
+    const [state, setState] = React.useState<ReturnType<BalootiState['toJSON']>>(undefined)
+
+    const join = () => {
+        if (hasActiveJoinRequest) { return; }
+        hasActiveJoinRequest = true;
+
+        setIsConnecting(true);
+
+        try {
+            room = await client.joinOrCreate("my_room");
+
+        } catch (e) {
+            setJoinError(true);
+            setIsConnecting(false);
+            return;
+
+        } finally {
+            hasActiveJoinRequest = false;
+        }
+
+        //
+        // cache reconnection token, if user goes back to this URL, we can try re-connect to the room.
+        // TODO: do not cache reconnection token if user is spectating
+        //
+        localStorage.setItem("reconnection", JSON.stringify({
+            token: room.reconnectionToken,
+            roomId: room.roomId,
+        }));
+
+        room.onStateChange((state) => setState(state.toJSON()));
+        room.onLeave(() => setIsConnected(false));
+
+        setIsConnected(true);
+    };
+
+    return (
+        <RoomContext.Provider value={{ isConnecting, isConnected, room, join, joinError, state }}>
+            {children}
+        </RoomContext.Provider>
+    );
+}
+```
