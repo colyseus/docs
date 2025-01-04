@@ -2,6 +2,8 @@ import { Callout, Tabs, Steps } from 'nextra/components';
 
 <Callout type="warning">
     If you find configuring scalability overwhelming, consider using [Colyseus Cloud](https://cloud.colyseus.io/) to easily deploy and scale your Colyseus servers.
+
+    You do not need to specify `driver`, `presence`, or `publicAddress` when using Colyseus Cloud.
 </Callout>
 
 ### How does Colyseus achieve scalability?
@@ -63,10 +65,6 @@ The process to join a Room consists of two requests:
 ## Make each Colyseus process publicly accessible
 
 Configure each Colyseus process to use its very own public address, so clients can connect directly to it.
-
-<Callout type="info">
-    [Colyseus Cloud](https://colyseus.io/cloud-managed-hosting) does not require this configuration, as it automatically handles the public address for you.
-</Callout>
 
 <Tabs items={["Recommended Usage", "Raw usage"]}>
     <Tabs.Tab>
