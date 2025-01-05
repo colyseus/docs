@@ -41,7 +41,7 @@ If you are using TypeScript to target ES2022/ESNext, you need to provide `"useDe
 
 ### How can I sync data of the `state` only to a specific client?
 
-You can either use [schema filters](/state/schema/#filtering-data-per-client), and/or send data manually to each client through [room's send method](/server/room#client/#sendtype-message).
+Support for per-client state visibility was introduced in version `0.16`. You can use the `StateView` class to control which parts of the state are visible to each client. See [State View](/state/view) for more details.
 
 ### Does Colyseus help me with client-prediction?
 
