@@ -341,47 +341,70 @@ Room handlers have these methods available.
 Register a callback to process a type of message sent by the client-side.
 
 ```ts filename="Signature"
-this.onMessage (type, callback)
+this.onMessage (type, callback, validation)
 ```
 
 - The `type` argument can be either `string` or `number`.
 - You can only define a single callback per message type. (Defining a callback more than once will result in overriding the previous one)
 
-**Callback for specific type of message**
+#### Callback for specific type of message
 
 ```ts filename="MyRoom.ts"
 onCreate () {
-    this.onMessage("action", (client, message) => {
-        console.log(client.sessionId, "sent 'action' message: ", message);
-    });
-}
-```
-
-**Fallback for ALL messages**
-
-You can register a single callback as a fallback to handle **other** types of messages.
-
-```ts filename="MyRoom.ts"
-onCreate () {
-    this.onMessage("action", (client, message) => {
-        //
-        // Triggers when 'action' message is sent.
-        //
-    });
-
-    this.onMessage("*", (client, type, message) => {
-        //
-        // Triggers when any other type of message is sent,
-        // excluding "action", which has its own specific handler defined above.
-        //
-        console.log(client.sessionId, "sent", type, message);
+    this.onMessage("action", (client, payload) => {
+        console.log(client.sessionId, "sent 'action' message: ", payload);
     });
 }
 ```
 
 <Callout type="info">
-    Use `room.send()` from the client SDK to send messages to the server.
+    Use `room.send(type, payload)` from the client SDK to send messages to the server.
 </Callout>
+
+#### Fallback for all messages
+
+You can register a single callback as a fallback to handle **other** types of messages.
+
+```ts filename="MyRoom.ts"
+onCreate () {
+    this.onMessage("action", (client, payload) => {
+        //
+        // Triggers when 'action' message is sent.
+        //
+    });
+
+    this.onMessage("*", (client, type, payload) => {
+        //
+        // Triggers when any other type of message is sent,
+        // excluding "action", which has its own specific handler defined above.
+        //
+        console.log(client.sessionId, "sent", type, payload);
+    });
+}
+```
+
+#### Input validation
+
+You may provide a validation function as the third argument to `onMessage`. This function will be called before the message is processed, and if it throws an error, the message will be ignored.
+
+The data returned by the validation function will be passed as `payload` on the message handler.
+
+```ts filename="MyRoom.ts"
+onCreate () {
+    this.onMessage("action", (client, payload) => {
+        //
+        // payload.x and payload.y are guaranteed to be numbers here.
+        //
+        console.log({ x: payload.x, y: payload.y });
+
+    }, (payload) => {
+        if (typeof(payload.x) !== "number" || typeof(payload.y) !== "number") {
+            throw new Error("Invalid payload");
+        }
+        return payload;
+    });
+}
+```
 
 ---
 
@@ -497,7 +520,7 @@ You may set the `COLYSEUS_SEAT_RESERVATION_TIME` environment variable if you'd l
 Send a message to all connected clients.
 
 ```ts filename="Signature"
-this.broadcast (type, message, options?)
+this.broadcast (type, payload, options?)
 ```
 
 Available options are:
@@ -512,7 +535,7 @@ Available options are:
 
     ```ts filename="MyRoom.ts"
     onCreate() {
-        this.onMessage("action", (client, message) => {
+        this.onMessage("action", (client, payload) => {
             // broadcast a message to all clients
             this.broadcast("action-taken", "an action has been taken!");
         });
@@ -525,9 +548,9 @@ Available options are:
 
     ```ts filename="MyRoom.ts"
     onCreate() {
-        this.onMessage("fire", (client, message) => {
+        this.onMessage("fire", (client, payload) => {
             // sends "fire" event to every client, except the one who triggered it.
-            this.broadcast("fire", message, { except: client });
+            this.broadcast("fire", payload, { except: client });
         });
     }
     ```
@@ -538,7 +561,7 @@ Available options are:
 
     ```ts filename="MyRoom.ts"
     onCreate() {
-        this.onMessage("destroy", (client, message) => {
+        this.onMessage("destroy", (client, payload) => {
             // perform changes in your state!
             this.state.destroySomething();
 
@@ -937,19 +960,19 @@ onJoin(client, options) {
 Send a type of message to the client. Messages are encoded with MsgPack and can hold any JSON-seriazeable data structure.
 
 ```ts filename="Signature"
-client.send(type, message)
+client.send(type, payload)
 ```
 
 The `type` can be either a `string` or a `number`.
 
 ```ts filename="MyRoom.ts"
 //
-// sending message with a string type ("powerup")
+// sending message of string type ("powerup")
 //
 client.send("powerup", { kind: "ammo" });
 
 //
-// sending message with a number type (1)
+// sending message of number type (1)
 //
 client.send(1, { kind: "ammo"});
 ```
@@ -974,12 +997,12 @@ This is useful if you'd like to manually encode a message, rather than the defau
 
 ```ts filename="MyRoom.ts"
 //
-// sending message with a string type ("powerup")
+// sending message of string type ("powerup")
 //
 client.sendBytes("powerup", [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
 
 //
-// sending message with a number type (1)
+// sending message of number type (1)
 //
 client.sendBytes(1, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
 ```
@@ -991,7 +1014,7 @@ client.sendBytes(1, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 
 Send an error with code and message to the client. The client can handle it on [`onError`](/client#onerror)
 
 ```ts filename="Signature"
-client.error(code, message)
+client.error(code, payload)
 ```
 
 ---
