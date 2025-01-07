@@ -39,7 +39,7 @@ const config: DocsThemeConfig = {
     },
 
     footer: {
-        content: '2024 © Endel Dreyer',
+        content: (new Date().getFullYear()) + ' © Endel Dreyer',
     },
 
     head: function useHead() {
