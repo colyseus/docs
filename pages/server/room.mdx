@@ -408,16 +408,25 @@ onCreate () {
 
 ---
 
-### `setState (schema)`
+### Set State
 
 Set the synchronizable room state. See [State Synchronization](/state/) and [Schema](/state/schema/) for more details.
 
-<Callout type="info">
-    You usually call this method only once during [`onCreate()`](#onCreate-options)
-</Callout>
+```typescript
+import { Room } from "colyseus";
+import { MyState } from "./MyState";
+
+export class MyRoom extends Room {
+    state = new MyState();
+}
+```
 
 <Callout type="warning">
     The room's `state` is **mutable**. You should not reassign the `state` object, but rather mutate it directly when updating the state.
+</Callout>
+
+<Callout type="error">
+    The `.setState()` method is deprecated. Use `this.state` directly instead.
 </Callout>
 
 ---
