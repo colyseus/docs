@@ -9,39 +9,33 @@ import { DatabaseIcon } from "@primer/octicons-react";
 
 _This page has a list of features and improvements for future versions of Colyseus. The order of items does not reflect their priority or importance._
 
-## General improvements
-- Add request/response model to rooms ([#331](https://github.com/colyseus/colyseus/issues/331))
-- Client input validation API (`onMessage` in the server)
-- Introduce "version check" to allow native SDKs to communicate with newer versions of the server
-
-## Database
-- Introduce an official database recommendation tool. The recommendation should be used on the documentation, official examples, and initial template project. (See [<DatabaseIcon/> Database](/database))
-
-## Matchmaking
-- SQL Driver: Provide a SQL driver as alternative to `@colyseus/redis-driver` (should support SQLite / PostgreSQL, possibly on top of Kysely)
-- Improve filtering and sorting options
-
-### Introduce new "queue" matchmaking type
-- A queue would keep more clients than needed before starting a match
-- User specifies logic that combines clients into a new room
-- Reserve seats for selected clients and redirect them to the newly created room
-
-## Full-stack + TypeScript Improvements
-- Allow to specify `client.auth` and `client.userData` types on the server-side only once
-- Allow to infer types for room message and payload definitions from client-side (`room.send()`)
-- Allow to infer http routes and request/response body types from client-side (`client.http.*`)
-
-## State Sync / `@colyseus/schema`
-
-### Bidirectional schema instances
-- Allow to send schema instance updates from client to server
-- Wild idea: support RPC calls via schema instances (?)
-
-### "Netcode" / Client-side prediction
-- Allow to specify client-side prediction techniques on the client-side (?)
-
-## WebTransport
-- Improve and stabilize [WebTransport](/server/transport/webtransport) support
-
-## More SDKs
-- Fork and support a Godot SDK ([gsioteam/godot-colyseus](https://github.com/gsioteam/godot-colyseus))
+- **General improvements:**
+    - Add request/response model to rooms ([#331](https://github.com/colyseus/colyseus/issues/331))
+    - Client input validation API (`onMessage` in the server)
+    - Introduce "version check" to allow native SDKs to communicate with newer versions of the server
+- **Database:**
+    - Introduce an official database recommendation tool. The recommendation should be used on the documentation, official examples, and initial template project. (See [<DatabaseIcon/> Database](/database))
+- **Matchmaking:**
+    - SQL Driver - Provide a SQL driver as alternative to `@colyseus/redis-driver` _(should support SQLite / PostgreSQL, possibly on top of Kysely)_
+    - Improve filtering and sorting options
+    - **New "queue" matchmaking type:**
+        - A queue would keep more clients than needed before starting a match
+        - User specifies logic that combines clients into a new room
+        - Reserve seats for selected clients and redirect them to the newly created room
+- **State Sync:**
+    - **`@colyseus/schema` - Bidirectional schema instances:**
+        - Allow to send schema instance updates from client to server
+        - Wild idea: support RPC calls via schema instances (?)
+        - **Client-side prediction:**
+            - Allow to specify client-side prediction techniques on the client-side (?)
+        - **Decouple `@colyseus/schema` from the core:**
+            - Allow to use other serialization methods for the state
+            - Yjs (CRDT) [connection provider](https://docs.yjs.dev/ecosystem/connection-provider) via Colyseus Rooms.
+- **Full-stack + TypeScript Improvements:**
+    - Allow to specify `client.auth` and `client.userData` types on the server-side only once
+    - Allow to infer types for room message and payload definitions from client-side _(`room.send()`)_
+    - Allow to infer http routes and request/response body types from client-side _(`client.http.*`)_
+- **WebTransport:**
+    - Improve and stabilize [WebTransport](/server/transport/webtransport) support
+- **More SDKs:**
+    - Fork and support a Godot SDK _([gsioteam/godot-colyseus](https://github.com/gsioteam/godot-colyseus))_
