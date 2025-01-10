@@ -7,9 +7,9 @@ export default {
     },
     index: {
         title: <span><HomeIcon/> Introduction</span>, // 'Introduction'
-        theme: {
-            layout: "full"
-        }
+        // theme: {
+        //     layout: "full"
+        // }
     },
 
     "getting-started": { title: <span><ZapIcon/> Getting Started</span> }, // "Getting Started"
