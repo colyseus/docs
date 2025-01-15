@@ -111,7 +111,9 @@ Each `StateView` instance is going to add a new encoding step for state serializ
 
 See more in the [`StateView` documentation](/state/view).
 
-## Breaking change: Attaching `playground` routes:
+## Breaking changes
+
+### Attaching `playground` routes:
 
 The `playground` routes are now returned from a method call instead:
 
@@ -127,12 +129,38 @@ if (process.env.NODE_ENV !== "production") {
 
 This change was necessary to avoid the internal monkey-patching coming from the playground module when using in production environment.
 
-## Breaking change: `matchMaker.getRoomById()`
+### `matchMaker.getRoomById()`
 
 - `matchMaker.getRoomById()` now returns the cached room data. This method will return properly when called from any process.
 - `matchMaker.getLocalRoomById()` returns the room instance itself, if it's available in the current process.
 
 
-## Sending schema-encoded messages is now deprecated
+### `ArraySchema.deleteAt()` has been removed.
+
+You can use `ArraySchema.splice()` instead:
+
+```diff
+- array.deleteAt(index);
++ array.splice(index, 1);
+```
+
+### Sending schema-encoded messages is now deprecated
 
 Sending schema instances as messages via `client.send(instance)` or `this.broadcast(instance)` is now deprecated. This feature it was introduced in previous versions due to lack of strong types in C# for messages.
+
+### `.encode()`, `.encodeAll()` and `.decode()` methods have been moved
+
+The Schema instances used to provide `.encode()`, `.encodeAll()` and `.decode()` methods. These methods are called internally by the framework, and if you were not using them, you don't need to worry about this change.
+
+If you were using these methods, you can now use them from the `Encoder` and `Decoder` classes:
+
+```ts
+import { Encoder, Decoder } from "@colyseus/schema";
+
+const encoder = new Encoder(new MyState());
+const encodeAllBytes = encoder.encodeAll();
+
+const decoded = new Decoder(new MyState());
+decoded.decode(encodeAllBytes);
+```
+
