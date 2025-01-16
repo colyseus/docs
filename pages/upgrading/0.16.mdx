@@ -11,16 +11,19 @@ Use this guide to migrate your existing 0.15 projects to version 0.16.
     See [version 0.16 release announcement](https://github.com/colyseus/colyseus/releases/tag/0.16.0).
 </Callout>
 
-Make sure `colyseus` versions on `package.json` are pointing to `^0.16.0-preview.0`:
+Make sure `colyseus` and all `@colyseus/*` packages on `package.json` are pointing to `^0.16.0-preview.0`. Having different versions of `colyseus` and `@colyseus/*` packages may lead to unexpected behavior.
 
 **Server-side:**
 
 ```json filename="package.json"
     "@colyseus/schema": "^3.0.0-alpha.22",
     "colyseus": "^0.16.0-preview.1",
+    "@colyseus/auth": "^0.16.0-preview.5",
     "@colyseus/core": "^0.16.0-preview.30",
+    "@colyseus/loadtest": "^0.16.0-preview.5",
     "@colyseus/monitor": "^0.16.0-preview.4",
     "@colyseus/playground": "^0.16.0-preview.13",
+    "@colyseus/testing": "^0.16.0-preview.5",
     "@colyseus/tools": "^0.16.0-preview.3",
     "@colyseus/uwebsockets-transport": "^0.16.0-preview.12",
 ```
