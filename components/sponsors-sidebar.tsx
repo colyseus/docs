@@ -16,7 +16,7 @@ export function SponsorsSidebar() {
                 </a>
 
                 <a href="https://bloxd.io/?utm_source=colyseus-docs&utm_content=sidebar" target="_blank" rel="sponsored" style={{ display: "flex", alignItems: "center" }}>
-                    <img src="/sponsors/bloxd.png" style={{ height: "auto", width: "100%", margin: "auto" }} />
+                    <img src="/sponsors/bloxd.svg" style={{ height: "auto", width: "100%", margin: "auto" }} />
                 </a>
 
                 <a href="https://0xand.com/?utm_source=colyseus-docs&utm_content=sidebar" target="_blank" rel="sponsored" style={{ display: "flex", alignItems: "center" }}>
