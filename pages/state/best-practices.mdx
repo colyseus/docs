@@ -2,10 +2,9 @@
 
 ## Limitations and Best practices
 
-- Each `Schema` structure can hold up to `64` fields. If you need more fields, use nested `Schema` structures.
-- `NaN` or `null` numbers are encoded as `0`
-- `null` strings are encoded as `""`
-- `Infinity` numbers are encoded as `Number.MAX_SAFE_INTEGER`
+- Each `Schema` structure can hold up to `64` serialized fields. If you need more fields, use nested `Schema` structures.
+- `NaN` and `Infinity` are encoded as `0` (integer encoding only)
+- `null` strings are encoded as `""` (both "string" and "cstring" encoding)
 - Multi-dimensional arrays are not supported. [See how to use 1D arrays as multi-dimensional](https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid/212813#212813)
 - `@colyseus/schema` encoding order is based on field definition order.
     - Both encoder (server) and decoder (client) must have same schema definition.
