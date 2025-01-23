@@ -96,30 +96,19 @@ export class MyRoom extends Room<MyState> {
 
 ### Primitive types
 
-<Callout type="warning">
-    **Some types are only available for JavaScript SDK:** `cstring`, `bigUint64`, `bigInt64`, `varUint`, `varInt`, `varBigUint`, `varBigInt`, `varFloat32`, `varFloat64`
-
-    **`cstring` type requires the platform to supply a TextEncoder (and TextDecoder) implementation.** You may supply a polyfill yourself.
-</Callout>
-
 - `string`: utf8 string type
 - `boolean`: `true` or `false`
 - `number`: auto-detects the number type to use. (may use one extra byte when encoding)
-- `uint8`, `uint16`, `uint32`, `uint64`: unsigned number types.
 - `int8`, `int16`,  `int32`, `int64`: signed number types.
+- `uint8`, `uint16`, `uint32`, `uint64`: unsigned number types.
 - `float32`, `float64`: floating-point number types.
-- `cstring`: utf8 null-terminated string type.
-- `bigUint64`, `bigInt64`: unsigned / signed 64-bit bigint type.
-- `varUint`, `varInt`: unsigned / signed variable-length integer type. (encoded with [LEB128](https://en.wikipedia.org/wiki/LEB128))
-- `varBigUint`, `varBigInt`: unsigned / signed variable-length bigint type. (encoded with [LEB128](https://en.wikipedia.org/wiki/LEB128))
-- `varFloat32`, `varFloat64`: variable-length floating-point number types. (encoded with [LEB128](https://en.wikipedia.org/wiki/LEB128))
+- `bigInt64`, `bigUint64`: unsigned / signed 64-bit bigint type.
 
 #### Table of types and their limitations
 
 | Type | Description | Limitation |
 |------|-------------|------------|
 | `"string"` | length-prefixed utf8 strings | maximum byte size of `4294967295` |
-| `"cstring"` | null-terminated utf8 strings | string must not contain a null-byte ("\x00") |
 | `"number"` | also known as "variable length encoding". Auto-detects the number type to use. (may use one extra byte when encoding to identify the type) | `5e-324` to `5e+324` (float64 limits) |
 | `"boolean"` | `true` or `false` | `0` or `1` |
 | `"int64"` and `"uint64"` | JavaScript numbers are 64 bit floats and thus cannot represent full 64 bit integers safely | The minimum/maximum integer that can be safely represented by float64 is `-9007199254740991` to `9007199254740991` (53 bits of precision) |
@@ -141,16 +130,6 @@ Specialized number types:
 | `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |
 | `"bigInt64"` | signed 64-bit integer (`bigint` type) | `-2^63 (-9223372036854775808)` to `2^63-1 (9223372036854775807)` |
 | `"bigUint64"` | unsigned 64-bit integer (`bigint` type) | `0` to `2^64-1 (18446744073709551615)` |
-
-Variable length number types:
-| Type | Description | Limitation | Size (Bytes) |
-|------|-------------|------------|--------------|
-| `"varInt"` | signed variable-length encoded integer (`number` type) | -2147483648 to 2147483647 (safely) | 1 - 8 (depending on bits used) |
-| `"varUint"` | unsigned variable-length encoded integer (`number` type) | 0 to 4294967296 (safely) | 1 - 8 (depending on bits used) |
-| `"varBigInt"` | signed variable-length encoded integer (`bigint` type) | limitations based on platforms bigint implementation | 1 - ? (depending on the bits used) |
-| `"varBigUint"` | unsigned variable-length encoded integer (`bigint` type) | limitations based on platforms bigint implementation | 1 - ? (depending on the bits used) |
-| `"varFloat32"` | single-precision variable-length encoded floating-point number | `-3.40282347e+38` to `3.40282347e+38`| 2 - 6 (depending on bits used) |
-| `"varFloat64"` | double-precision variable-length encoded floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` | 2 - 10 (depending on the bits used) |
 
 ### `Schema` type
 

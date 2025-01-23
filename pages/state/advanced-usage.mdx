@@ -5,10 +5,62 @@ import { Callout } from 'nextra/components'
 Since `@colyseus/schema` 3.0, experimental APIs are available allowing you to
 customize:
 
+- [Custom types and encoding](#custom-types-and-encoding)
 - [Change tracking](#change-tracking)
 - [Byte-level encoding](#byte-level-encoding)
 - [Byte-level decoding](#byte-level-decoding)
 - [Encoding non-`Schema` structures](#encoding-non-schema-structures)
+
+## Custom types and encoding
+
+You can define custom types to encode and decode your data structures.
+
+```typescript
+import { Schema, defineCustomTypes } from "@colyseus/schema";
+import { TextDecoder, TextEncoder } from "util";
+
+const _encoder = new TextEncoder();
+const _decoder = new TextDecoder();
+
+const customType = defineCustomTypes({
+        cstring: {
+            encode: (bytes, value, it) => {
+                value ??= "";
+                value += "\x00";
+                if (bytes instanceof Uint8Array) {
+                    it.offset += _encoder.encodeInto(value, bytes.subarray(it.offset)).written;
+                } else {
+                    const encoded = _encoder.encode(value);
+                    const len = encoded.length;
+                    for (let i = 0; i < len; ++i) bytes[it.offset++] = encoded[i]; // could probably also figure out if bytes has .set
+                }
+            },
+            decode: (bytes, it) => {
+                // should short circuit if buffer length can't be determined for some reason so we don't just infinitely loop
+                const len = (bytes as Buffer | ArrayBuffer).byteLength ?? (bytes as number[]).length;
+                if (len === undefined) throw TypeError("Unable to determine length of 'BufferLike' " + bytes.toString());
+                let start = it.offset;
+                while (it.offset < len && bytes[it.offset++] !== 0x00) { }; // nop, fast search for terminator
+                return _decoder.decode(new Uint8Array((bytes as Buffer | Uint8Array)?.subarray?.(start, it.offset - 1) ?? bytes.slice(start, it.offset - 1))); // ignore terminator
+            }
+        },
+});
+
+class MyState extends Schema {
+    @customType("cstring") message: string;
+}
+```
+
+See [CustomPrimitiveTypes.test.ts](https://github.com/colyseus/schema/blob/master/test/CustomPrimitiveTypes.test.ts) for more examples, which includes:
+
+| Type | Description | Limitation | Size (Bytes) |
+|------|-------------|------------|--------------|
+| `"varInt"` | signed variable-length encoded integer (`number` type) | -2147483648 to 2147483647 (safely) | 1 - 8 (depending on bits used) |
+| `"varUint"` | unsigned variable-length encoded integer (`number` type) | 0 to 4294967296 (safely) | 1 - 8 (depending on bits used) |
+| `"varBigInt"` | signed variable-length encoded integer (`bigint` type) | limitations based on platforms bigint implementation | 1 - ? (depending on the bits used) |
+| `"varBigUint"` | unsigned variable-length encoded integer (`bigint` type) | limitations based on platforms bigint implementation | 1 - ? (depending on the bits used) |
+| `"varFloat32"` | single-precision variable-length encoded floating-point number | `-3.40282347e+38` to `3.40282347e+38`| 2 - 6 (depending on bits used) |
+| `"varFloat64"` | double-precision variable-length encoded floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` | 2 - 10 (depending on the bits used) |
 
 ## Change Tracking
 
