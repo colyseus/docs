@@ -22,14 +22,14 @@ In order to register callbacks to Schema instances, you must access the instance
     <Tabs.Tab>
     ```cs filename="client.cs"
     var room = await client.JoinOrCreate<MyRoom>("my_room");
-    var $ = new StateCallbacks<MyRoom>(room);
+    var callbacks = Colyseus.Schema.Callbacks.Get(room);
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
     ```lua filename="client.lua"
     local room = client:join_or_create("my_room")
-    local $ = getStateCallbacks(room)
+    local $ = colyseus.get_state_callbacks(room)
     ```
     </Tabs.Tab>
 
@@ -68,11 +68,25 @@ In order to register callbacks to Schema instances, you must access the instance
 
     <Tabs.Tab>
     ```cs filename="client.cs"
-    // TODO: NOT IMPLEMENTED / NOT FINAL
-    $(room.state).OnCurrentTurnChange((currentValue, previousValue) => {
-        Debug.Log(currentValue);
-        Debug.Log(previousValue);
-    })
+    callbacks.Listen(state => state.currentTurn, (currentValue, previousValue) => {
+        // ...
+    });
+
+    // when an entity was added (ArraySchema or MapSchema)
+    callbacks.OnAdd(state => state.entities, (sessionId, entity) => {
+        // ...
+        Debug.Log("entity added", entity);
+
+        callbacks.Listen(entity, entity => entity.hp, (currentHp, previousHp) => {
+            Debug.Log("entity", sessionId, "changed hp to", currentHp);
+        });
+    });
+
+    // when an entity was removed (ArraySchema or MapSchema)
+    callbacks.OnRemove(state => state.entities, (sessionId, entity) => {
+        // ...
+        Debug.Log("entity removed", entity);
+    });
     ```
     </Tabs.Tab>
 
@@ -113,10 +127,9 @@ In order to register callbacks to Schema instances, you must access the instance
 
 - [onAdd (item, key)](#onadd-fn-item-key-triggerall-true)
 - [onRemove (item, key)](#onremove-item-key)
-- [onChange (item, key)](#onchange-item-key)
 
 <Callout type="info">
-    **What are collections?** - Collections are `MapSchema`, `ArraySchema`, etc. See how to [define collections of items](/state/schema/#collections-of-items).
+    Collections are `MapSchema`, `ArraySchema`, etc. See how to [define collections of items](/state/schema/#collections-of-items).
 </Callout>
 
 ---
@@ -153,10 +166,11 @@ Listens for a single property change.
 
     <Tabs.Tab>
     ```cs filename="client.cs"
-    $(room.state).OnCurrentTurnChange((currentValue, previousValue) => {
-        Debug.Log(currentValue);
-        Debug.Log(previousValue);
-    })
+    callbacks.Listen(state => state.currentTurn, (currentValue, previousValue) =>
+    {
+        Debug.Log($"currentTurn is now {currentValue}");
+        Debug.Log($"previous value was: {previousValue}");
+    });
     ```
     </Tabs.Tab>
 
@@ -192,7 +206,7 @@ unbindCallback();
 
 ---
 
-#### `.bindTo(targetObject, properties?)`
+#### Bind To
 
 Bind properties directly to `targetObject`, whenever the server send updates.
 
@@ -202,7 +216,7 @@ Bind properties directly to `targetObject`, whenever the server send updates.
 - `properties`: (optional) list of properties that will be assigned to
   `targetObject`. By default, every `@type()`'d property will be used.
 
-<Tabs items={["TypeScript"]}>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
     <Tabs.Tab>
     ```ts filename="client.ts"
     $(room.state).players.onAdd((player, sessionId) => {
@@ -211,20 +225,46 @@ Bind properties directly to `targetObject`, whenever the server send updates.
     });
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    callbacks.OnAdd(state => state.players, (sessionId, player) =>
+    {
+        var playerVisual = new PlayerVisual();
+        callbacks.BindTo(player, playerVisual);
+    });
+    ```
+    </Tabs.Tab>
+
 </Tabs>
 
 ---
 
-#### `onChange ()`
+#### On Change
 
 You can register the `onChange` to track whenever a `Schema` had its properties changed. When the callback is triggered, changes have already been applied.
 
 <Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
     <Tabs.Tab>
-    ```ts filename="client.ts"
-    $(room.state).onChange(() => {
-        // something changed on .state
-        console.log(room.state.xxx)
+    ```ts {3} filename="client.ts"
+    $(room.state).entities.onAdd((entity, sessionId) => {
+        // ...
+        $(entity).onChange(() => {
+            // something changed on `entity`
+        })
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs {4-7} filename="client.cs"
+    callbacks.OnAdd(state => state.entities, (sessionId, entity) =>
+    {
+        // ...
+        callbacks.OnChange(entity, () =>
+        {
+            // something changed on `entity`
+        });
     });
     ```
     </Tabs.Tab>
@@ -235,16 +275,6 @@ You can register the `onChange` to track whenever a `Schema` had its properties 
         -- something changed on .state
         print(room.state.xxx)
     end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="client.cs"
-    $(room.State).OnChange(() =>
-    {
-        // something changed on .state
-        Debug.Log(room.State.xxx)
-    });
     ```
     </Tabs.Tab>
 
@@ -266,7 +296,7 @@ You can register the `onChange` to track whenever a `Schema` had its properties 
 
 ### On collections of items
 
-#### `onAdd (fn (item, key), triggerAll = true)`
+#### On Item Add
 
 Register the `onAdd` callback is called whenever a new instance is added to a collection.
 
@@ -291,16 +321,18 @@ By default, the callback is called immediately for existing items in the collect
 
     <Tabs.Tab>
     ```cs filename="client.cs"
-    $(room.State).players.OnAdd((string key, Player player) =>
+    callbacks.OnAdd(room.State.players, (string key, Player player) =>
     {
         Debug.Log("player has been added at " + key);
 
         // add your player entity to the game world!
 
         // detecting changes on object properties
-        player.OnFieldNameChange += (value, previousValue) => {
-            // property "fieldName" has changed!
-        };
+        callbacks.Listen(player, player => player.field_name, (value, previousValue) =>
+        {
+            Debug.Log(value);
+            Debug.Log(previousValue);
+        });
     });
     ```
     </Tabs.Tab>
@@ -344,7 +376,7 @@ By default, the callback is called immediately for existing items in the collect
 
 ---
 
-#### `onRemove (item, key)`
+#### On Item Remove
 
 The `onRemove` callback is called with the removed item and its key on holder object as argument.
 
@@ -362,7 +394,7 @@ The `onRemove` callback is called with the removed item and its key on holder ob
 
     <Tabs.Tab>
     ```cs filename="client.cs"
-    $(room.State).players.OnRemove((string key, Player player) =>
+    callbacks.OnRemove(state => state.players, (string key, Player player) =>
     {
         Debug.Log("player has been removed at " + key);
 
@@ -391,53 +423,6 @@ The `onRemove` callback is called with the removed item and its key on holder ob
     ```
     </Tabs.Tab>
 </Tabs>
-
-
----
-
-#### `onChange (item, key)`
-
-This callback is triggered whenever a collection of **primitive** types (`string`, `number`, `boolean`, etc.) updates its values at the same key.
-
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
-
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    $(room.state).mapOfStrings.onChange((value, key) => {
-        console.log(key, "changed to", value);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="client.cs"
-    $(room.State).mapOfStrings.OnChange((string key, string value) =>
-    {
-        Debug.Log(key + " changed to" + value);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    $(room.state).mapOfStrings:on_change(function (value, key)
-        print(key .. " changed to " .. value);
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    $(room.state).mapOfStrings.onChange((value, key) => {
-        trace(key + " changed to " + value);
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-<Callout type="info">
-    **Collection of `Schema` instances?** - If you'd like to get the changes of a child `Schema` instance inside a collection, you need to attach either `.listen()` or `.onChange()` callbacks to the child instance directly during `.onAdd()`
-</Callout>
 
 ---
 
