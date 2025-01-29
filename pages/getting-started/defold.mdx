@@ -57,6 +57,14 @@ See [client-side documentation](/client/).
 
 ## FAQ
 
+### Defold Editor is not opening the project!
+
+If you placed your server directory inside the Defold project directory, the Defold Editor might fail to load the project. You can fix this by adding the server directory to the `.defignore` file.
+
+```txt filename=".defignore"
+/server
+```
+
 ### "I can't connect to the local server!"
 
 When running on localhost, make sure you don't have any service running on port
