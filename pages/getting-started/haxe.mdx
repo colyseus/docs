@@ -2,6 +2,7 @@
 title: "Haxe"
 ---
 import { haxe } from "../../components/icons/platforms"
+import { Callout, Cards, Tabs } from "nextra/components";
 
 # {haxe} Haxe
 
@@ -28,7 +29,9 @@ var client = new Client('ws://localhost:2567');
 
 ### Joining to a room:
 
-> See how to generate your `RoomState` from [State Handling](/state/schema/#client-side-schema-generation)
+<Callout type="info">
+    See how to generate your `RoomState` from [State Synchronization → Client-side Callbacks](/state/callbacks#client-side-schema-generation)
+</Callout>
 
 ```haxe filename="main.hx"
 client.joinOrCreate("room_name", [], RoomState, function(err, room) {
