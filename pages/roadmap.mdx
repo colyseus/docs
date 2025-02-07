@@ -11,7 +11,7 @@ Colyseus is an independent open-source project that has been around since 2015. 
 
 - **General improvements:**
     - Add request/response model to rooms ([#331](https://github.com/colyseus/colyseus/issues/331))
-    - Client input validation API (`onMessage` in the server)
+    - Introduce the concept of "low priority" and "high priority" messages. Drop "low priority" messages if clients are under backpressure.
     - Introduce "version check" to allow native SDKs to communicate with newer versions of the server
 - **Database:**
     - Introduce an official database recommendation tool. The recommendation should be used on the documentation, official examples, and initial template project. (See [<DatabaseIcon/> Database](/database))
