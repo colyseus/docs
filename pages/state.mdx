@@ -90,10 +90,10 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
             state = new MyState.MyState();
 
             onJoin (client, options) {
-                this.state.players.set(this.sessionId, new Player());
+                this.state.players.set(client.sessionId, new Player());
             }
             onLeave (client) {
-                this.state.players.delete(this.sessionId);
+                this.state.players.delete(client.sessionId);
             }
         }
         ```
