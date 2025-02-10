@@ -474,14 +474,14 @@ Define a new type of room for the match-maker.
 - Rooms are created upon client request ([See client-side methods](/client/#methods))
 
 ```ts filename="Signature"
-gameServer.define (roomName: string, room: Room, options?: any)
+gameServer.define (roomName: string, room: typeof Room, defaultOptions?: any)
 ```
 
 **Parameters:**
 
 - `roomName: string` - The public name of the room. You'll use this name when joining the room from the client-side
 - `room: Room` - The `Room` class
-- _(optional)_ `options: any` - Custom options for room initialization
+- `defaultOptions: any` - _(optional)_ Default options to provide for room creation and `onAuth`/`onJoin` methods
 
 ```ts
 // Define "chat" room

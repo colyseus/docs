@@ -115,22 +115,38 @@ The `onAuth` method is called before `onJoin`, and it is responsible for validat
 <Tabs items={["Instance onAuth", "Static onAuth"]}>
     <Tabs.Tab>
     ```ts filename="MyRoom.ts"
-    async onAuth (client, options, request) {
+    async onAuth (client, options, context) {
         /**
          * This is a good place to validate the client's auth token.
          */
     }
     ```
+    **Arguments**
+    - `client`: A reference to the client that is trying to join the room.
+    - `options`: Options provided by the client-side SDK.
+    - `context`: The request context, containing:
+        - `.token` - the authentication token sent by the client.
+        - `.headers` - the headers sent by the client.
+        - `.ip` - the IP address of the client.
+
     </Tabs.Tab>
 
     <Tabs.Tab>
     ```ts filename="MyRoom.ts"
-    static async onAuth (token, request) {
+    static async onAuth (token, options, context) {
         /**
          * This is a good place to validate the client's auth token.
          */
     }
     ```
+    **Arguments**
+    - `token`: The authentication token sent by the client.
+    - `options`: Options provided by the client-side SDK.
+    - `context`: The request context, containing:
+        - `.token` - the authentication token sent by the client.
+        - `.headers` - the headers sent by the client.
+        - `.ip` - the IP address of the client.
+
     </Tabs.Tab>
 </Tabs>
 
@@ -147,8 +163,8 @@ Triggered when a client successfully joins the room, after a successful `onAuth`
 **Parameters:**
 
 - `client`: A reference to the client that joined the room.
-- `options`: merged values specified on [Server#define()](/server/#define-roomname-string-room-room-options-any) with the options provided by the SDK.
-- _(optional)_ `auth`: auth data returned by [`onAuth`](#onauth) method.
+- `options`: Options provided by the Client SDK. _(Merged with default values provided by [Server#define()](/server#define-room-type))_
+- `auth`: _(optional)_ auth data returned by [`onAuth`](#onauth) method.
 
 ```ts filename="MyRoom.ts"
 async onJoin (client, options, auth?) {
