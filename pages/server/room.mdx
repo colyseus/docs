@@ -64,7 +64,7 @@ The `Room` class is meant to implement a game session, and/or serve as the commu
 - The room lifecycle events are called automatically.
 - Optional [`async`/`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) is supported on every lifecycle event.
 
-### onCreate
+### On Create
 
 Called once, when the room is created by the matchmaker. `options` is the merged values specified on [Server#define()](/server/#define-room-type) with the options provided from the SDK at [`.joinOrCreate()`](/client#join-or-create-a-room) or [`.join()`](/client#join-existing-room).
 
@@ -108,7 +108,7 @@ On this example, the `map` option is `"cs_assault"` during `onCreate()`, and `"d
 
 ---
 
-### onAuth
+### On Auth
 
 The `onAuth` method is called before `onJoin`, and it is responsible for validating the client's request to join a room.
 
@@ -140,7 +140,7 @@ The `onAuth` method is called before `onJoin`, and it is responsible for validat
 
 ---
 
-### onJoin
+### On Join
 
 Triggered when a client successfully joins the room, after a successful `onAuth`.
 
@@ -164,7 +164,7 @@ async onJoin (client, options, auth?) {
 
 ---
 
-### onLeave
+### On Leave
 
 Triggered when a client leaves the room.
 
@@ -207,7 +207,7 @@ You may define this function as `async`:
 
 ---
 
-### onDispose
+### On Dispose
 
 The `onDispose()` method is called before the room is destroyed, which happens when:
 
@@ -230,7 +230,7 @@ You may define `async onDispose()` an asynchronous method in order to persist so
 
 ---
 
-### onUnhandledException
+### On Unhandled Exception
 
 Opt-in to catch unhandled exceptions in your room. This method is called when an unhandled exception occurs in any of the lifecycle methods.
 
@@ -248,7 +248,7 @@ onUncaughtException (err: Error, methodName: string) {
 
 ---
 
-### onBeforePatch
+### On Before Patch
 
 The `onBeforePatch` lifecycle hook is triggered before state synchronization, at patch rate frequency. (see [setPatchRate()](#set-patch-rate))
 
@@ -263,7 +263,7 @@ onBeforePatch() {
 
 ---
 
-### onCacheRoom (`devMode`)
+### On Cache Room (`devMode`)
 
 An optional hook to cache external data when [`devMode`](devmode) is enabled.
 (See [restoring data outside the room's state](/server/devmode#restoring-data-outside-the-rooms-state))
@@ -280,9 +280,9 @@ export class MyRoom extends Room<MyRoomState> {
 
 ---
 
-### onRestoreRoom (`devMode`)
+### On Restore Room (`devMode`)
 
-An optional hook to reprocess/restore data which was returned and stored from the previous hook [`onCacheRoom`](/server/room/#oncacheroom-devmode) when [Development Mode](devmode) is enabled.
+An optional hook to reprocess/restore data which was returned and stored from the previous hook [`onCacheRoom`](/server/room/#on-cache-room-devmode) when [Development Mode](devmode) is enabled.
 
 ```ts filename="MyRoom.ts"
 export class MyRoom extends Room<MyRoomState> {
@@ -304,7 +304,7 @@ export class MyRoom extends Room<MyRoomState> {
 
 ---
 
-### onBeforeShutdown
+### On Before Shutdown
 
 The `onBeforeShutdown` lifecycle hook is called as part of the [Graceful Shutdown](/server/graceful-shutdown/) process. The process will only truly shutdown after all rooms have been disposed.
 
@@ -336,7 +336,7 @@ onBeforeShutdown() {
 
 Room handlers have these methods available.
 
-### onMessage
+### On Message
 
 Register a callback to process a type of message sent by the client-side.
 
@@ -583,7 +583,7 @@ Available options are:
 </Tabs>
 
 <Callout type="info">
-    The client will receive the message in the [`onMessage()`](/client/#onmessage) callback.
+    The client will receive the message in the [`onMessage()`](/client/#on-message) callback.
 </Callout>
 
 ---
@@ -987,7 +987,7 @@ client.send(1, { kind: "ammo"});
 ```
 
 <Callout type="info">
-    [See how to handle `onMessage` from the client-side SDK](/client/#onmessage)
+    [See how to handle `onMessage` from the client-side SDK](/client/#on-message)
 </Callout>
 
 ---
@@ -1037,7 +1037,7 @@ client.leave(code?: number)
 ```
 
 <Callout type="info">
-    This will trigger [`room.onLeave`](/client/#onleave) event on the client-side.
+    This will trigger [`room.onLeave`](/client/#on-leave) event on the client-side.
 </Callout>
 
 **Table of WebSocket close codes**

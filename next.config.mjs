@@ -4,6 +4,10 @@ const withNextra = nextra({
     theme: 'nextra-theme-docs',
     themeConfig: './theme.config.tsx',
 
+    // mdxOptions: {
+    //     remarkPlugins: [],
+    // },
+
     latex: true,
     search: {
         codeblocks: false

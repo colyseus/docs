@@ -495,7 +495,7 @@ gameServer.define("battle_woods", BattleRoom, { map: "woods" });
 ```
 
 <Callout type="info">
-    You may define the same room handler multiple times with different `options`. When [Room#onCreate()](/server/room/#oncreate) is called, the `options` will contain the merged values you specified on [Server#define()](/server/#define-room-type) with the options provided by the client SDK.
+    You may define the same room handler multiple times with different `options`. When [Room#onCreate()](/server/room/#on-create) is called, the `options` will contain the merged values you specified on [Server#define()](/server/#define-room-type) with the options provided by the client SDK.
 </Callout>
 
 ---
@@ -713,7 +713,7 @@ Binds the [Transport](/server/transport) layer into the specified port.
 
 ---
 
-### onBeforeShutdown
+### On Before Shutdown
 
 Register a custom callback that is called **before** the Graceful Shutdown routine starts.
 
@@ -733,7 +733,7 @@ gameServer.onBeforeShutdown(async () => {
 
 ---
 
-### onShutdown
+### On Shutdown
 
 Register a custom callback that is called **after** the graceful shutdown is fully complete.
 

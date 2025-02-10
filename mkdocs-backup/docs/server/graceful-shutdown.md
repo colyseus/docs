@@ -7,15 +7,15 @@ Colyseus listens for `SIGTERM` and `SIGINT` signals to gracefully shut down the 
 
 These actions will be performed, in order, before the process is killed:
 
-1. The custom [`gameServer.onBeforeShutdown()`](/server/#onbeforeshutdown-callback-function) is called, if defined.
+1. The custom [`gameServer.onBeforeShutdown()`](/server/#on-before-shutdown-callback-function) is called, if defined.
 2. The process is excluded from match-making.
 3. All existing rooms are locked  ([`room.lock()`](/server/room/#lock)),
-4. All rooms [`room.onBeforeShutdown()`](/server/room/#onbeforeshutdown) is called.
+4. All rooms [`room.onBeforeShutdown()`](/server/room/#on-before-shutdown) is called.
     - You may override `room.onBeforeShutdown()` to perform custom actions before the room is disposed.
     - By default, `room.onBeforeShutdown()` simply calls `room.disconnect()`, which will trigger `room.onLeave()` for all clients, and then `room.onDispose()`.
 5. The server waits for all rooms to be disposed (room count must be zero).
 6. The Transport, Presence, and Driver are closed and disconnected.
-7. The custom [`gameServer.onShutdown()`](/server/#onshutdown-callback-function) is called, if defined.
+7. The custom [`gameServer.onShutdown()`](/server/#on-shutdown-callback-function) is called, if defined.
 
 You may use `async` functions or return a `Promise` to perform asynchronous operations on `onLeave` and `onDispose` methods, as well as `gameServer.onBeforeShutdown()` and `gameServer.onShutdown()`.
 

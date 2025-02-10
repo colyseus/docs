@@ -843,7 +843,7 @@ Disconnect client from the room.
     ```
 
 !!! Tip
-    Use [Room#onLeave()](/server/room/#onleave-client-consented) to handle the disconnection from the server-side.
+    Use [Room#onLeave()](/server/room/#on-leave) to handle the disconnection from the server-side.
 
 ---
 
