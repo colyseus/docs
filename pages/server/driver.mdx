@@ -34,7 +34,7 @@ The `RedisDriver` stores room data in a Redis database. This driver is suitable 
 npm install --save @colyseus/redis-driver
 ```
 
-<Tabs items={["app.config.ts", "Raw usage"]}>
+<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
     <Tabs.Tab>
     ```ts {2,5-6} filename="app.config.ts"
     import config from "@colyseus/tools";
@@ -66,7 +66,7 @@ npm install --save @colyseus/redis-driver
 
 The `MongoDriver` stores room data in a MongoDB database. This driver is not actively maintained and is not recommended for production environments.
 
-<Tabs items={["app.config.ts", "Raw usage"]}>
+<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
     <Tabs.Tab>
     ```ts {2,5-6} filename="app.config.ts"
     import config from "@colyseus/tools";
