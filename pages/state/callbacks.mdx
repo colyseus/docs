@@ -1,190 +1,197 @@
 ---
 title: "Client-side Callbacks"
 ---
-import { Tabs, Callout } from 'nextra/components'
+import { Tabs, Callout, Steps } from 'nextra/components'
 
 # Client-side Schema Callbacks
 
 When applying state changes coming from the server, the client-side is going to trigger callbacks on local instances according to the changes being applied.
 
-In order to register callbacks to Schema instances, you must access the instances through a "proxy":
+In order to register callbacks to Schema instances, you must access the instances through a "callbacks handler".
 
-<Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    import { Client, getStateCallbacks } from "colyseus.js";
+## Overview
 
-    // initialize SDK
-    const client = new Client("ws://localhost:2567");
+<Steps>
+    ### Get the callback handler
 
-    // join room
-    const room = await client.joinOrCreate("my_room");
+    <Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
+        <Tabs.Tab>
+        ```ts {10} filename="client.ts"
+        import { Client, getStateCallbacks } from "colyseus.js";
 
-    // get state callbacks handler
-    const $ = getStateCallbacks(room);
-    ```
-    </Tabs.Tab>
+        // initialize SDK
+        const client = new Client("ws://localhost:2567");
 
-    <Tabs.Tab>
-    ```cs filename="client.cs"
-    using Colyseus;
-
-    // initialize SDK
-    var client = new Client("ws://localhost:2567");
-
-    // join room
-    var room = await client.JoinOrCreate<MyRoomState>("my_room");
-
-    // get state callbacks handler
-    var callbacks = Colyseus.Schema.Callbacks.Get(room);
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    local ColyseusSDK = require("colyseus.sdk")
-
-    -- initialize SDK
-    local client = ColyseusSDK.Client("ws://localhost:2567")
-
-    -- join room
-    client:join_or_create("my_room", function(room)
-
-        -- get state callbacks handler
-        local callbacks = ColyseusSDK.callbacks(room)
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    import colyseus.Client;
-    import io.colyseus.serializer.schema.Callbacks;
-
-    // initialize SDK
-    var client = new Colyseus.Client("ws://localhost:2567");
-
-    // join room
-    client.joinOrCreate("my_room", [], MyRoomState, function(err, room) {
+        // join room
+        const room = await client.joinOrCreate("my_room");
 
         // get state callbacks handler
-        var callbacks = Callbacks.get(room);
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
+        const $ = getStateCallbacks(room);
+        ```
+        </Tabs.Tab>
 
-<Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    $(room.state).listen("currentTurn", (currentValue, previousValue) => {
-        // ...
-    });
+        <Tabs.Tab>
+        ```cs {10} filename="client.cs"
+        using Colyseus;
 
-    // when an entity was added (ArraySchema or MapSchema)
-    $(room.state).entities.onAdd((entity, sessionId) => {
-        // ...
-        console.log("entity added", entity);
+        // initialize SDK
+        var client = new Client("ws://localhost:2567");
 
-        $(entity).listen("hp", (currentHp, previousHp) => {
-            console.log("entity", sessionId, "changed hp to", currentHp);
-        })
-    });
+        // join room
+        var room = await client.JoinOrCreate<MyRoomState>("my_room");
 
-    // when an entity was removed (ArraySchema or MapSchema)
-    $(room.state).entities.onRemove((entity, sessionId) => {
-        // ...
-        console.log("entity removed", entity);
-    });
-    ```
-    </Tabs.Tab>
+        // get state callbacks handler
+        var callbacks = Colyseus.Schema.Callbacks.Get(room);
+        ```
+        </Tabs.Tab>
 
-    <Tabs.Tab>
-    ```cs filename="client.cs"
-    callbacks.Listen(state => state.currentTurn, (currentValue, previousValue) => {
-        // ...
-    });
+        <Tabs.Tab>
+        ```lua {10} filename="client.lua"
+        local ColyseusSDK = require("colyseus.sdk")
 
-    // when an entity was added (ArraySchema or MapSchema)
-    callbacks.OnAdd(state => state.entities, (sessionId, entity) => {
-        // ...
-        Debug.Log("entity added", entity);
+        -- initialize SDK
+        local client = ColyseusSDK.Client("ws://localhost:2567")
 
-        callbacks.Listen(entity, entity => entity.hp, (currentHp, previousHp) => {
-            Debug.Log("entity", sessionId, "changed hp to", currentHp);
+        -- join room
+        client:join_or_create("my_room", function(room)
+
+            -- get state callbacks handler
+            local callbacks = ColyseusSDK.callbacks(room)
+        end)
+        ```
+        </Tabs.Tab>
+
+        <Tabs.Tab>
+        ```haxe {2,11} filename="client.hx"
+        import colyseus.Client;
+        import io.colyseus.serializer.schema.Callbacks;
+
+        // initialize SDK
+        var client = new Colyseus.Client("ws://localhost:2567");
+
+        // join room
+        client.joinOrCreate("my_room", [], MyRoomState, function(err, room) {
+
+            // get state callbacks handler
+            var callbacks = Callbacks.get(room);
         });
-    });
+        ```
+        </Tabs.Tab>
+    </Tabs>
 
-    // when an entity was removed (ArraySchema or MapSchema)
-    callbacks.OnRemove(state => state.entities, (sessionId, entity) => {
-        // ...
-        Debug.Log("entity removed", entity);
-    });
-    ```
-    </Tabs.Tab>
+    ### Register the callbacks
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    -- TODO: NOT IMPLEMENTED / NOT FINAL
-    $(room.state):listen("currentTurn", function (current_value, previous_value)
-        pprint(current_value);
-        pprint(previous_value);
-    end)
-    ```
-    </Tabs.Tab>
+    <Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
+        <Tabs.Tab>
+        ```ts filename="client.ts"
+        $(room.state).listen("currentTurn", (currentValue, previousValue) => {
+            // ...
+        });
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    // TODO: NOT IMPLEMENTED / NOT FINAL
-    $(room.state).listen("currentTurn", (currentValue, previousValue) => {
-        trace(currentValue);
-        trace(previousValue);
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
+        // when an entity was added (ArraySchema or MapSchema)
+        $(room.state).entities.onAdd((entity, sessionId) => {
+            // ...
+            console.log("entity added", entity);
 
-<Callout type="info">
+            $(entity).listen("hp", (currentHp, previousHp) => {
+                console.log("entity", sessionId, "changed hp to", currentHp);
+            })
+        });
+
+        // when an entity was removed (ArraySchema or MapSchema)
+        $(room.state).entities.onRemove((entity, sessionId) => {
+            // ...
+            console.log("entity removed", entity);
+        });
+        ```
+        </Tabs.Tab>
+
+        <Tabs.Tab>
+        ```cs filename="client.cs"
+        callbacks.Listen(state => state.currentTurn, (currentValue, previousValue) => {
+            // ...
+        });
+
+        // when an entity was added (ArraySchema or MapSchema)
+        callbacks.OnAdd(state => state.entities, (sessionId, entity) => {
+            // ...
+            Debug.Log("entity added", entity);
+
+            callbacks.Listen(entity, entity => entity.hp, (currentHp, previousHp) => {
+                Debug.Log("entity", sessionId, "changed hp to", currentHp);
+            });
+        });
+
+        // when an entity was removed (ArraySchema or MapSchema)
+        callbacks.OnRemove(state => state.entities, (sessionId, entity) => {
+            // ...
+            Debug.Log("entity removed", entity);
+        });
+        ```
+        </Tabs.Tab>
+
+        <Tabs.Tab>
+        ```lua filename="client.lua"
+        callbacks:listen("currentTurn", function (currentValue, previousValue)
+            -- ...
+        end)
+
+        -- when an entity was added (ArraySchema or MapSchema)
+        callbacks:on_add("entities", function (entity, sessionId)
+            -- ...
+            print("entity added", entity)
+
+            callbacks:listen(entity, "hp", function (currentHp, previousHp)
+                print("entity", sessionId, "changed hp to", currentHp)
+            end)
+        end)
+
+        -- when an entity was removed (ArraySchema or MapSchema)
+        callbacks:on_remove("entities", function (entity, sessionId)
+            -- ...
+            print("entity removed")
+            pprint(entity)
+        end)
+        ```
+        </Tabs.Tab>
+
+        <Tabs.Tab>
+        ```haxe filename="client.hx"
+        callbacks.listen("currentTurn", function (currentValue, previousValue) {
+            // ...
+        });
+
+        // when an entity was added (ArraySchema or MapSchema)
+        callbacks.onAdd("entities", function (entity, sessionId) {
+            // ...
+            trace("entity added", entity);
+
+            callbacks.listen(entity, "hp", function (currentHp, previousHp) {
+                trace("entity", sessionId, "changed hp to", currentHp);
+            });
+        });
+
+        // when an entity was removed (ArraySchema or MapSchema)
+        callbacks.onRemove("entities", function (entity, sessionId) {
+            // ...
+            trace("entity removed", entity);
+        });
+        ```
+        </Tabs.Tab>
+    </Tabs>
+</Steps>
+
+<Callout type="warning">
     **C#, C++, Haxe** - When using statically typed languages, you need to generate the client-side schema files based on your TypeScript schema definitions. [See generating schema on the client-side](#client-side-schema-generation).
 </Callout>
 
-### Methods
-
-**On `Schema` instances**
-
-- [listen()](#listenprop-callback) for properties
-- [bindTo()](#bindto-callback) for properties
-- [onChange ()](#onchange)
-
-**On collections of items**
-
-- [onAdd (item, key)](#onadd-fn-item-key-triggerall-true)
-- [onRemove (item, key)](#onremove-item-key)
-
-<Callout type="info">
-    Collections are `MapSchema`, `ArraySchema`, etc. See how to [define collections of items](/state/schema/#collections-of-items).
-</Callout>
-
----
+## How to use
 
 ### On `Schema` instances
 
-<Callout type="info">
-    **TypeScript** - When your `tsconfig.json` targets `ES2022` or higher (e.g. `ESNext`), the `@type()` schema decorators may fail to work because TS moves property declarations to the constructor. Set `"useDefineForClassFields": false` in your `tsconfig.json` to fix this. See [#510](https://github.com/colyseus/colyseus/issues/510#issuecomment-1507828422) for the discussion.
-</Callout>
-
 #### Listen
 
-Listens for a single property change.
-
-```ts filename="Signature"
-.listen(property, callback)
-```
-
-**Parameters:**
-
-- `property`: the property name you'd like to listen for changes.
-- `callback`: the callback that is going to be triggered when `property` changes.
+Listens for a single property change within a `Schema` instance.
 
 <Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
 
@@ -199,8 +206,7 @@ Listens for a single property change.
 
     <Tabs.Tab>
     ```cs filename="client.cs"
-    callbacks.Listen(state => state.currentTurn, (currentValue, previousValue) =>
-    {
+    callbacks.Listen(state => state.currentTurn, (currentValue, previousValue) => {
         Debug.Log($"currentTurn is now {currentValue}");
         Debug.Log($"previous value was: {previousValue}");
     });
@@ -209,25 +215,24 @@ Listens for a single property change.
 
     <Tabs.Tab>
     ```lua filename="client.lua"
-
-    $(room.state):listen("currentTurn", function (current_value, previous_value)
-        pprint(current_value);
-        pprint(previous_value);
+    callbacks:listen("currentTurn", function (currentValue, previousValue)
+        print("currentTurn is now " .. currentValue)
+        print("previous value was: " .. previousValue)
     end)
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
     ```haxe filename="client.hx"
-    $(room.state).listen("currentTurn", (currentValue, previousValue) => {
-        trace(currentValue);
-        trace(previousValue);
+    callbacks.listen("currentTurn", function (currentValue, previousValue) {
+        trace("currentTurn is now " + currentValue);
+        trace("previous value was: " + previousValue);
     });
     ```
     </Tabs.Tab>
 </Tabs>
 
-The `.listen()` method returns a function that, when called, removes the attached callback:
+**Removing the callback:** The `.listen()` method returns a function that, when called, removes the attached callback:
 
 ```ts filename="client.ts"
 const unbindCallback = $(room.state).listen("currentTurn", (currentValue, previousValue) => {
@@ -242,7 +247,7 @@ unbindCallback();
 
 #### Bind To
 
-Bind properties directly to `targetObject`, whenever the server send updates.
+Bind properties directly to `targetObject`, whenever the client receives an update from the server.
 
 **Parameters:**
 
@@ -261,12 +266,29 @@ Bind properties directly to `targetObject`, whenever the server send updates.
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```ts filename="client.ts"
-    callbacks.OnAdd(state => state.players, (sessionId, player) =>
-    {
+    ```cs filename="client.cs"
+    callbacks.OnAdd(state => state.players, (sessionId, player) => {
         var playerVisual = new PlayerVisual();
         callbacks.BindTo(player, playerVisual);
     });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    --
+    -- callbacks:bind_to() is not implemented in Lua SDK yet
+    -- contributions are very welcome!
+    --
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    //
+    // callbacks.bindTo() is not implemented in Haxe SDK yet
+    // contributions are very welcome!
+    //
     ```
     </Tabs.Tab>
 
@@ -276,61 +298,62 @@ Bind properties directly to `targetObject`, whenever the server send updates.
 
 #### On Change
 
-You can register the `onChange` to track whenever a `Schema` had its properties changed. When the callback is triggered, changes have already been applied.
+The On Change callback is invoked whenever a direct property of a `Schema` instance is modified.
+
+- **Triggers only for direct property changes:** It does not cascade or propagate changes from nested properties within the Schema.
+- The callback fires after the changes have been applied to the Schema instance. This means you're dealing with the updated instance when the callback executes.
 
 <Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
     <Tabs.Tab>
-    ```ts {3} filename="client.ts"
+    ```ts {3-5} filename="client.ts"
     $(room.state).entities.onAdd((entity, sessionId) => {
         // ...
         $(entity).onChange(() => {
-            // something changed on `entity`
+            // some property changed inside `entity`
         })
     });
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```cs {4-7} filename="client.cs"
-    callbacks.OnAdd(state => state.entities, (sessionId, entity) =>
-    {
+    ```cs {3-5} filename="client.cs"
+    callbacks.OnAdd(state => state.entities, (sessionId, entity) => {
         // ...
-        callbacks.OnChange(entity, () =>
-        {
-            // something changed on `entity`
+        callbacks.OnChange(entity, () => {
+            // some property changed inside `entity`
         });
     });
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```lua filename="client.lua"
-    $(room.state):on_change(function ()
-        -- something changed on .state
-        print(room.state.xxx)
+    ```lua {3-5} filename="client.lua"
+    callbacks:on_add("entities", function (entity, sessionId)
+        -- ...
+        callbacks:on_change(entity, function ()
+            -- some property changed inside `entity`
+        end)
     end)
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```haxe filename="client.hx"
-    $(room.state).onChange(() => {
-        // something changed on .state
-        trace(room.state.xxx);
+    ```haxe {3-5} filename="client.hx"
+    callbacks.onAdd("entities", function(entity, sessionId) {
+        // ...
+        callbacks.onChange(entity, function() {
+            // some property changed inside `entity`
+        });
     });
     ```
     </Tabs.Tab>
 </Tabs>
 
-<Callout type="info">
-    **Use `.listen()` to detect changes on particular properties** - Since version 0.15, the `.onChange()` does not provide the full list of properties changed. See [`.listen()`](#listenprop-callback)
-</Callout>
-
 ---
 
-### On collections of items
+### On Maps or Arrays
 
-#### On Item Add
+#### On Add
 
 Register the `onAdd` callback is called whenever a new instance is added to a collection.
 
@@ -338,9 +361,9 @@ By default, the callback is called immediately for existing items in the collect
 
 <Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
     <Tabs.Tab>
-    ```ts filename="client.ts"
-    $(room.state).players.onAdd((player, key) => {
-        console.log(player, "has been added at", key);
+    ```ts {1} filename="client.ts"
+    $(room.state).players.onAdd((player, sessionId) => {
+        console.log(player, "has been added at", sessionId);
 
         // add your player entity to the game world!
 
@@ -354,16 +377,14 @@ By default, the callback is called immediately for existing items in the collect
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```cs filename="client.cs"
-    callbacks.OnAdd(room.State.players, (string key, Player player) =>
-    {
-        Debug.Log("player has been added at " + key);
+    ```cs {1} filename="client.cs"
+    callbacks.OnAdd(state => state.players, (string sessionId, Player player) => {
+        Debug.Log("player has been added at " + sessionId);
 
         // add your player entity to the game world!
 
         // detecting changes on object properties
-        callbacks.Listen(player, player => player.field_name, (value, previousValue) =>
-        {
+        callbacks.Listen(player, player => player.field_name, (value, previousValue) => {
             Debug.Log(value);
             Debug.Log(previousValue);
         });
@@ -372,14 +393,14 @@ By default, the callback is called immediately for existing items in the collect
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```lua filename="client.lua"
-    $(room.state).players:on_add(function (player, key)
-        print("player has been added at", key);
+    ```lua {1} filename="client.lua"
+    callbacks:on_add("players", function (player, sessionId)
+        print("player has been added at " .. sessionId);
 
         -- add your player entity to the game world!
 
         -- detecting changes on object properties
-        player:listen("field_name", function(value, previous_value)
+        callbacks:listen(player, "field_name", function(value, previous_value)
             print(value)
             print(previousValue)
         end)
@@ -388,14 +409,14 @@ By default, the callback is called immediately for existing items in the collect
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```haxe filename="client.hx"
-    $(room.state).players.onAdd((player, key) => {
-        trace("player has been added at " + key);
+    ```haxe {1} filename="client.hx"
+    callbacks.onAdd("players", (player, sessionId) => {
+        trace("player has been added at " + sessionId);
 
         // add your player entity to the game world!
 
         // detecting changes on object properties
-        player.listen("field_name", (value, previousValue) => {
+        callbacks.listen(player, "field_name", (value, previousValue) => {
             trace(value);
             trace(previousValue);
         });
@@ -404,22 +425,18 @@ By default, the callback is called immediately for existing items in the collect
     </Tabs.Tab>
 </Tabs>
 
-<Callout type="info">
-    **Avoiding doubled-up callbacks** - You may notice that `onAdd` is called multiple times when an entry is inserted. This is because the "add" callback is called immediately by default for existing items in the collection. When the collection is nested within another schema instance, this can cause doubling. To fix this, set the second argument of `onAdd` to false (e.g. `.onAdd(callback, false)`). See [#147](https://github.com/colyseus/schema/issues/147#issuecomment-1538684941).
-</Callout>
-
 ---
 
-#### On Item Remove
+#### On Remove
 
 The `onRemove` callback is called with the removed item and its key on holder object as argument.
 
 <Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
 
     <Tabs.Tab>
-    ```ts filename="client.ts"
-    $(room.state).players.onRemove((player, key) => {
-        console.log(player, "has been removed at", key);
+    ```ts {1} filename="client.ts"
+    $(room.state).players.onRemove((player, sessionId) => {
+        console.log(player, "has been removed at", sessionId);
 
         // remove your player entity from the game world!
     });
@@ -427,10 +444,9 @@ The `onRemove` callback is called with the removed item and its key on holder ob
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```cs filename="client.cs"
-    callbacks.OnRemove(state => state.players, (string key, Player player) =>
-    {
-        Debug.Log("player has been removed at " + key);
+    ```cs {1} filename="client.cs"
+    callbacks.OnRemove(state => state.players, (string sessionId, Player player) => {
+        Debug.Log("player has been removed at " + sessionId);
 
         // remove your player entity from the game world!
     });
@@ -438,9 +454,9 @@ The `onRemove` callback is called with the removed item and its key on holder ob
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```lua filename="client.lua"
-    $(room.state).players:on_remove(function (player, key)
-        print("player has been removed at " .. key);
+    ```lua {1} filename="client.lua"
+    callbacks:on_remove("players", function (player, sessionId)
+        print("player has been removed at " .. sessionId);
 
         -- remove your player entity from the game world!
     end)
@@ -448,9 +464,9 @@ The `onRemove` callback is called with the removed item and its key on holder ob
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```haxe filename="client.hx"
-    $(room.state).players.onRemove((player, key) => {
-        trace("player has been removed at " + key);
+    ```haxe {1} filename="client.hx"
+    callbacks.onRemove("players", (player, sessionId) => {
+        trace("player has been removed at " + sessionId);
 
         // remove your player entity from the game world!
     });
@@ -460,15 +476,15 @@ The `onRemove` callback is called with the removed item and its key on holder ob
 
 ---
 
-## Client-side schema generation
+## Client-side Schema Generation
 
-The `schema-codegen` is a tool that transpiles your server-side schema definition files to be used in the client-side:
-
-To be able to decode the state in the client-side, its local schema definitions must be compatible with the schema definitions in the server.
-
-<Callout type="info">
-    **Not required when using [JavaScript SDK](/getting-started/javascript-client/)** - Using `schema-codegen` is only required when using statically typed languages in the client-side, such as C#, Haxe, etc.
+<Callout type="warning">
+    **Not required when using [JavaScript SDK](/getting-started/javascript) or [Defold SDK](/getting-started/defold)** - The following section is only required when using statically typed languages in your front-end, such as C#, Haxe, etc.
 </Callout>
+
+The `schema-codegen` is a command-line tool designed to convert your server-side schema definitions into compatible client-side schemas.
+
+To decode the state on the client side, its local schema definitions must be compatible with those on the server.
 
 **Usage:**
 

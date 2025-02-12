@@ -34,4 +34,9 @@ getRawChangesCallback(room, (changes) => {
 
 On the above example, the raw list of changes is being printed to the console.
 
-You can see how the standard callback system is implemented [here](https://github.com/colyseus/schema/blob/3.0/src/decoder/strategy/StateCallbacks.ts).
+Each SDK has its own way of handling the callback system.
+
+- [JavaScript SDK](https://github.com/colyseus/schema/blob/3.0/src/decoder/strategy/StateCallbacks.ts)
+- [Unity SDK](https://github.com/colyseus/colyseus-unity-sdk/blob/0.16/Assets/Colyseus/Runtime/Colyseus/Serializer/Schema/Callbacks/Callbacks.cs)
+- [Defold SDK](https://github.com/colyseus/colyseus-defold/blob/0.16/colyseus/serializer/schema/callbacks.lua)
+- [Haxe SDK](https://github.com/colyseus/colyseus-haxe/blob/0.16/src/io/colyseus/serializer/schema/Callbacks.hx)
