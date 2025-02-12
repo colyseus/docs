@@ -9,39 +9,72 @@ When applying state changes coming from the server, the client-side is going to 
 
 In order to register callbacks to Schema instances, you must access the instances through a "proxy":
 
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
     <Tabs.Tab>
     ```ts filename="client.ts"
-    import { getStateCallbacks } from "colyseus.js";
+    import { Client, getStateCallbacks } from "colyseus.js";
 
+    // initialize SDK
+    const client = new Client("ws://localhost:2567");
+
+    // join room
     const room = await client.joinOrCreate("my_room");
+
+    // get state callbacks handler
     const $ = getStateCallbacks(room);
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
     ```cs filename="client.cs"
-    var room = await client.JoinOrCreate<MyRoom>("my_room");
+    using Colyseus;
+
+    // initialize SDK
+    var client = new Client("ws://localhost:2567");
+
+    // join room
+    var room = await client.JoinOrCreate<MyRoomState>("my_room");
+
+    // get state callbacks handler
     var callbacks = Colyseus.Schema.Callbacks.Get(room);
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
     ```lua filename="client.lua"
-    local room = client:join_or_create("my_room")
-    local $ = colyseus.get_state_callbacks(room)
+    local ColyseusSDK = require("colyseus.sdk")
+
+    -- initialize SDK
+    local client = ColyseusSDK.Client("ws://localhost:2567")
+
+    -- join room
+    client:join_or_create("my_room", function(room)
+
+        -- get state callbacks handler
+        local callbacks = ColyseusSDK.callbacks(room)
+    end)
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
     ```haxe filename="client.hx"
-    var room = await client.joinOrCreate("my_room");
-    var $ = getStateCallbacks(room);
+    import colyseus.Client;
+    import io.colyseus.serializer.schema.Callbacks;
+
+    // initialize SDK
+    var client = new Colyseus.Client("ws://localhost:2567");
+
+    // join room
+    client.joinOrCreate("my_room", [], MyRoomState, function(err, room) {
+
+        // get state callbacks handler
+        var callbacks = Callbacks.get(room);
+    });
     ```
     </Tabs.Tab>
 </Tabs>
 
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
     <Tabs.Tab>
     ```ts filename="client.ts"
     $(room.state).listen("currentTurn", (currentValue, previousValue) => {
@@ -153,7 +186,7 @@ Listens for a single property change.
 - `property`: the property name you'd like to listen for changes.
 - `callback`: the callback that is going to be triggered when `property` changes.
 
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
 
     <Tabs.Tab>
     ```ts filename="client.ts"
@@ -176,6 +209,7 @@ Listens for a single property change.
 
     <Tabs.Tab>
     ```lua filename="client.lua"
+
     $(room.state):listen("currentTurn", function (current_value, previous_value)
         pprint(current_value);
         pprint(previous_value);
@@ -216,7 +250,7 @@ Bind properties directly to `targetObject`, whenever the server send updates.
 - `properties`: (optional) list of properties that will be assigned to
   `targetObject`. By default, every `@type()`'d property will be used.
 
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
     <Tabs.Tab>
     ```ts filename="client.ts"
     $(room.state).players.onAdd((player, sessionId) => {
@@ -244,7 +278,7 @@ Bind properties directly to `targetObject`, whenever the server send updates.
 
 You can register the `onChange` to track whenever a `Schema` had its properties changed. When the callback is triggered, changes have already been applied.
 
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
     <Tabs.Tab>
     ```ts {3} filename="client.ts"
     $(room.state).entities.onAdd((entity, sessionId) => {
@@ -302,7 +336,7 @@ Register the `onAdd` callback is called whenever a new instance is added to a co
 
 By default, the callback is called immediately for existing items in the collection.
 
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
     <Tabs.Tab>
     ```ts filename="client.ts"
     $(room.state).players.onAdd((player, key) => {
@@ -380,7 +414,7 @@ By default, the callback is called immediately for existing items in the collect
 
 The `onRemove` callback is called with the removed item and its key on holder object as argument.
 
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
 
     <Tabs.Tab>
     ```ts filename="client.ts"

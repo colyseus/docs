@@ -411,12 +411,6 @@ client.joinById (roomId: string, options: any)
     </Tabs.Tab>
 </Tabs>
 
-<Callout type="info">
-    **Getting available `roomId`'s you can join**
-
-    See [`getAvailableRooms()`](#getavailablerooms-roomname-string) to retrieve a list of rooms with their respective `roomId`'s available for joining, along with their metadata.
-</Callout>
-
 #### Reconnect into a Room
 
 Reconnects the client back into a previously connected room.
@@ -500,119 +494,6 @@ client.reconnect (reconnectionToken)
     }
 
     std::cout << "joined successfully" << std::endl;
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-#### Get Available Rooms
-
-Queries for all available rooms to connect.
-
-- Locked and private rooms won't be listed.
-- If the `roomName` parameter is ommitted, all rooms are going to be queried.
-
-```ts filename="Signature"
-client.getAvailableRooms (roomName?: string)
-```
-
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
-
-    <Tabs.Tab>
-    ```js filename="client.js"
-    client.getAvailableRooms("battle").then(rooms => {
-      rooms.forEach((room) => {
-        console.log(room.roomId);
-        console.log(room.clients);
-        console.log(room.maxClients);
-        console.log(room.metadata);
-      });
-    }).catch(e => {
-      console.error(e);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    try {
-      var rooms = await client.GetAvailableRooms("battle");
-      for (int i = 0; i < rooms.Length; i++) {
-        Debug.Log(rooms[i].roomId);
-        Debug.Log(rooms[i].clients);
-        Debug.Log(rooms[i].maxClients);
-        Debug.Log(rooms[i].metadata);
-      }
-    } catch (ex) {
-      Debug.Log(ex.Message)
-    }
-
-    /**
-     * Retrieving custom metadata
-     */
-    [Serializable]
-    class Metadata
-    {
-        public string mode;
-        public string name;
-    }
-
-    [Serializable]
-    class CustomRoomAvailable : RoomAvailable
-    {
-        public Metadata metadata;
-    }
-
-    var rooms = await client.GetAvailableRooms<CustomRoomAvailable>("battle");
-    Debug.Log(rooms[0].metadata.mode);
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    client:get_available_rooms("battle", function(err, rooms)
-      if (err) then
-        console.error(err);
-        return
-      end
-
-      for i, room in pairs(rooms) do
-        print(room.roomId)
-        print(room.clients)
-        print(room.maxClients)
-        print(room.metadata)
-      end
-    end);
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    client.getAvailableRooms("battle", function(err, rooms) {
-      if (err != null) {
-        trace(err);
-        return;
-      }
-
-      for (room in rooms) {
-        trace(room.roomId);
-        trace(room.clients);
-        trace(room.maxClients);
-        trace(room.metadata);
-      }
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cpp filename="client.cpp"
-    client.getAvailableRooms("battle", [=](std::string err, nlohmann::json rooms) {
-      if (err != "") {
-        std::cout << "error: " << err << std::endl;
-        return;
-      }
-
-      // rooms
     });
     ```
     </Tabs.Tab>

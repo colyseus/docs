@@ -132,6 +132,26 @@ if (process.env.NODE_ENV !== "production") {
 
 This change was necessary to avoid the internal monkey-patching coming from the playground module when using in production environment.
 
+### SDKs: `getAvailableRooms()` method has been removed!
+
+The `getAvailableRooms()` method has been removed from the SDKs. The usage of `getAvailableRooms()` was considered a security risk for many use-cases, as it was exposing the full list of rooms to any client.
+
+If you rely on this method, you can re-implement it on your server-side code:
+
+```ts filename="app.config.ts"
+import { matchMaker } from "colyseus";
+
+// ...
+initializeExpress (app) {
+    app.get("/rooms/:roomName?", (req, res) => {
+        const roomName = req.params.roomName;
+        res.json(await matchMaker.controller.getAvailableRooms(roomName));
+    });
+}
+```
+
+On previous version (`0.15`) it is possible to disable this behaviour, please reach out to the community if you need help on this.
+
 ### `matchMaker.getRoomById()`
 
 - `matchMaker.getRoomById()` now returns the cached room data. This method will return properly when called from any process.

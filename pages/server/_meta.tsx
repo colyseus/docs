@@ -2,7 +2,7 @@ import { RowsIcon } from "@primer/octicons-react"
 
 export default {
     "room": { title: <span><RowsIcon/> Room API</span> },
-    "matchmaker": "",
+    "matchmaker": "Match-maker API",
     "custom-http-routes": "",
     "presence": "",
     "driver": "",
