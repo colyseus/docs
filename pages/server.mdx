@@ -20,10 +20,10 @@ npm create colyseus-app@latest ./my-server
 
 You may add your own [Room Definitions](/server/room/), and [API routes](/server/custom-http-routes) to your server:
 
-<Tabs items={["Recommended usage", "Raw usage with Express", "Raw usage"]}>
+<Tabs items={["Recommended", "Raw usage with Express", "Raw usage"]} storageKey="recommended-or-raw">
 
     <Tabs.Tab>
-    ```ts {2,14,21-23} copy filename="app.config.ts"
+    ```ts {2,12,16-18} copy filename="app.config.ts"
     import config from "@colyseus/tools";
     import { MyRoom } from "./rooms/MyRoom";
 
@@ -34,25 +34,14 @@ You may add your own [Room Definitions](/server/room/), and [API routes](/server
             // presence: new RedisPresence(),
         },
         initializeGameServer: (gameServer) => {
-            /**
-             * Define your room handlers:
-             */
+            // Define your room handlers:
             gameServer.define('my_room', MyRoom);
         },
-
         initializeExpress: (app) => {
-            /**
-             * Bind your custom express routes here:
-             */
+            // Bind your express routes here:
             app.get("/", (req, res) => {
                 res.send("It's time to kick ass and chew bubblegum!");
             });
-        },
-
-        beforeListen: () => {
-            /**
-             * Before before gameServer.listen() is called.
-             */
         }
     });
     ```
@@ -99,6 +88,12 @@ You may add your own [Room Definitions](/server/room/), and [API routes](/server
      */
     gameServer.define("my_room", MyRoom);
     gameServer.listen(2567);
+
+
+
+
+
+
     ```
     </Tabs.Tab>
 </Tabs>
@@ -109,21 +104,18 @@ You may add your own [Room Definitions](/server/room/), and [API routes](/server
 
 When using the recommended structure from the template project, the `Server` instance is created automatically. You may customize the server options by editing the `app.config.ts` file.
 
-<Tabs items={["Recommended", "Raw usage"]}>
+<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
     <Tabs.Tab>
     ```ts filename="app.config.ts"
     import config from "@colyseus/tools";
 
     export default config({
         options: {
-            /*
-             * Server options here
-             */
+            // Server options here
         },
         initializeGameServer: (gameServer) => {
-            /**
-             * Define your room handlers:
-             */
+            // Define your room handlers:
+            // gameServer.define("my_room", MyRoom);
         },
     });
     ```
@@ -138,6 +130,10 @@ When using the recommended structure from the template project, the `Server` ins
          * Server options here
          */
     });
+    /**
+     * Define your room handlers:
+     */
+    // gameServer.define("my_room", MyRoom);
     ```
     </Tabs.Tab>
 </Tabs>
@@ -155,7 +151,7 @@ Each Transport has its own options you may customize.
     The default transport is `WebSocketTransport`. See [Transport → WebSocket Transport (ws)](/server/transport/ws) for more details.
 </Callout>
 
-<Tabs items={["Recommended", "Raw usage"]}>
+<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
     <Tabs.Tab>
     ```ts {2,5-10} filename="app.config.ts"
     import config from "@colyseus/tools";
@@ -173,15 +169,11 @@ Each Transport has its own options you may customize.
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```ts {2,11-14} filename="server.ts"
+    ```ts {2,7-10} filename="server.ts"
     import { Server } from "colyseus";
     import { WebSocketTransport } from "@colyseus/ws-transport";
-    import express from "express";
 
-    const app = express();
-    app.use(express.json());
-
-    const server = createServer(app);
+    const server = createServer();
 
     const gameServer = new Server({
         transport: new WebSocketTransport({
@@ -207,7 +199,7 @@ The match-making driver. Rooms are cached and queried against a Driver implement
 
 #### Presence (`presence`)
 
-When scaling Colyseus through multiple processes / machines, you need to provide a presence server. Read more about [scalability](/scalability/), and the [`Presence API`](/server/presence/#api).
+When scaling Colyseus through multiple processes / machines, you need to provide a presence server. Read more about [Scalability](/deployment/scalability), and the [`Presence API`](/server/presence/#api).
 
 <Tabs items={["TypeScript", "JavaScript"]}>
     <Tabs.Tab>
@@ -241,14 +233,13 @@ The `selectProcessIdToCreateRoom` is a callback that allows you to customize whi
 
 By default, the process with the **least amount of rooms** is selected to create a new room.
 
-<Tabs items={["Recommended", "Raw usage"]}>
+<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
 
     <Tabs.Tab>
-    ```ts filename="app.config.ts"
+    ```ts {5-9} filename="app.config.ts"
     import config from "@colyseus/tools";
 
     export default config({
-        // ...
         options: {
             selectProcessIdToCreateRoom: async function (roomName: string, clientOptions: any) {
                 return (await matchMaker.stats.fetchAll())
@@ -256,13 +247,12 @@ By default, the process with the **least amount of rooms** is selected to create
                     .processId;
             }
         },
-        // ...
     });
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```ts filename="server.ts"
+    ```ts {5-9} filename="server.ts"
     import { Server, RedisPresence } from "colyseus";
 
     const gameServer = new Server({
@@ -272,6 +262,7 @@ By default, the process with the **least amount of rooms** is selected to create
                 .sort((p1, p2) => p1.roomCount > p2.roomCount ? 1 : -1)[0]
                 .processId;
         }
+        // ...
     });
     ```
     </Tabs.Tab>
@@ -279,14 +270,13 @@ By default, the process with the **least amount of rooms** is selected to create
 
 A common alternative is to use the process with least amount of **connections**:
 
-<Tabs items={["Recommended", "Raw usage"]}>
+<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
 
     <Tabs.Tab>
-    ```ts filename="app.config.ts"
+    ```ts {5-9} filename="app.config.ts"
     import config from "@colyseus/tools";
 
     export default config({
-        // ...
         options: {
             selectProcessIdToCreateRoom: async function (roomName: string, clientOptions: any) {
                 return (await matchMaker.stats.fetchAll())
@@ -294,13 +284,12 @@ A common alternative is to use the process with least amount of **connections**:
                     .processId;
             }
         },
-        // ...
     });
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```ts filename="server.ts"
+    ```ts {5-9} filename="server.ts"
     import { Server, RedisPresence } from "colyseus";
 
     const gameServer = new Server({
@@ -310,6 +299,7 @@ A common alternative is to use the process with least amount of **connections**:
                 .sort((p1, p2) => p1.ccu > p2.ccu ? 1 : -1)[0]
                 .processId;
         }
+        // ...
     });
     ```
     </Tabs.Tab>
@@ -323,17 +313,15 @@ When `devMode` is enabled, it is capable of restoring previous Rooms and Room St
 
 Default is `false`.
 
-<Tabs items={["Recommended", "Raw usage"]}>
+<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
     <Tabs.Tab>
-    ```ts {5-7} filename="app.config.ts"
+    ```ts {5} filename="app.config.ts"
     import config from "@colyseus/tools";
 
     export default config({
-        // ...
         options: {
             devMode: true
         },
-        // ...
     });
     ```
     </Tabs.Tab>
@@ -345,6 +333,7 @@ Default is `false`.
     const gameServer = new Server({
         // ...
         devMode: true
+        // ...
     });
     ```
     </Tabs.Tab>
@@ -362,17 +351,15 @@ Wether to register shutdown routine automatically. Default is `true`.
 
 If disabled, you should call [`gracefullyShutdown()`](#gracefully-shutdown) method manually in your shutdown process.
 
-<Tabs items={["Recommended", "Raw usage"]}>
+<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
     <Tabs.Tab>
-    ```ts {5-7} filename="app.config.ts"
+    ```ts {5} filename="app.config.ts"
     import config from "@colyseus/tools";
 
     export default config({
-        // ...
         options: {
             gracefullyShutdown: false
         },
-        // ...
     });
     ```
     </Tabs.Tab>
@@ -384,6 +371,7 @@ If disabled, you should call [`gracefullyShutdown()`](#gracefully-shutdown) meth
     const gameServer = new Server({
         // ...
         gracefullyShutdown: false
+        // ...
     });
     ```
     </Tabs.Tab>
@@ -693,7 +681,7 @@ if (process.env.NODE_ENV !== "production") {
 
 Binds the [Transport](/server/transport) layer into the specified port.
 
-<Tabs items={["Recommended", "Raw usage"]}>
+<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
     <Tabs.Tab>
     ```ts {5} filename="src/index.ts"
     import { listen } from "@colyseus/tools";

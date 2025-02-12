@@ -66,7 +66,7 @@ The process to join a Room consists of two requests:
 
 Configure each Colyseus process to use its very own public address, so clients can connect directly to it.
 
-<Tabs items={["Recommended Usage", "Raw usage"]}>
+<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
     <Tabs.Tab>
 
         ```ts {9-10} filename="src/app.config.ts"
@@ -132,7 +132,7 @@ module.exports = {
 }
 ```
 
-<Tabs items={["Recommended Usage", "Raw usage"]}>
+<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
     <Tabs.Tab>
         When you use `@colyseus/tools` to configure your server, the `NODE_APP_INSTANCE` from PM2 is automatically used to define the port number.
 

@@ -2,6 +2,7 @@
 title: "Client-side Callbacks"
 ---
 import { Tabs, Callout, Steps } from 'nextra/components'
+import { SDKTabs } from "../../components/SDKTabs"
 
 # Client-side Schema Callbacks
 
@@ -14,7 +15,7 @@ In order to register callbacks to Schema instances, you must access the instance
 <Steps>
     ### Get the callback handler
 
-    <Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
+    <SDKTabs>
         <Tabs.Tab>
         ```ts {10} filename="client.ts"
         import { Client, getStateCallbacks } from "colyseus.js";
@@ -77,11 +78,11 @@ In order to register callbacks to Schema instances, you must access the instance
         });
         ```
         </Tabs.Tab>
-    </Tabs>
+    </SDKTabs>
 
     ### Register the callbacks
 
-    <Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
+    <SDKTabs>
         <Tabs.Tab>
         ```ts filename="client.ts"
         $(room.state).listen("currentTurn", (currentValue, previousValue) => {
@@ -178,7 +179,7 @@ In order to register callbacks to Schema instances, you must access the instance
         });
         ```
         </Tabs.Tab>
-    </Tabs>
+    </SDKTabs>
 </Steps>
 
 <Callout type="warning">
@@ -193,7 +194,7 @@ In order to register callbacks to Schema instances, you must access the instance
 
 Listens for a single property change within a `Schema` instance.
 
-<Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
+<SDKTabs>
 
     <Tabs.Tab>
     ```ts filename="client.ts"
@@ -230,7 +231,7 @@ Listens for a single property change within a `Schema` instance.
     });
     ```
     </Tabs.Tab>
-</Tabs>
+</SDKTabs>
 
 **Removing the callback:** The `.listen()` method returns a function that, when called, removes the attached callback:
 
@@ -255,7 +256,7 @@ Bind properties directly to `targetObject`, whenever the client receives an upda
 - `properties`: (optional) list of properties that will be assigned to
   `targetObject`. By default, every `@type()`'d property will be used.
 
-<Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
+<SDKTabs>
     <Tabs.Tab>
     ```ts filename="client.ts"
     $(room.state).players.onAdd((player, sessionId) => {
@@ -292,7 +293,7 @@ Bind properties directly to `targetObject`, whenever the client receives an upda
     ```
     </Tabs.Tab>
 
-</Tabs>
+</SDKTabs>
 
 ---
 
@@ -303,7 +304,7 @@ The On Change callback is invoked whenever a direct property of a `Schema` insta
 - **Triggers only for direct property changes:** It does not cascade or propagate changes from nested properties within the Schema.
 - The callback fires after the changes have been applied to the Schema instance. This means you're dealing with the updated instance when the callback executes.
 
-<Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
+<SDKTabs>
     <Tabs.Tab>
     ```ts {3-5} filename="client.ts"
     $(room.state).entities.onAdd((entity, sessionId) => {
@@ -347,7 +348,7 @@ The On Change callback is invoked whenever a direct property of a `Schema` insta
     });
     ```
     </Tabs.Tab>
-</Tabs>
+</SDKTabs>
 
 ---
 
@@ -359,7 +360,7 @@ Register the `onAdd` callback is called whenever a new instance is added to a co
 
 By default, the callback is called immediately for existing items in the collection.
 
-<Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
+<SDKTabs>
     <Tabs.Tab>
     ```ts {1} filename="client.ts"
     $(room.state).players.onAdd((player, sessionId) => {
@@ -423,7 +424,7 @@ By default, the callback is called immediately for existing items in the collect
     });
     ```
     </Tabs.Tab>
-</Tabs>
+</SDKTabs>
 
 ---
 
@@ -431,7 +432,7 @@ By default, the callback is called immediately for existing items in the collect
 
 The `onRemove` callback is called with the removed item and its key on holder object as argument.
 
-<Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]}>
+<SDKTabs>
 
     <Tabs.Tab>
     ```ts {1} filename="client.ts"
@@ -472,7 +473,7 @@ The `onRemove` callback is called with the removed item and its key on holder ob
     });
     ```
     </Tabs.Tab>
-</Tabs>
+</SDKTabs>
 
 ---
 
