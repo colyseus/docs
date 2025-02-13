@@ -19,10 +19,10 @@
   },
   "homepage": "https://github.com/shuding/nextra-docs-template#readme",
   "dependencies": {
-    "@primer/octicons-react": "^19.12.0",
-    "next": "^15.1.7",
-    "nextra": "^4.2.8",
-    "nextra-theme-docs": "^4.2.8",
+    "@primer/octicons-react": "19.13.0",
+    "next": "^13.0.6",
+    "nextra": "^3.3.1",
+    "nextra-theme-docs": "^3.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "supports-color": "^9.4.0"
