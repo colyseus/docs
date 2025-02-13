@@ -20,7 +20,16 @@ No connection with the server is established yet by creating a `Client` instance
 
 The `Client` instance is used to perform matchmaking calls, and later connect to one or many rooms.
 
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    import Colyseus from "colyseus.js";
+    // ...
+
+    let client = new Colyseus.Client("ws://localhost:2567");
+    ```
+    </Tabs.Tab>
 
     <Tabs.Tab>
     ```js filename="client.js"
@@ -70,10 +79,10 @@ Join an existing room or create a new one, by provided `roomName` and `options`.
 client.joinOrCreate (roomName: string, options: any)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
 
     <Tabs.Tab>
-    ```js filename="client.js"
+    ```ts filename="client.ts"
     try {
       const room = await client.joinOrCreate("battle", {/* options */});
       console.log("joined successfully", room);
@@ -160,10 +169,10 @@ Creates a new room by provided `roomName` and `options`.
 client.create (roomName: string, options: any)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
 
     <Tabs.Tab>
-    ```js filename="client.js"
+    ```ts filename="client.ts"
     try {
       const room = await client.create("battle", {/* options */});
       console.log("joined successfully", room);
@@ -245,10 +254,10 @@ Joins an existing room by provided `roomName` and `options`.
 client.join (roomName: string, options: any)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
 
     <Tabs.Tab>
-    ```js filename="client.js"
+    ```ts filename="client.ts"
     try {
       const room = await client.join("battle", {/* options */});
       console.log("joined successfully", room);
@@ -334,10 +343,10 @@ Joins an existing room by its `roomId`. Private rooms can be joined by id.
 client.joinById (roomId: string, options: any)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
 
     <Tabs.Tab>
-    ```js filename="client.js"
+    ```ts filename="client.ts"
     try {
       const room = await client.joinById("KRYAKzRo2", {/* options */});
       console.log("joined successfully", room);
@@ -422,10 +431,10 @@ Reconnects the client back into a previously connected room.
 client.reconnect (reconnectionToken)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
 
     <Tabs.Tab>
-    ```js filename="client.js"
+    ```ts filename="client.ts"
     try {
       const room = await client.reconnect(cachedReconnectionToken);
       console.log("joined successfully", room);
@@ -507,10 +516,10 @@ Join a room by manually consuming a "seat reservation".
 client.consumeSeatReservation (reservation)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
 
     <Tabs.Tab>
-    ```js filename="client.js"
+    ```ts filename="client.ts"
     try {
       const room = await client.consumeSeatReservation(reservation);
       console.log("joined successfully", room);
@@ -594,11 +603,9 @@ client.consumeSeatReservation (reservation)
 
 #### `state: any`
 
-The current room's state. This variable is always synched with the latest
-`state` from the server-side. To listen for updates on the whole state, see
-[`onStateChange`](#onstatechange) event.
+The current room's state. This variable is always synched with the latest `state` from the server-side. To listen for updates on the whole state, see [`onStateChange`](#onstatechange) event.
 
-For fine-grained control over state updates, you should use the [Client-side Callbacks](/state/callbacks).
+For fine-grained control over state updates, see [State Synchronization → Client-side Callbacks](/state/callbacks).
 
 ---
 
@@ -641,7 +648,21 @@ Send a type of message to the room handler. Messages are encoded with MsgPack an
 room.send (type, message)
 ```
 
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    //
+    // sending message with string type
+    //
+    room.send("move", { direction: "left"});
+
+    //
+    // sending message with number type
+    //
+    room.send(0, { direction: "left"});
+    ```
+    </Tabs.Tab>
+
     <Tabs.Tab>
     ```js filename="client.js"
     //
@@ -742,7 +763,16 @@ room.leave (consented: boolean)
 
 - `consented`: Whether the act of leaving has been "consented" or not (Default is `true`)
 
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    // consented leave
+    room.leave();
+
+    // force unconsented leave
+    room.leave(false);
+    ```
+    </Tabs.Tab>
 
     <Tabs.Tab>
     ```js filename="client.js"
@@ -813,7 +843,19 @@ For fine-grained control over state updates, you should use the [schema callback
     Check out the [State Synchronization » Client-side Callbacks](/state/callbacks) section for more details.
 </Callout>
 
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.onStateChange.once((state) => {
+      console.log("this is the first room state!", state);
+    });
+
+    room.onStateChange((state) => {
+      console.log("the room state has been updated:", state);
+    });
+    ```
+    </Tabs.Tab>
+
     <Tabs.Tab>
     ```js filename="client.js"
     room.onStateChange.once((state) => {
@@ -870,7 +912,16 @@ For fine-grained control over state updates, you should use the [schema callback
 
 This event is triggered when the server sends a message directly to the client, or via broadcast.
 
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.onMessage("powerup", (message) => {
+      console.log("message received from server");
+      console.log(message);
+    });
+    ```
+    </Tabs.Tab>
 
     <Tabs.Tab>
     ```js filename="client.js"
@@ -933,7 +984,15 @@ This event is triggered when the server sends a message directly to the client, 
 
 This event is triggered when the client leave the room.
 
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.onLeave((code) => {
+      console.log("client left the room");
+    });
+    ```
+    </Tabs.Tab>
 
     <Tabs.Tab>
     ```js filename="client.js"
@@ -989,7 +1048,16 @@ This event is triggered when the client leave the room.
 
 This event is triggered when some error occurs in the room handler.
 
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.onError((code, message) => {
+      console.log("oops, error ocurred:");
+      console.log(message);
+    });
+    ```
+    </Tabs.Tab>
+
     <Tabs.Tab>
     ```js filename="client.js"
     room.onError((code, message) => {
