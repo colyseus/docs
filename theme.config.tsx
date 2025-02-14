@@ -3,8 +3,6 @@ import Image from 'next/image'
 import { DocsThemeConfig, useConfig } from 'nextra-theme-docs'
 import { SponsorsSidebar } from './components/sponsors-sidebar';
 
-const shareImage = require('./images/fb-share.png');
-
 const logo = <Image src={require('./images/logo.svg')} width={0} height={0} style={{ width: 'auto', height: '28px' }} alt="Colyseus" />;
 
 const config: DocsThemeConfig = {
