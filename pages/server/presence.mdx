@@ -11,17 +11,17 @@ The `presence` instance is also available on every `Room` handler. You may use i
 
 ---
 
-### `LocalPresence`
+## `LocalPresence`
 
 This is the default option. It's meant to be used when you're running Colyseus in a single process.
 
 ---
 
-### `RedisPresence (clientOpts?)`
+## `RedisPresence`
 
 Use this option when you're running Colyseus on multiple processes and/or machines.
 
-**Parameters:**
+**Constructor parameters:**
 
 - `clientOpts`: The redis client options (host/credentials). [See full list of options](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/2e6f3e603a01589534cb5f6197849a6bc8ca71dc/types/ioredis/index.d.ts#L1997-L2160).
 
