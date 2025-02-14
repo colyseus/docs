@@ -35,7 +35,7 @@ import { StateView } from "@colyseus/schema";
 
 ---
 
-## Tagging fields with `@view()`
+## Tag fields with `@view()`
 
 The `@view()` decorator is used to tag a field as only visible to `StateView`'s that contains that `Schema` instance.
 
@@ -51,7 +51,7 @@ class Player extends Schema {
 
 On the example above, the `position` field is only visible to clients that contain this `Player` instance on their `StateView`.
 
-### Adding a schema instance to a `StateView`
+### Add instance to `StateView`
 
 In order to add a schema instance to a `StateView`, you must call `.add()` on the `StateView` instance:
 
@@ -71,7 +71,7 @@ import { StateView } from "@colyseus/schema";
 
 The client-side will receive either a "On Add" or "Listen" callback you can listen to, depending on which structure the schema instance is part of.
 
-### Removing a schema instance from a `StateView`
+### Remove instance from `StateView`
 
 In order to remove a schema instance from a `StateView`, you must call `.remove()` on the `StateView` instance:
 
