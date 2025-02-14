@@ -3,12 +3,12 @@ title: "uWebSockets.js"
 ---
 import { Callout, Cards, Tabs } from "nextra/components";
 
-## `uWebSockets.js`- A Native C++ WebSocket Transport
+## uWebSockets.js
 
-The uWebSockets.js generally performs better than the default WebSockets implementation, and is capable of handling more connections with less memory consumption.
+The uWebSockets.js generally performs better than the default WebSockets implementation, and is capable of handling more connections while using less resources. It is the recommended transport for production environments.
 
 <Callout type="info">
-    The underlying library is [`uNetworking/uWebSockets.js`](https://github.com/uNetworking/uWebSockets.js), which is a C++ implementation of WebSockets for Node.js. It is a high performance WebSocket library for Node.js, which focuses on performance and low memory consumption.
+    The underlying library [`uNetworking/uWebSockets.js`](https://github.com/uNetworking/uWebSockets.js) is a C++ implementation of WebSockets that performs at least [10x that of Socket.IO](https://unetworkingab.medium.com/100k-secure-websockets-with-raspberry-pi-4-1ba5d2127a23), [8.5x that of Fastify](https://unetworkingab.medium.com/serving-100k-requests-second-from-a-fanless-raspberry-pi-4-over-ethernet-fdd2c2e05a1e). It makes up the [core components of Bun](https://x.com/uNetworkingAB/status/1810380862556397887) and is the fastest standards compliant web server in the TechEmpower ([not endorsed](https://x.com/uNetworkingAB/status/1811425564764610926)) benchmarks.
 </Callout>
 
 ### Installation
