@@ -235,14 +235,51 @@ Listens for a single property change within a `Schema` instance.
 
 **Removing the callback:** The `.listen()` method returns a function that, when called, removes the attached callback:
 
-```ts filename="client.ts"
-const unbindCallback = $(room.state).listen("currentTurn", (currentValue, previousValue) => {
-    // ...
-});
+<SDKTabs>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    const unbindCallback = $(room.state).listen("currentTurn", (currentValue, previousValue) => {
+        // ...
+    });
 
-// later on, if you don't need the listener anymore, you can call `unbindCallback()` to stop listening for `"currentTurn"` changes.
-unbindCallback();
-```
+    // stop listening for `"currentTurn"` changes.
+    unbindCallback();
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="client.cs"
+    var unbindCallback = callbacks.Listen(state => state.currentTurn, (currentValue, previousValue) => {
+        // ...
+    });
+
+    // stop listening for `"currentTurn"` changes.
+    unbindCallback();
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    local unbind_callback = callbacks:listen("currentTurn", function (currentValue, previousValue)
+        -- ...
+    end)
+
+    -- stop listening for `"currentTurn"` changes.
+    unbind_callback()
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    var unbindCallbacks = callbacks.listen("currentTurn", function (currentValue, previousValue) {
+        // ...
+    });
+
+    // stop listening for `"currentTurn"` changes.
+    unbindCallback();
+    ```
+    </Tabs.Tab>
+</SDKTabs>
 
 ---
 
