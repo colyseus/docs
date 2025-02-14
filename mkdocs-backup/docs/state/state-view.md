@@ -10,12 +10,13 @@ You can do so by:
 1. Assigning a `StateView` instance to the client
 2. Tag fields with the `@view()` decorator
 3. Manually `.add()` schema instances to the `StateView`
+4. Manually `.remove()` schema instances from the `StateView`
 
 The `StateView` must be assigned to the `client.view`.
 
 ---
 
-## Initializing a `StateView`
+## Initialize a `StateView`
 
 ```typescript
 import { StateView } from "@colyseus/schema";
@@ -50,6 +51,8 @@ class Player extends Schema {
 
 On the example above, the `position` field is only visible to clients that contain this `Player` instance on their `StateView`.
 
+### Adding a schema instance to a `StateView`
+
 In order to add a schema instance to a `StateView`, you must call `.add()` on the `StateView` instance:
 
 ```typescript
@@ -65,6 +68,18 @@ import { StateView } from "@colyseus/schema";
         this.state.players.set(client.sessionId, player);
     }
 ```
+
+The client-side will receive either a "On Add" or "Listen" callback you can listen to, depending on which structure the schema instance is part of.
+
+### Removing a schema instance from a `StateView`
+
+In order to remove a schema instance from a `StateView`, you must call `.remove()` on the `StateView` instance:
+
+```typescript
+client.view.remove(player);
+```
+
+The client-side will receive either a "On Remove" or "Listen" callback you can listen to, depending on which structure the schema instance is part of.
 
 ---
 
