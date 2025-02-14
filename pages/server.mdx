@@ -648,8 +648,8 @@ gameServer
 Revert a `.define()` call. Makes a `roomName` unavailable for matchmaking. This
 method is usually not recommended but it may be useful in some scenarios.
 
-```ts filename="Signature"
-gameServer.removeRoomType (roomName: string): void
+```ts
+gameServer.removeRoomType("battle");
 ```
 
 ---
@@ -657,10 +657,6 @@ gameServer.removeRoomType (roomName: string): void
 ### Simulate Latency
 
 Colyseus allows you to simulate latency between the server and the client. This is a convenience method for simulating clients with high latency during development.
-
-```ts filename="Signature"
-gameServer.simulateLatency (milliseconds: number)
-```
 
 ```ts filename="server.ts"
 // Make sure to never call the `simulateLatency()` method in production.
@@ -692,7 +688,6 @@ Binds the [Transport](/server/transport) layer into the specified port.
     <Tabs.Tab>
     ```ts {5} filename="src/index.ts"
     import { Server } from "colyseus";
-
     const gameServer = new Server();
     gameServer.listen(2567);
     ```
@@ -704,10 +699,6 @@ Binds the [Transport](/server/transport) layer into the specified port.
 ### On Before Shutdown
 
 Register a custom callback that is called **before** the Graceful Shutdown routine starts.
-
-```ts filename="Signature"
-gameServer.onBeforeShutdown (callback: Function)
-```
 
 ```ts filename="server.ts"
 gameServer.onBeforeShutdown(async () => {
@@ -724,10 +715,6 @@ gameServer.onBeforeShutdown(async () => {
 ### On Shutdown
 
 Register a custom callback that is called **after** the graceful shutdown is fully complete.
-
-```ts filename="Signature"
-gameServer.onShutdown (callback: Function)
-```
 
 ```typescript
 gameServer.onShutdown(async () => {
