@@ -3,6 +3,8 @@ import Image from 'next/image'
 import { DocsThemeConfig, useConfig } from 'nextra-theme-docs'
 import { SponsorsSidebar } from './components/sponsors-sidebar';
 
+const shareImage = require('./images/fb-share.png');
+
 const logo = <Image src={require('./images/logo.svg')} width={0} height={0} style={{ width: 'auto', height: '28px' }} alt="Colyseus" />;
 
 const config: DocsThemeConfig = {
@@ -48,7 +50,7 @@ const config: DocsThemeConfig = {
         const description =
             config.frontMatter.description || 'Colyseus: Multiplayer Framework for Node.js'
 
-        const image = config.frontMatter.image || 'https://colyseus.io/images/fb-share.png'
+        const image = config.frontMatter.image || 'https://docs.colyseus.io/fb-share.png';
 
         return (
             <>
@@ -64,36 +66,13 @@ const config: DocsThemeConfig = {
                 <meta name="msapplication-TileImage" content="/ms-icon-144x144.png" />
 
                 <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:site" content="https://nextra.site" />
-                <link
-                    rel="apple-touch-icon"
-                    sizes="180x180"
-                    href="/apple-icon-180x180.png"
-                />
-                <link
-                    rel="icon"
-                    type="image/png"
-                    sizes="192x192"
-                    href="/android-icon-192x192.png"
-                />
-                <link
-                    rel="icon"
-                    type="image/png"
-                    sizes="32x32"
-                    href="/favicon-32x32.png"
-                />
-                <link
-                    rel="icon"
-                    type="image/png"
-                    sizes="96x96"
-                    href="/favicon-96x96.png"
-                />
-                <link
-                    rel="icon"
-                    type="image/png"
-                    sizes="16x16"
-                    href="/favicon-16x16.png"
-                />
+                <meta name="twitter:site" content="https://docs.colyseus.io" />
+
+                <link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png" />
+                <link rel="icon" type="image/png" sizes="192x192" href="/android-icon-192x192.png" />
+                <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+                <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+                <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
             </>
         )
     }
