@@ -34,7 +34,7 @@ Use this option when you're running Colyseus on multiple processes and/or machin
     export default config({
         // ...
         options: {
-            presence: new RedisPresence()
+            presence: new RedisPresence(process.env.REDIS_URI)
         },
         // ...
     });
@@ -49,7 +49,7 @@ Use this option when you're running Colyseus on multiple processes and/or machin
     // This happens on the slave processes.
     const gameServer = new Server({
         // ...
-        presence: new RedisPresence()
+        presence: new RedisPresence(process.env.REDIS_URI)
     });
 
     gameServer.listen(2567);
@@ -64,7 +64,7 @@ Use this option when you're running Colyseus on multiple processes and/or machin
     // This happens on the slave processes.
     const gameServer = new colyseus.Server({
         // ...
-        presence: new RedisPresence()
+        presence: new RedisPresence(process.env.REDIS_URI)
     });
 
     gameServer.listen(2567);
