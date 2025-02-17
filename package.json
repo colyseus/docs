@@ -1,7 +1,8 @@
 {
-  "name": "nextra-docs-template",
+  "private": true,
+  "name": "colyseus-docs",
   "version": "0.0.1",
-  "description": "Nextra docs template",
+  "description": "Colyseus Documentation",
   "type": "module",
   "scripts": {
     "dev": "next dev",
@@ -10,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shuding/nextra-docs-template.git"
+    "url": "git+https://github.com/colyseus/docs.git"
   },
-  "author": "Shu Ding <g@shud.in>",
+  "author": "Endel Dreyer",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/shuding/nextra-docs-template/issues"
+    "url": "https://github.com/colyseus/docs/issues"
   },
-  "homepage": "https://github.com/shuding/nextra-docs-template#readme",
+  "homepage": "https://github.com/colyseus/docs#readme",
   "dependencies": {
     "@primer/octicons-react": "19.13.0",
     "next": "^13.0.6",
@@ -25,7 +26,8 @@
     "nextra-theme-docs": "^3.3.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "supports-color": "^9.4.0"
+    "supports-color": "^9.4.0",
+    "nextjs-google-analytics": "^2.3.7"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
