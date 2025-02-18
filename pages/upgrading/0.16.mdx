@@ -2,36 +2,33 @@ import { Callout } from 'nextra/components'
 
 # Upgrading to version 0.16 (from 0.15)
 
-> Version 0.16 is still under "preview" tag and may receive more updates.
-> This guide is still being updated and is intended for early adopters and contributors.
-
 Use this guide to migrate your existing 0.15 projects to version 0.16.
 
 <Callout type="info">
     See [version 0.16 release announcement](https://github.com/colyseus/colyseus/releases/tag/0.16.0).
 </Callout>
 
-Make sure `colyseus` and all `@colyseus/*` packages on `package.json` are pointing to `^0.16.0-preview.0`. Having different versions of `colyseus` and `@colyseus/*` packages may lead to unexpected behavior.
+Make sure `colyseus` and all `@colyseus/*` packages on `package.json` are pointing to `^0.16.0`. Having different versions of `colyseus` and `@colyseus/*` packages may lead to unexpected behavior.
 
 **Server-side:**
 
 ```json filename="package.json"
-    "@colyseus/schema": "^3.0.0-alpha.22",
-    "colyseus": "^0.16.0-preview.1",
-    "@colyseus/auth": "^0.16.0-preview.5",
-    "@colyseus/core": "^0.16.0-preview.30",
-    "@colyseus/loadtest": "^0.16.0-preview.5",
-    "@colyseus/monitor": "^0.16.0-preview.4",
-    "@colyseus/playground": "^0.16.0-preview.13",
-    "@colyseus/testing": "^0.16.0-preview.5",
-    "@colyseus/tools": "^0.16.0-preview.3",
-    "@colyseus/uwebsockets-transport": "^0.16.0-preview.12",
+    "@colyseus/schema": "^3.0.0",
+    "colyseus": "^0.16.0",
+    "@colyseus/auth": "^0.16.0",
+    "@colyseus/core": "^0.16.0",
+    "@colyseus/loadtest": "^0.16.0",
+    "@colyseus/monitor": "^0.16.0",
+    "@colyseus/playground": "^0.16.0",
+    "@colyseus/testing": "^0.16.0",
+    "@colyseus/tools": "^0.16.0",
+    "@colyseus/uwebsockets-transport": "^0.16.0",
 ```
 
 **Client-side:**
 
 ```json filename="package.json"
-    "colyseus.js": "^0.16.0-preview.20",
+    "colyseus.js": "^0.16.0",
 ```
 
 Make sure you don't have any packages under `0.15.x`, neither `@colyseus/schema` under `2.0.x`. You may need to remove `node_modules` and `package-lock.json` before running `npm install`.
