@@ -133,7 +133,7 @@ This change was necessary to avoid the internal monkey-patching coming from the 
 
 The `getAvailableRooms()` method has been removed from the SDKs. The usage of `getAvailableRooms()` was considered a security risk for many use-cases, as it was exposing the full list of rooms to any client.
 
-If you rely on this method, you can re-implement it on your server-side code:
+If you rely on this method, you can easily re-implement it on your server-side code, although it's recommended to implement a more secure way to query rooms, such as using the `LobbyRoom`.
 
 ```ts filename="app.config.ts"
 import { matchMaker } from "colyseus";
@@ -141,13 +141,19 @@ import { matchMaker } from "colyseus";
 // ...
 initializeExpress (app) {
     app.get("/rooms/:roomName?", (req, res) => {
-        const roomName = req.params.roomName;
-        res.json(await matchMaker.controller.getAvailableRooms(roomName));
+        const conditions: any = {
+            locked: false,
+            private: false,
+        };
+        if (roomName) {
+            conditions["name"] = roomName;
+        }
+        res.json(await matchMaker.query(conditions));
     });
 }
 ```
 
-On previous version (`0.15`) it is possible to disable this behaviour, please reach out to the community if you need help on this.
+From the client SDK, you can use `client.http.get("/rooms/:roomName")` to get the list of rooms.
 
 ### `matchMaker.getRoomById()`
 
