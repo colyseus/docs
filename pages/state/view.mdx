@@ -20,6 +20,10 @@ By default, the entire state is visible to all clients. However, you may want to
 
 A `StateView` instance must be assigned to the `client.view`.
 
+<Callout type="warning">
+    It is not recommended to rely on StateView for big datasets, as it is not optimized for that yet. However, it is a great way to filter data per client, such as "private fields" per schema instance, "level of detail", area-based, team-owned data, and etc.
+</Callout>
+
 ## Initializing a `StateView`
 
 ```ts filename="MyRoom.ts"
