@@ -113,6 +113,10 @@ See more in the [`StateView` documentation](/state/view).
 
 ## Breaking changes
 
+### `.onChange` callback on collections (`MapSchema`, `ArraySchema`, etc) has been removed!
+
+Collections no longer have the `.onChange` callback. You can use a combination of `.onAdd`, `.onRemove` to achieve the same behavior. ([See discussion](https://github.com/colyseus/schema/issues/155#issuecomment-2666989614))
+
 ### Attaching `playground` routes:
 
 The `playground` routes are now returned from a method call instead:
