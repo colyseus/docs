@@ -5,20 +5,21 @@ import { ZapIcon, SyncIcon } from "@primer/octicons-react";
 
 <Cards>
     <Cards.Card icon={<ZapIcon/>} title="Getting Started" href="/getting-started" />
-    <Cards.Card icon={<SyncIcon />} title="State Synchronization" href="/state" />
+    <Cards.Card icon={<SyncIcon />} title="Client-side Callbacks" href="/state/callbacks" />
 </Cards>
 
 ## Overview
 
-No connection with the server is established yet by creating a `Client` instance. Bidirectional communication is established by joining a `Room` instance.
+Every client-side SDK provides the same set of methods and events to interact with the server-side.
 
-- [Client](#client)
-- [Room](#room)
-- [HTTP Client](#http-client)
+- [Client](#client) - The SDK entrypoint
+- [Room](#room) - Room connection.
+- [HTTP](#http-client) - HTTP requests.
+- [Auth](/auth/module#client-side-api) _(Optional)_ - Authentication module.
 
 ## Client
 
-The `Client` instance is used to perform matchmaking calls, and later connect to one or many rooms.
+The `Client` instance is the entrypoint to connect to the server-side. It is used to create or join rooms, and perform HTTP requests.
 
 <Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
 
