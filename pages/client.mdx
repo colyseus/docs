@@ -14,7 +14,7 @@ Every client-side SDK provides the same set of methods and events to interact wi
 
 - [Client](#client) - The SDK entrypoint
 - [Room](#room) - Room connection.
-- [HTTP](#http-client) - HTTP requests.
+- [HTTP](#http-requests) - HTTP requests.
 - [Auth](/auth/module#client-side-api) _(Optional)_ - Authentication module.
 
 ## Client
@@ -1106,9 +1106,9 @@ This event is triggered when some error occurs in the room handler.
 
 ---
 
-## HTTP Client
+## HTTP Requests
 
-The `Client` instance provides the `client.http` utility to perform HTTP requests to your server endpoint.
+The `client.http` utility can perform HTTP requests to your server endpoint.
 
 <Callout type="info">
     The `client.auth.token` property is sent automatically as `Authorization` header in all HTTP requests. See [Authentication → HTTP Middleware](/auth/http) for more details.
