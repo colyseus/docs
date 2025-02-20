@@ -10,7 +10,7 @@ import { ZapIcon, SyncIcon } from "@primer/octicons-react";
 
 ## Overview
 
-Every client-side SDK provides the same set of methods and events to interact with the server-side.
+Every client SDK provides the same set of methods and events to interact with the server.
 
 - [Client](#client) - The SDK entrypoint
 - [Room](#room) - Room connection.
@@ -19,7 +19,7 @@ Every client-side SDK provides the same set of methods and events to interact wi
 
 ## Client
 
-The `Client` instance is the entrypoint to connect to the server-side. It is used to create or join rooms, and perform HTTP requests.
+The `Client` instance is the entrypoint to connect to the server. It is used to create or join rooms, and perform HTTP requests.
 
 <Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
 
@@ -426,7 +426,7 @@ client.joinById (roomId: string, options: any)
 Reconnects the client back into a previously connected room.
 
 - You must store/cache the `room.reconnectionToken` from an active room connection to be able to reconnect.
-- To enable the reconnection of a particular client, the server-side needs to call [`.allowReconnection()`](/server/room#allowreconnection-client-seconds) for that client instance.
+- To enable the reconnection of a particular client, the server needs to call [`.allowReconnection()`](/server/room#allowreconnection-client-seconds) for that client instance.
 
 ```ts filename="Signature"
 client.reconnect (reconnectionToken)
@@ -604,7 +604,7 @@ client.consumeSeatReservation (reservation)
 
 #### `state: any`
 
-The current room's state. This variable is always synched with the latest `state` from the server-side. To listen for updates on the whole state, see [`onStateChange`](#on-state-change) event.
+The current room's state. This variable is always synched with the latest `state` from the server. To listen for updates on the whole state, see [`onStateChange`](#on-state-change) event.
 
 For fine-grained control over state updates, see [State Synchronization → Client-side Callbacks](/state/callbacks).
 
@@ -612,7 +612,7 @@ For fine-grained control over state updates, see [State Synchronization → Clie
 
 #### `sessionId: string`
 
-Unique identifier for the current connected client. This property matches the [`client.sessionId`](/server/room#client/#sessionid-string) from the server-side.
+Unique identifier for the current connected client. This property matches the [`client.sessionId`](/server/room#client/#sessionid-string) from the server.
 
 ---
 
@@ -1117,9 +1117,9 @@ The `client.http` utility can perform HTTP requests to your server endpoint.
 
 ### GET
 
-Perform a GET request to the server-side.
+Perform a GET request to the server.
 
-<Tabs items={["Client-side", "Server-side"]}>
+<Tabs items={["Client", "Server"]}>
     <Tabs.Tab>
     ```js filename="client.js"
     client.http.get("/profile").then((response) => {
@@ -1143,9 +1143,9 @@ Perform a GET request to the server-side.
 
 ### POST
 
-Perform a POST request to the server-side.
+Perform a POST request to the server.
 
-<Tabs items={["Client-side", "Server-side"]}>
+<Tabs items={["Client", "Server"]}>
     <Tabs.Tab>
     ```js filename="client.js"
     client.http.post("/profile", { name: "Jake Badlands" }).then((response) => {
@@ -1170,9 +1170,9 @@ Perform a POST request to the server-side.
 
 ### DELETE
 
-Perform a DELETE request to the server-side.
+Perform a DELETE request to the server.
 
-<Tabs items={["Client-side", "Server-side"]}>
+<Tabs items={["Client", "Server"]}>
     <Tabs.Tab>
     ```js filename="client.js"
     client.http.delete("/profile").then((response) => {
@@ -1196,9 +1196,9 @@ Perform a DELETE request to the server-side.
 
 ### PUT
 
-Perform a PUT request to the server-side.
+Perform a PUT request to the server.
 
-<Tabs items={["Client-side", "Server-side"]}>
+<Tabs items={["Client", "Server"]}>
     <Tabs.Tab>
     ```js filename="client.js"
     client.http.put("/profile", { name: "Jake Badlands" }).then((response) => {
