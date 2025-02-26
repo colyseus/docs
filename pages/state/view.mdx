@@ -90,6 +90,18 @@ client.view.remove(player);
 
 The client-side will receive either a "On Remove" or "Listen" callback you can listen to, depending on which structure the schema instance is part of.
 
+### Checking if instance is part of `StateView`
+
+You can check if a schema instance is part of a `StateView` by calling `.has()` on the `StateView` instance:
+
+```typescript
+if (client.view.has(player)) {
+    // player is part of this client's StateView
+}
+```
+
+The client-side will receive either a "On Remove" or "Listen" callback you can listen to, depending on which structure the schema instance is part of.
+
 ## Specialized tags with `@view(tag: number)`
 
 Sometimes you may want to have multiple views with different fields.
