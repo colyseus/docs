@@ -25,10 +25,10 @@ The `Client` instance is the entrypoint to connect to the server. It is used to 
 
     <Tabs.Tab>
     ```ts filename="client.ts"
-    import Colyseus from "colyseus.js";
+    import { Client } from "colyseus.js";
     // ...
 
-    let client = new Colyseus.Client("ws://localhost:2567");
+    let client = new Client("ws://localhost:2567");
     ```
     </Tabs.Tab>
 
