@@ -10,7 +10,6 @@ const config: DocsThemeConfig = {
         {logo}
         <span style={{ fontSize: "0.8em", marginLeft: "0.6em", paddingTop: "0.7em", color: "GrayText" }}>v0.16</span>
     </>,
-    // logo,
     project: {
         link: 'https://github.com/colyseus/colyseus',
     },

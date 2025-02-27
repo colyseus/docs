@@ -1,0 +1,25 @@
+import { NotFoundPage } from 'nextra-theme-docs'
+
+<script dangerouslySetInnerHTML={{
+    __html: `(function(w, d) {
+        var redirects = [
+            { from: "/getting-started/javascript-client", to: "/getting-started/javascript" },
+            { from: "/getting-started/defold-client", to: "/getting-started/defold" },
+            { from: "/getting-started/unity3d-client", to: "/getting-started/unity" },
+            { from: "/getting-started/haxe-client", to: "/getting-started/haxe" },
+        ];
+        var isRedirect = redirects.find((r) => window.location.pathname.includes(r.from));
+        if (isRedirect) {
+            window.location.replace(
+                window.location.protocol + "//" +
+                window.location.hostname +
+                (window.location.port ? ':' + window.location.port : '') +
+                isRedirect.to
+            );
+        }
+    })(window, document);
+`}}></script>
+
+# Page Not Found
+
+<NotFoundPage />
