@@ -8,6 +8,8 @@ import { NotFoundPage } from 'nextra-theme-docs'
             { from: "/getting-started/unity3d-client", to: "/getting-started/unity" },
             { from: "/getting-started/haxe-client", to: "/getting-started/haxe" },
             { from: "/server/exception-handling", to: "/server/room/exception-handling" },
+            { from: "/debugging", to: "/server/debugging" },
+
         ];
         var isRedirect = redirects.find((r) => window.location.pathname.includes(r.from));
         if (isRedirect) {
