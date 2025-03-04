@@ -16,7 +16,7 @@ If left non-implemented, it always returns `true` - allowing any client to conne
 
 <Steps>
 
-## Server-side: `onAuth` method
+## Server: `onAuth` method
 
 <Tabs items={["Static onAuth (recommended)", "Instance onAuth"]}>
     <Tabs.Tab>
@@ -66,7 +66,7 @@ If left non-implemented, it always returns `true` - allowing any client to conne
     </Tabs.Tab>
 </Tabs>
 
-## Server-side: `onJoin` method
+## Server: `onJoin` method
 
 Get the user data during the `onJoin` method via the `client.auth` property.
 
@@ -75,13 +75,14 @@ import { Room } from "colyseus";
 // ...
 class MyRoom extends Room {
     // ...
-    async onJoin (client, options) {
-        client.auth // contains the userdata
+    async onJoin (client, options, auth) {
+        console.log(auth); // contains the "userdata" returned by onAuth
+        console.log(client.auth); // shorthand/equivalent to `auth`
     }
 }
 ```
 
-## Client-side: Setting the auth token
+## Client: Setting the auth token
 
 The `client.auth.token` property is used to set the authentication token. This token will be sent as an `Authorization` header in all HTTP requests to the server.
 
