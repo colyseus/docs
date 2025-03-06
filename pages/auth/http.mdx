@@ -10,7 +10,7 @@ If you are using the HTTP API, you can authenticate your requests using the `Aut
 
 <Steps>
 
-## Client-side: Set the auth token
+## Client SDK: Set the auth token
 
 ```js filename="client.js"
 // set the auth token
@@ -21,7 +21,7 @@ client.auth.token = "YOUR AUTH TOKEN";
     If you are using the `@colyseus/auth` module, this token is managed automatically. See [Authentication → Module](/auth/module).
 </Callout>
 
-## Client-side: Make HTTP requests
+## Client SDK: Make HTTP requests
 
 The HTTP requests contain the auth token in the `Authorization` header.
 
@@ -31,7 +31,7 @@ client.http.get("/profile").then((response) => {
 });
 ```
 
-## Server-side: Validate the auth token
+## Server: Validate the auth token
 
 If you are using the `@colyseus/auth` module, you can use the `auth.middleware()` method to validate the authentication token in your routes.
 

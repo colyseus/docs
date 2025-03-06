@@ -82,7 +82,7 @@ class MyRoom extends Room {
 }
 ```
 
-## Client: Setting the auth token
+## Client SDK: Setting the auth token
 
 The `client.auth.token` property is used to set the authentication token. This token will be sent as an `Authorization` header in all HTTP requests to the server.
 
@@ -95,7 +95,7 @@ client.auth.token = "YOUR AUTH TOKEN";
     If you are using the `@colyseus/auth` module, this token is managed automatically. See [Authentication → Module](/auth/module).
 </Callout>
 
-## Client-side: Requesting to join a Room
+## Client SDK: Requesting to join a Room
 
 Match-making requests will contain the auth token.
 
