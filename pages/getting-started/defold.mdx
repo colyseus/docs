@@ -32,14 +32,14 @@ Now, select **Project** ▸ **Fetch Libraries** to update library dependencies, 
 ## Usage
 
 ```lua filename="main.lua"
-local ColyseusClient = require "colyseus.client"
+local Colyseus = require "colyseus.sdk"
 
 local client
 local room
 
 function init(self)
     -- Add initialization code here
-    client = ColyseusClient.new("ws://localhost:2567")
+    client = Colyseus.Client("ws://localhost:2567")
 
     -- join chat room
     client:join_or_create("chat", {}, function(err, _room)
@@ -49,6 +49,7 @@ function init(self)
       end
 
       room = _room
+      callbacks = Colyseus.callbacks(room) -- See "Client-side Schema Callbacks"
     end)
 end
 ```
