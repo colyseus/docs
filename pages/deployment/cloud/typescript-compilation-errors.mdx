@@ -36,6 +36,31 @@ npm run build
 
 ---
 
+## Running `tsx` directly in production (not recommended)
+
+You may run `tsx` directly in production, by updating the following configuration in your `ecosystem.config.js` file:
+
+```diff filename="ecosystem.config.js"
+module.exports = {
+   apps : [{
+     // ...
+-    script: 'build/index.js',
++    script: 'src/index.ts',
++    interpreter: 'node',
++    interpreterArgs: '--loader tsx',
+     // ...
+```
+
+You'll also need to skip the build step by updating `package.json`:
+
+```diff filename="package.json"
+  "scripts": {
+-    "build": "npm run clean && tsc",
++    "build": "exit 0"
+```
+
+---
+
 ## Disabling TypeScript strict mode (not recommended)
 
 You can disable TypeScript strict mode by modifying the following configuration to your `tsconfig.json`. (This is not recommend as it will make your application more prone to runtime errors.)
@@ -85,3 +110,4 @@ pnpm install
 **Push `pnpm-lock.yaml` and `pnpm-workspace.yaml`**
 
 Make sure to push the `pnpm-lock.yaml` and `pnpm-workspace.yaml` files to your repository, so Colyseus Cloud can install your dependencies correctly.
+
