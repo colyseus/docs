@@ -70,11 +70,10 @@ import { StateView } from "@colyseus/schema";
 // ...
     onJoin(client, options) {
         const player = new Player();
+        this.state.players.set(client.sessionId, player);
 
         client.view = new StateView();
         client.view.add(player);
-
-        this.state.players.set(client.sessionId, player);
     }
 ```
 
@@ -168,11 +167,10 @@ import { StateView } from "@colyseus/schema";
 // ...
     onJoin(client, options) {
         const player = new Player();
+        this.state.players.set(client.sessionId, player);
 
         client.view = new StateView();
         client.view.add(player);
-
-        this.state.players.set(client.sessionId, player);
     }
 // ...
 ```
