@@ -46,7 +46,7 @@ import { HashIcon } from '@primer/octicons-react'
     </Tabs.Tab>
 
     <Tabs.Tab>
-        <Callout type="warning">
+        <Callout type="error">
             The `defineTypes()` method will be removed in future versions of Colyseus. It is recommended to use the `schema.schema()` method instead.
         </Callout>
 
@@ -88,9 +88,9 @@ export class MyRoom extends Room<MyState> {
 <Cards>
     <Cards.Card icon={<HashIcon/>} title="Primitive Types" href="#primitive-types" arrow />
     <Cards.Card icon={<HashIcon/>} title="Schema Type" href="#schema-type" arrow />
-    <Cards.Card icon={<HashIcon/>} title="ArraySchema" href="#arrayschema" arrow />
-    <Cards.Card icon={<HashIcon/>} title="MapSchema" href="#mapschema" arrow />
-    <Cards.Card icon={<HashIcon/>} title="SetSchema" href="#setschema" arrow />
+    <Cards.Card icon={<HashIcon/>} title="ArraySchema" href="#array-arrayschema" arrow />
+    <Cards.Card icon={<HashIcon/>} title="MapSchema" href="#map-mapschema" arrow />
+    <Cards.Card icon={<HashIcon/>} title="SetSchema" href="#set-setschema" arrow />
     <Cards.Card icon={<HashIcon/>} title="CollectionSchema" href="#collectionschema" arrow />
 </Cards>
 
@@ -179,71 +179,70 @@ A `Schema` type can define properties as primitives, other `Schema` types, or co
 
 The `ArraySchema` is a synchronizeable version of the built-in JavaScript [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array) type.
 
-**Example: Array of custom `Schema` type**
+You can't mix types inside `ArraySchema`.
 
-<Tabs items={["TypeScript", "JavaScript"]}>
+<Tabs items={["Example with primitive child type", "Example with Schema child type"]}>
     <Tabs.Tab>
 
-    ```ts filename="MyState.ts"
-    import { Schema, ArraySchema, type } from "@colyseus/schema";
+        <Tabs items={["TypeScript", "JavaScript"]}>
+            <Tabs.Tab>
+            ```ts filename="MyState.ts"
+            import { Schema, ArraySchema, type } from "@colyseus/schema";
 
-    class Block extends Schema {
-        @type("number") x: number;
-        @type("number") y: number;
-    }
+            class MyState extends Schema {
+                @type([ "string" ]) animals = new ArraySchema<string>();
+            }
+            ```
+            </Tabs.Tab>
 
-    class MyState extends Schema {
-        @type([ Block ]) blocks = new ArraySchema<Block>();
-    }
-    ```
+            <Tabs.Tab>
+
+            ```js filename="MyState.js"
+            const schema = require('@colyseus/schema');
+
+            const MyState = schema.schema({
+                animals: [ "string" ]
+            });
+            ```
+            </Tabs.Tab>
+        </Tabs>
     </Tabs.Tab>
 
     <Tabs.Tab>
+        <Tabs items={["TypeScript", "JavaScript"]}>
+            <Tabs.Tab>
 
-    ```js filename="MyState.js"
-    const schema = require('@colyseus/schema');
+            ```ts filename="MyState.ts"
+            import { Schema, ArraySchema, type } from "@colyseus/schema";
 
-    const Block = schema.schema({
-      x: "number",
-      y: "number"
-    });
+            class Block extends Schema {
+                @type("number") x: number;
+                @type("number") y: number;
+            }
 
-    const MyState = schema.schema({
-      blocks: [ Block ]
-    });
-    ```
+            class MyState extends Schema {
+                @type([ Block ]) blocks = new ArraySchema<Block>();
+            }
+            ```
+            </Tabs.Tab>
+
+            <Tabs.Tab>
+
+            ```js filename="MyState.js"
+            const schema = require('@colyseus/schema');
+
+            const Block = schema.schema({
+                x: "number",
+                y: "number"
+            });
+
+            const MyState = schema.schema({
+                blocks: [ Block ]
+            });
+            ```
+            </Tabs.Tab>
+        </Tabs>
     </Tabs.Tab>
-</Tabs>
-
-
-
-**Example: Array of a primitive type**
-
-You can't mix types inside arrays.
-
-<Tabs items={["TypeScript", "JavaScript"]}>
-    <Tabs.Tab>
-
-    ```ts filename="MyState.ts"
-    import { Schema, ArraySchema, type } from "@colyseus/schema";
-
-    class MyState extends Schema {
-        @type([ "string" ]) animals = new ArraySchema<string>();
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-
-    ```js filename="MyState.js"
-    const schema = require('@colyseus/schema');
-
-    const MyState = schema.schema({
-      animals: [ "string" ]
-    });
-    ```
-    </Tabs.Tab>
-
 </Tabs>
 
 ---
@@ -321,6 +320,32 @@ const itemIndex = animals.findIndex((animal) => animal === "sheeps");
 
 // remove it!
 animals.splice(itemIndex, 1);
+```
+
+---
+
+#### `array.shuffle()`
+
+Shuffles the array in place. This method returns the shuffled array.
+
+``` typescript
+const animals = new ArraySchema<string>();
+animals.push("pigs", "goats", "sheeps", "cows");
+animals.shuffle();
+// output: ["cows", "pigs", "sheeps", "goats"]
+```
+
+---
+
+#### `array.move(cb)`
+
+Allows you to move elements from one index to another without re-encoding them. This method takes a callback function that should mutate the array in place.
+
+```typescript
+state.cards.move((cards) => {
+    // swap items at index 2 and 3
+    [cards[3], cards[2]] = [cards[2], cards[3]];
+})
 ```
 
 ---
@@ -419,12 +444,12 @@ Maps are recommended to track your game entities by id, such as players, enemies
     const schema = require('@colyseus/schema');
 
     const Player = schema.schema({
-      x: "number",
-      y: "number"
+        x: "number",
+        y: "number"
     });
 
     const MyState = schema.schema({
-      players: { map: Player }
+        players: { map: Player }
     });
     ```
     </Tabs.Tab>
@@ -570,11 +595,11 @@ The usage of `SetSchema` is very similar to [`CollectionSchema`], the biggest di
     const schema = require('@colyseus/schema');
 
     const Effect = schema.schema({
-      radius: "number"
+        radius: "number"
     });
 
     const Player = schema.schema({
-      effects: { set: Effect }
+        effects: { set: Effect }
     });
     ```
     </Tabs.Tab>
@@ -677,11 +702,11 @@ The `CollectionSchema` works similarly as the `ArraySchema`, with the caveat tha
     const schema = require('@colyseus/schema');
 
     const Item = schema.schema({
-      damage: "number"
+        damage: "number"
     });
 
     const Player = schema.schema({
-      items: { collection: Item }
+        items: { collection: Item }
     });
     ```
     </Tabs.Tab>
