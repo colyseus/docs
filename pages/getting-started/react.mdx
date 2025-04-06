@@ -57,7 +57,7 @@ function RoomComponent () {
 }
 ```
 
-## Using a Context Provider
+## Using a Context Provider for Room Management
 
 > TODO: Add a more complex example using a React Context Provider.
 
@@ -134,4 +134,56 @@ export function RoomProvider({ children }: { children: React.ReactNode }) {
         </RoomContext.Provider>
     );
 }
+```
+
+## Using a Context Provider for Authentication
+
+You can also use a React Context Provider to manage the authentication state across your application. This is useful if you want to handle user authentication and authorization in a centralized way.
+
+The following example shows how to create an `AuthContext` that provides the authentication state and automatically signs in the user anonymously if no token is available.
+
+You can customize it to meet your specific authentication needs.
+
+```typescript filename="AuthContext.tsx"
+import { createContext, useContext, useState, useEffect } from 'react';
+import { Client } from "colyseus.js";
+
+interface AuthContextType {
+  user: any;
+  loading: boolean;
+}
+
+const AuthContext = createContext<AuthContextType>(undefined);
+
+export function AuthProvider({ colyseusSDK, children }: { colyseusSDK: Client, children: React.ReactNode }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const setUserData = (userData: any) => {
+    setUser(userData);
+    setLoading(false);
+  };
+
+  // Handle authentication on mount or token change
+  useEffect(() => {
+    colyseusSDK.auth.onChange((authData) =>
+      setUserData((authData.token) ? authData.user : null));
+
+    if (!colyseusSDK.auth.token) {
+        colyseusSDK.auth.signInAnonymously()
+            .then((response) => console.log("Anonymous login success:", response))
+            .catch((error) => console.error("Anonymous login error:", error));
+    }
+  }, [colyseusSDK]);
+
+  return (
+    <AuthContext.Provider value={{ user, loading, }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export function useAuth () {
+  return useContext(AuthContext);
+};
 ```
