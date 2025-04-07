@@ -163,7 +163,7 @@ Virtual host configuration:
 ```dockerfile filename="Dockerfile"
 FROM node:22
 
-ENV PORT 8080
+ENV PORT 2567
 
 WORKDIR /usr/src/app
 
@@ -176,7 +176,7 @@ RUN npm ci
 
 COPY . .
 
-EXPOSE 8080
+EXPOSE 2567
 
 CMD [ "npm", "start" ]
 ```
@@ -220,14 +220,14 @@ node                            14         1934b0b038d1    About a minute ago
 Run the Docker Image with following command:
 
 ```sh filename="Terminal"
-docker run -p 8080:8080 -d <your username>/colyseus-server
+docker run -p 2567:2567 -d <your username>/colyseus-server
 ```
 
 Running your image with -d runs the container in detached mode, leaving the container running in the background. The -p flag redirects a public port to a private port inside the container.
 
 ### Done
 
-Done, now you can connect to the server with `localhost:8080`
+Done, now you can connect to the server with `localhost:2567`
 
 </Steps>
 
