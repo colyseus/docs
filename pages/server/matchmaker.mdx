@@ -330,7 +330,7 @@ You can restrict the client-side to be allowed only to call specific matchmaking
 not going to be able to perform `create` or `joinOrCreate` calls.
 
 ``` typescript
-import { matchmaker } from "colyseus";
+import { matchMaker } from "colyseus";
 
 matchMaker.controller.exposedMethods = ['join', 'joinById', 'reconnect'];
 ```
