@@ -51,7 +51,7 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
         })
 
         exports.MyState = schema.schema({
-            players: { map: Player }
+            players: { map: Player, default: new Map() }
         })
         ```
         </Tabs.Tab>

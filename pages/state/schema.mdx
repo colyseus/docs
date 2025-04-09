@@ -449,7 +449,7 @@ Maps are recommended to track your game entities by id, such as players, enemies
     });
 
     const MyState = schema.schema({
-        players: { map: Player }
+        players: { map: Player, default: new Map() }
     });
     ```
     </Tabs.Tab>
