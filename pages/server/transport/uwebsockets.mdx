@@ -29,7 +29,9 @@ npm install --save @colyseus/uwebsockets-transport
       // ...
       initializeTransport: function() {
         return new uWebSocketsTransport({
-          /* ...options */
+          /* transport options */
+        }, {
+          /* ssl options */
         });
       },
 
@@ -53,7 +55,9 @@ npm install --save @colyseus/uwebsockets-transport
     import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
 
     const transport = new uWebSocketsTransport({
-        /* ...options */
+      /* transport options */
+    }, {
+      /* ssl options */
     });
     const app = transport['expressApp'];
 
@@ -65,7 +69,7 @@ npm install --save @colyseus/uwebsockets-transport
     </Tabs.Tab>
 </Tabs>
 
-### Available options
+### Transport options
 
 #### `options.maxPayloadLength`
 Maximum length of received message. If a client tries to send you a message larger than this, the connection is immediately closed.
@@ -95,6 +99,8 @@ Maximum length of allowed backpressure per socket when publishing or sending mes
 
 Default: `1024 * 1024`
 
+### SSL options
+
 #### `options.key_file_name`
 
 Path to the SSL key file. (for SSL termination through the Node.js application.)
@@ -106,4 +112,3 @@ Path to the SSL certificate file. (for SSL termination through the Node.js appli
 #### `options.passphrase`
 
 Password for the SSL file. (for SSL termination through the Node.js application.)
-
