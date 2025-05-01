@@ -39,3 +39,8 @@ export const haxe = <Image
             src={require('../../images/icons/haxe.png')}
             width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block' }}
             alt="Haxe" />
+
+export const discord = <Image
+            src={require('../../images/icons/discord.png')}
+            width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block' }}
+            alt="Discord" />
