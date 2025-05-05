@@ -14,14 +14,14 @@ By default, the entire state is visible to all clients. However, you may want to
 **You can do so by:**
 
 1. Assigning a `StateView` instance to the client
-2. Tag fields with the `@view()` decorator
+2. Tag state fields with the `@view()` decorator
 3. Manually `.add()` schema instances to the `StateView`
 4. Manually `.remove()` schema instances from the `StateView`
 
 A `StateView` instance must be assigned to the `client.view`.
 
 <Callout type="warning">
-    It is not recommended to rely on StateView for big datasets, as it is not optimized for that yet. However, it is a great way to filter data per client, such as "private fields" per schema instance, "level of detail", area-based, team-owned data, and etc.
+    It is not recommended to rely on `StateView` for big datasets, as it is not optimized for that yet. However, it is a great way to filter data per client, such as "private fields" per schema instance, "level of detail", area-based, team-owned data, and etc.
 </Callout>
 
 ## Initializing a `StateView`
@@ -65,7 +65,7 @@ On the example above, the `position` field is only visible to clients that conta
 
 In order to add a schema instance to a `StateView`, you must call `.add()` on the `StateView` instance:
 
-```ts {6,7} filename="MyRoom.ts"
+```ts {7,8} filename="MyRoom.ts"
 import { StateView } from "@colyseus/schema";
 // ...
     onJoin(client, options) {
