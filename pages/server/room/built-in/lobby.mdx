@@ -9,9 +9,9 @@ import { Callout, Cards, Tabs } from "nextra/components";
     Client-side API for lobby room will change on Colyseus 1.0.0
 </Callout>*/}
 
-## Server-side
+The built-in `LobbyRoom` automatically notify connected clients whenever rooms with "realtime listing" have updates.
 
-The built-in `LobbyRoom` will automatically notify its connected clients whenever rooms with "realtime listing" have updates.
+## Server
 
 ```ts filename="server.ts"
 import { LobbyRoom } from "colyseus";
@@ -27,6 +27,8 @@ gameServer
 ```
 
 The `LobbyRoom` is notified automatically during `onCreate()`, `onJoin()`, `onLeave()` and `onDispose()`.
+
+### Updating the lobby
 
 If you have [updated the `metadata` of your room](/server/room/#setmetadata-metadata), and need to trigger an update for the lobby, you can call `updateLobby()` right after the metadata has been updated:
 
@@ -44,7 +46,7 @@ class YourGameRoom extends Room {
     this.clock.setTimeout(() => {
 
       this.setMetadata({
-        customData: "Hello world!"
+        gameMode: "deathmatch",
       }).then(() => updateLobby(this));
 
     }, 5000);
@@ -54,11 +56,11 @@ class YourGameRoom extends Room {
 }
 ```
 
-## Client-side
+## Client
 
-You need to keep track of the rooms being added, removed and updated through messages sent to the client from the `LobbyRoom`.
+The `LobbyRoom` will send messages to the client whenever a room is added, removed or updated.
 
-```ts filename="client.ts"
+```ts {8,12,22} filename="client.ts"
 import { Client, RoomAvailable } from "colyseus.js";
 
 const client = new Client("ws://localhost:2567");
@@ -82,5 +84,31 @@ lobby.onMessage("+", ([roomId, room]) => {
 
 lobby.onMessage("-", (roomId) => {
   allRooms = allRooms.filter((room) => room.roomId !== roomId);
+});
+```
+
+### Filtering rooms
+
+Filtering rooms by `name` or `metadata` can be done by providing the `filter` option when joining the lobby:
+
+```ts {1-6} filename="client.ts"
+const lobby = await client.joinOrCreate("lobby", {
+  filter: {
+    name: "my_room",
+    metadata: {
+      gameMode: "deathmatch",
+    }
+  }
+});
+```
+
+Alternatively, you can also dynamically change the filter by sending a `"filter"` message to the lobby room:
+
+```ts
+lobby.send("filter", {
+  name: "my_room",
+  metadata: {
+    gameMode: "deathmatch",
+  }
 });
 ```
