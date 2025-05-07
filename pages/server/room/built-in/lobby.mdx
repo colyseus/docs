@@ -5,16 +5,16 @@ import { Callout, Steps, Cards, Tabs } from "nextra/components";
 
 # Lobby Room
 
-<Callout>
-    The source-code for `LobbyRoom` is fairly straightforward. You can check it out [here](https://github.com/colyseus/colyseus/blob/master/packages/core/src/rooms/LobbyRoom.ts). You are encouraged to extend it and create your own lobby room if you need more control over the behavior.
-</Callout>
-
 Colyseus provides a built-in `LobbyRoom` that can be used to list all available rooms in your game server.
 
 **Features:**
 - Automatically lists all rooms created with `enableRealtimeListing()`.
 - Automatically updates the list of rooms when a room is created, joined, left or disposed.
 - Allows filtering rooms by `name` and `metadata`.
+
+<Callout type="info">
+    The source-code for `LobbyRoom` is fairly straightforward. You can check it out [here](https://github.com/colyseus/colyseus/blob/master/packages/core/src/rooms/LobbyRoom.ts). You are encouraged to extend it and create your own lobby room if you need more control over the behavior.
+</Callout>
 
 ## Server
 
