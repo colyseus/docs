@@ -101,7 +101,7 @@ lobby.onMessage("-", (roomId) => {
 
 Filtering rooms by `name` or `metadata` can be done by providing the `filter` option when joining the lobby:
 
-```ts {1-6} filename="client.ts"
+```ts {2-7} filename="client.ts"
 const lobby = await client.joinOrCreate("lobby", {
   filter: {
     name: "my_room",
