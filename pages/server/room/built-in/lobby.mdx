@@ -1,7 +1,7 @@
 ---
 title: "Lobby Room"
 ---
-import { Callout, Cards, Tabs } from "nextra/components";
+import { Callout, Steps, Cards, Tabs } from "nextra/components";
 
 # Lobby Room
 
@@ -9,33 +9,44 @@ import { Callout, Cards, Tabs } from "nextra/components";
     Client-side API for lobby room will change on Colyseus 1.0.0
 </Callout>*/}
 
-The built-in `LobbyRoom` automatically notify connected clients whenever rooms with "realtime listing" have updates.
+Colyseus provides a built-in `LobbyRoom` that can be used to list all available rooms in your game server.
+
+**Features:**
+- Automatically lists all rooms created with `enableRealtimeListing()`.
+- Automatically updates the list of rooms when a room is created, joined, left or disposed.
+- Allows filtering rooms by `name` and `metadata`.
 
 ## Server
+
+<Steps>
+### Expose the lobby room
 
 ```ts filename="server.ts"
 import { LobbyRoom } from "colyseus";
 
 // Expose the "lobby" room.
-gameServer
-  .define("lobby", LobbyRoom);
-
-// Expose your game room with realtime listing enabled.
-gameServer
-  .define("your_game", YourGameRoom)
-  .enableRealtimeListing();
+gameServer.define("lobby", LobbyRoom);
 ```
 
-The `LobbyRoom` is notified automatically during `onCreate()`, `onJoin()`, `onLeave()` and `onDispose()`.
+### Enable _realtime listing_ on your game room
+
+When _realtime listing_ is enabled, the `LobbyRoom` is notified automatically during `onCreate()`, `onJoin()`, `onLeave()` and `onDispose()`.
+
+```ts {3} filename="server.ts"
+gameServer
+  .define("my_room", MyRoom)
+  .enableRealtimeListing();
+```
+</Steps>
 
 ### Updating the lobby
 
 If you have [updated the `metadata` of your room](/server/room/#setmetadata-metadata), and need to trigger an update for the lobby, you can call `updateLobby()` right after the metadata has been updated:
 
-```ts filename="YourGameRoom.ts"
+```ts filename="MyRoom.ts"
 import { Room, updateLobby } from "colyseus";
 
-class YourGameRoom extends Room {
+class MyRoom extends Room {
 
   onCreate() {
 
