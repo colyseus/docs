@@ -4,10 +4,6 @@ title: "1: Basic Player Movement"
 import { Callout, Cards, Tabs } from "nextra/components";
 import { DownloadIcon, LinkIcon } from '@primer/octicons-react'
 
-<Callout type="warning">
-    This tutorial still uses version 0.15. We're gradually migrating content to version 0.16.
-</Callout>
-
 # 1: Basic Player Movement
 
 This guide will show you how you can build a multiplayer experience with Colyseus Multiplayer Framework and Phaser.
@@ -333,6 +329,14 @@ For this demo, we only need one sprite to represent the player, which we are goi
 
 After a connection with the room has been established, the client-side can start listening for state changes, and create a visual representation of the data in the server.
 
+In order to attach callbacks to the state, we need to import the `getStateCallbacks()` function from `colyseus.js`:
+
+```typescript
+import { getStateCallbacks } from "colyseus.js";
+// (...)
+const $ = getStateCallbacks(this.room);
+```
+
 ### Adding new players
 
 As per [Room State and Schema](#room-state-and-schema) section, whenever the server accepts a new connection - the `onJoin()` method is creating a new Player instance within the state.
@@ -341,7 +345,7 @@ We're going to listen to this event on the client-side now:
 
 ```ts
 // (...)
-this.room.state.players.onAdd((player, sessionId) => {
+$(this.room.state).players.onAdd((player, sessionId) => {
   //
   // A player has joined!
   //
@@ -355,6 +359,8 @@ When playing the Scene, you should see a message in the console of the browser w
 For the visual representation, we need to add a Phaser GameObject for each joining player, and keep a local reference to the GameObject based on their `sessionId`, so we can operate on them later:
 
 ```ts
+import { getStateCallbacks } from "colyseus.js";
+
 export class GameScene extends Phaser.Scene {
     // (...)
     room: Room;
@@ -368,7 +374,7 @@ export class GameScene extends Phaser.Scene {
         // (...)
 
         // listen for new players
-        this.room.state.players.onAdd((player, sessionId) => {
+        $(this.room.state).players.onAdd((player, sessionId) => {
             const entity = this.physics.add.image(player.x, player.y, 'ship_0001');
 
             // keep a reference of it on `playerEntities`
@@ -386,7 +392,7 @@ When a player is removed from the state (upon `onLeave()` in the server-side), w
 
 ```ts
 // (...)
-this.room.state.players.onRemove((player, sessionId) => {
+$(this.room.state).players.onRemove((player, sessionId) => {
     const entity = this.playerEntities[sessionId];
     if (entity) {
         // destroy entity
@@ -448,9 +454,9 @@ Whenever the message is received in the server, we're going to mutate the player
 
 ```ts filename="MyRoom.ts"
 // (...)
-  onCreate(options: any) {
-    this.setState(new MyRoomState());
+  state = new MyRoomState();
 
+  onCreate(options: any) {
     // handle player input
     this.onMessage(0, (client, payload) => {
       // get reference to the player who sent the message
@@ -487,14 +493,14 @@ We are going to use `.onChange()` since we need all the new coordinates at once,
 ```ts
 // (...)
 // listen for new players
-this.room.state.players.onAdd((player, sessionId) => {
+$(this.room.state).players.onAdd((player, sessionId) => {
     const entity = this.physics.add.image(player.x, player.y, 'ship_0001');
 
     // keep a reference of it on `playerEntities`
     this.playerEntities[sessionId] = entity;
 
     // listening for server updates
-    player.onChange(() => {
+    $(player).onChange(() => {
         // update local position immediately
         entity.x = player.x;
         entity.y = player.y;

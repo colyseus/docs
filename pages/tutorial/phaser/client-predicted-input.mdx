@@ -4,10 +4,6 @@ title: "3: Client Predicted Input"
 import { Callout, Cards, Tabs } from "nextra/components";
 import { DownloadIcon, LinkIcon } from '@primer/octicons-react'
 
-<Callout type="warning">
-    This tutorial still uses version 0.15. We're gradually migrating content to version 0.16.
-</Callout>
-
 # 3: Client Predicted Input
 
 This guide will show you how you can build a multiplayer experience with Colyseus Multiplayer Framework and Phaser.
@@ -57,7 +53,7 @@ export class GameScene extends Phaser.Scene {
 Now, let's modify the `players.onAdd()` callback to identify which player is the current one, by checking the `sessionId` key against the connected `room.sessionId`:
 
 ```typescript
-this.room.state.players.onAdd((player, sessionId) => {
+$(this.room.state).players.onAdd((player, sessionId) => {
     const entity = this.physics.add.image(player.x, player.y, 'ship_0001');
     this.playerEntities[sessionId] = entity;
 
@@ -70,7 +66,7 @@ this.room.state.players.onAdd((player, sessionId) => {
         this.remoteRef = this.add.rectangle(0, 0, entity.width, entity.height);
         this.remoteRef.setStrokeStyle(1, 0xff0000);
 
-        player.onChange(() => {
+        $(player).onChange(() => {
             this.remoteRef.x = player.x;
             this.remoteRef.y = player.y;
         });
@@ -78,7 +74,7 @@ this.room.state.players.onAdd((player, sessionId) => {
     } else {
         // all remote players are here!
         // (same as before, we are going to interpolate remote players)
-        player.onChange(() => {
+        $(player).onChange(() => {
             entity.setData('serverX', player.x);
             entity.setData('serverY', player.y);
         });

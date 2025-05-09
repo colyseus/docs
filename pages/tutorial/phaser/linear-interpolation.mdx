@@ -4,10 +4,6 @@ title: "2: Linear Interpolation"
 import { Callout, Cards, Tabs } from "nextra/components";
 import { DownloadIcon, LinkIcon } from '@primer/octicons-react'
 
-<Callout type="warning">
-    This tutorial still uses version 0.15. We're gradually migrating content to version 0.16.
-</Callout>
-
 # 2: Linear Interpolation
 
 This guide will show you how you can build a multiplayer experience with Colyseus Multiplayer Framework and Phaser.
@@ -35,7 +31,7 @@ On [Part 1](basic-player-movement) of this tutorial, we updated the player's vis
 
 ```typescript
 // listening for server updates
-player.onChange(() => {
+$(player).onChange(() => {
     // update local position immediately
     entity.x = player.x;
     entity.y = player.y;
@@ -58,7 +54,7 @@ To allow that, first we need to cache the latest player position received from t
 
 ```typescript
 // listening for server updates
-player.onChange(() => {
+$(player).onChange(() => {
     //
     // do not update local position immediately
     // we're going to LERP them during the render loop.
