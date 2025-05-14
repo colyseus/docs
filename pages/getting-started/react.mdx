@@ -64,6 +64,7 @@ Alternatively, you can use a React Context Provider to manage the connection and
 ```typescript filename="RoomContext.tsx"
 import React, { createContext, useContext } from 'react';
 import { Room } from 'colyseus.js';
+import type { MyRoomState } from "../../backend/src/rooms/MyRoomState";
 
 interface RoomContextType {
     isConnecting: boolean;
@@ -91,7 +92,7 @@ export function RoomProvider({ children }: { children: React.ReactNode }) {
     const [joinError, setJoinError] = React.useState(false);
     const [isConnecting, setIsConnecting] = React.useState(false);
     const [isConnected, setIsConnected] = React.useState(false);
-    const [state, setState] = React.useState<ReturnType<BalootiState['toJSON']>>(undefined)
+    const [state, setState] = React.useState<ReturnType<MyRoomState['toJSON']>>(undefined)
 
     const join = () => {
         if (hasActiveJoinRequest) { return; }
