@@ -22,6 +22,13 @@ import { Callout, Steps, Tabs } from 'nextra/components'
     </Tabs.Tab>
 </Tabs>
 
+### Testing from Unity Editor
+
+Starting with Unity 6000.1.0b1, Unity integrates [Multiplayer Play Mode](https://docs-multiplayer.unity3d.com/mppm/current/about/), enabling you to test your Colyseus-based multiplayer game with multiple clients directly within the Unity Editor, without needing to build the application.
+
+- See how to install [Multiplayer Play Mode](https://docs-multiplayer.unity3d.com/mppm/current/install/)
+- Alternatively, you can use [ParrelSync](https://github.com/VeriorPies/ParrelSync) for older versions of Unity.
+
 ## Setup
 
 Here we'll be going over the steps to get your Unity client up and running and connected to a Colyseus server.
@@ -112,7 +119,7 @@ where `OnLeaveRoom` functions as so:
 private void OnLeaveRoom(int code)
   {
       WebSocketCloseCode closeCode = WebSocketHelpers.ParseCloseCodeEnum(code);
-      LSLog.Log(string.Format("ROOM: ON LEAVE =- Reason: {0} ({1})", closeCode, code));
+      Debug.Log(string.Format("ROOM: ON LEAVE =- Reason: {0} ({1})", closeCode, code));
   }
 ```
 
@@ -176,29 +183,26 @@ public partial class MyRoomState : Schema
 When you are using MapSchema or ArraySchema, the state sychronizations from the server can be used as below as well.
 
 ```csharp
-// Something has been added to Schema
-room.State.players.OnAdd((key, player) =>
+var callbacks = Colyseus.Schema.Callbacks.Get(room);
+
+// Player has been added to Schema
+callbacks.OnAdd(state => state.players, (key, player) =>
 {
     Debug.Log($"{key} has joined the Game!");
+
+    // Something has changed in the Player instance
+    callbacks.OnChange(player, (key, value) =>
+    {
+        Debug.Log($"{key} has changed!");
+    });
 });
 
-// Something has changed in Schema
-room.State.players.OnChange((key, player) =>
-{
-    Debug.Log($"{key} has been changed!");
-});
-
-// Something has been removed from Schema
-room.State.players.OnRemove((key, player) =>
+// Player has been removed from Schema
+callbacks.OnRemove(state => state.players, (key, player) =>
 {
     Debug.Log($"{key} has left the Game!");
 });
 ```
-
-## Testing locally
-
-The [ParrelSync](https://github.com/VeriorPies/ParrelSync) is a tool that has been proven useful for quickly testing
-multiplayer from Unity's editor, without the need to build the application.
 
 ## Debugging
 
