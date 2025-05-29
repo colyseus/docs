@@ -79,7 +79,7 @@ Configure each Colyseus process to use its very own public address, so clients c
                 presence: new RedisPresence(),
 
                 // use a unique public address for each process
-                publicAddress: `backend.yourdomain.com/${(Number(process.env.PORT) + Number(process.env.NODE_APP_INSTANCE))}`
+                publicAddress: `backend.yourdomain.com:${(Number(process.env.PORT) + Number(process.env.NODE_APP_INSTANCE))}`
             },
             // ...
         });
