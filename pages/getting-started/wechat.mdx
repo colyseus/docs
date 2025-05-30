@@ -1,0 +1,61 @@
+---
+title: React
+---
+import _js_ts_header from "./_js_ts_header.mdx"
+import { javascript, wechat } from "../../components/icons/platforms"
+import { Callout, Tabs } from 'nextra/components'
+
+# {wechat} WeChat (JavaScript/TypeScript SDK)
+
+WeChat is a popular messaging and social media platform in China, and it provides a rich set of APIs for building mini-programs and games. Colyseus can be integrated with WeChat to create real-time multiplayer experiences.
+
+As the WeChat JavaScript runtime is not fully compatible with the browser, you will need to use the following polyfills to ensure compatibility.
+
+<Callout type="warning">
+  Feedback? Join the discussion on GitHub — https://github.com/colyseus/colyseus.js/pull/158
+</Callout>
+
+<Callout type="info">
+  The [JavaScript](javascript) or [TypeScript](typescript) SDK are compatible with WeChat after applying the necessary polyfills and monkey-patches.
+</Callout>
+
+### `URL` Polyfill
+
+WeChat does not provide the [`URL` standard](https://url.spec.whatwg.org/), so you need to install a polyfill to use it.
+
+<Tabs items={["Install polyfill via NPM", "Copy & paste manually"]}>
+    <Tabs.Tab>
+        If you are using a build system, you can install the `url-polyfill` package:
+
+        ```sh npm2yarn
+        npm install --save url-polyfill
+        ```
+
+        And import it in your entry file:
+
+        ```javascript
+        require('url-polyfill');
+        ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+        If you are not using a build system, you can manually copy and paste the polyfill code from the [url-polyfill repository](https://github.com/lifaon74/url-polyfill/blob/master/url-polyfill.js).
+    </Tabs.Tab>
+</Tabs>
+
+### WebSocket monkey-patch
+
+It has been reported that the WeChat JavaScript runtime does not support sending `Uint8Array` or `Array` data types directly through WebSocket. To work around this, you can monkey-patch the `WebSocket.send` method to convert these data types to a format that WeChat can handle.
+
+```typescript
+const WebSocket_send = WebSocket.prototype.send;
+WebSocket.prototype.send = function(data) {
+    if (data instanceof Uint8Array) {
+        WebSocket_send.call(this, data.slice().buffer);
+    } else if (Array.isArray(data)){
+        WebSocket_send.call(this, (new Uint8Array(data)).buffer);
+    } else {
+        WebSocket_send.call(this, data);
+    }
+}
+```

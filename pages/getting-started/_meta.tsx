@@ -4,9 +4,11 @@ export default {
     "typescript": 'TypeScript',
     "javascript": 'JavaScript',
     "react": 'React',
-    "haxe": 'Haxe',
     "unity": 'Unity',
     "defold": 'Defold',
     "construct3": 'Construct 3',
-    "cocos": 'Cocos',
+    "cocos": 'Cocos Creator',
+    "haxe": 'Haxe',
+    "discord-activity": 'Discord Activity',
+    "wechat": 'WeChat',
 }

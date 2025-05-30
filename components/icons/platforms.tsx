@@ -44,3 +44,8 @@ export const discord = <Image
             src={require('../../images/icons/discord.png')}
             width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block' }}
             alt="Discord" />
+
+export const wechat = <Image
+            src={require('../../images/icons/wechat.png')}
+            width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block' }}
+            alt="WeChat" />
