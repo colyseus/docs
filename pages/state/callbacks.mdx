@@ -116,17 +116,17 @@ In order to register callbacks to Schema instances, you must access the instance
         // when an entity was added (ArraySchema or MapSchema)
         callbacks.OnAdd(state => state.entities, (sessionId, entity) => {
             // ...
-            Debug.Log("entity added", entity);
+            Debug.Log($"entity added, {entity}");
 
             callbacks.Listen(entity, entity => entity.hp, (currentHp, previousHp) => {
-                Debug.Log("entity", sessionId, "changed hp to", currentHp);
+                Debug.Log($"entity {sessionId} changed hp to {currentHp}");
             });
         });
 
         // when an entity was removed (ArraySchema or MapSchema)
         callbacks.OnRemove(state => state.entities, (sessionId, entity) => {
             // ...
-            Debug.Log("entity removed", entity);
+            Debug.Log($"entity removed {entity}");
         });
         ```
         </Tabs.Tab>
