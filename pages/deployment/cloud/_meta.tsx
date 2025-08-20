@@ -1,5 +1,6 @@
 export default {
     "compute-plans": "",
+    "private-npm-registry": "",
     "continuous-deployment": "",
     "ddos-protection": "",
     "environment-variables": "",

@@ -1,0 +1,24 @@
+---
+title: "Private NPM Registry"
+---
+
+# Private NPM Registry
+
+If you rely on private NPM packages from your organization, you need to configure authentication to access them during deployment. This is done by creating a local `~/.npmrc` file in your project root.
+
+## Example: Private NPM Registry from GitHub
+
+For packages published under your GitHub organization (e.g., `@your-company/package-name`):
+
+```txt filename=".npmrc"
+@your-org-name:registry=https://npm.pkg.github.com/
+//npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
+```
+
+**Configuration steps:**
+
+1. Replace `@your-org-name` with your actual GitHub organization or username
+2. Replace `YOUR_GITHUB_TOKEN` with your GitHub personal access token that has `read:packages` permission
+3. Place this `.npmrc` file in your project root directory
+
+This configuration tells npm to use GitHub's package registry for all packages under your organization's scope, while using the default npm registry for all other packages.
