@@ -9,7 +9,10 @@ import { NotFoundPage } from 'nextra-theme-docs'
             { from: "/getting-started/unity-sdk", to: "/getting-started/unity" },
             { from: "/getting-started/haxe-client", to: "/getting-started/haxe" },
             { from: "/cloud/typescript-compilation-errors", to: "/deployment/cloud/typescript-compilation-errors" },
-            { from: "/server/exception-handling", to: "/server/room/exception-handling" },
+            { from: "/server/api#constructor-options", to: "/server#server-options" },
+            { from: "/server/api", to: "/server" },
+            { from: "/server/exception-handling", to: "/room/exception-handling" },
+            { from: "/server/room/exception-handling", to: "/room/exception-handling" },
             { from: "/debugging", to: "/server/debugging" },
             { from: "/tools/monitor", to: "/tools/monitoring" },
             { from: "/demo/shooting-gallery", to: "/examples/unity/shooting-gallery" },
@@ -18,9 +21,16 @@ import { NotFoundPage } from 'nextra-theme-docs'
             { from: "/demo/mmo", to: "/examples/unity/mmo" },
             { from: "/demo/cocos/mmo", to: "/examples/cocos/mmo" },
             { from: "/demo/babylonjs-editor/hide-and-seek", to: "/examples/babylonjs-editor/hide-and-seek" },
+            { from: "/community/custom-room-id", to: "/recipes/custom-room-id" },
+            { from: "/unity", to: "/getting-started/unity" },
+            { from: "/scalability", to: "/deployment/scalability" },
+            { from: "/colyseus/server/room#leavecode-number", to: "/room#leave-room" },
+            { from: "/cloud", to: "/deployment/cloud" },
+            { from: "/state/schema-callbacks", to: "/state/callbacks" },
 
         ];
-        var isRedirect = redirects.find((r) => window.location.pathname.includes(r.from));
+        var currentPath = window.location.pathname + window.location.hash;
+        var isRedirect = redirects.find((r) => currentPath.includes(r.from));
         if (isRedirect) {
             window.location.replace(
                 window.location.protocol + "//" +
