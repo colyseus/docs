@@ -1,0 +1,18 @@
+---
+title: "Monetization"
+---
+import { Cards, Callout } from 'nextra/components'
+import { LinkExternalIcon } from '@primer/octicons-react'
+import { xsolla, stripe, paddle } from '../components/icons/platforms'
+
+# Payments
+
+Monetizing multiplayer games requires careful integration of payment systems with your game's server architecture. Colyseus provides the flexibility to integrate with various payment providers while maintaining secure and scalable payment processing.
+
+### Payment Providers
+
+<Cards>
+    <Cards.Card icon={xsolla({ width: '32px' })} title="Xsolla" href="/payments/xsolla" arrow />
+    {/* <Cards.Card icon={stripe} title="Stripe" href="/payments/stripe" arrow />
+    <Cards.Card icon={paddle} title="Paddle" href="/payments/paddle" arrow /> */}
+</Cards>

@@ -1,0 +1,427 @@
+---
+title: "Xsolla Integration"
+---
+
+import { Cards, Callout } from 'nextra/components'
+import { LinkExternalIcon, MarkGithubIcon } from "@primer/octicons-react"
+
+# Xsolla Integration 
+
+[Xsolla](https://xsolla.com/) is a global merchant of record that supports a wide range of payment methods and currencies.
+
+In this article, we are going to explore shows how to integrate Xsolla payments and webhooks with Colyseus to handle purchasing virtual items or subscriptions in your web game.
+
+<Cards>
+    <Cards.Card target="_blank" icon={<MarkGithubIcon/>} title="Full source-code" href="https://github.com/colyseus/colyseus-xsolla-integration" />
+    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="Xsolla Documentation" href="https://developers.xsolla.com/" />
+</Cards>
+
+<Cards>
+    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="Live demo" href="http://xsolla.colyseus.dev/">
+        <img style={{ display: "inline"}} src="/tutorial/xsolla/screenshot.png" alt="Screenshot" />
+    </Cards.Card>
+</Cards>
+
+## Table of Contents
+
+1. [Architecture Overview](#architecture-overview)
+2. [Setup Requirements](#setup-requirements)
+3. [Virtual Items vs Subscriptions](#virtual-items-vs-subscriptions)
+4. [Webhook Types](#webhook-types)
+5. [Local Testing Setup](#local-testing-setup)
+6. [Code Walkthrough](#code-walkthrough)
+7. [Database Integration](#database-integration)
+8. [Production Considerations](#production-considerations)
+
+## Architecture Overview
+
+The integration follows this flow:
+
+```
+Client (index.html) → Colyseus Server (xsolla.ts) → Xsolla API → Webhook → Colyseus Server
+```
+
+1. **Client requests payment token** from Colyseus server
+2. **Colyseus server** creates payment token via Xsolla API
+3. **Client** opens Xsolla Pay Station with token
+4. **User completes payment** in Xsolla interface
+5. **Xsolla sends webhook** to Colyseus server
+6. **Colyseus server** processes payment and grants items/access
+
+## Setup Requirements
+
+### Xsolla Account Setup
+
+1. **Register for Xsolla Account**: Use the registration link in the demo
+2. **Create Project**: Set up a new project in Xsolla Merchant Account
+3. **Configure Virtual Items**: Create items in your project's catalog
+4. **Configure Subscriptions**: Set up subscription plans
+5. **Get API Credentials**: Retrieve Project ID, Merchant ID, and API Key
+
+### Environment Variables
+
+Create a `.env` file with your Xsolla credentials:
+
+```bash
+XSOLLA_PROJECT_ID=your_project_id
+XSOLLA_MERCHANT_ID=your_merchant_id
+XSOLLA_API_KEY=your_api_key
+XSOLLA_WEBHOOK_SECRET_KEY=your_webhook_secret
+NODE_ENV=development
+```
+
+## Virtual Items vs Subscriptions
+
+### Virtual Items
+- **One-time purchases** of digital goods
+- **Immediate delivery** after payment
+- **Examples**: In-game currency, skins, weapons, power-ups
+- **API Endpoint**: `https://store.xsolla.com/api/v3/project/{projectId}/admin/payment/token`
+- **Webhook Events**: `order_paid`, `order_canceled`, `refund`
+
+### Subscriptions
+- **Recurring payments** for ongoing access
+- **Time-based access** (monthly, yearly, etc.)
+- **Examples**: Premium membership, battle pass, VIP access
+- **API Endpoint**: `https://api.xsolla.com/merchant/v2/merchants/{merchantId}/token`
+- **Webhook Events**: `create_subscription`, `update_subscription`, `cancel_subscription`, `order_paid`, `order_canceled`, `refund`
+
+### Key Differences
+
+| Aspect | Virtual Items | Subscriptions |
+|--------|---------------|---------------|
+| **Payment Model** | One-time | Recurring |
+| **API Version** | v3 | v2 |
+| **Token Endpoint** | `/admin/payment/token` | `/token` |
+| **Purchase Object** | `items: [{sku, quantity}]` | `subscription: {plan_id}` |
+| **Webhook Focus** | Order events | Subscription lifecycle |
+| **Delivery** | Immediate | Time-based access |
+
+## Webhooks
+
+![How webhooks work](/tutorial/xsolla/webhooks-general.svg)
+
+<Callout type="info">
+    See more about [Xsolla webhooks](https://developers.xsolla.com/webhooks/overview/) in the official documentation.
+</Callout>
+
+### Common Webhooks (Both Virtual Items & Subscriptions)
+
+#### `user_validation`
+- **Purpose**: Validate user before payment
+- **When**: Before payment processing
+- **Response**: Return validation status
+- **Implementation**: Check user exists in your database
+
+#### `order_paid`
+- **Purpose**: Payment completed successfully
+- **When**: After successful payment
+- **Action**: Grant items/access to user
+- **Data**: User ID, order details, items purchased
+
+#### `order_canceled`
+- **Purpose**: Payment was canceled
+- **When**: User cancels or payment fails
+- **Action**: Clean up any temporary changes
+- **Data**: User ID, order details
+
+#### `refund`
+- **Purpose**: Payment was refunded
+- **When**: Admin or user initiates refund
+- **Action**: Remove items/access from user
+- **Data**: Refund details, original order info
+
+### Subscription-Specific Webhooks
+
+#### `create_subscription`
+- **Purpose**: New subscription created
+- **When**: First subscription payment
+- **Action**: Grant subscription access
+- **Data**: User ID, subscription details
+
+#### `update_subscription`
+- **Purpose**: Subscription modified
+- **When**: Plan change, billing update
+- **Action**: Update user's subscription status
+- **Data**: Updated subscription details
+
+#### `cancel_subscription`
+- **Purpose**: Subscription canceled
+- **When**: User or admin cancels
+- **Action**: Revoke subscription access
+- **Data**: Cancellation details
+
+## Local Testing Setup
+
+### Using Cloudflared for Webhook Testing
+
+1. **Install Cloudflared**:
+   ```bash
+   # macOS
+   brew install cloudflared
+   
+   # Or download from: https://github.com/cloudflare/cloudflared/releases
+   ```
+
+2. **Start Cloudflared Tunnel**:
+   ```bash
+   cloudflared tunnel --url http://localhost:2567
+   ```
+
+3. **Copy the Public URL**:
+   ```
+   https://random-string.trycloudflare.com
+   ```
+
+4. **Configure Xsolla Webhook**:
+   - Go to your Xsolla project settings
+   - Set webhook URL to: `https://your-tunnel-url.trycloudflare.com/xsolla/webhook`
+   - Enable required webhook events
+   - Save configuration
+
+5. **Test Webhook Delivery**:
+   - Make a test purchase
+   - Check server logs for webhook events
+   - Verify signature validation works
+
+### Webhook URL Configuration
+
+```typescript
+// In your Xsolla project settings, set:
+Webhook URL: https://your-tunnel-url.trycloudflare.com/xsolla/webhook
+
+// Enable these events:
+✅ user_validation
+✅ order_paid
+✅ order_canceled
+✅ create_subscription
+✅ update_subscription
+✅ cancel_subscription
+✅ refund
+```
+
+## Code Walkthrough
+
+### Client-Side (index.html)
+
+#### Payment Token Request
+```javascript
+function getToken() {
+    const selectedPurchaseType = document.querySelector('input[name="purchaseType"]:checked').value;
+    
+    return client.http.post("/xsolla/shop/token", {
+        body: {
+            userId: userId.value,
+            name: userName.value,
+            email: email.value,
+            country: country.value,
+            purchaseType: selectedPurchaseType
+        }
+    });
+}
+```
+
+#### Three Payment Methods
+1. **New Window**: Opens Xsolla Pay Station in new tab
+2. **Iframe**: Embeds Pay Station in modal
+3. **Embed Widget**: Uses Xsolla's JavaScript widget
+
+### Server-Side (xsolla.ts)
+
+#### Virtual Item Token Creation
+```typescript
+// Virtual Items use v3 API
+const tokenResponse = await fetch(`https://store.xsolla.com/api/v3/project/${projectId}/admin/payment/token`, {
+    method: 'POST',
+    headers: {
+        'Authorization': 'Basic ' + Buffer.from(`${merchantId}:${apiKey}`).toString('base64')
+    },
+    body: JSON.stringify({
+        user: { id: { value: userId }, name: { value: name }, email: { value: email }, country: { value: country } },
+        purchase: {
+            items: [{ sku: "my-virtual-item", quantity: 1 }]
+        },
+        sandbox: true,
+        settings: { language: "en", currency: "USD", return_url: "http://localhost:2567/" }
+    })
+});
+```
+
+#### Subscription Token Creation
+```typescript
+// Subscriptions use v2 API
+const tokenResponse = await fetch(`https://api.xsolla.com/merchant/v2/merchants/${merchantId}/token`, {
+    method: 'POST',
+    headers: {
+        'Authorization': 'Basic ' + Buffer.from(`${merchantId}:${apiKey}`).toString('base64')
+    },
+    body: JSON.stringify({
+        user: { id: { value: userId }, name: { value: name }, email: { value: email }, country: { value: country } },
+        purchase: {
+            subscription: { plan_id: "72qb7Cu9" }
+        },
+        settings: {
+            project_id: Number(projectId),
+            language: "en",
+            mode: "sandbox",
+            currency: "USD"
+        }
+    })
+});
+```
+
+#### Webhook Signature Verification
+```typescript
+function verifySignature(req: ExpressRequest, rawBody: string): boolean {
+    const signature = req.headers.authorization;
+    if (!signature) return false;
+
+    const expectedSignature = "Signature " + crypto
+        .createHash("sha1")
+        .update(rawBody + webhookSecretKey)
+        .digest("hex");
+
+    return signature === expectedSignature;
+}
+```
+
+## Database Integration
+
+### ⚠️ Critical: Replace Hardcoded Data
+
+The current example uses hardcoded user data for demonstration. **In production, you MUST:**
+
+1. **Authenticate Users**: Use `@colyseus/auth` middleware
+2. **Store User Data**: Implement proper database integration
+3. **Validate Webhooks**: Check user existence in your database
+4. **Track Transactions**: Log all payment events
+
+### Recommended Database Schema
+
+```sql
+-- Users table
+CREATE TABLE users (
+    id VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    country VARCHAR(2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Virtual items inventory
+CREATE TABLE user_items (
+    user_id VARCHAR(255),
+    item_sku VARCHAR(255),
+    quantity INT DEFAULT 1,
+    purchased_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Subscriptions
+CREATE TABLE user_subscriptions (
+    user_id VARCHAR(255),
+    subscription_id VARCHAR(255),
+    plan_id VARCHAR(255),
+    status ENUM('active', 'canceled', 'expired'),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Transaction log
+CREATE TABLE transactions (
+    id VARCHAR(255) PRIMARY KEY,
+    user_id VARCHAR(255),
+    type ENUM('virtual_item', 'subscription'),
+    amount DECIMAL(10,2),
+    currency VARCHAR(3),
+    status ENUM('pending', 'completed', 'canceled', 'refunded'),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+```
+
+### Updated Webhook Handlers
+
+```typescript
+// Example: Handle order_paid with database
+async function handleOrderPaid(webhookData: any): Promise<void> {
+    const userId = webhookData.user?.external_id;
+    const orderId = webhookData.order?.id;
+    const items = webhookData.items || [];
+    
+    // Start database transaction
+    await db.beginTransaction();
+    
+    try {
+        // Log transaction
+        await db.query(
+            'INSERT INTO transactions (id, user_id, type, amount, currency, status) VALUES (?, ?, ?, ?, ?, ?)',
+            [orderId, userId, 'virtual_item', webhookData.order.amount, webhookData.order.currency, 'completed']
+        );
+        
+        // Grant items to user
+        for (const item of items) {
+            await db.query(
+                'INSERT INTO user_items (user_id, item_sku, quantity) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE quantity = quantity + ?',
+                [userId, item.sku, item.quantity, item.quantity]
+            );
+        }
+        
+        await db.commit();
+        console.log(`Successfully granted ${items.length} items to user ${userId}`);
+        
+    } catch (error) {
+        await db.rollback();
+        console.error('Failed to process order_paid:', error);
+        throw error;
+    }
+}
+```
+
+## Production Considerations
+
+### Security
+- ✅ **Always verify webhook signatures**
+- ✅ **Use HTTPS for all endpoints**
+- ✅ **Implement rate limiting**
+- ✅ **Validate all input data**
+- ✅ **Use environment variables for secrets**
+
+### Error Handling
+- ✅ **Implement retry logic for failed webhooks**
+- ✅ **Log all webhook events**
+- ✅ **Handle partial failures gracefully**
+- ✅ **Monitor webhook delivery success rates**
+
+### Performance
+- ✅ **Use database connection pooling**
+- ✅ **Implement caching for user data**
+- ✅ **Queue webhook processing for high volume**
+- ✅ **Monitor API rate limits**
+
+### Testing
+- ✅ **Test with Xsolla sandbox environment**
+- ✅ **Use test payment methods**
+- ✅ **Verify webhook delivery**
+- ✅ **Test error scenarios**
+
+## Next Steps
+
+1. **Set up your Xsolla account** and configure virtual items/subscriptions
+2. **Implement database integration** to replace hardcoded data
+3. **Configure webhooks** with your cloudflared tunnel URL
+4. **Test the complete flow** with sandbox payments
+5. **Deploy to production** with proper security measures
+
+## Resources
+
+- [Xsolla Developer Documentation](https://developers.xsolla.com/)
+- [Colyseus Documentation](https://docs.colyseus.io/)
+- [Colyseus Auth Middleware](https://docs.colyseus.io/auth/http)
+- [Xsolla Test Cards](https://developers.xsolla.com/doc/pay-station/testing/test-cards/)
+- [Cloudflared Documentation](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/)
+
+---
+
+**Remember**: This tutorial demonstrates the integration flow. Always implement proper authentication, database integration, and security measures for production use.

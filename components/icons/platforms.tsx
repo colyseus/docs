@@ -49,3 +49,22 @@ export const wechat = <Image
             src={require('../../images/icons/wechat.png')}
             width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block' }}
             alt="WeChat" />
+
+/**
+ * BRANDS
+ */
+
+export const xsolla = ({width = '32px'}) => <Image
+            src={require('../../images/icons/brands/xsolla.svg')}
+            width={0} height={0} style={{ width, height: 'auto', display: 'inline-block' }}
+            alt="JavaScript" />
+
+export const stripe = <Image
+            src={require('../../images/icons/brands/stripe.jpg')}
+            width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block' }}
+            alt="JavaScript" />
+
+export const paddle = <Image
+            src={require('../../images/icons/brands/paddle.jpeg')}
+            width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block' }}
+            alt="JavaScript" />
