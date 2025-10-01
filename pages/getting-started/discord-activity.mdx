@@ -4,15 +4,15 @@ title: "Discord Activity"
 import { discord } from "../../components/icons/platforms"
 import { Callout, Cards, Tabs } from "nextra/components";
 
-# {discord} Discord Activity
+# Discord Activity
+
+[This Project Template](https://github.com/colyseus/discord-activity) is a starting point for crafting HTML5 multiplayer Discord Activities.
+
+![Video](/tutorial/discord/video.gif)
 
 <Callout type="info">
     Check out the [Discord Activity Examples](/examples/discord) to see how to use the Discord Activity SDK with Colyseus.
 </Callout>
-
-This Project Template is a starting point for crafting HTML5 multiplayer Discord Activities.
-
-![Video](video.gif)
 
 ## Project Structure
 
@@ -54,17 +54,18 @@ During development, there's no need to expose the `server` to the public interne
 npm run cloudflared
 ```
 
-![cloudflared-screenshot](cloudflared-screenshot.png)
+![cloudflared-screenshot](/tutorial/discord/cloudflared-screenshot.png)
 
 You will need to update your Discord Activity's "OAuth2 → Redirect URL" and "URL Mappings → Target" to the URL provided by `cloudflared`:
 
-<p float="left">
-  <img src="settings-oauth.png" width="49%" />
-  <img src="settings-url-mappings.png" width="49%" />
-</p>
+<div float="left">
+  <img src="/tutorial/discord/settings-oauth.png" width="49%" />
+  <img src="/tutorial/discord/settings-url-mappings.png" width="49%" />
+</div>
 
-> [!WARNING]
-> Each time you run `cloudflared`, it will generate a new URL. Be sure to update your Discord Activity's "OAuth2 → Redirect URL" and "URL Mappings → Target" to the new URL.
+<Callout type="warning">
+  Each time you run `cloudflared`, it will generate a new URL. Be sure to update your Discord Activity's "OAuth2 → Redirect URL" and "URL Mappings → Target" to the new URL.
+</Callout>
 
 _(Be sure to complete all the steps listed [here](https://discord.com/developers/docs/activities/building-an-activity) to ensure your development setup is working as expected.)_
 
@@ -74,7 +75,7 @@ _(Be sure to complete all the steps listed [here](https://discord.com/developers
 
 When using Colyseus Cloud with Scalability, you must configure the following URL Mappings:
 
-<img src="production-url-mappings.png" />
+![Production URL Mappings](/tutorial/discord/production-url-mappings.png)
 
 When instantiating the `Client` SDK, you should do as follows:
 
@@ -86,8 +87,9 @@ When instantiating the `Client` SDK, you should do as follows:
 
 When deploying your Discord Activity, you will generally need to deploy the `client` and `server` projects separately, under their own public URLs.
 
-> [!TIP]
-> You can use services like Vercel, Netlify, or Heroku to deploy your client project, and services like [Colyseus Cloud](https://colyseus.io/cloud-managed-hosting/), [Vultr](https://www.vultr.com/marketplace/apps/colyseus/?ref=8013231), AWS, or DigitalOcean to deploy your server project.
+<Callout type="info">
+  You can use services like Vercel, Netlify, or Heroku to deploy your client project, and services like [Colyseus Cloud](https://colyseus.io/cloud-managed-hosting/), [Vultr](https://www.vultr.com/marketplace/apps/colyseus/?ref=8013231), AWS, or DigitalOcean to deploy your server project.
+</Callout>
 
 You will need to configure your Discord Activity's URLs:
 

@@ -1,70 +1,75 @@
 import Image from 'next/image'
 
-export const javascript = <Image
+interface IconProps {
+    width?: string;
+    marginRight?: string;
+}
+
+export const javascript = (props: IconProps = {}) => <Image
             src={require('../../images/icons/javascript.png')}
-            width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block' }}
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
             alt="JavaScript" />
 
-export const typescript = <Image
+export const typescript = (props: IconProps = {}) => <Image
             src={require('../../images/icons/typescript.png')}
-            width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block'  }}
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
             alt="TypeScript" />
 
-export const react = <Image
+export const react = (props: IconProps = {}) => <Image
             src={require('../../images/icons/react.png')}
-            width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block'  }}
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
             alt="React" />
 
-export const unity = <Image
+export const unity = (props: IconProps = {}) => <Image
             src={require('../../images/icons/unity.png')}
-            width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block'  }}
-            alt="Defold Engine" />
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
+            alt="Unity" />
 
-export const defold = <Image
+export const defold = (props: IconProps = {}) => <Image
             src={require('../../images/icons/defold.png')}
-            width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block'  }}
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
             alt="Defold Engine" />
 
-export const construct3 = <Image
+export const construct3 = (props: IconProps = {}) => <Image
             src={require('../../images/icons/construct3.png')}
-            width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block'  }}
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
             alt="Construct 3" />
 
-export const cocos = <Image
+export const cocos = (props: IconProps = {}) => <Image
             src={require('../../images/icons/cocos.png')}
-            width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block'  }}
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
             alt="Cocos Creator" />
 
-export const haxe = <Image
+export const haxe = (props: IconProps = {}) => <Image
             src={require('../../images/icons/haxe.png')}
-            width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block' }}
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
             alt="Haxe" />
 
-export const discord = <Image
+export const discord = (props: IconProps = {}) => <Image
             src={require('../../images/icons/discord.png')}
-            width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block' }}
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
             alt="Discord" />
 
-export const wechat = <Image
+export const wechat = (props: IconProps = {}) => <Image
             src={require('../../images/icons/wechat.png')}
-            width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block' }}
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
             alt="WeChat" />
 
 /**
  * BRANDS
  */
 
-export const xsolla = ({width = '32px'}) => <Image
+export const xsolla = (props: IconProps = {}) => <Image
             src={require('../../images/icons/brands/xsolla.svg')}
-            width={0} height={0} style={{ width, height: 'auto', display: 'inline-block' }}
-            alt="JavaScript" />
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
+            alt="Xsolla" />
 
-export const stripe = <Image
+export const stripe = (props: IconProps = {}) => <Image
             src={require('../../images/icons/brands/stripe.jpg')}
-            width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block' }}
-            alt="JavaScript" />
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
+            alt="Stripe" />
 
-export const paddle = <Image
+export const paddle = (props: IconProps = {}) => <Image
             src={require('../../images/icons/brands/paddle.jpeg')}
-            width={0} height={0} style={{ width: '32px', height: 'auto', display: 'inline-block' }}
-            alt="JavaScript" />
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
+            alt="Paddle" />
