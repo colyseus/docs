@@ -472,3 +472,4 @@ function processWebhook(data: any, res: Response): void {
 
 - Use the [<PasskeyFillIcon/> Authentication → HTTP Middleware](/auth/http) to authenticate the user's request before generating the payment token.
 - Use one of the [<DatabaseIcon/> Database](/database) recommended solutions for storing, retrieving and validating the user's data.
+- Dissallow receiving webhooks from IPs that are not the Xsolla IPs. (See [Xsolla IP ranges](https://developers.xsolla.com/webhooks/overview/#section/Webhook-listener))
