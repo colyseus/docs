@@ -3,7 +3,7 @@ title: "Xsolla Integration"
 ---
 
 import { Cards, Callout, Steps, Tabs } from 'nextra/components'
-import { LinkExternalIcon, MarkGithubIcon, HeartFillIcon, FileCodeIcon, DeviceDesktopIcon, PasskeyFillIcon, DatabaseIcon } from "@primer/octicons-react"
+import { LinkExternalIcon, MarkGithubIcon, HeartFillIcon, FileCodeIcon, DeviceDesktopIcon, PasskeyFillIcon, DatabaseIcon, BellIcon } from "@primer/octicons-react"
 
 # Xsolla Integration 
 
@@ -37,31 +37,31 @@ import { LinkExternalIcon, MarkGithubIcon, HeartFillIcon, FileCodeIcon, DeviceDe
 
     ![Create Project](/tutorial/xsolla/create-project.png)
 
-### Create a Virtual Items
+### Create Virtual Item
 
     Virtual items are one-time purchases. If you plan to sell virtual items, let's create the first one.
 
-    ![Create Virtual Items](/tutorial/xsolla/create-virtual-item.png)
+    ![Create Virtual Item](/tutorial/xsolla/create-virtual-item.png)
 
     <Callout type="info">
         See ["Set up virtual item"](https://developers.xsolla.com/doc/shop-builder/features/virtual-items/#shop_builder_virtual_items_set_up_in_pa_create_item) for more information.
     </Callout>
 
 ### Configure Subscriptions
-    
+
     Xsolla supports 3 types of subscriptions:
 
-    - **Regular plan**: Let subscriber make regular payments to access your content.
+    - **Regular plan**: Allows subscribers to make regular payments to access your content.
     - **Lifetime plan**: One-time payment to access your content for life.
     - **Season pass**: One-time payment to access your content for a limited period of time.
-    
+
     <Callout type="info">
         See ["Set up subscription plan"](https://developers.xsolla.com/doc/subscriptions/integration-guide/set-up-plan/) for more information.
     </Callout>
 
 ### Create "All projects" API Key
 
-    In order to create an "All projects" API Key, you need to go to your company settings, select the "API keys" section, and create a new API key.
+    To create an "All projects" API Key, go to your company settings, select the "API keys" section, and create a new API key.
 
     ![Get API Credentials](/tutorial/xsolla/api-key.png)
 
@@ -81,7 +81,7 @@ You will need to set the following environment variables in your Colyseus server
 
 ## The Payment Flow
 
-The following diagram shows how the payment flow works. 
+The following diagram shows how the payment flow works.
 
 <div align="center" style={{ margin: "1.5em 0" }}>
     ![How webhooks work](/tutorial/xsolla/webhooks-general.svg)
@@ -95,7 +95,7 @@ In the next sections, we will cover each step in detail.
 
 ### Generate the Payment Token
 
-    In order to initiate a purchase, we first need to generate a **Payment Token**. This step is required to later open the Xsolla **Pay Station** UI.
+    To initiate a purchase, we first need to generate a **Payment Token**. This step is required to later open the Xsolla **Pay Station** UI.
 
     Use the following snippets and modify them to fit your needs.
 
@@ -136,8 +136,8 @@ In the next sections, we will cover each step in detail.
                         name: { value: name },
                         email: { value: email },
 
-                        // user.country.value parameter is used to select a currency for the order. 
-                        // If user's country is unknown, providing the user's IP in 'X-User-Ip' header is an alternative option.
+                        // user.country.value parameter is used to select a currency for the order.
+                        // If the user's country is unknown, providing the user's IP in the 'X-User-Ip' header is an alternative option.
                         country: { value: country, allow_modify: true }
                     },
                     purchase: { items },
@@ -192,8 +192,8 @@ In the next sections, we will cover each step in detail.
                         id: { value: userId, hidden: true },
                         name: { value: name, hidden: false },
                         email: { value: email },
-                        // user.country.value parameter is used to select a currency for the order. 
-                        // If user's country is unknown, providing the user's IP in 'X-User-Ip' header is an alternative option.
+                        // user.country.value parameter is used to select a currency for the order.
+                        // If the user's country is unknown, providing the user's IP in the 'X-User-Ip' header is an alternative option.
                         country: { value: country, allow_modify: true }
                     },
                     purchase: { subscription },
@@ -217,10 +217,6 @@ In the next sections, we will cover each step in detail.
 ### Open Payment UI
 
     After generating the payment token, you can open the Xsolla **Pay Station** UI from the frontend.
-
-    {/* <Callout type="info">
-        The Pay Station window triggers many events which you can listen to via post-message from the frontend. 
-    </Callout> */}
 
     <Callout type="info">
         See ["Open Payment UI"](https://developers.xsolla.com/doc/subscriptions/integration-guide/open-payment-ui/) for more information.
@@ -264,7 +260,7 @@ In the next sections, we will cover each step in detail.
             head.appendChild(s);
 
             //
-            // (...) with the Xsolla widget script included, you can now open the Pay Station UI
+            // (...) With the Xsolla widget script included, you can now open the Pay Station UI
             //
 
             const client = new Client("ws://localhost:2567");
@@ -300,6 +296,49 @@ In the next sections, we will cover each step in detail.
         </Tabs.Tab>
     </Tabs>
 
+    <details>
+        <summary><BellIcon/> Listening to events from the Pay Station UI</summary>
+
+        ---
+
+        The Pay Station UI triggers many events which you can listen to via post-message from the frontend.
+
+        ```typescript filename="client.ts"
+        /**
+         * Listen to events from the Pay Station UI
+         */
+        window.addEventListener('message', postMessageListener);
+
+        const postMessageListener = (event) => {
+            if (!event.origin.endsWith(".xsolla.com")) {
+                /* Skip messages from other origins except Xsolla */
+                return;
+            }
+
+            const eventData = JSON.parse(event.data);
+            switch (eventData.command) {
+                case 'open-status-success':
+                    console.log('Success payment status page opened', eventData.data);
+                    break;
+
+                case 'open-status-error':
+                    console.log('Error payment status page opened', eventData.data);
+                    break;
+
+                case 'close':
+                    console.log('Payment UI closed', eventData.data);
+                    window.removeEventListener('message', postMessageListener);
+                    break;
+
+                default:
+                    console.log('Unhandled event', eventData.command, eventData.data);
+                    break;
+            }
+        };
+        ```
+    </details>
+
+
     **Example: Purchasing a single virtual item with the Pay Station UI**
 
     ![Pay Station UI](/tutorial/xsolla/payment-ui.png)
@@ -312,6 +351,8 @@ From your Xsolla project, navigate to **"Payments → Webhooks"**, paste the URL
 
 <details>
 <summary><DeviceDesktopIcon/> Testing webhooks from a **local server**</summary>
+
+---
 
 You can test webhooks from a local server by tunneling it through Cloudflared.
 
@@ -363,7 +404,7 @@ For the full operation of the in-game store and payment management, it is necess
 
 ##### Implementation example:
 
-Use the following implementation as a reference to handle the webhooks in your Colyseus server. 
+Use the following implementation as a reference to handle the webhooks in your Colyseus server.
 
 You will need to bring your own implementation for the `handleUserValidation()`, `handleOrderPaid()`, `handleOrderCanceled()`, `handleCreateSubscription()`, `handleUpdateSubscription()`, `handleCancelSubscription()`, and `handleRefund()` methods.
 
@@ -384,7 +425,7 @@ app.post('/webhook', (req: Request, res: Response) => {
                 return;
             }
 
-            // Process the webhook 
+            // Process the webhook
             processWebhook(JSON.parse(rawBody), res);
         } catch (err: any) {
             console.error('Error processing Xsolla webhook:', err);
@@ -472,4 +513,4 @@ function processWebhook(data: any, res: Response): void {
 
 - Use the [<PasskeyFillIcon/> Authentication → HTTP Middleware](/auth/http) to authenticate the user's request before generating the payment token.
 - Use one of the [<DatabaseIcon/> Database](/database) recommended solutions for storing, retrieving and validating the user's data.
-- Dissallow receiving webhooks from IPs that are not the Xsolla IPs. (See [Xsolla IP ranges](https://developers.xsolla.com/webhooks/overview/#section/Webhook-listener))
+- Disallow receiving webhooks from IPs that are not Xsolla IPs. (See [Xsolla IP ranges](https://developers.xsolla.com/webhooks/overview/#section/Webhook-listener))
