@@ -139,3 +139,20 @@ then the handshake is automatically accepted.
     - `result` (Boolean) Whether or not to accept the handshake.
     - `code` (Number) When `result` is `false` this field determines the HTTP error status code to be sent to the client.
     - `name` (String) When `result` is `false` this field determines the HTTP reason phrase.
+
+
+---
+
+### Troubleshooting
+
+#### 431 Request Header Fields Too Large
+
+The maximum header size is 16 KiB by default. If you need to increase the maximum header size, you can use the `NODE_OPTIONS` environment variable:
+
+```bash
+NODE_OPTIONS="--max-http-header-size=32768"
+```
+
+<Callout type="info">
+    See [Node.js documentation on --max-http-header-size](https://nodejs.org/api/cli.html#--max-http-header-sizesize) for more information.
+</Callout>

@@ -112,3 +112,15 @@ Path to the SSL certificate file. (for SSL termination through the Node.js appli
 #### `options.passphrase`
 
 Password for the SSL file. (for SSL termination through the Node.js application.)
+
+---
+
+### Troubleshooting
+
+#### 431 Request Header Fields Too Large
+
+The maximum header size is 4 KiB by default. If you need to increase the maximum header size, you can use the `UWS_HTTP_MAX_HEADERS_SIZE` environment variable:
+
+```bash
+UWS_HTTP_MAX_HEADERS_SIZE=32768
+```
