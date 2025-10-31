@@ -3,10 +3,6 @@
 
 export function SponsorsSidebar() {
 
-    // <a href="https://pixels.xyz?utm_source=colyseus-docs&utm_content=sidebar" target="_blank" rel="sponsored" style={{ display: "flex", alignItems: "center" }}>
-    //     <img src="/sponsors/pixels.png" style={{ height: "auto", width: "100%", margin: "auto" }} />
-    // </a>
-
     return (
         <div style={{ textAlign: "center", padding: "2em", width: "100%" }}>
             <span style={{ marginBottom: "0.5em", display: "inline-block", fontSize: "0.9em" }}>Sponsors</span>
@@ -15,6 +11,10 @@ export function SponsorsSidebar() {
 
                 <a href="https://scorewarrior.com/?utm_source=colyseus-docs&utm_content=sidebar" target="_blank" rel="sponsored" style={{ display: "flex", alignItems: "center" }}>
                     <img src="/sponsors/scorewarrior.svg" style={{ height: "auto", width: "100%", margin: "auto" }} />
+                </a>
+
+                <a href="https://pixels.xyz?utm_source=colyseus-docs&utm_content=sidebar" target="_blank" rel="sponsored" style={{ display: "flex", alignItems: "center" }}>
+                    <img src="/sponsors/pixels.png" style={{ height: "auto", width: "100%", margin: "auto" }} />
                 </a>
 
                 <a href="https://bloxd.io/?utm_source=colyseus-docs&utm_content=sidebar" target="_blank" rel="sponsored" style={{ display: "flex", alignItems: "center" }}>
