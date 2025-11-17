@@ -301,6 +301,43 @@ console.log(room);
 */
 ```
 
+### Get Room by ID
+
+Get room data by id. This method will return the cached room data. It is safe to call from any process.
+
+```ts filename="Signature"
+matchMaker.getRoomById(roomId)
+```
+
+**Parameters:**
+
+- **`roomId`**: the id of a specific room instance.
+
+``` typescript
+const room = await matchMaker.getRoomById("xxxxxxxxx");
+console.log(room);
+/*
+  { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+*/
+```
+
+### Get Local Room by ID
+
+Get the actual Room instance by id. This method only returns the room instance if it's available in the current process, otherwise it will return `undefined`.
+
+```ts filename="Signature"
+matchMaker.getLocalRoomById(roomId)
+```
+
+**Parameters:**
+
+- **`roomId`**: the id of a specific room instance.
+
+``` typescript
+const room = await matchMaker.getLocalRoomById("xxxxxxxxx");
+room.clients[0].send("hello", "world");
+```
+
 ### Remote Room Call
 
 Call a method or return a property on a remote room.
