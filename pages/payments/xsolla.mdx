@@ -5,9 +5,13 @@ title: "Xsolla Integration"
 import { Cards, Callout, Steps, Tabs } from 'nextra/components'
 import { LinkExternalIcon, MarkGithubIcon, HeartFillIcon, FileCodeIcon, DeviceDesktopIcon, PasskeyFillIcon, DatabaseIcon, BellIcon } from "@primer/octicons-react"
 
-# Xsolla Integration 
+# Xsolla Integration
 
-[Xsolla](https://xsolla.com/) is a global merchant of record that supports a wide range of payment methods and currencies.
+[Xsolla](https://xsolla.com/) is a global **merchant of record** that supports a wide range of payment methods and currencies.
+
+<Callout type="info">
+    While this article focuses on the payments functionality, Xsolla offers a comprehensive suite of products and services for game developers—including virtual storefronts, distribution, user account systems, in-game store management, analytics, anti-fraud tools, and more. For the full range of Xsolla's offerings, please consult the <a href="https://xsolla.com/solutions" target="_blank" rel="noopener">Xsolla solutions page</a>.
+</Callout>
 
 ### In this article, we will cover:
 
@@ -149,8 +153,8 @@ In the next sections, we will cover each step in detail.
                         return_url: "http://localhost:2567/",
                         ui: {
                             /**
-                             * - "63295a9a2e47fab76f7708e1": light theme (default) 
-                             * - "63295aab2e47fab76f7708e3": the dark theme. 
+                             * - "63295a9a2e47fab76f7708e1": light theme (default)
+                             * - "63295aab2e47fab76f7708e3": the dark theme.
                              * - You can also create a custom theme:
                              *   Go to "Your project > Payments (Pay Station) > UI theme", and copy the ID of your custom theme.
                              */
