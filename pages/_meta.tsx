@@ -1,4 +1,4 @@
-import { HomeIcon, FileCodeIcon, ServerIcon, ThumbsupIcon, DevicesIcon, DatabaseIcon, ToolsIcon, QuestionIcon, VersionsIcon, HeartFillIcon, DownloadIcon, CodeIcon, ZapIcon, BookIcon, SyncIcon, PasskeyFillIcon, RocketIcon, ListOrderedIcon, RepoIcon, TasklistIcon, ListUnorderedIcon, CodeSquareIcon, FlameIcon, LightBulbIcon } from '@primer/octicons-react';
+import { HomeIcon, FileCodeIcon, ServerIcon, ThumbsupIcon, DevicesIcon, DatabaseIcon, ToolsIcon, QuestionIcon, VersionsIcon, HeartFillIcon, DownloadIcon, CodeIcon, ZapIcon, BookIcon, SyncIcon, PasskeyFillIcon, RocketIcon, ListOrderedIcon, RepoIcon, TasklistIcon, ListUnorderedIcon, CodeSquareIcon, FlameIcon, LightBulbIcon, CreditCardIcon, RowsIcon, PeopleIcon, StackIcon } from '@primer/octicons-react';
 
 export default {
     '-- Intro': {
@@ -16,15 +16,17 @@ export default {
     "tutorial": { title: <span><FileCodeIcon/> Tutorials</span>},
 
     '-- API Reference': { type: 'separator', title: 'API Reference' },
-    "server": { title: <span><ServerIcon/> Server API</span> },
     "client": { title: <span><DevicesIcon/> Client SDK</span>},
+    "server": { title: <span><ServerIcon/> Server</span> },
+    "room": { title: <span><PeopleIcon/> Rooms</span> },
     "state": { title: <span><SyncIcon/> State Synchronization</span> },
     "auth": { title: <span><PasskeyFillIcon/> Authentication</span> },
-    "database": { title: <span><DatabaseIcon/> Database</span> },
     "tools": { title: <span><ToolsIcon/> Tools</span> },
     "deployment": { title: <span><RocketIcon/> Deployment</span> },
 
     '-- More': { type: 'separator', title: 'More' },
+    "database": { title: <span><DatabaseIcon/> Database</span> },
+    "payments": { title: <span><CreditCardIcon/> Payments</span> },
     "recipes": { title: <span><LightBulbIcon /> Recipes</span> },
     "examples": { title: <span><RepoIcon /> Example Projects</span> },
 

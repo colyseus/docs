@@ -1148,7 +1148,7 @@ Perform a POST request to the server.
 <Tabs items={["Client", "Server"]}>
     <Tabs.Tab>
     ```js filename="client.js"
-    client.http.post("/profile", { name: "Jake Badlands" }).then((response) => {
+    client.http.post("/profile", { body: { name: "Jake Badlands" } }).then((response) => {
         console.log(response.data);
     });
     ```
@@ -1201,7 +1201,7 @@ Perform a PUT request to the server.
 <Tabs items={["Client", "Server"]}>
     <Tabs.Tab>
     ```js filename="client.js"
-    client.http.put("/profile", { name: "Jake Badlands" }).then((response) => {
+    client.http.put("/profile", { body: { name: "Jake Badlands" } }).then((response) => {
         console.log(response.data);
     });
     ```
