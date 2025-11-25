@@ -1,0 +1,249 @@
+import { Callout, Cards, Tabs } from "nextra/components";
+
+# HTTP and API Routes
+
+Colyseus uses Express as its HTTP routing library. You can use it to add your custom routes to your server.
+
+<Tabs items={["Recommened", "Raw usage"]} storageKey="recommended-or-raw">
+
+    <Tabs.Tab>
+    CORS is enabled by default when using `@colyseus/tools`.
+
+    ```ts {15-17} filename="app.config.ts"
+    import config from "@colyseus/tools";
+    import express from "express";
+
+    export default config({
+        // ...
+        initializeExpress: (app) => {
+            //
+            // Include express middlewares (e.g. JSON body parser)
+            //
+            app.use(express.json({ limit: "100kb" }));
+
+            //
+            // Define your custom routes here
+            //
+            app.get("/hello_world", (req, res) => {
+                res.json({ hello: "world" });
+            });
+
+        },
+        // ...
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+
+    CORS is **not** enabled by default in raw usage. You need to enable it manually.
+
+    ```ts {17-19} filename="server.ts"
+    import { Server } from "colyseus";
+    import { createServer } from "http";
+    import express from "express";
+    import cors from "cors";
+
+    const app = express();
+    
+    // Enable CORS
+    app.use(cors({ origin: true, credentials: true }));
+
+    // Parse incoming JSON bodies
+    app.use(express.json({ limit: "100kb" }));
+
+    //
+    // Define your custom routes here
+    //
+    app.get("/hello_world", (req, res) => {
+        res.json({ hello: "world" });
+    });
+
+    const gameServer = new Server({ server: createServer(app) });
+    gameServer.listen(2567);
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    For more information about Express, check out the [Express guides](https://expressjs.com/en/guide/routing.html).
+</Callout>
+
+
+## Parsing JSON bodies
+
+Here's an example of how to handle JSON POST requests with both server-side parsing and client-side usage:
+
+<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
+
+    <Tabs.Tab>
+    ```ts {11-30,33-49} filename="app.config.ts"
+    import config from "@colyseus/tools";
+    import express from "express";
+
+    export default config({
+        // ...
+        initializeExpress: (app) => {
+            // Parse incoming JSON bodies
+            app.use(express.json({ limit: "100kb" }));
+
+            // Example: User profile update endpoint
+            app.post("/api/user/profile", (req, res) => {
+                const { name, email, preferences } = req.body;
+                
+                // Validate required fields
+                if (!name || !email) {
+                    return res.status(400).json({ 
+                        error: "Name and email are required" 
+                    });
+                }
+
+                // Process the data (e.g., save to database)
+                console.log("Updating user profile:", { name, email, preferences });
+
+                // Return success response
+                res.json({ 
+                    success: true, 
+                    message: "Profile updated successfully",
+                    data: { name, email, preferences }
+                });
+            });
+
+            // Example: Game score submission
+            app.post("/api/game/score", (req, res) => {
+                const { playerId, score, level, timestamp } = req.body;
+                
+                if (!playerId || typeof score !== 'number') {
+                    return res.status(400).json({ 
+                        error: "Invalid score data" 
+                    });
+                }
+
+                // Process score submission
+                console.log("Score submitted:", { playerId, score, level, timestamp });
+                
+                res.json({ 
+                    success: true, 
+                    leaderboardPosition: 1 // Example response
+                });
+            });
+        },
+        // ...
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts {15-35} filename="server.ts"
+    import { Server } from "colyseus";
+    import { createServer } from "http";
+    import express from "express";
+    import cors from "cors";
+
+    const app = express();
+    
+    // Enable CORS
+    app.use(cors({ origin: true, credentials: true }));
+
+    // Parse incoming JSON bodies
+    app.use(express.json({ limit: "100kb" }));
+
+    // Example: User profile update endpoint
+    app.post("/api/user/profile", (req, res) => {
+        const { name, email, preferences } = req.body;
+        
+        // Validate required fields
+        if (!name || !email) {
+            return res.status(400).json({ 
+                error: "Name and email are required" 
+            });
+        }
+
+        // Process the data (e.g., save to database)
+        console.log("Updating user profile:", { name, email, preferences });
+
+        // Return success response
+        res.json({ 
+            success: true, 
+            message: "Profile updated successfully",
+            data: { name, email, preferences }
+        });
+    });
+
+    // Example: Game score submission
+    app.post("/api/game/score", (req, res) => {
+        const { playerId, score, level, timestamp } = req.body;
+        
+        if (!playerId || typeof score !== 'number') {
+            return res.status(400).json({ 
+                error: "Invalid score data" 
+            });
+        }
+
+        // Process score submission
+        console.log("Score submitted:", { playerId, score, level, timestamp });
+        
+        res.json({ 
+            success: true, 
+            leaderboardPosition: 1 // Example response
+        });
+    });
+
+    const gameServer = new Server({ server: createServer(app) });
+    gameServer.listen(2567);
+    ```
+
+    </Tabs.Tab>
+</Tabs>
+
+### Client-side usage:
+
+Use the `client.http.*` methods to perform HTTP requests to your server. 
+
+<Callout type="info">
+    See [Client SDK → HTTP Requests](/client/#http-requests) for more details.
+</Callout>
+
+```ts {8-10,23-25} filename="client.ts"
+import { Client } from "colyseus.js";
+
+const client = new Client("ws://localhost:2567");
+
+// Update user profile
+async function updateProfile(name: string, email: string, preferences: any) {
+    try {
+        const response = await client.http.post("/api/user/profile", {
+            body: { name, email, preferences }
+        });
+        
+        console.log("Profile updated:", response);
+        return response;
+    } catch (error) {
+        console.error("Failed to update profile:", error);
+        throw error;
+    }
+}
+
+// Submit game score
+async function submitScore(playerId: string, score: number, level: number) {
+    try {
+        const response = await client.http.post("/api/game/score", {
+            body: { playerId, score, level, timestamp: Date.now() }
+        });
+        
+        console.log("Score submitted:", response);
+        return response;
+    } catch (error) {
+        console.error("Failed to submit score:", error);
+        throw error;
+    }
+}
+
+// Usage examples
+updateProfile("John Doe", "john@example.com", { theme: "dark" });
+submitScore("player123", 1500, 5);
+```
+
+<Callout type="info">
+    The `client.http.post()` method automatically handles JSON serialization and sets the appropriate `Content-Type` header. The server-side `express.json()` middleware will parse the incoming JSON body into `req.body`.
+</Callout>
