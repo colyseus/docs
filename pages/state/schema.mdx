@@ -18,7 +18,7 @@ import { HashIcon } from '@primer/octicons-react'
 <Steps>
 ### Defining a `Schema` structure
 
-<Tabs items={["TypeScript", "JavaScript", "JavaScript (legacy)"]}>
+<Tabs items={["TypeScript", "JavaScript", "JavaScript (legacy)"]} storageKey="ts-or-js">
     <Tabs.Tab>
 
         ```ts filename="MyState.ts"
@@ -135,7 +135,7 @@ Specialized number types:
 
 A `Schema` type can define properties as primitives, other `Schema` types, or collections (e.g., arrays or maps) that may contain nested types.
 
-<Tabs items={["TypeScript", "JavaScript"]}>
+<Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
     <Tabs.Tab>
 
     ```ts filename="MyState.ts"
@@ -184,7 +184,7 @@ You can't mix types inside `ArraySchema`.
 <Tabs items={["Example with primitive child type", "Example with Schema child type"]}>
     <Tabs.Tab>
 
-        <Tabs items={["TypeScript", "JavaScript"]}>
+        <Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
             <Tabs.Tab>
             ```ts filename="MyState.ts"
             import { Schema, ArraySchema, type } from "@colyseus/schema";
@@ -209,7 +209,7 @@ You can't mix types inside `ArraySchema`.
     </Tabs.Tab>
 
     <Tabs.Tab>
-        <Tabs items={["TypeScript", "JavaScript"]}>
+        <Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
             <Tabs.Tab>
 
             ```ts filename="MyState.ts"
@@ -421,7 +421,7 @@ Maps are recommended to track your game entities by id, such as players, enemies
 </Callout>
 
 
-<Tabs items={["TypeScript", "JavaScript"]}>
+<Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
     <Tabs.Tab>
 
     ```ts filename="MyState.ts"
@@ -573,7 +573,7 @@ The `SetSchema` is a synchronizeable version of the built-in JavaScript [Set](ht
 The usage of `SetSchema` is very similar to [`CollectionSchema`], the biggest difference is that Sets hold unique values. Sets do not have a way to access a value directly. (like [collection.at()](#collectionat))
 
 
-<Tabs items={["TypeScript", "JavaScript"]}>
+<Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
     <Tabs.Tab>
 
     ```ts filename="MyState.ts"
@@ -680,7 +680,7 @@ Empties the Set. (Client-side will trigger `onRemove` for each element.)
 The `CollectionSchema` works similarly as the `ArraySchema`, with the caveat that you don't have control over its indexes.
 
 
-<Tabs items={["TypeScript", "JavaScript"]}>
+<Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
     <Tabs.Tab>
 
     ```ts filename="MyState.ts"
@@ -865,7 +865,7 @@ These inherited types may define their own serialized fields.
 
 The following example is supported:
 
-<Tabs items={["TypeScript", "JavaScript"]}>
+<Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
     <Tabs.Tab>
 
     ```ts {3-5,8,12-13} filename="MyState.ts"

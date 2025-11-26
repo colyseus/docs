@@ -22,7 +22,7 @@ npm install --save @colyseus/command
 
 Initialize the `dispatcher` in your room implementation:
 
-<Tabs items={["TypeScript", "JavaScript"]}>
+<Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
     <Tabs.Tab>
     ```ts filename="MyRoom.ts"
     import { Room } from "colyseus";
@@ -80,7 +80,7 @@ Initialize the `dispatcher` in your room implementation:
 
 How a command implementation looks like:
 
-<Tabs items={["TypeScript", "JavaScript"]}>
+<Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
     <Tabs.Tab>
     ```ts filename="OnJoinCommand.ts"
     import { Command } from "@colyseus/command";

@@ -24,7 +24,7 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 
     Define your state structures by extending `Schema` class from `@colyseus/schema`:
 
-    <Tabs items={["TypeScript", "JavaScript"]}>
+    <Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
         <Tabs.Tab>
         ```ts filename="src/rooms/MyState.ts"
         import { Schema, type } from "@colyseus/schema";
@@ -62,7 +62,7 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 
     Setting up the state in your room class, and mutating it when clients join or leave the room:
 
-    <Tabs items={["TypeScript", "JavaScript"]}>
+    <Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
         <Tabs.Tab>
         ```ts {2,5,8,11} filename="src/rooms/MyRoom.ts"
         import { Room } from "colyseus";
