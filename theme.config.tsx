@@ -23,20 +23,20 @@ const config: DocsThemeConfig = {
         toggleButton: true
     },
 
-    banner: {
-        key: "gamejam",
-        content: (
-            <a href="https://colyseus.io/gamejam" target="_blank">
-                You are invited to join the 🎄 Colyseus Holyjam 2025 🎁
-            </a>
-        )
-    },
+    // banner: {
+    //     key: "gamejam",
+    //     content: (
+    //         <a href="https://colyseus.io/gamejam" target="_blank">
+    //             You are invited to join the 🎄 Colyseus Holyjam 2025 🎁
+    //         </a>
+    //     )
+    // },
 
     // color: {
     //     hue: 265,
     //     saturation: 100,
     //     lightness: {
-    //         dark: 72,
+    //         dark: 78,
     //         light: 60,
     //     }
     // },
