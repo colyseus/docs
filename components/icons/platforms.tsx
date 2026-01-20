@@ -60,7 +60,7 @@ export const wechat = (props: IconProps = {}) => <Image
  */
 
 export const xsolla = (props: IconProps = {}) => <Image
-            src={require('../../images/icons/brands/xsolla.svg')}
+            src={require('../../images/icons/brands/xsolla.jpg')}
             width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
             alt="Xsolla" />
 
