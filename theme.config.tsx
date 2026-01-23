@@ -23,14 +23,14 @@ const config: DocsThemeConfig = {
         toggleButton: true
     },
 
-    // banner: {
-    //     key: "gamejam",
-    //     content: (
-    //         <a href="https://colyseus.io/gamejam" target="_blank">
-    //             You are invited to join the 🎄 Colyseus Holyjam 2025 🎁
-    //         </a>
-    //     )
-    // },
+    banner: {
+        key: "old-version",
+        content: (
+            <a href={`https://docs.colyseus.io`} onClick={(e) => { e.preventDefault(); window.location.href = `https://docs.colyseus.io${typeof window !== 'undefined' ? window.location.pathname : ''}`; }}>
+                You are viewing an old version of this page. – <b>see the latest version here</b>.
+            </a>
+        ),
+    },
 
     // color: {
     //     hue: 265,
