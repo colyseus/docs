@@ -1,11 +1,15 @@
 import { Callout, Cards, Tabs } from "nextra/components";
 import { ZapIcon, SyncIcon } from "@primer/octicons-react";
 
-# Client-side SDK
+TODO:
+- [ ] Connection state recovery after a disconnect (1001, 1005, 1006)
+- [ ] Move frontend schema callbacks to this page
+
+# Frontend SDK
 
 <Cards>
     <Cards.Card icon={<ZapIcon/>} title="Getting Started" href="/getting-started" />
-    <Cards.Card icon={<SyncIcon />} title="Client-side Callbacks" href="/state/callbacks" />
+    <Cards.Card icon={<SyncIcon />} title="Frontend Callbacks" href="/state/callbacks" />
 </Cards>
 
 ## Overview
@@ -15,7 +19,7 @@ Every client SDK provides the same set of methods and events to interact with th
 - [Client](#client) - The SDK entrypoint
 - [Room](#room) - Room connection.
 - [HTTP Requests](#http-requests) - Utility to perform HTTP requests.
-- [Auth](/auth/module#client-side-api) _(Optional)_ - Authentication module.
+- [Auth](/auth/module#frontend-api) _(Optional)_ - Authentication module.
 
 ## Client
 
@@ -25,7 +29,7 @@ The `Client` instance is the entrypoint to connect to the server. It is used to 
 
     <Tabs.Tab>
     ```ts filename="client.ts"
-    import { Client } from "colyseus.js";
+    import { Client } from "@colyseus/sdk";
     // ...
 
     let client = new Client("ws://localhost:2567");
@@ -34,7 +38,7 @@ The `Client` instance is the entrypoint to connect to the server. It is used to 
 
     <Tabs.Tab>
     ```js filename="client.js"
-    import Colyseus from "colyseus.js";
+    import Colyseus from "@colyseus/sdk";
     // ...
 
     let client = new Colyseus.Client("ws://localhost:2567");
@@ -606,7 +610,7 @@ client.consumeSeatReservation (reservation)
 
 The current room's state. This variable is always synched with the latest `state` from the server. To listen for updates on the whole state, see [`onStateChange`](#on-state-change) event.
 
-For fine-grained control over state updates, see [State Synchronization → Client-side Callbacks](/state/callbacks).
+For fine-grained control over state updates, see [State Synchronization → Frontend Callbacks](/state/callbacks).
 
 ---
 
@@ -722,7 +726,7 @@ room.send (type, message)
 </Tabs>
 
 <Callout type="info">
-    **Use `Room#onMessage()` from the server-side to receive the messages** - Check out [Room API → onMessage](/server/room/#on-message) section.
+    **Use `Room#onMessage()` from the backend to receive the messages** - Check out [Room API → onMessage](/server/room/#on-message) section.
 </Callout>
 
 ---
@@ -817,7 +821,7 @@ room.leave (consented: boolean)
 </Tabs>
 
 <Callout type="info">
-    Use [Room API → onLeave](/server/room/#on-message) to handle the disconnection from the server-side.
+    Use [Room API → onLeave](/server/room/#on-message) to handle the disconnection from the backend.
 </Callout>
 
 ---
@@ -977,7 +981,7 @@ This event is triggered whenever the server's state is synchronized with the cli
 For fine-grained control over state updates, you should use the [schema callbacks](/state/callbacks).
 
 <Callout type="info">
-    Check out the [State Synchronization » Client-side Callbacks](/state/callbacks) section for more details.
+    Check out the [State Synchronization » Frontend Callbacks](/state/callbacks) section for more details.
 </Callout>
 
 <Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
@@ -1131,7 +1135,7 @@ Perform a GET request to the server.
     <Tabs.Tab>
     ```ts filename="src/app.config.ts"
     // ...
-        initializeExpress: (app) => {
+        express: (app) => {
             app.get("/profile", (req, res) => {
                 res.json({ name: "Jake Badlands" });
             });
@@ -1157,7 +1161,7 @@ Perform a POST request to the server.
     <Tabs.Tab>
     ```ts filename="src/app.config.ts"
     // ...
-        initializeExpress: (app) => {
+        express: (app) => {
             app.post("/profile", (req, res) => {
                 res.json(req.body);
             });
@@ -1184,7 +1188,7 @@ Perform a DELETE request to the server.
     <Tabs.Tab>
     ```ts filename="src/app.config.ts"
     // ...
-        initializeExpress: (app) => {
+        express: (app) => {
             app.delete("/profile", (req, res) => {
                 res.json({ deleted: true });
             });
@@ -1210,7 +1214,7 @@ Perform a PUT request to the server.
     <Tabs.Tab>
     ```ts filename="src/app.config.ts"
     // ...
-        initializeExpress: (app) => {
+        express: (app) => {
             app.put("/profile", (req, res) => {
                 res.json(req.body);
             });

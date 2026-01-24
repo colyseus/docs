@@ -22,19 +22,25 @@ Colyseus provides a built-in `LobbyRoom` that can be used to list all available 
 ### Expose the lobby room
 
 ```ts filename="server.ts"
-import { LobbyRoom } from "colyseus";
-// ...
-gameServer.define("lobby", LobbyRoom);
+import { defineServer, defineRoom, LobbyRoom } from "colyseus";
+
+const server = defineServer({
+  rooms: {
+    lobby: defineRoom(LobbyRoom)
+  }
+})
 ```
 
 ### Enable _realtime listing_ on your game room
 
 When _realtime listing_ is enabled, the `LobbyRoom` is notified automatically during `onCreate()`, `onJoin()`, `onLeave()` and `onDispose()`.
 
-```ts {3} filename="server.ts"
-gameServer
-  .define("my_room", MyRoom)
-  .enableRealtimeListing();
+```ts {4} filename="server.ts"
+const server = defineServer({
+  rooms: {
+    my_room: defineRoom(MyRoom).enableRealtimeListing()
+  }
+})
 ```
 </Steps>
 
@@ -71,7 +77,7 @@ class MyRoom extends Room {
 The `LobbyRoom` will send messages to the client whenever a room is added, removed or updated.
 
 ```ts {8,12,22} filename="client.ts"
-import { Client, RoomAvailable } from "colyseus.js";
+import { Client, RoomAvailable } from "@colyseus/sdk";
 
 const client = new Client("ws://localhost:2567");
 const lobby = await client.joinOrCreate("lobby");

@@ -25,16 +25,18 @@ This example demonstrates an entire room implementing the `onCreate`, `onJoin` a
       // initialize empty room state
       state = new State();
 
-      // Colyseus will invoke when creating the room instance
-      onCreate(options: any) {
-        // Called every time this room receives a "move" message
-        this.onMessage("move", (client, data) => {
+      // Called every time this room receives a "move" message
+      messages = {
+        "move": (client, data) => {
           const player = this.state.players.get(client.sessionId);
           player.x += data.x;
           player.y += data.y;
           console.log(client.sessionId + " at, x: " + player.x, "y: " + player.y);
-        });
+        }
       }
+
+      // Colyseus will invoke when creating the room instance
+      onCreate(options: any) { }
 
       // Called every time a client joins
       onJoin(client: Client, options: any) {
@@ -46,42 +48,42 @@ This example demonstrates an entire room implementing the `onCreate`, `onJoin` a
 
     <Tabs.Tab>
     ```js filename="MyRoom.js"
-    const colyseus = require('colyseus');
-    const schema = require('@colyseus/schema');
+    import { Room } from "colyseus";
+    import { schema } from "@colyseus/schema";
 
     // State sync: Player structure
-    const Player = schema.schema({
+    export const Player = schema({
         x: "number",
         y: "number",
     });
 
     // State sync: State structure
-    const State = schema.schema({
+    export const State = schema({
         players: { map: Player, default: new Map() }
     });
 
-    class GameRoom extends colyseus.Room {
+    export class GameRoom extends Room {
       // initialize empty room state
       state = new State();
 
-      // Colyseus will invoke when creating the room instance
-      onCreate(options) {
-        // Called every time this room receives a "move" message
-        this.onMessage("move", (client, data) => {
+      // Called every time this room receives a "move" message
+      messages = {
+        "move": (client, data) => {
           const player = this.state.players.get(client.sessionId);
           player.x += data.x;
           player.y += data.y;
           console.log(client.sessionId + " at, x: " + player.x, "y: " + player.y);
-        });
+        }
       }
+
+      // Colyseus will invoke when creating the room instance
+      onCreate(options) { }
 
       // Called every time a client joins
       onJoin(client, options) {
         this.state.players.set(client.sessionId, new Player());
       }
     }
-
-    module.exports = { GameRoom, State, Player };
     ```
     </Tabs.Tab>
 </Tabs>

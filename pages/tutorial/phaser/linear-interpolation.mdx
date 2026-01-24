@@ -27,20 +27,20 @@ This guide will show you how you can build a multiplayer experience with Colyseu
 
 ## Why does Part 1 have choppy movement?
 
-On [Part 1](basic-player-movement) of this tutorial, we updated the player's visual representation at the same instant as state updates are received from the server, using `player.onChange()`:
+On [Part 1](basic-player-movement) of this tutorial, we updated the player's visual representation at the same instant as state updates are received from the server, using `callbacks.onChange()`:
 
 ```typescript
 // listening for server updates
-$(player).onChange(() => {
+callbacks.onChange(player, () => {
     // update local position immediately
     entity.x = player.x;
     entity.y = player.y;
 });
 ```
 
-By doing so, the result is "choppy" because the frequency of updates received from the server is lower than the frequency the client-side render each frame.
+By doing so, the result is "choppy" because the frequency of updates received from the server is lower than the frequency the frontend render each frame.
 
-Colyseus sends state updates to the client at every **50ms** (_20fps_) by default, whereas the client-side re-renders at every **16.6ms** (_60fps_).
+Colyseus sends state updates to the client at every **50ms** (_20fps_) by default, whereas the frontend re-renders at every **16.6ms** (_60fps_).
 
 One simple yet effective way to smooth out the movement is to progressively move the player towards the latest position received at every render frame.
 
@@ -54,7 +54,7 @@ To allow that, first we need to cache the latest player position received from t
 
 ```typescript
 // listening for server updates
-$(player).onChange(() => {
+callbacks.onChange(player, () => {
     //
     // do not update local position immediately
     // we're going to LERP them during the render loop.

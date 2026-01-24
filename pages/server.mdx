@@ -12,131 +12,30 @@ The Colyseus `Server` instance holds the server configuration options, such as t
 
 The recommended structure to initialize a new Colyseus server is created using `npm create colyseus-app@latest` command.
 
-It includes a basic structure with Express and an empty room handler, ready to be customized.
-
 ```sh filename="Terminal"
 npm create colyseus-app@latest ./my-server
 ```
 
 You may add your own [Room Definitions](/server/room/), and [API routes](/server/custom-http-routes) to your server:
 
-<Tabs items={["Recommended", "Raw usage with Express", "Raw usage"]} storageKey="recommended-or-raw">
+```ts {2,6,10-12} copy filename="app.config.ts"
+import { defineServer, defineRoom } from "colyseus";
+import { MyRoom } from "./rooms/MyRoom";
 
-    <Tabs.Tab>
-    ```ts {2,12,16-18} copy filename="app.config.ts"
-    import config from "@colyseus/tools";
-    import { MyRoom } from "./rooms/MyRoom";
-
-    export default config({
-        options: {
-            // transport: new uWebSocketsTransport(),
-            // driver: new RedisDriver(),
-            // presence: new RedisPresence(),
-        },
-        initializeGameServer: (gameServer) => {
-            // Define your room handlers:
-            gameServer.define('my_room', MyRoom);
-        },
-        initializeExpress: (app) => {
-            // Bind your express routes here:
-            app.get("/", (req, res) => {
-                res.send("It's time to kick ass and chew bubblegum!");
-            });
-        }
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts {3,9-14,19-20} copy filename="server.ts"
-    import express from "express";
-    import { createServer } from "http";
-    import { Server } from "colyseus";
-    import { MyRoom } from "./rooms/MyRoom";
-
-    const app = express();
-    app.use(express.json());
-
-    const gameServer = new Server({
-      server: createServer(app),
-      // transport: new uWebSocketsTransport(),
-      // driver: new RedisDriver(),
-      // presence: new RedisPresence(),
-    });
-
-    /**
-     * Define your room handlers:
-     */
-    gameServer.define("my_room", MyRoom);
-    gameServer.listen(2567);
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts {1,4-8,13-14} copy filename="server.ts"
-    import { Server } from "colyseus";
-    import { MyRoom } from "./rooms/MyRoom";
-
-    const gameServer = new Server({
-      // transport: new uWebSocketsTransport(),
-      // driver: new RedisDriver(),
-      // presence: new RedisPresence(),
-    });
-
-    /**
-     * Define your room handlers:
-     */
-    gameServer.define("my_room", MyRoom);
-    gameServer.listen(2567);
-
-
-
-
-
-
-    ```
-    </Tabs.Tab>
-</Tabs>
+const server = defineServer({
+    rooms: {
+        my_room: defineRoom(MyRoom),
+    },
+    express: (app) => {
+        // Bind your express routes here:
+        app.get("/", (req, res) => {
+            res.send("It's time to kick ass and chew bubblegum!");
+        });
+    }
+});
+```
 
 ---
-
-## Constructor
-
-When using the recommended structure from the template project, the `Server` instance is created automatically. You may customize the server options by editing the `app.config.ts` file.
-
-<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
-    <Tabs.Tab>
-    ```ts filename="app.config.ts"
-    import config from "@colyseus/tools";
-
-    export default config({
-        options: {
-            // Server options here
-        },
-        initializeGameServer: (gameServer) => {
-            // Define your room handlers:
-            // gameServer.define("my_room", MyRoom);
-        },
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts filename="server.ts"
-    import { Server } from "colyseus";
-
-    const gameServer = new Server({
-        /*
-         * Server options here
-         */
-    });
-    /**
-     * Define your room handlers:
-     */
-    // gameServer.define("my_room", MyRoom);
-    ```
-    </Tabs.Tab>
-</Tabs>
 
 ### Server `options`
 
@@ -151,39 +50,16 @@ Each Transport has its own options you may customize.
     The default transport is `WebSocketTransport`. See [Transport → WebSocket Transport (ws)](/server/transport/ws) for more details.
 </Callout>
 
-<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
-    <Tabs.Tab>
-    ```ts {2,5-10} filename="app.config.ts"
-    import config from "@colyseus/tools";
-    import { WebSocketTransport } from "@colyseus/ws-transport";
+```ts {2,5-7} filename="app.config.ts"
+import { defineServer } from "colyseus";
+import { WebSocketTransport } from "@colyseus/ws-transport";
 
-    export default config({
-        initializeTransport: (options) => {
-            return new WebSocketTransport({
-                ...options,
-                pingInterval: 10000
-            });
-        },
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts {2,7-10} filename="server.ts"
-    import { Server } from "colyseus";
-    import { WebSocketTransport } from "@colyseus/ws-transport";
-
-    const server = createServer();
-
-    const gameServer = new Server({
-        transport: new WebSocketTransport({
-            server,
-            // ... other options
-        })
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
+const server = defineServer({
+    transport: new WebSocketTransport({
+        pingInterval: 10000
+    }),
+});
+```
 
 <Callout type="info">
     See [Transport](/server/transport/) for more details.
@@ -201,29 +77,14 @@ The match-making driver. Rooms are cached and queried against a Driver implement
 
 When scaling Colyseus through multiple processes / machines, you need to provide a presence server. Read more about [Scalability](/deployment/scalability), and the [`Presence API`](/server/presence/#api).
 
-<Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
-    <Tabs.Tab>
-    ``` typescript
-    import { Server, RedisPresence } from "colyseus";
+``` typescript
+import { defineServer, RedisPresence } from "colyseus";
 
-    const gameServer = new Server({
-        // ...
-        presence: new RedisPresence()
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ``` typescript
-    const colyseus = require("colyseus");
-
-    const gameServer = new colyseus.Server({
-        // ...
-        presence: new colyseus.RedisPresence()
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
+const server = defineServer({
+    // ...
+    presence: new RedisPresence()
+});
+```
 
 ---
 
@@ -233,77 +94,31 @@ The `selectProcessIdToCreateRoom` is a callback that allows you to customize whi
 
 By default, the process with the **least amount of rooms** is selected to create a new room.
 
-<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
+```ts {4-8} filename="app.config.ts"
+import { defineServer } from "colyseus";
 
-    <Tabs.Tab>
-    ```ts {5-9} filename="app.config.ts"
-    import config from "@colyseus/tools";
-
-    export default config({
-        options: {
-            selectProcessIdToCreateRoom: async function (roomName: string, clientOptions: any) {
-                return (await matchMaker.stats.fetchAll())
-                    .sort((p1, p2) => p1.roomCount > p2.roomCount ? 1 : -1)[0]
-                    .processId;
-            }
-        },
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts {5-9} filename="server.ts"
-    import { Server, RedisPresence } from "colyseus";
-
-    const gameServer = new Server({
-        // ...
-        selectProcessIdToCreateRoom: async function (roomName: string, clientOptions: any) {
-            return (await matchMaker.stats.fetchAll())
-                .sort((p1, p2) => p1.roomCount > p2.roomCount ? 1 : -1)[0]
-                .processId;
-        }
-        // ...
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
+const server = defineServer({
+    selectProcessIdToCreateRoom: async function (roomName: string, clientOptions: any) {
+        return (await matchMaker.stats.fetchAll())
+            .sort((p1, p2) => p1.roomCount > p2.roomCount ? 1 : -1)[0]
+            .processId;
+    },
+});
+```
 
 A common alternative is to use the process with least amount of **connections**:
 
-<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
+```ts {4-8} filename="app.config.ts"
+import { defineServer } from "colyseus";
 
-    <Tabs.Tab>
-    ```ts {5-9} filename="app.config.ts"
-    import config from "@colyseus/tools";
-
-    export default config({
-        options: {
-            selectProcessIdToCreateRoom: async function (roomName: string, clientOptions: any) {
-                return (await matchMaker.stats.fetchAll())
-                    .sort((p1, p2) => p1.ccu > p2.ccu ? 1 : -1)[0]
-                    .processId;
-            }
-        },
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts {5-9} filename="server.ts"
-    import { Server, RedisPresence } from "colyseus";
-
-    const gameServer = new Server({
-        // ...
-        selectProcessIdToCreateRoom: async function (roomName: string, clientOptions: any) {
-            return (await matchMaker.stats.fetchAll())
-                .sort((p1, p2) => p1.ccu > p2.ccu ? 1 : -1)[0]
-                .processId;
-        }
-        // ...
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
+const server = defineServer({
+    selectProcessIdToCreateRoom: async function (roomName: string, clientOptions: any) {
+        return (await matchMaker.stats.fetchAll())
+            .sort((p1, p2) => p1.ccu > p2.ccu ? 1 : -1)[0]
+            .processId;
+    },
+});
+```
 
 ---
 
@@ -313,31 +128,13 @@ When `devMode` is enabled, it is capable of restoring previous Rooms and Room St
 
 Default is `false`.
 
-<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
-    <Tabs.Tab>
-    ```ts {5} filename="app.config.ts"
-    import config from "@colyseus/tools";
+```ts {4} filename="app.config.ts"
+import { defineServer } from "colyseus";
 
-    export default config({
-        options: {
-            devMode: true
-        },
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts {5} filename="server.ts"
-    import { Server, RedisPresence } from "colyseus";
-
-    const gameServer = new Server({
-        // ...
-        devMode: true
-        // ...
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
+const server = defineServer({
+    devMode: true,
+});
+```
 
 <Callout type="info">
     See [Development Mode](/server/devmode).
@@ -351,104 +148,18 @@ Wether to register shutdown routine automatically. Default is `true`.
 
 If disabled, you should call [`gracefullyShutdown()`](#gracefully-shutdown) method manually in your shutdown process.
 
-<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
-    <Tabs.Tab>
-    ```ts {5} filename="app.config.ts"
-    import config from "@colyseus/tools";
+```ts {4} filename="app.config.ts"
+import { defineServer } from "colyseus";
 
-    export default config({
-        options: {
-            gracefullyShutdown: false
-        },
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts {5} filename="server.ts"
-    import { Server, RedisPresence } from "colyseus";
-
-    const gameServer = new Server({
-        // ...
-        gracefullyShutdown: false
-        // ...
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
+const server = defineServer({
+    gracefullyShutdown: false,
+});
+```
 
 <Callout type="info">
     See [Graceful Shutdown](/server/graceful-shutdown/).
 </Callout>
 
----
-
-#### `options.server`
-
-<Callout type="warning">
-    This option should be provided for the **Transport** instead - See [WebSocket Transport Options](/server/transport/ws#optionsserver)
-</Callout>
-
-The HTTP server to bind the WebSocket Server into. You may use [`express`](https://www.npmjs.com/package/express) for your server too.
-
-<Tabs items={["TypeScript", "TypeScript (barebones)", "JavaScript", "JavaScript (barebones)"]}>
-
-    <Tabs.Tab>
-    ```ts filename="server.ts"
-    // Colyseus + Express
-    import { Server } from "colyseus";
-    import { createServer } from "http";
-    import express from "express";
-
-    const app = express();
-    app.use(express.json());
-
-    const gameServer = new Server({
-      server: createServer(app)
-    });
-
-    gameServer.listen(2567);
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts filename="server.ts"
-    // Colyseus (barebones)
-    import { Server } from "colyseus";
-
-    const gameServer = new Server();
-    gameServer.listen(2567);
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="server.js"
-    // Colyseus + Express
-    const colyseus = require("colyseus");
-    const http = require("http");
-    const express = require("express");
-
-    const app = express();
-    app.use(express.json());
-
-    const gameServer = new colyseus.Server({
-      server: http.createServer(app)
-    });
-
-    gameServer.listen(2567);
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="server.js"
-    // Colyseus (barebones)
-    const colyseus = require("colyseus");
-
-    const gameServer = new colyseus.Server();
-    gameServer.listen(2567);
-    ```
-    </Tabs.Tab>
-</Tabs>
 
 ---
 
@@ -456,30 +167,38 @@ The HTTP server to bind the WebSocket Server into. You may use [`express`](https
 
 ### Define Room Type
 
-Define a new type of room for the match-maker.
+Define room types for the match-maker using the `rooms` configuration in `defineServer()`.
 
-- Rooms are **not created** during `.define()`
-- Rooms are created upon client request ([See client-side methods](/client/#methods))
+- Rooms are **not created** during configuration
+- Rooms are created upon client request ([See frontend methods](/client/#methods))
 
 ```ts filename="Signature"
-gameServer.define (roomName: string, room: typeof Room, defaultOptions?: any)
+const server = defineServer({
+  rooms: {
+    room_name: defineRoom(RoomClass, defaultOptions?)
+  }
+})
 ```
 
 **Parameters:**
 
-- `roomName` - The public name of the room. You'll use this name when joining the room from the client-side
-- `room` - The `Room` class
+- `room_name` - The public name of the room. You'll use this name when joining the room from the frontend
+- `RoomClass` - The `Room` class
 - `defaultOptions` - _(optional)_ Default options to provide for room creation and `onAuth`/`onJoin` methods
 
 ```ts
-// Define "chat" room
-gameServer.define("chat", ChatRoom);
+const server = defineServer({
+  rooms: {
+    // Define "chat" room
+    chat: defineRoom(ChatRoom),
 
-// Define "battle" room
-gameServer.define("battle", BattleRoom);
+    // Define "battle" room
+    battle: defineRoom(BattleRoom),
 
-// Define "battle" room with custom options
-gameServer.define("battle_woods", BattleRoom, { map: "woods" });
+    // Define "battle" room with custom options
+    battle_woods: defineRoom(BattleRoom, { map: "woods" }),
+  }
+})
 ```
 
 <Callout type="info">
@@ -495,9 +214,7 @@ gameServer.define("battle_woods", BattleRoom, { map: "woods" });
 Whenever a room is created by the `create()` or `joinOrCreate()` methods, only the `options` defined by the `filterBy()` method are going to be stored internally, and used to filter out rooms in further `join()` or `joinOrCreate()` calls.
 
 ```ts filename="Signature"
-gameServer
-    .define(roomName, RoomClass)
-    .filterBy(options);
+defineRoom(RoomClass).filterBy(options);
 ```
 
 **Parameters**
@@ -511,9 +228,11 @@ gameServer
     Filter match-making by `mode` option.
 
     ```ts filename="server.ts"
-    gameServer
-        .define("battle", BattleRoom)
-        .filterBy(['mode']);
+    const server = defineServer({
+      rooms: {
+        battle: defineRoom(BattleRoom).filterBy(['mode'])
+      }
+    })
     ```
 
     Whenever the room is created, the `mode` option is going to be stored internally.
@@ -546,9 +265,11 @@ gameServer
     The `maxClients` is an internal variable stored for matchmaking, and can be used for filtering too.
 
     ```ts filename="server.ts"
-    gameServer
-        .define("battle", BattleRoom)
-        .filterBy(['maxClients']);
+    const server = defineServer({
+      rooms: {
+        battle: defineRoom(BattleRoom).filterBy(['maxClients'])
+      }
+    })
     ```
 
     The client can then ask to join a room capable of handling a certain number of players.
@@ -567,9 +288,7 @@ gameServer
 You can also give a different priority for joining rooms depending on their information upon creation.
 
 ```ts filename="Signature"
-gameServer
-    .define(roomName, RoomClass)
-    .sortBy(options);
+defineRoom(RoomClass).sortBy(options);
 ```
 
 The `options` parameter is a key-value object containing the field name in the left, and the sorting direction in the right. Sorting direction can be one of these values: `-1`, `"desc"`, `"descending"`, `1`, `"asc"` or `"ascending"`.
@@ -581,17 +300,21 @@ The `options` parameter is a key-value object containing the field name in the l
     The `clients` is an internal variable stored for matchmaking, which contains the current number of connected clients. On the example below, the rooms with the highest amount of clients connected will have priority. Use `-1`, `"desc"` or `"descending"` for descending order:
 
     ```typescript
-    gameServer
-        .define("battle", BattleRoom)
-        .sortBy({ clients: -1 });
+    const server = defineServer({
+      rooms: {
+        battle: defineRoom(BattleRoom).sortBy({ clients: -1 })
+      }
+    })
     ```
 
     To sort by the fewest amount of players, you can do the opposite. Use `1`, `"asc"` or `"ascending"` for ascending order:
 
     ```typescript
-    gameServer
-        .define("battle", BattleRoom)
-        .sortBy({ clients: 1 });
+    const server = defineServer({
+      rooms: {
+        battle: defineRoom(BattleRoom).sortBy({ clients: 1 })
+      }
+    })
     ```
     </Tabs.Tab>
 </Tabs>
@@ -604,9 +327,11 @@ The `options` parameter is a key-value object containing the field name in the l
 To allow the `LobbyRoom` to receive updates from a specific room type, you should define them with realtime listing enabled:
 
 ```typescript
-gameServer
-  .define("battle", BattleRoom)
-  .enableRealtimeListing();
+const server = defineServer({
+  rooms: {
+    battle: defineRoom(BattleRoom).enableRealtimeListing()
+  }
+})
 ```
 
 <Callout type="info">
@@ -629,16 +354,19 @@ You can listen for matchmaking events from outside the room instance scope, such
 **Usage:**
 
 ```typescript
-gameServer
-  .define("chat", ChatRoom)
-  .on("create", (room) => console.log("room created:", room.roomId))
-  .on("dispose", (room) => console.log("room disposed:", room.roomId))
-  .on("join", (room, client) => console.log(client.id, "joined", room.roomId))
-  .on("leave", (room, client) => console.log(client.id, "left", room.roomId));
+const server = defineServer({
+  rooms: {
+    chat: defineRoom(ChatRoom)
+      .on("create", (room) => console.log("room created:", room.roomId))
+      .on("dispose", (room) => console.log("room disposed:", room.roomId))
+      .on("join", (room, client) => console.log(client.id, "joined", room.roomId))
+      .on("leave", (room, client) => console.log(client.id, "left", room.roomId))
+  }
+})
 ```
 
 <Callout type="warning">
-    Use these events for logging and monitoring purposes only. It is not encouraged to manipulate a room's state through these events. Use the [Room's Lifecycle Events](/server/room#room-lifecycle-events) in your room handler instead.
+    Use these events for logging and monitoring purposes only. It is not encouraged to manipulate a room's state through these events. Use the [Room's Lifecycle Events](/room#lifecycle-events) in your room handler instead.
 </Callout>
 
 ---
@@ -677,22 +405,13 @@ if (process.env.NODE_ENV !== "production") {
 
 Binds the [Transport](/server/transport) layer into the specified port.
 
-<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
-    <Tabs.Tab>
-    ```ts {5} filename="src/index.ts"
-    import { listen } from "@colyseus/tools";
-    import app from "./app.config";
-    listen(app, 2567);
-    ```
-    </Tabs.Tab>
-    <Tabs.Tab>
-    ```ts {5} filename="src/index.ts"
-    import { Server } from "colyseus";
-    const gameServer = new Server();
-    gameServer.listen(2567);
-    ```
-    </Tabs.Tab>
-</Tabs>
+```ts {5} filename="src/app.config.ts"
+import { defineServer } from "colyseus";
+const server = defineServer({
+    // ...
+});
+server.listen(2567);
+```
 
 ---
 

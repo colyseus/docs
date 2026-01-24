@@ -34,7 +34,7 @@ This is an example scripting file. Based on the room lifecycle events for each c
     <Tabs.Tab>
 
     ```ts filename="loadtest/example.ts"
-    import { Client, Room } from "colyseus.js";
+    import { Client, Room } from "@colyseus/sdk";
     import { cli, Options } from "@colyseus/loadtest";
 
     async function main(options: Options) {
@@ -69,11 +69,11 @@ This is an example scripting file. Based on the room lifecycle events for each c
 
     <Tabs.Tab>
 
-    ```ts filename="loadtest/example.js"
-    const { Client } = require("colyseus.js");
-    const { cli } = require("@colyseus/loadtest");
+    ```js filename="loadtest/example.js"
+    import { Client } from "@colyseus/sdk";
+    import { cli } from "@colyseus/loadtest";
 
-    function main (options) {
+    async function main (options) {
         const client = new Client(options.endpoint);
         const room = await client.joinOrCreate(options.roomName, {
             // your join options here...

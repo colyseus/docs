@@ -8,7 +8,7 @@ const logo = <Image src={require('./images/logo.svg')} width={0} height={0} styl
 const config: DocsThemeConfig = {
     logo: <>
         {logo}
-        <span style={{ fontSize: "0.8em", marginLeft: "0.6em", paddingTop: "0.7em", color: "GrayText" }}>v0.16</span>
+        <span style={{ fontSize: "0.8em", marginLeft: "0.6em", paddingTop: "0.7em", color: "GrayText" }}>v0.17</span>
     </>,
     project: {
         link: 'https://github.com/colyseus/colyseus',
@@ -24,10 +24,10 @@ const config: DocsThemeConfig = {
     },
 
     // banner: {
-    //     key: "gamejam",
+    //     key: "merch",
     //     content: (
-    //         <a href="https://colyseus.io/gamejam" target="_blank">
-    //             You are invited to join the 🎄 Colyseus Holyjam 2025 🎁
+    //         <a href="https://shop.colyseus.io" target="_blank">
+    //             🧢 We've released a new merch collection! Check it out at the Colyseus Shop. 👕
     //         </a>
     //     )
     // },

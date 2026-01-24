@@ -77,7 +77,7 @@ import { StateView } from "@colyseus/schema";
     }
 ```
 
-The client-side will receive either a "On Add" or "Listen" callback you can listen to, depending on which structure the schema instance is part of.
+The frontend will receive either a "On Add" or "Listen" callback you can listen to, depending on which structure the schema instance is part of.
 
 ### Removing a schema instance from a `StateView`
 
@@ -87,7 +87,7 @@ In order to remove a schema instance from a `StateView`, you must call `.remove(
 client.view.remove(player);
 ```
 
-The client-side will receive either a "On Remove" or "Listen" callback you can listen to, depending on which structure the schema instance is part of.
+The frontend will receive either a "On Remove" or "Listen" callback you can listen to, depending on which structure the schema instance is part of.
 
 ### Checking if instance is part of `StateView`
 
@@ -99,7 +99,7 @@ if (client.view.has(player)) {
 }
 ```
 
-The client-side will receive either a "On Remove" or "Listen" callback you can listen to, depending on which structure the schema instance is part of.
+The frontend will receive either a "On Remove" or "Listen" callback you can listen to, depending on which structure the schema instance is part of.
 
 ## Specialized tags with `@view(tag: number)`
 
@@ -137,7 +137,7 @@ On the example above, the `attributes` field is only visible to clients that con
 
 ---
 
-The following table shows the relation between type annotations and the visibility of each field on the client-side:
+The following table shows the relation between type annotations and the visibility of each field on the frontend:
 
 | Annotations              | Without `view.add()` | `view.add(instance)` | `view.add(instance, 1)` |
 |-----------------------------------|----------------------|-------------------------|-----------------|

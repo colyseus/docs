@@ -52,15 +52,15 @@ Initialize the `dispatcher` in your room implementation:
 
     <Tabs.Tab>
     ```js filename="MyRoom.js"
-    const colyseus = require("colyseus");
-    const command = require("@colyseus/command");
+    import { Room } from "colyseus";
+    import { Dispatcher } from "@colyseus/command";
 
-    const { OnJoinCommand } = require("./OnJoinCommand");
+    import { OnJoinCommand } from "./OnJoinCommand";
 
-    class MyRoom extends colyseus.Room {
+    class MyRoom extends Room {
 
       onCreate() {
-        this.dispatcher = new command.Dispatcher(this);
+        this.dispatcher = new Dispatcher(this);
         this.setState(new YourState());
       }
 
@@ -99,9 +99,9 @@ How a command implementation looks like:
 
     <Tabs.Tab>
     ```js filename="OnJoinCommand.js"
-    const command = require("@colyseus/command");
+    import { Command } from "@colyseus/command";
 
-    exports.OnJoinCommand = class OnJoinCommand extends command.Command {
+    export class OnJoinCommand extends Command {
 
       execute({ sessionId }) {
         this.state.players[sessionId] = new Player();

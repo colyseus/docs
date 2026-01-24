@@ -1,22 +1,12 @@
-import { Callout, Tabs } from 'nextra/components'
+import { Callout } from 'nextra/components'
 
 # Match-maker API
 
 The methods described below are provided by the `matchMaker` singleton, which can be imported from the `"colyseus"` package:
 
-<Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
-    <Tabs.Tab>
-    ``` typescript
-    import { matchMaker } from "colyseus";
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ``` javascript
-    const matchMaker = require("colyseus").matchMaker;
-    ```
-    </Tabs.Tab>
-</Tabs>
+``` typescript
+import { matchMaker } from "colyseus";
+```
 
 ## Stats
 
@@ -83,7 +73,7 @@ matchMaker.createRoom(roomName, options)
 
 **Parameters:**
 
-- **`roomName`**: the identifier you defined on `gameServer.define()`.
+- **`roomName`**: the identifier you defined in the `rooms` configuration of `defineServer()`.
 - **`options`**: options for `onCreate`.
 
 ```typescript
@@ -108,7 +98,7 @@ matchMaker.joinOrCreate(roomName, options)
 
 **Parameters:**
 
-- **`roomName`**: the identifier you defined on `gameServer.define()`.
+- **`roomName`**: the identifier you defined in the `rooms` configuration of `defineServer()`.
 - **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`).
 
 ```ts filename="server.ts"
@@ -123,7 +113,7 @@ console.log(reservation);
 ```
 
 <Callout type="info">
-    **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the client-side](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
+    **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the frontend](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 </Callout>
 
 ### Reserve A Seat For
@@ -153,7 +143,7 @@ console.log(reservation);
 ```
 
 <Callout type="info">
-    **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the client-side](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
+    **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the frontend](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 </Callout>
 
 ### Join existing Room
@@ -166,7 +156,7 @@ matchMaker.join(roomName, options)
 
 **Parameters:**
 
-- **`roomName`**: the identifier you defined on `gameServer.define()`.
+- **`roomName`**: the identifier you defined in the `rooms` configuration of `defineServer()`.
 - **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`).
 
 ```ts filename="server.ts"
@@ -181,7 +171,7 @@ console.log(reservation);
 ```
 
 <Callout type="info">
-    **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the client-side](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
+    **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the frontend](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 </Callout>
 
 ### Join Room by ID
@@ -209,7 +199,7 @@ console.log(reservation);
 ```
 
 <Callout type="info">
-    **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the client-side](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
+    **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the frontend](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 </Callout>
 
 ### Create and Reserve a Seat
@@ -222,7 +212,7 @@ matchMaker.create(roomName, options)
 
 **Parameters:**
 
-- **`roomName`**: the identifier you defined on `gameServer.define()`.
+- **`roomName`**: the identifier you defined in the `rooms` configuration of `defineServer()`.
 - **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`).
 
 ``` typescript
@@ -237,7 +227,7 @@ console.log(reservation);
 ```
 
 <Callout type="info">
-    **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the client-side](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
+    **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the frontend](/client/#consumeseatreservation-reservation) to join the room by its reserved seat.
 </Callout>
 
 ### Search for Rooms
@@ -359,11 +349,11 @@ await matchMaker.remoteRoomCall("xxxxxxxxx", "lock");
 
 ---
 
-## Restricting the client-side from creating rooms
+## Restricting the frontend from creating rooms
 
-You can restrict the client-side to be allowed only to call specific matchmaking methods.
+You can restrict the frontend to be allowed only to call specific matchmaking methods.
 
-**Example:** by exposing only `join`, `joinById`, and `reconnect` methods, the client-side is
+**Example:** by exposing only `join`, `joinById`, and `reconnect` methods, the frontend is
 not going to be able to perform `create` or `joinOrCreate` calls.
 
 ``` typescript

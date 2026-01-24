@@ -12,7 +12,7 @@ This guide will show you how you can build a multiplayer experience with Colyseu
 
 ## In Part 3, we will:
 
-- Update **CURRENT** player position immediately at the rate of the client-side's update loop
+- Update **CURRENT** player position immediately at the rate of the frontend's update loop
 - Use linear interpolation to smooth the visual representation of **OTHER** players
 
 ### Materials
@@ -53,7 +53,7 @@ export class GameScene extends Phaser.Scene {
 Now, let's modify the `players.onAdd()` callback to identify which player is the current one, by checking the `sessionId` key against the connected `room.sessionId`:
 
 ```typescript
-$(this.room.state).players.onAdd((player, sessionId) => {
+callbacks.onAdd("players", (player, sessionId) => {
     const entity = this.physics.add.image(player.x, player.y, 'ship_0001');
     this.playerEntities[sessionId] = entity;
 
@@ -66,7 +66,7 @@ $(this.room.state).players.onAdd((player, sessionId) => {
         this.remoteRef = this.add.rectangle(0, 0, entity.width, entity.height);
         this.remoteRef.setStrokeStyle(1, 0xff0000);
 
-        $(player).onChange(() => {
+        callbacks.onChange(player, () => {
             this.remoteRef.x = player.x;
             this.remoteRef.y = player.y;
         });
@@ -74,7 +74,7 @@ $(this.room.state).players.onAdd((player, sessionId) => {
     } else {
         // all remote players are here!
         // (same as before, we are going to interpolate remote players)
-        $(player).onChange(() => {
+        callbacks.onChange(player, () => {
             entity.setData('serverX', player.x);
             entity.setData('serverY', player.y);
         });
@@ -86,7 +86,7 @@ The `remoteRef` here is a simple rectangle used to have visual feedback of where
 
 ## Moving the local player instantly
 
-We need to implement in the client-side the same logic we already have on the server-side for player movement.
+We need to implement in the frontend the same logic we already have on the backend for player movement.
 
 Instead of waiting for the acknowledgement of the server, we apply the position change locally at exactly the same instant as sending the input to the server:
 
@@ -149,7 +149,7 @@ Let's go back to your browser and see the results now. You should see the visual
 
 Colyseus provides an utility method you can use during development for simulating network latency. You can use it for checking how the user experience would look like when experiencing latency and delay.
 
-From the server-side, in the `app.config.ts` file, add the following:
+From the backend, in the `app.config.ts` file, add the following:
 
 ```typescript
 gameServer.simulateLatency(200);

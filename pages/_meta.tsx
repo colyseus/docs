@@ -33,7 +33,7 @@ export default {
     '-- Extra': { type: 'separator', title: 'Extra' },
     "recommendations": { title: <span><ThumbsupIcon/> Recommendations</span> },
     "community": { title: <span><HeartFillIcon/> Community</span> },
-    "upgrading": { title: <span><VersionsIcon/> Upgrading Versions</span> }, // "Upgrading Versions"
+    "migrating": { title: <span><VersionsIcon/> Migrating Versions</span> }, // "Migrating Versions"
     "faq": {title: <span><QuestionIcon/> FAQ</span>},
 
     '-- (final) --': { type: 'separator' },
@@ -58,6 +58,7 @@ export default {
         type: 'menu',
         title: 'Versions',
         items: [
+            { title: '0.16 ↗', href: 'https://0-16-x.docs.colyseus.io/', newWindow: true },
             { title: '0.15 ↗', href: 'https://0-15-x.docs.colyseus.io/', newWindow: true },
             { title: '0.14 ↗', href: 'https://0-14-x.docs.colyseus.io/', newWindow: true },
             { title: '0.13 ↗', href: 'https://0-13-x.docs.colyseus.io/', newWindow: true },

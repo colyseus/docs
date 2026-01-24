@@ -12,12 +12,11 @@ The `Room` class is meant to implement a game session, and/or serve as the commu
 <Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
     <Tabs.Tab>
     ```ts filename="MyRoom.ts"
-    import http from "http";
-    import { Room, Client } from "colyseus";
+    import { Room, Client, AuthContext } from "colyseus";
 
     export class MyRoom extends Room {
         // (optional) Validate client auth token before joining/creating the room
-        static async onAuth (token: string, request: http.IncomingMessage) { }
+        async onAuth (client: Client, options: any, context: AuthContext) { }
 
         // When room is initialized
         onCreate (options: any) { }
@@ -36,11 +35,11 @@ The `Room` class is meant to implement a game session, and/or serve as the commu
 
     <Tabs.Tab>
     ```js filename="MyRoom.js"
-    const colyseus = require('colyseus');
+    import { Room } from "colyseus";
 
-    export class MyRoom extends colyseus.Room {
+    export class MyRoom extends Room {
         // (optional) Validate client auth token before joining/creating the room
-        static async onAuth (token, request) { }
+        async onAuth (client, options, context) { }
 
         // When room is initialized
         onCreate (options) { }
@@ -59,7 +58,7 @@ The `Room` class is meant to implement a game session, and/or serve as the commu
 </Tabs>
 
 
-## Room Lifecycle Events
+## Lifecycle Events
 
 - The room lifecycle events are called automatically.
 - Optional [`async`/`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) is supported on every lifecycle event.
@@ -78,14 +77,15 @@ onCreate (options) {
 
 The server may overwrite options during [`.define()`](/server/#define-room-type) for authortity over client-provided options:
 
-<Tabs items={["Server-side", "Client-side"]}>
+<Tabs items={["Backend", "Frontend"]}>
     <Tabs.Tab>
 
         ```ts filename="app.config.ts"
-        // (server-side)
-        // ...
-        gameServer.define("my_room", MyRoom, {
-            map: "cs_assault"
+        // (backend)
+        const server = defineServer({
+          rooms: {
+            my_room: defineRoom(MyRoom, { map: "cs_assault" })
+          }
         })
         ```
     </Tabs.Tab>
@@ -94,7 +94,7 @@ The server may overwrite options during [`.define()`](/server/#define-room-type)
         The `options` argument is provided by the client upon room creation:
 
         ```js filename="client.js"
-        // (client-side - using the javascript sdk)
+        // (frontend - using the javascript sdk)
         // ...
         client.joinOrCreate("my_room", {
             name: "Jake",
@@ -123,7 +123,7 @@ The `onAuth` method is called before `onJoin`, and it is responsible for validat
     ```
     **Arguments**
     - `client`: A reference to the client that is trying to join the room.
-    - `options`: Options provided by the client-side SDK.
+    - `options`: Options provided by the frontend SDK.
     - `context`: The request context, containing:
         - `.token` - the authentication token sent by the client.
         - `.headers` - the headers sent by the client.
@@ -141,7 +141,7 @@ The `onAuth` method is called before `onJoin`, and it is responsible for validat
     ```
     **Arguments**
     - `token`: The authentication token sent by the client.
-    - `options`: Options provided by the client-side SDK.
+    - `options`: Options provided by the frontend SDK.
     - `context`: The request context, containing:
         - `.token` - the authentication token sent by the client.
         - `.headers` - the headers sent by the client.
@@ -348,28 +348,30 @@ onBeforeShutdown() {
 
 ---
 
-## Public methods
+## Message Handling
 
 Room handlers have these methods available.
 
-### On Message
+### On Messages
 
-Register a callback to process a type of message sent by the client-side.
+Register callbacks to process messages sent by the frontend.
 
 ```ts filename="Signature"
-this.onMessage (type, callback, validation)
+messages = {
+    [type: string | number]: (client, payload) => void
+}
 ```
 
 - The `type` argument can be either `string` or `number`.
-- You can only define a single callback per message type. (Defining a callback more than once will result in overriding the previous one)
+- You can only define a single callback per message type.
 
 #### Callback for specific type of message
 
 ```ts filename="MyRoom.ts"
-onCreate () {
-    this.onMessage("action", (client, payload) => {
+messages = {
+    "action": (client, payload) => {
         console.log(client.sessionId, "sent 'action' message: ", payload);
-    });
+    }
 }
 ```
 
@@ -382,45 +384,46 @@ onCreate () {
 You can register a single callback as a fallback to handle **other** types of messages.
 
 ```ts filename="MyRoom.ts"
-onCreate () {
-    this.onMessage("action", (client, payload) => {
+messages = {
+    "action": (client, payload) => {
         //
         // Triggers when 'action' message is sent.
         //
-    });
+    },
 
-    this.onMessage("*", (client, type, payload) => {
+    "*": (client, type, payload) => {
         //
         // Triggers when any other type of message is sent,
         // excluding "action", which has its own specific handler defined above.
         //
         console.log(client.sessionId, "sent", type, payload);
-    });
+    }
 }
 ```
 
 #### Message input validation
 
-You may provide a validation function as the third argument to `onMessage`. This function will be called before the message is processed, and if it throws an error, the message will be ignored.
+You may provide a validation schema using the `validate()` helper with a Zod schema. If validation fails, the message will be ignored.
 
-The data returned by the validation function will be passed as `payload` on the message handler.
+The validated and typed data will be passed as `payload` on the message handler.
 
 ```ts filename="MyRoom.ts"
-onCreate () {
-    this.onMessage("action", (client, payload) => {
+import { Room, validate } from "colyseus";
+import { z } from "zod";
+
+// ...
+
+messages = {
+    "action": validate(z.object({
+        x: z.number(),
+        y: z.number()
+    }), (client, payload) => {
         //
         // payload.x and payload.y are guaranteed to be numbers here.
         //
         console.log({ x: payload.x, y: payload.y });
-
-    }, (payload) => {
-        if (typeof(payload.x) !== "number" || typeof(payload.y) !== "number") {
-            throw new Error("Invalid payload");
-        }
-        return payload;
-    });
+    })
 }
-```
 
 ---
 
@@ -441,11 +444,9 @@ export class MyRoom extends Room {
     The room's `state` is **mutable**. You should not reassign the `state` object, but rather mutate it directly when updating the state.
 </Callout>
 
-<Callout type="error">
-    The `.setState()` method is deprecated. Use `this.state` directly instead.
-</Callout>
-
 ---
+
+## Methods
 
 ### Set Simulation Interval
 
@@ -536,11 +537,11 @@ Available options are:
     Broadcasting a message to all clients:
 
     ```ts filename="MyRoom.ts"
-    onCreate() {
-        this.onMessage("action", (client, payload) => {
+    messages = {
+        "action": (client, payload) => {
             // broadcast a message to all clients
             this.broadcast("action-taken", "an action has been taken!");
-        });
+        }
     }
     ```
     </Tabs.Tab>
@@ -549,11 +550,11 @@ Available options are:
     Broadcasting a message to all clients, except the sender.
 
     ```ts filename="MyRoom.ts"
-    onCreate() {
-        this.onMessage("fire", (client, payload) => {
+    messages = {
+        "fire": (client, payload) => {
             // sends "fire" event to every client, except the one who triggered it.
             this.broadcast("fire", payload, { except: client });
-        });
+        }
     }
     ```
     </Tabs.Tab>
@@ -562,14 +563,14 @@ Available options are:
     Broadcasting a message to all clients, only after a change in the state has been applied:
 
     ```ts filename="MyRoom.ts"
-    onCreate() {
-        this.onMessage("destroy", (client, payload) => {
+    messages = {
+        "destroy": (client, payload) => {
             // perform changes in your state!
             this.state.destroySomething();
 
             // this message will arrive only after new state has been applied
             this.broadcast("destroy", "something has been destroyed", { afterNextPatch: true });
-        });
+        }
     }
     ```
     </Tabs.Tab>
@@ -769,7 +770,7 @@ You may replace `this.roomId` during `onCreate()`.
 
 ### `roomName`
 
-The name of the room you provided as first argument for [`gameServer.define()`](/server/#define-roomname-string-room-room-options-any).
+The name of the room you provided in the `rooms` configuration of [`defineServer()`](/server/#define-room-type).
 
 ---
 
@@ -787,7 +788,7 @@ The synchronized state of the room.
 
 The array of connected clients. See [Client instance](#client).
 
-#### Sending a message to a specific clients.
+#### Sending a message to a specific client
 
 ```ts filename="MyRoom.ts"
 // ...
@@ -894,7 +895,7 @@ onCreate() {
 
 ## Client
 
-The `client` instance from the server-side is responsible for the **transport** layer between the server and the client. It should not be confused with the [`Client` from the client-side SDK](/client/), as they have completely different purposes.
+The `client` instance from the backend is responsible for the **transport** layer between the server and the client. It should not be confused with the [`Client` from the frontend SDK](/client/), as they have completely different purposes.
 
 You operate on `client` instances from [`this.clients`](#clients), [`Room#onJoin()`](#onjoin), [`Room#onLeave()`](#onleave) and [`Room#onMessage()`](#onmessage).
 
@@ -913,7 +914,7 @@ onJoin(client, options) {
 ```
 
 <Callout type="info">
-    In the client-side, you can find the [`sessionId` in the `room` instance](/client/#sessionid-string).
+    In the frontend, you can find the [`sessionId` in the `room` instance](/client/#sessionid-string).
 </Callout>
 
 ---
@@ -980,7 +981,7 @@ client.send(1, { kind: "ammo"});
 ```
 
 <Callout type="info">
-    [See how to handle `onMessage` from the client-side SDK](/client/#on-message)
+    [See how to handle `onMessage` from the frontend SDK](/client/#on-message)
 </Callout>
 
 ---
@@ -1030,7 +1031,7 @@ client.leave(code?: number)
 ```
 
 <Callout type="info">
-    This will trigger [`room.onLeave`](/client/#on-leave) event on the client-side.
+    This will trigger [`room.onLeave`](/client/#on-leave) event on the frontend.
 </Callout>
 
 **Table of WebSocket close codes**

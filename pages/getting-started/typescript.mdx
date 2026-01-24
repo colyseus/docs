@@ -28,7 +28,7 @@ The TypeScript SDK provides type safety and auto-completion for your state struc
 You may use `import type` to import only the type of the state from your server code.
 
 ```ts {2,6-10}
-import { Client } from "colyseus.js";
+import { Client } from "@colyseus/sdk";
 import type { MyState } from "../server/path/MyState";
 
 const client = new Client("http://localhost:2567");

@@ -1,12 +1,12 @@
 ---
-title: "Client-side Callbacks"
+title: "Frontend Callbacks"
 ---
 import { Tabs, Callout, Steps } from 'nextra/components'
 import { SDKTabs } from "../../components/SDKTabs"
 
-# Client-side Schema Callbacks
+# Frontend Schema Callbacks
 
-When applying state changes coming from the server, the client-side is going to trigger callbacks on local instances according to the changes being applied.
+When applying state changes coming from the server, the frontend is going to trigger callbacks on local instances according to the changes being applied.
 
 In order to register callbacks to Schema instances, you must access the instances through a "callbacks handler".
 
@@ -18,7 +18,7 @@ In order to register callbacks to Schema instances, you must access the instance
     <SDKTabs>
         <Tabs.Tab>
         ```ts {10} filename="client.ts"
-        import { Client, getStateCallbacks } from "colyseus.js";
+        import { Client, Callbacks } from "@colyseus/sdk";
 
         // initialize SDK
         const client = new Client("ws://localhost:2567");
@@ -27,7 +27,7 @@ In order to register callbacks to Schema instances, you must access the instance
         const room = await client.joinOrCreate("my_room");
 
         // get state callbacks handler
-        const $ = getStateCallbacks(room);
+        const callbacks = Callbacks.get(room);
         ```
         </Tabs.Tab>
 
@@ -85,22 +85,22 @@ In order to register callbacks to Schema instances, you must access the instance
     <SDKTabs>
         <Tabs.Tab>
         ```ts filename="client.ts"
-        $(room.state).listen("currentTurn", (currentValue, previousValue) => {
+        callbacks.listen("currentTurn", (currentValue, previousValue) => {
             // ...
         });
 
         // when an entity was added (ArraySchema or MapSchema)
-        $(room.state).entities.onAdd((entity, sessionId) => {
+        callbacks.onAdd("entities", (entity, sessionId) => {
             // ...
             console.log("entity added", entity);
 
-            $(entity).listen("hp", (currentHp, previousHp) => {
+            callbacks.listen(entity, "hp", (currentHp, previousHp) => {
                 console.log("entity", sessionId, "changed hp to", currentHp);
             })
         });
 
         // when an entity was removed (ArraySchema or MapSchema)
-        $(room.state).entities.onRemove((entity, sessionId) => {
+        callbacks.onRemove("entities", (entity, sessionId) => {
             // ...
             console.log("entity removed", entity);
         });
@@ -183,7 +183,7 @@ In order to register callbacks to Schema instances, you must access the instance
 </Steps>
 
 <Callout type="warning">
-    **C#, C++, Haxe** - When using statically typed languages, you need to generate the client-side schema files based on your TypeScript schema definitions. [See generating schema on the client-side](#client-side-schema-generation).
+    **C#, C++, Haxe** - When using statically typed languages, you need to generate the frontend schema files based on your TypeScript schema definitions. [See generating schema on the frontend](#frontend-schema-generation).
 </Callout>
 
 ## How to use
@@ -198,7 +198,7 @@ Listens for a single property change within a `Schema` instance.
 
     <Tabs.Tab>
     ```ts filename="client.ts"
-    $(room.state).listen("currentTurn", (currentValue, previousValue) => {
+    callbacks.listen("currentTurn", (currentValue, previousValue) => {
         console.log(`currentTurn is now ${currentValue}`);
         console.log(`previous value was: ${previousValue}`);
     });
@@ -238,7 +238,7 @@ Listens for a single property change within a `Schema` instance.
 <SDKTabs>
     <Tabs.Tab>
     ```ts filename="client.ts"
-    const unbindCallback = $(room.state).listen("currentTurn", (currentValue, previousValue) => {
+    const unbindCallback = callbacks.listen("currentTurn", (currentValue, previousValue) => {
         // ...
     });
 
@@ -296,9 +296,9 @@ Bind properties directly to `targetObject`, whenever the client receives an upda
 <SDKTabs>
     <Tabs.Tab>
     ```ts filename="client.ts"
-    $(room.state).players.onAdd((player, sessionId) => {
+    callbacks.onAdd("players", (player, sessionId) => {
         const playerVisual = PIXI.Sprite.from('player');
-        $(player).bindTo(playerVisual);
+        callbacks.bindTo(player, playerVisual);
     });
     ```
     </Tabs.Tab>
@@ -344,9 +344,9 @@ The On Change callback is invoked whenever a direct property of a `Schema` insta
 <SDKTabs>
     <Tabs.Tab>
     ```ts {3-5} filename="client.ts"
-    $(room.state).entities.onAdd((entity, sessionId) => {
+    callbacks.onAdd("entities", (entity, sessionId) => {
         // ...
-        $(entity).onChange(() => {
+        callbacks.onChange(entity, () => {
             // some property changed inside `entity`
         })
     });
@@ -400,13 +400,13 @@ By default, the callback is called immediately for existing items in the collect
 <SDKTabs>
     <Tabs.Tab>
     ```ts {1} filename="client.ts"
-    $(room.state).players.onAdd((player, sessionId) => {
+    callbacks.onAdd("players", (player, sessionId) => {
         console.log(player, "has been added at", sessionId);
 
         // add your player entity to the game world!
 
         // detecting changes on object properties
-        $(player).listen("field_name", (value, previousValue) => {
+        callbacks.listen(player, "field_name", (value, previousValue) => {
             console.log(value);
             console.log(previousValue);
         });
@@ -473,7 +473,7 @@ The `onRemove` callback is called with the removed item and its key on holder ob
 
     <Tabs.Tab>
     ```ts {1} filename="client.ts"
-    $(room.state).players.onRemove((player, sessionId) => {
+    callbacks.onRemove("players", (player, sessionId) => {
         console.log(player, "has been removed at", sessionId);
 
         // remove your player entity from the game world!
@@ -514,13 +514,13 @@ The `onRemove` callback is called with the removed item and its key on holder ob
 
 ---
 
-## Client-side Schema Generation
+## Frontend Schema Generation
 
 <Callout type="warning">
     **Not required when using [JavaScript SDK](/getting-started/javascript) or [Defold SDK](/getting-started/defold)** - The following section is only required when using statically typed languages in your front-end, such as C#, Haxe, etc.
 </Callout>
 
-The `schema-codegen` is a command-line tool designed to convert your server-side schema definitions into compatible client-side schemas.
+The `schema-codegen` is a command-line tool designed to convert your backend schema definitions into compatible frontend schemas.
 
 To decode the state on the client side, its local schema definitions must be compatible with those on the server.
 
@@ -538,10 +538,10 @@ npx schema-codegen --help
 schema-codegen [path/to/Schema.ts]
 
 Usage (C#/Unity)
-    schema-codegen src/Schema.ts --output client-side/ --csharp --namespace MyGame.Schema
+    schema-codegen src/Schema.ts --output frontend/ --csharp --namespace MyGame.Schema
 
 Valid options:
-    --output: fhe output directory for generated client-side schema files
+    --output: fhe output directory for generated frontend schema files
     --csharp: generate for C#/Unity
     --cpp: generate for C++
     --haxe: generate for Haxe

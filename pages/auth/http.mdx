@@ -40,7 +40,7 @@ If you are using the `@colyseus/auth` module, you can use the `auth.middleware()
     ```ts filename="src/app.config.ts"
     import { auth } from "@colyseus/auth";
     // ...
-        initializeExpress: (app) => {
+        express: (app) => {
             app.use("/profile", auth.middleware(), (req, res) => {
                 console.log("authenticated user:", req.auth);
                 res.json(req.auth);

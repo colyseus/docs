@@ -23,8 +23,8 @@ import { DownloadIcon, LinkIcon } from '@primer/octicons-react'
 
 ### Full source code
 
-- [<LinkIcon/> Babylon.js Project (Client-side)](https://github.com/colyseus/tutorial-babylonjs-client/)
-- [<LinkIcon/> Colyseus Node.js/TypeScrippt Project (Server-side)](https://github.com/colyseus/tutorial-babylonjs-server/)
+- [<LinkIcon/> Babylon.js Project (Frontend)](https://github.com/colyseus/tutorial-babylonjs-client/)
+- [<LinkIcon/> Colyseus Node.js/TypeScrippt Project (Backend)](https://github.com/colyseus/tutorial-babylonjs-server/)
 
 ## Before you start
 
@@ -165,7 +165,7 @@ export class MyRoomState extends Schema {
     See [State Synchronization → Schema Definition](/state/schema/).
 </Callout>
 
-Now, still in the server-side, let's modify our `onJoin()` method to create a `Player` instance whenever a new connection is established with the room.
+Now, still in the backend, let's modify our `onJoin()` method to create a `Player` instance whenever a new connection is established with the room.
 
 ```ts filename="MyRoom.ts"
 // ...
@@ -201,7 +201,7 @@ Also, when the client disconnects, let's remove the player from the map of playe
 // ...
 ```
 
-The state mutations we've done in the server-side **can be observed** in the client-side, and that's what we're going to do in the next section.
+The state mutations we've done in the backend **can be observed** in the frontend, and that's what we're going to do in the next section.
 
 ## Setting up the Scene for Synchronization
 
@@ -223,13 +223,13 @@ ground.rotation.x = Math.PI / 2;
 
 ## Listening for State Changes
 
-After a connection with the room has been established, the client-side can start listening for state changes, and create a visual representation of the data in the server.
+After a connection with the room has been established, the frontend can start listening for state changes, and create a visual representation of the data in the server.
 
 ## Adding new players
 
 As per [Room State and Schema](#room-state-and-schema) section, whenever the server accepts a new connection - the `onJoin()` method is creating a new Player instance within the state.
 
-We're going to listen to this event on the client-side now:
+We're going to listen to this event on the frontend now:
 
 ```typescript
 // (...)
@@ -313,7 +313,7 @@ room.state.players.onAdd((player, sessionId) => {
 
 ### Removing disconnected players
 
-When a player is removed from the state (upon `onLeave()` in the server-side), we need to remove their visual representation as well.
+When a player is removed from the state (upon `onLeave()` in the backend), we need to remove their visual representation as well.
 
 ```javascript
 // ...
@@ -362,22 +362,22 @@ Whenever the `"updatePosition"` message is received in the server, we're going t
 
 ```ts filename="MyRoom.ts"
 // ...
-  onCreate(options: any) {
-    this.setState(new MyRoomState());
+  state = new MyRoomState();
 
-    this.onMessage("updatePosition", (client, data) => {
+  messages = {
+    "updatePosition": (client, data) => {
       const player = this.state.players.get(client.sessionId);
       player.x = data.x;
       player.y = data.y;
       player.z = data.z;
-    });
+    }
   }
 // ...
 ```
 
 ### Updating Player's visual representation
 
-Having the mutation on the server, we can detect it on the client-side via `player.onChange()`, or `player.listen()`.
+Having the mutation on the server, we can detect it on the frontend via `player.onChange()`, or `player.listen()`.
 
 - `player.onChange()` is triggered **per schema instance**
 - `player.listen(prop)` is triggered **per property** change
@@ -403,7 +403,7 @@ room.state.players.onAdd(function (player, sessionId) {
 ```
 
 <Callout type="info">
-    See [State Synchronization → Client-side Callbacks](/state/callbacks)
+    See [State Synchronization → Frontend Callbacks](/state/callbacks)
 </Callout>
 
 > [Playground Link](https://playground.babylonjs.com/#JMA5FE#2)

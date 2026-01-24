@@ -161,13 +161,13 @@ room.Send("position", new { x = 1.3, y = -1.4 });
 ```
 
 ### Room State:
-> See how to generate your `RoomState` from [State Handling](https://docs.colyseus.io/state/schema/#client-side-schema-generation)
+> See how to generate your `RoomState` from [State Handling](https://docs.colyseus.io/state/schema/#frontend-schema-generation)
 
 - Each room holds its own state. The mutations of the state are synchronized automatically to all connected clients.
 - In regards to room state synchronization:
   - When the user successfully joins the room, they receive the full state from the server.
   - At every `patchRate`, binary patches of the state are sent to every client (default is 50ms)
-  - `onStateChange` is called on the client-side after every patch received from the server.
+  - `onStateChange` is called on the frontend after every patch received from the server.
   - Each serialization method has its own particular way to handle incoming state patches.
 - `MyRoomState` is the base room state you will want your room state to inherit from.
 - Take a look at our tech demos for implementation examples of synchronizable data in a room&#39;s state such as networked entities, networked users, or room attributes. ([Shooting Gallery Tech Demo](https://docs.colyseus.io/demo/shooting-gallery/))
@@ -209,14 +209,13 @@ callbacks.OnRemove(state => state.players, (key, player) =>
 If you set a breakpoint in your application while the WebSocket connection is open, the connection will be closed automatically after 3 seconds due to inactivity. To prevent the WebSocket connection from dropping, use `pingInterval: 0` during development:
 
 ```ts filename="app.config.ts"
-import config from "@colyseus/tools";
+import { defineServer } from "colyseus";
 import { WebSocketTransport } from "@colyseus/ws-transport";
 
-export default config({
+const server = defineServer({
     // ...
-    initializeTransport: (options) => new WebSocketTransport({
+    transport: new WebSocketTransport({
         pingInterval: 0, // <--- HERE
-        ...options
     }),
     // ...
 });

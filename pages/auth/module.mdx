@@ -15,20 +15,20 @@ The `@colyseus/auth` module is highly configurable and allows you to implement y
 It does not provide a database or email sending capabilities, but it provides a set of callbacks that you can implement to query your database, send emails, and handle OAuth providers.
 
 <Cards>
-    <Cards.Card icon={<DevicesIcon/>} title="Client-side API" href="#client-side-api" arrow />
+    <Cards.Card icon={<DevicesIcon/>} title="Frontend API" href="#frontend-api" arrow />
     <Cards.Card icon={<GearIcon/>} title="Backend API" href="#backend-api" arrow />
 </Cards>
 
 ## Features
 
-- Client-side APIs (via `client.auth`)
+- Frontend APIs (via `client.auth`)
 - Email/Password Authentication
 - Anonymous Authentication
 - Forgot Password + Password Reset
 - OAuth 2.0 providers (_200+ supported providers, including Discord, Google, Twitter, etc._)
 
 <Callout type="info">
-    **Example Project** - The [Webgame Template](https://github.com/colyseus/webgame-template) project contains a complete usage example of `@colyseus/auth` for both server-side and client-side.
+    **Example Project** - The [Webgame Template](https://github.com/colyseus/webgame-template) project contains a complete usage example of `@colyseus/auth` for both backend and frontend.
 </Callout>
 
 ## Installation
@@ -44,10 +44,11 @@ npm install --save @colyseus/auth
 
     ```ts filename="src/app.config.ts"
     import { auth } from "@colyseus/auth";
+    import { defineServer } from "colyseus";
 
-    export default config({
+    const server = defineServer({
     // ...
-        initializeExpress: (app) => {
+        express: (app) => {
             // ...
             app.use(auth.prefix, auth.routes());
             // ...
@@ -147,7 +148,7 @@ auth.oauth.addProvider('discord', {
 
 ---
 
-## Client-side API
+## Frontend API
 
 ### Register With Email and Password
 
@@ -364,7 +365,7 @@ client.auth.getUserData() => Promise<UserData>
     </Tabs.Tab>
 
     <Tabs.Tab>
-    You may customize the `onParseToken` callback to include additional user data for the client-side.
+    You may customize the `onParseToken` callback to include additional user data for the frontend.
 
     ```ts filename="src/config/auth.ts"
     import { auth } from "@colyseus/auth";
@@ -395,7 +396,7 @@ client.auth.onChange(function(authData) {
 
 ### Sign Out
 
-Clear the authentication token from the client-side.
+Clear the authentication token from the frontend.
 
 ```typescript
 client.auth.signOut();
@@ -723,13 +724,13 @@ auth.oauth.onCallback(async (data, provider) => {
 
 You may customize the following settings:
 
-- `auth.settings.onParseToken`: to parse JWT token provided by the client-side
+- `auth.settings.onParseToken`: to parse JWT token provided by the frontend
 - `auth.settings.onGenerateToken`: to generate the auth token
 - `auth.settings.onHashPassword`: to hash the user's password
 
 #### On Parse Token
 
-Use this callback to modify the user's data before sending it to the client-side during the [Get User Data](#get-user-data) call.
+Use this callback to modify the user's data before sending it to the frontend during the [Get User Data](#get-user-data) call.
 
 ```ts filename="Signature"
 auth.settings.onParseToken(data: any) => Promise<any>

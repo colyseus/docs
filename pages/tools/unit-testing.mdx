@@ -12,7 +12,7 @@ The `@colyseus/testing` package provides utility methods for testing your Colyse
 
 ## Recommendations and best practices
 
-- Make assertions on both server-side and client-side structures after simulating an exchange of messages between them.
+- Make assertions on both backend and frontend structures after simulating an exchange of messages between them.
 - Room instances are disposed between tests - make sure each test you declare is creating the room you're going to perform tests and don't re-use room instances between tests.
 - Always declare your test cases with `async`.
 - Before running assertions make sure you [await for the server or client to process pending actions](#waiting-for-asynchronous-actions-to-process)
@@ -35,10 +35,10 @@ The `@colyseus/testing` package provides utility methods for testing your Colyse
       beforeEach(async () => await colyseus.cleanup());
 
       it("connecting into a room", async() => {
-        // `room` is the server-side Room instance reference.
+        // `room` is the backend Room instance reference.
         const room = await colyseus.createRoom("my_room", {});
 
-        // `client1` is the client-side `Room` instance reference (from the JavaScript SDK)
+        // `client1` is the frontend `Room` instance reference (from the JavaScript SDK)
         const client1 = await colyseus.connectTo(room);
 
         // make your assertions
@@ -66,10 +66,10 @@ The `@colyseus/testing` package provides utility methods for testing your Colyse
       beforeEach(async () => await colyseus.cleanup());
 
       it("connecting into a room", async() => {
-        // `room` is the server-side Room instance reference.
+        // `room` is the backend Room instance reference.
         const room = await colyseus.createRoom("my_room", {});
 
-        // `client1` is the client-side `Room` instance reference (from the JavaScript SDK)
+        // `client1` is the frontend `Room` instance reference (from the JavaScript SDK)
         const client1 = await colyseus.connectTo(room);
 
         // make your assertions
@@ -119,7 +119,7 @@ room.waitForNextMessage(delay?: number): Promise<[Client, any]>
 
 **Parameters**
 
-- `delay: number` - additional delay after `onMessage` has been called in the server-side, in milliseconds (optional)
+- `delay: number` - additional delay after `onMessage` has been called in the backend, in milliseconds (optional)
 
 ```ts {11} filename="App.test.ts"
 it("should receive message", async() => {
@@ -179,9 +179,9 @@ it("should assert something after room's simulation tick", async() => {
 });
 ```
 
-## Client-side SDK methods & utilities
+## Frontend SDK methods & utilities
 
-From your test-cases, you may call any of the client-side SDK methods through `colyseus.sdk`
+From your test-cases, you may call any of the frontend SDK methods through `colyseus.sdk`
 
 - [`colyseus.sdk.joinOrCreate()`](/client/#joinorcreate-roomname-string-options-any)
 - [`colyseus.sdk.create()`](/client/#create-roomname-string-options-any)
@@ -217,7 +217,7 @@ it("should do xyz after receiving message 'x'", async () => {
 
 ### Wait for Message Type
 
-Wait for a particular message `type` to arrive in the client-side.
+Wait for a particular message `type` to arrive in the frontend.
 
 ```ts filename="Signature"
 client.waitForMessage(type): Promise<any>

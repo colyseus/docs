@@ -83,19 +83,25 @@ This demo was designed to show how a user could potentially design and implement
 MMORooms are created and disposed of as needed. When a player enters a grid space, we join a room where it's `progress` value is set to the grid values, as seen in `app.config.ts`:
 
 ```javascript
-gameServer.define("lobby_room", MMORoom).filterBy(["progress"]); // Filter room by "progress" (which grid we're wanting to join EX: -1x2)
+const server = defineServer({
+  rooms: {
+    lobby_room: defineRoom(MMORoom).filterBy(["progress"]) // Filter room by "progress" (which grid we're wanting to join EX: -1x2)
+  }
+})
 ```
 
 As players move throughout the world, they join/leave rooms based off of their position in the world grid. A message is sent from the client to the server stating that the player is trying to update their progress, which we then catch in `MMORoom.ts`:
 
 ```javascript
-this.onMessage("transitionArea", (client: Client, transitionData: Vector[]) => {
-    if (transitionData == null || transitionData.length < 2) {
-        logger.error(`*** Grid Change Error! Missing data for grid change! ***`);
-        return;
+messages = {
+    "transitionArea": (client: Client, transitionData: Vector[]) => {
+        if (transitionData == null || transitionData.length < 2) {
+            logger.error(`*** Grid Change Error! Missing data for grid change! ***`);
+            return;
+        }
+        this.onGridUpdate(client, transitionData[0] as  Vector2, transitionData[1] as  Vector3);
     }
-    this.onGridUpdate(client, transitionData[0] as  Vector2, transitionData[1] as  Vector3);
-});
+}
 ```
 
 After determining what the new grid position is, the client is given a new SeatReservation to consume, thus joining the correct ColyseusRoom for their new grid position. A similar flow also occurs when Logging in/Signing up (see <b>Player Persistence</b> section).
@@ -127,7 +133,7 @@ A player's progress is used to filter rooms during the matchmaking process. For 
 ### Interactable Elements
 
 ![Interactables](/examples/cocos/mmo/interactable.png)
-Grid spaces may have `Interactables` scattered around them. These are client-side representations of `InteractableState` schema objects that are placed within the editor when we make a new grid space prefab. When a player performs an interaction with one of these objects, the client will send a `objectInteracted` message to the server. If the server is not yet aware of the Interactable ID that has been provided, it will create a new schema reference which will be added to the room's schema map and makes its way back to the client. The server will then check if the Client meets the requirements to perform an interaction. If successful, all clients will receive an `objectUsed` message broadcast, along with the interactable's ID and the user who interacted with it. On the client's side, the appropriate `NetworkedEntity` and `Interactable` objects will be told to perform together.
+Grid spaces may have `Interactables` scattered around them. These are frontend representations of `InteractableState` schema objects that are placed within the editor when we make a new grid space prefab. When a player performs an interaction with one of these objects, the client will send a `objectInteracted` message to the server. If the server is not yet aware of the Interactable ID that has been provided, it will create a new schema reference which will be added to the room's schema map and makes its way back to the client. The server will then check if the Client meets the requirements to perform an interaction. If successful, all clients will receive an `objectUsed` message broadcast, along with the interactable's ID and the user who interacted with it. On the client's side, the appropriate `NetworkedEntity` and `Interactable` objects will be told to perform together.
 This demo comes with 4 different types of interactables that you can find in the various grid spaces:
 
 -   Button Podium

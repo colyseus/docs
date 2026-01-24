@@ -1,7 +1,7 @@
 ---
 title: "WebTransport"
 ---
-import { Callout, Cards, Tabs } from "nextra/components";
+import { Callout, Cards } from "nextra/components";
 
 ## WebTransport
 
@@ -12,7 +12,7 @@ WebTransport is a new transport protocol that allows for low-latency, bidirectio
 </Callout>
 
 <Callout type="info">
-    The underlying library is [`@fails-components/webtransport`](https://github.com/fails-components/webtransport) - a server-side implementation of HTTP3/WebTransport.
+    The underlying library is [`@fails-components/webtransport`](https://github.com/fails-components/webtransport) - a backend implementation of HTTP3/WebTransport.
 </Callout>
 
 ```sh npm2yarn
@@ -21,52 +21,29 @@ npm install --save @colyseus/h3-transport
 
 **Usage**
 
-<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
-    <Tabs.Tab>
-    ```ts {2,6-11} filename="app.config.ts"
-    import config from "@colyseus/tools";
-    import { H3Transport } from "@colyseus/h3-transport"
+```ts {2,6-8} filename="app.config.ts"
+import { defineServer } from "colyseus";
+import { H3Transport } from "@colyseus/h3-transport"
 
-    export default config({
-      // ...
-      initializeTransport: function(options) {
-        return new H3Transport({
-          // more H3Transport options
-          ...options,
-        });
-      },
+const server = defineServer({
+  // ...
+  transport: new H3Transport({
+    /* H3Transport options */
+  }),
 
-      //
-      // bind express routes
-      //
-      initializeExpress: (app) => {
+  //
+  // bind express routes
+  //
+  express: (app) => {
 
-        app.get("/hello", (req, res) => {
-          res.json({ hello: "world!" });
-        });
-
-      },
-      // ...
-    })
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts {1,3-5} filename="server.ts"
-    import { H3Transport } from "@colyseus/h3-transport"
-
-    const transport = new H3Transport({
-        /* ...options */
-    });
-    const app = transport['expressApp'];
-
-    // register routes
     app.get("/hello", (req, res) => {
       res.json({ hello: "world!" });
     });
-    ```
-    </Tabs.Tab>
-</Tabs>
+
+  },
+  // ...
+});
+```
 
 ### Available options
 

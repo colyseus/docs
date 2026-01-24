@@ -18,8 +18,8 @@ import { LinkIcon } from '@primer/octicons-react'
 
 ## Materials
 
-- [<LinkIcon/> PlayCanvas Project (Client-side)](https://playcanvas.com/project/859259/overview/colyseus-demo)
-- [<LinkIcon/> Colyseus TypeScript Project (Server-side)](https://github.com/colyseus/tutorial-playcanvas-server)
+- [<LinkIcon/> PlayCanvas Project (Frontend)](https://playcanvas.com/project/859259/overview/colyseus-demo)
+- [<LinkIcon/> Colyseus TypeScript Project (Backend)](https://github.com/colyseus/tutorial-playcanvas-server)
 
 ## Before you start
 
@@ -71,7 +71,7 @@ From the Settings panel, expand on **"External Scripts"**, and increase the numb
 In the new **"URL"** field, let's include the Colyseus JavaScript SDK, from a CDN:
 
 ```txt
-https://unpkg.com/colyseus.js@^0.16.0/dist/colyseus.js
+https://unpkg.com/@colyseus/sdk@^0.17.0/dist/colyseus.js
 ```
 
 This is going to make the `Colyseus` [JavaScript SDK](/getting-started/typescript/) available for our PlayCanvas scripts.
@@ -151,7 +151,7 @@ export class MyRoomState extends Schema {
     See [State Synchronization → Schema Definition](/state/schema/).
 </Callout>
 
-Now, still in the server-side, let's modify our `onJoin()` method to create a `Player` instance whenever a new connection is established with the room.
+Now, still in the backend, let's modify our `onJoin()` method to create a `Player` instance whenever a new connection is established with the room.
 
 ```ts filename="MyRoom.ts"
 // ...
@@ -187,7 +187,7 @@ Also, when the client disconnects, let's remove the player from the map of playe
 // ...
 ```
 
-The state mutations we've done in the server-side **can be observed** in the client-side, and that's what we're going to do in the next section.
+The state mutations we've done in the backend **can be observed** in the frontend, and that's what we're going to do in the next section.
 
 ## Setting up the Scene for Synchronization
 
@@ -212,22 +212,22 @@ Make sure to uncheck the `"Enabled"` property. We will not have any Player insta
 
 ## Listening for State Changes
 
-After a connection with the room has been established, the client-side can start listening for state changes, and create a visual representation of the data in the server.
+After a connection with the room has been established, the frontend can start listening for state changes, and create a visual representation of the data in the server.
 
 ### Adding new players
 
 As per [Room State and Schema](#room-state-and-schema) section, whenever the server accepts a new connection - the `onJoin()` method is creating a new Player instance within the state.
 
-We're going to listen to this event on the client-side now:
+We're going to listen to this event on the frontend now:
 
 ```typescript
 //
-// In order to attach callbacks to the state, we need to use the `getStateCallbacks()` method
+// In order to attach callbacks to the state, we need to use the `Callbacks.get()` method
 //
-const $ = Colyseus.getStateCallbacks(this.room);
+const callbacks = Colyseus.Callbacks.get(this.room);
 
 // ...
-$(this.room.state).players.onAdd((player, sessionId) => {
+callbacks.onAdd("players", (player, sessionId) => {
   //
   // A player has joined!
   //
@@ -248,7 +248,7 @@ For the visual representation, we need to clone the "Player" object, and keep a 
 this.playerEntities = {};
 
 // listen for new players
-$(this.room.state).players.onAdd((player, sessionId) => {
+callbacks.onAdd("players", (player, sessionId) => {
   // find the base Player representation (not enabled)
   const playerEntityToClone = this.app.root.findByName("Player");
 
@@ -274,7 +274,7 @@ You can keep a special reference to the current player object by checking the `s
 
 ```typescript
 // ...
-$(this.room.state).players.onAdd((player, sessionId) => {
+callbacks.onAdd("players", (player, sessionId) => {
   // ...
   if (room.sessionId === sessionId) {
     this.currentPlayerEntity = playerEntities[sessionId];
@@ -285,11 +285,11 @@ $(this.room.state).players.onAdd((player, sessionId) => {
 
 ### Removing disconnected players
 
-When a player is removed from the state (upon `onLeave()` in the server-side), we need to remove their visual representation as well.
+When a player is removed from the state (upon `onLeave()` in the backend), we need to remove their visual representation as well.
 
 ```javascript
 // ...
-$(this.room.state).players.onRemove((player, sessionId) => {
+callbacks.onRemove("players", (player, sessionId) => {
   // destroy entity
   this.playerEntities[sessionId].destroy();
 
@@ -346,45 +346,45 @@ Whenever the `"updatePosition"` message is received in the server, we're going t
 
 ```ts filename="MyRoom.ts"
 // ...
-  onCreate(options: any) {
-    this.setState(new MyRoomState());
+  state = new MyRoomState();
 
-    this.onMessage("updatePosition", (client, data) => {
+  messages = {
+    "updatePosition": (client, data) => {
       const player = this.state.players.get(client.sessionId);
       player.x = data.x;
       player.y = data.y;
       player.z = data.z;
-    });
+    }
   }
 // ...
 ```
 
 ### Updating Player's visual representation
 
-Having the mutation on the server, we can detect it on the client-side via `$(player).onChange()`, or `$(player).listen()`.
+Having the mutation on the server, we can detect it on the frontend via `callbacks.onChange()`, or `callbacks.listen()`.
 
-- `$(player).onChange()` is triggered **per schema instance**
-- `$(player).listen(prop)` is triggered **per property** change
+- `callbacks.onChange(instance, ...)` is triggered **per schema instance**
+- `callbacks.listen(instance, prop, ...)` is triggered **per property** change
 
 We are going to use `.onChange()` since we need all the new coordinates at once, no matter if just one has changed individually.
 
 ```typescript
 // ...
-$(this.room.state).players.onAdd((player, sessionId) => {
+callbacks.onAdd("players", (player, sessionId) => {
   // ...
-  $(player).onChange(() => {
+  callbacks.onChange(player, () => {
     this.playerEntities[sessionId].setPosition(player.x, player.y, player.z);
   });
 
   // Alternative, listening to individual properties:
-  // player.listen("x", (newX, prevX) => console.log(newX, prevX));
-  // player.listen("y", (newY, prevY) => console.log(newY, prevY));
-  // player.listen("z", (newZ, prevZ) => console.log(newZ, prevZ));
+  // callbacks.listen(player, "x", (newX, prevX) => console.log(newX, prevX));
+  // callbacks.listen(player, "y", (newY, prevY) => console.log(newY, prevY));
+  // callbacks.listen(player, "z", (newZ, prevZ) => console.log(newZ, prevZ));
 });
 ```
 
 <Callout type="info">
-    See [State Synchronization → Client-side Callbacks](/state/callbacks)
+    See [State Synchronization → Frontend Callbacks](/state/callbacks)
 </Callout>
 
 ---

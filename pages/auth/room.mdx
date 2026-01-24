@@ -9,8 +9,8 @@ import { SignInIcon, ShieldCheckIcon, PackageIcon } from "@primer/octicons-react
 You can authenticate your users using the `onAuth` method in your room. This method is called before `onJoin`, and it is responsible for validating the client's request to join a room.
 
 - If `onAuth()` returns a [truthy](https://developer.mozilla.org/en-US/docs/Glossary/Truthy) value, `onJoin()` is going to be called with the returned value as the third argument.
-- If `onAuth()` returns a [falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy) value, the client is immediatelly rejected, causing the matchmaking function call from the client-side to fail.
-- You may also throw a `ServerError` to expose a custom error to be handled in the client-side.
+- If `onAuth()` returns a [falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy) value, the client is immediatelly rejected, causing the matchmaking function call from the frontend to fail.
+- You may also throw a `ServerError` to expose a custom error to be handled in the frontend.
 
 If left non-implemented, it always returns `true` - allowing any client to connect.
 

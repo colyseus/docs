@@ -1,7 +1,7 @@
 ---
 title: "Development Mode"
 ---
-import { Callout, Tabs } from "nextra/components";
+import { Callout } from "nextra/components";
 
 ### How `devMode` works?
 
@@ -18,7 +18,7 @@ The clients are going to try to reconnect as soon as the server goes down, and k
 ![devMode flow](/server/devmode_flow.png)
 
 <Callout type="info">
-    The client-side code is **not reloaded**, only the connection is re-established
+    The frontend code is **not reloaded**, only the connection is re-established
 </Callout>
 
 ---
@@ -27,37 +27,20 @@ The clients are going to try to reconnect as soon as the server goes down, and k
 
 The `devMode` is disabled by default and it can be enabled via [Server option](/server/#optionsdevmode):
 
-<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
-    <Tabs.Tab>
-    ```ts {5-7} filename="app.config.ts"
-    import config from "@colyseus/tools";
+```ts {5} filename="app.config.ts"
+import { defineServer } from "colyseus";
 
-    export default config({
-        // ...
-        options: {
-            devMode: true
-        },
-        // ...
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts {5} filename="server.ts"
-    import { Server } from "colyseus";
-
-    const gameServer = new Server({
-      // ...
-      devMode: true
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
+const server = defineServer({
+    // ...
+    devMode: true,
+    // ...
+});
+```
 
 <Callout type="warning">
-    **Attention on the client-side**
+    **Attention on the frontend**
 
-    Upon re-establishing a connection on devMode, the `onAdd` schema callback will be triggered again on the client-side.
+    Upon re-establishing a connection on devMode, the `onAdd` schema callback will be triggered again on the frontend.
     Be prepared to ignore additional `onAdd` calls during development.
 </Callout>
 
