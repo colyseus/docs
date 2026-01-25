@@ -539,13 +539,15 @@ await this.setMatchmaking({
 
 ### Set Seat Reservation Time
 
+<Callout type="warning">
+    Deprecated: Use the [`seatReservationTimeout`](#seatreservationtimeout) property instead.
+</Callout>
+
 Set the number of seconds a room can wait for a client to effectively join the room. You should consider how long your [`onAuth()`](#onauth) will have to wait for setting a different seat reservation time. The default value is 15 seconds.
 
 ```ts filename="Signature"
 this.setSeatReservationTime (seconds)
 ```
-
-You may set the `COLYSEUS_SEAT_RESERVATION_TIME` environment variable if you'd like to change the seat reservation time globally.
 
 ---
 
@@ -765,13 +767,10 @@ this.broadcastPatch ()
 If you'd like to have control over when to broadcast patches, you can do this by disabling the default patch interval:
 
 ```ts filename="MyRoom.ts"
+// disable automatic patches
+patchRate = null;
+
 onCreate() {
-    // disable automatic patches
-    this.setPatchRate(null);
-
-    // ensure clock timers are enabled
-    this.setSimulationInterval(() => {/* */});
-
     this.clock.setInterval(() => {
         // only broadcast patches if your custom conditions are met.
         if (yourCondition) {
@@ -873,6 +872,20 @@ class MyRoom extends Room {
     autoDispose = false;
 }
 ```
+
+---
+
+### `seatReservationTimeout`
+
+Set the number of seconds a room can wait for a client to effectively join the room. You should consider how long your [`onAuth()`](#onauth) will have to wait for setting a different seat reservation time. The default value is 15 seconds.
+
+```ts
+class MyRoom extends Room {
+    seatReservationTimeout = 15;
+}
+```
+
+You may set the `COLYSEUS_SEAT_RESERVATION_TIME` environment variable if you'd like to change the seat reservation time globally.
 
 ---
 
