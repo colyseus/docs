@@ -44,34 +44,6 @@ const server = defineServer({
 ```
 </Steps>
 
-### Updating the lobby
-
-If you have updated the `metadata` of your room (via [`.setMetadata()`](/server/room/#set-metadata)), you will need to call `updateLobby()` to trigger an update for the lobby.
-
-```ts filename="MyRoom.ts"
-import { Room, updateLobby } from "colyseus";
-
-class MyRoom extends Room {
-
-  onCreate() {
-
-    //
-    // This is just a demonstration
-    // on how to call `updateLobby` from your Room
-    //
-    this.clock.setTimeout(() => {
-
-      this.setMetadata({
-        gameMode: "deathmatch",
-      }).then(() => updateLobby(this));
-
-    }, 5000);
-
-  }
-
-}
-```
-
 ## Client
 
 The `LobbyRoom` will send messages to the client whenever a room is added, removed or updated.

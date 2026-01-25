@@ -125,6 +125,10 @@ If you only use `Room<State>`, you can remove the generic types, and assign the 
 +    state = new MyState();
 ```
 
+#### LobbyRoom: `updateLobby()` calls are not required anymore
+
+There is no need to manually call `updateLobby()` after `.setMetadata()` anymore. This is done automatically for you.
+
 #### TypeScript: `Client` generic types have changed:
 
 The `Client<UserData, AuthData>` generic types have changed to `Client<{ userData: U, auth: A, messages: M }>`.
