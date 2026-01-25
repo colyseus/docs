@@ -2,9 +2,11 @@ import { Callout, Cards } from "nextra/components";
 
 # HTTP and API Routes
 
-Colyseus uses Express as its HTTP routing library. You can use it to add your custom routes to your server.
+<Callout type="info">
+    Since Colyseus 0.17, we introduced another routing stack (a fork of [better-call](https://github.com/colyseus/better-call)) for client-facing API routes, which enables type inference of HTTP calls to the [Client SDK](/client#http-requests). You can use both Express or our own routing stack as you prefer.
+</Callout>
 
-CORS is enabled by default when using `defineServer()`.
+Colyseus uses Express and a fork of [better-call](https://github.com/colyseus/better-call) as its HTTP routing libraries. You can use it to add your custom routes to your server.
 
 ```ts {15-17} filename="app.config.ts"
 import { defineServer } from "colyseus";
@@ -39,7 +41,7 @@ const server = defineServer({
 
 Here's an example of how to handle JSON POST requests with both backend parsing and frontend usage:
 
-```ts {11-30,33-49} filename="app.config.ts"
+```ts {11-30} filename="app.config.ts"
 import { defineServer } from "colyseus";
 import express from "express";
 
@@ -70,28 +72,45 @@ const server = defineServer({
                 data: { name, email, preferences }
             });
         });
-
-        // Example: Game score submission
-        app.post("/api/game/score", (req, res) => {
-            const { playerId, score, level, timestamp } = req.body;
-
-            if (!playerId || typeof score !== 'number') {
-                return res.status(400).json({
-                    error: "Invalid score data"
-                });
-            }
-
-            // Process score submission
-            console.log("Score submitted:", { playerId, score, level, timestamp });
-
-            res.json({
-                success: true,
-                leaderboardPosition: 1 // Example response
-            });
-        });
     },
     // ...
 });
+```
+
+## CORS (Cross-Origin Resource Sharing)
+
+CORS is enabled by default. 
+
+<Callout type="info">
+    **What is CORS?** - Cross-Origin Resource Sharing (CORS) is an HTTP-header based mechanism that allows a server to indicate any origins (domain, scheme, or port) other than its own from which a browser should permit loading resources. CORS also relies on a mechanism by which browsers make a "preflight" request to the server hosting the cross-origin resource, in order to check that the server will permit the actual request. In that preflight, the browser sends headers that indicate the HTTP method and headers that will be used in the actual request.
+
+    See [MDN documentation on CORS for more information ↗](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
+</Callout>
+
+You may customize the default CORS headers if you need to:
+
+```typescript
+import { matchMaker } from "colyseus";
+
+matchMaker.controller.DEFAULT_CORS_HEADERS = {
+    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+    'Access-Control-Allow-Methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Max-Age': '2592000',
+    // ...
+}
+```
+
+You may also return custom CORS headers based on request headers sent by the client:
+
+```typescript
+import { matchMaker } from "colyseus";
+
+matchMaker.controller.getCorsHeaders = function(requestHeaders) {
+    // check for 'requestHeaders' and return custom key-value headers here.
+    return {};
+}
 ```
 
 ### Frontend usage:
