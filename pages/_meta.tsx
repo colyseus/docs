@@ -1,4 +1,4 @@
-import { HomeIcon, FileCodeIcon, ServerIcon, ThumbsupIcon, DevicesIcon, DatabaseIcon, ToolsIcon, QuestionIcon, VersionsIcon, HeartFillIcon, DownloadIcon, CodeIcon, ZapIcon, BookIcon, SyncIcon, PasskeyFillIcon, RocketIcon, ListOrderedIcon, RepoIcon, TasklistIcon, ListUnorderedIcon, CodeSquareIcon, FlameIcon, LightBulbIcon, CreditCardIcon, RowsIcon, PeopleIcon, StackIcon } from '@primer/octicons-react';
+import { HomeIcon, FileCodeIcon, ServerIcon, ThumbsupIcon, DevicesIcon, DatabaseIcon, ToolsIcon, QuestionIcon, VersionsIcon, HeartFillIcon, DownloadIcon, CodeIcon, ZapIcon, BookIcon, SyncIcon, PasskeyFillIcon, RocketIcon, ListOrderedIcon, RepoIcon, TasklistIcon, ListUnorderedIcon, CodeSquareIcon, FlameIcon, LightBulbIcon, CreditCardIcon, RowsIcon, PeopleIcon, StackIcon, CloudIcon, PackageIcon, DuplicateIcon } from '@primer/octicons-react';
 
 export default {
     '-- Intro': {
@@ -23,17 +23,24 @@ export default {
     "state": { title: <span><SyncIcon/> State Synchronization</span> },
     "matchmaker": { title: <span><StackIcon/> Matchmaker API</span> },
     "auth": { title: <span><PasskeyFillIcon/> Authentication</span> },
-    "tools": { title: <span><ToolsIcon/> Tools</span> },
+
+    '-- Tools': { type: 'separator', title: 'Tools' },
+    "tools": { title: <span><ToolsIcon/> Built-in Tools</span> },
+    "payments": { title: <span><CreditCardIcon/> Payments</span> },
+    "database": { title: <span><DatabaseIcon/> Database</span> },
+    "3rd-party-packages": { title: <span><PackageIcon/> 3rd Party Packages</span> },
+
+    '-- Infrastructure': { type: 'separator', title: 'Infrastructure' },
     "deployment": { title: <span><RocketIcon/> Deployment</span> },
+    "scalability": { title: <span><DuplicateIcon/> Scalability</span> },
+    "cloud": { title: <span><CloudIcon/> Colyseus Cloud</span> },
 
     '-- More': { type: 'separator', title: 'More' },
-    "database": { title: <span><DatabaseIcon/> Database</span> },
-    "payments": { title: <span><CreditCardIcon/> Payments</span> },
     "recipes": { title: <span><LightBulbIcon /> Recipes</span> },
     "examples": { title: <span><RepoIcon /> Example Projects</span> },
 
     '-- Extra': { type: 'separator', title: 'Extra' },
-    "recommendations": { title: <span><ThumbsupIcon/> Recommendations</span> },
+    "best-practices": { title: <span><ThumbsupIcon/> Best Practices</span> },
     "community": { title: <span><HeartFillIcon/> Community</span> },
     "migrating": { title: <span><VersionsIcon/> Migrating Versions</span> }, // "Migrating Versions"
     "faq": {title: <span><QuestionIcon/> FAQ</span>},

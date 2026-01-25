@@ -1,14 +1,19 @@
 ---
-title: "Schema Callbacks"
+title: "State Sync Callbacks"
 ---
 import { Tabs, Callout, Steps } from 'nextra/components'
 import { SDKTabs } from "../../components/SDKTabs"
+import { SyncIcon } from "@primer/octicons-react";
 
-# Frontend Schema Callbacks
+# State Sync Callbacks (Schema Callbacks)
 
 When applying state changes coming from the server, the frontend is going to trigger callbacks on local instances according to the changes being applied.
 
 In order to register callbacks to Schema instances, you must access the instances through a "callbacks handler".
+
+<Callout type="info">
+    Read more about [<SyncIcon /> State Synchronization](/state)
+</Callout>
 
 ## Overview
 
