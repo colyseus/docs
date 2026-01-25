@@ -14,7 +14,7 @@ The `Room` class is the core building block of Colyseus. Each room instance repr
 
 ## Lifecycle Events
 
-The room's lifecycle events are called automatically. [`async`/`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) is supported on every lifecycle event.
+The room's lifecycle events are called automatically. [`async`/`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) is supported in all of them.
 
 <Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
     <Tabs.Tab>
@@ -23,12 +23,12 @@ The room's lifecycle events are called automatically. [`async`/`await`](https://
 
     export class MyRoom extends Room {
         // (optional) Validate client auth token before joining/creating the room
-        async onAuth (client: Client, options: any, context: AuthContext) { }
+        onAuth (client: Client, options: any, context: AuthContext) { }
 
         // When room is initialized
         onCreate (options: any) { }
 
-        // When client successfully join the room
+        // When the client successfully joins the room
         onJoin (client: Client, options: any, auth: any) { }
 
         // When a client leaves the room
@@ -46,12 +46,12 @@ The room's lifecycle events are called automatically. [`async`/`await`](https://
 
     export class MyRoom extends Room {
         // (optional) Validate client auth token before joining/creating the room
-        async onAuth (client, options, context) { }
+        onAuth (client, options, context) { }
 
         // When room is initialized
         onCreate (options) { }
 
-        // When client successfully join the room
+        // When the client successfully joins the room
         onJoin (client, options, auth) { }
 
         // When a client leaves the room
@@ -76,7 +76,7 @@ onCreate (options) {
 }
 ```
 
-The server may overwrite options during [`.define()`](/server/#define-room-type) for authortity over client-provided options:
+The server may overwrite options during [`.define()`](/server/#define-room-type) for authority over client-provided options:
 
 <Tabs items={["Backend", "Frontend"]}>
     <Tabs.Tab>
@@ -187,7 +187,7 @@ Triggered when a client leaves the room.
 
 If the client leaves the room by closing the browser tab, the `onLeave` method is called with `consented` set to `false`. If the client leaves the room by calling [`.leave()`](/client#leave-room), the `onLeave` method is called with `consented` set to `true`.
 
-```ts filename="MyRoom.s"
+```ts filename="MyRoom.ts"
 async onLeave (client, consented) {
     /**
      * This is a good place to remove the client from the state.
@@ -253,7 +253,7 @@ Opt-in to catch unhandled exceptions in your room. This method is called when an
 
 ```ts filename="MyRoom.ts"
 onUncaughtException (err: Error, methodName: string) {
-    console.error("An error ocurred in", methodName, ":", err);
+    console.error("An error occurred in", methodName, ":", err);
     err.cause // original unhandled error
     err.message // original error message
 }
@@ -267,7 +267,7 @@ onUncaughtException (err: Error, methodName: string) {
 
 ### On Before Patch
 
-The `onBeforePatch` lifecycle hook is triggered before state synchronization, at patch rate frequency. (see [setPatchRate()](#set-patch-rate))
+The `onBeforePatch` lifecycle hook is triggered before state synchronization, at patch rate frequency. (see [`patchRate`](#patchrate))
 
 ```ts filename="MyRoom.ts"
 onBeforePatch() {
@@ -1005,7 +1005,7 @@ onJoin(client, options) {
 
 #### Send Message
 
-Send a type of message to the client. Messages are encoded with MsgPack and can hold any JSON-seriazeable data structure.
+Send a type of message to the client. Messages are encoded with MsgPack and can hold any JSON-serializable data structure.
 
 ```ts filename="Signature"
 client.send(type, payload)
@@ -1069,7 +1069,7 @@ client.error(code, payload)
 
 #### Leave Room
 
-Force disconnection of the `client` with the room. You may send a custom `code` when closing the connection, with values betweeen `4000` and `4999` (see [table of WebSocket close codes](#websocket-close-codes-table))
+Force disconnection of the `client` with the room. You may send a custom `code` when closing the connection, with values between `4000` and `4999` (see [table of WebSocket close codes](#websocket-close-codes-table))
 
 ```ts filename="Signature"
 client.leave(code?: number)
@@ -1090,7 +1090,7 @@ client.leave(code?: number)
 | `1003`                | `CLOSE_UNSUPPORTED`    | Yes      | No           | Endpoint received an unsupported frame (e.g. binary-only endpoint received text frame) |
 | `1004`                |                        | Yes      | No           | Reserved |
 | `1005`                | `CLOSED_NO_STATUS`     | Yes      | No           | Expected close status, received none |
-| `1006`                | `CLOSE_ABNORMAL`       | Yes      | No           | No close code frame has been receieved |
+| `1006`                | `CLOSE_ABNORMAL`       | Yes      | No           | No close code frame has been received |
 | `1007`                | *Unsupported payload*  | Yes      | No           | Endpoint received inconsistent message (e.g. malformed UTF-8) |
 | `1008`                | *Policy violation*     | No       | No           | Generic code used for situations other than 1003 and 1009 |
 | `1009`                | `CLOSE_TOO_LARGE`      | No       | No           | Endpoint won't process large frame |
