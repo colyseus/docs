@@ -32,6 +32,7 @@ Initialize the `dispatcher` in your room implementation:
 
     class MyRoom extends Room {
       dispatcher = new Dispatcher(this);
+      state = new YourState();
 
       onJoin(client, options) {
         this.dispatcher.dispatch(new OnJoinCommand(), {
@@ -54,11 +55,8 @@ Initialize the `dispatcher` in your room implementation:
     import { OnJoinCommand } from "./OnJoinCommand";
 
     class MyRoom extends Room {
-
-      onCreate() {
-        this.dispatcher = new Dispatcher(this);
-        this.setState(new YourState());
-      }
+      dispatcher = new Dispatcher(this);
+      state = new YourState();
 
       onJoin(client, options) {
         this.dispatcher.dispatch(new OnJoinCommand(), {

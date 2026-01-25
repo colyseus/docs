@@ -36,11 +36,11 @@ export default {
     "cloud": { title: <span><CloudIcon/> Colyseus Cloud</span> },
 
     '-- More': { type: 'separator', title: 'More' },
+    "best-practices": { title: <span><ThumbsupIcon/> Best Practices</span> },
     "recipes": { title: <span><LightBulbIcon /> Recipes</span> },
     "examples": { title: <span><RepoIcon /> Example Projects</span> },
 
     '-- Extra': { type: 'separator', title: 'Extra' },
-    "best-practices": { title: <span><ThumbsupIcon/> Best Practices</span> },
     "community": { title: <span><HeartFillIcon/> Community</span> },
     "migrating": { title: <span><VersionsIcon/> Migrating Versions</span> }, // "Migrating Versions"
     "faq": {title: <span><QuestionIcon/> FAQ</span>},
