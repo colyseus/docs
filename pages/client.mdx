@@ -598,6 +598,189 @@ client.consumeSeatReservation (reservation)
     **Advanced usage** - See [Match-maker API](/server/matchmaker/#reserveseatforroom-options) to learn how to manually reserve a seat for a client within a room.
 </Callout>
 
+---
+
+#### Get Latency
+
+Create a temporary connection with the server and measure the latency. Returns a promise that resolves to the average latency in milliseconds.
+
+```ts filename="Signature"
+client.getLatency (options?: LatencyOptions): Promise<number>
+```
+
+**Parameters**
+
+- `options.pingCount`: Number of pings to send (default: `1`). Returns the average latency when greater than 1.
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    const latency = await client.getLatency();
+    console.log("Latency:", latency, "ms");
+
+    // With multiple pings for a more accurate average
+    const avgLatency = await client.getLatency({ pingCount: 5 });
+    console.log("Average Latency:", avgLatency, "ms");
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    client.getLatency().then((latency) => {
+      console.log("Latency:", latency, "ms");
+    });
+
+    // With multiple pings for a more accurate average
+    client.getLatency({ pingCount: 5 }).then((avgLatency) => {
+      console.log("Average Latency:", avgLatency, "ms");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    float latency = await client.GetLatency();
+    Debug.Log("Latency: " + latency + " ms");
+
+    // With multiple pings for a more accurate average
+    float avgLatency = await client.GetLatency(new LatencyOptions { PingCount = 5 });
+    Debug.Log("Average Latency: " + avgLatency + " ms");
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    client:get_latency(function(err, latency)
+      print("Latency: " .. latency .. " ms")
+    end)
+
+    -- With multiple pings for a more accurate average
+    client:get_latency({ ping_count = 5 }, function(err, avg_latency)
+      print("Average Latency: " .. avg_latency .. " ms")
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    client.getLatency(function(err, latency) {
+      trace("Latency: " + latency + " ms");
+    });
+
+    // With multiple pings for a more accurate average
+    client.getLatency({ pingCount: 5 }, function(err, avgLatency) {
+      trace("Average Latency: " + avgLatency + " ms");
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+---
+
+#### Select By Latency (Static)
+
+Select the endpoint with the lowest latency from a list of endpoints. This is useful for connecting to the best server when you have multiple server deployments across different regions.
+
+```ts filename="Signature"
+Client.selectByLatency (endpoints: Array<string | EndpointSettings>): Promise<Client>
+```
+
+**Parameters**
+
+- `endpoints`: Array of server endpoints (URLs or endpoint settings objects).
+- `options`: Optional client options to pass to each client instance.
+- `latencyOptions.pingCount`: Number of pings to send per endpoint (default: `1`).
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    import { Client } from "@colyseus/sdk";
+
+    // Select the best server from multiple regions
+    const client = await Client.selectByLatency([
+      "https://us-east.gameserver.com",
+      "https://eu-west.gameserver.com",
+      "https://asia.gameserver.com",
+    ]);
+
+    // Now use the client with the lowest latency
+    const room = await client.joinOrCreate("game");
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    import Colyseus from "@colyseus/sdk";
+
+    // Select the best server from multiple regions
+    Colyseus.Client.selectByLatency([
+      "https://us-east.gameserver.com",
+      "https://eu-west.gameserver.com",
+      "https://asia.gameserver.com",
+    ]).then((client) => {
+      // Now use the client with the lowest latency
+      return client.joinOrCreate("game");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    using Colyseus;
+
+    // Select the best server from multiple regions
+    ColyseusClient client = await ColyseusClient.SelectByLatency(new string[] {
+      "https://us-east.gameserver.com",
+      "https://eu-west.gameserver.com",
+      "https://asia.gameserver.com"
+    });
+
+    // Now use the client with the lowest latency
+    Room<YourStateClass> room = await client.JoinOrCreate<YourStateClass>("game");
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    local ColyseusClient = require("colyseus.client")
+
+    -- Select the best server from multiple regions
+    ColyseusClient.select_by_latency({
+      "https://us-east.gameserver.com",
+      "https://eu-west.gameserver.com",
+      "https://asia.gameserver.com"
+    }, function(err, client)
+      -- Now use the client with the lowest latency
+      client:join_or_create("game", {}, function(err, room)
+        print("joined successfully")
+      end)
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    import io.colyseus.Client;
+
+    // Select the best server from multiple regions
+    Client.selectByLatency([
+      "https://us-east.gameserver.com",
+      "https://eu-west.gameserver.com",
+      "https://asia.gameserver.com"
+    ], function(err, client) {
+      // Now use the client with the lowest latency
+      client.joinOrCreate("game", [], YourStateClass, function(err, room) {
+        trace("joined successfully");
+      });
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    The method logs the latency for each endpoint to the console for debugging purposes. If all endpoints fail to respond, an error is thrown.
+</Callout>
+
 ## Room
 
 ### Properties
@@ -818,6 +1001,62 @@ room.leave (consented: boolean)
 
 <Callout type="info">
     Use [Room API → onLeave](/server/room/#on-message) to handle the disconnection from the backend.
+</Callout>
+
+---
+
+#### Ping
+
+Measure the round-trip time (RTT) latency between the client and the server in milliseconds. The callback is invoked with the latency value once the server responds.
+
+```ts filename="Signature"
+room.ping (callback: (ms: number) => void)
+```
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.ping((latency) => {
+      console.log("Latency:", latency, "ms");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    room.ping((latency) => {
+      console.log("Latency:", latency, "ms");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    room.Ping((latency) => {
+      Debug.Log("Latency: " + latency + " ms");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    room:ping(function(latency)
+      print("Latency: " .. latency .. " ms")
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    room.ping(function(latency) {
+      trace("Latency: " + latency + " ms");
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    If the connection is not open, calling `ping()` has no effect.
 </Callout>
 
 ---

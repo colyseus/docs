@@ -876,6 +876,18 @@ class MyRoom extends Room {
 
 ---
 
+### `maxMessagesPerSecond`
+
+Maximum number of messages a client can send to the server per second. If a client sends more messages than this limit, it will be disconnected. Default is `60`.
+
+```ts 
+class MyRoom extends Room {
+    maxMessagesPerSecond = 60;
+}
+```
+
+---
+
 ### `seatReservationTimeout`
 
 Set the number of seconds a room can wait for a client to effectively join the room. You should consider how long your [`onAuth()`](#onauth) will have to wait for setting a different seat reservation time. The default value is 15 seconds.
