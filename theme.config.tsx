@@ -27,7 +27,7 @@ const config: DocsThemeConfig = {
         key: "new-version",
         content: (
             <>
-                <strong>Version 0.17 is rolling out!</strong> 🎉 - Only the TypeScript SDK is supported at this time. Other SDKs will be updated soon. 
+                <strong>Version 0.17 is rolling out!</strong> 🎉 - Only the TypeScript SDK is supported at this time. Other SDKs will be updated soon.
             </>
         )
     },

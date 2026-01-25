@@ -3,10 +3,151 @@ import { Callout, Cards } from "nextra/components";
 # HTTP and API Routes
 
 <Callout type="info">
-    Since Colyseus 0.17, we introduced another routing stack (a fork of [better-call](https://github.com/colyseus/better-call)) for client-facing API routes, which enables type inference of HTTP calls to the [Client SDK](/client#http-requests). You can use both Express or our own routing stack as you prefer.
+    Since Colyseus 0.17, we introduced another routing stack (a fork of [better-call](https://github.com/colyseus/better-call)) for client-facing API routes, which enables type inference of HTTP calls to the [Client SDK](/client#http-requests), and visual integration with the [Playground](/tools/playground). You can use both Express or our own routing stack as you prefer.
 </Callout>
 
 Colyseus uses Express and a fork of [better-call](https://github.com/colyseus/better-call) as its HTTP routing libraries. You can use it to add your custom routes to your server.
+
+## API Routes
+
+The built-in router is recommended for new API routes. It supports full type safety both in your backend and your frontend.
+
+```ts
+import { defineServer, createEndpoint, createRouter } from "colyseus";
+import { z } from "zod";
+
+const listThings = createEndpoint("/things", { method: "GET" }, /* ... */);
+const getThing = createEndpoint("/things/:id", { method: "GET" }, /* ... */);
+const createThing = createEndpoint("/things", { method: "POST" }, /* ... */);
+const updateThing = createEndpoint("/things/:id", { method: "PUT" }, /* ... */);
+const deleteThing = createEndpoint("/things/:id", { method: "DELETE" }, /* ... */);
+
+const server = defineServer({
+  routes: createRouter({
+    listThings,
+    getThing,
+    createThing,
+    updateThing,
+    patchThing,
+    deleteThing,
+  })
+})
+```
+
+### `createEndpoint` options
+
+`createEndpoint(path, options, handler)` accepts the following options. These are the same options supported by the underlying router used in Colyseus.
+
+- `method`: HTTP method string or an array of methods (e.g. `"GET"` or `["GET", "POST"]`). When invoking the endpoint directly as a function, the `method` argument is optional and defaults to the first method in the array.
+- `body`: Standard schema for validating the request body (e.g. Zod). Invalid bodies result in a 400 response when mounted to the router.
+- `query`: Standard schema for validating the request query string. Invalid queries result in a 400 response when mounted to the router.
+- `use`: Array of middlewares created with `createMiddleware`. Returned middleware context is merged into `ctx.context`.
+- `requireHeaders`: When `true`, requires `headers` to be provided when calling the endpoint as a function. (No effect for HTTP requests.)
+- `requireRequest`: When `true`, requires a `request` object when calling the endpoint as a function. (No effect for HTTP requests.)
+- `metadata`: Extra endpoint metadata.
+    - `scope`: Controls visibility for RPC/HTTP routing.
+        - `"rpc"` (default): routed and available to the RPC client.
+        - `"server"`: routed and callable directly, but not exposed to the RPC client.
+        - `"http"`: routed only (not callable directly or via RPC).
+    - `allowedMediaTypes`: Restricts accepted request `Content-Type` values for this endpoint (overrides router defaults).
+
+### Handler context (`ctx`)
+
+The handler signature is `async (ctx) => response`. The context includes request data and helper methods.
+
+**Properties**
+
+- `ctx.request`: The raw `Request` object (when running via HTTP).
+- `ctx.headers`: `Headers` instance for the incoming request.
+- `ctx.body`: Parsed request body (based on `Content-Type`).
+- `ctx.query`: Parsed and validated query string (when `query` schema is provided).
+- `ctx.params`: Route parameters and wildcards (e.g. `:id`, `**:name`).
+- `ctx.method`: HTTP method (useful for multi-method endpoints).
+- `ctx.context`: Merged middleware context returned by `createMiddleware`.
+
+**Methods**
+
+- `ctx.setStatus(status)`: Override the default success status code.
+- `ctx.error(codeOrStatus, data?, headers?)`: Throw an API error with a named code or numeric status. You can include custom response headers.
+- `ctx.redirect(url)`: Throw a redirect response.
+- `ctx.json(data)`: Return a JSON response payload.
+- `ctx.setHeader(name, value)`: Set a response header.
+- `ctx.setCookie(name, value, options?)`: Set a response cookie.
+- `ctx.getCookie(name)`: Read a request cookie.
+- `ctx.setSignedCookie(name, value, options?)`: Set a signed cookie.
+- `ctx.getSignedCookie(name)`: Read a signed cookie.
+
+### Examples
+
+**1) Body/query validation, params, and multi-method routing**
+
+```ts
+import { createEndpoint } from "colyseus";
+import { z } from "zod";
+
+export const itemEndpoint = createEndpoint("/item/:id", {
+    method: ["GET", "POST"],
+    query: z.object({ include: z.string().optional() }),
+    body: z.object({ name: z.string() }).optional(),
+}, async (ctx) => {
+    if (ctx.method === "POST") {
+        ctx.setStatus(201);
+        return { id: ctx.params.id, name: ctx.body?.name };
+    }
+
+    return {
+        id: ctx.params.id,
+        include: ctx.query.include,
+    };
+});
+```
+
+**2) Middleware context, headers, cookies, and custom errors**
+
+```ts
+import { createEndpoint, createMiddleware } from "colyseus";
+
+const auth = createMiddleware(async (ctx) => {
+    const token = ctx.headers.get("authorization");
+    if (!token) throw ctx.error("UNAUTHORIZED", { message: "Missing token" });
+    return { userId: "user-123" };
+});
+
+export const secureEndpoint = createEndpoint("/secure", {
+    method: "GET",
+    use: [auth],
+}, async (ctx) => {
+    ctx.setHeader("X-User", ctx.context.userId);
+    ctx.setCookie("session", "abc", { httpOnly: true });
+    return { ok: true, userId: ctx.context.userId };
+});
+```
+
+**3) Media types, request/headers requirements, and response helpers**
+
+```ts
+import { createEndpoint } from "colyseus";
+import { z } from "zod";
+
+export const upload = createEndpoint("/upload", {
+    method: "POST",
+    body: z.object({ id: z.string() }).optional(),
+    requireHeaders: true,
+    requireRequest: true,
+    metadata: {
+        allowedMediaTypes: ["multipart/form-data", "application/octet-stream"],
+    },
+}, async (ctx) => {
+    // ctx.request and ctx.headers are guaranteed here
+    if (!ctx.body) throw ctx.error(400, { message: "Missing body" });
+    return ctx.json({ ok: true });
+});
+```
+
+
+## Express
+
+Express is recommended if you rely on existing software built on top of Express.
 
 ```ts {15-17} filename="app.config.ts"
 import { defineServer } from "colyseus";
@@ -37,7 +178,7 @@ const server = defineServer({
 </Callout>
 
 
-## Parsing JSON bodies
+### Parsing JSON bodies
 
 Here's an example of how to handle JSON POST requests with both backend parsing and frontend usage:
 
@@ -113,7 +254,7 @@ matchMaker.controller.getCorsHeaders = function(requestHeaders) {
 }
 ```
 
-### Frontend usage:
+## Frontend usage
 
 Use the `client.http.*` methods to perform HTTP requests to your server.
 
