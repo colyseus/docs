@@ -1,0 +1,180 @@
+---
+title: "Queue Room"
+---
+import { Callout, Steps, Tabs } from "nextra/components";
+
+# Queue Room
+
+The built-in `QueueRoom` provides a matchmaking queue that groups players over time and spawns a match room when a group is ready.
+
+**Features:**
+- Rank-based grouping with customizable compatibility (`compare`).
+- Team-aware grouping (`maxTeamSize`, `teamId`).
+- Timeout-based priority escalation (`maxWaitingCyclesForPriority`).
+- Optional incomplete matches for bots (`allowIncompleteGroups`).
+- Custom room creation hook (`onGroupReady`).
+
+<Callout type="info">
+		The source-code for `QueueRoom` is available [here](https://github.com/colyseus/colyseus/blob/master/packages/core/src/rooms/QueueRoom.ts). You can extend it or override `compare`/`onGroupReady` for custom matchmaking.
+</Callout>
+
+## Server
+
+<Steps>
+### Expose the queue room
+
+```ts {5-10} filename="server.ts"
+import { defineServer, defineRoom, QueueRoom } from "colyseus";
+
+const server = defineServer({
+	rooms: {
+		queue: defineRoom(QueueRoom, {
+			matchRoomName: "battle",
+			maxPlayers: 4,
+			maxWaitingCycles: 15,
+			maxWaitingCyclesForPriority: 10,
+		}),
+	}
+});
+```
+
+### Expose your match room
+
+```ts {7} filename="server.ts"
+import { defineServer, defineRoom, Room } from "colyseus";
+
+class BattleRoom extends Room {}
+
+const server = defineServer({
+	rooms: {
+		battle: defineRoom(BattleRoom),
+		queue: defineRoom(QueueRoom, { matchRoomName: "battle" })
+	}
+});
+```
+</Steps>
+
+## Options
+
+`QueueRoom` receives the following options on `defineRoom(QueueRoom, options)`:
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `matchRoomName` | `string` | **required** | Name of the room to create when a group is ready. |
+| `maxPlayers` | `number` | `4` | Number of players per match group. |
+| `maxWaitingCycles` | `number` | `15` | Cycles after which a group can be marked ready if `allowIncompleteGroups` is true. |
+| `maxWaitingCyclesForPriority` | `number` | `10` | Cycles after which a client becomes high-priority and can bypass `compare`. |
+| `maxTeamSize` | `number` | — | Enables team-based grouping and limits team size per match. |
+| `allowIncompleteGroups` | `boolean` | `false` | Allows groups to start before reaching `maxPlayers` (expect bots). |
+| `compare` | `(client, group) => boolean` | built-in | Compatibility check for assigning a client to a group. |
+| `onGroupReady` | `(group) => Promise<IRoomCache>` | built-in | Custom hook to create/choose the room to join. |
+
+## Client
+
+### Joining the queue
+
+```ts filename="client.ts"
+import { Client } from "@colyseus/sdk";
+
+const client = new Client("http://localhost:2567");
+
+const queue = await client.joinOrCreate("queue", {
+	rank: 1200,
+	teamId: "party-42",
+	mode: "ranked",
+});
+```
+
+### Queue updates
+
+The server periodically notifies clients with the number of players currently in their group.
+
+```ts filename="client.ts"
+queue.onMessage("clients", (count) => {
+	console.log("Players in your group:", count);
+});
+```
+
+### Receiving a seat reservation
+
+When a group is ready, the queue sends a seat reservation for the target match room:
+
+```ts filename="client.ts"
+queue.onMessage("seat", async (reservation) => {
+	// Optionally confirm the reservation to the queue
+	queue.send("confirm");
+
+	// Join the match room with the reservation
+	const match = await client.consumeSeatReservation(reservation);
+	console.log("Joined match", match.roomId);
+});
+```
+
+## Matching behavior
+
+### Rank-based grouping
+
+By default, clients are grouped by rank and split into multiple groups if the rank difference becomes too high. You can customize this logic with `compare`:
+
+```ts filename="server.ts"
+import { defineRoom, QueueRoom } from "colyseus";
+
+defineRoom(QueueRoom, {
+	matchRoomName: "battle",
+	compare: (client, group) => {
+		const diff = Math.abs(client.rank - group.averageRank);
+		return diff <= 50; // strict rank matching
+	}
+});
+```
+
+### Team-based grouping
+
+Provide `maxTeamSize` and pass `teamId` from the client to enforce team cohesion:
+
+```ts filename="server.ts"
+defineRoom(QueueRoom, {
+	matchRoomName: "battle",
+	maxPlayers: 6,
+	maxTeamSize: 3,
+});
+```
+
+```ts filename="client.ts"
+await client.joinOrCreate("queue", {
+	rank: 980,
+	teamId: "party-7",
+});
+```
+
+### Incomplete groups and bots
+
+If you want matches to start even when groups are not full, enable `allowIncompleteGroups`. Your match room should fill the remaining slots with bots.
+
+```ts filename="server.ts"
+defineRoom(QueueRoom, {
+	matchRoomName: "battle",
+	maxPlayers: 4,
+	allowIncompleteGroups: true,
+	maxWaitingCycles: 8,
+});
+```
+
+## Custom room creation
+
+Use `onGroupReady` to decide how and where a match room is created:
+
+```ts filename="server.ts"
+import { defineRoom, QueueRoom, matchMaker } from "colyseus";
+
+defineRoom(QueueRoom, {
+	matchRoomName: "battle",
+	onGroupReady: async function (group) {
+		// Create a new room with match options
+		return await matchMaker.createRoom("battle", {
+			averageRank: group.averageRank,
+			players: group.clients.length,
+		});
+	}
+});
+```

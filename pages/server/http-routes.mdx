@@ -105,7 +105,7 @@ Use the `client.http.*` methods to perform HTTP requests to your server.
 ```ts {8-10,23-25} filename="client.ts"
 import { Client } from "@colyseus/sdk";
 
-const client = new Client("ws://localhost:2567");
+const client = new Client("http://localhost:2567");
 
 // Update user profile
 async function updateProfile(name: string, email: string, preferences: any) {

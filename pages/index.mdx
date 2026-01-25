@@ -94,6 +94,12 @@ export class MyRoom extends Room {
     maxClients = 4;
     state = new MyState();
 
+    messages = {
+        doSomething: (client, payload) => {
+            // handle client's "doSomething" message
+        }
+    }
+
     // Called when the room is created
     onCreate(options) { }
 
@@ -150,6 +156,9 @@ async function connect() {
     callbacks.onRemove("players", (player, sessionId) => {
         console.log('Player left:', player);
     });
+
+    // Send messages to the server
+    room.send("doSomething", {/* ... */});
 
     return room;
 }

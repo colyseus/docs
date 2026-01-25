@@ -1,8 +1,10 @@
-import { Callout } from 'nextra/components'
+import { Callout, Tabs } from 'nextra/components'
 
 # Match-maker API
 
-The methods described below are provided by the `matchMaker` singleton, which can be imported from the `"colyseus"` package:
+The Match-maker API gives you server-side control over room management and player matchmaking in Colyseus.
+
+You can programmatically create rooms, join players to existing rooms, query and search for available rooms, reserve seats for players, monitor statistics like connected users (CCU) and room counts across processes, and even call methods on rooms running in different processes—all programmatically from your server code rather than relying solely on client requests.
 
 ``` typescript
 import { matchMaker } from "colyseus";

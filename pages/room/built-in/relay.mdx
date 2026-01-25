@@ -5,15 +5,18 @@ import { Callout, Cards, Tabs } from "nextra/components";
 
 # Relay Room
 
-The built-in `RelayRoom` is useful for simple use cases, where you don't need to hold any state in the backend other than the clients connected to it.
+The built-in `RelayRoom` provides a lightweight relay for simple multiplayer use cases where you only need to track connected clients.
 
-By simply relaying messages (forwarding them from a client to everyone else) - the backend is not able to validate any of them - the frontend is the one who will be doing the validations.
+**Features:**
+- Broadcasts client messages to everyone else.
+- Minimal backend state (no authoritative validation).
+- Ideal for quick prototypes or frontend-driven validation.
 
 <Callout type="info">
-    The [source-code of the `RelayRoom`](https://github.com/colyseus/colyseus/blob/master/packages/core/src/rooms/RelayRoom.ts) is very simple. The general recommendation is to implement your own version of it with backend validations when you see fit.
+  The source-code for `RelayRoom` is available [here](https://github.com/colyseus/colyseus/blob/master/packages/core/src/rooms/RelayRoom.ts). Consider implementing your own version with backend validations when needed.
 </Callout>
 
-## Backend
+## Server
 
 ```ts filename="server.ts"
 import { defineServer, defineRoom, RelayRoom } from "colyseus";
@@ -31,7 +34,7 @@ const server = defineServer({
 })
 ```
 
-## Frontend
+## Client
 
 See how to register callbacks for players joining, leaving, sending and receiving messages from the relayed room.
 
@@ -40,7 +43,7 @@ See how to register callbacks for players joining, leaving, sending and receivin
 ```ts filename="client.ts"
 import { Client } from "@colyseus/sdk";
 
-const client = new Client("ws://localhost:2567");
+const client = new Client("http://localhost:2567");
 
 //
 // Join the relayed room.

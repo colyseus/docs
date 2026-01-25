@@ -22,7 +22,7 @@ npm install --save-dev @colyseus/loadtest
 The `colyseus-loadtest` command requires a few arguments to work:
 
 - `script`: The custom script the tool is going to use
-- `--endpoint`: Your server endpoint (by default uses `ws://localhost:2567`)
+- `--endpoint`: Your server endpoint (by default uses `http://localhost:2567`)
 - `--room`: Name of the room you'd like to connect to
 - `--numClients`: Number of clients you'd like to connect into the room.
 
@@ -107,5 +107,5 @@ This is an example scripting file. Based on the room lifecycle events for each c
 ### Connecting 50 clients into a `"battle"` room
 
 ```sh filename="Terminal"
-npx tsx loadtest/example.ts --room battle --numClients 50 --endpoint ws://localhost:2567
+npx tsx loadtest/example.ts --room battle --numClients 50 --endpoint http://localhost:2567
 ```

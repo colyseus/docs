@@ -1,5 +1,5 @@
 ---
-title: "Frontend Callbacks"
+title: "Schema Callbacks"
 ---
 import { Tabs, Callout, Steps } from 'nextra/components'
 import { SDKTabs } from "../../components/SDKTabs"
@@ -21,7 +21,7 @@ In order to register callbacks to Schema instances, you must access the instance
         import { Client, Callbacks } from "@colyseus/sdk";
 
         // initialize SDK
-        const client = new Client("ws://localhost:2567");
+        const client = new Client("http://localhost:2567");
 
         // join room
         const room = await client.joinOrCreate("my_room");
@@ -36,7 +36,7 @@ In order to register callbacks to Schema instances, you must access the instance
         using Colyseus;
 
         // initialize SDK
-        var client = new Client("ws://localhost:2567");
+        var client = new Client("http://localhost:2567");
 
         // join room
         var room = await client.JoinOrCreate<MyRoomState>("my_room");
@@ -51,7 +51,7 @@ In order to register callbacks to Schema instances, you must access the instance
         local ColyseusSDK = require("colyseus.sdk")
 
         -- initialize SDK
-        local client = ColyseusSDK.Client("ws://localhost:2567")
+        local client = ColyseusSDK.Client("http://localhost:2567")
 
         -- join room
         client:join_or_create("my_room", function(room)
@@ -68,7 +68,7 @@ In order to register callbacks to Schema instances, you must access the instance
         import io.colyseus.serializer.schema.Callbacks;
 
         // initialize SDK
-        var client = new Colyseus.Client("ws://localhost:2567");
+        var client = new Colyseus.Client("http://localhost:2567");
 
         // join room
         client.joinOrCreate("my_room", [], MyRoomState, function(err, room) {

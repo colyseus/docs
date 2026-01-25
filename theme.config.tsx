@@ -23,6 +23,15 @@ const config: DocsThemeConfig = {
         toggleButton: true
     },
 
+    banner: {
+        key: "new-version",
+        content: (
+            <>
+                Version 0.17 is rolling out! Only the TypeScript SDK is supported at this time. Other SDKs will follow soon. 
+            </>
+        )
+    },
+
     // banner: {
     //     key: "merch",
     //     content: (

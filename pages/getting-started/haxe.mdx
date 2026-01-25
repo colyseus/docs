@@ -24,13 +24,13 @@ haxelib install colyseus
 import io.colyseus.Client;
 import io.colyseus.Room;
 
-var client = new Client('ws://localhost:2567');
+var client = new Client('http://localhost:2567');
 ```
 
 ### Joining to a room:
 
 <Callout type="info">
-    See how to generate your `RoomState` from [State Synchronization → Frontend Callbacks](/state/callbacks#frontend-schema-generation)
+    See how to generate your `RoomState` from [State Synchronization → Schema Callbacks](/state/callbacks#frontend-schema-generation)
 </Callout>
 
 ```haxe filename="main.hx"

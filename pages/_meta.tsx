@@ -12,6 +12,7 @@ export default {
         // }
     },
 
+    // "concepts": { title: <span><BookIcon/> Core Concepts</span> },
     "getting-started": { title: <span><ZapIcon/> Getting Started</span> }, // "Getting Started"
     "tutorial": { title: <span><FileCodeIcon/> Tutorials</span>},
 
@@ -20,6 +21,7 @@ export default {
     "server": { title: <span><ServerIcon/> Server</span> },
     "room": { title: <span><PeopleIcon/> Rooms</span> },
     "state": { title: <span><SyncIcon/> State Synchronization</span> },
+    "matchmaker": { title: <span><StackIcon/> Matchmaker API</span> },
     "auth": { title: <span><PasskeyFillIcon/> Authentication</span> },
     "tools": { title: <span><ToolsIcon/> Tools</span> },
     "deployment": { title: <span><RocketIcon/> Deployment</span> },

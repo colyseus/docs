@@ -5,15 +5,34 @@ import { Callout } from 'nextra/components'
 
 # Frequently Asked Questions
 
-### How many CCU a Colyseus server can handle?
+## Performance & Scaling
 
-The maximum number of concurrent users (CCU) a Colyseus server can handle will vary accourding to how CPU-intensive your game loop is, and how much traffic your server is sending back to the clients.
+### How many CCU can a Colyseus server handle?
+
+The maximum number of concurrent users (CCU) a Colyseus server can handle will vary according to how CPU-intensive your game loop is, and how much traffic your server is sending back to the clients.
 
 The default "file descriptor limit" (amount of open connections you can have) of Linux servers is around 1024 - this value can be increased at your own risk. So, you can safely assume the cheapest cloud server is capable of holding 1024 concurrent connections. There are reports of people managing to have up to [600k open WebSocket connections](https://blog.jayway.com/2015/04/13/600k-concurrent-websocket-connections-on-aws-using-node-js/), even though they're idle connections, without transferring data - it proves you can potentially handle more than 1024 concurrent connections by fine tuning the server specs and configuration.
 
+### How can I improve performance?
+
+- **Reduce state size**: Only include data that needs to be synchronized. Use messages for transient data.
+- **Optimize patch rate**: The default `patchRate` is 50ms. Increase it if your game doesn't need frequent updates.
+- **Use State View**: Limit what each client sees using [State View](/state/view) to reduce bandwidth per client.
+- **Profile your room code**: Avoid heavy computations in `onMessage` handlers. Offload intensive work to workers.
+
+### Does Colyseus help me with client-prediction?
+
+Colyseus does not provide any client-prediction solution out of the box. Games such as [wilds.io](http://wilds.io/) and [mazmorra.io](https://mazmorra.io/) do not use any form of client-prediction. [`lerp`](http://gamestd.io/mathf/globals.html#lerp)ing user coordinates usually gives reasonable results.
+
+See our [Phaser tutorial on client-predicted input](/tutorial/phaser/client-predicted-input) for a practical implementation.
+
+---
+
+## Connection Issues
+
 ### I'm getting `"Error: seat reservation expired"`, what does it mean?
 
-This error originally means that the client was not able to effectively connect with the server's room in time.
+This error means that the client was not able to effectively connect with the server's room in time.
 
 **This error may appear in a few scenarios:**
 
@@ -24,28 +43,69 @@ This error originally means that the client was not able to effectively connect 
   matter, but major and minor matters.
 - When using multiple Node.js processes, your [scalability configuration](/deployment/scalability) may not be correct. Make sure to follow scalability instructions.
 
+### How do I handle reconnection?
+
+When a client disconnects (e.g., network issues), you can allow them to reconnect to the same room:
+
+1. Store the `room.reconnectionToken` on the client after joining
+2. Use `client.reconnect(reconnectionToken)` to rejoin
+3. On the server, set `allowReconnection` in `onLeave`:
+
+```ts
+async onLeave(client, consented) {
+    if (!consented) {
+        // Allow reconnection for 30 seconds
+        await this.allowReconnection(client, 30);
+    }
+}
+```
+
+### Why does my WebSocket connection close immediately?
+
+Common causes:
+- **CORS issues**: Make sure your server allows connections from your client's origin
+- **Wrong URL**: Verify the URL is correct (http:// for local, https:// for production)
+- **Firewall/proxy**: Some networks block WebSocket connections
+
+---
+
+## State Synchronization
+
 ### Why is my room state not synchronizing with the client?
 
-If you are using TypeScript to target ES2022/ESNext, you need to provide `"useDefineForClassFields": false` on your tsconfig to make sure `@type()` decorators are defining property accessors property.
+If you are using TypeScript to target ES2022/ESNext, you need to provide `"useDefineForClassFields": false` on your tsconfig to make sure `@type()` decorators are defining property accessors properly.
 
 ```json filename="tsconfig.json"
+{
     "compilerOptions": {
         "useDefineForClassFields": false,
-        // ...
+        "experimentalDecorators": true
     }
+}
 ```
 
 <Callout type="info">
     See [colyseus/colyseus#510](https://github.com/colyseus/colyseus/issues/510) for more details.
 </Callout>
 
-### How can I sync data of the `state` only to a specific client?
+### How can I sync data only to a specific client?
 
 Support for per-client state visibility was introduced in version `0.16`. You can use the `StateView` class to control which parts of the state are visible to each client. See [State View](/state/view) for more details.
 
-### Does Colyseus help me with client-prediction?
+### When should I use state vs messages?
 
-Colyseus does not provide any client-prediction solution out of the box. Games such as [wilds.io](http://wilds.io/) and [mazmorra.io](https://mazmorra.io/) do not use any form of client-prediction. [`lerp`](http://gamestd.io/mathf/globals.html#lerp)ing user coordinates usually gives reasonable results.
+| Use **State** when... | Use **Messages** when... |
+|-----------------------|--------------------------|
+| Data needs to persist | Event is one-time |
+| All/new clients need the value | Only current clients care |
+| Data changes frequently | Triggering an action/effect |
+| Example: positions, scores | Example: chat, effects |
+
+See [State vs Messages](/concepts#state-vs-messages) for a detailed guide.
+
+---
+
+## TypeScript Errors
 
 ### I'm getting this error: `Class constructor Room cannot be invoked without 'new'"`, what should I do?
 
@@ -54,10 +114,83 @@ Make sure you have `es2015` or higher in your `tsconfig.json`:
 ```json filename="tsconfig.json"
 {
     "compilerOptions": {
-        // ...
-        "target": "es2015",
-        // ...
-    },
-    // ...
+        "target": "es2015"
+    }
 }
 ```
+
+### TypeScript decorators aren't working
+
+Ensure these settings in your `tsconfig.json`:
+
+```json filename="tsconfig.json"
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "useDefineForClassFields": false
+    }
+}
+```
+
+---
+
+## Unity SDK
+
+### Unity WebSocket connection drops during debugging
+
+If you set a breakpoint in your application while the WebSocket connection is open, the connection will be closed automatically after 3 seconds due to inactivity. To prevent this, use `pingInterval: 0` during development:
+
+```ts filename="app.config.ts"
+import { defineServer } from "colyseus";
+import { WebSocketTransport } from "@colyseus/ws-transport";
+
+const server = defineServer({
+    transport: new WebSocketTransport({
+        pingInterval: 0, // Disable for debugging
+    }),
+});
+```
+
+<Callout type="warning">
+Remember to set `pingInterval` back to a positive value (default: 3000) in production.
+</Callout>
+
+### How do I test multiple Unity clients locally?
+
+Starting with Unity 6000.1.0b1, use [Multiplayer Play Mode](https://docs-multiplayer.unity3d.com/mppm/current/about/). For older versions, use [ParrelSync](https://github.com/VeriorPies/ParrelSync).
+
+---
+
+## Rooms & Architecture
+
+### When should I create separate room types?
+
+Create separate room types when:
+- Different game modes have different logic (e.g., `BattleRoom`, `LobbyRoom`)
+- Different state structures are needed
+- Different max players or configurations
+
+Reuse room types when:
+- The same game can have multiple instances (most common case)
+- Only configuration differs (pass options on join)
+
+### Can rooms communicate with each other?
+
+Yes, using [Presence](/server/presence). Rooms can publish/subscribe to channels to coordinate across instances:
+
+```ts
+// In Room A
+this.presence.publish("game-events", { type: "tournament-start" });
+
+// In Room B
+this.presence.subscribe("game-events", (message) => {
+    console.log("Received:", message);
+});
+```
+
+### How do I persist room data?
+
+Rooms are ephemeral by default. To persist data:
+- Use a database (Postgres, MongoDB, Redis) to save game state
+- Load state in `onCreate()`, save in `onDispose()`
+- See [Database](/database) for integration guides

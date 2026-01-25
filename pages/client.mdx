@@ -1,15 +1,11 @@
 import { Callout, Cards, Tabs } from "nextra/components";
 import { ZapIcon, SyncIcon } from "@primer/octicons-react";
 
-TODO:
-- [ ] Connection state recovery after a disconnect (1001, 1005, 1006)
-- [ ] Move frontend schema callbacks to this page
-
-# Frontend SDK
+# Client SDK
 
 <Cards>
     <Cards.Card icon={<ZapIcon/>} title="Getting Started" href="/getting-started" />
-    <Cards.Card icon={<SyncIcon />} title="Frontend Callbacks" href="/state/callbacks" />
+    <Cards.Card icon={<SyncIcon />} title="Schema Callbacks" href="/state/callbacks" />
 </Cards>
 
 ## Overview
@@ -32,7 +28,7 @@ The `Client` instance is the entrypoint to connect to the server. It is used to 
     import { Client } from "@colyseus/sdk";
     // ...
 
-    let client = new Client("ws://localhost:2567");
+    let client = new Client("http://localhost:2567");
     ```
     </Tabs.Tab>
 
@@ -41,7 +37,7 @@ The `Client` instance is the entrypoint to connect to the server. It is used to 
     import Colyseus from "@colyseus/sdk";
     // ...
 
-    let client = new Colyseus.Client("ws://localhost:2567");
+    let client = new Colyseus.Client("http://localhost:2567");
     ```
     </Tabs.Tab>
 
@@ -50,7 +46,7 @@ The `Client` instance is the entrypoint to connect to the server. It is used to 
     using Colyseus;
     // ...
 
-    ColyseusClient client = new ColyseusClient("ws://localhost:2567");
+    ColyseusClient client = new ColyseusClient("http://localhost:2567");
     ```
     </Tabs.Tab>
 
@@ -59,7 +55,7 @@ The `Client` instance is the entrypoint to connect to the server. It is used to 
     local ColyseusClient = require("colyseus.client")
     -- ...
 
-    local client = ColyseusClient.new("ws://localhost:2567");
+    local client = ColyseusClient.new("http://localhost:2567");
     ```
     </Tabs.Tab>
 
@@ -68,7 +64,7 @@ The `Client` instance is the entrypoint to connect to the server. It is used to 
     import io.colyseus.Client;
     // ...
 
-    var client = new Client("ws://localhost:2567");
+    var client = new Client("http://localhost:2567");
     ```
     </Tabs.Tab>
 
@@ -610,7 +606,7 @@ client.consumeSeatReservation (reservation)
 
 The current room's state. This variable is always synched with the latest `state` from the server. To listen for updates on the whole state, see [`onStateChange`](#on-state-change) event.
 
-For fine-grained control over state updates, see [State Synchronization → Frontend Callbacks](/state/callbacks).
+For fine-grained control over state updates, see [State Synchronization → Schema Callbacks](/state/callbacks).
 
 ---
 
@@ -981,7 +977,7 @@ This event is triggered whenever the server's state is synchronized with the cli
 For fine-grained control over state updates, you should use the [schema callbacks](/state/callbacks).
 
 <Callout type="info">
-    Check out the [State Synchronization » Frontend Callbacks](/state/callbacks) section for more details.
+    Check out the [State Synchronization » Schema Callbacks](/state/callbacks) section for more details.
 </Callout>
 
 <Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
@@ -1223,3 +1219,12 @@ Perform a PUT request to the server.
     ```
     </Tabs.Tab>
 </Tabs>
+
+---
+
+## Next Steps
+
+- [State Callbacks](/state/callbacks) - Listen for state changes on the client
+- [Room API](/room) - Server-side room implementation
+- [Authentication](/auth) - Secure your room connections
+- [Tutorials](/tutorial) - Step-by-step game implementations

@@ -1,13 +1,20 @@
-import { Callout, Tabs } from 'nextra/components'
-import { SyncIcon } from '@primer/octicons-react'
+import { Callout, Tabs, Cards } from 'nextra/components'
+import { SyncIcon, BookIcon } from '@primer/octicons-react'
 
 # Rooms
 
-The `Room` class is meant to implement a game session, and/or serve as the communication channel between a group of clients.
+The `Room` class is the core building block of Colyseus. Each room instance represents an isolated game session where clients can interact through shared state and messages.
 
-- Rooms are created **on demand** during matchmaking by default
-- Room classes must be exposed using [`.define()`](/server/#define-room-type)
+## Why Rooms?
 
+- **Isolation** - Players in Room A don't see or interact with players in Room B
+- **Encapsulation** - Each room contains its own state, logic, and connected clients
+- **Scalability** - Rooms are created on demand and _(optionally)_ disposed when empty
+- **Flexibility** - One room class can spawn many instances (e.g., multiple matches of the same game type)
+
+## Lifecycle Events
+
+The room's lifecycle events are called automatically. [`async`/`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) is supported on every lifecycle event.
 
 <Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
     <Tabs.Tab>
@@ -56,12 +63,6 @@ The `Room` class is meant to implement a game session, and/or serve as the commu
     ```
     </Tabs.Tab>
 </Tabs>
-
-
-## Lifecycle Events
-
-- The room lifecycle events are called automatically.
-- Optional [`async`/`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) is supported on every lifecycle event.
 
 ### On Create
 
@@ -285,7 +286,7 @@ An optional hook to cache external data when [`devMode`](devmode) is enabled.
 (See [restoring data outside the room's state](/server/devmode#restoring-data-outside-the-rooms-state))
 
 ```ts filename="MyRoom.ts"
-export class MyRoom extends Room<MyRoomState> {
+export class MyRoom extends Room {
   // ...
 
   onCacheRoom() {
@@ -301,7 +302,7 @@ export class MyRoom extends Room<MyRoomState> {
 An optional hook to reprocess/restore data which was returned and stored from the previous hook [`onCacheRoom`](/server/room/#on-cache-room-devmode) when [Development Mode](devmode) is enabled.
 
 ```ts filename="MyRoom.ts"
-export class MyRoom extends Room<MyRoomState> {
+export class MyRoom extends Room {
   // ...
 
   onRestoreRoom(cachedData: any): void {
@@ -471,6 +472,10 @@ update (deltaTime) {
 
 ### Set Patch Rate
 
+<Callout type="warning">
+    Deprecated: Use the [`patchRate`](#patchrate) property instead.
+</Callout>
+
 Set frequency the patched state should be sent to all clients. Default is `50ms` (20fps)
 
 ```ts filename="Signature"
@@ -502,6 +507,32 @@ this.setMetadata (metadata)
 onCreate(options) {
     this.setMetadata({ friendlyFire: options.friendlyFire });
 }
+```
+
+---
+
+### Set Matchmaking
+
+<Callout type="info">New in 0.17</Callout>
+
+Update multiple matchmaking/listing properties at once with a single persist operation. This is the recommended way to update room listing properties.
+
+**Parameters**
+
+- `updates`: object containing the properties to update
+        - `metadata` (optional): room metadata (merged with existing metadata)
+        - `private` (optional): whether the room should be private
+        - `locked` (optional): whether the room should be locked
+        - `maxClients` (optional): maximum number of clients allowed
+
+```ts filename="MyRoom.ts"
+// Update multiple properties at once
+await this.setMatchmaking({
+    metadata: { difficulty: "hard", rating: 1500 },
+    private: true,
+    locked: true,
+    maxClients: 10
+});
 ```
 
 ---
@@ -821,13 +852,27 @@ disconnects from it.
 
 ### `patchRate`
 
-Frequency to send the room state to connected clients, in milliseconds. Default is `50`ms (20fps)
+Frequency to send the room state to connected clients, in milliseconds. Default is `50`ms (20fps).
+
+```ts 
+class MyRoom extends Room {
+    patchRate = 50;
+}
+```
 
 ---
 
 ### `autoDispose`
 
 Automatically dispose the room when last client disconnects. Default is `true`
+
+You may disable this, and let the room stay in memory forever by 
+
+```ts 
+class MyRoom extends Room {
+    autoDispose = false;
+}
+```
 
 ---
 
@@ -1059,3 +1104,12 @@ client.leave(code?: number)
 | `2000` - `2999`         |                        | Yes      | Yes          | Reserved for use by WebSocket extensions |
 | `3000` - `3999`         |                        | No       | Yes          | 	Available for use by libraries and frameworks. May not be used by applications. Available for registration at the IANA via first-come, first-serve. |
 | `4000` - `4999`         |                        | No       | Yes          | **Available for applications** |
+
+---
+
+## Next Steps
+
+- [State Synchronization](/state) - Learn how to define and synchronize room state
+- [Server Configuration](/server) - Configure your Colyseus server
+- [Timing Events](/room/timing-events) - Schedule delayed and recurring events
+- [Built-in Rooms](/room/built-in) - Explore Lobby and Relay rooms

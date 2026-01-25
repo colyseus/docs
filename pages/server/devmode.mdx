@@ -59,7 +59,7 @@ const server = defineServer({
 The `onCacheRoom` will be executed before the room is cached and disposed.
 
 ```ts filename="MyRoom.ts"
-export class MyRoom extends Room<MyRoomState> {
+export class MyRoom extends Room {
   // ...
 
   onCacheRoom() {
@@ -79,7 +79,7 @@ The argument provided for the `onRestoreRoom` is the data previously returned by
 No clients are connected yet at this point.
 
 ```ts filename="MyRoom.ts"
-export class MyRoom extends Room<MyRoomState> {
+export class MyRoom extends Room {
   // ...
 
   onRestoreRoom(cachedData: any): void {

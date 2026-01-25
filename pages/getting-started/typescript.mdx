@@ -2,6 +2,7 @@
 title: TypeScript
 ---
 import _js_ts_header from "./_js_ts_header.mdx"
+import { Callout, Tabs } from 'nextra/components'
 import Image from 'next/image'
 import { typescript } from "../../components/icons/platforms"
 
@@ -11,41 +12,117 @@ import { typescript } from "../../components/icons/platforms"
 
 ---
 
-### Adding the TypeScript SDK to your project
-
-This is the preffered method if you're using a build tool (`vite`, `webpack`, `rollup`, or similar)
+## Installation
 
 ```sh npm2yarn
-npm install --save colyseus.js
+npm install --save @colyseus/sdk
 ```
 
-### Room's `.state` type safety and auto-completion
+The SDK includes TypeScript definitions, so you get full type support out of the box.
 
-The TypeScript SDK provides type safety and auto-completion for your state structures. There are two ways to enable this feature:
-
-#### 1. **Recommended:** import only the type directly from the server code:
-
-You may use `import type` to import only the type of the state from your server code.
-
-```ts {2,6-10}
-import { Client } from "@colyseus/sdk";
-import type { MyState } from "../server/path/MyState";
-
-const client = new Client("http://localhost:2567");
-
-client.joinOrCreate<MyState>(...)
-client.create<MyState>(...)
-client.join<MyState>(...)
-client.joinById<MyState>(...)
-client.reconnect<MyState>(...)
-```
-
-#### 2. Providing the concrete class reference:
-
-In some cases, you may want to import the concrete implementation, to be able to re-use methods implemented in the server in the client.
+## Initializing the SDK
 
 ```ts
-import { MyState } from "../server/path/MyState"
+import { Client } from "@colyseus/sdk";
 
-client.joinOrCreate("my_room", {}, MyState);
+const client = new Client("http://localhost:2567");
 ```
+
+### Full Type Safety: Room State and Messages
+
+It is recommended to provide the `typeof server` type as a generic to the client. This will allow the client to infer both the state type, and the message types for the room.
+
+```ts
+import { Client } from "@colyseus/sdk";
+import type { server } from "../../server/src/app.config.ts";
+
+const client = new Client<typeof server>("http://localhost:2567");
+```
+
+<Callout type="info">
+`import type` only imports type information at compile time—no server code is included in your client bundle.
+</Callout>
+
+#### Providing Room State Types
+
+There are two ways to get type safety for your room's state:
+
+##### Option 1: Importing the Room **State** Type Only
+
+Use `import type` to import the state type and pass it as a generic to `joinOrCreate<T>()`. This gives you **type inference** for `room.state` and state callbacks.
+
+This way, you don't get type inference for the message name or the payload type.
+
+```ts {2,5}
+import { Client } from "@colyseus/sdk";
+import type { MyState } from "../server/rooms/schema/MyState";
+
+const client = new Client("http://localhost:2567");
+const room = await client.joinOrCreate<MyState>("my_room");
+
+room.state.players  // ✓ Auto-complete works
+room.state.invalid  // ✗ Compile error
+
+room.onMessage("...", (client, payload) => {}); // ?? Missing type here!
+```
+
+##### Option 2: Importing the **Room** Type Only
+
+Use `import type` and pass the type as a generic to `joinOrCreate<T>()`. This gives you **type inference** for `room.state` and state callbacks.
+
+```ts {2,5}
+import { Client } from "@colyseus/sdk";
+import type { MyRoom } from "../server/rooms/MyRoom";
+
+const client = new Client("http://localhost:2567");
+const room = await client.joinOrCreate<MyRoom>("my_room");
+
+room.state.players  // ✓ Auto-complete works
+room.state.invalid  // ✗ Compile error
+
+room.onMessage("...", () => {}); // ✓ Type-safe
+```
+
+---
+
+### Sharing Schema Classes with the Client
+
+If you import the actual schema class (not just its type) and pass it as the **third argument** to `joinOrCreate()`, you get two benefits:
+
+1. **Custom methods available** — Any custom methods you've defined on your schema classes become accessible on the client.
+2. **Reduced bandwidth** — The server skips sending the state structure definition when the client joins, since the client already knows the schema shape.
+
+```ts {2,5}
+import { Client } from "@colyseus/sdk";
+import { MyState } from "../server/rooms/MyState";
+
+const client = new Client("http://localhost:2567");
+const room = await client.joinOrCreate("my_room", {}, MyState);
+
+room.state.players  // ✓ Auto-complete works
+room.state.players.get("abc")?.customMethod()  // ✓ Custom methods available
+```
+
+
+## Troubleshooting: `tsconfig.json` Configuration
+
+If you're using ES2022 or ESNext and experiencing issues with state synchronization, ensure your `tsconfig.json` includes:
+
+```json filename="tsconfig.json"
+{
+    "compilerOptions": {
+        "useDefineForClassFields": false,
+        "experimentalDecorators": true,
+        "strict": true
+    }
+}
+```
+
+This is required for the `@type()` decorators to work correctly in Schema classes.
+
+## Next Steps
+
+- [Client SDK API Reference](/client) - Full API documentation for all methods, events, and room operations
+- [State Synchronization](/state) - Understanding Schema definitions
+- [State Callbacks](/state/callbacks) - Listen for state changes
+- [Phaser Tutorial](/tutorial/phaser) - Complete game example

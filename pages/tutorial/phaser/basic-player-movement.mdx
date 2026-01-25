@@ -56,7 +56,7 @@ If successful, the output should look like this in your command-line:
 ```txt
 ✅ development.env loaded.
 ✅ Express initialized
-⚔️ Listening on ws://localhost:2567
+⚔️ Listening on http://localhost:2567
 ```
 
 ## Creating the Client
@@ -201,7 +201,7 @@ import { Client, Room } from "@colyseus/sdk";
 export class GameScene extends Phaser.Scene {
     // (...)
 
-    client = new Client("ws://localhost:2567");
+    client = new Client("http://localhost:2567");
     room: Room;
 
     async create() {
@@ -221,7 +221,7 @@ export class GameScene extends Phaser.Scene {
 ```
 
 <Callout type="info">
-    Note that we're using the local `ws://localhost:2567` endpoint here. You need to [deploy your server](/deployment) to the public internet in order to play with others online. You can also use [Glitch](https://glitch.com/edit/#!/colyseus-phaser-tutorial) to host your server publicly.
+    Note that we're using the local `http://localhost:2567` endpoint here. You need to [deploy your server](/deployment) to the public internet in order to play with others online. You can also use [Glitch](https://glitch.com/edit/#!/colyseus-phaser-tutorial) to host your server publicly.
 </Callout>
 
 When you refresh your browser now, your client is going to establish a connection with the server, and the server is going to create the room `my_room` on demand for you.
@@ -515,7 +515,7 @@ callbacks.onAdd("players", (player, sessionId) => {
 ```
 
 <Callout type="info">
-    See [State Synchronization → Frontend Callbacks](/state/callbacks)
+    See [State Synchronization → Schema Callbacks](/state/callbacks)
 </Callout>
 
 ## Extra: Monitoring Rooms and Connections

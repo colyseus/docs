@@ -232,7 +232,7 @@ In the next sections, we will cover each step in detail.
             //
             // Open the Pay Station UI in an iframe
             //
-            const client = new Client("ws://localhost:2567");
+            const client = new Client("http://localhost:2567");
             const isSandbox = true; // Set to false in production
 
             // Get the token from the backend. This will trigger the /xsolla/token backend route
@@ -267,7 +267,7 @@ In the next sections, we will cover each step in detail.
             // (...) With the Xsolla widget script included, you can now open the Pay Station UI
             //
 
-            const client = new Client("ws://localhost:2567");
+            const client = new Client("http://localhost:2567");
             const isSandbox = true; // Set to false in production
 
             // Get the token from the backend. This will trigger the /xsolla/token backend route
@@ -288,7 +288,7 @@ In the next sections, we will cover each step in detail.
             //
             // Open the Pay Station UI in a new window
             //
-            const client = new Client("ws://localhost:2567");
+            const client = new Client("http://localhost:2567");
             const isSandbox = true; // Set to false in production
 
             // Get the token from the backend. This will trigger the /xsolla/token backend route

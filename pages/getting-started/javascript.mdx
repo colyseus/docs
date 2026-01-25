@@ -2,6 +2,7 @@
 title: JavaScript
 ---
 import _js_ts_header from "./_js_ts_header.mdx"
+import { Callout, Tabs } from 'nextra/components'
 import { javascript } from "../../components/icons/platforms"
 
 # JavaScript SDK
@@ -10,22 +11,81 @@ import { javascript } from "../../components/icons/platforms"
 
 ---
 
-### Adding the JavaScript SDK to your project
+## Installation
 
-This is the preffered method if you're using a build tool (`vite`, `webpack`, `rollup`, or similar)
+<Tabs items={['Package Manager', 'CDN', 'Download']}>
+<Tabs.Tab>
+If you're using a build tool (`vite`, `webpack`, `rollup`, or similar):
 
 ```sh npm2yarn
-npm install --save colyseus.js
+npm install --save @colyseus/sdk
 ```
+</Tabs.Tab>
 
-If you're not using a build tool, it is recommended to download the release binaries from [GitHub Releases](https://github.com/colyseus/colyseus.js/releases)
+<Tabs.Tab>
+Include directly from unpkg. Replace `@x.x.x` with a version compatible with your server:
+
+```html
+<script src="https://unpkg.com/@colyseus/sdk@^0.16.0/dist/colyseus.js"></script>
+```
+</Tabs.Tab>
+
+<Tabs.Tab>
+Download the release binaries from [GitHub Releases](https://github.com/colyseus/@colyseus/sdk/releases) and include them in your project:
 
 ```html
 <script src="colyseus.js"></script>
 ```
+</Tabs.Tab>
+</Tabs>
 
-Alternatively, you may include the distribution file directly by using unpkg. Make sure to replace the `@x.x.x` portion of it with a version compatible with your server.
+## Initializing the SDK
 
-```html
-<script src="https://unpkg.com/colyseus.js@^0.16.0/dist/colyseus.js"></script>
+Create a `Client` instance pointing to your Colyseus server:
+
+```js
+import { Client } from "@colyseus/sdk";
+
+const client = new Client("http://localhost:2567");
 ```
+
+<Callout type="info">
+Use `https://` for secure connections in production.
+</Callout>
+
+## Quick Example
+
+Here's a minimal example to get you started:
+
+```js
+import Colyseus from "@colyseus/sdk";
+
+const client = new Colyseus.Client("http://localhost:2567");
+
+async function main() {
+    const room = await client.joinOrCreate("game_room");
+
+    console.log("Joined!", room.sessionId);
+
+    // Send a message to the server
+    room.send("move", { direction: "up" });
+
+    // Listen for messages from the server
+    room.onMessage("notification", (data) => {
+        console.log("Server says:", data);
+    });
+
+    // Handle disconnection
+    room.onLeave((code) => {
+        console.log("Disconnected:", code);
+    });
+}
+
+main();
+```
+
+## Next Steps
+
+- [Client SDK API Reference](/client) - Full API documentation for all methods, events, and room operations
+- [State Callbacks](/state/callbacks) - Listen for state changes
+- [Phaser Tutorial](/tutorial/phaser) - Complete game example
