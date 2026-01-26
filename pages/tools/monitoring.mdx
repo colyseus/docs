@@ -27,14 +27,18 @@ npm install --save @colyseus/monitor
 
 Include it in your project:
 
-```ts {1,5} filename="app.config.ts"
+```ts {2,8} filename="app.config.ts"
+import { defineServer } from "colyseus";
 import { monitor } from "@colyseus/monitor";
-// ...
+
+const server = defineServer({
+    // ...
     express: (app) => {
         // bind it as an express middleware
         app.use("/monitor", monitor());
     }
-// ...
+    // ...
+});
 ```
 
 Access it in the browser via [http://localhost:2567/monitor](http://localhost:2567/monitor).

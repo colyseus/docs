@@ -35,7 +35,7 @@ const server = defineServer({
 
 When _realtime listing_ is enabled, the `LobbyRoom` is notified automatically during `onCreate()`, `onJoin()`, `onLeave()` and `onDispose()`.
 
-```ts {4} filename="server.ts"
+```ts {3} filename="server.ts"
 const server = defineServer({
   rooms: {
     my_room: defineRoom(MyRoom).enableRealtimeListing()

@@ -97,7 +97,7 @@ Create a new file called `main.ts` in the `src` directory
 import { defineServer } from "colyseus"
 const port = parseInt(process.env.PORT, 10) || 3000
 
-const server = defineServer({})
+const server = defineServer({/* ... */})
 server.listen(port)
 console.log(`[GameServer] Listening on Port: ${port}`)
 ```

@@ -26,16 +26,18 @@ npm install --save @colyseus/playground
 
 Then, import and bind it to your express app instance:
 
-```ts {7} filename="app.config.ts"
-// import the route
+```ts {2,8} filename="app.config.ts"
+import { defineServer } from "colyseus";
 import { playground } from "@colyseus/playground";
 
-// ...
+const server = defineServer({
+    // ...
     express: (app) => {
         // bind it as an express middleware
         app.use("/playground", playground());
     }
-// ...
+    // ...
+});
 ```
 
 ## Contribute

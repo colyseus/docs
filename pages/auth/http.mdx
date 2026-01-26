@@ -38,15 +38,19 @@ If you are using the `@colyseus/auth` module, you can use the `auth.middleware()
 <Tabs items={["Using @colyseus/auth", "Custom authentication"]}>
     <Tabs.Tab>
     ```ts filename="src/app.config.ts"
+    import { defineServer } from "colyseus";
     import { auth } from "@colyseus/auth";
-    // ...
+    
+    const server = defineServer({
+        // ...
         express: (app) => {
             app.use("/profile", auth.middleware(), (req, res) => {
                 console.log("authenticated user:", req.auth);
                 res.json(req.auth);
             });
         }
-    // ...
+        // ...
+    });
     ```
     </Tabs.Tab>
 
