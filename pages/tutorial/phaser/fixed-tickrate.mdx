@@ -15,7 +15,7 @@ This guide will show you how you can build a multiplayer experience with Colyseu
 - Learn why determinism is important
 - **Enqueue** incoming player inputs on the server
 - **Dequeue** player inputs at every tick on the server
-- Use fixed tick-rate on both the server and the client-side
+- Use fixed tick-rate on both the server and the frontend
 
 ### Materials
 
@@ -35,7 +35,7 @@ In order to avoid differences between the server and client simulations, both th
 
 The server and client must process the input and apply the same update loop logic at a fixed tick rate.
 
-## Enqueue/dequeue player input on the server-side
+## Enqueue/dequeue player input on the backend
 
 ### Enqueue player input
 
@@ -54,18 +54,20 @@ Now, when receiving the player input messages, instead of processing them immedi
 
 ```ts filename="MyRoom.ts"
 // (...)
-this.onMessage(0, (client, payload) => {
-    // handle player input
-    const player = this.state.players.get(client.sessionId);
+messages = {
+    0: (client, payload) => {
+        // handle player input
+        const player = this.state.players.get(client.sessionId);
 
-    // enqueue input to user input buffer.
-    player.inputQueue.push(payload);
-});
+        // enqueue input to user input buffer.
+        player.inputQueue.push(payload);
+    }
+}
 ```
 
 ### Process/dequeue player input at every tick
 
-We need to have an update loop in the server-side with the same implementation we do for the client-side.
+We need to have an update loop in the backend with the same implementation we do for the frontend.
 
 For this, we use `this.setSimulationInterval()` to register the update loop:
 
@@ -116,7 +118,7 @@ We can manually force more ticks during a single render frame to make sure the s
 
 ### Fixed tick-rate on Phaser
 
-We are going to copy the entire `update()` implementation we have on the client-side, and move it to a `fixedTick()` method.
+We are going to copy the entire `update()` implementation we have on the frontend, and move it to a `fixedTick()` method.
 
 ```typescript
 // (...)
@@ -154,7 +156,7 @@ update(time: number, delta: number): void {
 
 ### Fixed tick-rate on Colyseus
 
-Let's do the same for the server-side now:
+Let's do the same for the backend now:
 
 ```ts filename="MyRoom.ts"
 // (...)
@@ -172,4 +174,4 @@ onCreate() {
 // (...)
 ```
 
-For consistency, we have also renamed the server-side `update()` method to `fixedUpdate()`.
+For consistency, we have also renamed the backend `update()` method to `fixedUpdate()`.

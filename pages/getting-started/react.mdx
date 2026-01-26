@@ -19,7 +19,7 @@ The simplest way to use Colyseus in React is by using the `useEffect` hook to jo
 
 ```typescript filename="RoomComponent.tsx"
 import { useEffect } from "react";
-import { Client, Room } from "colyseus.js";
+import { Client, Room } from "@colyseus/sdk";
 
 const client = new Client("http://localhost:2567");
 
@@ -63,7 +63,7 @@ Alternatively, you can use a React Context Provider to manage the connection and
 
 ```typescript filename="RoomContext.tsx"
 import React, { createContext, useContext } from 'react';
-import { Room } from 'colyseus.js';
+import { Room } from '@colyseus/sdk';
 import type { MyRoomState } from "../../backend/src/rooms/MyRoomState";
 
 interface RoomContextType {
@@ -145,7 +145,7 @@ You can customize it to meet your specific authentication needs.
 
 ```typescript filename="AuthContext.tsx"
 import { createContext, useContext, useState, useEffect } from 'react';
-import { Client } from "colyseus.js";
+import { Client } from "@colyseus/sdk";
 
 interface AuthContextType {
   user: any;

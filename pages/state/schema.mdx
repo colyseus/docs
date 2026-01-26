@@ -37,9 +37,9 @@ import { HashIcon } from '@primer/octicons-react'
         </Callout>
 
         ```js filename="MyState.js"
-        const schema = require('@colyseus/schema');
+        import { schema } from "@colyseus/schema";
 
-        const MyState = schema.schema({
+        const MyState = schema({
             currentTurn: "string"
         });
         ```
@@ -47,16 +47,15 @@ import { HashIcon } from '@primer/octicons-react'
 
     <Tabs.Tab>
         <Callout type="error">
-            The `defineTypes()` method will be removed in future versions of Colyseus. It is recommended to use the `schema.schema()` method instead.
+            The `defineTypes()` method will be removed in future versions of Colyseus. It is recommended to use the `schema()` method instead.
         </Callout>
 
         ```js filename="MyState.js"
-        const schema = require('@colyseus/schema');
-        const Schema = schema.Schema;
+        import { Schema, defineTypes } from "@colyseus/schema";
 
         class MyState extends Schema {
         }
-        schema.defineTypes(MyState, {
+        defineTypes(MyState, {
             currentTurn: "string"
         });
         ```
@@ -70,7 +69,7 @@ import { HashIcon } from '@primer/octicons-react'
 import { Room } from "colyseus";
 import { MyState } from "./MyState";
 
-export class MyRoom extends Room<MyState> {
+export class MyRoom extends Room {
     state = new MyState()
 }
 ```
@@ -156,15 +155,15 @@ A `Schema` type can define properties as primitives, other `Schema` types, or co
     <Tabs.Tab>
 
     ```js filename="MyState.js"
-    const schema = require('@colyseus/schema');
+    import { schema } from "@colyseus/schema";
 
-    const World = schema.schema({
+    const World = schema({
       width: "number",
       height: "number",
       items: "number"
     });
 
-    const MyState = schema.schema({
+    const MyState = schema({
       world: World
     });
     ```
@@ -198,9 +197,9 @@ You can't mix types inside `ArraySchema`.
             <Tabs.Tab>
 
             ```js filename="MyState.js"
-            const schema = require('@colyseus/schema');
+            import { schema } from "@colyseus/schema";
 
-            const MyState = schema.schema({
+            const MyState = schema({
                 animals: [ "string" ]
             });
             ```
@@ -229,14 +228,14 @@ You can't mix types inside `ArraySchema`.
             <Tabs.Tab>
 
             ```js filename="MyState.js"
-            const schema = require('@colyseus/schema');
+            import { schema } from "@colyseus/schema";
 
-            const Block = schema.schema({
+            const Block = schema({
                 x: "number",
                 y: "number"
             });
 
-            const MyState = schema.schema({
+            const MyState = schema({
                 blocks: [ Block ]
             });
             ```
@@ -406,7 +405,7 @@ Iterates over each element of the array.
 
 #### `array.clear()`
 
-Empties the array. The client-side will trigger the `onRemove` callback for each element.
+Empties the array. The frontend will trigger the `onRemove` callback for each element.
 
 ---
 
@@ -441,14 +440,14 @@ Maps are recommended to track your game entities by id, such as players, enemies
     <Tabs.Tab>
 
     ```js filename="MyState.js"
-    const schema = require('@colyseus/schema');
+    import { schema } from "@colyseus/schema";
 
-    const Player = schema.schema({
+    const Player = schema({
         x: "number",
         y: "number"
     });
 
-    const MyState = schema.schema({
+    const MyState = schema({
         players: { map: Player, default: new Map() }
     });
     ```
@@ -558,7 +557,7 @@ Iterates over each key/value pair of the map, in insertion order.
 
 #### `map.clear()`
 
-Empties the Map. (Client-side will trigger `onRemove` for each element.)
+Empties the Map. (Frontend will trigger `onRemove` for each element.)
 
 ---
 
@@ -592,13 +591,13 @@ The usage of `SetSchema` is very similar to [`CollectionSchema`], the biggest di
     <Tabs.Tab>
 
     ```js filename="MyState.js"
-    const schema = require('@colyseus/schema');
+    import { schema } from "@colyseus/schema";
 
-    const Effect = schema.schema({
+    const Effect = schema({
         radius: "number"
     });
 
-    const Player = schema.schema({
+    const Player = schema({
         effects: { set: Effect }
     });
     ```
@@ -667,7 +666,7 @@ console.log(set.size);
 
 #### `set.clear()`
 
-Empties the Set. (Client-side will trigger `onRemove` for each element.)
+Empties the Set. (Frontend will trigger `onRemove` for each element.)
 
 ---
 
@@ -699,13 +698,13 @@ The `CollectionSchema` works similarly as the `ArraySchema`, with the caveat tha
     <Tabs.Tab>
 
     ```js filename="MyState.js"
-    const schema = require('@colyseus/schema');
+    import { schema } from "@colyseus/schema";
 
-    const Item = schema.schema({
+    const Item = schema({
         damage: "number"
     });
 
-    const Player = schema.schema({
+    const Player = schema({
         items: { collection: Item }
     });
     ```
@@ -798,7 +797,7 @@ collection.forEach((value, at) => {
 
 #### `collection.clear()`
 
-Empties the Collection. (Client-side will trigger `onRemove` for each element.)
+Empties the Collection. (Frontend will trigger `onRemove` for each element.)
 
 ---
 
@@ -828,7 +827,7 @@ Backwards/fowards compatibility is possible by declaring new fields at the end o
         // Flag field as deprecated.
         @deprecated() @type("string") myField: string;
 
-        // To allow your server to play nicely with multiple client-side versions.
+        // To allow your server to play nicely with multiple frontend versions.
         @type("string") newField: string;
     }
     ```
@@ -854,7 +853,7 @@ Backwards/fowards compatibility is possible by declaring new fields at the end o
 </Tabs>
 
 
-This is particularly useful for native-compiled targets, such as C#, C++, Haxe, etc - where the client-side can potentially not have the most up-to-date version of the schema definitions.
+This is particularly useful for native-compiled targets, such as C#, C++, Haxe, etc - where the frontend can potentially not have the most up-to-date version of the schema definitions.
 
 ---
 
@@ -888,13 +887,13 @@ The following example is supported:
     <Tabs.Tab>
 
     ```js  {3-5,8,12-13} filename="MyState.js"
-    const schema = require('@colyseus/schema');
+    import { schema } from "@colyseus/schema";
 
-    const Item = schema.schema({/* base Item fields */});
+    const Item = schema({/* base Item fields */});
     const Weapon = Item.extend({/* specialized Weapon fields */});
     const Shield = Item.extend({/* specialized Shield fields */});
 
-    const Inventory = schema.schema({
+    const Inventory = schema({
         items: { map: Item }
     });
 

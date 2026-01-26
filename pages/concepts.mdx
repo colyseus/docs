@@ -2,4 +2,818 @@
 display: 'hidden'
 ---
 
-# Concepts
+- [ ] Server + Transports
+- [ ] Rooms + Driver + Metadata
+- [ ] State vs Messages
+- [ ] StateView
+
+# Core Concepts
+
+import { Callout, Tabs } from 'nextra/components'
+
+Before diving into the API, it's helpful to understand the key concepts that make Colyseus work. This section covers the fundamental building blocks you'll use in every multiplayer game.
+
+## What You'll Learn
+
+- **[Rooms](#rooms)** - Isolated game sessions that group players together
+- **[State vs Messages](#state-vs-messages)** - Two ways to communicate between server and clients
+- **[Matchmaking](#matchmaking)** - How players find and join rooms
+
+---
+
+## Rooms
+
+Rooms are the core building block of Colyseus. A room represents an isolated game session where a group of clients can interact with each other through shared state and messages.
+
+### Why Rooms?
+
+In multiplayer games, you typically need to:
+
+- **Isolate players** into separate game sessions (players in Room A don't see Room B)
+- **Encapsulate game logic** in a contained environment
+- **Manage resources** efficiently (rooms are created and disposed as needed)
+- **Scale horizontally** by distributing rooms across servers
+
+Rooms solve all of these problems. Think of them as individual "game worlds" that exist independently.
+
+### Room Lifecycle
+
+Every room goes through a predictable lifecycle:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        ROOM LIFECYCLE                        │
+└─────────────────────────────────────────────────────────────┘
+
+  ┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
+  │ onCreate │ ──> │  onJoin  │ ──> │ onLeave  │ ──> │ onDispose│
+  └──────────┘     └──────────┘     └──────────┘     └──────────┘
+       │                │                │                │
+       │                │                │                │
+       v                v                v                v
+  Room created    Client joins     Client leaves    Room destroyed
+  Initialize      Add to state     Remove from      Clean up
+  state/logic     Send welcome     state            resources
+```
+
+#### `onCreate(options)`
+Called once when the room is first created. Initialize your state, set up game loops, and configure the room here.
+
+#### `onJoin(client, options, auth)`
+Called each time a client successfully joins. Add the player to your state and send any initial data they need.
+
+#### `onLeave(client, consented)`
+Called when a client disconnects. The `consented` parameter tells you if they left intentionally or lost connection.
+
+#### `onDispose()`
+Called when the room is about to be destroyed (usually when all clients leave). Clean up timers, database connections, etc.
+
+### Common Room Patterns
+
+#### Game Room
+The most common pattern. Handles a single match or game session.
+
+```ts
+class GameRoom extends Room {
+    maxClients = 4;
+    state = new GameState();
+
+    onCreate(options) {
+        this.setMetadata({ map: options.map });
+    }
+
+    onJoin(client) {
+        this.state.players.set(client.sessionId, new Player());
+
+        if (this.clients.length === this.maxClients) {
+            this.lock(); // Prevent more joins
+            this.startGame();
+        }
+    }
+}
+```
+
+#### Lobby Room
+A waiting area where players gather before starting a game.
+
+```ts
+class LobbyRoom extends Room {
+    state = new LobbyState();
+
+    onCreate() {
+        this.onMessage("ready", (client) => {
+            const player = this.state.players.get(client.sessionId);
+            player.isReady = true;
+
+            if (this.allPlayersReady()) {
+                this.broadcast("gameStarting");
+                // Transfer players to game room
+            }
+        });
+    }
+}
+```
+
+#### Spectator Pattern
+Allow some clients to watch without participating.
+
+```ts
+onJoin(client, options) {
+    if (options.spectator) {
+        // Don't add to players, just let them watch
+        this.state.spectators.push(client.sessionId);
+    } else {
+        this.state.players.set(client.sessionId, new Player());
+    }
+}
+```
+
+#### Persistent Room
+A room that stays alive even when empty (e.g., a game world).
+
+```ts
+class WorldRoom extends Room {
+    autoDispose = false; // Don't destroy when empty
+
+    onCreate() {
+        // Load world state from database
+        this.loadWorldState();
+    }
+
+    onDispose() {
+        // Save before shutting down
+        this.saveWorldState();
+    }
+}
+```
+
+### Room Properties
+
+| Property | Description |
+|----------|-------------|
+| `roomId` | Unique identifier for this room instance |
+| `clients` | Array of connected clients |
+| `maxClients` | Maximum number of clients allowed |
+| `state` | The synchronized state object |
+| `autoDispose` | Whether to destroy room when empty (default: `true`) |
+| `locked` | Whether the room accepts new joins |
+
+### Communication Methods
+
+#### Broadcasting
+Send a message to all clients in the room:
+
+```ts
+// To everyone
+this.broadcast("announcement", { text: "Game starting!" });
+
+// To everyone except one client
+this.broadcast("playerAction", data, { except: client });
+```
+
+#### Direct Messages
+Send to a specific client:
+
+```ts
+this.send(client, "privateMessage", { text: "You found a bonus!" });
+```
+
+#### State Mutations
+Change the state and it automatically syncs:
+
+```ts
+this.state.players.get(sessionId).score += 10;
+// All clients receive this update automatically
+```
+
+### Room vs Client Perspective
+
+Understanding both sides helps you design better:
+
+| Server (Room) | Client |
+|---------------|--------|
+| `onCreate()` | - |
+| `onJoin(client)` | `room.onJoin()` callback |
+| `this.state.x = 1` | `onChange(state, "x", ...)` |
+| `this.broadcast("msg", data)` | `room.onMessage("msg", ...)` |
+| `onLeave(client)` | `room.onLeave()` callback |
+| `onDispose()` | - |
+
+<Callout type="info">
+The room is the **authoritative source of truth**. Clients send requests (via messages), and the server decides what actually happens by updating the state.
+</Callout>
+
+---
+
+## State vs Messages
+
+Colyseus provides two ways for the server to communicate with clients: **State Synchronization** and **Messages**. Understanding when to use each is key to building efficient multiplayer games.
+
+### The Two Approaches
+
+#### State Synchronization
+
+State is your game's **continuous, shared reality**. It represents everything that needs to stay in sync across all clients: player positions, scores, inventories, game phase, etc.
+
+- Automatically synchronized to all clients
+- Only sends the **differences** (delta encoding)
+- Clients can **listen for changes** on specific properties
+- Persists throughout the room's lifetime
+
+```ts filename="Server: Defining State"
+import { Schema, type, MapSchema } from "@colyseus/schema";
+
+class Player extends Schema {
+    @type("number") x: number = 0;
+    @type("number") y: number = 0;
+    @type("number") health: number = 100;
+}
+
+class GameState extends Schema {
+    @type({ map: Player }) players = new MapSchema<Player>();
+    @type("string") phase: string = "waiting";
+}
+```
+
+```ts filename="Client: Listening to State"
+// Listen when a player is added
+callbacks.onAdd("players", (player, sessionId) => {
+    console.log("Player joined:", sessionId);
+
+    // Listen to this specific player's position changes
+    callbacks.onChange(player, "x", (value) => {
+        updatePlayerPosition(sessionId, value, player.y);
+    });
+});
+```
+
+#### Messages
+
+Messages are **discrete events** sent between server and clients. They're one-time communications that don't persist in the game state.
+
+- Sent explicitly when needed
+- Can target specific clients or broadcast to all
+- No automatic synchronization
+- Good for actions, notifications, and transient data
+
+```ts filename="Server: Sending Messages"
+// Broadcast to all clients
+this.broadcast("gameEvent", { type: "explosion", x: 100, y: 200 });
+
+// Send to a specific client
+this.send(client, "privateNotification", { message: "You found a secret!" });
+```
+
+```ts filename="Client: Receiving Messages"
+room.onMessage("gameEvent", (data) => {
+    if (data.type === "explosion") {
+        playExplosionEffect(data.x, data.y);
+    }
+});
+
+room.onMessage("privateNotification", (data) => {
+    showNotification(data.message);
+});
+```
+
+### When to Use Which
+
+#### Use State When:
+
+| Scenario | Why State? |
+|----------|-----------|
+| Player positions | Need continuous sync, interpolation |
+| Health, scores, resources | All clients need current values |
+| Game phase (waiting, playing, ended) | Determines UI and allowed actions |
+| Inventory, equipment | Persists and affects gameplay |
+| Turn order, current player | Shared game logic depends on it |
+
+#### Use Messages When:
+
+| Scenario | Why Messages? |
+|----------|--------------|
+| "Fire weapon" action | One-time event, triggers animation |
+| Chat messages | Transient, no need to persist in state |
+| Sound/visual effects | Client-side only, no game logic impact |
+| Error notifications | Temporary feedback to one client |
+| Game over results | One-time data dump at end of match |
+
+### Decision Framework
+
+Ask yourself these questions:
+
+```
+1. Does this data need to be known by clients who join later?
+   YES → Use State
+   NO  → Consider Messages
+
+2. Do clients need the current value, or just react to changes?
+   CURRENT VALUE → Use State
+   REACT TO EVENT → Messages work fine
+
+3. Is this data used in game logic calculations?
+   YES → Use State (server needs authoritative value)
+   NO  → Messages may be sufficient
+
+4. How often does this change?
+   FREQUENTLY (every frame) → Use State with delta sync
+   RARELY (events) → Messages are more explicit
+```
+
+### Practical Example: Combat System
+
+Here's how you might implement a combat system using both state and messages:
+
+<Tabs items={["Server", "Client"]}>
+<Tabs.Tab>
+```ts filename="CombatRoom.ts"
+import { Room, Client } from "@colyseus/core";
+import { Schema, type, MapSchema } from "@colyseus/schema";
+
+class Player extends Schema {
+    @type("number") x: number = 0;
+    @type("number") y: number = 0;
+    @type("number") health: number = 100;
+    @type("boolean") isDead: boolean = false;
+}
+
+class GameState extends Schema {
+    @type({ map: Player }) players = new MapSchema<Player>();
+}
+
+export class CombatRoom extends Room {
+    state = new GameState();
+
+    onJoin(client: Client) {
+        this.state.players.set(client.sessionId, new Player());
+    }
+
+    onCreate() {
+        // Handle attack action (via message)
+        this.onMessage("attack", (client, data) => {
+            const attacker = this.state.players.get(client.sessionId);
+            const target = this.state.players.get(data.targetId);
+
+            if (!target || target.isDead) return;
+
+            // Update STATE (health change persists)
+            target.health -= 25;
+
+            // Send MESSAGE (visual feedback, doesn't persist)
+            this.broadcast("attackEffect", {
+                attackerId: client.sessionId,
+                targetId: data.targetId,
+                damage: 25
+            });
+
+            if (target.health <= 0) {
+                // Update STATE
+                target.isDead = true;
+
+                // Send MESSAGE
+                this.broadcast("playerKilled", {
+                    killerId: client.sessionId,
+                    victimId: data.targetId
+                });
+            }
+        });
+    }
+}
+```
+</Tabs.Tab>
+<Tabs.Tab>
+```ts filename="client.ts"
+const room = await client.joinOrCreate("combat");
+const callbacks = Callbacks.get(room);
+
+// STATE: Track player health (persists, new clients see current value)
+callbacks.onAdd("players", (player, sessionId) => {
+    createPlayerSprite(sessionId, player);
+
+    callbacks.onChange(player, "health", (newHealth) => {
+        updateHealthBar(sessionId, newHealth);
+    });
+
+    callbacks.onChange(player, "isDead", (isDead) => {
+        if (isDead) {
+            showDeathAnimation(sessionId);
+        }
+    });
+});
+
+// MESSAGE: Play attack animation (one-time effect)
+room.onMessage("attackEffect", (data) => {
+    playAttackAnimation(data.attackerId, data.targetId);
+    showDamageNumber(data.targetId, data.damage);
+});
+
+// MESSAGE: Show kill notification (transient)
+room.onMessage("playerKilled", (data) => {
+    showKillFeed(`${data.killerId} eliminated ${data.victimId}`);
+});
+
+// Send attack action
+function attackPlayer(targetId: string) {
+    room.send("attack", { targetId });
+}
+```
+</Tabs.Tab>
+</Tabs>
+
+In this example:
+- **Health and isDead** are in state because clients joining mid-game need to know current values
+- **Attack effects** are messages because they're visual feedback, not game logic
+- **Kill notifications** are messages because they're transient UI elements
+
+### Performance Considerations
+
+#### State Synchronization
+- Optimized with delta encoding (only changes are sent)
+- Batched at a configurable interval (default: 50ms)
+- Schema overhead for type definitions
+- Best for data that changes frequently
+
+#### Messages
+- Sent immediately when called
+- No delta encoding (full payload each time)
+- More control over exactly what's sent
+- Best for discrete events
+
+<Callout type="info">
+For high-frequency updates like player positions, State is more efficient because it batches and only sends deltas. Sending position via messages every frame would flood the connection.
+</Callout>
+
+### Common Mistakes
+
+#### Mistake 1: Using messages for everything
+
+```ts
+// Bad: Position via messages
+this.onMessage("move", (client, pos) => {
+    this.broadcast("playerMoved", { id: client.sessionId, x: pos.x, y: pos.y });
+});
+
+// Good: Position in state
+this.onMessage("move", (client, pos) => {
+    const player = this.state.players.get(client.sessionId);
+    player.x = pos.x;
+    player.y = pos.y;
+    // Automatically synced to all clients
+});
+```
+
+#### Mistake 2: Storing transient data in state
+
+```ts
+// Bad: Chat in state (grows forever, unnecessary sync)
+class GameState extends Schema {
+    @type([ChatMessage]) chatHistory = new ArraySchema<ChatMessage>();
+}
+
+// Good: Chat via messages
+this.onMessage("chat", (client, text) => {
+    this.broadcast("chatMessage", {
+        sender: client.sessionId,
+        text
+    });
+});
+```
+
+#### Mistake 3: Duplicating state data in messages
+
+```ts
+// Bad: Sending health in both state AND message
+target.health -= damage;
+this.broadcast("damage", { targetId, newHealth: target.health, damage });
+
+// Good: State handles the value, message just triggers the effect
+target.health -= damage;
+this.broadcast("damageEffect", { targetId, damage });
+// Client reads current health from state
+```
+
+---
+
+## Matchmaking
+
+Matchmaking is how players find and join game sessions. In Colyseus, the matchmaker automatically creates room instances on demand and routes players to appropriate rooms based on your configuration.
+
+### How It Works
+
+When a client requests to join a room, the matchmaker:
+
+1. **Searches** for an existing room that matches the criteria
+2. **Creates** a new room instance if no suitable room exists
+3. **Reserves a seat** for the player
+4. **Returns** connection details to the client
+
+```
+Client                    Matchmaker                   Room Instances
+  |                           |                              |
+  |--- joinOrCreate("game") ->|                              |
+  |                           |--- Search for available ---->|
+  |                           |<-- Found Room A -------------|
+  |                           |--- Reserve seat ------------>|
+  |<-- Connection details ----|                              |
+  |                           |                              |
+  |=============== WebSocket Connection to Room A ===========|
+```
+
+### Join Methods
+
+The client SDK provides three methods for joining rooms, each with different behavior:
+
+#### `joinOrCreate()`
+
+The most common method. Joins an existing room if available, or creates a new one.
+
+<Tabs items={["TypeScript", "C#", "Lua"]}>
+<Tabs.Tab>
+```ts
+// Join any available "battle" room, or create one
+const room = await client.joinOrCreate("battle");
+
+// With options for filtering/room creation
+const room = await client.joinOrCreate("battle", {
+    mode: "ranked",
+    maxPlayers: 4
+});
+```
+</Tabs.Tab>
+<Tabs.Tab>
+```cs
+// Join any available "battle" room, or create one
+var room = await client.JoinOrCreate<BattleState>("battle");
+
+// With options
+var room = await client.JoinOrCreate<BattleState>("battle", new Dictionary<string, object> {
+    { "mode", "ranked" },
+    { "maxPlayers", 4 }
+});
+```
+</Tabs.Tab>
+<Tabs.Tab>
+```lua
+-- Join any available "battle" room, or create one
+local room = client:join_or_create("battle")
+
+-- With options
+local room = client:join_or_create("battle", {
+    mode = "ranked",
+    maxPlayers = 4
+})
+```
+</Tabs.Tab>
+</Tabs>
+
+**Use when:** You want players to be matched into games automatically.
+
+#### `join()`
+
+Only joins an existing room. Fails if no room is available.
+
+<Tabs items={["TypeScript", "C#", "Lua"]}>
+<Tabs.Tab>
+```ts
+try {
+    const room = await client.join("battle", { mode: "ranked" });
+} catch (e) {
+    console.log("No rooms available");
+}
+```
+</Tabs.Tab>
+<Tabs.Tab>
+```cs
+try {
+    var room = await client.Join<BattleState>("battle");
+} catch (Exception e) {
+    Debug.Log("No rooms available");
+}
+```
+</Tabs.Tab>
+<Tabs.Tab>
+```lua
+local room, err = client:join("battle", { mode = "ranked" })
+if err then
+    print("No rooms available")
+end
+```
+</Tabs.Tab>
+</Tabs>
+
+**Use when:** You only want to join existing games (e.g., joining a friend's room).
+
+#### `create()`
+
+Always creates a new room, even if similar rooms exist.
+
+<Tabs items={["TypeScript", "C#", "Lua"]}>
+<Tabs.Tab>
+```ts
+// Always creates a fresh room
+const room = await client.create("battle", { mode: "private" });
+```
+</Tabs.Tab>
+<Tabs.Tab>
+```cs
+var room = await client.Create<BattleState>("battle", new Dictionary<string, object> {
+    { "mode", "private" }
+});
+```
+</Tabs.Tab>
+<Tabs.Tab>
+```lua
+local room = client:create("battle", { mode = "private" })
+```
+</Tabs.Tab>
+</Tabs>
+
+**Use when:** You need a private room or want to guarantee a fresh game session.
+
+#### `joinById()`
+
+Join a specific room by its unique ID.
+
+<Tabs items={["TypeScript", "C#", "Lua"]}>
+<Tabs.Tab>
+```ts
+// Join a specific room (e.g., from an invite link)
+const room = await client.joinById("room_id_here");
+```
+</Tabs.Tab>
+<Tabs.Tab>
+```cs
+var room = await client.JoinById<BattleState>("room_id_here");
+```
+</Tabs.Tab>
+<Tabs.Tab>
+```lua
+local room = client:join_by_id("room_id_here")
+```
+</Tabs.Tab>
+</Tabs>
+
+**Use when:** Implementing invite links, reconnection, or spectator modes.
+
+### Filtering Rooms
+
+Options passed to join methods serve two purposes:
+
+1. **Filter criteria** - Find rooms with matching metadata
+2. **Room configuration** - Passed to `onCreate()` when creating a new room
+
+#### Setting Room Metadata
+
+On the server, use `setMetadata()` to make room properties visible to the matchmaker:
+
+```ts filename="MyRoom.ts"
+onCreate(options) {
+    // Set metadata that clients can filter by
+    this.setMetadata({
+        mode: options.mode || "casual",
+        map: options.map || "default",
+        currentPlayers: 0
+    });
+}
+
+onJoin(client) {
+    // Update metadata as the room state changes
+    this.setMetadata({ currentPlayers: this.clients.length });
+}
+```
+
+#### Filtering on Join
+
+Clients can then filter by these metadata fields:
+
+```ts filename="client.ts"
+// Only join rooms with mode="ranked" and map="arena"
+const room = await client.joinOrCreate("battle", {
+    mode: "ranked",
+    map: "arena"
+});
+```
+
+<Callout type="info">
+Only metadata fields are used for filtering. The room's internal state is not visible to the matchmaker.
+</Callout>
+
+### Custom Matchmaking
+
+For advanced scenarios, you can override the default matchmaking behavior.
+
+#### Using `filterBy`
+
+Specify which options should be used for room filtering:
+
+```ts filename="app.config.ts"
+import { defineServer, defineRoom } from "colyseus";
+import { BattleRoom } from "./BattleRoom";
+
+const server = defineServer({
+    rooms: {
+        battle: defineRoom(BattleRoom, {
+            // Only "mode" and "map" will be used for filtering
+            // Other options are passed to onCreate but don't affect matching
+            filterBy: ["mode", "map"]
+        })
+    }
+});
+```
+
+#### Listing Available Rooms
+
+Let players browse and choose rooms manually:
+
+```ts filename="client.ts"
+// Get all available "battle" rooms
+const rooms = await client.getAvailableRooms("battle");
+
+rooms.forEach((room) => {
+    console.log(room.roomId, room.metadata, room.clients);
+});
+
+// Join a specific room
+const selectedRoom = rooms[0];
+const room = await client.joinById(selectedRoom.roomId);
+```
+
+#### Locking Rooms
+
+Prevent new players from joining a room that's already in progress:
+
+```ts filename="MyRoom.ts"
+onJoin(client) {
+    if (this.clients.length >= this.maxClients) {
+        // Room is full, lock it
+        this.lock();
+    }
+}
+
+startGame() {
+    // Lock the room when the game starts
+    this.lock();
+}
+```
+
+<Callout type="warning">
+Locked rooms won't appear in `getAvailableRooms()` and cannot be joined via `join()` or `joinOrCreate()`. Players can still join by ID if they have the room ID.
+</Callout>
+
+### Common Patterns
+
+#### Skill-Based Matchmaking
+
+Match players with similar skill levels:
+
+```ts filename="MyRoom.ts"
+onCreate(options) {
+    this.setMetadata({
+        skillBracket: this.getSkillBracket(options.playerSkill)
+    });
+}
+
+getSkillBracket(skill: number): string {
+    if (skill < 1000) return "bronze";
+    if (skill < 2000) return "silver";
+    if (skill < 3000) return "gold";
+    return "platinum";
+}
+```
+
+```ts filename="client.ts"
+const room = await client.joinOrCreate("ranked", {
+    playerSkill: 1500  // Will match with "silver" bracket
+});
+```
+
+#### Private Rooms with Codes
+
+Create invite-only rooms:
+
+```ts filename="MyRoom.ts"
+onCreate(options) {
+    if (options.private) {
+        this.setPrivate(true);  // Won't appear in listings
+    }
+}
+```
+
+```ts filename="client.ts"
+// Create a private room
+const room = await client.create("game", { private: true });
+const inviteCode = room.roomId;  // Share this with friends
+
+// Friend joins using the code
+const room = await client.joinById(inviteCode);
+```
+
+---
+
+## Next Steps
+
+- [See the full Room API](/room) for all methods and properties
+- [Learn about State Synchronization](/state) for managing shared data
+- [Explore State Callbacks](/state/callbacks) for reacting to changes on the client
+- [Explore the Match-maker API](/server/matchmaker) for advanced server-side control
+- [See the Lobby Room](/room/built-in/lobby) for real-time room listings

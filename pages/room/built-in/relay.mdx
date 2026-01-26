@@ -5,38 +5,45 @@ import { Callout, Cards, Tabs } from "nextra/components";
 
 # Relay Room
 
-The built-in `RelayRoom` is useful for simple use cases, where you don't need to hold any state in the server-side other than the clients connected to it.
+The built-in `RelayRoom` provides a lightweight relay for simple multiplayer use cases where you only need to track connected clients.
 
-By simply relaying messages (forwarding them from a client to everyone else) - the server-side is not able to validate any of them - the client-side is the one who will be doing the validations.
+**Features:**
+- Broadcasts client messages to everyone else.
+- Minimal backend state (no authoritative validation).
+- Ideal for quick prototypes or frontend-driven validation.
 
 <Callout type="info">
-    The [source-code of the `RelayRoom`](https://github.com/colyseus/colyseus/blob/master/packages/core/src/rooms/RelayRoom.ts) is very simple. The general recommendation is to implement your own version of it with server-side validations when you see fit.
+  The source-code for `RelayRoom` is available [here](https://github.com/colyseus/colyseus/blob/master/packages/core/src/rooms/RelayRoom.ts). Consider implementing your own version with backend validations when needed.
 </Callout>
 
-## Server-side
+## Server
 
 ```ts filename="server.ts"
-import { RelayRoom } from "colyseus";
+import { defineServer, defineRoom, RelayRoom } from "colyseus";
 
 //
 // Expose your relayed room.
 //
-gameServer.define("your_relayed_room", RelayRoom, {
-  maxClients: 4,
-  allowReconnectionTime: 120
-});
+const server = defineServer({
+  rooms: {
+    your_relayed_room: defineRoom(RelayRoom, {
+      maxClients: 4,
+      allowReconnectionTime: 120
+    })
+  }
+})
 ```
 
-## Client-side
+## Client
 
 See how to register callbacks for players joining, leaving, sending and receiving messages from the relayed room.
 
 ### Connecting into the room
 
 ```ts filename="client.ts"
-import { Client } from "colyseus.js";
+import { Client } from "@colyseus/sdk";
 
-const client = new Client("ws://localhost:2567");
+const client = new Client("http://localhost:2567");
 
 //
 // Join the relayed room.
@@ -70,7 +77,7 @@ relay.state.players.onRemove((player, sessionId) => {
 
 //
 // Detect when the connectivity of a player has changed.
-// (only available if you provided `allowReconnection: true` in the server-side)
+// (only available if you provided `allowReconnection: true` in the backend)
 //
 relay.state.players.onChange((player, sessionId) => {
   if (player.connected) {

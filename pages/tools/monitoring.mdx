@@ -1,7 +1,6 @@
 ---
 title: "Monitoring Panel"
 ---
-import { Tabs } from 'nextra/components'
 
 # Monitoring Panel
 
@@ -28,35 +27,15 @@ npm install --save @colyseus/monitor
 
 Include it in your project:
 
-<Tabs items={['TypeScript', 'JavaScript']}>
-
-    <Tabs.Tab>
-
-    ```ts {1,5} filename="app.config.ts"
-    import { monitor } from "@colyseus/monitor";
-    // ...
-        initializeExpress: (app) => {
-            // bind it as an express middleware
-            app.use("/monitor", monitor());
-        }
-    // ...
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-
-    ```js {1,5} filename="app.config.js"
-    const monitor = require("@colyseus/monitor").monitor;
-    // ...
-        initializeExpress: (app) => {
-            // bind it as an express middleware
-            app.use("/monitor", monitor());
-        }
-    // ...
-    ```
-    </Tabs.Tab>
-
-</Tabs>
+```ts {1,5} filename="app.config.ts"
+import { monitor } from "@colyseus/monitor";
+// ...
+    express: (app) => {
+        // bind it as an express middleware
+        app.use("/monitor", monitor());
+    }
+// ...
+```
 
 Access it in the browser via [http://localhost:2567/monitor](http://localhost:2567/monitor).
 

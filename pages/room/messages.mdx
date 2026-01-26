@@ -1,0 +1,110 @@
+import { Callout } from 'nextra/components'
+
+# Message Composability
+
+The `Messages<R>` type allows you to define reusable, type-safe message handlers that can be composed and spread into your Room's `messages` property. This is useful for:
+
+- **Code reuse**: Share common message handlers across multiple rooms
+- **Modularity**: Organize handlers into separate files or modules
+- **Third-party libraries**: Create and distribute reusable message handler packages
+
+<Callout type="info">
+  This pattern requires TypeScript for full type-safety.
+</Callout>
+
+## Defining Reusable Message Handlers
+
+Use the `Messages<R>` generic type to define a set of message handlers outside of your Room class. The generic parameter `R` should be your Room class to ensure proper typing for `this` context.
+
+```typescript filename="thirdPartyMessages.ts"
+import { Room, validate, type Client, type Messages } from "colyseus";
+import { z } from "zod";
+import { MyRoom } from "./MyRoom";
+
+// Define a custom client type if needed
+type MyClient = Client<{ userData: { name: string } }>;
+
+export const thirdPartyMessages: Messages<MyRoom> = {
+  // Handler with validation
+  chat: validate(
+    z.object({
+      text: z.string().max(500),
+    }),
+    function (client: MyClient, message) {
+      // message.text is guaranteed to be a string (max 500 chars)
+      this.broadcast("chat", {
+        sender: client.sessionId,
+        text: message.text,
+      });
+    }
+  ),
+};
+```
+
+<Callout type="warning">
+  When using `validate()` with the `Messages<R>` type, use a regular `function` expression instead of an arrow function if you need to access `this` (the Room instance).
+</Callout>
+
+## Composing Messages in Your Room
+
+Use the spread operator to compose multiple message handler objects into your Room's `messages` property:
+
+```typescript filename="MyRoom.ts"
+import { Room, Client, validate } from "colyseus";
+import { z } from "zod";
+import { thirdPartyMessages } from "./thirdPartyMessages";
+import { MyRoomState } from "./MyRoomState";
+
+type MyClient = Client<{ userData: { name: string } }>;
+
+export class MyRoom extends Room<{ client: MyClient }> {
+  state = new MyRoomState();
+
+  messages = {
+    // Spread reusable handlers from external modules
+    ...thirdPartyMessages,
+
+    // Define room-specific handlers with validation
+    move: validate(
+      z.object({
+        x: z.number(),
+        y: z.number(),
+        z: z.number().optional(),
+      }),
+      (client, message) => {
+        const player = this.state.players.get(client.sessionId)!;
+        player.x = message.x;
+        player.y = message.y;
+      }
+    ),
+
+    // Simple handler defined inline
+    notify_something: (client: MyClient, message: any) => {
+      this.broadcast("notify", { sessionId: client.sessionId, message: "I'm a notification!" });
+    },
+  };
+}
+```
+
+## Overriding Composed Handlers
+
+When spreading multiple handler objects, handlers defined later will override earlier ones with the same name:
+
+```typescript filename="MyRoom.ts"
+messages = {
+  ...thirdPartyMessages,  // Contains "chat" handler
+  
+  // This overrides the "chat" handler from thirdPartyMessages
+  chat: validate(
+    z.object({ text: z.string() }),
+    (client, message) => {
+      // Custom chat implementation
+    }
+  ),
+};
+```
+
+## See Also
+
+- [Room - Message Handling](/room#message-handling) - Basic message handler syntax
+- [Room - Message Input Validation](/room#message-input-validation) - Using `validate()` with Zod schemas

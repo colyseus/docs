@@ -13,43 +13,22 @@ The `WebSocketTransport` with its default options is going to be used automatica
 
 ### Example
 
-<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
-    <Tabs.Tab>
-    ```ts {2,7-14} filename="app.config.ts"
-    import config from "@colyseus/tools";
-    import { WebSocketTransport } from "@colyseus/ws-transport"
+```ts {2,7-11} filename="app.config.ts"
+import { defineServer } from "colyseus";
+import { WebSocketTransport } from "@colyseus/ws-transport"
 
-    export default config({
-      // ...
+const server = defineServer({
+  // ...
 
-      initializeTransport: function(opts) {
-        return new WebSocketTransport({
-          ...opts,
-          pingInterval: 6000,
-          pingMaxRetries: 4,
-          maxPayload: 1024 * 1024 * 1, // 1MB Max Payload
-        });
-      },
+  transport: new WebSocketTransport({
+    pingInterval: 6000,
+    pingMaxRetries: 4,
+    maxPayload: 1024 * 1024 * 1, // 1MB Max Payload
+  }),
 
-      // ...
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts {2,5-8} filename="server.ts"
-    import { Server } from "@colyseus/core";
-    import { WebSocketTransport } from "@colyseus/ws-transport"
-
-    const gameServer = new Server({
-        transport: new WebSocketTransport({
-            pingInterval: 6000,
-            pingMaxRetries: 4,
-        })
-    })
-    ```
-    </Tabs.Tab>
-</Tabs>
+  // ...
+});
+```
 
 ---
 
@@ -63,14 +42,14 @@ A Node.js http server instance to re-use for the WebSocket server. Useful when y
     <Tabs.Tab>
     ```ts {3,8-10} filename="app.config.ts"
     import { createServer } from "http";
-    import { Server } from "@colyseus/core";
+    import { defineServer } from "@colyseus/core";
     import { WebSocketTransport } from "@colyseus/ws-transport"
 
-    const server = createServer(); // create the http server manually
+    const httpServer = createServer(); // create the http server manually
 
-    const gameServer = new Server({
+    const server = defineServer({
       transport: new WebSocketTransport({
-        server // provide the custom server for `WebSocketTransport`
+        server: httpServer // provide the custom server for `WebSocketTransport`
       })
     });
     ```
@@ -80,15 +59,15 @@ A Node.js http server instance to re-use for the WebSocket server. Useful when y
     ```ts {1,4,6-7,10-12} filename="server.ts"
     import express from "express";
     import { createServer } from "http";
-    import { Server } from "@colyseus/core";
+    import { defineServer } from "@colyseus/core";
     import { WebSocketTransport } from "@colyseus/ws-transport"
 
     const app = express();
-    const server = createServer(app); // create the http server manually
+    const httpServer = createServer(app); // create the http server manually
 
-    const gameServer = new Server({
+    const server = defineServer({
       transport: new WebSocketTransport({
-        server // provide the custom server for `WebSocketTransport`
+        server: httpServer // provide the custom server for `WebSocketTransport`
       })
     });
     ```

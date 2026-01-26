@@ -1,4 +1,4 @@
-import { Callout, Cards, Tabs } from "nextra/components";
+import { Callout, Cards } from "nextra/components";
 import { HeartIcon } from "@primer/octicons-react";
 
 # Driver
@@ -13,14 +13,8 @@ When a room is created, deleted, or its "metadata" is properties are updated - t
 
 - [Local In-Memory (default)](#local-in-memory)
 - [Redis](#redis)
+- [Drizzle Driver (PostgreSQL)](#drizzle-driver-postgresql)
 - [MongoDB](#mongodb)
-- PostgreSQL
-
-<Callout type="info">
-    A PostgreSQL driver is planned for Colyseus v1.0.
-
-    See [Roadmap](/roadmap), and please consider [sponsoring](https://github.com/sponsors/endel) to help reach this goal <HeartIcon/>
-</Callout>
 
 ### Local In-Memory
 
@@ -34,62 +28,48 @@ The `RedisDriver` stores room data in a Redis database. This driver is suitable 
 npm install --save @colyseus/redis-driver
 ```
 
-<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
-    <Tabs.Tab>
-    ```ts {2,5-6} filename="app.config.ts"
-    import config from "@colyseus/tools";
-    import { RedisDriver } from "@colyseus/redis-driver";
+```ts {2,5} filename="app.config.ts"
+import { defineServer } from "colyseus";
+import { RedisDriver } from "@colyseus/redis-driver";
 
-    export default config({
-        options: {
-            driver: new RedisDriver(/* connection options */),
-            // ...
-        }
-        // ...
-    });
-    ```
-    </Tabs.Tab>
+const server = defineServer({
+    driver: new RedisDriver(/* connection options */),
+    // ...
+});
+```
 
-    <Tabs.Tab>
-    ```ts {2,5} filename="Raw usage"
-    import { Server } from "colyseus";
-    import { RedisDriver } from "@colyseus/redis-driver";
+### Drizzle Driver (PostgreSQL)
 
-    const gameServer = new Server({
-        driver: new RedisDriver(/* connection options */)
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
+<Callout type="info">
+    The Drizzle/PostgreSQL driver is experimental. Use at your own risk. Please report any issues you may find.
+</Callout>
+
+The `PostgresDriver` stores room data in a PostgreSQL database. This driver is suitable for large-scale multi-process applications and is recommended for production environments.
+
+```sh npm2yarn
+npm install --save @colyseus/drizzle-driver
+```
+
+```ts {2,5} filename="app.config.ts"
+import { defineServer } from "colyseus";
+import { PostgresDriver } from "@colyseus/drizzle-driver";
+
+const server = defineServer({
+    driver: new PostgresDriver(/* connection options */),
+    // ...
+});
+```
 
 ### MongoDB
 
 The `MongoDriver` stores room data in a MongoDB database. This driver is not actively maintained and is not recommended for production environments.
 
-<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
-    <Tabs.Tab>
-    ```ts {2,5-6} filename="app.config.ts"
-    import config from "@colyseus/tools";
-    import { MongooseDriver } from "@colyseus/mongoose-driver";
+```ts {2,5} filename="app.config.ts"
+import { defineServer } from "colyseus";
+import { MongooseDriver } from "@colyseus/mongoose-driver";
 
-    export default config({
-        options: {
-            driver: new Mongoose(/* connection options */),
-            // ...
-        }
-        // ...
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts {2,5} filename="Raw usage"
-    import { Server } from "colyseus";
-    import { MongooseDriver } from "@colyseus/mongoose-driver";
-
-    const gameServer = new Server({
-        driver: new MongooseDriver(/* connection options */)
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
+const server = defineServer({
+    driver: new MongooseDriver(/* connection options */),
+    // ...
+});
+```

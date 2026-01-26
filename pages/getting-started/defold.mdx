@@ -39,7 +39,7 @@ local room
 
 function init(self)
     -- Add initialization code here
-    client = Colyseus.Client("ws://localhost:2567")
+    client = Colyseus.Client("http://localhost:2567")
 
     -- join chat room
     client:join_or_create("chat", {}, function(err, _room)
@@ -49,12 +49,12 @@ function init(self)
       end
 
       room = _room
-      callbacks = Colyseus.callbacks(room) -- See "Client-side Schema Callbacks"
+      callbacks = Colyseus.callbacks(room) -- See "Frontend Schema Callbacks"
     end)
 end
 ```
 
-See [client-side documentation](/client/).
+See [frontend documentation](/client/).
 
 ## FAQ
 

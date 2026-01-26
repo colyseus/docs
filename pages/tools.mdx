@@ -4,17 +4,15 @@ title: Tools
 import { Cards, Callout } from 'nextra/components'
 import { PulseIcon, TableIcon, RocketIcon, ChecklistIcon, DevicesIcon, PackageIcon } from '@primer/octicons-react'
 
-# Tools
+# Built-in Tools
+
+All the tools below are included in the template projects created via `npm create colyseus-app@latest`
+
+---
 
 <Cards>
-    <Cards.Card icon={<PulseIcon/>} title="Load testing" href="/tools/loadtest" />
-    <Cards.Card icon={<TableIcon/>} title="Monitoring Panel" href="/tools/monitoring" />
     <Cards.Card icon={<DevicesIcon/>} title="Playground" href="/tools/playground" />
+    <Cards.Card icon={<TableIcon/>} title="Monitoring Panel" href="/tools/monitoring" />
+    <Cards.Card icon={<PulseIcon/>} title="Load testing" href="/tools/loadtest" />
     <Cards.Card icon={<ChecklistIcon/>} title="Unit Testing" href="/tools/unit-testing" />
-</Cards>
-
-## 3rd Party Packages
-
-<Cards>
-    <Cards.Card icon={<PackageIcon/>} title="3rd Party Packages" href="/recommendations/3rd-party-packages" arrow />
 </Cards>

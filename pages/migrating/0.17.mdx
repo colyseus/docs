@@ -1,0 +1,265 @@
+import { Callout } from 'nextra/components'
+
+# Migrating to version 0.17 (from 0.16)
+
+<Callout type="warning">
+    This guide may not be complete. Please report if you find any missing information.
+
+    A blog post with new features of 0.17.x will be published soon.
+</Callout>
+
+{/* <Callout type="info">
+    We're gathering feedback on the breaking changes in this version. Please [open an issue](https://github.com/colyseus/colyseus/issues/new) if you have any feedback.
+</Callout> */}
+
+## Upgrading packages
+
+Get all the latest 0.17.x versions for the package names you already have in your `package.json`:
+
+```json filename="package.json"
+{
+    "dependencies": {
+        "colyseus": "^0.17.8",
+        "@colyseus/core": "^0.17.22",
+        "@colyseus/tools": "^0.17.16",
+        "@colyseus/ws-transport": "^0.17.8",
+        "@colyseus/monitor": "^0.17.7", // (optional)
+        "@colyseus/playground": "^0.17.9", // (optional)
+        "@colyseus/redis-driver": "^0.17.6", // (optional)
+        "@colyseus/redis-presence": "^0.17.6", // (optional)
+        "@colyseus/auth": "^0.17.6", // (optional)
+        "@colyseus/loadtest": "^0.17.8", // (optional)
+        "@colyseus/testing": "^0.17.11", // (optional)
+        "@colyseus/uwebsockets-transport": "^0.17.12", // (optional)
+    }
+}
+```
+
+The `@colyseus/schema` package is now at version 4.0.x
+
+```diff filename="package.json"
+-   "@colyseus/schema": "^3.0.x",
++   "@colyseus/schema": "^4.0.4",
+```
+
+In the front-end, replace `colyseus.js` with the `@colyseus/sdk` package:
+
+```diff filename="package.json"
+-   "colyseus.js": "^0.16.x",
++   "@colyseus/sdk": "^0.17.22",
+```
+
+### uWebSockets.js (`@colyseus/uwebsockets-transport`)
+
+If you use uWebSockets.js, it is now required to add `uwebsockets-express` as a dependency to your project.
+
+```diff filename="package.json"
+-   "uwebsockets-express": "^1.3.x",
++   "uwebsockets-express": "^1.4.1",
+```
+
+(If you'd like to migrate to Express v5, you should use `uwebsockets-express@2.0.1` instead.)
+
+### New recommended structure for `app.config.ts`
+
+We are soft-deprecating how to structure the `app.config.ts` file. The previous syntax is still supported, but we recommend using the new one. Eventually, the previous syntax will be removed.
+
+```diff filename="app.config.ts"
+-import config from "@colyseus/tools";
++import { defineServer } from "colyseus";
+
+-export default config({
++const server = defineServer({
+-    initializeTransport: () => new uWebSocketsTransport(),
++    transport: new uWebSocketsTransport(),
+-    initializeExpress: (app) => {}
++    express: (app) => {}
+-    options: {/* presence: new RedisPresence(), driver: new RedisDriver(), etc. */}
++    /* presence: new RedisPresence(), driver: new RedisDriver(), etc. */
+});
+```
+
+(The [`create-colyseus-app` templates](https://github.com/colyseus/create-colyseus-app/tree/master/templates) are now using this new structure.)
+
+## Breaking Changes
+
+### Backend
+
+#### Matchmaker: Seat reservation format has changed
+
+If you use the Matchmaker API for reserving seats (`matchMaker.reserveSeatFor(room)`), and manually access the `.room` object within the seat reservation object, you will need to update your code to access from the new format.
+
+```diff
+{
+    "sessionId": "zzzzzzzzz",
+-    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", ...other room data...}
++    "name": "battle",
++    "roomId": "xxxxxxxxx",
++    "processId": "yyyyyyyyy",
++    "sessionId": "zzzzzzzzz",
++    "publicAddress": "subdomain.domain.com",
+}
+```
+
+Accessing the `.roomId` from the seat reservation object has changed:
+
+```diff
+const seatReservation = await matchMaker.reserveSeatFor(room);
+-const roomId = seatReservation.room.roomId;
++const roomId = seatReservation.roomId;
+```
+
+The `"room"` object has been removed from the seat reservation object.
+
+We basically removed redundant and unecessary information from the seat reservation object.
+
+#### TypeScript: `Room` generic types have changed:
+
+The `Room<State, Metadata>` generic type has changed to `Room<{ state: S, metadata: M, client: C }>`.
+
+If you only use `Room<State>`, you can remove the generic types, and assign the state instance to the `state` property.
+
+```diff filename="MyRoom.ts"
+-export class MyRoom extends Room<MyState> {
++export class MyRoom extends Room {
++    state = new MyState();
+```
+
+#### LobbyRoom: `updateLobby()` calls are not required anymore
+
+There is no need to manually call `updateLobby()` after `.setMetadata()` anymore. This is done automatically for you.
+
+#### TypeScript: `Client` generic types have changed:
+
+The `Client<UserData, AuthData>` generic types have changed to `Client<{ userData: U, auth: A, messages: M }>`.
+
+```diff
+interface UserData {
+    your: any;
+    custom: any;
+    data: any;
+}
+interface AuthData {
+    id: string;
+    name: string;
+}
+
+-onJoin(client: Client<UserData, AuthData>) {
++onJoin(client: Client<{ userData: UserData, auth: AuthData }>) {
+    console.log(client.userData);
+    console.log(client.auth);
+    console.log(client.messages);
+}
+```
+
+Alternatively, you can create your own `Client` type alias:
+
+```typescript
+import { type Client as MyClient } from "colyseus";
+type Client = MyClient<{ userData: UserData, auth: AuthData }>;
+// ...
+onJoin(client: Client) {
+    console.log(client.userData.custom);
+    console.log(client.auth.name);
+}
+```
+
+#### `.setSeatReservationTime()` method has moved:
+
+The `.setSeatReservationTime()` method has moved to the `.seatReservationTimeout` property.
+
+```diff
+-   this.setSeatReservationTime(15);
++   this.seatReservationTimeout = 15;
+```
+
+#### Room `onLeave()`'s `consented` parameter have changed
+
+The `consented: boolean` parameter have changed to `code: number`:
+
+```diff
+-   async onLeave (client: Client, consented: boolean) {
++   async onLeave (client: Client, code: number) {
+}
+```
+
+In order to keep the same behavior, you can use the following:
+
+```typescript
+import { CloseCode } from "colyseus";
+
+async onLeave (client: Client, code: number) {
+    const consented = (code === CloseCode.CONSENTED);
+    // ... your existing code ...
+}
+```
+
+#### Internal and undocumented Room properties have changed
+
+If you were accessing or modifying internal undocumented properties of the `Room` class, you may need to update your code.
+
+```diff filename="Example"
+-this.resetAutoDisposeTimeout();
++this["resetAutoDisposeTimeout"]();
+```
+
+List of renamed protected members:
+
+| Old Member | New Member |
+|--------|-------------|
+| `this.resetAutoDisposeTimeout` | `this["resetAutoDisposeTimeout"]` |
+| `this.listing` | `this["_listing"]` |
+| `this.reservedSeats` | `this["_reservedSeats"]` |
+| `this.reservedSeatTimeouts` | `this["_reservedSeatTimeouts"]` |
+| `this._events` | `this["_events"]` |
+| `this._reconnections` | `this["_reconnections"]` |
+
+#### Fallback for all messages
+
+If you were using the `onMessageHandlers` property directly to register a fallback for all messages, you need to update your code to use the `onMessageFallbacks` property instead.
+
+```diff filename="Example"
+-this.onMessageHandlers["__no_message_handler"] = {
+-    callback: (client, type, payload) => {
+-       // ... your existing code ...
+-    }
+-}}
++this["onMessageFallbacks"]["__no_message_handler"] = (client, type, payload) => {
++    // ... your existing code ...
++}
+```
+
+#### `Protocol.WS_*` constants have been moved to `CloseCode`
+
+```diff
+-import { Protocol } from "colyseus";
++import { CloseCode } from "colyseus";
+```
+
+| Old (`Protocol.WS_*`) | New (`CloseCode.*`) |
+|----------------------|---------------------|
+| `WS_CLOSE_NORMAL` | `NORMAL_CLOSURE` |
+| `WS_CLOSE_GOING_AWAY` | `GOING_AWAY` |
+| `WS_CLOSE_CONSENTED` | `CONSENTED` |
+| `WS_CLOSE_WITH_ERROR` | `WITH_ERROR` |
+| `WS_CLOSE_DEVMODE_RESTART` | `MAY_TRY_RECONNECT` |
+| `WS_SERVER_DISCONNECT` | `SERVER_SHUTDOWN` |
+| `WS_TOO_MANY_CLIENTS` | (removed) |
+
+### Frontend
+
+#### Accessing `refId` of Schema instances
+
+You could previously access the `refId` of Schema instances via the `room.serializer.decoder.root.refIds` object.
+
+```diff
+-room.serializer.decoder.root.refIds.get(schemaInstance)
+```
+
+You may now access the `refId` of a Schema instance via the `[$refId]` property.
+
+```diff
++import { $refId } from "@colyseus/schema";
++const refId = schemaInstance[$refId]
+```
+

@@ -5,7 +5,7 @@ import { CodeSquareIcon, FileBinaryIcon, EyeIcon, StarIcon } from '@primer/octic
 
 <Cards>
     <Cards.Card icon={<FileBinaryIcon/>} title="Schema Definition" href="/state/schema" />
-    <Cards.Card icon={<CodeSquareIcon/>} title="Client-side Callbacks" href="/state/callbacks" />
+    <Cards.Card icon={<CodeSquareIcon/>} title="Schema Callbacks" href="/state/callbacks" />
     <Cards.Card icon={<EyeIcon/>} title="State View" href="/state/view" />
     <Cards.Card icon={<StarIcon/>} title="Best Practices" href="/state/best-practices" />
 </Cards>
@@ -17,12 +17,12 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 - The room's state is defined using the `Schema` class from `@colyseus/schema`. Only the server can directly mutate the state.
 - Clients send messages to the server to request state changes. Your room code processes these requests and updates the state.
 - Colyseus optimizes performance and bandwidth by tracking property-level changes. Only the latest mutation of each property is queued and sent to clients during the [patchRate](/server/room/#patchrate) interval.
-- On the client side, you listen for state changes to keep the user interface in sync
+- On the client side, you listen for state changes to keep the user interface in sync.
 
 <Steps>
-	### Server-side: Define your state structures
+	### Backend: Define your state structures
 
-    Define your state structures by extending `Schema` class from `@colyseus/schema`:
+    Define your state structures by extending the `Schema` class from `@colyseus/schema`:
 
     <Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
         <Tabs.Tab>
@@ -42,15 +42,15 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
         </Tabs.Tab>
         <Tabs.Tab>
         ```js filename="src/rooms/MyState.js"
-        const schema = require("@colyseus/schema");
+        import { schema } from "@colyseus/schema";
 
-        exports.Player = schema.schema({
+        export const Player = schema({
             name: "string",
             x: "number",
             y: "number",
         })
 
-        exports.MyState = schema.schema({
+        export const MyState = schema({
             players: { map: Player, default: new Map() }
         })
         ```
@@ -58,9 +58,9 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
     </Tabs>
 
 
-    ### Server-side: Assign and mutate the state
+    ### ... assign and mutate the state
 
-    Setting up the state in your room class, and mutating it when clients join or leave the room:
+    Setting up the state in your room class and mutating it when clients join or leave the room:
 
     <Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
         <Tabs.Tab>
@@ -83,11 +83,11 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 
         <Tabs.Tab>
         ```js {2,5,8,11} filename="src/rooms/MyRoom.js"
-        const colyseus = require('colyseus');
-        const MyState = require("./MyState");
+        import { Room } from "colyseus";
+        import { MyState, Player } from "./MyState";
 
-        exports.MyRoom = class MyRoom extends colyseus.Room {
-            state = new MyState.MyState();
+        export class MyRoom extends Room {
+            state = new MyState();
 
             onJoin (client, options) {
                 this.state.players.set(client.sessionId, new Player());
@@ -100,78 +100,78 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
         </Tabs.Tab>
     </Tabs>
 
-    ### Client-side: Full state received on join
+    ### Frontend: Full state received on join
 
-    Clients receive the full state when they join the room. Whenever a mutation occurs in the server-side, the state is automatically synchronized with all clients in the room.
+    Clients receive the full state when they join the room. Whenever a mutation occurs in the backend, the state is automatically synchronized with all clients in the room.
 
-    Below is an example of how to listen to player additions and removals on the client-side:
+    Below is an example of how to listen to player additions and removals on the frontend:
 
     ```js {9-11,14-16} copy filename="client.js"
-    import { Client, getStateCallbacks } from 'colyseus.js';
+    import { Client, Callbacks } from "@colyseus/sdk";
 
     // ...
     const client = new Client('http://localhost:2567');
     const room = await client.joinOrCreate('my_room', {/* */});
-    const $ = getStateCallbacks(room);
+    const callbacks = Callbacks.get(room);
 
     // Listen to 'player' instance additions
-    $(room.state).players.onAdd((player, sessionId) => {
+    callbacks.onAdd("players", (player, sessionId) => {
         console.log('Player joined:', player);
     });
 
     // Listen to 'player' instance removals
-    $(room.state).players.onRemove((player, sessionId) => {
+    callbacks.onRemove("players", (player, sessionId) => {
         console.log('Player left:', player);
     });
     ```
 
-    ### Client-side: request the server to mutate the state
+    ### ... request the server to mutate the state
 
-    The client-side is not capable of mutating the state directly. Instead, it sends messages to the server to request state changes.
+    The frontend is not capable of mutating the state directly. Instead, it sends messages to the server to request state changes.
 
     ```js {4} filename="client.js"
-    import { Client, getStateCallbacks } from 'colyseus.js';
+    import { Client, Callbacks } from '@colyseus/sdk';
 
     // ...
     room.send("set-position", { x: 16, y: 16 });
     ```
 
-    ### Server-side: listen to client messages
+    ### Backend: Listen to client messages
 
-    The server-side processes the client messages and mutates the state. Colyseus will take care of synchronizing the state with all clients in the room.
+    The backend processes the client messages and mutates the state. Colyseus will take care of synchronizing the state with all clients in the room.
 
     ```ts {6-11} filename="src/rooms/MyRoom.ts"
     // ...
     export class MyRoom extends Room<MyState> {
         state = new MyState();
 
-        onCreate() {
-            this.onMessage("set-position", (client, data) => {
+        messages = {
+            "set-position": (client, data) => {
                 const player = this.state.players.get(client.sessionId);
                 player.x = data.x;
                 player.y = data.y;
-            });
+            }
         }
         // ...
     ```
 
-    ### Client-side: Listen to state changes
+    ### Frontend: Listen to state changes
 
-    The client listens to state changes at the direct instance to keep the user interface in sync.
+    The client listens to state changes on the instance directly to keep the user interface in sync.
 
-    <Tabs items={["Using .onChange() on instance", "Using .listen() on property"]}>
+    <Tabs items={["Using .onChange() on an instance", "Using .listen() on a property"]}>
         <Tabs.Tab>
         ```js {10-12} filename="client.js"
-        import { Client, getStateCallbacks } from 'colyseus.js';
+        import { Client, Callbacks } from "@colyseus/sdk";
         // ...
         const client = new Client('http://localhost:2567');
         const room = await client.joinOrCreate('my_room', {/* */});
-        const $ = getStateCallbacks(room);
+        const callbacks = Callbacks.get(room);
 
         // Listen to 'player' instance additions
-        $(room.state).players.onAdd((player, sessionId) => {
+        callbacks.onAdd("players", (player, sessionId) => {
             // Listening for any change on the player instance
-            $(player).onChange(() => {
+            callbacks.onChange(player, () => {
                 console.log('Player changed:', player.x, player.y);
             });
         });
@@ -180,19 +180,19 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 
         <Tabs.Tab>
         ```js {10-15} filename="client.js"
-        import { Client, getStateCallbacks } from 'colyseus.js';
+        import { Client, Callbacks } from "@colyseus/sdk";
         // ...
         const client = new Client('http://localhost:2567');
         const room = await client.joinOrCreate('my_room', {/* */});
-        const $ = getStateCallbacks(room);
+        const callbacks = Callbacks.get(room);
 
         // Listen to 'player' instance additions
-        $(room.state).players.onAdd((player, sessionId) => {
-            // Listen to direct property changes
-            $(player).listen("x", (x, prevX) => {
+        callbacks.onAdd("players", (player, sessionId) => {
+            // Listen to property changes directly
+            callbacks.listen(player, "x", (x, prevX) => {
                 console.log('Player changed:', x, "from", prevX);
             });
-            $(player).listen("y", (x, prevX) => {
+            callbacks.listen(player, "y", (x, prevX) => {
                 console.log('Player changed:', x, "from", prevX);
             });
         });
@@ -203,13 +203,26 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 
 ---
 
+## Limitations and Best Practices
+
+- Each `Schema` structure can hold up to `64` serialized fields. If you need more fields, use nested `Schema` structures.
+- `NaN` and `Infinity` are encoded as `0` (integer encoding only).
+- `null` strings are encoded as `""` (both "string" and "cstring" encoding).
+- Multi-dimensional arrays are not supported. [See how to use 1D arrays as multi-dimensional](https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid/212813#212813)
+- `@colyseus/schema` encoding order is based on field definition order.
+    - Both encoder (server) and decoder (client) must have the same schema definition.
+    - The order of the fields must be the same.
+
+---
+
 ## How does it work, internally?
 
-- **Handshake**: When a client joins a room, the server sends all the types that compose the room's state to the client, following by the full state.
-- **Enqueueing changes**: When the server mutates the state, it holds which properties have changed since the last state synchronization, per `Schema` instance. Each `Schema` instance holds a `ChangeTree` object that tracks its changes.
+- **Handshake**: When a client joins a room, the server sends all the types that compose the room's state to the client, followed by the full state.
+    - Handshake is skipped on automatic reconnections, OR when the client has provided the concrete state classes when joining the room.
+- **Enqueueing changes**: When the server mutates the state, it tracks which properties have changed since the last state synchronization, per `Schema` instance. Each `Schema` instance holds a `ChangeTree` object that tracks its changes.
 - **Sending changes**: The server encodes only the changed properties and sends them to the client during the [patchRate](/server/room/#patchrate) interval.
 - **`refId`**: Each `Schema` instance has a unique `refId` that is used to identify the instance across the network. This is how Colyseus knows which instance has been added, removed, or updated.
-- **Decoding changes**: When the client receives the state changes, it decodes them and applies them to each `Schema` instance, based on the `refId` - triggering the `onChange`, `listen` and `onAdd`/`onRemove` callbacks on the client-side.
+- **Decoding changes**: When the client receives the state changes, it decodes them and applies them to each `Schema` instance, based on the `refId`—triggering the `onChange`, `listen`, and `onAdd`/`onRemove` callbacks on the frontend.
 
 ---
 
@@ -227,3 +240,12 @@ If you are using TypeScript, make sure to enable the `experimentalDecorators` an
     }
 }
 ```
+
+---
+
+## Next Steps
+
+- [Schema Definition](/state/schema) - Complete reference for defining state structures
+- [Schema Callbacks](/state/callbacks) - All methods for listening to state changes
+- [State View](/state/view) - Control which parts of state each client can see
+- [Best Practices](/state/best-practices) - Tips for efficient state design

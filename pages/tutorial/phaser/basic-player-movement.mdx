@@ -56,16 +56,16 @@ If successful, the output should look like this in your command-line:
 ```txt
 ✅ development.env loaded.
 ✅ Express initialized
-⚔️ Listening on ws://localhost:2567
+⚔️ Listening on http://localhost:2567
 ```
 
 ## Creating the Client
 
-We are going to set up a new project using NPM, Parcel and TypeScript for the client-side. If you are more comfortable with other tooling, feel free to use the tools of your choice instead.
+We are going to set up a new project using NPM, Parcel and TypeScript for the frontend. If you are more comfortable with other tooling, feel free to use the tools of your choice instead.
 
 ### Setting up Parcel and TypeScript
 
-Create the client-side project by running the following commands from your terminal:
+Create the frontend project by running the following commands from your terminal:
 
 ```sh filename="Terminal"
 mkdir client
@@ -79,10 +79,10 @@ Install the development dependencies (`parcel` and `typescript`):
 npm install --save-dev parcel typescript
 ```
 
-Install the runtime dependencies (`phaser` and `colyseus.js`):
+Install the runtime dependencies (`phaser` and `@colyseus/sdk`):
 
 ```sh filename="Terminal"
-npm install --save phaser colyseus.js
+npm install --save phaser @colyseus/sdk
 ```
 
 Generate the `tsconfig.json` file by running the following command:
@@ -156,7 +156,7 @@ const config: Phaser.Types.Core.GameConfig = {
 const game = new Phaser.Game(config);
 ```
 
-In order to access the client-side project from your web browser, let's start `parcel` through another terminal tab, which is going to build and serve the client-side files:
+In order to access the frontend project from your web browser, let's start `parcel` through another terminal tab, which is going to build and serve the frontend files:
 
 ```sh filename="Terminal"
 npx parcel serve index.html
@@ -195,13 +195,13 @@ From the Phaser scene, let's instantiate our Colyseus `Client` instance, and con
 We need the `create()` method to be defined as `async` to be able to use `await` inside it.
 
 ```ts
-import { Client, Room } from "colyseus.js";
+import { Client, Room } from "@colyseus/sdk";
 
 // custom scene class
 export class GameScene extends Phaser.Scene {
     // (...)
 
-    client = new Client("ws://localhost:2567");
+    client = new Client("http://localhost:2567");
     room: Room;
 
     async create() {
@@ -221,7 +221,7 @@ export class GameScene extends Phaser.Scene {
 ```
 
 <Callout type="info">
-    Note that we're using the local `ws://localhost:2567` endpoint here. You need to [deploy your server](/deployment) to the public internet in order to play with others online. You can also use [Glitch](https://glitch.com/edit/#!/colyseus-phaser-tutorial) to host your server publicly.
+    Note that we're using the local `http://localhost:2567` endpoint here. You need to [deploy your server](/deployment) to the public internet in order to play with others online. You can also use [Glitch](https://glitch.com/edit/#!/colyseus-phaser-tutorial) to host your server publicly.
 </Callout>
 
 When you refresh your browser now, your client is going to establish a connection with the server, and the server is going to create the room `my_room` on demand for you.
@@ -269,7 +269,7 @@ export class MyRoomState extends Schema {
     See [State Synchronization → Schema Definition](/state/schema/).
 </Callout>
 
-Now, still in the server-side, let's modify our `onJoin()` method to create a `Player` instance whenever a new connection is established with the room.
+Now, still in the backend, let's modify our `onJoin()` method to create a `Player` instance whenever a new connection is established with the room.
 
 ```ts filename="MyRoom.ts"
 // (...)
@@ -306,7 +306,7 @@ Also, when the client disconnects, let's remove the player from the map of playe
 // (...)
 ```
 
-The state mutations we've done on the server-side **can be observed** on the client-side, and that's what we're going to do in the next sections.
+The state mutations we've done on the backend **can be observed** on the frontend, and that's what we're going to do in the next sections.
 
 ## Preloading Assets in the Demo Scene
 
@@ -327,25 +327,25 @@ For this demo, we only need one sprite to represent the player, which we are goi
 
 ## Listening for State Changes
 
-After a connection with the room has been established, the client-side can start listening for state changes, and create a visual representation of the data in the server.
+After a connection with the room has been established, the frontend can start listening for state changes, and create a visual representation of the data in the server.
 
-In order to attach callbacks to the state, we need to import the `getStateCallbacks()` function from `colyseus.js`:
+In order to attach callbacks to the state, we need to import the `Callbacks` class from `@colyseus/sdk`:
 
 ```typescript
-import { getStateCallbacks } from "colyseus.js";
+import { Callbacks } from "@colyseus/sdk";
 // (...)
-const $ = getStateCallbacks(this.room);
+const callbacks = Callbacks.get(this.room);
 ```
 
 ### Adding new players
 
 As per [Room State and Schema](#room-state-and-schema) section, whenever the server accepts a new connection - the `onJoin()` method is creating a new Player instance within the state.
 
-We're going to listen to this event on the client-side now:
+We're going to listen to this event on the frontend now:
 
 ```ts
 // (...)
-$(this.room.state).players.onAdd((player, sessionId) => {
+callbacks.onAdd("players", (player, sessionId) => {
   //
   // A player has joined!
   //
@@ -359,7 +359,7 @@ When playing the Scene, you should see a message in the console of the browser w
 For the visual representation, we need to add a Phaser GameObject for each joining player, and keep a local reference to the GameObject based on their `sessionId`, so we can operate on them later:
 
 ```ts
-import { getStateCallbacks } from "colyseus.js";
+import { Callbacks } from "@colyseus/sdk";
 
 export class GameScene extends Phaser.Scene {
     // (...)
@@ -372,9 +372,10 @@ export class GameScene extends Phaser.Scene {
     // (...)
     async create() {
         // (...)
+        const callbacks = Callbacks.get(this.room);
 
         // listen for new players
-        $(this.room.state).players.onAdd((player, sessionId) => {
+        callbacks.onAdd("players", (player, sessionId) => {
             const entity = this.physics.add.image(player.x, player.y, 'ship_0001');
 
             // keep a reference of it on `playerEntities`
@@ -388,11 +389,11 @@ export class GameScene extends Phaser.Scene {
 
 ### Removing disconnected players
 
-When a player is removed from the state (upon `onLeave()` in the server-side), we need to remove their visual representation as well.
+When a player is removed from the state (upon `onLeave()` in the backend), we need to remove their visual representation as well.
 
 ```ts
 // (...)
-$(this.room.state).players.onRemove((player, sessionId) => {
+callbacks.onRemove("players", (player, sessionId) => {
     const entity = this.playerEntities[sessionId];
     if (entity) {
         // destroy entity
@@ -456,9 +457,9 @@ Whenever the message is received in the server, we're going to mutate the player
 // (...)
   state = new MyRoomState();
 
-  onCreate(options: any) {
-    // handle player input
-    this.onMessage(0, (client, payload) => {
+  // handle player input
+  messages = {
+    0: (client, payload) => {
       // get reference to the player who sent the message
       const player = this.state.players.get(client.sessionId);
       const velocity = 2;
@@ -476,45 +477,45 @@ Whenever the message is received in the server, we're going to mutate the player
       } else if (payload.down) {
         player.y += velocity;
       }
-    });
+    }
   }
 // (...)
 ```
 
 ### Updating Player's visual representation
 
-Having the mutation on the server, we can detect it on the client-side via `player.onChange()`, or `player.listen()`.
+Having the mutation on the server, we can detect it on the frontend via `callbacks.onChange()`, or `callbacks.listen()`.
 
-- `player.onChange()` is triggered **per schema instance**
-- `player.listen(prop)` is triggered **per property** change
+- `callbacks.onChange(instance, ...)` is triggered **per schema instance**
+- `callbacks.listen(instance, prop, ...)` is triggered **per property** change
 
 We are going to use `.onChange()` since we need all the new coordinates at once, no matter if just one has changed individually.
 
 ```ts
 // (...)
 // listen for new players
-$(this.room.state).players.onAdd((player, sessionId) => {
+callbacks.onAdd("players", (player, sessionId) => {
     const entity = this.physics.add.image(player.x, player.y, 'ship_0001');
 
     // keep a reference of it on `playerEntities`
     this.playerEntities[sessionId] = entity;
 
     // listening for server updates
-    $(player).onChange(() => {
+    callbacks.onChange(player, () => {
         // update local position immediately
         entity.x = player.x;
         entity.y = player.y;
     });
 
     // Alternative, listening to individual properties:
-    // player.listen("x", (newX, prevX) => console.log(newX, prevX));
-    // player.listen("y", (newY, prevY) => console.log(newY, prevY));
+    // callbacks.listen(player, "x", (newX, prevX) => console.log(newX, prevX));
+    // callbacks.listen(player, "y", (newY, prevY) => console.log(newY, prevY));
 });
 // (...)
 ```
 
 <Callout type="info">
-    See [State Synchronization → Client-side Callbacks](/state/callbacks)
+    See [State Synchronization → Schema Callbacks](/state/callbacks)
 </Callout>
 
 ## Extra: Monitoring Rooms and Connections

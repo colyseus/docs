@@ -1,4 +1,6 @@
-import { Callout, Tabs, Steps } from 'nextra/components';
+import { Callout, Steps } from 'nextra/components';
+
+# Scalability
 
 <Callout type="warning">
     If you find configuring scalability overwhelming, consider using [Colyseus Cloud](https://cloud.colyseus.io/) to easily deploy and scale your Colyseus servers.
@@ -22,37 +24,17 @@ import { Callout, Tabs, Steps } from 'nextra/components';
 
 ## Use a shared `Presence` and `Driver`
 
-<Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
-    <Tabs.Tab>
+```ts {7-8} filename="server.ts"
+import { defineServer } from "colyseus";
+import { RedisPresence } from "@colyseus/redis-presence";
+import { RedisDriver } from "@colyseus/redis-driver";
 
-    ```ts {7-8} filename="server.ts"
-    import { Server } from "colyseus";
-    import { RedisPresence } from "@colyseus/redis-presence";
-    import { RedisDriver } from "@colyseus/redis-driver";
-
-    const gameServer = new Server({
-      // ...
-      presence: new RedisPresence(),
-      driver: new RedisDriver(),
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-
-    ```js {7-8} filename="server.js"
-    const colyseus = require("colyseus");
-    const { RedisPresence } = require("@colyseus/redis-presence");
-    const { RedisDriver } = require("@colyseus/redis-driver");
-
-    const gameServer = new colyseus.Server({
-      // ...
-      presence: new colyseus.RedisPresence(),
-      driver: new colyseus.RedisDriver(),
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
+const server = defineServer({
+  // ...
+  presence: new RedisPresence(),
+  driver: new RedisDriver(),
+});
+```
 
 The process to join a Room consists of two requests:
 - **Reserve a seat in the Room**: Any of the Colyseus processes can handle this request. By using a shared `presence` and `driver`, the framework is able to communicate internally via pub/sub to reserve a seat, or create a new room if necessary.
@@ -66,39 +48,18 @@ The process to join a Room consists of two requests:
 
 Configure each Colyseus process to use its very own public address, so clients can connect directly to it.
 
-<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
-    <Tabs.Tab>
+```ts {6-9} filename="src/app.config.ts"
+    import { defineServer } from "colyseus";
+    // ...
+    const server = defineServer({
+        driver: new RedisDriver(),
+        presence: new RedisPresence(),
 
-        ```ts {9-10} filename="src/app.config.ts"
-        import config from "@colyseus/tools";
+        // use a unique public address for each process
+        publicAddress: `backend.yourdomain.com/${(Number(process.env.PORT) + Number(process.env.NODE_APP_INSTANCE))}`,
         // ...
-        export default config({
-            options: {
-                // ...
-                driver: new RedisDriver(),
-                presence: new RedisPresence(),
-
-                // use a unique public address for each process
-                publicAddress: `backend.yourdomain.com/${(Number(process.env.PORT) + Number(process.env.NODE_APP_INSTANCE))}`
-            },
-            // ...
-        });
-        ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-        ```ts {6-7} filename="server.ts"
-        const server = new Server({
-            // ...
-            presence: new RedisPresence(),
-            driver: new RedisDriver(),
-
-            // use a unique public address for each process
-            publicAddress: `backend.yourdomain.com/${(Number(process.env.PORT) + Number(process.env.NODE_APP_INSTANCE))}`
-        });
-        ```
-    </Tabs.Tab>
-</Tabs>
+    });
+    ```
 
 You may have a regular load balancer sitting behind all the Colyseus processes in order to distribute the incoming connections. The load balancer must be the initial entrypoint.
 
@@ -124,37 +85,11 @@ module.exports = {
         watch       : false,
         instances   : os.cpus().length, // or manually set the amount of instances
         exec_mode   : 'fork',           // IMPORTANT: DO NOT use 'cluster' mode.
-        env: {
-            DEBUG: "colyseus:errors",
-            NODE_ENV: "production",
-        }
     }]
 }
 ```
 
-<Tabs items={["Recommended", "Raw usage"]} storageKey="recommended-or-raw">
-    <Tabs.Tab>
-        When you use `@colyseus/tools` to configure your server, the `NODE_APP_INSTANCE` from PM2 is automatically used to define the port number.
-
-        If you specified `2567` as port number, the first instance will listen on port `2567`, the second instance on port `2568`, and so on.
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-        By default, PM2 provides a `NODE_APP_INSTANCE` environment variable, containing a different number for each process. You can use it to define your port number.
-
-        ```ts filename="server.ts"
-        import { Server } from "colyseus";
-
-        // binds each instance of the server on a different port.
-        const PORT = Number(process.env.PORT) + Number(process.env.NODE_APP_INSTANCE);
-
-        const gameServer = new Server({ /* ... */ })
-
-        gameServer.listen(PORT);
-        console.log("Listening on", PORT);
-        ```
-    </Tabs.Tab>
-</Tabs>
+When you use `@colyseus/tools`'s `.listen()` method, the `NODE_APP_INSTANCE` from PM2 is automatically used to define the port number. If you specified `2567` as port number, the first instance will listen on port `2567`, the second instance on port `2568`, and so on.
 
 ---
 

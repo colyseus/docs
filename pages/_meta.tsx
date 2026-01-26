@@ -1,4 +1,4 @@
-import { HomeIcon, FileCodeIcon, ServerIcon, ThumbsupIcon, DevicesIcon, DatabaseIcon, ToolsIcon, QuestionIcon, VersionsIcon, HeartFillIcon, DownloadIcon, CodeIcon, ZapIcon, BookIcon, SyncIcon, PasskeyFillIcon, RocketIcon, ListOrderedIcon, RepoIcon, TasklistIcon, ListUnorderedIcon, CodeSquareIcon, FlameIcon, LightBulbIcon, CreditCardIcon, RowsIcon, PeopleIcon, StackIcon } from '@primer/octicons-react';
+import { HomeIcon, FileCodeIcon, ServerIcon, ThumbsupIcon, DevicesIcon, DatabaseIcon, ToolsIcon, QuestionIcon, VersionsIcon, HeartFillIcon, DownloadIcon, CodeIcon, ZapIcon, BookIcon, SyncIcon, PasskeyFillIcon, RocketIcon, ListOrderedIcon, RepoIcon, TasklistIcon, ListUnorderedIcon, CodeSquareIcon, FlameIcon, LightBulbIcon, CreditCardIcon, RowsIcon, PeopleIcon, StackIcon, CloudIcon, PackageIcon, DuplicateIcon } from '@primer/octicons-react';
 
 export default {
     '-- Intro': {
@@ -12,6 +12,7 @@ export default {
         // }
     },
 
+    // "concepts": { title: <span><BookIcon/> Core Concepts</span> },
     "getting-started": { title: <span><ZapIcon/> Getting Started</span> }, // "Getting Started"
     "tutorial": { title: <span><FileCodeIcon/> Tutorials</span>},
 
@@ -20,20 +21,28 @@ export default {
     "server": { title: <span><ServerIcon/> Server</span> },
     "room": { title: <span><PeopleIcon/> Rooms</span> },
     "state": { title: <span><SyncIcon/> State Synchronization</span> },
+    "matchmaker": { title: <span><StackIcon/> Matchmaker API</span> },
     "auth": { title: <span><PasskeyFillIcon/> Authentication</span> },
-    "tools": { title: <span><ToolsIcon/> Tools</span> },
+
+    '-- Tools': { type: 'separator', title: 'Tools' },
+    "tools": { title: <span><ToolsIcon/> Built-in Tools</span> },
+    "payments": { title: <span><CreditCardIcon/> Payments</span> },
+    "database": { title: <span><DatabaseIcon/> Database</span> },
+    "3rd-party-packages": { title: <span><PackageIcon/> 3rd Party Packages</span> },
+
+    '-- Infrastructure': { type: 'separator', title: 'Infrastructure' },
     "deployment": { title: <span><RocketIcon/> Deployment</span> },
+    "scalability": { title: <span><DuplicateIcon/> Scalability</span> },
+    "cloud": { title: <span><CloudIcon/> Colyseus Cloud</span> },
 
     '-- More': { type: 'separator', title: 'More' },
-    "database": { title: <span><DatabaseIcon/> Database</span> },
-    "payments": { title: <span><CreditCardIcon/> Payments</span> },
+    "best-practices": { title: <span><ThumbsupIcon/> Best Practices</span> },
     "recipes": { title: <span><LightBulbIcon /> Recipes</span> },
     "examples": { title: <span><RepoIcon /> Example Projects</span> },
 
     '-- Extra': { type: 'separator', title: 'Extra' },
-    "recommendations": { title: <span><ThumbsupIcon/> Recommendations</span> },
     "community": { title: <span><HeartFillIcon/> Community</span> },
-    "upgrading": { title: <span><VersionsIcon/> Upgrading Versions</span> }, // "Upgrading Versions"
+    "migrating": { title: <span><VersionsIcon/> Migrating Versions</span> }, // "Migrating Versions"
     "faq": {title: <span><QuestionIcon/> FAQ</span>},
 
     '-- (final) --': { type: 'separator' },
@@ -58,6 +67,7 @@ export default {
         type: 'menu',
         title: 'Versions',
         items: [
+            { title: '0.16 ↗', href: 'https://0-16-x.docs.colyseus.io/', newWindow: true },
             { title: '0.15 ↗', href: 'https://0-15-x.docs.colyseus.io/', newWindow: true },
             { title: '0.14 ↗', href: 'https://0-14-x.docs.colyseus.io/', newWindow: true },
             { title: '0.13 ↗', href: 'https://0-13-x.docs.colyseus.io/', newWindow: true },

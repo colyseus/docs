@@ -16,6 +16,7 @@ import { NotFoundPage } from 'nextra-theme-docs'
             { from: "/server/room#allowreconnection-client-seconds", to: "/room#allow-reconnection" },
             { from: "/server/room/timing-events", to: "/room/timing-events" },
             { from: "/server/room", to: "/room" },
+            { from: "/server/matchmaker", to: "/matchmaker" },
             { from: "/debugging", to: "/server/debugging" },
             { from: "/tools/monitor", to: "/tools/monitoring" },
             { from: "/demo/shooting-gallery", to: "/examples/unity/shooting-gallery" },
@@ -26,15 +27,34 @@ import { NotFoundPage } from 'nextra-theme-docs'
             { from: "/demo/babylonjs-editor/hide-and-seek", to: "/examples/babylonjs-editor/hide-and-seek" },
             { from: "/community/custom-room-id", to: "/recipes/custom-room-id" },
             { from: "/unity", to: "/getting-started/unity" },
-            { from: "/scalability", to: "/deployment/scalability" },
             { from: "/colyseus/server/room#leavecode-number", to: "/room#leave-room" },
             { from: "/cloud", to: "/deployment/cloud" },
             { from: "/state/schema-callbacks", to: "/state/callbacks" },
+            { from: "/state/best-practices", to: "/state#limitations-and-best-practices" },
             { from: "/server/custom-http-routes", to: "/server/http-routes" },
+            { from: "/upgrading/0.15", to: "/migrating/0.15" },
+            { from: "/upgrading/0.16", to: "/migrating/0.16" },
+            { from: "/upgrading", to: "/migrating" },
+            { from: "/recipes/custom-cors-headers", to: "/server/http-routes#cors-cross-origin-resource-sharing" },
+            
+            { from: "/room/examples", to: "/examples" },
 
+            { from: "/state/callbacks", to: "/client/state-sync-callbacks" },
+
+            { from: "/deployment/cloud", to: "/cloud" },
+            { from: "/deployment/scalability", to: "/scalability" },
+
+            { from: "/recommendations/3rd-party-packages", to: "/tools/3rd-party-packages" },
+            { from: "/recommendations/command-pattern", to: "/best-practices/command-pattern" },
+            
+            { from: "/recommendations", to: "/best-practices" },
         ];
+
         var currentPath = window.location.pathname + window.location.hash;
         var isRedirect = redirects.find((r) => currentPath.includes(r.from));
+
+        console.log({ currentPath, isRedirect });
+
         if (isRedirect) {
             window.location.replace(
                 window.location.protocol + "//" +

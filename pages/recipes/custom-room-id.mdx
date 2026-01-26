@@ -20,7 +20,7 @@ See the code below:
 ```typescript
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-export class MyRoom extends Room<MyRoomState> {
+export class MyRoom extends Room {
     // The channel where we register the room IDs.
     // This can be anything you want, it doesn't have to be `$mylobby`.
     LOBBY_CHANNEL = "$mylobby"

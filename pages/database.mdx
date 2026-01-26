@@ -1,30 +1,20 @@
 ---
-title: "Database & Persistance"
+title: "Database & Persistence"
 ---
 import { Cards, Callout } from 'nextra/components'
 import { LinkExternalIcon } from '@primer/octicons-react'
 
-# Database & Persistance
+# Database & Persistence
 
-Colyseus is agnostic to the database you use. You can use your preferred database and Node module for working with databases.
+Colyseus is agnostic to the database you use. You can use your preferred database and Node.js module for working with databases.
 
 <Callout type="warning">
-    We're experimenting with our own recommended tool built on top of [Kysely](https://kysely.dev/). If you're interested in helping/contributing, please [join the discussion](https://github.com/colyseus/colyseus/issues/594) and let us know!
+    Having database-first features such as **player identity**, **leaderboards**, **configurations**, etc. is in our [Roadmap](/roadmap). Currently, we don't have an official database recommendation. [Join the discussion](https://github.com/colyseus/colyseus/issues/594).
 </Callout>
 
 ---
 
 ## Recommended database tools
-
-### Query builders
-
-Query builders are known for their simplicity and flexibility.
-
-<Cards>
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="Kysely" href="https://kysely.dev/" />
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="Knex" href="https://knexjs.org/" />
-</Cards>
-
 
 ### ORMs (Object-Relational Mappers)
 
@@ -38,11 +28,21 @@ ORMs are known for abstracting the database layer and providing a more object-or
     <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="TypeORM" href="https://typeorm.io/" />
 </Cards>
 
+### Query builders
+
+Query builders are known for their simplicity and flexibility.
+
+<Cards>
+    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="Kysely" href="https://kysely.dev/" />
+    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="Knex" href="https://knexjs.org/" />
+</Cards>
+
+
 ---
 
-## Common Usage Patterns
+## Usage patterns with Colyseus
 
-### Query the database on `onAuth` method
+### Query the database in `onAuth()`
 
 You may fetch user data based on the `options` passed to the client on connection, or based on the authentication token.
 
@@ -59,7 +59,7 @@ onJoin (client, options) {
 }
 ```
 
-### Update the database on `onLeave` method
+### Update the database in `onLeave()`
 
 You may update the database when the client leaves the room.
 

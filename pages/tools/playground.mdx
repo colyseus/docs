@@ -1,6 +1,6 @@
 # Playground
 
-The client-side playground allows to easily create connections with rooms and inspect how they communicate with the server.
+The frontend playground allows to easily create connections with rooms and inspect how they communicate with the server.
 
 ![](https://cdn.jsdelivr.net/npm/@colyseus/playground@latest/screenshot.png)
 
@@ -31,7 +31,7 @@ Then, import and bind it to your express app instance:
 import { playground } from "@colyseus/playground";
 
 // ...
-    initializeExpress: (app) => {
+    express: (app) => {
         // bind it as an express middleware
         app.use("/playground", playground());
     }

@@ -21,7 +21,7 @@ By default, the entire state is visible to all clients. However, you may want to
 A `StateView` instance must be assigned to the `client.view`.
 
 <Callout type="warning">
-    It is not recommended to rely on `StateView` for big datasets, as it is not optimized for that yet. However, it is a great way to filter data per client, such as "private fields" per schema instance, "level of detail", area-based, team-owned data, and etc.
+    It is not recommended to rely on `StateView` for large datasets, as it is not optimized for that yet. However, it is a great way to filter data per client, such as "private fields" per schema instance, "level of detail", area-based, team-owned data, etc.
 </Callout>
 
 ## Initializing a `StateView`
@@ -47,7 +47,7 @@ import { StateView } from "@colyseus/schema";
 
 ## Tagging fields with `@view()`
 
-The `@view()` decorator is used to tag a field as only visible to `StateView`'s that contains that `Schema` instance.
+The `@view()` decorator is used to tag a field as only visible to `StateView` instances that contain that `Schema` instance.
 
 ```ts {6} filename="MyState.ts"
 class Player extends Schema {
@@ -59,11 +59,11 @@ class Player extends Schema {
 }
 ```
 
-On the example above, the `position` field is only visible to clients that contain this `Player` instance on their `StateView`.
+In the example above, the `position` field is only visible to clients that contain this `Player` instance in their `StateView`.
 
 ### Adding a schema instance to a `StateView`
 
-In order to add a schema instance to a `StateView`, you must call `.add()` on the `StateView` instance:
+To add a schema instance to a `StateView`, call `.add()` on the `StateView` instance:
 
 ```ts {7,8} filename="MyRoom.ts"
 import { StateView } from "@colyseus/schema";
@@ -77,17 +77,17 @@ import { StateView } from "@colyseus/schema";
     }
 ```
 
-The client-side will receive either a "On Add" or "Listen" callback you can listen to, depending on which structure the schema instance is part of.
+The frontend will receive either an "On Add" or "Listen" callback, depending on which structure the schema instance is part of.
 
 ### Removing a schema instance from a `StateView`
 
-In order to remove a schema instance from a `StateView`, you must call `.remove()` on the `StateView` instance:
+To remove a schema instance from a `StateView`, call `.remove()` on the `StateView` instance:
 
 ```typescript
 client.view.remove(player);
 ```
 
-The client-side will receive either a "On Remove" or "Listen" callback you can listen to, depending on which structure the schema instance is part of.
+The frontend will receive either an "On Remove" or "Listen" callback, depending on which structure the schema instance is part of.
 
 ### Checking if instance is part of `StateView`
 
@@ -99,7 +99,7 @@ if (client.view.has(player)) {
 }
 ```
 
-The client-side will receive either a "On Remove" or "Listen" callback you can listen to, depending on which structure the schema instance is part of.
+The frontend will receive either an "On Remove" or "Listen" callback, depending on which structure the schema instance is part of.
 
 ## Specialized tags with `@view(tag: number)`
 
@@ -133,11 +133,11 @@ By assigning a numeric tag to the `@view()` decorator, that field will only be v
 ```
 
 
-On the example above, the `attributes` field is only visible to clients that contain this `Player` instance on their `StateView` with tag `1`, whereas the `position` field is visible to all clients that contain this `Player` instance on their `StateView`.
+In the example above, the `position` field is only visible to clients that contain this `Player` instance in their `StateView` with tag `1`, whereas the `health` field is visible to all clients that contain this `Player` instance in their `StateView`.
 
 ---
 
-The following table shows the relation between type annotations and the visibility of each field on the client-side:
+The following table shows the relation between type annotations and the visibility of each field on the frontend:
 
 | Annotations              | Without `view.add()` | `view.add(instance)` | `view.add(instance, 1)` |
 |-----------------------------------|----------------------|-------------------------|-----------------|
@@ -162,7 +162,7 @@ class MyState extends Schema {
 
 The instance must be assigned to the state and added to the `StateView`:
 
-```ts {6,7} filename="MyRoom.ts"
+```ts {5,8} filename="MyRoom.ts"
 import { StateView } from "@colyseus/schema";
 // ...
     onJoin(client, options) {

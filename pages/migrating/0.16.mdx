@@ -1,6 +1,6 @@
 import { Callout } from 'nextra/components'
 
-# Upgrading to version 0.16 (from 0.15)
+# Migrating to version 0.16 (from 0.15)
 
 Use this guide to migrate your existing 0.15 projects to version 0.16.
 
@@ -10,7 +10,7 @@ Use this guide to migrate your existing 0.15 projects to version 0.16.
 
 Make sure `colyseus` and all `@colyseus/*` packages on `package.json` are pointing to `^0.16.0`. Having different versions of `colyseus` and `@colyseus/*` packages may lead to unexpected behavior.
 
-**Server-side:**
+**Backend:**
 
 ```json filename="package.json"
     "@colyseus/schema": "^3.0.0",
@@ -25,7 +25,7 @@ Make sure `colyseus` and all `@colyseus/*` packages on `package.json` are pointi
     "@colyseus/uwebsockets-transport": "^0.16.0",
 ```
 
-**Client-side:**
+**Frontend:**
 
 ```json filename="package.json"
     "colyseus.js": "^0.16.0",
@@ -133,13 +133,13 @@ This change was necessary to avoid the internal monkey-patching coming from the 
 
 The `getAvailableRooms()` method has been removed from the SDKs. The usage of `getAvailableRooms()` was considered a security risk for many use-cases, as it was exposing the full list of rooms to any client.
 
-If you rely on this method, you can easily re-implement it on your server-side code, although it's recommended to implement a more secure way to query rooms, such as using the `LobbyRoom`.
+If you rely on this method, you can easily re-implement it on your backend code, although it's recommended to implement a more secure way to query rooms, such as using the `LobbyRoom`.
 
 ```ts filename="app.config.ts"
 import { matchMaker } from "colyseus";
 
 // ...
-initializeExpress (app) {
+express (app) {
     app.get("/rooms/:roomName?", (req, res) => {
         const conditions: any = {
             locked: false,

@@ -1,7 +1,7 @@
 import { Callout } from "nextra/components";
 import { DatabaseIcon } from "@primer/octicons-react";
 
-# Roadmap towards Colyseus v1.0
+# Colyseus v1.0 Roadmap
 
 Colyseus is an independent open-source project that has been around since 2015. The project has been used in production by several indies and companies and has been battle-tested in many different scenarios. The project is currently stable, but there are still many features and improvements that we'd like to add.
 
@@ -9,33 +9,39 @@ Colyseus is an independent open-source project that has been around since 2015. 
     If you'd like to support the project, please consider [sponsoring](https://github.com/sponsors/endel) my work.
 </Callout>
 
+- **Release the [Native SDK](https://github.com/colyseus/native-sdk)**:
+    - Shared native cross-platform SDK aimed to be used on Godot ([wip](https://github.com/colyseus/native-sdk/pull/3)), Game Maker ([wip](https://github.com/colyseus/native-sdk/pull/5)), Unreal, etc.
+- **Database-first features:**
+    - Since Colyseus doesn't currently have an official database recommendation tool, we can't provide database-first features out of the box. Features that depend on a database tool are: player identity, leaderboards, configs, etc.
+- **State Sync:**
+    - **`@colyseus/schema` - Bidirectional schema instances:**
+        - Allow to send schema instance updates from client to server
+        - **Client-side prediction:**
+            - Allow to specify client-side prediction techniques on the frontend (?)
+        - **Decouple `@colyseus/schema` from the core:**
+            - Allow to use other serialization methods for the state:
+            - Yjs (CRDT) [connection provider](https://docs.yjs.dev/ecosystem/connection-provider) via Colyseus Rooms.
+        - Wild idea: support RPC calls via schema instances (?)
+- **WebTransport:**
+    - Improve and stabilize [WebTransport](/server/transport/webtransport) support
+- **Matchmaking:**
+    - Improve filtering and sorting options
 - **General improvements:**
     - Add request/response model to rooms ([#331](https://github.com/colyseus/colyseus/issues/331))
     - Introduce the concept of "low priority" and "high priority" messages. Drop "low priority" messages if clients are under backpressure.
     - Introduce "version check" to allow native SDKs to communicate with newer versions of the server
-- **Database:**
-    - Introduce an official database recommendation tool. The recommendation should be used on the documentation, official examples, and initial template project. (See [<DatabaseIcon/> Database](/database))
+
+## Shippped in v0.17 (February 2026)
+
 - **Matchmaking:**
-    - SQL Driver - Provide a SQL driver as alternative to `@colyseus/redis-driver` _(should support SQLite / PostgreSQL, possibly on top of Kysely)_
-    - Improve filtering and sorting options
-    - **New "queue" matchmaking type:**
-        - A queue would keep more clients than needed before starting a match
-        - User specifies logic that combines clients into a new room
-        - Reserve seats for selected clients and redirect them to the newly created room
-- **State Sync:**
-    - **`@colyseus/schema` - Bidirectional schema instances:**
-        - Allow to send schema instance updates from client to server
-        - Wild idea: support RPC calls via schema instances (?)
-        - **Client-side prediction:**
-            - Allow to specify client-side prediction techniques on the client-side (?)
-        - **Decouple `@colyseus/schema` from the core:**
-            - Allow to use other serialization methods for the state
-            - Yjs (CRDT) [connection provider](https://docs.yjs.dev/ecosystem/connection-provider) via Colyseus Rooms.
+    - ~SQL Driver - Provide a SQL driver as alternative to `@colyseus/redis-driver` _(should support SQLite / PostgreSQL, possibly on top of Kysely)_~
+        - Added [PostgreSQL Driver](/server/driver#postgresql)
+    - ~**New "queue" matchmaking type:**~
+        - ~A queue would keep more clients than needed before starting a match~
+        - ~User specifies logic that combines clients into a new room~
+        - ~Reserve seats for selected clients and redirect them to the newly created room~
+        - Added [Queue matchmaking type](/server/matchmaking/queue)
 - **Full-stack + TypeScript Improvements:**
-    - Allow to specify `client.auth` and `client.userData` types on the server-side only once
-    - Allow to infer types for room message and payload definitions from client-side _(`room.send()`)_
-    - Allow to infer http routes and request/response body types from client-side _(`client.http.*`)_
-- **WebTransport:**
-    - Improve and stabilize [WebTransport](/server/transport/webtransport) support
-- **More SDKs:**
-    - Fork and support a Godot SDK _([gsioteam/godot-colyseus](https://github.com/gsioteam/godot-colyseus))_
+    - ~Allow to specify `client.auth` and `client.userData` types on the backend only once~
+    - ~Allow to infer types for room message and payload definitions from frontend _(`room.send()`)_~
+    - ~Allow to infer http routes and request/response body types from frontend _(`client.http.*`)_~

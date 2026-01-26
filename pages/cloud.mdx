@@ -9,8 +9,8 @@ import { Tabs, FileTree } from "nextra/components"
 
 It is the easiest way to deploy your Colyseus servers. It should take less than 15 minutes to get your server up and ready for production.
 
-Colyseus Cloud uses NGINX, PM2, and requires you to use the `@colyseus/tools`
-package for easy integration with its infrastructure.
+Colyseus Cloud uses NGINX, PM2, and requires you to use the `defineServer()`
+function from `colyseus` for easy integration with its infrastructure.
 
 ![Colyseus Cloud Dashboard](/cloud/dashboard.png)
 
@@ -24,34 +24,21 @@ In order to deploy your Colyseus application to Colyseus Cloud, you need to foll
 
 The key important configurations the template provide are:
 
-1. Usage of `@colyseus/tools` to start the application
+1. Usage of `defineServer()` from `colyseus` to start the application
 2. An `ecosystem.config.js` file at the root of the project (with the `"script"` pointing to your application's entrypoint)
 
-<Tabs items={["src/index.ts", "src/app.config.ts", "ecosystem.config.js"]}>
-    <Tabs.Tab>
-
-    ```ts {1,7} filename="src/index.ts"
-    import { listen } from "@colyseus/tools";
-
-    // Import Colyseus config
-    import app from "./app.config";
-
-    // Create and listen on 2567 (or PORT environment variable.)
-    listen(app);
-    ```
-    </Tabs.Tab>
-
+<Tabs items={["src/app.config.ts", "ecosystem.config.js"]}>
     <Tabs.Tab>
 
     ```ts filename="src/app.config.ts"
-    import config from "@colyseus/tools";
+    import { defineServer, defineRoom } from "colyseus";
     import { MyRoom } from "./rooms/MyRoom";
 
-    export default config({
-        initializeGameServer: (gameServer) => {
-            gameServer.define('my_room', MyRoom);
+    const server = defineServer({
+        rooms: {
+            my_room: defineRoom(MyRoom),
         },
-        initializeExpress: (app) => {
+        express: (app) => {
             // ...
         },
         beforeListen: () => {
@@ -110,9 +97,9 @@ This will generate a `.colyseus-cloud.json` file at the root of your project wit
 
 ## Customizing build steps
 
-By default, Colyseus Cloud is going to build your server-side code using the `build` script from your `package.json` file:
+By default, Colyseus Cloud is going to build your backend code using the `build` script from your `package.json` file:
 
-You may customize how your server-side is built by updating the **"Build Command"** in your Colyseus Cloud application settings, under **"Build settings"**.
+You may customize how your backend is built by updating the **"Build Command"** in your Colyseus Cloud application settings, under **"Build settings"**.
 
 ```json filename="package.json"
 {

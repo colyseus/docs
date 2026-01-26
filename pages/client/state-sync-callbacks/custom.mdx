@@ -11,7 +11,7 @@ The standard way of attaching callbacks uses the same "flavor" as Colyseus is us
 This is an example of how you can bring your own callback system:
 
 ```ts filename="client.ts"
-import { Room } from "colyseus.js";
+import { Room } from "@colyseus/sdk";
 import { DataChange } from "@colyseus/schema";
 
 function getRawChangesCallback(room: Room, callback: (changes: DataChange[]) => void) {

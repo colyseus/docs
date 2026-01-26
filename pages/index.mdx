@@ -94,6 +94,12 @@ export class MyRoom extends Room {
     maxClients = 4;
     state = new MyState();
 
+    messages = {
+        doSomething: (client, payload) => {
+            // handle client's "doSomething" message
+        }
+    }
+
     // Called when the room is created
     onCreate(options) { }
 
@@ -117,12 +123,12 @@ export class MyRoom extends Room {
 Exposing the room type allows clients to connect to the server and dynamically create instances of it.
 
 ```ts {6} copy filename="src/app.config.ts"
-import config from "@colyseus/tools";
+import { defineServer, defineRoom } from "colyseus";
 import { MyRoom } from "./MyRoom";
 
-export default config({
-    initializeGameServer: (gameServer) => {
-        gameServer.define('my_room', MyRoom);
+const server = defineServer({
+    rooms: {
+        my_room: defineRoom(MyRoom),
     },
 });
 ```
@@ -132,24 +138,27 @@ export default config({
 Communication between the client and server occurs through room connections. In the example below, the JavaScript SDK is used to let the client join a room and listen for state changes:
 
 ```ts copy filename="client.ts"
-import { Client, getStateCallbacks } from 'colyseus.js';
+import { Client, Callbacks } from "@colyseus/sdk";
 
 async function connect() {
     const client = new Client('http://localhost:2567');
     const room = await client.joinOrCreate('my_room', {
         /* custom join options */
     });
-    const $ = getStateCallbacks(room);
+    const callbacks = Callbacks.get(room);
 
     // Listen to 'player' instance additions
-    $(room.state).players.onAdd((player, sessionId) => {
+    callbacks.onAdd("players", (player, sessionId) => {
         console.log('Player joined:', player);
     });
 
     // Listen to 'player' instance removals
-    $(room.state).players.onRemove((player, sessionId) => {
+    callbacks.onRemove("players", (player, sessionId) => {
         console.log('Player left:', player);
     });
+
+    // Send messages to the server
+    room.send("doSomething", {/* ... */});
 
     return room;
 }

@@ -25,52 +25,16 @@ Use this option when you're running Colyseus on multiple processes and/or machin
 
 - `clientOpts`: The redis client options (host/credentials). [See full list of options](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/2e6f3e603a01589534cb5f6197849a6bc8ca71dc/types/ioredis/index.d.ts#L1997-L2160).
 
-<Tabs items={["Recommended", "Raw: TypeScript", "Raw: JavaScript"]} storageKey="recommended-or-raw">
-    <Tabs.Tab>
-    ```ts filename="app.config.ts"
-    import config from "@colyseus/tools";
-    import { RedisPresence } from "@colyseus/redis-presence";
+```ts filename="app.config.ts"
+import { defineServer } from "colyseus";
+import { RedisPresence } from "@colyseus/redis-presence";
 
-    export default config({
-        // ...
-        options: {
-            presence: new RedisPresence(process.env.REDIS_URI)
-        },
-        // ...
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts filename="server.ts"
-    import { Server } from "colyseus";
-    import { RedisPresence } from "@colyseus/redis-presence";
-
-    // This happens on the slave processes.
-    const gameServer = new Server({
-        // ...
-        presence: new RedisPresence(process.env.REDIS_URI)
-    });
-
-    gameServer.listen(2567);
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="server.js"
-    const colyseus = require('colyseus');
-    const RedisPresence = require('@colyseus/redis-presence').RedisPresence;
-
-    // This happens on the slave processes.
-    const gameServer = new colyseus.Server({
-        // ...
-        presence: new RedisPresence(process.env.REDIS_URI)
-    });
-
-    gameServer.listen(2567);
-    ```
-    </Tabs.Tab>
-</Tabs>
+const server = defineServer({
+    // ...
+    presence: new RedisPresence(process.env.REDIS_URI),
+    // ...
+});
+```
 
 ---
 
