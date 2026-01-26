@@ -9,22 +9,25 @@ import { Callout } from 'nextra/components'
 
 ### How many CCU can a Colyseus server handle?
 
-The maximum number of concurrent users (CCU) a Colyseus server can handle will vary according to how CPU-intensive your game loop is, and how much traffic your server is sending back to the clients.
+The maximum number of concurrent users (CCU) a Colyseus server can handle depends on several factors:
 
-The default "file descriptor limit" (amount of open connections you can have) of Linux servers is around 1024 - this value can be increased at your own risk. So, you can safely assume the cheapest cloud server is capable of holding 1024 concurrent connections. There are reports of people managing to have up to [600k open WebSocket connections](https://blog.jayway.com/2015/04/13/600k-concurrent-websocket-connections-on-aws-using-node-js/), even though they're idle connections, without transferring data - it proves you can potentially handle more than 1024 concurrent connections by fine tuning the server specs and configuration.
+- **CPU**: How intensive your game loop and message handlers are. Complex physics or AI calculations will limit CCU.
+- **RAM**: Each connection and room state consumes memory. A typical connection uses ~2-5KB, but this grows with your state size. Monitor memory usage to avoid OOM crashes.
+- **Bandwidth**: The frequency and size of state patches sent to clients. Use [State View](/state/view) to reduce per-client traffic.
+- **File descriptors**: Linux servers default to ~1024 open connections. This can be increased via `ulimit -n` (e.g., `ulimit -n 65535`), but ensure your hardware can handle the load.
+
+As a baseline, a small cloud server (1 vCPU, 1GB RAM) can typically handle 1,000-2,000 concurrent connections for simple games. For complex games with large state, expect fewer. Always load test your specific use case. 
 
 ### How can I improve performance?
 
 - **Reduce state size**: Only include data that needs to be synchronized. Use messages for transient data.
 - **Optimize patch rate**: The default `patchRate` is 50ms. Increase it if your game doesn't need frequent updates.
 - **Use State View**: Limit what each client sees using [State View](/state/view) to reduce bandwidth per client.
-- **Profile your room code**: Avoid heavy computations in `onMessage` handlers. Offload intensive work to workers.
+- **Profile your room code**: Avoid heavy computations.
 
 ### Does Colyseus help me with client-prediction?
 
-Colyseus does not provide any client-prediction solution out of the box. Games such as [wilds.io](http://wilds.io/) and [mazmorra.io](https://mazmorra.io/) do not use any form of client-prediction. [`lerp`](http://gamestd.io/mathf/globals.html#lerp)ing user coordinates usually gives reasonable results.
-
-See our [Phaser tutorial on client-predicted input](/tutorial/phaser/client-predicted-input) for a practical implementation.
+Not yet—client-prediction is planned for a future release (see [Roadmap](/roadmap)). For now, see our [Phaser tutorial](/tutorial/phaser/client-predicted-input) for a reference implementation.
 
 ---
 
@@ -45,27 +48,23 @@ This error means that the client was not able to effectively connect with the se
 
 ### How do I handle reconnection?
 
-When a client disconnects (e.g., network issues), you can allow them to reconnect to the same room:
+When a client disconnects (e.g., closed browser tab), you can allow them to reconnect to the same room:
 
 1. Store the `room.reconnectionToken` on the client after joining
 2. Use `client.reconnect(reconnectionToken)` to rejoin
 3. On the server, set `allowReconnection` in `onLeave`:
 
-```ts
-async onLeave(client, consented) {
-    if (!consented) {
+```ts {7}
+import { CloseCode } from "colyseus";
+// ...
+
+async onLeave(client, code) {
+    if (code !== CloseCode.CONSENTED) {
         // Allow reconnection for 30 seconds
         await this.allowReconnection(client, 30);
     }
 }
 ```
-
-### Why does my WebSocket connection close immediately?
-
-Common causes:
-- **CORS issues**: Make sure your server allows connections from your client's origin
-- **Wrong URL**: Verify the URL is correct (http:// for local, https:// for production)
-- **Firewall/proxy**: Some networks block WebSocket connections
 
 ---
 
@@ -99,9 +98,9 @@ Support for per-client state visibility was introduced in version `0.16`. You ca
 | Data needs to persist | Event is one-time |
 | All/new clients need the value | Only current clients care |
 | Data changes frequently | Triggering an action/effect |
-| Example: positions, scores | Example: chat, effects |
+| Example: positions, scores | Example: chat, events |
 
-See [State vs Messages](/concepts#state-vs-messages) for a detailed guide.
+{/* See [State vs Messages](/concepts#state-vs-messages) for a detailed guide. */}
 
 ---
 
