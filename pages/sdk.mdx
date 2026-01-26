@@ -787,7 +787,7 @@ Client.selectByLatency (endpoints: Array<string | EndpointSettings>): Promise<Cl
 
 The current room's state. This variable is always synched with the latest `state` from the server. To listen for updates on the whole state, see [`onStateChange`](#on-state-change) event.
 
-For fine-grained control over state updates, see [Client SDK → State Sync Callbacks](/client/state-sync-callbacks).
+For fine-grained control over state updates, see [Client SDK → State Sync Callbacks](/sdk/state-sync-callbacks).
 
 ---
 
@@ -1211,10 +1211,10 @@ This event is triggered when the client leave the room.
 
 This event is triggered whenever the server's state is synchronized with the client. It occurs both when the client first connects to the room and when state updates are sent by the server
 
-For fine-grained control over state updates, you should use the [State Sync Callbacks](/client/state-sync-callbacks).
+For fine-grained control over state updates, you should use the [State Sync Callbacks](/sdk/state-sync-callbacks).
 
 <Callout type="info">
-    Check out the [Client SDK → State Sync Callbacks](/client/state-sync-callbacks) section for more details.
+    Check out the [Client SDK → State Sync Callbacks](/sdk/state-sync-callbacks) section for more details.
 </Callout>
 
 <Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
@@ -1461,7 +1461,7 @@ Perform a PUT request to the server.
 
 ## Next Steps
 
-- [State Sync Callbacks](/client/state-sync-callbacks) - Listen for state changes on the client
+- [State Sync Callbacks](/sdk/state-sync-callbacks) - Listen for state changes on the client
 - [Room API](/room) - Server-side room implementation
 - [Authentication](/auth) - Secure your room connections
 - [Tutorials](/tutorial) - Step-by-step game implementations

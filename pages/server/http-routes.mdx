@@ -3,7 +3,7 @@ import { Callout, Cards } from "nextra/components";
 # HTTP and API Routes
 
 <Callout type="info">
-    Since Colyseus 0.17, we introduced another routing stack (a fork of [better-call](https://github.com/colyseus/better-call)) for client-facing API routes, which enables type inference of HTTP calls to the [Client SDK](/client#http-requests), and visual integration with the [Playground](/tools/playground). You can use both Express or our own routing stack as you prefer.
+    Since Colyseus 0.17, we introduced another routing stack (a fork of [better-call](https://github.com/colyseus/better-call)) for client-facing API routes, which enables type inference of HTTP calls to the [Client SDK](/sdk#http-requests), and visual integration with the [Playground](/tools/playground). You can use both Express or our own routing stack as you prefer.
 </Callout>
 
 Colyseus uses Express and a fork of [better-call](https://github.com/colyseus/better-call) as its HTTP routing libraries. You can use it to add your custom routes to your server.
@@ -259,7 +259,7 @@ matchMaker.controller.getCorsHeaders = function(requestHeaders) {
 Use the `client.http.*` methods to perform HTTP requests to your server.
 
 <Callout type="info">
-    See [Client SDK → HTTP Requests](/client/#http-requests) for more details.
+    See [Client SDK → HTTP Requests](/sdk/#http-requests) for more details.
 </Callout>
 
 ```ts {8-10,23-25} filename="client.ts"

@@ -39,7 +39,12 @@ import { NotFoundPage } from 'nextra-theme-docs'
             
             { from: "/room/examples", to: "/examples" },
 
-            { from: "/state/callbacks", to: "/client/state-sync-callbacks" },
+            { from: "/state/callbacks", to: "/sdk/state-sync-callbacks" },
+            {
+                from: "/client",
+                to: "/sdk",
+                replace: true, // replace all /client with /sdk
+            },
 
             { from: "/deployment/cloud", to: "/cloud" },
             { from: "/deployment/scalability", to: "/scalability" },
@@ -56,11 +61,15 @@ import { NotFoundPage } from 'nextra-theme-docs'
         console.log({ currentPath, isRedirect });
 
         if (isRedirect) {
+            var newPath = isRedirect.replace
+                ? currentPath.replace(isRedirect.from, isRedirect.to)
+                : isRedirect.to;
+
             window.location.replace(
                 window.location.protocol + "//" +
                 window.location.hostname +
                 (window.location.port ? ':' + window.location.port : '') +
-                isRedirect.to
+                newPath
             );
         }
     })(window, document);

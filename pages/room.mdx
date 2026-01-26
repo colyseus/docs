@@ -66,7 +66,7 @@ The room's lifecycle events are called automatically. [`async`/`await`](https://
 
 ### On Create
 
-Called once, when the room is created by the matchmaker. `options` is the merged values specified on [Server#define()](/server/#define-room-type) with the options provided from the SDK at [`.joinOrCreate()`](/client#join-or-create-a-room) or [`.join()`](/client#join-existing-room).
+Called once, when the room is created by the matchmaker. `options` is the merged values specified on [Server#define()](/server/#define-room-type) with the options provided from the SDK at [`.joinOrCreate()`](/sdk#join-or-create-a-room) or [`.join()`](/sdk#join-existing-room).
 
 ```ts filename="MyRoom.ts"
 onCreate (options) {
@@ -176,7 +176,7 @@ async onJoin (client, options, auth?) {
 ```
 
 <Callout type="info">
-    See Client SDK on [`.joinOrCreate()`](/client#join-or-create-a-room) and [`.join()`](/client#join-existing-room).
+    See Client SDK on [`.joinOrCreate()`](/sdk#join-or-create-a-room) and [`.join()`](/sdk#join-existing-room).
 </Callout>
 
 ---
@@ -185,7 +185,7 @@ async onJoin (client, options, auth?) {
 
 Triggered when a client leaves the room.
 
-If the client leaves the room by closing the browser tab, the `onLeave` method is called with `consented` set to `false`. If the client leaves the room by calling [`.leave()`](/client#leave-room), the `onLeave` method is called with `consented` set to `true`.
+If the client leaves the room by closing the browser tab, the `onLeave` method is called with `consented` set to `false`. If the client leaves the room by calling [`.leave()`](/sdk#leave-room), the `onLeave` method is called with `consented` set to `true`.
 
 ```ts filename="MyRoom.ts"
 async onLeave (client, consented) {
@@ -611,7 +611,7 @@ Available options are:
 </Tabs>
 
 <Callout type="info">
-    The client will receive the message in the [`onMessage()`](/client/#on-message) callback.
+    The client will receive the message in the [`onMessage()`](/sdk/#on-message) callback.
 </Callout>
 
 ---
@@ -638,14 +638,14 @@ this.unlock ()
 
 ### Allow Reconnection
 
-Allow the specified client to [`reconnect`](/client/#reconnect-reconnectiontoken) into the room. Must be used inside [`onLeave()`](#onleave-client) method.
+Allow the specified client to [`reconnect`](/sdk/#reconnect-reconnectiontoken) into the room. Must be used inside [`onLeave()`](#onleave-client) method.
 
 ```ts filename="Signature"
 this.allowReconnection (client, seconds)
 ```
 
 - **`client`**: the disconnecting [`Client`](/server/room#client/) instance
-- **`seconds`**: number of seconds to wait for client to perform [`.reconnect()`](/client/#reconnect-roomid-string-sessionid-string), or `"manual"`, to allow for manual reconnection rejection (see second example)
+- **`seconds`**: number of seconds to wait for client to perform [`.reconnect()`](/sdk/#reconnect-roomid-string-sessionid-string), or `"manual"`, to allow for manual reconnection rejection (see second example)
 
 **Return type:**
 
@@ -966,7 +966,7 @@ onCreate() {
 
 ## Client
 
-The `client` instance from the backend is responsible for the **transport** layer between the server and the client. It should not be confused with the [`Client` from the frontend SDK](/client/), as they have completely different purposes.
+The `client` instance from the backend is responsible for the **transport** layer between the server and the client. It should not be confused with the [`Client` from the frontend SDK](/sdk/), as they have completely different purposes.
 
 You operate on `client` instances from [`this.clients`](#clients), [`Room#onJoin()`](#onjoin), [`Room#onLeave()`](#onleave) and [`Room#onMessage()`](#onmessage).
 
@@ -985,7 +985,7 @@ onJoin(client, options) {
 ```
 
 <Callout type="info">
-    In the frontend, you can find the [`sessionId` in the `room` instance](/client/#sessionid-string).
+    In the frontend, you can find the [`sessionId` in the `room` instance](/sdk/#sessionid-string).
 </Callout>
 
 ---
@@ -1052,7 +1052,7 @@ client.send(1, { kind: "ammo"});
 ```
 
 <Callout type="info">
-    [See how to handle `onMessage` from the frontend SDK](/client/#on-message)
+    [See how to handle `onMessage` from the frontend SDK](/sdk/#on-message)
 </Callout>
 
 ---
@@ -1085,7 +1085,7 @@ client.sendBytes(1, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 
 
 #### Send Error
 
-Send an error with code and message to the client. The client can handle it on [`onError`](/client#onerror)
+Send an error with code and message to the client. The client can handle it on [`onError`](/sdk#onerror)
 
 ```ts filename="Signature"
 client.error(code, payload)
@@ -1102,7 +1102,7 @@ client.leave(code?: number)
 ```
 
 <Callout type="info">
-    This will trigger [`room.onLeave`](/client/#on-leave) event on the frontend.
+    This will trigger [`room.onLeave`](/sdk/#on-leave) event on the frontend.
 </Callout>
 
 **Table of WebSocket close codes**
