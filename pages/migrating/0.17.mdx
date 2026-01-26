@@ -129,6 +129,10 @@ If you only use `Room<State>`, you can remove the generic types, and assign the 
 
 There is no need to manually call `updateLobby()` after `.setMetadata()` anymore. This is done automatically for you.
 
+#### Room's `this.presence.subscribe()` / `this.presence.unsubscribe()`
+
+There is no need to manually unsubscribe from presence channels in the `onDispose()` method anymore. Subscriptions are removed automatically when the room is disposed.
+
 #### TypeScript: `Client` generic types have changed:
 
 The `Client<UserData, AuthData>` generic types have changed to `Client<{ userData: U, auth: A, messages: M }>`.

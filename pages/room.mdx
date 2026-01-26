@@ -260,7 +260,7 @@ onUncaughtException (err: Error, methodName: string) {
 ```
 
 <Callout type="info">
-    See [Exception Handling](/server/room/exception-handling) for more details.
+    See [Exception Handling](/room/exception-handling) for more details.
 </Callout>
 
 ---
@@ -299,7 +299,7 @@ export class MyRoom extends Room {
 
 ### On Restore Room (`devMode`)
 
-An optional hook to reprocess/restore data which was returned and stored from the previous hook [`onCacheRoom`](/server/room/#on-cache-room-devmode) when [Development Mode](devmode) is enabled.
+An optional hook to reprocess/restore data which was returned and stored from the previous hook [`onCacheRoom`](/room#on-cache-room-devmode) when [Development Mode](devmode) is enabled.
 
 ```ts filename="MyRoom.ts"
 export class MyRoom extends Room {
@@ -498,7 +498,7 @@ this.setPrivate (bool)
 
 ### Set Metadata
 
-Set metadata to this room. Each room instance may have metadata attached to it - the only purpose for attaching metadata is to differentiate one room from another when getting the list of available rooms via [Lobby Room](/server/room/built-in/lobby) or [Match-maker API](/server/matchmaker).
+Set metadata to this room. Each room instance may have metadata attached to it - the only purpose for attaching metadata is to differentiate one room from another when getting the list of available rooms via [Lobby Room](/room/built-in/lobby) or [Match-maker API](/matchmaker).
 
 ```ts filename="Signature"
 this.setMetadata (metadata)
@@ -562,7 +562,7 @@ this.broadcast (type, payload, options?)
 
 Available options are:
 
-- **`except`**: a [`Client`](/server/room#client/), or array of `Client` instances not to send the message to
+- **`except`**: a [`Client`](/room#client), or array of `Client` instances not to send the message to
 - **`afterNextPatch`**: waits until next patch to broadcast the message
 
 <Tabs items={["Broadcast to all", "Broadcast except for sender", "Broadcast after state patch"]}>
@@ -644,7 +644,7 @@ Allow the specified client to [`reconnect`](/sdk/#reconnect-reconnectiontoken) i
 this.allowReconnection (client, seconds)
 ```
 
-- **`client`**: the disconnecting [`Client`](/server/room#client/) instance
+- **`client`**: the disconnecting [`Client`](/room#client) instance
 - **`seconds`**: number of seconds to wait for client to perform [`.reconnect()`](/sdk/#reconnect-roomid-string-sessionid-string), or `"manual"`, to allow for manual reconnection rejection (see second example)
 
 **Return type:**
@@ -878,11 +878,11 @@ class MyRoom extends Room {
 
 ### `maxMessagesPerSecond`
 
-Maximum number of messages a client can send to the server per second. If a client sends more messages than this limit, it will be disconnected. Default is `60`.
+Maximum number of messages a client can send to the server per second. If a client sends more messages than this limit, it will be disconnected. Default is `Infinity` (disabled).
 
 ```ts 
 class MyRoom extends Room {
-    maxMessagesPerSecond = 60;
+    maxMessagesPerSecond = 30;
 }
 ```
 
@@ -930,7 +930,7 @@ onCreate() {
 ```
 
 <Callout type="info">
-    See [Timing Events](/server/room/timing-events).
+    See [Timing Events](/room/timing-events).
 </Callout>
 
 ---
@@ -938,8 +938,6 @@ onCreate() {
 ### `presence`
 
 The `presence` is used as a shared in-memory database for your cluster, and for pub/sub operations between rooms.
-
-You may access the global `presence` instance from your Room code.
 
 ```ts filename="MyRoom.ts"
 // ...
@@ -1079,16 +1077,6 @@ client.sendBytes("powerup", [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 10
 // sending message of number type (1)
 //
 client.sendBytes(1, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
-```
-
----
-
-#### Send Error
-
-Send an error with code and message to the client. The client can handle it on [`onError`](/sdk#onerror)
-
-```ts filename="Signature"
-client.error(code, payload)
 ```
 
 ---

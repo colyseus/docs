@@ -3,11 +3,11 @@ import { Callout } from "nextra/components";
 # Timing Events
 
 For [timing events](https://www.w3.org/TR/2011/WD-html5-20110525/timers.html),
-it's recommended to use the [`this.clock`](/server/room/#clock-clocktimer) methods,
+it's recommended to use the [`this.clock`](/room#clock) methods,
 from your `Room` instance.
 
 <Callout type="info">
-    All intervals and timeouts registered on [`this.clock`](/server/room/#clock-clocktimer) are cleared automatically when the `Room` is disposed.
+    All intervals and timeouts registered on [`this.clock`](/room#clock) are cleared automatically when the `Room` is disposed.
 </Callout>
 
 <Callout type="warning">
@@ -87,7 +87,7 @@ This method is called automatically at every simulation interval step. All
 `Delayed` instances are checked during `tick`.
 
 <Callout type="info">
-    See [Room#setSimiulationInterval()](/server/room/#set-simulation-interval) for more details.
+    See [Room#setSimiulationInterval()](/room#set-simulation-interval) for more details.
 </Callout>
 
 ### Public properties

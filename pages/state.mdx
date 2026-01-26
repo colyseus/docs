@@ -18,7 +18,7 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 
 - The room's state is defined using the `Schema` class from `@colyseus/schema`. Only the server can directly mutate the state.
 - Clients send messages to the server to request state changes. Your room code processes these requests and updates the state.
-- Colyseus optimizes performance and bandwidth by tracking property-level changes. Only the latest mutation of each property is queued and sent to clients during the [patchRate](/server/room/#patchrate) interval.
+- Colyseus optimizes performance and bandwidth by tracking property-level changes. Only the latest mutation of each property is queued and sent to clients during the [patchRate](/room#patchrate) interval.
 - On the client side, you listen for state changes to keep the user interface in sync.
 
 <Steps>
@@ -222,7 +222,7 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 - **Handshake**: When a client joins a room, the server sends all the types that compose the room's state to the client, followed by the full state.
     - Handshake is skipped on automatic reconnections, OR when the client has provided the concrete state classes when joining the room.
 - **Enqueueing changes**: When the server mutates the state, it tracks which properties have changed since the last state synchronization, per `Schema` instance. Each `Schema` instance holds a `ChangeTree` object that tracks its changes.
-- **Sending changes**: The server encodes only the changed properties and sends them to the client during the [patchRate](/server/room/#patchrate) interval.
+- **Sending changes**: The server encodes only the changed properties and sends them to the client during the [patchRate](/room#patchrate) interval.
 - **`refId`**: Each `Schema` instance has a unique `refId` that is used to identify the instance across the network. This is how Colyseus knows which instance has been added, removed, or updated.
 - **Decoding changes**: When the client receives the state changes, it decodes them and applies them to each `Schema` instance, based on the `refId`—triggering the `onChange`, `listen`, and `onAdd`/`onRemove` callbacks on the frontend.
 

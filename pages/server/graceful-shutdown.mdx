@@ -34,7 +34,7 @@ These actions will be performed, in order, before the process is killed:
     The rooms handled by this process are locked via `room.lock()`.
 
     <Callout type="info">
-        See [Room API → Lock Room](/server/room/#lock)
+        See [Room API → Lock Room](/room/#lock)
     </Callout>
 
     ### Room: On Before Shutdown
@@ -58,7 +58,7 @@ These actions will be performed, in order, before the process is killed:
     ```
 
     <Callout type="info">
-        See [Room API → On Before Shutdown](/server/room/#on-before-shutdown)
+        See [Room API → On Before Shutdown](/room#on-before-shutdown)
     </Callout>
 
     ### (...) wait until all rooms are disposed
@@ -66,7 +66,7 @@ These actions will be performed, in order, before the process is killed:
     The server waits for local room count to be zero before proceeding to the next step.
 
     <Callout type="info">
-        See [Matchmaker → Get Local Room Count](/server/matchmaker#get-local-ccu)
+        See [Matchmaker → Get Local Room Count](/matchmaker#get-local-ccu)
     </Callout>
 
     ### Close Transport, Presence, and Driver

@@ -42,7 +42,7 @@ const server = defineServer({
 
 The `Presence` API is highly based on Redis's API, which is a key-value database.
 
-Every [`Room`](/server/room) instance has a [`presence`](/server/room/#presence-presence) property:
+Every [`Room`](/room) instance has a [`presence`](/room#presence) property:
 
 ```ts filename="MyRoom.ts"
 export class MyRoom extends Room {
@@ -52,7 +52,7 @@ export class MyRoom extends Room {
 }
 ```
 
-Alternatively, you can access `matchMaker.presence` from anywhere, by importing the [Match-maker API](/server/matchmaker/):
+Alternatively, you can access `matchMaker.presence` from anywhere, by importing the [Match-maker API](/matchmaker/):
 
 ```ts filename="server.ts"
 import { matchMaker } from "colyseus";

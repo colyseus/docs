@@ -16,7 +16,7 @@ The recommended structure to initialize a new Colyseus server is created using `
 npm create colyseus-app@latest ./my-server
 ```
 
-You may add your own [Room Definitions](/server/room/), and [API routes](/server/custom-http-routes) to your server:
+You may add your own [Room Definitions](/room/), and [API routes](/server/http-routes) to your server:
 
 ```ts {2,6,10-12} copy filename="app.config.ts"
 import { defineServer, defineRoom } from "colyseus";
@@ -202,7 +202,7 @@ const server = defineServer({
 ```
 
 <Callout type="info">
-    You may define the same room handler multiple times with different `options`. When [Room#onCreate()](/server/room/#on-create) is called, the `options` will contain the merged values you specified on [Server#define()](/server/#define-room-type) with the options provided by the client SDK.
+    You may define the same room handler multiple times with different `options`. When [Room#onCreate()](/room#on-create) is called, the `options` will contain the merged values you specified on [Server#define()](/server/#define-room-type) with the options provided by the client SDK.
 </Callout>
 
 ---
@@ -335,7 +335,7 @@ const server = defineServer({
 ```
 
 <Callout type="info">
-    See [Built-in Rooms → LobbyRoom](/server/room/built-in/lobby) for more details.
+    See [Built-in Rooms → LobbyRoom](/room/built-in/lobby) for more details.
 </Callout>
 
 ---

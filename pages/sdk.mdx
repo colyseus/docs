@@ -1,5 +1,6 @@
 import { Callout, Cards, Tabs } from "nextra/components";
 import { ZapIcon, SyncIcon } from "@primer/octicons-react";
+import { SDKTabs } from "../components/SDKTabs"
 
 # Client SDK
 
@@ -8,18 +9,13 @@ import { ZapIcon, SyncIcon } from "@primer/octicons-react";
     <Cards.Card icon={<SyncIcon />} title="State Sync Callbacks" href="/client/state-sync-callbacks" />
 </Cards>
 
-## Overview
+The Client SDK provides everything you need to connect to a Colyseus server from your game or application.
 
-Every client SDK provides the same set of methods and events to interact with the server.
+---
 
-- [Client](#client) - The SDK entrypoint
-- [Room](#room) - Room connection.
-- [HTTP Requests](#http-requests) - Utility to perform HTTP requests.
-- [Auth](/auth/module#frontend-api) _(Optional)_ - Authentication module.
+## Set Up
 
-## Client
-
-The `Client` instance is the entrypoint to connect to the server. It is used to create or join rooms, and perform HTTP requests.
+The `Client` instance is your entry point to connect to the server.
 
 <Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
 
@@ -68,11 +64,15 @@ The `Client` instance is the entrypoint to connect to the server. It is used to 
 
 </Tabs>
 
-### Methods
+---
 
-#### Join or Create a Room
+## Connecting to Rooms
 
-Join an existing room or create a new one, by provided `roomName` and `options`.
+Once you have a client, you can connect to rooms. Choose the method that best fits your matchmaking needs.
+
+### Join or Create (Recommended)
+
+The most common way to connect. Joins an existing room if available, or creates a new one.
 
 ```ts filename="Signature"
 client.joinOrCreate (roomName: string, options: any)
@@ -160,9 +160,9 @@ client.joinOrCreate (roomName: string, options: any)
     Locked or private rooms are ignored by this method.
 </Callout>
 
-#### Create a Room
+### Create a New Room
 
-Creates a new room by provided `roomName` and `options`.
+Always creates a new room instance, even if others exist.
 
 ```ts filename="Signature"
 client.create (roomName: string, options: any)
@@ -245,9 +245,13 @@ client.create (roomName: string, options: any)
     </Tabs.Tab>
 </Tabs>
 
-#### Join existing Room
+<Callout type="info">
+  You may dissallow the client from creating rooms. See [Matchmaker → API Restricting the frontend from creating rooms](/matchmaker#restricting-the-frontend-from-creating-rooms)
+</Callout>
 
-Joins an existing room by provided `roomName` and `options`.
+### Join an Existing Room
+
+Joins an existing room by room name. Fails if no room is available.
 
 ```ts filename="Signature"
 client.join (roomName: string, options: any)
@@ -334,9 +338,9 @@ client.join (roomName: string, options: any)
     Locked or private rooms are ignored by this method.
 </Callout>
 
-#### Join Room by ID
+### Join by Room ID
 
-Joins an existing room by its `roomId`. Private rooms can be joined by id.
+Joins a specific room by its unique ID. This is useful for invite links or rejoining a specific game. **Private rooms can be joined by ID.**
 
 ```ts filename="Signature"
 client.joinById (roomId: string, options: any)
@@ -419,97 +423,24 @@ client.joinById (roomId: string, options: any)
     </Tabs.Tab>
 </Tabs>
 
-#### Reconnect into a Room
+**Example: Creating an invite link**
 
-Reconnects the client back into a previously connected room.
+```js filename="client.js"
+// Share the room ID with other players
+const inviteLink = `https://mygame.com/join?roomId=${room.roomId}`;
 
-- You must store/cache the `room.reconnectionToken` from an active room connection to be able to reconnect.
-- To enable the reconnection of a particular client, the server needs to call [`.allowReconnection()`](/server/room#allowreconnection-client-seconds) for that client instance.
-
-```ts filename="Signature"
-client.reconnect (reconnectionToken)
+// On the receiving end, parse the room ID and join
+let roomId = location.href.match(/roomId=([a-zA-Z0-9\-_]+)/)[1];
+client.joinById(roomId).then(room => {
+  // ...
+});
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+### Consume Seat Reservation
 
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    try {
-      const room = await client.reconnect(cachedReconnectionToken);
-      console.log("joined successfully", room);
+Join a room using a pre-reserved seat. 
 
-    } catch (e) {
-      console.error("join error", e);
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="client.js"
-    client.reconnect(cachedReconnectionToken).then(room => {
-      console.log("joined successfully", room);
-    }).catch(e => {
-      console.error("join error", e);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    try {
-      Room<YourStateClass> room = await client.Reconnect<YourStateClass>(cachedReconnectionToken);
-      Debug.Log("joined successfully");
-
-    } catch (ex) {
-      Debug.Log("join error");
-      Debug.Log(ex.Message);
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    client:reconnect(cached_reconnection_token, function(err, room)
-      if (err ~= nil) then
-        print("join error: " .. err)
-        return
-      end
-
-      print("joined successfully")
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    client.reconnect(cachedReconnectionToken, YourStateClass, function(err, room) {
-      if (err != null) {
-        trace("join error: " + err);
-        return;
-      }
-
-      trace("joined successfully");
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cpp filename="client.cpp"
-    client->reconnect<YourStateClass>(cachedReconnectionToken, [=](std::string err, Room<State>* room) {
-    if (err != "") {
-        std::cout << "join error: " << err << std::endl;
-        return;
-    }
-
-    std::cout << "joined successfully" << std::endl;
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-#### Consume Seat Reservation
-
-Join a room by manually consuming a "seat reservation".
+A **"seat reservation"** is a token generated by the server that allows a client to join a specific room instance. This is useful for scenarios where you want to control access to rooms, such as private matches or matchmaking systems.
 
 ```ts filename="Signature"
 client.consumeSeatReservation (reservation)
@@ -593,14 +524,856 @@ client.consumeSeatReservation (reservation)
 </Tabs>
 
 <Callout type="info">
-    **Advanced usage** - See [Match-maker API](/server/matchmaker/#reserveseatforroom-options) to learn how to manually reserve a seat for a client within a room.
+  A "seat reservation" can be obtained from the backend using the Match-maker API. See [Match-maker API → Reserve Seat For](/matchmaker#reserve-a-seat-for)
 </Callout>
 
 ---
 
-#### Get Latency
+## Send and Receive Messages
 
-Create a temporary connection with the server and measure the latency. Returns a promise that resolves to the average latency in milliseconds.
+Once connected to a room, you can send and receive messages in real-time.
+
+### Send Message
+
+Send messages to the room handler. Messages are encoded with MsgPack and can hold any JSON-serializable data.
+
+```ts filename="Signature"
+room.send (type, message)
+```
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    //
+    // sending message with string type
+    //
+    room.send("move", { direction: "left"});
+
+    //
+    // sending message with number type
+    //
+    room.send(0, { direction: "left"});
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    //
+    // sending message with string type
+    //
+    room.send("move", { direction: "left"});
+
+    //
+    // sending message with number type
+    //
+    room.send(0, { direction: "left"});
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    //
+    // sending message with string type
+    //
+    await room.Send("move", new { direction = "left" });
+
+    //
+    // sending message with number type
+    //
+    await room.Send(0, new { direction = "left" });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    --
+    -- sending message with string type
+    --
+    room:send("move", { direction = "left" })
+
+    --
+    -- sending message with number type
+    --
+    room:send(0, { direction = "left" })
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    //
+    // sending message with string type
+    //
+    room.send("move", { direction: "left" });
+
+    //
+    // sending message with number type
+    //
+    room.send(0, { direction: "left" });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    **Backend:** See [Room → Message Handling](/room#message-handling) for detailed documentation on receiving messages from the client.
+</Callout>
+
+### Send Raw Bytes
+
+For custom encoding, send raw byte arrays (numbers from `0` to `255`).
+
+```ts filename="Signature"
+room.sendBytes (type, bytes)
+```
+
+```js filename="client.js"
+//
+// sending message with number type
+//
+room.sendBytes(0, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
+
+//
+// sending message with string type
+//
+room.sendBytes("some-bytes", [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
+```
+
+### On Message
+
+Listen for messages sent from the server.
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.onMessage("powerup", (message) => {
+      console.log("message received from server");
+      console.log(message);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    room.onMessage("powerup", (message) => {
+      console.log("message received from server");
+      console.log(message);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    class PowerUpMessage {
+      string kind;
+    }
+
+    room.OnMessage<PowerUpMessage>("powerup", (message) => {
+      Debug.Log ("message received from server");
+      Debug.Log(message);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    room:on_message("powerup", function(message)
+      print("message received from server")
+      print(message)
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    room.onMessage("powerup", function(message) {
+      trace("message received from server");
+      trace(Std.string(message));
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cpp filename="client.cpp"
+    room.onMessage("powerup", [=](msgpack::object message) -> void {
+        std::cout << "message received from server" << std::endl;
+        std::cout << message << std::endl;
+    });
+    ```
+    </Tabs.Tab>
+
+</Tabs>
+
+<Callout type="info">
+    **Backend:** To send a message from the server to a client you'll need to use either [client.send()](/room#send-message) or [room.broadcast()](/room/#broadcast-message)
+</Callout>
+
+---
+
+## State Synchronization
+
+The room state is automatically synchronized from the server to all connected clients.
+
+### Accessing Room State
+
+The `room.state` property always contains the latest synchronized state from the server.
+
+```ts filename="Signature"
+room.state: any
+```
+
+### On State Change
+
+The `onStateChange` event fires whenever the server synchronizes state updates.
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.onStateChange.once((state) => {
+      console.log("this is the first room state!", state);
+    });
+
+    room.onStateChange((state) => {
+      console.log("the room state has been updated:", state);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    room.onStateChange.once((state) => {
+      console.log("this is the first room state!", state);
+    });
+
+    room.onStateChange((state) => {
+      console.log("the room state has been updated:", state);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    room.OnStateChange += (state, isFirstState) => {
+      if (isFirstState) {
+        Debug.Log ("this is the first room state!");
+      }
+
+      Debug.Log ("the room state has been updated");
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    room:on("statechange", function(state)
+      print("new state:", state)
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    room.onStateChange += function(state) {
+      trace("new state:" + Std.string(state));
+    };
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cpp filename="client.cpp"
+    room.onStateChange = [=](State>* state) {
+      std::cout << "new state" << std::endl;
+      // ...
+    };
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+### State Sync Callbacks
+
+For better performance and control, listen to specific property changes instead of the entire state.
+
+<SDKTabs>
+    <Tabs.Tab>
+    ```ts {10} filename="client.ts"
+    // get state callbacks handler
+    const callbacks = Callbacks.get(room);
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs {10} filename="client.cs"
+    // get state callbacks handler
+    var callbacks = Colyseus.Schema.Callbacks.Get(room);
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua {10} filename="client.lua"
+    -- get state callbacks handler
+    local callbacks = ColyseusSDK.callbacks(room)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe {2,11} filename="client.hx"
+    import io.colyseus.serializer.schema.Callbacks;
+
+    // get state callbacks handler
+    var callbacks = Callbacks.get(room);
+    ```
+    </Tabs.Tab>
+</SDKTabs>
+
+<Callout type="info">
+    Check out the [Client SDK → State Sync Callbacks](/sdk/state-sync-callbacks) section for detailed documentation on listening to specific state changes.
+</Callout>
+
+<Callout type="info">
+    Read more about [<SyncIcon/> State Sychronization](/state) 
+</Callout>
+
+---
+
+## Connection Lifecycle
+
+Handle the various states of a room connection.
+
+### Leaving a Room
+
+Disconnect from the room. Use `consented: true` (default) for intentional leaves, or `false` to simulate an unexpected disconnect.
+
+```ts filename="Signature"
+room.leave (consented: boolean)
+```
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    // consented leave
+    room.leave();
+
+    // force unconsented leave
+    room.leave(false);
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    // consented leave
+    room.leave();
+
+    // force unconsented leave
+    room.leave(false);
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    // consented leave
+    room.Leave();
+
+    // unconsented leave
+    room.Leave(false);
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    -- consented leave
+    room:leave()
+
+    -- unconsented leave
+    room:leave(false)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    // consented leave
+    room.leave();
+
+    // unconsented leave
+    room.leave(false);
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    **Backend:** Use [Room → On Leave](/room#on-leave) to handle client disconnection.
+</Callout>
+
+### On Leave Event
+
+Triggered when the client leaves the room (either intentionally or due to disconnection).
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.onLeave((code) => {
+      console.log("client left the room");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    room.onLeave((code) => {
+      console.log("client left the room");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    room.OnLeave += (code) => {
+      Debug.Log ("client left the room");
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    room:on("leave", function()
+      print("client left the room")
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    room.onLeave += function () {
+      trace("client left the room");
+    };
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cpp filename="client.cpp"
+    room.onLeave = [=]() -> void {
+      std::cout << "client left the room" << std::endl;
+    };
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+**Possible closing `code`s and their meaning:**
+
+- `1000` - Regular socket shutdown
+- Between `1001` and `1015` - Abnormal socket shutdown
+- Between `4000` and `4999` - Custom socket close code (See [more details](/room/#table-of-websocket-close-codes))
+
+### Automatic Reconnection
+
+The SDK automatically attempts to reconnect when the connection is unexpectedly dropped. Configure this behavior using `room.reconnection`.
+
+**Reconnection config options**
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `maxRetries` | `15` | Maximum reconnection attempts |
+| `minDelay` | `100` | Minimum delay between attempts (ms) |
+| `maxDelay` | `5000` | Maximum delay between attempts (ms) |
+| `minUptime` | `5000` | Minimum room uptime before reconnection is allowed (ms) |
+| `delay` | `100` | Initial delay between attempts (ms) |
+| `maxEnqueuedMessages` | `10` | Maximum buffered messages during reconnection |
+| `backoff` | exponential | Delay calculation function |
+
+**Status properties** _(read-only)_
+
+| Property | Type | Description |
+|----------|------|------------|
+| `isReconnecting` | boolean | Whether currently reconnecting |
+| `retryCount` | number | Current reconnection attempt count |
+| `enqueuedMessages` | number | Buffered messages |
+
+
+**Customizing reconnection behavior:**
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    const room = await client.joinOrCreate("battle");
+
+    // Customize reconnection options
+    room.reconnection.maxRetries = 10;
+    room.reconnection.maxDelay = 10000; // 10 seconds max delay
+    room.reconnection.minUptime = 3000; // Allow reconnection after 3 seconds
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    client.joinOrCreate("battle").then(room => {
+      // Customize reconnection options
+      room.reconnection.maxRetries = 10;
+      room.reconnection.maxDelay = 10000; // 10 seconds max delay
+      room.reconnection.minUptime = 3000; // Allow reconnection after 3 seconds
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    Room<YourStateClass> room = await client.JoinOrCreate<YourStateClass>("battle");
+
+    // Customize reconnection options
+    room.Reconnection.MaxRetries = 10;
+    room.Reconnection.MaxDelay = 10000; // 10 seconds max delay
+    room.Reconnection.MinUptime = 3000; // Allow reconnection after 3 seconds
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    client:join_or_create("battle", {}, function(err, room)
+      -- Customize reconnection options
+      room.reconnection.max_retries = 10
+      room.reconnection.max_delay = 10000 -- 10 seconds max delay
+      room.reconnection.min_uptime = 3000 -- Allow reconnection after 3 seconds
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    client.joinOrCreate("battle", [], YourStateClass, function(err, room) {
+      // Customize reconnection options
+      room.reconnection.maxRetries = 10;
+      room.reconnection.maxDelay = 10000; // 10 seconds max delay
+      room.reconnection.minUptime = 3000; // Allow reconnection after 3 seconds
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+**Custom backoff function:**
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.reconnection.backoff = (attempt: number, delay: number) => {
+      return Math.floor(Math.pow(2, attempt) * delay);
+    };
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    room.reconnection.backoff = (attempt, delay) => {
+      return Math.floor(Math.pow(2, attempt) * delay);
+    };
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    room.Reconnection.Backoff = (attempt, delay) => {
+      return (int)Math.Floor(Math.Pow(2, attempt) * delay);
+    };
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    room.reconnection.backoff = function(attempt, delay)
+      return math.floor(math.pow(2, attempt) * delay)
+    end
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    room.reconnection.backoff = function(attempt:Int, delay:Int):Int {
+      return Math.floor(Math.pow(2, attempt) * delay);
+    };
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="warning">
+    Automatic reconnection only triggers if the room has been connected for at least `minUptime` milliseconds. This prevents reconnection loops for rooms that fail immediately after joining.
+</Callout>
+
+#### On Drop Event
+
+Triggered when the connection is unexpectedly dropped. The SDK will automatically attempt to reconnect.
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.onDrop((code, reason) => {
+      console.log("connection dropped, attempting to reconnect...");
+      console.log("code:", code, "reason:", reason);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    room.onDrop((code, reason) => {
+      console.log("connection dropped, attempting to reconnect...");
+      console.log("code:", code, "reason:", reason);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    room.OnDrop += (code, reason) => {
+      Debug.Log("connection dropped, attempting to reconnect...");
+      Debug.Log("code: " + code + " reason: " + reason);
+    };
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    room:on("drop", function(code, reason)
+      print("connection dropped, attempting to reconnect...")
+      print("code:", code, "reason:", reason)
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    room.onDrop += function(code, reason) {
+      trace("connection dropped, attempting to reconnect...");
+      trace("code: " + code + " reason: " + reason);
+    };
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    The `onDrop` event is different from `onLeave`. While `onLeave` is triggered when the client intentionally leaves or the connection is permanently closed, `onDrop` indicates a temporary disconnection where reconnection will be attempted.
+</Callout>
+
+<Callout type="info">
+    **Close codes that trigger `onDrop`:**
+    - `1005` - No status received
+    - `1006` - Abnormal closure
+    - `1001` - Going away (server shutting down)
+    - `4050` - May try reconnect
+</Callout>
+
+#### On Reconnect Event
+
+Triggered when the client successfully reconnects after a connection drop. Buffered messages are automatically sent to the server.
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.onReconnect(() => {
+      console.log("successfully reconnected to the room!");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    room.onReconnect(() => {
+      console.log("successfully reconnected to the room!");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    room.OnReconnect += () => {
+      Debug.Log("successfully reconnected to the room!");
+    };
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    room:on("reconnect", function()
+      print("successfully reconnected to the room!")
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    room.onReconnect += function() {
+      trace("successfully reconnected to the room!");
+    };
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    The room state remains intact during reconnection. No state re-synchronization is needed as the serializer state is preserved on the client.
+</Callout>
+
+### Manual Reconnection
+
+For more control, you can manually reconnect using a cached reconnection token.
+
+- You must store/cache the `room.reconnectionToken` from an active room connection.
+- The server needs to call [`.allowReconnection()`](/room#allow-reconnection) for that client.
+
+```ts filename="Signature"
+client.reconnect (reconnectionToken)
+```
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    try {
+      const room = await client.reconnect(cachedReconnectionToken);
+      console.log("joined successfully", room);
+
+    } catch (e) {
+      console.error("join error", e);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    client.reconnect(cachedReconnectionToken).then(room => {
+      console.log("joined successfully", room);
+    }).catch(e => {
+      console.error("join error", e);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    try {
+      Room<YourStateClass> room = await client.Reconnect<YourStateClass>(cachedReconnectionToken);
+      Debug.Log("joined successfully");
+
+    } catch (ex) {
+      Debug.Log("join error");
+      Debug.Log(ex.Message);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    client:reconnect(cached_reconnection_token, function(err, room)
+      if (err ~= nil) then
+        print("join error: " .. err)
+        return
+      end
+
+      print("joined successfully")
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    client.reconnect(cachedReconnectionToken, YourStateClass, function(err, room) {
+      if (err != null) {
+        trace("join error: " + err);
+        return;
+      }
+
+      trace("joined successfully");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cpp filename="client.cpp"
+    client->reconnect<YourStateClass>(cachedReconnectionToken, [=](std::string err, Room<State>* room) {
+    if (err != "") {
+        std::cout << "join error: " << err << std::endl;
+        return;
+    }
+
+    std::cout << "joined successfully" << std::endl;
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+### Error Handling
+
+Listen for errors that occur in the room.
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.onError((code, message) => {
+      console.log("oops, error ocurred:");
+      console.log(message);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    room.onError((code, message) => {
+      console.log("oops, error ocurred:");
+      console.log(message);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    room.OnError += (code, message) => {
+      Debug.Log ("oops, error ocurred:");
+      Debug.Log(message);
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    room:on("error", function(code, message)
+      print("oops, error ocurred:")
+      print(message)
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    room.onError += function(code, message) {
+      trace("oops, error ocurred:");
+      trace(message);
+    };
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cpp filename="client.cpp"
+    room.onError = [=] (int code, std::string message) => void {
+      std::cout << "oops, error ocurred: " << message << std::endl;
+    };
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+### Removing Listeners
+
+Remove all event listeners from the room.
+
+```ts filename="Signature"
+room.removeAllListeners()
+```
+
+---
+
+## Latency & Server Selection
+
+Measure network latency and choose optimal servers for your players.
+
+### Measuring Latency
+
+#### On the Client
+
+Create a temporary connection to measure latency before joining a room.
 
 ```ts filename="Signature"
 client.getLatency (options?: LatencyOptions): Promise<number>
@@ -673,11 +1446,63 @@ client.getLatency (options?: LatencyOptions): Promise<number>
     </Tabs.Tab>
 </Tabs>
 
----
+#### On an Active Room
 
-#### Select By Latency (Static)
+Measure round-trip time on an existing connection.
 
-Select the endpoint with the lowest latency from a list of endpoints. This is useful for connecting to the best server when you have multiple server deployments across different regions.
+```ts filename="Signature"
+room.ping (callback: (ms: number) => void)
+```
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.ping((latency) => {
+      console.log("Latency:", latency, "ms");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    room.ping((latency) => {
+      console.log("Latency:", latency, "ms");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    room.Ping((latency) => {
+      Debug.Log("Latency: " + latency + " ms");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    room:ping(function(latency)
+      print("Latency: " .. latency .. " ms")
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    room.ping(function(latency) {
+      trace("Latency: " + latency + " ms");
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    If the connection is not open, calling `ping()` has no effect.
+</Callout>
+
+### Multi-Region Server Selection
+
+Automatically connect to the server with the lowest latency from a list of endpoints.
 
 ```ts filename="Signature"
 Client.selectByLatency (endpoints: Array<string | EndpointSettings>): Promise<Client>
@@ -779,582 +1604,17 @@ Client.selectByLatency (endpoints: Array<string | EndpointSettings>): Promise<Cl
     The method logs the latency for each endpoint to the console for debugging purposes. If all endpoints fail to respond, an error is thrown.
 </Callout>
 
-## Room
-
-### Properties
-
-#### `state: any`
-
-The current room's state. This variable is always synched with the latest `state` from the server. To listen for updates on the whole state, see [`onStateChange`](#on-state-change) event.
-
-For fine-grained control over state updates, see [Client SDK → State Sync Callbacks](/sdk/state-sync-callbacks).
-
----
-
-#### `sessionId: string`
-
-Unique identifier for the current connected client. This property matches the [`client.sessionId`](/server/room#client/#sessionid-string) from the server.
-
----
-
-#### `id: string`
-
-The unique idenfitier of the room. You can share this id with other clients in
-order to allow them to connect directly to this room.
-
-```js filename="client.js"
-// get `roomId` from the query string
-let roomId = location.href.match(/roomId=([a-zA-Z0-9\-_]+)/)[1];
-
-// joining a room by its id
-client.joinById(roomId).then(room => {
-  // ...
-});
-```
-
----
-
-#### `name: string`
-
-Name of the room handler. Ex: `"battle"`.
-
----
-
-### Methods
-
-#### Send Message
-
-Send a type of message to the room handler. Messages are encoded with MsgPack and can hold any JSON-serializable data structure.
-
-```ts filename="Signature"
-room.send (type, message)
-```
-
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    //
-    // sending message with string type
-    //
-    room.send("move", { direction: "left"});
-
-    //
-    // sending message with number type
-    //
-    room.send(0, { direction: "left"});
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="client.js"
-    //
-    // sending message with string type
-    //
-    room.send("move", { direction: "left"});
-
-    //
-    // sending message with number type
-    //
-    room.send(0, { direction: "left"});
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    //
-    // sending message with string type
-    //
-    await room.Send("move", new { direction = "left" });
-
-    //
-    // sending message with number type
-    //
-    await room.Send(0, new { direction = "left" });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    --
-    -- sending message with string type
-    --
-    room:send("move", { direction = "left" })
-
-    --
-    -- sending message with number type
-    --
-    room:send(0, { direction = "left" })
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    //
-    // sending message with string type
-    //
-    room.send("move", { direction: "left" });
-
-    //
-    // sending message with number type
-    //
-    room.send(0, { direction: "left" });
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-<Callout type="info">
-    **Use `Room#onMessage()` from the backend to receive the messages** - Check out [Room API → onMessage](/server/room/#on-message) section.
-</Callout>
-
----
-
-#### Send Message (in bytes)
-
-Send a raw byte array as a message to the server. A byte array is an array of numbers from `0` to `255`.
-
-This is useful if you'd like to manually encode a message, rather than the default encoding (MsgPack).
-
-```ts filename="Signature"
-client.sendBytes (type, bytes)
-```
-
-    ```js filename="client.js"
-    //
-    // sending message with number type
-    //
-    room.sendBytes(0, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
-
-
-    //
-    // sending message with string type
-    //
-    room.sendBytes("some-bytes", [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
-    ```
-
----
-
-#### Leave Room
-
-Disconnect client from the room.
-
-```ts filename="Signature"
-room.leave (consented: boolean)
-```
-
-**Parameters**
-
-- `consented`: Whether the act of leaving has been "consented" or not (Default is `true`)
-
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    // consented leave
-    room.leave();
-
-    // force unconsented leave
-    room.leave(false);
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="client.js"
-    // consented leave
-    room.leave();
-
-    // force unconsented leave
-    room.leave(false);
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    // consented leave
-    room.Leave();
-
-    // unconsented leave
-    room.Leave(false);
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    -- consented leave
-    room:leave()
-
-    -- unconsented leave
-    room:leave(false)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    // consented leave
-    room.leave();
-
-    // unconsented leave
-    room.leave(false);
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-<Callout type="info">
-    Use [Room API → onLeave](/server/room/#on-message) to handle the disconnection from the backend.
-</Callout>
-
----
-
-#### Ping
-
-Measure the round-trip time (RTT) latency between the client and the server in milliseconds. The callback is invoked with the latency value once the server responds.
-
-```ts filename="Signature"
-room.ping (callback: (ms: number) => void)
-```
-
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    room.ping((latency) => {
-      console.log("Latency:", latency, "ms");
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="client.js"
-    room.ping((latency) => {
-      console.log("Latency:", latency, "ms");
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    room.Ping((latency) => {
-      Debug.Log("Latency: " + latency + " ms");
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    room:ping(function(latency)
-      print("Latency: " .. latency .. " ms")
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    room.ping(function(latency) {
-      trace("Latency: " + latency + " ms");
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-<Callout type="info">
-    If the connection is not open, calling `ping()` has no effect.
-</Callout>
-
----
-
-#### Remove All Listeners
-
-Removes `onMessage`, `onStateChange`, `onLeave` and `onError` listeners.
-
-```ts filename="Signature"
-room.removeAllListeners()
-```
-
----
-
-### Events
-
-#### On Message
-
-This event is triggered when the server sends a message directly to the client, or via broadcast.
-
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
-
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    room.onMessage("powerup", (message) => {
-      console.log("message received from server");
-      console.log(message);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="client.js"
-    room.onMessage("powerup", (message) => {
-      console.log("message received from server");
-      console.log(message);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    class PowerUpMessage {
-      string kind;
-    }
-
-    room.OnMessage<PowerUpMessage>("powerup", (message) => {
-      Debug.Log ("message received from server");
-      Debug.Log(message);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    room:on_message("powerup", function(message)
-      print("message received from server")
-      print(message)
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    room.onMessage("powerup", function(message) {
-      trace("message received from server");
-      trace(Std.string(message));
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cpp filename="client.cpp"
-    room.onMessage("powerup", [=](msgpack::object message) -> void {
-        std::cout << "message received from server" << std::endl;
-        std::cout << message << std::endl;
-    });
-    ```
-    </Tabs.Tab>
-
-</Tabs>
-
-<Callout type="info">
-    To send a message from the server directly to the clients you'll need to use either [client.send()](/server/room#client/#sendtype-message) or [room.broadcast()](/server/room/#broadcast-type-message-options)
-</Callout>
-
----
-
-#### On Leave
-
-This event is triggered when the client leave the room.
-
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
-
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    room.onLeave((code) => {
-      console.log("client left the room");
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="client.js"
-    room.onLeave((code) => {
-      console.log("client left the room");
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    room.OnLeave += (code) => {
-      Debug.Log ("client left the room");
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    room:on("leave", function()
-      print("client left the room")
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    room.onLeave += function () {
-      trace("client left the room");
-    };
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cpp filename="client.cpp"
-    room.onLeave = [=]() -> void {
-      std::cout << "client left the room" << std::endl;
-    };
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-**Possible closing `code`s and their meaning:**
-
-- `1000` - Regular socket shutdown
-- Between `1001` and `1015` - Abnormal socket shutdown
-- Between `4000` and `4999` - Custom socket close code (See [more details](/server/room/#table-of-websocket-close-codes))
-
-
----
-
-#### On State Change
-
-This event is triggered whenever the server's state is synchronized with the client. It occurs both when the client first connects to the room and when state updates are sent by the server
-
-For fine-grained control over state updates, you should use the [State Sync Callbacks](/sdk/state-sync-callbacks).
-
-<Callout type="info">
-    Check out the [Client SDK → State Sync Callbacks](/sdk/state-sync-callbacks) section for more details.
-</Callout>
-
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    room.onStateChange.once((state) => {
-      console.log("this is the first room state!", state);
-    });
-
-    room.onStateChange((state) => {
-      console.log("the room state has been updated:", state);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="client.js"
-    room.onStateChange.once((state) => {
-      console.log("this is the first room state!", state);
-    });
-
-    room.onStateChange((state) => {
-      console.log("the room state has been updated:", state);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    room.OnStateChange += (state, isFirstState) => {
-      if (isFirstState) {
-        Debug.Log ("this is the first room state!");
-      }
-
-      Debug.Log ("the room state has been updated");
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    room:on("statechange", function(state)
-      print("new state:", state)
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    room.onStateChange += function(state) {
-      trace("new state:" + Std.string(state));
-    };
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cpp filename="client.cpp"
-    room.onStateChange = [=](State>* state) {
-      std::cout << "new state" << std::endl;
-      // ...
-    };
-    ```
-    </Tabs.Tab>
-</Tabs>
-
----
-
-
-#### On Error
-
-This event is triggered when some error occurs in the room handler.
-
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    room.onError((code, message) => {
-      console.log("oops, error ocurred:");
-      console.log(message);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="client.js"
-    room.onError((code, message) => {
-      console.log("oops, error ocurred:");
-      console.log(message);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    room.OnError += (code, message) => {
-      Debug.Log ("oops, error ocurred:");
-      Debug.Log(message);
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    room:on("error", function(code, message)
-      print("oops, error ocurred:")
-      print(message)
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    room.onError += function(code, message) {
-      trace("oops, error ocurred:");
-      trace(message);
-    };
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cpp filename="client.cpp"
-    room.onError = [=] (int code, std::string message) => void {
-      std::cout << "oops, error ocurred: " << message << std::endl;
-    };
-    ```
-    </Tabs.Tab>
-</Tabs>
-
 ---
 
 ## HTTP Requests
 
-The `client.http` utility can perform HTTP requests to your server endpoint.
+The `client.http` utility performs HTTP requests to your server endpoint.
 
 <Callout type="info">
     The `client.auth.token` property is sent automatically as `Authorization` header in all HTTP requests. See [Authentication → HTTP Middleware](/auth/http) for more details.
 </Callout>
 
 ### GET
-
-Perform a GET request to the server.
 
 <Tabs items={["Client", "Server"]}>
     <Tabs.Tab>
@@ -1380,8 +1640,6 @@ Perform a GET request to the server.
 
 ### POST
 
-Perform a POST request to the server.
-
 <Tabs items={["Client", "Server"]}>
     <Tabs.Tab>
     ```js filename="client.js"
@@ -1404,10 +1662,31 @@ Perform a POST request to the server.
     </Tabs.Tab>
 </Tabs>
 
+### PUT
+
+<Tabs items={["Client", "Server"]}>
+    <Tabs.Tab>
+    ```js filename="client.js"
+    client.http.put("/profile", { body: { name: "Jake Badlands" } }).then((response) => {
+        console.log(response.data);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts filename="src/app.config.ts"
+    // ...
+        express: (app) => {
+            app.put("/profile", (req, res) => {
+                res.json(req.body);
+            });
+        },
+    // ...
+    ```
+    </Tabs.Tab>
+</Tabs>
 
 ### DELETE
-
-Perform a DELETE request to the server.
 
 <Tabs items={["Client", "Server"]}>
     <Tabs.Tab>
@@ -1431,31 +1710,20 @@ Perform a DELETE request to the server.
     </Tabs.Tab>
 </Tabs>
 
-### PUT
+---
 
-Perform a PUT request to the server.
+## Room Reference
 
-<Tabs items={["Client", "Server"]}>
-    <Tabs.Tab>
-    ```js filename="client.js"
-    client.http.put("/profile", { body: { name: "Jake Badlands" } }).then((response) => {
-        console.log(response.data);
-    });
-    ```
-    </Tabs.Tab>
+Quick reference for room properties.
 
-    <Tabs.Tab>
-    ```ts filename="src/app.config.ts"
-    // ...
-        express: (app) => {
-            app.put("/profile", (req, res) => {
-                res.json(req.body);
-            });
-        },
-    // ...
-    ```
-    </Tabs.Tab>
-</Tabs>
+| Property | Type | Description |
+|----------|------|-------------|
+| `state` | `any` | The synchronized room state from the server |
+| `sessionId` | `string` | Unique identifier for the current client connection |
+| `roomId` | `string` | Unique room ID (shareable for direct joins) |
+| `name` | `string` | Name of the room handler (e.g., `"battle"`) |
+| `reconnectionToken` | `string` | Token for manual reconnection |
+| `reconnection` | `ReconnectionOptions` | Automatic reconnection configuration |
 
 ---
 
