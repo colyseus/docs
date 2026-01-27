@@ -1,20 +1,28 @@
+import { PackageIcon } from "@primer/octicons-react";
+
 # Playground
 
 The frontend playground allows to easily create connections with rooms and inspect how they communicate with the server.
 
-![](https://cdn.jsdelivr.net/npm/@colyseus/playground@latest/screenshot.png)
-
 ## Features
 
-- Lists all your defined room types
-- Allows to `joinOrCreate` / `create` / `join` into them.
+- Allows to `joinOrCreate` / `create` / `join` into rooms.
 - When `joinById` is selected, provides a list of active rooms by id
+- Easily authenticate with configured options from [<PackageIcon /> Auth Module]
+- Simulate room connection drops
 - Visualize the client state in JSON format
-- Table of incoming and outgoing messages
-- Table of raw events from the framework
 - Allow the client to send messages by type (auto-detected)
+- Built-in viewer and tester for server HTTP endpoints (similar to Postman)
 
-You can also interactively test how your room behaves during a dropped connection versus when a client leaves the room consensually.
+### Screenshots
+
+#### Rooms
+
+![](/playground/rooms.webp)
+
+#### API Endpoints
+
+![](/playground/endpoints.webp)
 
 ## Installation
 
@@ -42,9 +50,4 @@ const server = defineServer({
 
 ## Contribute
 
-This tool is built using React and TailwindCSS, making it easier for community
-members to contribute.
-
-You are welcome to use the [feedback thread](https://github.com/orgs/colyseus/discussions/585) to share ideas for features and/or improvements.
-
-Pull-requests are also welcome!
+This tool is built using React and TailwindCSS, making it easy for community members to contribute. See [source-code](https://github.com/colyseus/colyseus/tree/master/packages/playground)
