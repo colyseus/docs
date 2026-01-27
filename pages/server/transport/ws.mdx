@@ -104,6 +104,14 @@ Default: `4096` (4kb)
 
 ---
 
+#### `options.perMessageDeflate`
+
+Enable/disable per-message deflate compression. Disabling this can reduce CPU usage and latency at the cost of increased bandwidth.
+
+Default: `false`
+
+---
+
 #### `options.verifyClient`
 
 This method happens before WebSocket handshake. If `verifyClient` is not set

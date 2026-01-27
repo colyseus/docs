@@ -2,7 +2,9 @@ import { Callout, Cards, Tabs } from "nextra/components";
 
 # Transport
 
-Colyseus provides the following Transport implementations for the Transport layer.
+The Transport layer is responsible for handling the low-level network communication between the Colyseus server and clients. It manages WebSocket connections, handles ping/pong heartbeats to detect disconnected clients, and provides the underlying HTTP server for the application.
+
+## Available Transports
 
 ### Node.js Runtime
 
@@ -21,3 +23,12 @@ Colyseus provides the following Transport implementations for the Transport laye
 <Callout type="info">
     Each Transport implementation has its own set of options for customization.
 </Callout>
+
+## Connection Lifecycle
+
+When a client connects to the server, the transport layer:
+
+1. Accepts the WebSocket connection
+2. Starts heartbeat monitoring (ping/pong) to detect unresponsive clients
+3. Parses the connection URL for `sessionId`, `roomId`, and authentication tokens
+4. Forwards the connection to the appropriate room via `matchMaker`
