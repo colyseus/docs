@@ -121,16 +121,16 @@ When the exception is thrown inside the `onLeave` method.
 
 **Properties:**
 
-- `client` - the client that is trying to leave the room.
-- `consented` - whether the client consented to leave the room.
+- `client` - the client that is leaving the room.
+- `code` - the code associated with the client leaving the room.
 
 ```ts filename="MyRoom.ts"
 import { OnLeaveException } from "colyseus";
 // ...
     onUncaughtException (err: Error, methodName: string) {
         if (err instanceof OnLeaveException) {
-            err.client; // the client that is trying to leave the room.
-            err.consented; // whether the client consented to leave the room.
+            err.client; // the client that is leaving the room.
+            err.code; // the code associated with the client leaving the room.
             err.cause; // original unhandled error
             err.message; // original error message
         }

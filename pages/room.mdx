@@ -12,6 +12,66 @@ The `Room` class is the core building block of Colyseus. Each room instance repr
 - **Scalability** - Rooms are created on demand and _(optionally)_ disposed when empty
 - **Flexibility** - One room class can spawn many instances (e.g., multiple matches of the same game type)
 
+## Defining a Room
+
+You can define a Room using a class that extends `Room`.
+
+<Tabs items={["Simple", "With Full Type Safety"]} storageKey="room-definition">
+    <Tabs.Tab>
+    ```ts filename="MyRoom.ts"
+    import { Room, Client } from "colyseus";
+    import { MyState } from "./MyState";
+
+    export class MyRoom extends Room {
+        state = new MyState();
+
+        onJoin(client: Client, options: any) {
+            client.send("welcome", "Welcome to the room!");
+        }
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    You may specify the `metadata`, `state`, and `client` types for full type safety.
+
+    ```ts filename="MyRoom.ts"
+    import { Room, type Client as MyClient } from "colyseus";
+    import { MyState } from "./MyState";
+
+    interface MyMetadata {
+        difficulty: string;
+        rating: number;
+    }
+
+    type Client = MyClient<{
+        // specify the shape of outgoing messages to the client
+        // so client.send() is type-checked
+        // room.onMessage() on the frontend also becomes type-checked
+        messages: {
+            welcome: string;
+        }
+    }>;
+
+    export class MyRoom extends Room<{
+        state: MyState,
+        metadata: MyMetadata,
+        client: Client
+    }> {
+        state = new MyState();
+
+        onCreate(options: MyMetadata) {
+            this.metadata.difficulty  = options.difficulty;
+        }
+
+        onJoin(client: Client, options: any) {
+            client.send("welcome", "Welcome to the room!");
+        }
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
+
 ## Lifecycle Events
 
 The room's lifecycle events are called automatically. [`async`/`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) is supported in all of them.
@@ -31,8 +91,14 @@ The room's lifecycle events are called automatically. [`async`/`await`](https://
         // When the client successfully joins the room
         onJoin (client: Client, options: any, auth: any) { }
 
-        // When a client leaves the room
-        onLeave (client: Client, consented: boolean) { }
+        // When a client disconnects unexpectedly (use allowReconnection here)
+        onDrop (client: Client, code?: number) { }
+
+        // When a client successfully reconnects
+        onReconnect (client: Client) { }
+
+        // When a client effectively leaves the room
+        onLeave (client: Client, code?: number) { }
 
         // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
         onDispose () { }
@@ -54,8 +120,14 @@ The room's lifecycle events are called automatically. [`async`/`await`](https://
         // When the client successfully joins the room
         onJoin (client, options, auth) { }
 
-        // When a client leaves the room
-        onLeave (client, consented) { }
+        // When a client disconnects unexpectedly (use allowReconnection here)
+        onDrop (client, code) { }
+
+        // When a client successfully reconnects
+        onReconnect (client) { }
+
+        // When a client effectively leaves the room
+        onLeave (client, code) { }
 
         // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
         onDispose () { }
@@ -181,14 +253,64 @@ async onJoin (client, options, auth?) {
 
 ---
 
-### On Leave
+### On Drop
 
-Triggered when a client leaves the room.
+<Callout type="info">New in 0.17</Callout>
 
-If the client leaves the room by closing the browser tab, the `onLeave` method is called with `consented` set to `false`. If the client leaves the room by calling [`.leave()`](/sdk#leave-room), the `onLeave` method is called with `consented` set to `true`.
+Triggered when a client disconnects unexpectedly (without consent). This is the recommended place to use `allowReconnection()`.
+
+**Parameters:**
+
+- `client`: The client that was dropped from the room.
+- `code`: _(optional)_ The close code of the leave event.
 
 ```ts filename="MyRoom.ts"
-async onLeave (client, consented) {
+async onDrop (client, code) {
+    await this.allowReconnection(client, 20);
+}
+```
+
+<Callout type="info">
+    If `onDrop` is not defined, `onLeave` will be called for both consented and non-consented disconnections.
+</Callout>
+
+---
+
+### On Reconnect
+
+<Callout type="info">New in 0.17</Callout>
+
+Triggered when a client successfully reconnects to the room after calling `allowReconnection()`.
+
+**Parameters:**
+
+- `client`: The client that reconnected to the room.
+
+```ts filename="MyRoom.ts"
+onReconnect (client) {
+    /**
+     * Client has reconnected successfully.
+     */
+    console.log(client.sessionId, "reconnected!");
+}
+```
+
+---
+
+### On Leave
+
+Triggered when a client effectively leaves the room.
+
+- If `onDrop` is defined: `onLeave` is called only for consented disconnections (client called `.leave()`).
+- If `onDrop` is not defined: `onLeave` is called for both consented and non-consented disconnections.
+
+**Parameters:**
+
+- `client`: The client that left the room.
+- `code`: _(optional)_ The close code of the leave event.
+
+```ts filename="MyRoom.ts"
+async onLeave (client, code) {
     /**
      * This is a good place to remove the client from the state.
      */
@@ -200,7 +322,7 @@ You may define this function as `async`:
 <Tabs items={["Synchronous", "Asynchronous"]}>
     <Tabs.Tab>
     ``` typescript
-    onLeave(client, consented) {
+    onLeave(client, code) {
         if (this.state.players.has(client.sessionId)) {
             this.state.players.delete(client.sessionId);
         }
@@ -210,7 +332,7 @@ You may define this function as `async`:
 
     <Tabs.Tab>
     ``` typescript
-    async onLeave(client, consented) {
+    async onLeave(client, code) {
         const player = this.state.players.get(client.sessionId);
         await persistUserOnDatabase(player);
     }
@@ -219,7 +341,7 @@ You may define this function as `async`:
 </Tabs>
 
 <Callout type="info">
-    At [Graceful Shutdown](/server/graceful-shutdown), `onLeave` is called with `consented` set to `true` for all clients.
+    At [Graceful Shutdown](/server/graceful-shutdown), `onLeave` is called with `code = CloseCode.SERVER_SHUTDOWN` for all clients.
 </Callout>
 
 ---
@@ -270,7 +392,7 @@ onUncaughtException (err: Error, methodName: string) {
 The `onBeforePatch` lifecycle hook is triggered before state synchronization, at patch rate frequency. (see [`patchRate`](#patchrate))
 
 ```ts filename="MyRoom.ts"
-onBeforePatch() {
+onBeforePatch(state) {
     /*
      * Here you can mutate something in the state just before it is encoded &
      * synchronized with all clients
@@ -525,6 +647,7 @@ Update multiple matchmaking/listing properties at once with a single persist ope
         - `private` (optional): whether the room should be private
         - `locked` (optional): whether the room should be locked
         - `maxClients` (optional): maximum number of clients allowed
+        - `unlisted` (optional): whether the room should be unlisted from matchmaking queries
 
 ```ts filename="MyRoom.ts"
 // Update multiple properties at once
@@ -638,18 +761,17 @@ this.unlock ()
 
 ### Allow Reconnection
 
-Allow the specified client to [`reconnect`](/sdk/#reconnect-reconnectiontoken) into the room. Must be used inside [`onLeave()`](#onleave-client) method.
+Allow the client to reconnect into the room. 
+
+A reconnection may be [made manually](/sdk#manual-reconnection) (via `sdk.reconnect()`), or [automatically](/sdk#automatic-reconnection) in case of temporary network issues.
+
+The `.allowReconnection()` method should be called on [`onDrop()`](#on-drop) OR [`onLeave()`](#on-leave) method.
 
 ```ts filename="Signature"
 this.allowReconnection (client, seconds)
 ```
 
-- **`client`**: the disconnecting [`Client`](/room#client) instance
-- **`seconds`**: number of seconds to wait for client to perform [`.reconnect()`](/sdk/#reconnect-roomid-string-sessionid-string), or `"manual"`, to allow for manual reconnection rejection (see second example)
-
-**Return type:**
-
-- `allowReconnection()` returns a `Deferred<Client>` instance.
+- The `allowReconnection()` returns a `Deferred<Client>` instance.
 - The returned `Deferred` instance is a promise-like structure, you can forcibly reject the reconnection by calling `.reject()` on it. (see second example)
 - `Deferred` type can forcibly reject the promise by calling `.reject()` (see second example)
 
@@ -659,26 +781,22 @@ this.allowReconnection (client, seconds)
     **Example:** Rejecting the reconnection after a 20 second timeout.
 
     ```ts filename="MyRoom.ts"
-    async onLeave (client: Client, consented: boolean) {
+    async onDrop (client: Client, code: number) {
         // flag client as inactive for other users
         this.state.players.get(client.sessionId).connected = false;
 
-        try {
-            if (consented) {
-                throw new Error("consented leave");
-            }
+        // allow disconnected client to reconnect into this room until 20 seconds
+        await this.allowReconnection(client, 20);
+    }
 
-            // allow disconnected client to reconnect into this room until 20 seconds
-            await this.allowReconnection(client, 20);
+    onReconnect(client: Client) {
+        // client returned! let's re-activate it.
+        this.state.players.get(client.sessionId).connected = true;
+    }
 
-            // client returned! let's re-activate it.
-            this.state.players.get(client.sessionId).connected = true;
-
-        } catch (e) {
-
-            // 20 seconds expired. let's remove the client.
-            this.state.players.delete(client.sessionId);
-        }
+    onLeave (client: Client, code: number) {
+        // Client left by consent, remove from state immediately
+        this.state.players.delete(client.sessionId);
     }
     ```
     </Tabs.Tab>
@@ -687,59 +805,75 @@ this.allowReconnection (client, seconds)
     **Example:**  Manually rejecting the reconnection using custom logic.
 
     ```ts filename="MyRoom.ts"
-    async onLeave (client: Client, consented: boolean) {
+    async onDrop (client: Client, code: number) {
         // flag client as inactive for other users
         this.state.players.get(client.sessionId).connected = false;
 
-        try {
-            if (consented) {
-                throw new Error("consented leave");
-            }
+        const reconnection = this.allowReconnection(client, "manual");
 
-            //
-            // Get reconnection token
-            // NOTE: do not use `await` here yet
-            //
-            const reconnection = this.allowReconnection(client, "manual");
+        //
+        // here is the custom logic for rejecting the reconnection.
+        // for demonstration purposes of the API, an interval is created
+        // rejecting the reconnection if the player has missed 2 rounds,
+        // (assuming he's playing a turn-based game)
+        //
+        // in a real scenario, you would store the `reconnection` in
+        // your Player instance, for example, and perform this check during your
+        // game loop logic
+        //
+        const currentRound = this.state.currentRound;
 
-            //
-            // here is the custom logic for rejecting the reconnection.
-            // for demonstration purposes of the API, an interval is created
-            // rejecting the reconnection if the player has missed 2 rounds,
-            // (assuming he's playing a turn-based game)
-            //
-            // in a real scenario, you would store the `reconnection` in
-            // your Player instance, for example, and perform this check during your
-            // game loop logic
-            //
-            const currentRound = this.state.currentRound;
-            const interval = this.clock.setInterval(() => {
-            if ((this.state.currentRound - currentRound) > 2) {
-                // manually reject the client reconnection
+        client.userData.reconnectionInterval = this.clock.setInterval(() => {
+            // manually reject the client reconnection
+            const missedRounds = this.state.currentRound - currentRound;
+            if (missedRounds > 2) {
                 reconnection.reject();
-                interval.clear();
+                client.userData.reconnectionInterval.clear();
             }
-            }, 1000);
+        }, 1000);
 
-            // now it's time to `await` for the reconnection
-            await reconnection;
+        await reconnection;
+    }
 
+    onReconnect(client: Client) {
+        if (client.userData.reconnection) {
             // clear the interval after successful reconnection.
             // not doing so may lead to dangling intervals.
-            interval.clear();
+            client.userData.reconnectionInterval.clear();
 
-            // client returned! let's re-activate it.
-            this.state.players.get(client.sessionId).connected = true;
-
-        } catch (e) {
-
-            // reconnection has been rejected. let's remove the client.
-            this.state.players.delete(client.sessionId);
+            // clear any stored reconnection reference
+            delete client.userData.reconnectionInterval;
         }
+
+        // client returned! let's re-activate it.
+        this.state.players.get(client.sessionId).connected = true;
+    }
+
+    onLeave (client: Client, code: number) {
+        // Client left by consent, remove from state immediately
+        this.state.players.delete(client.sessionId);
     }
     ```
     </Tabs.Tab>
 </Tabs>
+
+---
+
+### Has Reached Max Clients
+
+Returns whether the sum of connected clients and reserved seats exceeds the maximum number of clients.
+
+```ts filename="Signature"
+this.hasReachedMaxClients ()
+```
+
+```ts filename="MyRoom.ts"
+onCreate(options) {
+    if (this.hasReachedMaxClients()) {
+        console.log("Room is full!");
+    }
+}
+```
 
 ---
 
@@ -807,6 +941,26 @@ The synchronized state of the room.
 
 <Callout type="info">
     See [State Synchronization](/state/).
+</Callout>
+
+---
+
+### `metadata`
+
+The room's matchmaking metadata. This data is used to filter rooms during matchmaking queries.
+
+```ts filename="MyRoom.ts"
+// Get metadata
+console.log(this.metadata.difficulty);
+
+// Set metadata during onCreate() only
+onCreate(options) {
+    this.metadata = { difficulty: "hard", rating: 1500 };
+}
+```
+
+<Callout type="warning">
+    The `metadata` setter can only be used during `onCreate()`. To update metadata after the room is created, use [`setMetadata()`](#set-metadata) or [`setMatchmaking()`](#set-matchmaking) instead.
 </Callout>
 
 ---
@@ -1018,6 +1172,37 @@ onJoin(client, options) {
 <Callout type="info">
     See [Authentication](/auth) for more details.
 </Callout>
+
+---
+
+#### `view`
+
+The `client.view` property is used for state filtering - allowing you to control which parts of the state a client can see.
+
+```ts filename="MyRoom.ts"
+import { StateView } from "@colyseus/schema";
+
+onJoin(client, options) {
+    // Set the client's view to filter portions of the state they receive
+    client.view = new StateView();
+}
+```
+
+<Callout type="info">
+    See [<SyncIcon/> State Synchronization → State View](/state/view) for more details.
+</Callout>
+
+---
+
+#### `reconnectionToken`
+
+The unique token used for reconnection. This token is regenerated each time the client connects.
+
+```ts filename="MyRoom.ts"
+onJoin(client, options) {
+    console.log(client.reconnectionToken);
+}
+```
 
 ---
 
