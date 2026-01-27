@@ -3,40 +3,92 @@ import { HeartIcon } from "@primer/octicons-react";
 
 # Driver
 
-The driver is responsible for storing and retrieving room data for match-making.
+The driver is responsible for storing and querying room data used by the matchmaker.
 
-## Overview
+When a room is created, deleted, or has its metadata updated, the driver persists this information so the matchmaker can find available rooms for players to join.
 
-When a room is created, deleted, or its "metadata" is properties are updated - the driver is responsible for storing and retrieving this information.
+For single-process deployments, the default in-memory driver is sufficient. For multi-process or distributed deployments, you need an external driver (like Redis or PostgreSQL) so all server instances share the same room data.
 
 ## Available Drivers
 
-- [Local In-Memory (default)](#local-in-memory)
-- [Redis](#redis)
+- [In-Memory Driver (default)](#in-memory-driver)
+- [Redis Driver](#redis-driver)
 - [Drizzle Driver (PostgreSQL)](#drizzle-driver-postgresql)
-- [MongoDB](#mongodb)
+- [MongoDB Driver](#mongodb-driver)
 
-### Local In-Memory
+### In-Memory Driver
 
 The default driver used by Colyseus is the `LocalDriver`, which stores all room data in memory. This driver is suitable for development and small-scale single-process applications.
 
-### Redis
+---
 
-The `RedisDriver` stores room data in a Redis database. This driver is suitable for large-scale multi-process applications and is recommended for production environments.
+### Redis Driver
+
+The `RedisDriver` stores room data in a Redis database using [ioredis](https://github.com/redis/ioredis). This driver is suitable for large-scale multi-process applications and is recommended for production environments.
 
 ```sh npm2yarn
 npm install --save @colyseus/redis-driver
 ```
+
+#### Basic Usage
 
 ```ts {2,5} filename="app.config.ts"
 import { defineServer } from "colyseus";
 import { RedisDriver } from "@colyseus/redis-driver";
 
 const server = defineServer({
-    driver: new RedisDriver(/* connection options */),
+    driver: new RedisDriver(),
     // ...
 });
 ```
+
+#### Connection Options
+
+The driver accepts multiple connection formats:
+
+```ts
+// Using a connection URL
+new RedisDriver("redis://username:password@localhost:6379/0")
+
+// Using a port number (connects to localhost)
+new RedisDriver(6379)
+
+// Using RedisOptions object
+new RedisDriver({
+    host: "localhost",
+    port: 6379,
+    password: "your-password",
+    db: 0,
+    // ... any ioredis options
+})
+```
+
+See [ioredis connection options](https://redis.github.io/ioredis/index.html#RedisOptions) for the full list of available options.
+
+#### Redis Cluster
+
+For high-availability setups, the driver supports Redis Cluster mode:
+
+```ts {2,5-12} filename="app.config.ts"
+import { defineServer } from "colyseus";
+import { RedisDriver } from "@colyseus/redis-driver";
+
+const server = defineServer({
+    driver: new RedisDriver([
+        { host: "node1.redis.example.com", port: 6379 },
+        { host: "node2.redis.example.com", port: 6379 },
+        { host: "node3.redis.example.com", port: 6379 },
+    ], {
+        // ClusterOptions (optional)
+        redisOptions: { password: "your-password" }
+    }),
+    // ...
+});
+```
+
+See [ioredis Cluster documentation](https://redis.github.io/ioredis/classes/Cluster.html) for all available cluster options.
+
+---
 
 ### Drizzle Driver (PostgreSQL)
 
@@ -44,23 +96,102 @@ const server = defineServer({
     The Drizzle/PostgreSQL driver is experimental. Use at your own risk. Please report any issues you may find.
 </Callout>
 
-The `PostgresDriver` stores room data in a PostgreSQL database. This driver is suitable for large-scale multi-process applications and is recommended for production environments.
+The `PostgresDriver` stores room data in a PostgreSQL database using [Drizzle ORM](https://orm.drizzle.team/). This driver is suitable for large-scale multi-process applications and is recommended for production environments.
 
 ```sh npm2yarn
 npm install --save @colyseus/drizzle-driver
 ```
+
+#### Basic Usage
+
+The simplest way to use the driver is to set the `DATABASE_URL` environment variable:
 
 ```ts {2,5} filename="app.config.ts"
 import { defineServer } from "colyseus";
 import { PostgresDriver } from "@colyseus/drizzle-driver";
 
 const server = defineServer({
-    driver: new PostgresDriver(/* connection options */),
+    driver: new PostgresDriver(),
     // ...
 });
 ```
 
-### MongoDB
+The driver will automatically connect using the `DATABASE_URL` environment variable, or fall back to `postgresql://postgres:postgres@localhost:5432/postgres`.
+
+#### Using an Existing Database Instance
+
+If you already have a Drizzle database instance in your application, you can pass it to the driver:
+
+```ts {2,3,6,9} filename="app.config.ts"
+import { defineServer } from "colyseus";
+import { drizzle } from "drizzle-orm/postgres-js";
+import { PostgresDriver } from "@colyseus/drizzle-driver";
+
+// Your existing database instance
+const db = drizzle(process.env.DATABASE_URL);
+
+const server = defineServer({
+    driver: new PostgresDriver({ db }),
+    // ...
+});
+```
+
+<Callout type="warning">
+    When providing your own database instance, you are responsible for managing the schema initialization. The `roomcaches_v1` table must exist before the driver is used.
+</Callout>
+
+#### Custom Schema
+
+You can provide a custom schema if you need to modify the table structure:
+
+```ts filename="app.config.ts"
+import { defineServer } from "colyseus";
+import { PostgresDriver, roomcaches } from "@colyseus/drizzle-driver";
+import { pgTable, integer, boolean, timestamp, jsonb, varchar } from "drizzle-orm/pg-core";
+
+// Custom schema with additional fields or different table name
+const customRoomCaches = pgTable('my_room_caches', {
+    roomId: varchar({ length: 9 }).primaryKey(),
+    processId: varchar({ length: 9 }),
+    name: varchar({ length: 64 }).notNull(),
+    clients: integer().notNull(),
+    maxClients: integer().notNull(),
+    locked: boolean(),
+    private: boolean(),
+    metadata: jsonb(),
+    publicAddress: varchar({ length: 255 }),
+    createdAt: timestamp().notNull().defaultNow(),
+    unlisted: boolean(),
+    // Add your custom fields here
+});
+
+const server = defineServer({
+    driver: new PostgresDriver({ schema: customRoomCaches }),
+    // ...
+});
+```
+
+#### Default Table Schema
+
+The driver creates a `roomcaches_v1` table with the following structure:
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `roomId` | `varchar(9)` | Primary key, unique room identifier |
+| `processId` | `varchar(9)` | ID of the process hosting the room |
+| `name` | `varchar(64)` | Room handler name |
+| `clients` | `integer` | Current number of connected clients |
+| `maxClients` | `integer` | Maximum allowed clients |
+| `locked` | `boolean` | Whether the room is locked |
+| `private` | `boolean` | Whether the room is private |
+| `metadata` | `jsonb` | Custom room metadata |
+| `publicAddress` | `varchar(255)` | Public address for the room |
+| `createdAt` | `timestamp` | Room creation timestamp |
+| `unlisted` | `boolean` | Whether the room is unlisted from queries |
+
+---
+
+### MongoDB Driver
 
 The `MongoDriver` stores room data in a MongoDB database. This driver is not actively maintained and is not recommended for production environments.
 
