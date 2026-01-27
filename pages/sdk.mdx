@@ -965,7 +965,124 @@ Triggered when the client leaves the room (either intentionally or due to discon
 
 ### Automatic Reconnection
 
-The SDK automatically attempts to reconnect when the connection is unexpectedly dropped. Configure this behavior using `room.reconnection`.
+The SDK automatically attempts to reconnect when the connection is unexpectedly dropped.
+
+<Callout type="warning">
+    Automatic reconnection only triggers if the room has been connected for at least `minUptime` milliseconds. This prevents reconnection loops for rooms that fail immediately after joining.
+</Callout>
+
+#### On Drop Event
+
+Triggered when the connection is unexpectedly dropped. The SDK will automatically attempt to reconnect.
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.onDrop((code, reason) => {
+      console.log("connection dropped, attempting to reconnect...");
+      console.log("code:", code, "reason:", reason);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    room.onDrop((code, reason) => {
+      console.log("connection dropped, attempting to reconnect...");
+      console.log("code:", code, "reason:", reason);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    room.OnDrop += (code, reason) => {
+      Debug.Log("connection dropped, attempting to reconnect...");
+      Debug.Log("code: " + code + " reason: " + reason);
+    };
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    room:on("drop", function(code, reason)
+      print("connection dropped, attempting to reconnect...")
+      print("code:", code, "reason:", reason)
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    room.onDrop += function(code, reason) {
+      trace("connection dropped, attempting to reconnect...");
+      trace("code: " + code + " reason: " + reason);
+    };
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+<Callout type="info">
+    The `onDrop` event is different from `onLeave`. While `onLeave` is triggered when the client intentionally leaves or the connection is permanently closed, `onDrop` indicates a temporary disconnection where reconnection will be attempted.
+</Callout>
+
+<Callout type="info">
+    **Close codes that trigger `onDrop`:**
+    - `1005` - No status received
+    - `1006` - Abnormal closure
+    - `1001` - Going away
+    - `4010` - May try reconnect
+</Callout>
+
+#### On Reconnect Event
+
+Triggered when the client successfully reconnects after a connection drop. While disconnected, your `room.send()` calls will be queued and sent to the server when the client reconnects. The maximum number of queued messages is configurable using `room.reconnection.maxEnqueuedMessages`.
+
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    room.onReconnect(() => {
+      console.log("successfully reconnected to the room!");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    room.onReconnect(() => {
+      console.log("successfully reconnected to the room!");
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    room.OnReconnect += () => {
+      Debug.Log("successfully reconnected to the room!");
+    };
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    room:on("reconnect", function()
+      print("successfully reconnected to the room!")
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    room.onReconnect += function() {
+      trace("successfully reconnected to the room!");
+    };
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+#### Configuration Options
+
+You may configure the reconnection behavior using `room.reconnection`.
 
 **Reconnection config options**
 
@@ -1091,126 +1208,9 @@ The SDK automatically attempts to reconnect when the connection is unexpectedly 
     </Tabs.Tab>
 </Tabs>
 
-<Callout type="warning">
-    Automatic reconnection only triggers if the room has been connected for at least `minUptime` milliseconds. This prevents reconnection loops for rooms that fail immediately after joining.
-</Callout>
-
-#### On Drop Event
-
-Triggered when the connection is unexpectedly dropped. The SDK will automatically attempt to reconnect.
-
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    room.onDrop((code, reason) => {
-      console.log("connection dropped, attempting to reconnect...");
-      console.log("code:", code, "reason:", reason);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="client.js"
-    room.onDrop((code, reason) => {
-      console.log("connection dropped, attempting to reconnect...");
-      console.log("code:", code, "reason:", reason);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    room.OnDrop += (code, reason) => {
-      Debug.Log("connection dropped, attempting to reconnect...");
-      Debug.Log("code: " + code + " reason: " + reason);
-    };
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    room:on("drop", function(code, reason)
-      print("connection dropped, attempting to reconnect...")
-      print("code:", code, "reason:", reason)
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    room.onDrop += function(code, reason) {
-      trace("connection dropped, attempting to reconnect...");
-      trace("code: " + code + " reason: " + reason);
-    };
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-<Callout type="info">
-    The `onDrop` event is different from `onLeave`. While `onLeave` is triggered when the client intentionally leaves or the connection is permanently closed, `onDrop` indicates a temporary disconnection where reconnection will be attempted.
-</Callout>
-
-<Callout type="info">
-    **Close codes that trigger `onDrop`:**
-    - `1005` - No status received
-    - `1006` - Abnormal closure
-    - `1001` - Going away
-    - `4010` - May try reconnect
-</Callout>
-
-#### On Reconnect Event
-
-Triggered when the client successfully reconnects after a connection drop. Buffered messages are automatically sent to the server.
-
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    room.onReconnect(() => {
-      console.log("successfully reconnected to the room!");
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="client.js"
-    room.onReconnect(() => {
-      console.log("successfully reconnected to the room!");
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    room.OnReconnect += () => {
-      Debug.Log("successfully reconnected to the room!");
-    };
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    room:on("reconnect", function()
-      print("successfully reconnected to the room!")
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    room.onReconnect += function() {
-      trace("successfully reconnected to the room!");
-    };
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-<Callout type="info">
-    The room state remains intact during reconnection. No state re-synchronization is needed as the serializer state is preserved on the client.
-</Callout>
-
 ### Manual Reconnection
 
-For more control, you can manually reconnect using a cached reconnection token.
+For more control, you can manually reconnect using a cached reconnection token. Because this method returns a new room instance on the client, you must reattach all event listeners to the room after reconnecting.
 
 - You must store/cache the `room.reconnectionToken` from an active room connection.
 - The server needs to call [`.allowReconnection()`](/room#allow-reconnection) for that client.
