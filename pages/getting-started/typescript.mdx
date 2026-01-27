@@ -103,6 +103,19 @@ room.state.players  // ✓ Auto-complete works
 room.state.players.get("abc")?.customMethod()  // ✓ Custom methods available
 ```
 
+### Room Debug Panel
+
+The debug panel allows you to inspect the room state and messages in real-time during development, simulate high latency conditions, connection drops, and more.
+
+You can enable the Room Debug Panel in development mode by:
+
+```ts {1}
+import "@colyseus/sdk/debug";
+```
+
+![](/getting-started/ts-sdk-debug.png)
+
+---
 
 ## Troubleshooting: `tsconfig.json` Configuration
 
