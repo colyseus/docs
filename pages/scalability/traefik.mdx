@@ -25,16 +25,6 @@ It automatically registers and de-registers Colyseus server instances with Traef
 - [RedisPresence](/server/presence#redis-presence) for presence management.
 - **Traefik v2+** configured with Redis or HTTP provider.
 
-#### Enabling Keyspace Notifications in Redis
-
-For the Redis provider, keyspace notifications must be enabled. Add the following to your Redis configuration:
-
-```
-notify-keyspace-events Ex
-```
-
-Or run: `redis-cli config set notify-keyspace-events Ex`.
-
 ## Installation
 
 ```sh npm2yarn
