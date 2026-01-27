@@ -9,10 +9,10 @@ These actions will be performed, in order, before the process is killed:
 <Steps>
     ### Server: On Before Shutdown
 
-    The custom `gameServer.onBeforeShutdown()` is called, if defined.
+    The custom `server.onBeforeShutdown()` is called, if defined.
 
     ```ts filename="app.config.ts"
-    gameServer.onBeforeShutdown(async () => {
+    server.onBeforeShutdown(async () => {
         // (...) custom logic
     });
     ```
@@ -75,12 +75,12 @@ These actions will be performed, in order, before the process is killed:
 
     ### Server: On Shutdown
 
-    The custom `gameServer.onShutdown()` is called, if defined.
+    The custom `server.onShutdown()` is called, if defined.
 
     At this point there is no more rooms or clients connected to the server.
 
     ```ts filename="app.config.ts"
-    gameServer.onShutdown(async () => {
+    server.onShutdown(async () => {
         // (...) custom logic
     });
     ```
@@ -96,7 +96,7 @@ These actions will be performed, in order, before the process is killed:
 
 ---
 
-You may use `async` functions or return a `Promise` to perform asynchronous operations on `onLeave` and `onDispose` methods, as well as `gameServer.onBeforeShutdown()` and `gameServer.onShutdown()`.
+You may use `async` functions or return a `Promise` to perform asynchronous operations on `onLeave` and `onDispose` methods, as well as `server.onBeforeShutdown()` and `server.onShutdown()`.
 
 <Tabs items={["Returning a Promise", "Using async"]}>
     <Tabs.Tab>

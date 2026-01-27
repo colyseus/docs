@@ -377,7 +377,7 @@ Revert a `.define()` call. Makes a `roomName` unavailable for matchmaking. This
 method is usually not recommended but it may be useful in some scenarios.
 
 ```ts
-gameServer.removeRoomType("battle");
+server.removeRoomType("battle");
 ```
 
 ---
@@ -391,7 +391,7 @@ Colyseus allows you to simulate latency between the server and the client. This 
 if (process.env.NODE_ENV !== "production") {
 
   // simulate 200ms latency between server and client.
-  gameServer.simulateLatency(200);
+  server.simulateLatency(200);
 }
 ```
 
@@ -420,7 +420,7 @@ server.listen(2567);
 Register a custom callback that is called **before** the Graceful Shutdown routine starts.
 
 ```ts filename="server.ts"
-gameServer.onBeforeShutdown(async () => {
+server.onBeforeShutdown(async () => {
     // ... custom logic
 });
 ```
@@ -436,7 +436,7 @@ gameServer.onBeforeShutdown(async () => {
 Register a custom callback that is called **after** the graceful shutdown is fully complete.
 
 ```typescript
-gameServer.onShutdown(async () => {
+server.onShutdown(async () => {
     // ... custom logic
 });
 ```
@@ -452,7 +452,7 @@ gameServer.onShutdown(async () => {
 Triggers the Graceful Shutdown routine.
 
 ```ts filename="app.config.ts"
-gameServer.gracefullyShutdown();
+server.gracefullyShutdown();
 ```
 
 This method is called automatically when the process received `SIGINT` or `SIGTERM` signal.
