@@ -787,14 +787,10 @@ onCreate() {
 
 ### `roomId`
 
-A unique, auto-generated, 9-character-long identifier of the room.
-
-You may replace `this.roomId` during `onCreate()`.
+The unique identifier of the room. By default, a random 9-character-long string is assigned as the Room ID.
 
 <Callout type="info">
-    **Using a custom `roomId`**
-
-    Check out the guide [How-to &raquo; Customize room id](/community/custom-room-id/)
+    You may customize the Room ID during `onCreate()` by setting the `this.roomId` property. See [Recipes &raquo; Customize Room ID](/recipes/custom-room-id)
 </Callout>
 
 ---
