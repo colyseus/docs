@@ -8,12 +8,12 @@ import { Callout, Steps } from 'nextra/components';
     You do not need to specify `driver`, `presence`, or `publicAddress` when using Colyseus Cloud.
 </Callout>
 
-### How does Colyseus achieve scalability?
+## How does Colyseus achieve scalability?
 
 - Increasing the number of processes will increase the amount of rooms that can be created.
 - Rooms are equally distributed across the available processes.
 - Each Room belongs to a single Colyseus process.
-- Each process **has a maximum amount of players** it can handle. _(The exact amount depends on many factors. [See our FAQ](/faq/#how-many-ccu-a-colyseus-server-can-handle).)_
+- Each process **has a maximum amount of players** it can handle. _(The exact amount depends on many factors. [See our FAQ](/faq/#how-many-ccu-can-a-colyseus-server-handle).)_
 - Client connections are directly associated with the process that created the room.
 
 <Callout type="info">
