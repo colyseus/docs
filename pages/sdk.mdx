@@ -1616,7 +1616,7 @@ The `client.http` utility performs HTTP requests to your server endpoint.
 
 ### GET
 
-<Tabs items={["Client", "Server"]}>
+<Tabs items={["Client", "Server Route (recommended)", "Server (express)"]}>
     <Tabs.Tab>
     ```js filename="client.js"
     client.http.get("/profile").then((response) => {
@@ -1627,20 +1627,36 @@ The `client.http` utility performs HTTP requests to your server endpoint.
 
     <Tabs.Tab>
     ```ts filename="src/app.config.ts"
-    // ...
+    import { defineServer, createEndpoint } from "@colyseus/sdk";
+
+    const server = defineServer({
+        routes: createRouter({
+            profile: createEndpoint("/profile", { method: "GET" }, (ctx) => {
+                ctx.json({ name: "Jake Badlands" });
+            })
+        })
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts filename="src/app.config.ts"
+    import { defineServer } from "@colyseus/sdk";
+
+    const server = defineServer({
         express: (app) => {
             app.get("/profile", (req, res) => {
                 res.json({ name: "Jake Badlands" });
             });
         },
-    // ...
+    });
     ```
     </Tabs.Tab>
 </Tabs>
 
 ### POST
 
-<Tabs items={["Client", "Server"]}>
+<Tabs items={["Client", "Server Route (recommended)", "Server (express)"]}>
     <Tabs.Tab>
     ```js filename="client.js"
     client.http.post("/profile", { body: { name: "Jake Badlands" } }).then((response) => {
@@ -1651,20 +1667,36 @@ The `client.http` utility performs HTTP requests to your server endpoint.
 
     <Tabs.Tab>
     ```ts filename="src/app.config.ts"
-    // ...
+    import { defineServer, createEndpoint } from "@colyseus/sdk";
+
+    const server = defineServer({
+        routes: createRouter({
+            profile: createEndpoint("/profile", { method: "POST" }, (ctx) => {
+                ctx.json(ctx.body);
+            })
+        })
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts filename="src/app.config.ts"
+    import { defineServer } from "@colyseus/sdk";
+    
+    const server = defineServer({
         express: (app) => {
             app.post("/profile", (req, res) => {
                 res.json(req.body);
             });
         },
-    // ...
+    });
     ```
     </Tabs.Tab>
 </Tabs>
 
 ### PUT
 
-<Tabs items={["Client", "Server"]}>
+<Tabs items={["Client", "Server Route (recommended)", "Server (express)"]}>
     <Tabs.Tab>
     ```js filename="client.js"
     client.http.put("/profile", { body: { name: "Jake Badlands" } }).then((response) => {
@@ -1675,20 +1707,36 @@ The `client.http` utility performs HTTP requests to your server endpoint.
 
     <Tabs.Tab>
     ```ts filename="src/app.config.ts"
-    // ...
+    import { defineServer, createEndpoint } from "@colyseus/sdk";
+
+    const server = defineServer({
+        routes: createRouter({
+            profile: createEndpoint("/profile", { method: "PUT" }, (ctx) => {
+                ctx.json(ctx.body);
+            })
+        })
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts filename="src/app.config.ts"
+    import { defineServer } from "@colyseus/sdk";
+    
+    const server = defineServer({
         express: (app) => {
             app.put("/profile", (req, res) => {
                 res.json(req.body);
             });
         },
-    // ...
+    });
     ```
     </Tabs.Tab>
 </Tabs>
 
 ### DELETE
 
-<Tabs items={["Client", "Server"]}>
+<Tabs items={["Client", "Server Route (recommended)", "Server (express)"]}>
     <Tabs.Tab>
     ```js filename="client.js"
     client.http.delete("/profile").then((response) => {
@@ -1699,13 +1747,29 @@ The `client.http` utility performs HTTP requests to your server endpoint.
 
     <Tabs.Tab>
     ```ts filename="src/app.config.ts"
-    // ...
+    import { defineServer, createEndpoint } from "@colyseus/sdk";
+
+    const server = defineServer({
+        routes: createRouter({
+            profile: createEndpoint("/profile", { method: "DELETE" }, (ctx) => {
+                ctx.json({ deleted: true });
+            })
+        })
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts filename="src/app.config.ts"
+    import { defineServer } from "@colyseus/sdk";
+    
+    const server = defineServer({
         express: (app) => {
             app.delete("/profile", (req, res) => {
                 res.json({ deleted: true });
             });
         },
-    // ...
+    });
     ```
     </Tabs.Tab>
 </Tabs>
