@@ -48,9 +48,9 @@ The `Client` instance is your entry point to connect to the server.
 
     <Tabs.Tab>
     ```lua filename="client.lua"
-    local ColyseusClient = require("colyseus.client")
+    local Colyseus = require("colyseus.sdk")
 
-    local client = ColyseusClient.new("http://localhost:2567");
+    local client = Colyseus.Client("http://localhost:2567");
     ```
     </Tabs.Tab>
 
@@ -1565,10 +1565,10 @@ Client.selectByLatency (endpoints: Array<string | EndpointSettings>): Promise<Cl
 
     <Tabs.Tab>
     ```lua filename="client.lua"
-    local ColyseusClient = require("colyseus.client")
+    local Colyseus = require("colyseus.sdk")
 
     -- Select the best server from multiple regions
-    ColyseusClient.select_by_latency({
+    Colyseus.Client.select_by_latency({
       "https://us-east.gameserver.com",
       "https://eu-west.gameserver.com",
       "https://asia.gameserver.com"
