@@ -1,5 +1,6 @@
 import { defold } from "../../components/icons/platforms"
 import { Callout } from 'nextra/components'
+import { DevicesIcon } from '@primer/octicons-react'
 
 # Defold Engine
 
@@ -10,51 +11,55 @@ The Colyseus SDK for Defold supports all major platforms, including:
 - Android
 - Native (Mac, and Windows.)
 
-## Installation
+## Install package
 
-From your `game.project` file, and add the following Dependencies to your project:
+From your `game.project` file, add the following Dependencies to your project:
 
 ```txt copy
-https://github.com/colyseus/colyseus-defold/archive/0.16.zip
+https://github.com/colyseus/colyseus-defold/archive/0.17.zip
 ```
 
 ```txt copy
-https://github.com/defold/extension-websocket/archive/master.zip
+https://github.com/defold/extension-websocket/archive/4.2.0.zip
 ```
 
-Now, select **Project** ▸ **Fetch Libraries** to update library dependencies, two folders with the libraries name should pop up on your Defold project. This means the libraries have been imported correctly.
+Now, select **Project** ▸ **Fetch Libraries** to update library dependencies. Two folders with the library names should appear in your Defold project, indicating the libraries have been imported correctly.
 
 <Callout type="info">
     Read more about [Setting up library dependencies](https://defold.com/manuals/libraries/#setting-up-library-dependencies) on Defold documentation.
 </Callout>
 
+## SDK Example Project
 
-## Usage
+The [colyseus-defold](https://github.com/colyseus/colyseus-defold) repository contains a raw example project that demonstrates the SDK features. To run the example:
 
-```lua filename="main.lua"
-local Colyseus = require "colyseus.sdk"
+1. Clone the repository: `git clone https://github.com/colyseus/colyseus-defold.git`
+2. Open the project in Defold Editor
 
-local client
-local room
+### Running the test server locally
 
-function init(self)
-    -- Add initialization code here
-    client = Colyseus.Client("http://localhost:2567")
+To run the test server locally, you will need to run the following commands in your terminal:
 
-    -- join chat room
-    client:join_or_create("chat", {}, function(err, _room)
-      if err then
-        print("JOIN ERROR: " .. err)
-        return
-      end
-
-      room = _room
-      callbacks = Colyseus.callbacks(room) -- See "Frontend State Sync Callbacks"
-    end)
-end
+```sh filename="Terminal"
+git clone https://github.com/colyseus/colyseus.git
+cd colyseus
+pnpm install
+pnpm run sdk-test-server
 ```
 
-See [frontend documentation](/sdk/).
+<Callout type="warning">
+    This test server is meant for testing features of the SDKs only. It does not follow good standards for production servers. For your own production servers, you should start from a fresh project and follow the [Getting Started](/getting-started#backend) guide.
+</Callout>
+
+<Callout type="info">
+    You can see the source code for the test server [here](https://github.com/colyseus/colyseus/blob/master/packages/example/src/sdks.server.ts).
+</Callout>
+
+You should be able to see the server running at `http://localhost:2567`, and the example project will be able to connect to it.
+
+## SDK API
+
+Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select the **Lua (Defold)** tab.
 
 ## FAQ
 
