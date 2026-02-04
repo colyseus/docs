@@ -65,10 +65,10 @@ this.setMetadata({isCoop:  options["logic"] == "starBossCoop" });
 ```
 We set the value for `isCoop` in the room's metadata, which we can then use on the client side to display the type of room.
 
-To accomplish this, on the client side we created a Serializable class `StarBossRoomMetaData.cs` that contains the `isCoop` value. We then use this class within our custom `StarBossRoomAvailable` which inherits from `ColyseusRoomAvailable`:
+To accomplish this, on the client side we created a Serializable class `StarBossRoomMetaData.cs` that contains the `isCoop` value. We then use this class within our custom `StarBossRoomAvailable` which inherits from `Colyseus.RoomAvailable`:
 ```csharp
 [System.Serializable]
-public class StarBossRoomAvailable : ColyseusRoomAvailable {
+public class StarBossRoomAvailable : Colyseus.RoomAvailable {
     public StarBossRoomMetaData metadata;
 }
 ```
