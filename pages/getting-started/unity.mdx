@@ -8,7 +8,7 @@ import { PeopleIcon, DevicesIcon } from '@primer/octicons-react'
 
 <Tabs items={['Unity Package Manager (UPM)', 'From .unitypackage (legacy)']}>
     <Tabs.Tab>
-        - Go to Window > Package Manager. Click "+" button, then select "Add package from git URL..."
+        - Go to **Window → Package Management → Package Manager**. Click "+" button, then select "Add package from git URL..."
         - Enter Git URL: `https://github.com/colyseus/colyseus-unity-sdk.git#upm`
         - Click "ADD"
 
@@ -35,6 +35,8 @@ Starting with Unity 6000.1.0b1, Unity integrates [Multiplayer Play Mode](https:/
 ## SDK Example Project
 
 The example project [included in the SDK package](https://github.com/colyseus/colyseus-unity-sdk/tree/master/Assets/Colyseus/Runtime/Example~) does not contain any visual components or UI. It contain the majority of important method calls you would be using in a real-world application.
+
+![Import Example](/getting-started/unity-sdk-import-example.png)
 
 - Joining into a custom room with Messages and State Synchronization
 - Joining into a [<PeopleIcon/> LobbyRoom](/room/built-in/lobby) and listening to its messages
