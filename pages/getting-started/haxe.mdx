@@ -2,13 +2,14 @@
 title: "Haxe"
 ---
 import { haxe } from "../../components/icons/platforms"
-import { Callout, Cards, Tabs } from "nextra/components";
+import { Callout } from "nextra/components";
+import { DevicesIcon } from '@primer/octicons-react'
 
 # Haxe
 
 You're encouraged to use this SDK along with any Haxe Game Engine, such as: [OpenFL](https://www.openfl.org/), [Kha](http://kha.tech/), [HaxeFlixel](http://haxeflixel.com/), [Heaps](https://heaps.io/), [HaxePunk](http://haxepunk.com/), etc.
 
-## Installation
+## Install package
 
 Install `colyseus` from haxelib:
 
@@ -16,97 +17,52 @@ Install `colyseus` from haxelib:
 haxelib install colyseus
 ```
 
-## Usage
+## SDK Example Project
 
-### Connecting to server:
+The [colyseus-hx](https://github.com/colyseus/colyseus-hx) repository contains an [example project](https://github.com/colyseus/colyseus-hx/blob/master/example/openfl) that can be compiled to `html5`, `neko`, `cpp`, `ios`, etc.
 
-```haxe filename="main.hx"
-import io.colyseus.Client;
-import io.colyseus.Room;
-
-var client = new Client('http://localhost:2567');
-```
-
-### Joining to a room:
-
-<Callout type="info">
-    See how to generate your `RoomState` from [State Synchronization → State Sync Callbacks](/sdk/state-sync-callbacks#frontend-schema-generation)
-</Callout>
-
-```haxe filename="main.hx"
-client.joinOrCreate("room_name", [], RoomState, function(err, room) {
-    if (err != null) {
-        trace("JOIN ERROR: " + err);
-        return;
-    }
-
-    room.state.entities.onAdd(function(entity, key) {
-        trace("entity added at " + key + " => " + entity);
-
-        entity.onChange(function (changes) {
-            trace("entity has been changed");
-        });
-    })
-
-    room.state.entities.onChange(function(entity, key) {
-        trace("entity changed at " + key + " => " + entity);
-    })
-
-    room.state.entities.onRemove(function(entity, key) {
-        trace("entity removed at " + key + " => " + entity);
-    })
-});
-```
-
-### Other room events
-
-Room state has been updated:
-
-```haxe filename="main.hx"
-room.onStateChange += function(state) {
-  // full new state avaialble on 'state' variable
-}
-```
-
-Message broadcasted from server or directly to this client:
-
-```haxe filename="main.hx"
-room.onMessage("type", function (message) {
-  trace(client.id + " received on " + room.name + ": " + message);
-});
-```
-
-Server error occurred:
-
-```haxe filename="main.hx"
-room.onError += function() {
-  trace(client.id + " couldn't join " + room.name);
-}
-```
-
-The client left the room:
-
-```haxe filename="main.hx"
-room.onLeave += function() {
-  trace(client.id + " left " + room.name);
-}
-```
-
-## Running the demo project
-
-The [`example`](https://github.com/colyseus/colyseus-hx/blob/master/example/openfl) project can be compiled to `html5`, `neko`, `cpp`, `ios`, etc.
-
-It uses the `state_handler` room from the [colyseus-examples](https://github.com/colyseus/colyseus-examples) project, which you can find [here](https://github.com/colyseus/colyseus-examples/blob/master/rooms/02-state-handler.ts).
-
-### Compiling the demo project to `html5`
+### Compiling the example project to `html5`
 
 ```sh filename="Terminal"
 git clone https://github.com/colyseus/colyseus-hx.git
 cd colyseus-hx/example/openfl
-lime build project.xml html5
+
+# Install haxelib dependencies
+haxelib install openfl
+haxelib install lime
+haxelib install tink_http
+haxelib install tink_await
+haxelib install swf
+haxelib install colyseus-websocket
+
+# Compile the project
+haxelib run lime test project.xml html5
 ```
 
-You can see the demo project [live here](http://colyseus.io/colyseus-hx/).
+### Running the test server locally
+
+To run the test server locally, you will need to run the following commands in your terminal:
+
+```sh filename="Terminal"
+git clone https://github.com/colyseus/colyseus.git
+cd colyseus
+pnpm install
+pnpm run sdk-test-server
+```
+
+<Callout type="warning">
+    This test server is meant for testing features of the SDKs only. It does not follow good standards for production servers. For your own production servers, you should start from a fresh project and follow the [Getting Started](/getting-started#backend) guide.
+</Callout>
+
+<Callout type="info">
+    You can see the source code for the test server [here](https://github.com/colyseus/colyseus/blob/master/packages/example/src/sdks.server.ts).
+</Callout>
+
+You should be able to see the server running at `http://localhost:2567`, and the example project will be able to connect to it.
+
+## SDK API
+
+Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select the **Haxe** tab.
 
 
 ## `ios` target caveats

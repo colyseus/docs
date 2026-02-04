@@ -4,6 +4,7 @@ title: JavaScript
 import _js_ts_header from "./_js_ts_header.mdx"
 import { Callout, Tabs } from 'nextra/components'
 import { javascript } from "../../components/icons/platforms"
+import { DevicesIcon } from '@primer/octicons-react'
 
 # JavaScript SDK
 
@@ -11,7 +12,7 @@ import { javascript } from "../../components/icons/platforms"
 
 ---
 
-## Installation
+## Install package
 
 <Tabs items={['Package Manager', 'CDN', 'Download']}>
 <Tabs.Tab>
@@ -53,36 +54,9 @@ const client = new Client("http://localhost:2567");
 Use `https://` for secure connections in production.
 </Callout>
 
-## Quick Example
+## SDK API
 
-Here's a minimal example to get you started:
-
-```js
-import Colyseus from "@colyseus/sdk";
-
-const client = new Colyseus.Client("http://localhost:2567");
-
-async function main() {
-    const room = await client.joinOrCreate("game_room");
-
-    console.log("Joined!", room.sessionId);
-
-    // Send a message to the server
-    room.send("move", { direction: "up" });
-
-    // Listen for messages from the server
-    room.onMessage("notification", (data) => {
-        console.log("Server says:", data);
-    });
-
-    // Handle disconnection
-    room.onLeave((code) => {
-        console.log("Disconnected:", code);
-    });
-}
-
-main();
-```
+Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select the **JavaScript** tab.
 
 ## Next Steps
 

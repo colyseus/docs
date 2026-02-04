@@ -135,36 +135,167 @@ const server = defineServer({
 
 ### Join the Room from the client SDK
 
-Communication between the client and server occurs through room connections. In the example below, the JavaScript SDK is used to let the client join a room and listen for state changes:
+Communication between the client and server occurs through room connections. Below are examples for each SDK showing how to join a room and listen for state changes:
 
-```ts copy filename="client.ts"
-import { Client, Callbacks } from "@colyseus/sdk";
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
 
-async function connect() {
-    const client = new Client('http://localhost:2567');
-    const room = await client.joinOrCreate('my_room', {
-        /* custom join options */
+    <Tabs.Tab>
+    ```ts copy filename="client.ts"
+    import { Client, Callbacks } from "@colyseus/sdk";
+
+    async function connect() {
+        const client = new Client('http://localhost:2567');
+        const room = await client.joinOrCreate('my_room', {
+            /* custom join options */
+        });
+        const callbacks = Callbacks.get(room);
+
+        // Listen to 'player' instance additions
+        callbacks.onAdd("players", (player, sessionId) => {
+            console.log('Player joined:', player);
+        });
+
+        // Listen to 'player' instance removals
+        callbacks.onRemove("players", (player, sessionId) => {
+            console.log('Player left:', player);
+        });
+
+        // Send messages to the server
+        room.send("doSomething", {/* ... */});
+
+        return room;
+    }
+
+    connect();
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js copy filename="client.js"
+    import Colyseus from "@colyseus/sdk";
+
+    const client = new Colyseus.Client('http://localhost:2567');
+
+    client.joinOrCreate('my_room', {/* custom join options */}).then(room => {
+        const callbacks = Colyseus.Callbacks.get(room);
+
+        // Listen to 'player' instance additions
+        callbacks.onAdd("players", (player, sessionId) => {
+            console.log('Player joined:', player);
+        });
+
+        // Listen to 'player' instance removals
+        callbacks.onRemove("players", (player, sessionId) => {
+            console.log('Player left:', player);
+        });
+
+        // Send messages to the server
+        room.send("doSomething", {/* ... */});
+
+    }).catch(e => {
+        console.error("join error", e);
     });
-    const callbacks = Callbacks.get(room);
+    ```
+    </Tabs.Tab>
 
-    // Listen to 'player' instance additions
-    callbacks.onAdd("players", (player, sessionId) => {
-        console.log('Player joined:', player);
-    });
+    <Tabs.Tab>
+    ```cs copy filename="Client.cs"
+    using Colyseus;
 
-    // Listen to 'player' instance removals
-    callbacks.onRemove("players", (player, sessionId) => {
-        console.log('Player left:', player);
-    });
+    async void Connect() {
+        var client = new Client("http://localhost:2567");
 
-    // Send messages to the server
-    room.send("doSomething", {/* ... */});
+        try {
+            var room = await client.JoinOrCreate<MyRoomState>("my_room");
+            var callbacks = Colyseus.Schema.Callbacks.Get(room);
 
-    return room;
-}
+            // Listen to 'player' instance additions
+            callbacks.OnAdd(state => state.players, (sessionId, player) => {
+                Debug.Log($"Player joined: {sessionId}");
+            });
 
-connect();
-```
+            // Listen to 'player' instance removals
+            callbacks.OnRemove(state => state.players, (sessionId, player) => {
+                Debug.Log($"Player left: {sessionId}");
+            });
+
+            // Send messages to the server
+            room.Send("doSomething", new { /* ... */ });
+
+        } catch (Exception ex) {
+            Debug.Log("join error");
+            Debug.Log(ex.Message);
+        }
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua copy filename="client.lua"
+    local ColyseusSDK = require("colyseus.sdk")
+
+    local client = ColyseusSDK.Client("http://localhost:2567")
+
+    client:join_or_create("my_room", {--[[custom join options]]}, function(err, room)
+        if (err ~= nil) then
+            print("join error: " .. err)
+            return
+        end
+
+        local callbacks = ColyseusSDK.callbacks(room)
+
+        -- Listen to 'player' instance additions
+        callbacks:on_add("players", function(player, sessionId)
+            print("Player joined:", sessionId)
+        end)
+
+        -- Listen to 'player' instance removals
+        callbacks:on_remove("players", function(player, sessionId)
+            print("Player left:", sessionId)
+        end)
+
+        -- Send messages to the server
+        room:send("doSomething", {--[[ ... ]]})
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe copy filename="Client.hx"
+    import io.colyseus.Client;
+    import io.colyseus.serializer.schema.Callbacks;
+
+    class Main {
+        static function main() {
+            var client = new Client("http://localhost:2567");
+
+            client.joinOrCreate("my_room", [], MyRoomState, function(err, room) {
+                if (err != null) {
+                    trace("join error: " + err);
+                    return;
+                }
+
+                var callbacks = Callbacks.get(room);
+
+                // Listen to 'player' instance additions
+                callbacks.onAdd("players", function(player, sessionId) {
+                    trace("Player joined: " + sessionId);
+                });
+
+                // Listen to 'player' instance removals
+                callbacks.onRemove("players", function(player, sessionId) {
+                    trace("Player left: " + sessionId);
+                });
+
+                // Send messages to the server
+                room.send("doSomething", [/* ... */]);
+            });
+        }
+    }
+    ```
+    </Tabs.Tab>
+
+</Tabs>
 
 ### Explore more
 
