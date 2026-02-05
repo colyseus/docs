@@ -48,18 +48,14 @@ The example project [included in the SDK package](https://github.com/colyseus/co
 To run the test server locally, you will need to run the following commands in your terminal:
 
 ```sh filename="Terminal"
-git clone https://github.com/colyseus/colyseus.git
-cd colyseus
-pnpm install
-pnpm run sdk-test-server
+git clone https://github.com/colyseus/sdks-test-server
+cd sdks-test-server
+npm install
+npm start
 ```
 
-<Callout type="warning">
-    This test server is meant for testing features of the SDKs only. It does not follow good standards for production servers. For your own production servers, you should start from a fresh project and follow the [Getting Started](/getting-started#backend) guide.
-</Callout>
-
 <Callout type="info">
-    You can see the source code for the test server [here](https://github.com/colyseus/colyseus/blob/master/packages/example/src/sdks.server.ts).
+    You can see the source code for the test server [here](https://github.com/colyseus/sdks-test-server).
 </Callout>
 
 You should be able to see the server running at `http://localhost:2567`, and the example project will be able to connect to it.
