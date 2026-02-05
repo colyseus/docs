@@ -64,6 +64,18 @@ You should be able to see the server running at `http://localhost:2567`, and the
 
 Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select the **C# (Unity)** tab.
 
+## State Schema Codegen
+
+For compiled languages like C#, you need to generate client-side schema classes that match your server's state structure. Run the following command from your server directory:
+
+```sh filename="Terminal"
+npx schema-codegen src/rooms/schema/* --csharp --output ../Assets/Scripts/States/
+```
+
+<Callout type="info">
+    See the full [State Schema Codegen documentation](/sdk/state-sync-callbacks#frontend-schema-generation) for more options and details.
+</Callout>
+
 ## Debugging
 
 ### Editor Debug Panel (experimental)
