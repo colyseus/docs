@@ -27,7 +27,7 @@ const config: DocsThemeConfig = {
         key: "new-version",
         content: (
             <a href="/migrating/0.17">
-                <strong>Version 0.17 is out! 🎉</strong> - Read the release notes and upgrade your projects.
+                <strong>Version 0.17 is out! 🎉</strong> - Read the migration guide and upgrade your projects.
             </a>
         )
     },
