@@ -16,7 +16,7 @@ const config: DocsThemeConfig = {
     chat: {
         link: 'http://chat.colyseus.io/',
     },
-    docsRepositoryBase: 'https://github.com/colyseus/docs/tree/master/',
+    docsRepositoryBase: 'https://github.com/colyseus/docs/tree/master',
 
     sidebar: {
         defaultMenuCollapseLevel: 1,
