@@ -89,26 +89,133 @@ const queue = await client.joinOrCreate("queue", {
 
 The server periodically notifies clients with the number of players currently in their group.
 
-```ts filename="client.ts"
-queue.onMessage("clients", (count) => {
-	console.log("Players in your group:", count);
-});
-```
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    queue.onMessage("clients", (count) => {
+      console.log("Players in your group:", count);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    queue.onMessage("clients", (count) => {
+      console.log("Players in your group:", count);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    queue.OnMessage("clients", (int count) => {
+      Debug.Log("Players in your group: " + count);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    queue:on_message("clients", function(count)
+      print("Players in your group: " .. tostring(count))
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    queue.onMessage("clients", function(count: Int) {
+      trace("Players in your group: " + Std.string(count));
+    });
+    ```
+    </Tabs.Tab>
+
+</Tabs>
 
 ### Receiving a seat reservation
 
 When a group is ready, the queue sends a seat reservation for the target match room:
 
-```ts filename="client.ts"
-queue.onMessage("seat", async (reservation) => {
-	// Optionally confirm the reservation to the queue
-	queue.send("confirm");
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
 
-	// Join the match room with the reservation
-	const match = await client.consumeSeatReservation(reservation);
-	console.log("Joined match", match.roomId);
-});
-```
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    queue.onMessage("seat", async (reservation) => {
+      // Optionally confirm the reservation to the queue
+      queue.send("confirm");
+
+      // Join the match room with the reservation
+      const match = await client.consumeSeatReservation(reservation);
+      console.log("Joined match", match.roomId);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    queue.onMessage("seat", (reservation) => {
+      // Optionally confirm the reservation to the queue
+      queue.send("confirm");
+
+      // Join the match room with the reservation
+      client.consumeSeatReservation(reservation).then(match => {
+        console.log("Joined match", match.roomId);
+      });
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    queue.OnMessage("seat", async (SeatReservation reservation) => {
+      // Optionally confirm the reservation to the queue
+      await queue.Send("confirm");
+
+      // Join the match room with the reservation
+      var match = await client.ConsumeSeatReservation<YourStateClass>(reservation);
+      Debug.Log("Joined match " + match.roomId);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    queue:on_message("seat", function(reservation)
+      -- Optionally confirm the reservation to the queue
+      queue:send("confirm")
+
+      -- Join the match room with the reservation
+      client:consume_seat_reservation(reservation, function(err, match)
+        if (err ~= nil) then
+          print("join error: " .. err)
+          return
+        end
+        print("Joined match " .. match.roomId)
+      end)
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    queue.onMessage("seat", function(reservation: Dynamic) {
+      // Optionally confirm the reservation to the queue
+      queue.send("confirm");
+
+      // Join the match room with the reservation
+      client.consumeSeatReservation(reservation, YourStateClass, function(err, match: Room<YourStateClass>) {
+        if (err != null) {
+          trace("join error: " + err);
+          return;
+        }
+        trace("Joined match " + match.roomId);
+      });
+    });
+    ```
+    </Tabs.Tab>
+
+</Tabs>
 
 ## Matching behavior
 

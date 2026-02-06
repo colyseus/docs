@@ -21,7 +21,7 @@ The built-in `LobbyRoom` provides a live listing of available rooms in your game
 <Steps>
 ### Expose the lobby room
 
-```ts filename="server.ts"
+```ts {5} filename="server.ts"
 import { defineServer, defineRoom, LobbyRoom } from "colyseus";
 
 const server = defineServer({
@@ -35,9 +35,12 @@ const server = defineServer({
 
 When _realtime listing_ is enabled, the `LobbyRoom` is notified automatically during `onCreate()`, `onJoin()`, `onLeave()` and `onDispose()`.
 
-```ts {3} filename="server.ts"
+```ts {6} filename="server.ts"
+import { defineServer, defineRoom, LobbyRoom } from "colyseus";
+
 const server = defineServer({
   rooms: {
+    lobby: defineRoom(LobbyRoom),
     my_room: defineRoom(MyRoom).enableRealtimeListing()
   }
 })
@@ -48,32 +51,190 @@ const server = defineServer({
 
 The `LobbyRoom` will send messages to the client whenever a room is added, removed or updated.
 
-```ts {8,12,22} filename="client.ts"
-import { Client, RoomAvailable } from "@colyseus/sdk";
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
 
-const client = new Client("http://localhost:2567");
-const lobby = await client.joinOrCreate("lobby");
+    <Tabs.Tab>
+    ```ts {8,12,22} filename="client.ts"
+    import { Client, RoomAvailable } from "@colyseus/sdk";
 
-let allRooms: RoomAvailable[] = [];
+    const client = new Client("http://localhost:2567");
+    const lobby = await client.joinOrCreate("lobby");
 
-lobby.onMessage("rooms", (rooms) => {
-  allRooms = rooms;
-});
+    let allRooms: RoomAvailable[] = [];
 
-lobby.onMessage("+", ([roomId, room]) => {
-  const roomIndex = allRooms.findIndex((room) => room.roomId === roomId);
-  if (roomIndex !== -1) {
-    allRooms[roomIndex] = room;
+    lobby.onMessage("rooms", (rooms) => {
+      allRooms = rooms;
+    });
 
-  } else {
-    allRooms.push(room);
-  }
-});
+    lobby.onMessage("+", ([roomId, room]) => {
+      const roomIndex = allRooms.findIndex((room) => room.roomId === roomId);
+      if (roomIndex !== -1) {
+        allRooms[roomIndex] = room;
 
-lobby.onMessage("-", (roomId) => {
-  allRooms = allRooms.filter((room) => room.roomId !== roomId);
-});
-```
+      } else {
+        allRooms.push(room);
+      }
+    });
+
+    lobby.onMessage("-", (roomId) => {
+      allRooms = allRooms.filter((room) => room.roomId !== roomId);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```ts {8,12,22} filename="client.ts"
+    import Colyseus from "@colyseus/sdk";
+
+    const client = new Colyseus.Client("http://localhost:2567");
+
+    client.joinOrCreate("lobby").then(function(lobby) {
+        let allRooms: RoomAvailable[] = [];
+
+        lobby.onMessage("rooms", (rooms) => {
+            allRooms = rooms;
+        });
+
+        lobby.onMessage("+", ([roomId, room]) => {
+            const roomIndex = allRooms.findIndex((room) => room.roomId === roomId);
+            if (roomIndex !== -1) {
+                allRooms[roomIndex] = room;
+
+            } else {
+                allRooms.push(room);
+            }
+        });
+
+        lobby.onMessage("-", (roomId) => {
+            allRooms = allRooms.filter((room) => room.roomId !== roomId);
+        });
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs {8,14,26} filename="LobbyClient.cs"
+    using Colyseus;
+
+    Client client = new Client("http://localhost:2567");
+    Room lobbyRoom = await client.JoinOrCreate("lobby");
+
+    List<RoomAvailable> allRooms = new List<RoomAvailable>();
+
+    lobbyRoom.OnMessage("rooms", (RoomAvailable[] rooms) =>
+    {
+      allRooms.Clear();
+      allRooms.AddRange(rooms);
+    });
+
+    lobbyRoom.OnMessage("+", (object[] message) =>
+    {
+      string roomId = (string)message[0];
+      var room = (RoomAvailable)message[1];
+      int roomIndex = allRooms.FindIndex((r) => r.roomId == roomId);
+      if (roomIndex != -1) {
+        allRooms[roomIndex] = room;
+      } else {
+        allRooms.Add(room);
+      }
+    });
+
+    lobbyRoom.OnMessage("-", (string roomId) =>
+    {
+      allRooms.RemoveAll((r) => r.roomId == roomId);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua {13,17,33} filename="lobby.lua"
+    local Colyseus = require("colyseus.sdk")
+
+    local client = Colyseus.Client("http://localhost:2567")
+
+    client:join_or_create("lobby", {}, function(err, lobby)
+        if err ~= nil then
+            print("join error: " .. err)
+            return
+        end
+
+        local all_rooms = {}
+
+        lobby:on_message("rooms", function(rooms)
+            all_rooms = rooms
+        end)
+
+        lobby:on_message("+", function(message)
+            local room_id = message[1]
+            local room = message[2]
+            local found = false
+            for i, r in ipairs(all_rooms) do
+                if r.roomId == room_id then
+                    all_rooms[i] = room
+                    found = true
+                    break
+                end
+            end
+            if not found then
+                table.insert(all_rooms, room)
+            end
+        end)
+
+        lobby:on_message("-", function(room_id)
+            for i, r in ipairs(all_rooms) do
+                if r.roomId == room_id then
+                    table.remove(all_rooms, i)
+                    break
+                end
+            end
+        end)
+    end)
+
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe {13,17,33} filename="Lobby.hx"
+    import io.colyseus.Client;
+    import io.colyseus.Room;
+
+    var client = new Client("http://localhost:2567");
+    client.joinOrCreate("lobby", [], function(err, lobby: Room<Dynamic>) {
+        if (err != null) {
+            trace("[Lobby] error: " + err);
+            return;
+        }
+
+        var allRooms:Array<Dynamic> = [];
+
+        lobby.onMessage("rooms", (rooms: Array<Dynamic>) -> {
+            allRooms = rooms;
+        });
+
+        lobby.onMessage("+", (message: Dynamic) -> {
+            var roomId:String = message[0];
+            var room:Dynamic = message[1];
+            var found = false;
+            for (i in 0...allRooms.length) {
+                if (allRooms[i].roomId == roomId) {
+                    allRooms[i] = room;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                allRooms.push(room);
+            }
+        });
+
+        lobby.onMessage("-", (roomId: String) -> {
+            allRooms = allRooms.filter((room) -> room.roomId != roomId);
+        });
+    });
+    ```
+    </Tabs.Tab>
+
+</Tabs>
 
 ### Filtering rooms
 
