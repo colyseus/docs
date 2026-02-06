@@ -1,2 +1,7 @@
 body {}
 ul > li > ul { margin-top: 0 !important; }
+
+/* Tint platform icons for light mode readability */
+html:not(.dark) .platform-icon {
+    filter: brightness(0) saturate(100%) invert(6%) sepia(19%) saturate(2226%) hue-rotate(185deg) brightness(100%) contrast(93%);
+}
