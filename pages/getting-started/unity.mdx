@@ -76,6 +76,66 @@ npx schema-codegen src/rooms/schema/* --csharp --output ../Assets/Scripts/States
     See the full [State Schema Codegen documentation](/sdk/state-sync-callbacks#frontend-schema-generation) for more options and details.
 </Callout>
 
+### Message Types Codegen
+
+The same `schema-codegen` command also generates C# classes for any TypeScript interface containing `"Message"` in its name. This allows you to use strongly-typed message objects on the client side.
+
+For example, given the following server-side code:
+
+```ts filename="src/rooms/MyRoom.ts"
+interface MoveMessage {
+  x: number;
+  y: number;
+}
+
+// ...
+
+messages = {
+  move: (client: Client, message: MoveMessage) => {
+    // handle move
+  }
+}
+```
+
+Running the codegen command will automatically generate a matching C# class:
+
+```csharp filename="Generated C# output"
+public class MoveMessage {
+    public float x;
+    public float y;
+}
+```
+
+You can then use these classes when sending and receiving messages on the Unity client:
+
+```csharp filename="Sending a message to the server"
+room.Send("move", new MoveMessage() { x = 1.0f, y = 2.0f });
+```
+
+The same applies to messages sent from the server to the client. For example, given a server-side interface:
+
+```ts filename="src/rooms/MyRoom.ts"
+interface EventMessage {
+  type: string;
+  data: string;
+}
+
+// ...
+
+onJoin(client: Client) {
+  client.send("event", { type: "welcome", data: "Hello!" } as EventMessage);
+}
+```
+
+You can listen for it on the Unity client with the generated type:
+
+```csharp filename="Receiving a message from the server"
+room.OnMessage<EventMessage>("event", (message) => {
+    Debug.Log(message.type);
+    Debug.Log(message.data);
+});
+```
+
 ## Debugging
 
 ### Editor Debug Panel (experimental)
