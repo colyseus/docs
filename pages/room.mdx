@@ -255,7 +255,9 @@ async onJoin (client, options, auth?) {
 
 ### On Drop
 
-<Callout type="info">New in 0.17</Callout>
+<Callout type="info">
+    New in 0.17. See [Automatic Reconnection](/room/automatic-reconnection) for more details.
+</Callout>
 
 Triggered when a client disconnects unexpectedly (without consent). This is the recommended place to use `allowReconnection()`.
 
@@ -278,7 +280,10 @@ async onDrop (client, code) {
 
 ### On Reconnect
 
-<Callout type="info">New in 0.17</Callout>
+<Callout type="info">
+    New in 0.17. See [Automatic Reconnection](/room/automatic-reconnection) for more details.
+</Callout>
+
 
 Triggered when a client successfully reconnects to the room after calling `allowReconnection()`.
 
@@ -761,7 +766,7 @@ this.unlock ()
 
 ### Allow Reconnection
 
-Allow the client to reconnect into the room. 
+Allow the client to reconnect into the room.
 
 A reconnection may be [made manually](/sdk#manual-reconnection) (via `sdk.reconnect()`), or [automatically](/sdk#automatic-reconnection) in case of temporary network issues.
 
@@ -1004,7 +1009,7 @@ disconnects from it.
 
 Frequency to send the room state to connected clients, in milliseconds. Default is `50`ms (20fps).
 
-```ts 
+```ts
 class MyRoom extends Room {
     patchRate = 50;
 }
@@ -1016,9 +1021,9 @@ class MyRoom extends Room {
 
 Automatically dispose the room when last client disconnects. Default is `true`
 
-You may disable this, and let the room stay in memory forever by 
+You may disable this, and let the room stay in memory forever by
 
-```ts 
+```ts
 class MyRoom extends Room {
     autoDispose = false;
 }
@@ -1030,7 +1035,7 @@ class MyRoom extends Room {
 
 Maximum number of messages a client can send to the server per second. If a client sends more messages than this limit, it will be disconnected. Default is `Infinity` (disabled).
 
-```ts 
+```ts
 class MyRoom extends Room {
     maxMessagesPerSecond = 30;
 }
