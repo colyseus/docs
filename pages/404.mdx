@@ -19,11 +19,13 @@ import { NotFoundPage } from 'nextra-theme-docs'
             { from: "/server/matchmaker", to: "/matchmaker" },
             { from: "/debugging", to: "/server/debugging" },
             { from: "/tools/monitor", to: "/tools/monitoring" },
-            { from: "/demo/shooting-gallery", to: "/examples/unity/shooting-gallery" },
-            { from: "/demo/starboss", to: "/examples/unity/starboss" },
-            { from: "/demo/turn-based-tanks", to: "/examples/unity/turn-based-tanks" },
-            { from: "/demo/mmo", to: "/examples/unity/mmo" },
-            { from: "/demo/cocos/mmo", to: "/examples/cocos/mmo" },
+
+            { from: "/demo/shooting-gallery", to: "/tutorial/unity/shooting-gallery" },
+            { from: "/demo/starboss", to: "/tutorial/unity/starboss" },
+            { from: "/demo/turn-based-tanks", to: "/tutorial/unity/turn-based-tanks" },
+            { from: "/demo/mmo", to: "/tutorial/unity/mmo" },
+            { from: "/demo/cocos/mmo", to: "/tutorial/cocos/mmo" },
+
             { from: "/demo/babylonjs-editor/hide-and-seek", to: "/examples/babylonjs-editor/hide-and-seek" },
             { from: "/community/custom-room-id", to: "/recipes/custom-room-id" },
             { from: "/unity", to: "/getting-started/unity" },
@@ -39,9 +41,15 @@ import { NotFoundPage } from 'nextra-theme-docs'
             { from: "/room/examples", to: "/examples" },
 
             { from: "/state/callbacks", to: "/sdk/state-sync-callbacks" },
+
             {
                 from: "/client",
                 to: "/sdk",
+                replace: true, // replace all /client with /sdk
+            },
+            {
+                from: "/tutorial",
+                to: "/learn/tutorial",
                 replace: true, // replace all /client with /sdk
             },
 

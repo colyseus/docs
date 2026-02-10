@@ -14,7 +14,7 @@ export default {
 
     // "concepts": { title: <span><BookIcon/> Core Concepts</span> },
     "getting-started": { title: <span><ZapIcon/> Getting Started</span> }, // "Getting Started"
-    "tutorial": { title: <span><FileCodeIcon/> Tutorials</span>},
+    "learn": { title: <span><FileCodeIcon/> Tutorials & Examples</span>},
 
     '-- API Reference': { type: 'separator', title: 'API Reference' },
     "sdk": { title: <span><DevicesIcon/> Client SDK</span>},
@@ -38,7 +38,6 @@ export default {
     '-- More': { type: 'separator', title: 'More' },
     "best-practices": { title: <span><ThumbsupIcon/> Best Practices</span> },
     "recipes": { title: <span><LightBulbIcon /> Recipes</span> },
-    "examples": { title: <span><RepoIcon /> Example Projects</span> },
 
     '-- Extra': { type: 'separator', title: 'Extra' },
     "community": { title: <span><HeartFillIcon/> Community</span> },
