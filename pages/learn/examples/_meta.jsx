@@ -3,10 +3,10 @@ export default {
         type: 'separator',
         title: "JavaScript"
     },
-    kaplay: "",
     phaser: "",
     pixijs: "",
     babylonjs: "",
+    kaplay: "",
     threejs: "Three.js",
 
     "--- Engines ---": {
