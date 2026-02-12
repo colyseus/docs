@@ -68,10 +68,17 @@ We are soft-deprecating how to structure the `app.config.ts` file. The previous 
 
 ```diff filename="app.config.ts"
 -import config from "@colyseus/tools";
-+import { defineServer } from "colyseus";
++import { defineServer, defineRoom } from "colyseus";
++import { MyRoom } from "./rooms/MyRoom";
 
 -export default config({
 +const server = defineServer({
+-    initializeGameServer: (gameServer) => {
+-        gameServer.define("my_room", MyRoom);
+-    },
++    rooms: {
++        my_room: defineRoom(MyRoom),
++    },
 -    initializeTransport: () => new uWebSocketsTransport(),
 +    transport: new uWebSocketsTransport(),
 -    initializeExpress: (app) => {}
@@ -127,6 +134,16 @@ If you only use `Room<State>`, you can remove the generic types, and assign the 
 +    state = new MyState();
 ```
 
+Alternatively, if you need to initialize the state in `onCreate()` (e.g., when passing arguments to the state constructor), you can use the new generic type format:
+
+```ts filename="MyRoom.ts"
+export class MyRoom extends Room<{ state: MyState }> {
+    onCreate(options) {
+        this.state = new MyState(options.someArg);
+    }
+}
+```
+
 #### LobbyRoom: `updateLobby()` calls are not required anymore
 
 There is no need to manually call `updateLobby()` after `.setMetadata()` anymore. This is done automatically for you.
@@ -168,6 +185,15 @@ onJoin(client: Client) {
     console.log(client.userData.custom);
     console.log(client.auth.name);
 }
+```
+
+#### TypeScript: `ClientArray` generic types have changed:
+
+Similar to `Client`, the `ClientArray<UserData, AuthData>` generic types have changed to `ClientArray<Client<{ userData: U, auth: A, messages: M }>>`.
+
+```diff
+-clients: ClientArray<UserData, AuthData>;
++clients: ClientArray<Client<{ userData: UserData, auth: AuthData }>>;
 ```
 
 #### `.setSeatReservationTime()` method has moved:
@@ -251,6 +277,21 @@ If you were using the `onMessageHandlers` property directly to register a fallba
 | `WS_CLOSE_DEVMODE_RESTART` | `MAY_TRY_RECONNECT` |
 | `WS_SERVER_DISCONNECT` | `SERVER_SHUTDOWN` |
 | `WS_TOO_MANY_CLIENTS` | (removed) |
+
+<Callout type="error">
+**Important: WebSocket Close Codes Conflict**
+
+Colyseus now uses close codes in the 4000-4010 range:
+- `4000` - `CONSENTED`
+- `4001` - `SERVER_SHUTDOWN`
+- `4002` - `WITH_ERROR`
+- `4003` - `FAILED_TO_RECONNECT`
+- `4010` - `MAY_TRY_RECONNECT`
+
+If your application was previously using codes in the 4xxx range for custom purposes (e.g., account banned, kicked, etc.), you will need to update your code to use different values to avoid conflicts.
+
+The [WebSocket specification](https://github.com/Luka967/websocket-close-codes) reserves 4000-4999 for application use, but Colyseus now uses part of this range internally.
+</Callout>
 
 ### Frontend
 
