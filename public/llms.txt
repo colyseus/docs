@@ -1,0 +1,40 @@
+# Colyseus
+
+> Colyseus is an open-source Node.js framework for building authoritative multiplayer game servers with real-time state synchronization, matchmaking, and integration into any game engine.
+
+## Getting Started
+
+- [Introduction](https://docs.colyseus.io/): Overview of Colyseus and quick start guide
+- [Getting Started](https://docs.colyseus.io/getting-started): Platform-specific setup guides for TypeScript, JavaScript, React, Unity, and more
+
+## API Reference
+
+- [Client SDK](https://docs.colyseus.io/sdk): Client-side SDK for connecting to Colyseus servers
+- [Server](https://docs.colyseus.io/server): Server configuration, presence, drivers, and debugging
+- [HTTP Routes](https://docs.colyseus.io/server/http-routes): Defining custom API routes on the server
+- [Rooms](https://docs.colyseus.io/room): Room API, lifecycle, sending and receiving messages, etc.
+- [Room Messages](https://docs.colyseus.io/room/messages): Message composability and communication between clients and server
+- [Room Reconnection](https://docs.colyseus.io/room/reconnection): Handling client reconnection to rooms
+- [State Synchronization](https://docs.colyseus.io/state): Schema-based automatic state sync between server and clients
+- [State Callbacks](https://docs.colyseus.io/sdk/state-sync-callbacks): Listening to state changes on the client
+- [Matchmaker API](https://docs.colyseus.io/matchmaker): API for joining, creating, and querying rooms
+- [Authentication](https://docs.colyseus.io/auth): Built-in authentication system
+
+## Tools & Integrations
+
+- [Built-in Tools](https://docs.colyseus.io/tools): Playground, monitoring, load testing, and unit testing
+- [Database](https://docs.colyseus.io/database): Database integration guide
+- [Payments](https://docs.colyseus.io/payments): Payment integration
+
+## Infrastructure
+
+- [Deployment](https://docs.colyseus.io/deployment): Deployment guides for various platforms
+- [Scalability](https://docs.colyseus.io/scalability): Horizontal and vertical scaling strategies
+- [Colyseus Cloud](https://docs.colyseus.io/cloud): Managed cloud service
+
+## Additional Resources
+
+- [Best Practices](https://docs.colyseus.io/best-practices): Recommended patterns and practices
+- [Recipes](https://docs.colyseus.io/recipes): Common recipes and implementation guides
+- [FAQ](https://docs.colyseus.io/faq): Frequently asked questions
+- [Migrating to 0.17](https://docs.colyseus.io/migrating/0.17): Migration guide for the latest version
