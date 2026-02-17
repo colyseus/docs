@@ -65,6 +65,12 @@ export const wechat = (props: IconProps = {}) => <Image
             width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
             alt="WeChat" />
 
+export const godot = (props: IconProps = {}) => <Image
+            className="platform-icon"
+            src={require('../../images/icons/godot.png')}
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
+            alt="Godot" />
+
 /**
  * BRANDS
  */
