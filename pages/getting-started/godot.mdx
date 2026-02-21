@@ -134,5 +134,16 @@ func _exit_tree():
 	# Clean up when node is removed
 	if room and room.has_joined():
 		room.leave()
-
 ```
+
+### State Schema Codegen
+
+It is not required to use the State Schema Codegen, but it is recommended to use it to get type safety and autocomplete in your IDE.
+
+```sh filename="Terminal"
+npx schema-codegen src/rooms/schema/* --gdscript --bundle --output ../colyseus/schema/
+```
+
+<Callout type="info">
+    See the full [State Schema Codegen documentation](/sdk/state-sync-callbacks#frontend-schema-generation) for more options and details.
+</Callout>
