@@ -10,13 +10,40 @@ import { DevicesIcon } from '@primer/octicons-react'
     The GDExtension is **very experimental** at the moment, and may not be stable. Please [report any issues you find](https://github.com/colyseus/native-sdk/issues/8).
 </Callout>
 
+## Platforms
+
+- Desktop (Windows, macOS, Linux)
+- iOS
+- Android
+- Web (HTML5)
+
 ## Installation
 
 - Download the latest Godot SDK from [GitHub Releases](https://github.com/colyseus/native-sdk/releases?q=godot+sdk&expanded=true)
 - Extract the addons folder into your Godot project root
 - Enable the plugin in **Project Settings** → **Plugins**
 
-## Initializing the SDK
+## Web Builds
+
+In **HTML** → **Custom HTML Shell**, use `res://addons/colyseus/web/colyseus.html`
+
+![Settings](/getting-started/godot-web.png)
+
+Do **not** use `ColyseusClient`, `ColyseusRoom` or `ColyseusCallbacks`, as they are not available in the web build.
+
+```gdscript filename="Network.gd"
+var client#: ColyseusClient
+var room#: ColyseusRoom
+var callbacks#: ColyseusCallbacks
+```
+
+## SDK API
+
+Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select the **Godot** tab.
+
+## Quick Example / Reference
+
+This example shows how to connect to a room, listen for state changes, send messages and leave the room.
 
 ```gdscript filename="Network.gd"
 extends Node
@@ -107,7 +134,3 @@ func _exit_tree():
 		room.leave()
 
 ```
-
-## SDK API
-
-Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select the **Godot** tab.
