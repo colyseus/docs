@@ -12,6 +12,9 @@ import { DevicesIcon } from '@primer/octicons-react'
 
 ## Installation
 
+- Download the latest Godot SDK from [GitHub Releases](https://github.com/colyseus/native-sdk/releases?q=godot+sdk&expanded=true)
+- Extract the addons folder into your Godot project root
+- Enable the plugin in **Project Settings** → **Plugins**
 
 ## Initializing the SDK
 
@@ -24,7 +27,7 @@ var callbacks: ColyseusCallbacks
 
 func _ready():
 	# Create and connect client
-	client = ColyseusClient.new()
+	client = Colyseus.create_client()
 	client.set_endpoint("ws://localhost:2567")
 
 	print("Connecting to: ", client.get_endpoint())
@@ -46,7 +49,7 @@ func _on_room_joined():
 	print("  Room name: ", room.get_name())
 
 	# Get callbacks container for the room
-	callbacks = ColyseusCallbacks.get(room)
+	callbacks = Colyseus.callbacks(room)
 
 	# Listen to root state property changes
 	callbacks.listen("currentTurn", _on_turn_change)
@@ -90,43 +93,7 @@ func _on_state_changed():
 
 func _on_message_received(type: Variant, data: Variant):
 	# type is the message type (String or int for numeric types)
-	# data is automatically decoded from msgpack to native Godot types:
-	#   - Dictionary for msgpack maps
-	#   - Array for msgpack arrays
-	#   - String, int, float, bool for primitives
-	#   - null for nil
-	#   - PackedByteArray for binary data
-	print("✉ Message received - type: ", type)
-
-	# Work directly with native Godot types - no manual decoding needed!
-	if data is Dictionary:
-		print("  Data (Dictionary): ", data)
-		# Access fields directly
-		if data.has("player_name"):
-			print("    Player: ", data["player_name"])
-		if data.has("score"):
-			print("    Score: ", data["score"])
-	elif data is Array:
-		print("  Data (Array): ", data)
-		for item in data:
-			print("    Item: ", item)
-	elif data is String:
-		print("  Data (String): ", data)
-	elif data is int or data is float:
-		print("  Data (Number): ", data)
-	elif data == null:
-		print("  Data: null")
-	else:
-		print("  Data (other): ", typeof(data), " = ", data)
-
-	# Example: Handle specific message types
-	if type == "greeting":
-		print("  → Got a greeting message!")
-	elif type == "game_update":
-		print("  → Got a game update!")
-		if data is Dictionary and data.has("players"):
-			for player in data["players"]:
-				print("    Player update: ", player)
+	print("✉ Message received - type: ", type, " data: ", data)
 
 func _on_room_error(code: int, message: String):
 	printerr("✗ Room error [", code, "]: ", message)
