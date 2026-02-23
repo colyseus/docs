@@ -27,17 +27,9 @@ We are experimenting with our shared [Colyseus Native SDK](https://github.com/co
 
 ## Web Builds
 
-In **HTML** → **Custom HTML Shell**, use `res://addons/colyseus/web/colyseus.html`
+When exporting your project via **Project** → **Export** → **Web (Runnable)**, make sure to enable **Extensions Support**.
 
 ![Settings](/getting-started/godot-web.png)
-
-Do **not** use `ColyseusClient`, `ColyseusRoom` or `ColyseusCallbacks`, as they are not available in the web build.
-
-```gdscript filename="Network.gd"
-var client#: ColyseusClient
-var room#: ColyseusRoom
-var callbacks#: ColyseusCallbacks
-```
 
 ## SDK API
 
@@ -71,6 +63,11 @@ func _ready():
 		room.message_received.connect(_on_message_received)
 		room.error.connect(_on_room_error)
 		room.left.connect(_on_room_left)
+
+func _process(delta):
+	# Poll the client for messages
+	# (Only required for web builds)
+	ColyseusClient.poll()
 
 func _on_room_joined():
 	print("✓ Joined room: ", room.get_id())
