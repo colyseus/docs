@@ -114,7 +114,7 @@ colyseus_on_message(room, function(_room, _type, _data) {
 
 colyseus_process();
 
-if (colyseus_room_has_joined(room)) {
+if (colyseus_room_is_connected(room)) {
     var _dx = keyboard_check(vk_right) - keyboard_check(vk_left);
     var _dy = keyboard_check(vk_down) - keyboard_check(vk_up);
     if (_dx != 0 || _dy != 0) {
@@ -155,7 +155,7 @@ if (client != 0) {
 
 | Function | Description |
 | --- | --- |
-| `colyseus_room_has_joined(room)` | Returns `1` if joined, `0` otherwise. |
+| `colyseus_room_is_connected(room)` | Returns `1` if connected, `0` otherwise. |
 | `colyseus_room_get_id(room)` | Get the room's unique ID. |
 | `colyseus_room_get_session_id(room)` | Get your session ID in the room. |
 | `colyseus_room_get_name(room)` | Get the room type name. |
