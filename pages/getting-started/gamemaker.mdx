@@ -38,7 +38,7 @@ You must call `colyseus_process()` once per frame in the **Step** event to poll 
 
 This example shows how to connect to a room, listen for state changes, send messages, and leave the room.
 
-```gml filename="Create_0.gml"
+```js filename="Create_0.gml"
 /// Create Event — initialize client and join room
 
 client = colyseus_client_create("http://localhost:2567");
@@ -109,7 +109,7 @@ colyseus_on_message(room, function(_room, _type, _data) {
 });
 ```
 
-```gml filename="Step_0.gml"
+```js filename="Step_0.gml"
 /// Step Event — poll events and send messages
 
 colyseus_process();
@@ -125,7 +125,7 @@ if (colyseus_room_has_joined(room)) {
 }
 ```
 
-```gml filename="CleanUp_0.gml"
+```js filename="CleanUp_0.gml"
 /// Clean Up Event — free resources
 
 if (room != 0) {
