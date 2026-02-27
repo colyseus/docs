@@ -129,7 +129,7 @@ func _on_room_left(code: int, reason: String):
 
 func _exit_tree():
 	# Clean up when node is removed
-	if room and room.has_joined():
+	if room and room.is_connected():
 		room.leave()
 ```
 
