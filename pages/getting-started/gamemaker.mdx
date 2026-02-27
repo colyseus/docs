@@ -1,0 +1,263 @@
+---
+title: "GameMaker"
+---
+import { Callout } from "nextra/components";
+import { DevicesIcon } from '@primer/octicons-react'
+
+# GameMaker
+
+<Callout type="warning">
+    The GameMaker extension is **very experimental**, and may not be stable. Please [report any issues you find](https://github.com/colyseus/native-sdk/issues).
+</Callout>
+
+The GameMaker SDK is built on top of the shared [Colyseus Native SDK](https://github.com/colyseus/native-sdk), which provides cross-platform support for Colyseus across different engines. The work on Native SDK is still in progress, so expect some breaking changes as we go.
+
+## Platforms
+
+- Windows
+- macOS
+- Linux
+
+## Installation
+
+- Download the latest GameMaker SDK from [GitHub Releases](https://github.com/colyseus/native-sdk/releases?q=gamemaker+sdk&expanded=true)
+- Extract the extension and `Colyseus.gml` script into your GameMaker project
+- Add the extension's native library (`.dll` / `.dylib` / `.so`) to your project's Extension
+
+## Project Setup
+
+The SDK uses an **event queue** pattern to integrate with GameMaker's frame loop. You need:
+
+1. A **Script** resource containing the `Colyseus.gml` helper (handles event dispatch and callback registration)
+2. An **Object** with **Create**, **Step**, and **Clean Up** events to manage the connection lifecycle
+
+You must call `colyseus_process()` once per frame in the **Step** event to poll and dispatch all queued events.
+
+## Quick Example
+
+This example shows how to connect to a room, listen for state changes, send messages, and leave the room.
+
+```gml filename="Create_0.gml"
+/// Create Event — initialize client and join room
+
+client = colyseus_client_create("http://localhost:2567");
+room = colyseus_client_join_or_create(client, "my_room", "{}");
+callbacks = -1;
+
+// --- Room event handlers ---
+
+colyseus_on_join(room, function(_room) {
+    show_debug_message("Joined room: " + colyseus_room_get_id(_room));
+    show_debug_message("Session ID: " + colyseus_room_get_session_id(_room));
+
+    // Create callbacks manager for state change tracking
+    callbacks = colyseus_callbacks_create(_room);
+
+    // Listen to root state properties (use 0 for root state instance)
+    colyseus_listen(callbacks, 0, "currentTurn", function(value, prev) {
+        show_debug_message("Turn changed: " + string(prev) + " -> " + string(value));
+    });
+
+    // Listen for players added to the "players" map
+    colyseus_on_add(callbacks, 0, "players", function(instance, key) {
+        show_debug_message("Player joined: " + key);
+
+        // Listen to nested properties on each player
+        colyseus_listen(callbacks, instance, "x", function(v, p) {
+            show_debug_message("Player x: " + string(v));
+        });
+        colyseus_listen(callbacks, instance, "y", function(v, p) {
+            show_debug_message("Player y: " + string(v));
+        });
+
+        // Listen to nested collections
+        colyseus_on_add(callbacks, instance, "items", function(item, k) {
+            show_debug_message("Item added: " + string(item));
+        });
+    });
+
+    // Listen for players removed from the map
+    colyseus_on_remove(callbacks, 0, "players", function(instance, key) {
+        show_debug_message("Player left: " + key);
+    });
+});
+
+colyseus_on_state_change(room, function(_room) {
+    var _state = colyseus_room_get_state(_room);
+    if (_state != 0) {
+        show_debug_message("State changed");
+
+        // Access schema fields
+        var _host = colyseus_schema_get_ref(_state, "host");
+        var _my_player = colyseus_map_get(_state, "players", colyseus_room_get_session_id(_room));
+        show_debug_message("Is host: " + string(_host == _my_player));
+    }
+});
+
+colyseus_on_error(room, function(code, msg) {
+    show_debug_message("Room error [" + string(code) + "]: " + msg);
+});
+
+colyseus_on_leave(room, function(code, reason) {
+    show_debug_message("Left room [" + string(code) + "]: " + reason);
+});
+
+colyseus_on_message(room, function(_room, _type, _data) {
+    // _data is auto-decoded: struct for maps, string/number for primitives
+    show_debug_message("Message [" + _type + "]: " + json_stringify(_data));
+});
+```
+
+```gml filename="Step_0.gml"
+/// Step Event — poll events and send messages
+
+colyseus_process();
+
+if (colyseus_room_has_joined(room)) {
+    var _dx = keyboard_check(vk_right) - keyboard_check(vk_left);
+    var _dy = keyboard_check(vk_down) - keyboard_check(vk_up);
+    if (_dx != 0 || _dy != 0) {
+        x += _dx * 4;
+        y += _dy * 4;
+        colyseus_send(room, "move", { x: x, y: y });
+    }
+}
+```
+
+```gml filename="CleanUp_0.gml"
+/// Clean Up Event — free resources
+
+if (room != 0) {
+    colyseus_room_leave(room);
+    colyseus_room_free(room);  // also frees associated callbacks
+}
+if (client != 0) {
+    colyseus_client_free(client);
+}
+```
+
+## SDK API
+
+### Client
+
+| Function | Description |
+| --- | --- |
+| `colyseus_client_create(endpoint)` | Create a client. Returns a client handle. |
+| `colyseus_client_free(client)` | Free client resources. |
+| `colyseus_client_join_or_create(client, room_name, options_json)` | Join or create a room. Returns a room handle. |
+| `colyseus_client_join(client, room_name, options_json)` | Join an existing room. |
+| `colyseus_client_create_room(client, room_name, options_json)` | Create a new room. |
+| `colyseus_client_join_by_id(client, room_id, options_json)` | Join a room by its ID. |
+| `colyseus_client_reconnect(client, reconnection_token)` | Reconnect using a token from a previous session. |
+
+### Room
+
+| Function | Description |
+| --- | --- |
+| `colyseus_room_has_joined(room)` | Returns `1` if joined, `0` otherwise. |
+| `colyseus_room_get_id(room)` | Get the room's unique ID. |
+| `colyseus_room_get_session_id(room)` | Get your session ID in the room. |
+| `colyseus_room_get_name(room)` | Get the room type name. |
+| `colyseus_room_leave(room)` | Leave the room gracefully. |
+| `colyseus_room_free(room)` | Free room resources (also frees callbacks). |
+
+### Room Events (GML helpers)
+
+Register callbacks for room lifecycle events. These are dispatched by `colyseus_process()`.
+
+| Function | Callback signature |
+| --- | --- |
+| `colyseus_on_join(room, handler)` | `handler(room)` |
+| `colyseus_on_state_change(room, handler)` | `handler(room)` |
+| `colyseus_on_message(room, handler)` | `handler(room, type, data)` — `data` is auto-decoded |
+| `colyseus_on_error(room, handler)` | `handler(code, message)` |
+| `colyseus_on_leave(room, handler)` | `handler(code, reason)` |
+
+### Sending Messages
+
+| Function | Description |
+| --- | --- |
+| `colyseus_send(room, type, struct)` | Send a struct as a message. Values must be strings or numbers. |
+| `colyseus_room_send(room, type, data)` | Send raw encoded bytes with a string type. |
+| `colyseus_room_send_bytes(room, type, data, length)` | Send raw bytes. |
+| `colyseus_room_send_int(room, type, data)` | Send raw encoded bytes with a numeric type. |
+
+For advanced message construction:
+
+| Function | Description |
+| --- | --- |
+| `colyseus_message_create_map()` | Create a message builder. Returns a message handle. |
+| `colyseus_message_put_str(msg, key, value)` | Add a string field. |
+| `colyseus_message_put_number(msg, key, value)` | Add a number field. |
+| `colyseus_message_put_bool(msg, key, value)` | Add a boolean field (`1`/`0`). |
+| `colyseus_room_send_message(room, type, msg)` | Send and free the constructed message. |
+| `colyseus_message_free(msg)` | Free a message (only needed if not sent). |
+
+### State & Schema
+
+Access fields from schema instances. Use `colyseus_room_get_state(room)` to get the root state handle.
+
+| Function | Description |
+| --- | --- |
+| `colyseus_room_get_state(room)` | Get the root state instance handle (`0` if unavailable). |
+| `colyseus_schema_get_string(instance, field)` | Get a string field value. |
+| `colyseus_schema_get_number(instance, field)` | Get a numeric field value (all numeric types). |
+| `colyseus_schema_get_ref(instance, field)` | Get a child schema instance handle. |
+| `colyseus_map_get(instance, field, key)` | Get an item from a MapSchema by key. |
+
+### State Change Callbacks (GML helpers)
+
+Create a callbacks manager to listen for state mutations. Use `0` as the instance handle to refer to the root state.
+
+| Function | Callback signature |
+| --- | --- |
+| `colyseus_callbacks_create(room)` | Create a callbacks manager. Returns a callbacks handle. |
+| `colyseus_listen(callbacks, instance, property, handler)` | `handler(value, previous_value)` |
+| `colyseus_on_add(callbacks, instance, property, handler)` | `handler(instance, key)` |
+| `colyseus_on_remove(callbacks, instance, property, handler)` | `handler(instance, key)` |
+| `colyseus_callbacks_remove_handle(callbacks, handle)` | Stop listening for a specific callback. |
+| `colyseus_callbacks_free(callbacks)` | Free callbacks (auto-freed when room is freed). |
+
+### Event Processing
+
+| Function | Description |
+| --- | --- |
+| `colyseus_process()` | **Call once per frame.** Polls the event queue and dispatches registered handlers. |
+
+### Running the test server locally
+
+To run the test server locally, you will need to run the following commands in your terminal:
+
+```sh filename="Terminal"
+git clone https://github.com/colyseus/sdks-test-server
+cd sdks-test-server
+npm install
+npm start
+```
+
+<Callout type="info">
+    You can see the source code for the test server [here](https://github.com/colyseus/sdks-test-server).
+</Callout>
+
+You should be able to see the server running at `http://localhost:2567`, and the example project will be able to connect to it.
+
+## Debugging
+
+### Breakpoints
+
+If you set a breakpoint in your application while the WebSocket connection is open, the connection will be closed automatically after 3 seconds due to inactivity. To prevent the WebSocket connection from dropping, use `pingInterval: 0` during development:
+
+```ts filename="app.config.ts"
+import { defineServer } from "colyseus";
+import { WebSocketTransport } from "@colyseus/ws-transport";
+
+const server = defineServer({
+    // ...
+    transport: new WebSocketTransport({
+        pingInterval: 0,
+    }),
+    // ...
+});
+```
+
+Make sure to have a `pingInterval` higher than `0` on production. The default `pingInterval` value is `3000`.
