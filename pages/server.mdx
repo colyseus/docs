@@ -122,6 +122,26 @@ const server = defineServer({
 
 ---
 
+#### Standalone Match-maker (`isStandaloneMatchMaker`)
+
+When set to `true`, this process will only handle matchmaking and will **not** spawn rooms locally. Room creation is delegated to other game server processes via IPC.
+
+Default is `false`.
+
+```ts {4} filename="app.config.ts"
+import { defineServer } from "colyseus";
+
+const server = defineServer({
+    isStandaloneMatchMaker: true,
+});
+```
+
+<Callout type="info">
+    See [Standalone Match-maker](/matchmaker/standalone) for a full setup guide.
+</Callout>
+
+---
+
 #### Development Mode
 
 When `devMode` is enabled, it is capable of restoring previous Rooms and Room State when the server restarts due to a code change, when iteratively updating your room code in a local environment.
