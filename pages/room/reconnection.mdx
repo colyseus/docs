@@ -338,6 +338,8 @@ room.reconnection.backoff = (attempt, delay) => {
 | `minUptime` | 5000ms | Room must be connected for this long before auto-reconnect kicks in |
 | `maxEnqueuedMessages` | 10 | Number of messages to buffer while disconnected |
 | `backoff` | exponential | Function to calculate delay between attempts |
+| `retryCount` | 0 | Current number of reconnection attempts (read-only) |
+| `isReconnecting` | false | Whether the room is currently reconnecting (read-only) |
 
 ---
 
