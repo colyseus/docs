@@ -314,6 +314,7 @@ The client-side `room.reconnection` object allows you to customize the reconnect
 const room = await client.joinOrCreate("my_room");
 
 // Customize reconnection options
+room.reconnection.enabled = true;          // Enable/disable auto-reconnection (default: true)
 room.reconnection.maxRetries = 15;        // Maximum reconnection attempts (default: 15)
 room.reconnection.delay = 100;            // Initial delay in ms (default: 100)
 room.reconnection.minDelay = 100;         // Minimum delay in ms (default: 100)
@@ -331,6 +332,7 @@ room.reconnection.backoff = (attempt, delay) => {
 
 | Option | Default | Description |
 |--------|---------|-------------|
+| `enabled` | `true` | Set to `false` to disable automatic reconnection entirely. When disabled, a dropped connection triggers `onLeave` immediately with the original close code. |
 | `maxRetries` | 15 | Maximum number of reconnection attempts |
 | `delay` | 100ms | Initial delay between attempts |
 | `minDelay` | 100ms | Minimum delay between attempts |
