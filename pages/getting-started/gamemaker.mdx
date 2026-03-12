@@ -14,23 +14,24 @@ The GameMaker SDK is built on top of the shared [Colyseus Native SDK](https://gi
 
 ## Platforms
 
-- Windows
-- macOS
-- Linux
-- HTML5
+- Windows (x86_64)
+- macOS (arm64, x86_64)
+- Linux (x86_64)
+- iOS (arm64)
+- Android (arm64, arm32, x86_64)
+- HTML5 (WASM)
 
 ## Installation
 
-- Download the latest GameMaker SDK from [GitHub Releases](https://github.com/colyseus/native-sdk/releases?q=gamemaker+sdk&expanded=true)
-- Extract the extension and `Colyseus.gml` script into your GameMaker project
-- Add the extension's native library (`.dll` / `.dylib` / `.so`) to your project's Extension
+1. Download the latest `.yymps` from [GitHub Releases](https://github.com/colyseus/native-sdk/releases?q=gamemaker+sdk&expanded=true)
+2. In GameMaker, go to **Tools → Import Local Package**
+3. Select the `.yymps` file, select all resources, and click **Import**
+
+This adds the `Colyseus_SDK` extension and the `Colyseus` script to your project.
 
 ## Project Setup
 
-The SDK uses an **event queue** pattern to integrate with GameMaker's frame loop. You need:
-
-1. A **Script** resource containing the `Colyseus.gml` helper (handles event dispatch and callback registration)
-2. An **Object** with **Create**, **Step**, and **Clean Up** events to manage the connection lifecycle
+The SDK uses an **event queue** pattern to integrate with GameMaker's frame loop. You need an **Object** with **Create**, **Step**, and **Clean Up** events to manage the connection lifecycle.
 
 You must call `colyseus_process()` once per frame in the **Step** event to poll and dispatch all queued events.
 
@@ -42,16 +43,16 @@ This example shows how to connect to a room, listen for state changes, send mess
 /// Create Event — initialize client and join room
 
 client = colyseus_client_create("http://localhost:2567");
-room = colyseus_client_join_or_create(client, "my_room", "{}");
-callbacks = -1;
+net_room = colyseus_client_join_or_create(client, "my_room", "{}");
 
 // --- Room event handlers ---
 
-colyseus_on_join(room, function(_room) {
+colyseus_on_join(net_room, function(_room) {
     show_debug_message("Joined room: " + colyseus_room_get_id(_room));
     show_debug_message("Session ID: " + colyseus_room_get_session_id(_room));
 
-    // Create callbacks manager for state change tracking
+    // Store as instance variables (no "var") so nested callbacks can access them
+    player_objs = {};
     callbacks = colyseus_callbacks_create(_room);
 
     // Listen to root state properties (use 0 for root state instance)
@@ -63,47 +64,42 @@ colyseus_on_join(room, function(_room) {
     colyseus_on_add(callbacks, 0, "players", function(instance, key) {
         show_debug_message("Player joined: " + key);
 
-        // Listen to nested properties on each player
-        colyseus_listen(callbacks, instance, "x", function(v, p) {
-            show_debug_message("Player x: " + string(v));
-        });
-        colyseus_listen(callbacks, instance, "y", function(v, p) {
-            show_debug_message("Player y: " + string(v));
-        });
+        var _px = colyseus_schema_get(instance, "x");
+        var _py = colyseus_schema_get(instance, "y");
+        var _player_obj = instance_create_depth(_px, _py, 0, obj_player);
 
-        // Listen to nested collections
-        colyseus_on_add(callbacks, instance, "items", function(item, k) {
-            show_debug_message("Item added: " + string(item));
-        });
+        player_objs[$ key] = _player_obj;
+
+        // GML anonymous functions can access instance variables (like "callbacks"),
+        // but NOT outer local variables (declared with "var").
+        // Use method() to pass local variables into nested callbacks:
+        colyseus_listen(callbacks, instance, "x", method({ obj: _player_obj }, function(v, p) {
+            obj.x = v;
+        }));
+        colyseus_listen(callbacks, instance, "y", method({ obj: _player_obj }, function(v, p) {
+            obj.y = v;
+        }));
     });
 
     // Listen for players removed from the map
-    colyseus_on_remove(callbacks, 0, "players", function(instance, key) {
+    colyseus_on_remove(callbacks, 0, "players", method({ objs: player_objs }, function(instance, key) {
         show_debug_message("Player left: " + key);
-    });
+        if (variable_struct_exists(objs, key)) {
+            instance_destroy(objs[$ key]);
+            delete objs[$ key];
+        }
+    }));
 });
 
-colyseus_on_state_change(room, function(_room) {
-    var _state = colyseus_room_get_state(_room);
-    if (_state != 0) {
-        show_debug_message("State changed");
-
-        // Access schema fields
-        var _host = colyseus_schema_get_ref(_state, "host");
-        var _my_player = colyseus_map_get(_state, "players", colyseus_room_get_session_id(_room));
-        show_debug_message("Is host: " + string(_host == _my_player));
-    }
-});
-
-colyseus_on_error(room, function(code, msg) {
+colyseus_on_error(net_room, function(code, msg) {
     show_debug_message("Room error [" + string(code) + "]: " + msg);
 });
 
-colyseus_on_leave(room, function(code, reason) {
+colyseus_on_leave(net_room, function(code, reason) {
     show_debug_message("Left room [" + string(code) + "]: " + reason);
 });
 
-colyseus_on_message(room, function(_room, _type, _data) {
+colyseus_on_message(net_room, function(_room, _type, _data) {
     // _data is auto-decoded: struct for maps, string/number for primitives
     show_debug_message("Message [" + _type + "]: " + json_stringify(_data));
 });
@@ -114,13 +110,13 @@ colyseus_on_message(room, function(_room, _type, _data) {
 
 colyseus_process();
 
-if (colyseus_room_is_connected(room)) {
+if (colyseus_room_is_connected(net_room)) {
     var _dx = keyboard_check(vk_right) - keyboard_check(vk_left);
     var _dy = keyboard_check(vk_down) - keyboard_check(vk_up);
     if (_dx != 0 || _dy != 0) {
         x += _dx * 4;
         y += _dy * 4;
-        colyseus_send(room, "move", { x: x, y: y });
+        colyseus_send(net_room, "move", { x: x, y: y });
     }
 }
 ```
@@ -128,9 +124,9 @@ if (colyseus_room_is_connected(room)) {
 ```js filename="CleanUp_0.gml"
 /// Clean Up Event — free resources
 
-if (room != 0) {
-    colyseus_room_leave(room);
-    colyseus_room_free(room);  // also frees associated callbacks
+if (net_room != 0) {
+    colyseus_room_leave(net_room);
+    colyseus_room_free(net_room);  // also frees associated callbacks
 }
 if (client != 0) {
     colyseus_client_free(client);
@@ -201,9 +197,8 @@ Access fields from schema instances. Use `colyseus_room_get_state(room)` to get 
 | Function | Description |
 | --- | --- |
 | `colyseus_room_get_state(room)` | Get the root state instance handle (`0` if unavailable). |
-| `colyseus_schema_get_string(instance, field)` | Get a string field value. |
-| `colyseus_schema_get_number(instance, field)` | Get a numeric field value (all numeric types). |
-| `colyseus_schema_get_ref(instance, field)` | Get a child schema instance handle. |
+| `colyseus_schema_get(instance, field)` | Get a field value (auto-dispatches by type: string, number, ref, array, map). |
+| `colyseus_schema_get_field_type(instance, field)` | Get the field type as a number (see type constants below). |
 | `colyseus_map_get(instance, field, key)` | Get an item from a MapSchema by key. |
 
 ### State Change Callbacks (GML helpers)
