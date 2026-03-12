@@ -55,13 +55,13 @@ colyseus_on_join(net_room, function(_room) {
     player_objs = {};
     callbacks = colyseus_callbacks_create(_room);
 
-    // Listen to root state properties (use 0 for root state instance)
-    colyseus_listen(callbacks, 0, "currentTurn", function(value, prev) {
+    // Listen to root state properties (instance can be omitted for root)
+    colyseus_listen(callbacks, "currentTurn", function(value, prev) {
         show_debug_message("Turn changed: " + string(prev) + " -> " + string(value));
     });
 
     // Listen for players added to the "players" map
-    colyseus_on_add(callbacks, 0, "players", function(instance, key) {
+    colyseus_on_add(callbacks, "players", function(instance, key) {
         show_debug_message("Player joined: " + key);
 
         var _px = colyseus_schema_get(instance, "x");
@@ -82,7 +82,7 @@ colyseus_on_join(net_room, function(_room) {
     });
 
     // Listen for players removed from the map
-    colyseus_on_remove(callbacks, 0, "players", method({ objs: player_objs }, function(instance, key) {
+    colyseus_on_remove(callbacks, "players", method({ objs: player_objs }, function(instance, key) {
         show_debug_message("Player left: " + key);
         if (variable_struct_exists(objs, key)) {
             instance_destroy(objs[$ key]);
@@ -208,9 +208,9 @@ Create a callbacks manager to listen for state mutations. Use `0` as the instanc
 | Function | Callback signature |
 | --- | --- |
 | `colyseus_callbacks_create(room)` | Create a callbacks manager. Returns a callbacks handle. |
-| `colyseus_listen(callbacks, instance, property, handler)` | `handler(value, previous_value)` |
-| `colyseus_on_add(callbacks, instance, property, handler)` | `handler(instance, key)` |
-| `colyseus_on_remove(callbacks, instance, property, handler)` | `handler(instance, key)` |
+| `colyseus_listen(callbacks, [instance], property, handler)` | `handler(value, previous_value)` — omit `instance` for root state |
+| `colyseus_on_add(callbacks, [instance], property, handler)` | `handler(instance, key)` — omit `instance` for root state |
+| `colyseus_on_remove(callbacks, [instance], property, handler)` | `handler(instance, key)` — omit `instance` for root state |
 | `colyseus_callbacks_remove_handle(callbacks, handle)` | Stop listening for a specific callback. |
 | `colyseus_callbacks_free(callbacks)` | Free callbacks (auto-freed when room is freed). |
 
