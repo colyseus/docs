@@ -23,6 +23,10 @@ We are experimenting with our shared [Colyseus Native SDK](https://github.com/co
 
 - Download the latest Godot SDK from [GitHub Releases](https://github.com/colyseus/native-sdk/releases?q=godot+sdk&expanded=true)
 - Extract the addons folder into your Godot project root
+- **macOS only:** Remove the quarantine attribute by running in the project root:
+  ```sh
+  xattr -cr addons/colyseus
+  ```
 - Enable the plugin in **Project Settings** → **Plugins**
 
 ## Web Builds
