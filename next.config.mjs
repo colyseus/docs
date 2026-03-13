@@ -9,6 +9,7 @@ const withNextra = nextra({
     // },
 
     latex: true,
+    defaultShowCopyCode: true,
     search: {
         codeblocks: false
     }

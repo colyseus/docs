@@ -1,5 +1,6 @@
 ---
-title: "Haxe"
+title: "Haxe SDK"
+description: "Use Colyseus with Haxe game engines like OpenFL, HaxeFlixel, Heaps, and more. Install the SDK, connect to rooms, and synchronize state across platforms."
 ---
 import { haxe } from "../../components/icons/platforms"
 import { Callout } from "nextra/components";
@@ -70,6 +71,49 @@ npx schema-codegen src/rooms/schema/* --haxe --output ../src/schema/
 
 <Callout type="info">
     See the full [State Schema Codegen documentation](/sdk/state-sync-callbacks#frontend-schema-generation) for more options and details.
+</Callout>
+
+### Reactive Schema Tools
+
+The SDK ships with Haxe macros that turn generated schema classes into reactive [`tink.state`](https://github.com/haxetink/tink_state) observables — no manual listeners required.
+
+**Dependencies** – add to your `.hxml`:
+
+```
+-lib tink_state
+-lib tink_macro
+-lib tink_json   # optional, for serialised string fields
+```
+
+**`ObservableSchemaMacro`** — generates a typed `State<T>` field for every property of a schema class:
+
+```haxe
+@:build(io.colyseus.tools.ObservableSchemaMacro.build(MyRoomState))
+class MyRoomObservable {
+    private static var link:CallbackLink;
+    public function listen(room:Room<MyRoomState>)
+        link = SchemaListenMacro.listenRef(Callbacks.get(room), room.state);
+    public function dispose() link.cancel();
+}
+```
+
+**`SchemaListenMacro`** — wires schema `listen` / `onAdd` / `onRemove` callbacks to the observable fields generated above. It handles primitives, nested schemas, `ArraySchema`, and `MapSchema` recursively.
+
+**Using observables** — after calling `observables.listen(room)`:
+
+```haxe
+// React to any change across all players
+Observable.autorun(() -> for (player in observables.players) {
+    trace('x=${player.x.value} y=${player.y.value}');
+    trace('items: ${player.items.toArray()}');
+});
+
+// Bind to a single field
+observables.currentTurn.observe().bind(x -> trace('Turn: $x'));
+```
+
+<Callout type="info">
+    Enable `-D debug_macro` to write the generated code to `GameSchemaDebug.hx` / `ListenDebug.hx` for inspection. See the full example in [`colyseus-hx/example/tools`](https://github.com/colyseus/colyseus-hx/tree/master/example/tools).
 </Callout>
 
 ## `ios` target caveats

@@ -1,5 +1,6 @@
 ---
-title: React
+title: "React SDK"
+description: "Use Colyseus with React using the @colyseus/react hooks package. Manage room connections and real-time state synchronization with idiomatic React patterns."
 ---
 import _js_ts_header from "./_js_ts_header.mdx"
 import { javascript, react } from "../../components/icons/platforms"
@@ -7,15 +8,283 @@ import { Callout } from 'nextra/components'
 
 # React (JavaScript/TypeScript SDK)
 
-<Callout type="warning">
-    Colyseus aims to provide a tighter integration with React in the future. If you'd like to contribute to this effort, please [check this thread on Discord](https://discord.com/channels/525739117951320081/1274526257270489088/1274526257270489088).
+You can use the `@colyseus/sdk` directly in your React applications, but we also provide a separate package, `@colyseus/react`, that offers custom hooks for managing room connections and state subscriptions in a way that works seamlessly with React's rendering model.
 
-    The objective is to iterate on [@pedr0fontoura](https://github.com/pedr0fontoura/)'s approach from his [`use-colyseus`](https://github.com/pedr0fontoura/use-colyseus/) project.
+<Callout type="info">
+  See a example project using `@colyseus/react` and React Three Fiber: [r3f-lobby-car-prototype](https://github.com/endel/r3f-lobby-car-prototype)
 </Callout>
 
-## Raw / Simple Usage
+## Installation
 
-The simplest way to use Colyseus in React is by using the `useEffect` hook to join a room and handle its events. Make sure to leave the room when the component is unmounted.
+```bash
+npm install @colyseus/react
+```
+
+### Hooks
+
+#### `useRoom(callback, deps?)`
+
+Manages the lifecycle of a Colyseus room connection. Handles connecting, disconnecting on unmount, and reconnecting when dependencies change. Works correctly with React StrictMode.
+
+```tsx
+import { Client } from "@colyseus/sdk";
+import { useRoom } from "@colyseus/react";
+
+const client = new Client("ws://localhost:2567");
+
+function Game() {
+  const { room, error, isConnecting } = useRoom(
+    () => client.joinOrCreate("game_room"),
+  );
+
+  if (isConnecting) return <p>Connecting...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
+  return <GameView room={room} />;
+}
+```
+
+The first argument is a callback that returns a `Promise<Room>` — any Colyseus matchmaking method works (`joinOrCreate`, `join`, `create`, `joinById`, `consumeSeatReservation`).
+
+**Reconnecting on dependency changes:**
+
+```tsx
+const { room } = useRoom(
+  () => client.joinOrCreate("game_room", { level }),
+  [level],
+);
+```
+
+When `level` changes the previous room is left and a new connection is established.
+
+**Conditional connection:**
+
+Pass a falsy value to skip connecting until a condition is met:
+
+```tsx
+const { room } = useRoom(
+  isReady ? () => client.joinOrCreate("game_room") : null,
+  [isReady],
+);
+```
+
+#### `useRoomState(room, selector?)`
+
+Subscribes to Colyseus room state changes and returns immutable plain-object snapshots. Unchanged portions of the state tree keep referential equality between renders, so React components only re-render when the data they use actually changes.
+
+```tsx
+import { useRoom, useRoomState } from "@colyseus/react";
+
+function Game() {
+  const { room } = useRoom(() => client.joinOrCreate("game_room"));
+  const state = useRoomState(room);
+
+  if (!state) return <p>Waiting for state...</p>;
+
+  return <p>Players: {state.players.size}</p>;
+}
+```
+
+**Using a selector** to subscribe to a subset of the state:
+
+```tsx
+const players = useRoomState(room, (state) => state.players);
+```
+
+Only components that read `players` will re-render when the players map changes.
+
+#### `useLobbyRoom(callback, deps?)`
+
+<Callout type="info">
+  This hook is designed to connect to a Colyseus [Lobby Room](/room/built-in/lobby) and manage the list of available rooms. If you're connecting to a regular game room, use `useRoom()` instead.
+</Callout>
+
+Connects to a [Lobby Room](/room/built-in/lobby) and provides a live-updating list of available rooms. The list is automatically maintained as rooms are created, updated, and removed.
+
+```tsx
+import { Client } from "@colyseus/sdk";
+import { useLobbyRoom } from "@colyseus/react";
+
+const client = new Client("ws://localhost:2567");
+
+function Lobby() {
+  const { rooms, error, isConnecting } = useLobbyRoom(
+    () => client.joinOrCreate("lobby"),
+  );
+
+  if (isConnecting) return <p>Connecting...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
+  return (
+    <ul>
+      {rooms.map((room) => (
+        <li key={room.roomId}>
+          {room.name} — {room.clients}/{room.maxClients} players
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+**Return value:**
+
+| Field | Type | Description |
+|---|---|---|
+| `rooms` | `RoomAvailable<Metadata>[]` | Live list of available rooms |
+| `room` | `Room \| undefined` | The underlying lobby room connection |
+| `error` | `Error \| undefined` | Connection error, if any |
+| `isConnecting` | `boolean` | `true` while connecting to the lobby |
+
+#### `useQueueRoom(connect, consume, deps?)`
+
+<Callout type="info">
+  This hook is designed to manage the full lifecycle of a [Queue Room](/room/built-in/queue): connecting to the queue room, tracking group size, receiving a seat reservation, confirming, and consuming the seat to join the match room. If you're connecting to a regular game room, use `useRoom()` instead.
+</Callout>
+
+Manages the full lifecycle of a [Queue Room](/room/built-in/queue): connecting to the queue room, tracking group size, receiving a seat reservation, confirming, and consuming the seat to join the match room. Cleans up both rooms on unmount.
+
+```tsx
+import { Client } from "@colyseus/sdk";
+import { useQueueRoom } from "@colyseus/react";
+
+const client = new Client("ws://localhost:2567");
+
+function Matchmaking() {
+  const { room, clients, isWaiting, error } = useQueueRoom(
+    () => client.joinOrCreate("queue", { rank: 1200 }),
+    (reservation) => client.consumeSeatReservation(reservation),
+  );
+
+  if (error) return <p>Error: {error.message}</p>;
+  if (room) return <GameScreen room={room} />;
+  if (isWaiting) return <p>Waiting for match... {clients} players in group</p>;
+  return <p>Connecting...</p>;
+}
+```
+
+The first argument connects to the queue room. The second argument is called with the `SeatReservation` once a match is found — use `client.consumeSeatReservation()` to join the match room.
+
+**Return value:**
+
+| Field | Type | Description |
+|---|---|---|
+| `room` | `Room \| undefined` | The match room, once the seat has been consumed |
+| `queue` | `Room \| undefined` | The queue room while waiting (undefined after match is joined) |
+| `clients` | `number` | Number of clients in the current matchmaking group |
+| `seat` | `SeatReservation \| undefined` | The seat reservation, once received |
+| `error` | `Error \| undefined` | Connection or matchmaking error |
+| `isWaiting` | `boolean` | `true` while connected to the queue and waiting for a match |
+
+### Contexts
+
+#### `createRoomContext()`
+
+Creates a set of hooks and a `RoomProvider` component that share a single room connection across React reconciler boundaries (e.g. DOM + React Three Fiber). The room is stored in a closure-scoped external store rather than React Context, so the hooks work in any reconciler tree that imports them.
+
+```tsx
+import { Client } from "@colyseus/sdk";
+import { createRoomContext } from "@colyseus/react";
+
+const client = new Client("ws://localhost:2567");
+
+const { RoomProvider, useRoom, useRoomState } = createRoomContext();
+```
+
+**Wrap your app with `RoomProvider`:**
+
+```tsx
+function App() {
+  return (
+    <RoomProvider connect={() => client.joinOrCreate("game_room")}>
+      <UI />
+      <Canvas>
+        <GameScene />
+      </Canvas>
+    </RoomProvider>
+  );
+}
+```
+
+`RoomProvider` accepts a `connect` callback (same as the standalone `useRoom` hook) and an optional `deps` array. Pass a falsy value to `connect` to defer the connection.
+
+**Use the hooks in any component — DOM or R3F:**
+
+```tsx
+function UI() {
+  const { room, error, isConnecting } = useRoom();
+  const players = useRoomState((state) => state.players);
+
+  if (isConnecting) return <p>Connecting...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
+  return <p>Players: {players?.size}</p>;
+}
+```
+
+The returned `useRoom()` and `useRoomState(selector?)` work identically to the standalone hooks but don't require you to pass the room as an argument.
+
+#### `createLobbyContext()`
+
+Creates a `LobbyProvider` and `useLobby` hook for sharing lobby room data globally across your app — useful when you need room metadata available persistently alongside an active game room, not just on a lobby screen. Like `createRoomContext`, it uses a closure-scoped external store so the hook works across reconciler boundaries.
+
+```tsx
+import { Client } from "@colyseus/sdk";
+import { createLobbyContext, createRoomContext } from "@colyseus/react";
+
+const client = new Client("ws://localhost:2567");
+
+const { LobbyProvider, useLobby } = createLobbyContext<MyMetadata>();
+const { RoomProvider, useRoom, useRoomState } = createRoomContext();
+```
+
+**Wrap your app with `LobbyProvider` (can nest with `RoomProvider`):**
+
+```tsx
+function App() {
+  return (
+    <LobbyProvider connect={() => client.joinOrCreate("lobby")}>
+      <RoomProvider connect={() => client.joinOrCreate("game_room")}>
+        <UI />
+        <Canvas>
+          <GameScene />
+        </Canvas>
+      </RoomProvider>
+    </LobbyProvider>
+  );
+}
+```
+
+`LobbyProvider` accepts a `connect` callback (same as `useLobbyRoom`) and an optional `deps` array. The lobby connection persists independently of the game room.
+
+**Access lobby data from any component — even deep inside the game:**
+
+```tsx
+function RoomBrowser() {
+  const { rooms, error, isConnecting } = useLobby();
+
+  if (isConnecting) return <p>Loading rooms...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
+  return (
+    <ul>
+      {rooms.map((room) => (
+        <li key={room.roomId}>
+          {room.metadata.displayName} — {room.clients}/{room.maxClients}
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+The returned `useLobby()` hook provides the same fields as `useLobbyRoom` (`rooms`, `room`, `error`, `isConnecting`).
+
+---
+
+## Direct use of `@colyseus/sdk` in React
+
+If you prefer to manage the room connection manually, you can use the `@colyseus/sdk` directly in your React components. Just make sure to handle the connection lifecycle properly (joining, leaving on unmount, etc.).
 
 ```typescript filename="RoomComponent.tsx"
 import { useEffect } from "react";
@@ -57,7 +326,7 @@ function RoomComponent () {
 }
 ```
 
-## Using a Context Provider for Room Management
+### Using a Context Provider for Room Management
 
 Alternatively, you can use a React Context Provider to manage the connection and room state across your application.
 
@@ -135,7 +404,7 @@ export function RoomProvider({ children }: { children: React.ReactNode }) {
 }
 ```
 
-## Using a Context Provider for Authentication
+### Using a Context Provider for Authentication
 
 You can also use a React Context Provider to manage the authentication state across your application. This is useful if you want to handle user authentication and authorization in a centralized way.
 

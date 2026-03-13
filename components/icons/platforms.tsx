@@ -71,6 +71,12 @@ export const godot = (props: IconProps = {}) => <Image
             width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
             alt="Godot" />
 
+export const gamemaker = (props: IconProps = {}) => <Image
+            className="platform-icon"
+            src={require('../../images/icons/gamemaker.png')}
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
+            alt="GameMaker" />
+
 /**
  * BRANDS
  */

@@ -1,0 +1,119 @@
+import { Callout } from 'nextra/components'
+
+# Standalone Match-maker
+
+In the default Colyseus setup, matchmaking and room handling run together in the same process. You can separate them so that a **dedicated match-maker process** handles all matchmaking logic, while **separate game server processes** handle the actual room connections.
+
+```
+┌─────────────────────────┐
+│   Match-maker Process   │  ← handles join/create/query
+│   (no rooms here)       │
+└────────────┬────────────┘
+             │  IPC via Redis
+      ┌──────┴──────┐
+      ▼             ▼
+┌───────────┐ ┌───────────┐
+│ Game Srv  │ │ Game Srv  │  ← rooms run here
+│ (rooms)   │ │ (rooms)   │
+└───────────┘ └───────────┘
+```
+
+This architecture is useful when you want to:
+
+- Have a single entry point for matchmaking while distributing room workload across multiple game servers
+- Scale game servers independently from the matchmaking layer
+- Run the match-maker behind a lightweight HTTP service without a WebSocket transport
+
+## Requirements
+
+Both the match-maker process and the game server processes must share the same **Presence** (e.g. [Redis](/server/presence)) and **Driver** (e.g. [Redis or Postgres](/server/driver)) so they can communicate via IPC and share room cache state.
+
+## Game Server Processes
+
+Each game server process runs a full Colyseus server with its rooms defined using `defineServer()`. These processes handle the actual WebSocket connections and room logic.
+
+```ts filename="app.config.ts"
+import { defineServer, defineRoom } from "colyseus";
+import { RedisPresence } from "@colyseus/redis-presence";
+import { RedisDriver } from "@colyseus/redis-driver";
+import { WebSocketTransport } from "@colyseus/ws-transport";
+import { BattleRoom } from "./rooms/BattleRoom";
+
+const gameServer = defineServer({
+    transport: new WebSocketTransport(),
+    presence: new RedisPresence(),
+    driver: new RedisDriver(),
+    publicAddress: "game-server-1.example.com:2567",
+    rooms: {
+        battle: defineRoom(BattleRoom),
+    },
+});
+```
+
+<Callout type="info">
+    Each game server must have a unique `publicAddress` so that the client SDK knows where to establish its WebSocket connection after receiving a seat reservation.
+</Callout>
+
+## Match-maker Process
+
+To run a standalone match-maker, use `defineServer()` with the `isStandaloneMatchMaker` option set to `true`. This tells Colyseus that this process will only handle matchmaking — it will not spawn rooms locally, subscribe to IPC room creation requests, or register itself as an available game server process.
+
+```ts {7} filename="app.config.ts"
+import { defineServer, defineRoom } from "colyseus";
+import { RedisPresence } from "@colyseus/redis-presence";
+import { RedisDriver } from "@colyseus/redis-driver";
+import { BattleRoom } from "./rooms/BattleRoom";
+
+const server = defineServer({
+    isStandaloneMatchMaker: true,
+    presence: new RedisPresence(),
+    driver: new RedisDriver(),
+    rooms: {
+        battle: defineRoom(BattleRoom),
+    },
+});
+```
+
+When `isStandaloneMatchMaker` is enabled, the process:
+
+- **Skips IPC subscription** — it will not receive or handle remote room creation requests
+- **Skips health checks** — it does not register itself in the process stats, so game servers will never try to create rooms on it
+- **Delegates room creation** — when a matchmaking request requires a new room, the default `selectProcessIdToCreateRoom` will select one of the available game server processes
+
+<Callout type="warning">
+    The match-maker process must register the same room types as the game servers. Room classes are needed for `filterBy()` options and `onAuth()` validation during matchmaking, even though rooms are not instantiated on this process.
+</Callout>
+
+### Custom process selection
+
+By default, rooms are created on the game server process with the fewest rooms. You can override this with `selectProcessIdToCreateRoom`:
+
+```ts {7-12} filename="app.config.ts"
+import { defineServer, defineRoom } from "colyseus";
+import { RedisPresence } from "@colyseus/redis-presence";
+import { RedisDriver } from "@colyseus/redis-driver";
+import { BattleRoom } from "./rooms/BattleRoom";
+
+const server = defineServer({
+    isStandaloneMatchMaker: true,
+    presence: new RedisPresence(),
+    driver: new RedisDriver(),
+    selectProcessIdToCreateRoom: async (roomName, clientOptions) => {
+        // Custom logic to select which game server should create the room
+    },
+    rooms: {
+        battle: defineRoom(BattleRoom),
+    },
+});
+```
+
+## How it works
+
+1. A client sends a matchmaking request (e.g. `joinOrCreate`) to the match-maker process
+2. The match-maker finds or creates a room — room creation is delegated to a game server process via IPC
+3. The match-maker returns a **seat reservation** containing the `sessionId`, `roomId`, and the game server's `publicAddress`
+4. The client SDK uses the `publicAddress` to establish a WebSocket connection directly to the game server hosting the room
+
+<Callout type="info">
+    Clients receive a seat reservation with the `publicAddress` of the game server that created the room. The client SDK uses this address to connect directly to the game server — traffic does not flow through the match-maker process after matchmaking.
+</Callout>
