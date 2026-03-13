@@ -17,7 +17,7 @@ The Client SDK provides everything you need to connect to a Colyseus server from
 
 The `Client` instance is your entry point to connect to the server.
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
 
     <Tabs.Tab>
     ```ts filename="client.ts"
@@ -62,6 +62,13 @@ The `Client` instance is your entry point to connect to the server.
     ```
     </Tabs.Tab>
 
+    <Tabs.Tab>
+    ```gdscript filename="client.gd"
+    var client: ColyseusClient = Colyseus.create_client()
+    client.set_endpoint("ws://localhost:2567")
+    ```
+    </Tabs.Tab>
+
 </Tabs>
 
 ---
@@ -78,7 +85,7 @@ The most common way to connect. Joins an existing room if available, or creates 
 client.joinOrCreate (roomName: string, options: any)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
 
     <Tabs.Tab>
     ```ts filename="client.ts"
@@ -142,15 +149,14 @@ client.joinOrCreate (roomName: string, options: any)
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```cpp filename="client.cpp"
-    client->joinOrCreate<YourStateClass>("battle", {/* options */}, [=](std::string err, Room<State>* room) {
-      if (err != "") {
-        std::cout << "join error: " << err << std::endl;
-        return;
-      }
+    ```gdscript filename="client.gd"
+    var room: ColyseusRoom = client.join_or_create("battle")
 
-      std::cout << "joined successfully" << std::endl;
-    });
+    room.joined.connect(func():
+        print("joined successfully"))
+
+    room.error.connect(func(code: int, message: String):
+        printerr("join error: ", message))
     ```
     </Tabs.Tab>
 
@@ -168,7 +174,7 @@ Always creates a new room instance, even if others exist.
 client.create (roomName: string, options: any)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
 
     <Tabs.Tab>
     ```ts filename="client.ts"
@@ -232,15 +238,14 @@ client.create (roomName: string, options: any)
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```cpp filename="client.cpp"
-    client->create<YourStateClass>("battle", {/* options */}, [=](std::string err, Room<State>* room) {
-      if (err != "") {
-        std::cout << "join error: " << err << std::endl;
-        return;
-      }
+    ```gdscript filename="client.gd"
+    var room: ColyseusRoom = client.create("battle")
 
-      std::cout << "joined successfully" << std::endl;
-    });
+    room.joined.connect(func():
+        print("joined successfully"))
+
+    room.error.connect(func(code: int, message: String):
+        printerr("join error: ", message))
     ```
     </Tabs.Tab>
 </Tabs>
@@ -257,7 +262,7 @@ Joins an existing room by room name. Fails if no room is available.
 client.join (roomName: string, options: any)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
 
     <Tabs.Tab>
     ```ts filename="client.ts"
@@ -321,15 +326,14 @@ client.join (roomName: string, options: any)
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```cpp filename="client.cpp"
-    client->join<YourStateClass>("battle", {/* options */}, [=](std::string err, Room<State>* room) {
-      if (err != "") {
-        std::cout << "join error: " << err << std::endl;
-        return;
-      }
+    ```gdscript filename="client.gd"
+    var room: ColyseusRoom = client.join("battle")
 
-      std::cout << "joined successfully" << std::endl;
-    });
+    room.joined.connect(func():
+        print("joined successfully"))
+
+    room.error.connect(func(code: int, message: String):
+        printerr("join error: ", message))
     ```
     </Tabs.Tab>
 </Tabs>
@@ -346,7 +350,7 @@ Joins a specific room by its unique ID. This is useful for invite links or rejoi
 client.joinById (roomId: string, options: any)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
 
     <Tabs.Tab>
     ```ts filename="client.ts"
@@ -410,15 +414,14 @@ client.joinById (roomId: string, options: any)
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```cpp filename="client.cpp"
-    client->joinById<YourStateClass>("battle", {/* options */}, [=](std::string err, Room<State>* room) {
-      if (err != "") {
-        std::cout << "join error: " << err << std::endl;
-        return;
-      }
+    ```gdscript filename="client.gd"
+    var room: ColyseusRoom = client.join_by_id("KRYAKzRo2")
 
-      std::cout << "joined successfully" << std::endl;
-    });
+    room.joined.connect(func():
+        print("joined successfully"))
+
+    room.error.connect(func(code: int, message: String):
+        printerr("join error: ", message))
     ```
     </Tabs.Tab>
 </Tabs>
@@ -446,7 +449,7 @@ A **"seat reservation"** is a token generated by the server that allows a client
 client.consumeSeatReservation (reservation)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
 
     <Tabs.Tab>
     ```ts filename="client.ts"
@@ -510,15 +513,14 @@ client.consumeSeatReservation (reservation)
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```cpp filename="client.cpp"
-    client->consumeSeatReservation<YourStateClass>(reservation, [=](std::string err, Room<State>* room) {
-      if (err != "") {
-        std::cout << "join error: " << err << std::endl;
-        return;
-      }
+    ```gdscript filename="client.gd"
+    var room: ColyseusRoom = client.consume_seat_reservation(reservation)
 
-      std::cout << "joined successfully" << std::endl;
-    });
+    room.joined.connect(func():
+        print("joined successfully"))
+
+    room.error.connect(func(code: int, message: String):
+        printerr("join error: ", message))
     ```
     </Tabs.Tab>
 </Tabs>
@@ -541,7 +543,7 @@ Send messages to the room handler. Messages are encoded with MsgPack and can hol
 room.send (type, message)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
     <Tabs.Tab>
     ```ts filename="client.ts"
     //
@@ -611,6 +613,16 @@ room.send (type, message)
     room.send(0, { direction: "left" });
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript filename="client.gd"
+    # sending message with string type
+    room.send_message("move", {"direction": "left"})
+
+    # sending message with number type
+    room.send_message(0, {"direction": "left"})
+    ```
+    </Tabs.Tab>
 </Tabs>
 
 <Callout type="info">
@@ -641,7 +653,7 @@ room.sendBytes("some-bytes", [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 1
 
 Listen for messages sent from the server.
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
 
     <Tabs.Tab>
     ```ts filename="client.ts"
@@ -693,11 +705,12 @@ Listen for messages sent from the server.
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```cpp filename="client.cpp"
-    room.onMessage("powerup", [=](msgpack::object message) -> void {
-        std::cout << "message received from server" << std::endl;
-        std::cout << message << std::endl;
-    });
+    ```gdscript filename="client.gd"
+    room.message_received.connect(_on_message_received)
+
+    func _on_message_received(type: Variant, message: Variant):
+        print("message received from server")
+        print(message)
     ```
     </Tabs.Tab>
 
@@ -725,7 +738,7 @@ room.state: any
 
 The `onStateChange` event fires whenever the server synchronizes state updates.
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
     <Tabs.Tab>
     ```ts filename="client.ts"
     room.onStateChange.once((state) => {
@@ -779,11 +792,12 @@ The `onStateChange` event fires whenever the server synchronizes state updates.
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```cpp filename="client.cpp"
-    room.onStateChange = [=](State>* state) {
-      std::cout << "new state" << std::endl;
-      // ...
-    };
+    ```gdscript filename="client.gd"
+    room.state_changed.connect(_on_state_changed)
+
+    func _on_state_changed():
+        var state = room.get_state()
+        print("the room state has been updated: ", state)
     ```
     </Tabs.Tab>
 </Tabs>
@@ -794,32 +808,39 @@ For better performance and control, listen to specific property changes instead 
 
 <SDKTabs>
     <Tabs.Tab>
-    ```ts {10} filename="client.ts"
+    ```ts filename="client.ts"
     // get state callbacks handler
     const callbacks = Callbacks.get(room);
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```cs {10} filename="client.cs"
+    ```cs filename="client.cs"
     // get state callbacks handler
     var callbacks = Colyseus.Schema.Callbacks.Get(room);
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```lua {10} filename="client.lua"
+    ```lua filename="client.lua"
     -- get state callbacks handler
     local callbacks = ColyseusSDK.callbacks(room)
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```haxe {2,11} filename="client.hx"
+    ```haxe filename="client.hx"
     import io.colyseus.serializer.schema.Callbacks;
 
     // get state callbacks handler
     var callbacks = Callbacks.get(room);
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript filename="client.gd"
+    # get state callbacks handler
+    var callbacks: ColyseusCallbacks = Colyseus.callbacks(room)
     ```
     </Tabs.Tab>
 </SDKTabs>
@@ -846,7 +867,7 @@ Disconnect from the room. Use `consented: true` (default) for intentional leaves
 room.leave (consented: boolean)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
     <Tabs.Tab>
     ```ts filename="client.ts"
     // consented leave
@@ -896,6 +917,13 @@ room.leave (consented: boolean)
     room.leave(false);
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript filename="client.gd"
+    # consented leave
+    room.leave()
+    ```
+    </Tabs.Tab>
 </Tabs>
 
 <Callout type="info">
@@ -906,7 +934,7 @@ room.leave (consented: boolean)
 
 Triggered when the client leaves the room (either intentionally or due to disconnection).
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
 
     <Tabs.Tab>
     ```ts filename="client.ts"
@@ -949,10 +977,11 @@ Triggered when the client leaves the room (either intentionally or due to discon
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```cpp filename="client.cpp"
-    room.onLeave = [=]() -> void {
-      std::cout << "client left the room" << std::endl;
-    };
+    ```gdscript filename="client.gd"
+    room.left.connect(_on_room_left)
+
+    func _on_room_left(code: int, reason: String):
+        print("client left the room: ", reason)
     ```
     </Tabs.Tab>
 </Tabs>
@@ -975,7 +1004,7 @@ The SDK automatically attempts to reconnect when the connection is unexpectedly 
 
 Triggered when the connection is unexpectedly dropped. The SDK will automatically attempt to reconnect.
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
     <Tabs.Tab>
     ```ts filename="client.ts"
     room.onDrop((code, reason) => {
@@ -1020,6 +1049,15 @@ Triggered when the connection is unexpectedly dropped. The SDK will automaticall
     };
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript filename="client.gd"
+    # The Godot SDK handles reconnection automatically
+    # Use the error signal to detect connection issues
+    room.error.connect(func(code: int, message: String):
+        print("connection error: ", message))
+    ```
+    </Tabs.Tab>
 </Tabs>
 
 <Callout type="info">
@@ -1038,7 +1076,7 @@ Triggered when the connection is unexpectedly dropped. The SDK will automaticall
 
 Triggered when the client successfully reconnects after a connection drop. While disconnected, your `room.send()` calls will be queued and sent to the server when the client reconnects. The maximum number of queued messages is configurable using `room.reconnection.maxEnqueuedMessages`.
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
     <Tabs.Tab>
     ```ts filename="client.ts"
     room.onReconnect(() => {
@@ -1078,6 +1116,15 @@ Triggered when the client successfully reconnects after a connection drop. While
     };
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript filename="client.gd"
+    # The Godot SDK handles reconnection automatically
+    # The joined signal will fire again after successful reconnection
+    room.joined.connect(func():
+        print("connected/reconnected to the room!"))
+    ```
+    </Tabs.Tab>
 </Tabs>
 
 #### Configuration Options
@@ -1107,7 +1154,7 @@ You may configure the reconnection behavior using `room.reconnection`.
 
 **Customizing reconnection behavior:**
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
     <Tabs.Tab>
     ```ts filename="client.ts"
     const room = await client.joinOrCreate("battle");
@@ -1162,11 +1209,18 @@ You may configure the reconnection behavior using `room.reconnection`.
     });
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript filename="client.gd"
+    # Reconnection is handled automatically by the Godot SDK
+    # Configuration options may vary - check the SDK documentation
+    ```
+    </Tabs.Tab>
 </Tabs>
 
 **Custom backoff function:**
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
     <Tabs.Tab>
     ```ts filename="client.ts"
     room.reconnection.backoff = (attempt: number, delay: number) => {
@@ -1206,6 +1260,13 @@ You may configure the reconnection behavior using `room.reconnection`.
     };
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript filename="client.gd"
+    # Custom backoff functions are not currently exposed in the Godot SDK
+    # The SDK uses a default exponential backoff strategy
+    ```
+    </Tabs.Tab>
 </Tabs>
 
 ### Manual Reconnection
@@ -1219,7 +1280,7 @@ For more control, you can manually reconnect using a cached reconnection token. 
 client.reconnect (reconnectionToken)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
 
     <Tabs.Tab>
     ```ts filename="client.ts"
@@ -1283,15 +1344,14 @@ client.reconnect (reconnectionToken)
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```cpp filename="client.cpp"
-    client->reconnect<YourStateClass>(cachedReconnectionToken, [=](std::string err, Room<State>* room) {
-    if (err != "") {
-        std::cout << "join error: " << err << std::endl;
-        return;
-    }
+    ```gdscript filename="client.gd"
+    var room: ColyseusRoom = client.reconnect(cached_reconnection_token)
 
-    std::cout << "joined successfully" << std::endl;
-    });
+    room.joined.connect(func():
+        print("reconnected successfully"))
+
+    room.error.connect(func(code: int, message: String):
+        printerr("reconnect error: ", message))
     ```
     </Tabs.Tab>
 </Tabs>
@@ -1300,7 +1360,7 @@ client.reconnect (reconnectionToken)
 
 Listen for errors that occur in the room.
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
     <Tabs.Tab>
     ```ts filename="client.ts"
     room.onError((code, message) => {
@@ -1347,10 +1407,11 @@ Listen for errors that occur in the room.
     </Tabs.Tab>
 
     <Tabs.Tab>
-    ```cpp filename="client.cpp"
-    room.onError = [=] (int code, std::string message) => void {
-      std::cout << "oops, error ocurred: " << message << std::endl;
-    };
+    ```gdscript filename="client.gd"
+    room.error.connect(_on_room_error)
+
+    func _on_room_error(code: int, message: String):
+        printerr("oops, error occurred: ", message)
     ```
     </Tabs.Tab>
 </Tabs>
@@ -1383,7 +1444,7 @@ client.getLatency (options?: LatencyOptions): Promise<number>
 
 - `options.pingCount`: Number of pings to send (default: `1`). Returns the average latency when greater than 1.
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
     <Tabs.Tab>
     ```ts filename="client.ts"
     const latency = await client.getLatency();
@@ -1444,6 +1505,13 @@ client.getLatency (options?: LatencyOptions): Promise<number>
     });
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript filename="client.gd"
+    # Latency measurement API may vary in the Godot SDK
+    # Check the SDK documentation for available methods
+    ```
+    </Tabs.Tab>
 </Tabs>
 
 #### On an Active Room
@@ -1454,7 +1522,7 @@ Measure round-trip time on an existing connection.
 room.ping (callback: (ms: number) => void)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
     <Tabs.Tab>
     ```ts filename="client.ts"
     room.ping((latency) => {
@@ -1494,6 +1562,13 @@ room.ping (callback: (ms: number) => void)
     });
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript filename="client.gd"
+    # Ping API may vary in the Godot SDK
+    # Check the SDK documentation for available methods
+    ```
+    </Tabs.Tab>
 </Tabs>
 
 <Callout type="info">
@@ -1514,7 +1589,7 @@ Client.selectByLatency (endpoints: Array<string | EndpointSettings>): Promise<Cl
 - `options`: Optional client options to pass to each client instance.
 - `latencyOptions.pingCount`: Number of pings to send per endpoint (default: `1`).
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
     <Tabs.Tab>
     ```ts filename="client.ts"
     import { Client } from "@colyseus/sdk";
@@ -1596,6 +1671,22 @@ Client.selectByLatency (endpoints: Array<string | EndpointSettings>): Promise<Cl
         trace("joined successfully");
       });
     });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript filename="client.gd"
+    # Multi-region server selection may vary in the Godot SDK
+    # You can manually test latency to multiple endpoints:
+    var endpoints = [
+        "wss://us-east.gameserver.com",
+        "wss://eu-west.gameserver.com",
+        "wss://asia.gameserver.com"
+    ]
+
+    # Select endpoint with lowest latency and create client
+    var client = Colyseus.create_client()
+    client.set_endpoint(endpoints[0])  # Set your preferred endpoint
     ```
     </Tabs.Tab>
 </Tabs>
