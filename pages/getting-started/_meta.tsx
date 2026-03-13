@@ -1,4 +1,4 @@
-import { javascript, typescript, react, unity, defold, construct3, cocos, haxe, discord, wechat } from '../../components/icons/platforms'
+import { javascript, typescript, react, unity, defold, construct3, cocos, haxe, discord, wechat, gamemaker } from '../../components/icons/platforms'
 
 export default {
     "typescript": { title: <span>{typescript({ width: '19px', marginRight: '2px' })} TypeScript</span> },
@@ -9,6 +9,7 @@ export default {
     "construct3": { title: <span>{construct3({ width: '19px', marginRight: '2px' })} Construct 3</span> },
     "cocos": { title: <span>{cocos({ width: '19px', marginRight: '2px' })} Cocos Creator</span> },
     "haxe": { title: <span>{haxe({ width: '19px', marginRight: '2px' })} Haxe</span> },
+    "gamemaker": { title: <span>{gamemaker({ width: '19px', marginRight: '2px' })} GameMaker</span> },
     "discord-activity": { title: <span>{discord({ width: '19px', marginRight: '2px' })} Discord Activity</span> },
     "wechat": { title: <span>{wechat({ width: '19px', marginRight: '2px' })} WeChat</span> },
 }
