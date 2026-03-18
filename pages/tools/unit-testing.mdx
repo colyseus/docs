@@ -93,9 +93,6 @@ When sending messages between server and client, it's important to wait for the 
 
 Wait for a particular message `type` to arrive in the server.
 
-```ts filename="Signature"
-room.waitForMessage(type): Promise<[Client, any]>
-```
 
 ```ts {8} filename="App.test.ts"
 it("should receive message", async() => {
@@ -117,9 +114,6 @@ it("should receive message", async() => {
 
 Wait for any next message to arrive in the server.
 
-```ts filename="Signature"
-room.waitForNextMessage(delay?: number): Promise<[Client, any]>
-```
 
 **Parameters**
 
@@ -146,9 +140,6 @@ it("should receive message", async() => {
 
 Wait for the server to send the latest patched state to all clients.
 
-```ts filename="Signature"
-room.waitForNextPatch(): Promise<void>
-```
 
 ```ts {5} filename="App.test.ts"
 it("client state must match server's after patch is received", async() => {
@@ -166,9 +157,6 @@ it("client state must match server's after patch is received", async() => {
 
 Wait for the next simulation tick to complete.
 
-```ts filename="Signature"
-room.waitForNextSimulationTick(): Promise<void>
-```
 
 ```ts {5} filename="App.test.ts"
 it("should assert something after room's simulation tick", async() => {
@@ -207,9 +195,6 @@ it("should connect into battle_room with options x, y, z", async () => {
 
 Wait for client state to be in sync with the server.
 
-```ts filename="Signature"
-client.waitForNextPatch(): Promise<void>
-```
 
 ```ts {3} filename="App.test.ts"
 it("should do xyz after receiving message 'x'", async () => {
@@ -223,9 +208,6 @@ it("should do xyz after receiving message 'x'", async () => {
 
 Wait for a particular message `type` to arrive in the frontend.
 
-```ts filename="Signature"
-client.waitForMessage(type): Promise<any>
-```
 
 ```ts {5} filename="App.test.ts"
 it("should do xyz after receiving message 'x'", async () => {
@@ -241,9 +223,6 @@ it("should do xyz after receiving message 'x'", async () => {
 
 Wait for any next message to arrive in the client.
 
-```ts filename="Signature"
-client.waitForNextMessage(): Promise<any>
-```
 
 ```ts {5} filename="App.test.ts"
 it("should do xyz after receiving message 'x'", async () => {

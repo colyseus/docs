@@ -117,9 +117,6 @@ matchMaker.presence // full Presence API is available from here
 
 Subscribes to the given `topic`. The `callback` will be triggered whenever a message is [published](#publish) on that topic.
 
-```ts filename="Signature"
-presence.subscribe(topic: string, callback: Function): Promise<Presence>
-```
 
 ```ts filename="MyRoom.ts"
 this.presence.subscribe("global-event", (data) => {
@@ -133,9 +130,6 @@ this.presence.subscribe("global-event", (data) => {
 
 Unsubscribe from a given `topic`.
 
-```ts filename="Signature"
-presence.unsubscribe(topic: string, callback?: Function): Promise<Presence>
-```
 
 <Tabs items={["Unsubscribe from all", "Unsubscribe from specific callback"]}>
     <Tabs.Tab>
@@ -166,9 +160,6 @@ presence.unsubscribe(topic: string, callback?: Function): Promise<Presence>
 
 Posts a message to the given `topic`. All subscribers will receive the message.
 
-```ts filename="Signature"
-presence.publish(topic: string, data: any): Promise<void>
-```
 
 ```ts filename="MyRoom.ts"
 this.presence.publish("global-event", { any: 1, data: 2, here: "3" });
@@ -180,9 +171,6 @@ this.presence.publish("global-event", { any: 1, data: 2, here: "3" });
 
 Returns the list of active channels matching a pattern.
 
-```ts filename="Signature"
-presence.channels(pattern?: string): Promise<string[]>
-```
 
 ```ts filename="MyRoom.ts"
 // Get all channels
@@ -200,9 +188,6 @@ const gameChannels = await this.presence.channels("game:*");
 
 Set a key to hold a string value.
 
-```ts filename="Signature"
-presence.set(key: string, value: string): Promise<void>
-```
 
 ```ts filename="MyRoom.ts"
 await this.presence.set("global-key", "a string value");
@@ -214,9 +199,6 @@ await this.presence.set("global-key", "a string value");
 
 Set a key to hold a string value with an expiration time in seconds.
 
-```ts filename="Signature"
-presence.setex(key: string, value: string, seconds: number): Promise<void>
-```
 
 ```ts filename="MyRoom.ts"
 // Set a key that expires after 2 minutes
@@ -229,9 +211,6 @@ await this.presence.setex("global-key", "a string value", 120);
 
 Set a timeout on a key. After the timeout, the key will be automatically deleted.
 
-```ts filename="Signature"
-presence.expire(key: string, seconds: number): Promise<void>
-```
 
 ```ts filename="MyRoom.ts"
 await this.presence.set("global-key", "value");
@@ -244,9 +223,6 @@ await this.presence.expire("global-key", 60); // expires in 60 seconds
 
 Get the value of a key.
 
-```ts filename="Signature"
-presence.get(key: string): Promise<string | null>
-```
 
 ```ts filename="MyRoom.ts"
 const value = await this.presence.get("global-key");
@@ -258,9 +234,6 @@ const value = await this.presence.get("global-key");
 
 Delete a key.
 
-```ts filename="Signature"
-presence.del(key: string): Promise<void>
-```
 
 ```ts filename="MyRoom.ts"
 await this.presence.del("global-key");
@@ -272,9 +245,6 @@ await this.presence.del("global-key");
 
 Check if a key exists.
 
-```ts filename="Signature"
-presence.exists(key: string): Promise<boolean>
-```
 
 ```ts filename="MyRoom.ts"
 const exists = await this.presence.exists("global-key");
@@ -286,9 +256,6 @@ const exists = await this.presence.exists("global-key");
 
 Increment the integer value of a key by one.
 
-```ts filename="Signature"
-presence.incr(key: string): Promise<number>
-```
 
 If the key does not exist, it is set to `0` before performing the operation.
 
@@ -307,9 +274,6 @@ console.log(count); // => "3"
 
 Decrement the integer value of a key by one.
 
-```ts filename="Signature"
-presence.decr(key: string): Promise<number>
-```
 
 If the key does not exist, it is set to `0` before performing the operation.
 
@@ -331,9 +295,6 @@ Sets are collections of unique string values.
 
 Add a member to a set.
 
-```ts filename="Signature"
-presence.sadd(key: string, value: any): Promise<void>
-```
 
 If the member already exists, it is ignored. If the key does not exist, a new set is created.
 
@@ -349,9 +310,6 @@ await this.presence.sadd("global-set", "member-two");
 
 Get all members of a set.
 
-```ts filename="Signature"
-presence.smembers(key: string): Promise<string[]>
-```
 
 ```ts filename="MyRoom.ts"
 const members = await this.presence.smembers("global-set");
@@ -364,9 +322,6 @@ console.log(members); // => ["member-one", "member-two"]
 
 Check if a value is a member of a set.
 
-```ts filename="Signature"
-presence.sismember(key: string, member: string): Promise<number>
-```
 
 Returns `1` if the element is a member, `0` if not (or if the key does not exist).
 
@@ -383,9 +338,6 @@ if (isMember) {
 
 Remove a member from a set.
 
-```ts filename="Signature"
-presence.srem(key: string, value: any): Promise<void>
-```
 
 ```ts filename="MyRoom.ts"
 await this.presence.srem("global-set", "member-one");
@@ -397,9 +349,6 @@ await this.presence.srem("global-set", "member-one");
 
 Get the number of members in a set (cardinality).
 
-```ts filename="Signature"
-presence.scard(key: string): Promise<number>
-```
 
 ```ts filename="MyRoom.ts"
 const count = await this.presence.scard("global-set");
@@ -412,9 +361,6 @@ console.log(count); // => 2
 
 Get the intersection of multiple sets.
 
-```ts filename="Signature"
-presence.sinter(...keys: string[]): Promise<string[]>
-```
 
 ```ts filename="MyRoom.ts"
 await this.presence.sadd("set1", "a");
@@ -436,9 +382,6 @@ Hashes are maps of field-value pairs, useful for storing objects.
 
 Set a field in a hash.
 
-```ts filename="Signature"
-presence.hset(key: string, field: string, value: string): Promise<boolean>
-```
 
 Returns `true` if the field is new, `false` if it was updated.
 
@@ -453,9 +396,6 @@ await this.presence.hset("player:123", "score", "100");
 
 Get the value of a field in a hash.
 
-```ts filename="Signature"
-presence.hget(key: string, field: string): Promise<string | null>
-```
 
 ```ts filename="MyRoom.ts"
 const name = await this.presence.hget("player:123", "name");
@@ -468,9 +408,6 @@ console.log(name); // => "John"
 
 Get all fields and values of a hash.
 
-```ts filename="Signature"
-presence.hgetall(key: string): Promise<{ [field: string]: string }>
-```
 
 ```ts filename="MyRoom.ts"
 const player = await this.presence.hgetall("player:123");
@@ -483,9 +420,6 @@ console.log(player); // => { name: "John", score: "100" }
 
 Delete a field from a hash.
 
-```ts filename="Signature"
-presence.hdel(key: string, field: string): Promise<boolean>
-```
 
 Returns `true` if the field was removed, `false` if the field did not exist.
 
@@ -499,9 +433,6 @@ await this.presence.hdel("player:123", "score");
 
 Get the number of fields in a hash.
 
-```ts filename="Signature"
-presence.hlen(key: string): Promise<number>
-```
 
 ```ts filename="MyRoom.ts"
 const fieldCount = await this.presence.hlen("player:123");
@@ -514,9 +445,6 @@ console.log(fieldCount); // => 2
 
 Increment the integer value of a hash field.
 
-```ts filename="Signature"
-presence.hincrby(key: string, field: string, value: number): Promise<number>
-```
 
 ```ts filename="MyRoom.ts"
 await this.presence.hset("player:123", "score", "100");
@@ -530,9 +458,6 @@ console.log(newScore); // => 110
 
 Increment a hash field and set an expiration on the hash key.
 
-```ts filename="Signature"
-presence.hincrbyex(key: string, field: string, value: number, expireInSeconds: number): Promise<number>
-```
 
 This is useful for rate limiting or temporary counters.
 
@@ -554,9 +479,6 @@ Lists are ordered collections of strings, supporting push/pop operations from bo
 
 Get the length of a list.
 
-```ts filename="Signature"
-presence.llen(key: string): Promise<number>
-```
 
 ```ts filename="MyRoom.ts"
 const length = await this.presence.llen("queue");
@@ -568,9 +490,6 @@ const length = await this.presence.llen("queue");
 
 Append a value to the end of a list.
 
-```ts filename="Signature"
-presence.rpush(key: string, value: string): Promise<number>
-```
 
 Returns the length of the list after the push.
 
@@ -585,9 +504,6 @@ await this.presence.rpush("queue", "task2");
 
 Prepend a value to the beginning of a list.
 
-```ts filename="Signature"
-presence.lpush(key: string, value: string): Promise<number>
-```
 
 Returns the length of the list after the push.
 
@@ -601,9 +517,6 @@ await this.presence.lpush("queue", "urgent-task");
 
 Remove and return the last element of a list.
 
-```ts filename="Signature"
-presence.rpop(key: string): Promise<string | null>
-```
 
 ```ts filename="MyRoom.ts"
 const lastItem = await this.presence.rpop("queue");
@@ -615,9 +528,6 @@ const lastItem = await this.presence.rpop("queue");
 
 Remove and return the first element of a list.
 
-```ts filename="Signature"
-presence.lpop(key: string): Promise<string | null>
-```
 
 ```ts filename="MyRoom.ts"
 const firstItem = await this.presence.lpop("queue");
@@ -629,9 +539,6 @@ const firstItem = await this.presence.lpop("queue");
 
 Remove and return the last element of a list, or block until one is available.
 
-```ts filename="Signature"
-presence.brpop(...args: any): Promise<[string, string] | null>
-```
 
 The last argument is the timeout in seconds. Returns `null` if the timeout is reached.
 

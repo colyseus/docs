@@ -154,9 +154,6 @@ auth.oauth.addProvider('discord', {
 
 Register a new user with email/password and return userdata. The user will be automatically logged in after registration. This method modifies the `client.auth.token` property.
 
-```ts filename="Signature"
-client.auth.registerWithEmailAndPassword(email, password, options?) => Promise<UserData>
-```
 
 The `options` argument may contain user data you can use when creating the user's account.
 
@@ -194,9 +191,6 @@ The `options` argument may contain user data you can use when creating the user'
 
 Sign in with email/password and return userdata. This method modifies the `client.auth.token` property.
 
-```ts filename="Signature"
-client.auth.signInWithEmailAndPassword(email, password) => Promise<UserData>
-```
 
 <Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
     <Tabs.Tab>
@@ -227,9 +221,6 @@ client.auth.signInWithEmailAndPassword(email, password) => Promise<UserData>
 
 Sign in anonymously and return anonymous userdata. This method modifies the `client.auth.token` property.
 
-```ts filename="Signature"
-client.auth.signInAnonymously(options?) => Promise<UserData>
-```
 
 <Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
     <Tabs.Tab>
@@ -261,9 +252,6 @@ client.auth.signInAnonymously(options?) => Promise<UserData>
 
 Sign in with OAuth provider and return userdata. This method modifies the `client.auth.token` property.
 
-```ts filename="Signature"
-client.auth.signInWithProvider(provider) => Promise<UserData>
-```
 
 <Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
     <Tabs.Tab>
@@ -307,9 +295,6 @@ client.auth.signInWithProvider(provider) => Promise<UserData>
 
 Send an email to the user with a link to reset their password.
 
-```ts filename="Signature"
-client.auth.sendPasswordResetEmail() => Promise<void>
-```
 
 <Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
     <Tabs.Tab>
@@ -345,9 +330,6 @@ client.auth.sendPasswordResetEmail() => Promise<void>
 
 Get the current user's data. This method does not modify the `client.auth.token` property.
 
-```ts filename="Signature"
-client.auth.getUserData() => Promise<UserData>
-```
 
 <Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
     <Tabs.Tab>
@@ -382,9 +364,6 @@ client.auth.getUserData() => Promise<UserData>
 
 Define a callback that is triggered when internal auth state changes. It only triggers as a response from `client.auth` method calls - this is not a realtime subscription.
 
-```ts filename="Signature"
-client.auth.onChange(callback: (authData: AuthData) => void) => void
-```
 
 
 ```ts filename="client.js"
@@ -450,9 +429,6 @@ In order to allow email/password authentication, you must implement the followin
 
 Use this callback to query your database for the user's by its email address. (The database module is not provided by this module, you must provide your own.)
 
-```ts filename="Signature"
-auth.settings.onFindUserByEmail(email: string) => Promise<UserData>
-```
 
 **Return value**: The function should return the user entry from the database, including the `password` field. All fields except `password` will be encoded in the JWT token. At minimum, return the user's `id` and `password`, though additional fields can be included for convenience
 
@@ -499,9 +475,6 @@ By default, the anonymous user will have the following fields on its JWT token p
 
 You may use this callback to customize the JWT token payload for anonymous users. The fields returned by this callback will be available in the JWT token as payload.
 
-```ts filename="Signature"
-auth.settings.onRegisterAnonymously(options?) => Promise<UserData>
-```
 
 On the example below the anonymous user is being inserted into the database, and its `userId` is being returned as payload.
 
@@ -529,9 +502,6 @@ It is your responsibility to limit the user access to your application until the
 
 Use this callback to send the email verification to the user.
 
-```ts filename="Signature"
-auth.settings.onSendEmailConfirmation(email: string, html: string, link: string) => Promise<void>
-```
 
 | Argument | Description |
 |------|-------------|
@@ -557,9 +527,6 @@ auth.settings.onSendEmailConfirmation = async function(email, html, link) {
 
 Use this callback to update the user's database record as verified.
 
-```ts filename="Signature"
-auth.settings.onEmailConfirmed(email: string) => Promise<void>
-```
 
 | Argument | Description |
 |------|-------------|
@@ -589,9 +556,6 @@ To enable "Forgot Password" feature, you must provide the following callbacks:
 
 Use this callback to send the "forgot password" email to the user. The email template used is `reset-password-email.html`.
 
-```ts filename="Signature"
-auth.settings.onForgotPassword(email: string, html: string, resetLink: string) => Promise<void>
-```
 
 ```typescript
 import { auth } from "@colyseus/auth";
@@ -610,9 +574,6 @@ auth.settings.onForgotPassword = async function (email: string, html: string/* ,
 
 Use this callback to update the user's password. The password is already hashed.
 
-```ts filename="Signature"
-auth.settings.onResetPassword(email: string, password: string) => Promise<void>
-```
 
 ```typescript
 import { auth } from "@colyseus/auth";
@@ -638,9 +599,6 @@ In order to enable OAuth authentication, you must add at least one OAuth provide
 
 Add an OAuth provider to the authentication module.
 
-```ts filename="Signature"
-auth.oauth.addProvider(providerId: string, config: any) => void
-```
 
 | Argument | Description |
 |------|-------------|
@@ -663,9 +621,6 @@ Register a callback to handle the OAuth provider's response.
 
 The callback should return the user's data, which will be stored in the JWT token.
 
-```ts filename="Signature"
-auth.oauth.onCallback(callback: (data: any, providerId: string) => UserData) => void
-```
 
 | Argument | Description |
 |------|-------------|
@@ -732,9 +687,6 @@ You may customize the following settings:
 
 Use this callback to modify the user's data before sending it to the frontend during the [Get User Data](#get-user-data) call.
 
-```ts filename="Signature"
-auth.settings.onParseToken(data: any) => Promise<any>
-```
 
 ```typescript
 import { auth } from "@colyseus/auth";
@@ -748,9 +700,6 @@ auth.settings.onParseToken = async function (data) {
 
 Use this callback to customize the token generation from the user's data.
 
-```ts filename="Signature"
-auth.settings.onGenerateToken(userdata: any) => Promise<string>
-```
 
 ```typescript
 import { auth, JWT } from "@colyseus/auth";
@@ -764,9 +713,6 @@ auth.settings.onGenerateToken = async function (userdata) {
 
 Use this callback to customize how to hash the user's password. The default hashing algorithm is `scrypt`.
 
-```ts filename="Signature"
-auth.settings.onHashPassword(password: string) => Promise<string>
-```
 
 ```typescript
 import { auth } from "@colyseus/auth";

@@ -78,9 +78,6 @@ Once you have a client, you can join rooms. Choose the method that best fits you
 
 The most common way to connect. Joins an existing room if available, or creates a new one.
 
-```ts filename="Signature"
-client.joinOrCreate (roomName: string, options: any)
-```
 
 <SDKTabs>
 
@@ -190,9 +187,6 @@ Once connected to a room, you can send and receive messages in real-time.
 
 Send messages to the room handler. Messages are encoded with MsgPack and can hold any JSON-serializable data.
 
-```ts filename="Signature"
-room.send (type, message)
-```
 
 <SDKTabs>
     <Tabs.Tab>
@@ -271,9 +265,6 @@ room.send (type, message)
 
 For custom encoding, send raw byte arrays (numbers from `0` to `255`).
 
-```ts filename="Signature"
-room.sendBytes (type, bytes)
-```
 
 ```js filename="client.js"
 //
@@ -502,9 +493,6 @@ Handle the various states of a room connection.
 
 Disconnect from the room. Use `consented: true` (default) for intentional leaves, or `false` to simulate an unexpected disconnect.
 
-```ts filename="Signature"
-room.leave (consented: boolean)
-```
 
 <SDKTabs>
     <Tabs.Tab>
@@ -865,9 +853,6 @@ For more control, you can manually reconnect using a cached reconnection token. 
 - You must store/cache the `room.reconnectionToken` from an active room connection.
 - The server needs to call [`.allowReconnection()`](/room#allow-reconnection) for that client.
 
-```ts filename="Signature"
-client.reconnect (reconnectionToken)
-```
 
 <SDKTabs>
 
@@ -992,9 +977,6 @@ Listen for errors that occur in the room.
 
 Remove all event listeners from the room.
 
-```ts filename="Signature"
-room.removeAllListeners()
-```
 
 ---
 
@@ -1008,9 +990,6 @@ Measure network latency and choose optimal servers for your players.
 
 Create a temporary connection to measure latency before joining a room.
 
-```ts filename="Signature"
-client.getLatency (options?: LatencyOptions): Promise<number>
-```
 
 **Parameters**
 
@@ -1078,9 +1057,6 @@ client.getLatency (options?: LatencyOptions): Promise<number>
 
 Measure round-trip time on an existing connection.
 
-```ts filename="Signature"
-room.ping (callback: (ms: number) => void)
-```
 
 <SDKTabs>
     <Tabs.Tab>
@@ -1132,9 +1108,6 @@ room.ping (callback: (ms: number) => void)
 
 Automatically connect to the server with the lowest latency from a list of endpoints.
 
-```ts filename="Signature"
-Client.selectByLatency (endpoints: Array<string | EndpointSettings>): Promise<Client>
-```
 
 **Parameters**
 

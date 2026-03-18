@@ -69,9 +69,6 @@ matchMaker.stats.local.roomCount
 
 Creates a new room and return its cached data.
 
-```ts filename="Signature"
-matchMaker.createRoom(roomName, options)
-```
 
 **Parameters:**
 
@@ -94,9 +91,6 @@ console.log(room);
 
 Join or create a room and return a client seat reservation.
 
-```ts filename="Signature"
-matchMaker.joinOrCreate(roomName, options)
-```
 
 **Parameters:**
 
@@ -122,9 +116,6 @@ console.log(reservation);
 
 Creates a seat reservation in a specific room.
 
-```ts filename="Signature"
-matchMaker.reserveSeatFor(room, clientOptions, authData)
-```
 
 **Parameters:**
 
@@ -152,9 +143,6 @@ console.log(reservation);
 
 Join a room and return seat reservation. An exception is thrown if there are no rooms available for `roomName`.
 
-```ts filename="Signature"
-matchMaker.join(roomName, options)
-```
 
 **Parameters:**
 
@@ -180,9 +168,6 @@ console.log(reservation);
 
 Join a room by ID and return client seat reservation. An exception is thrown if a room is not found for `roomId`.
 
-```ts filename="Signature"
-matchMaker.joinById(roomId, options)
-```
 
 **Parameters:**
 
@@ -208,9 +193,6 @@ console.log(reservation);
 
 Create a new room and return client seat reservation.
 
-```ts filename="Signature"
-matchMaker.create(roomName, options)
-```
 
 **Parameters:**
 
@@ -236,9 +218,6 @@ console.log(reservation);
 
 Perform a query against cached rooms.
 
-```ts filename="Signature"
-matchMaker.query(conditions, sortOptions?)
-```
 
 **Parameters:**
 
@@ -276,9 +255,6 @@ matchMaker.query(conditions, sortOptions?)
 
 Find a public and unlocked room available.
 
-```ts filename="Signature"
-matchMaker.findOneRoomAvailable(roomName, options)
-```
 
 **Parameters:**
 
@@ -297,9 +273,6 @@ console.log(room);
 
 Get room data by ID. This method will return the cached room data. It is safe to call from any process.
 
-```ts filename="Signature"
-matchMaker.getRoomById(roomId)
-```
 
 **Parameters:**
 
@@ -317,9 +290,6 @@ console.log(room);
 
 Get the actual Room instance by ID. This method only returns the room instance if it's available in the current process, otherwise it will return `undefined`.
 
-```ts filename="Signature"
-matchMaker.getLocalRoomById(roomId)
-```
 
 **Parameters:**
 
@@ -334,9 +304,6 @@ room.clients[0].send("hello", "world");
 
 Call a method or return a property on a remote room.
 
-```ts filename="Signature"
-matchMaker.remoteRoomCall(roomId, method, args)
-```
 
 **Parameters:**
 

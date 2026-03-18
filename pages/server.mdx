@@ -192,13 +192,6 @@ Define room types for the match-maker using the `rooms` configuration in `define
 - Rooms are **not created** during configuration
 - Rooms are created upon client request ([See frontend methods](/sdk/#methods))
 
-```ts filename="Signature"
-const server = defineServer({
-  rooms: {
-    room_name: defineRoom(RoomClass, defaultOptions?)
-  }
-})
-```
 
 **Parameters:**
 
@@ -233,9 +226,6 @@ const server = defineServer({
 
 Whenever a room is created by the `create()` or `joinOrCreate()` methods, only the `options` defined by the `filterBy()` method are going to be stored internally, and used to filter out rooms in further `join()` or `joinOrCreate()` calls.
 
-```ts filename="Signature"
-defineRoom(RoomClass).filterBy(options);
-```
 
 **Parameters**
 
@@ -307,9 +297,6 @@ defineRoom(RoomClass).filterBy(options);
 
 You can also give a different priority for joining rooms depending on their information upon creation.
 
-```ts filename="Signature"
-defineRoom(RoomClass).sortBy(options);
-```
 
 The `options` parameter is a key-value object containing the field name in the left, and the sorting direction in the right. Sorting direction can be one of these values: `-1`, `"desc"`, `"descending"`, `1`, `"asc"` or `"ascending"`.
 

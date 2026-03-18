@@ -72,6 +72,100 @@ You can define a Room using a class that extends `Room`.
     </Tabs.Tab>
 </Tabs>
 
+## Room State
+
+Set the synchronizable room state. See [State Synchronization](/state/) and [Schema](/state/schema/) for more details.
+
+```typescript
+import { Room } from "colyseus";
+import { MyState } from "./MyState";
+
+export class MyRoom extends Room {
+    state = new MyState();
+}
+```
+
+<Callout type="warning">
+    The room's `state` is **mutable**. You should not reassign the `state` object, but rather mutate it directly when updating the state.
+</Callout>
+
+---
+
+## Message Handling
+
+Room handlers have these methods available.
+
+### On Messages
+
+Register callbacks to process messages sent by the frontend.
+
+
+- The `type` argument can be either `string` or `number`.
+- You can only define a single callback per message type.
+
+#### Callback for specific type of message
+
+```ts filename="MyRoom.ts"
+messages = {
+    "action": (client, payload) => {
+        console.log(client.sessionId, "sent 'action' message: ", payload);
+    }
+}
+```
+
+<Callout type="info">
+    Use `room.send(type, payload)` from the client SDK to send messages to the server.
+</Callout>
+
+#### Fallback for all messages
+
+You can register a single callback as a fallback to handle **other** types of messages.
+
+```ts filename="MyRoom.ts"
+messages = {
+    "action": (client, payload) => {
+        //
+        // Triggers when 'action' message is sent.
+        //
+    },
+
+    "*": (client, type, payload) => {
+        //
+        // Triggers when any other type of message is sent,
+        // excluding "action", which has its own specific handler defined above.
+        //
+        console.log(client.sessionId, "sent", type, payload);
+    }
+}
+```
+
+#### Message input validation
+
+You may provide a validation schema using the `validate()` helper with a Zod schema. If validation fails, the message will be ignored.
+
+The validated and typed data will be passed as `payload` on the message handler.
+
+```ts filename="MyRoom.ts"
+import { Room, validate } from "colyseus";
+import { z } from "zod";
+
+// ...
+
+messages = {
+    "action": validate(z.object({
+        x: z.number(),
+        y: z.number()
+    }), (client, payload) => {
+        //
+        // payload.x and payload.y are guaranteed to be numbers here.
+        //
+        console.log({ x: payload.x, y: payload.y });
+    })
+}
+```
+
+---
+
 ## Lifecycle Events
 
 The room's lifecycle events are called automatically. [`async`/`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) is supported in all of them.
@@ -476,114 +570,12 @@ onBeforeShutdown() {
 
 ---
 
-## Message Handling
+## Room Configuration
 
-Room handlers have these methods available.
-
-### On Messages
-
-Register callbacks to process messages sent by the frontend.
-
-```ts filename="Signature"
-messages = {
-    [type: string | number]: (client, payload) => void
-}
-```
-
-- The `type` argument can be either `string` or `number`.
-- You can only define a single callback per message type.
-
-#### Callback for specific type of message
-
-```ts filename="MyRoom.ts"
-messages = {
-    "action": (client, payload) => {
-        console.log(client.sessionId, "sent 'action' message: ", payload);
-    }
-}
-```
-
-<Callout type="info">
-    Use `room.send(type, payload)` from the client SDK to send messages to the server.
-</Callout>
-
-#### Fallback for all messages
-
-You can register a single callback as a fallback to handle **other** types of messages.
-
-```ts filename="MyRoom.ts"
-messages = {
-    "action": (client, payload) => {
-        //
-        // Triggers when 'action' message is sent.
-        //
-    },
-
-    "*": (client, type, payload) => {
-        //
-        // Triggers when any other type of message is sent,
-        // excluding "action", which has its own specific handler defined above.
-        //
-        console.log(client.sessionId, "sent", type, payload);
-    }
-}
-```
-
-#### Message input validation
-
-You may provide a validation schema using the `validate()` helper with a Zod schema. If validation fails, the message will be ignored.
-
-The validated and typed data will be passed as `payload` on the message handler.
-
-```ts filename="MyRoom.ts"
-import { Room, validate } from "colyseus";
-import { z } from "zod";
-
-// ...
-
-messages = {
-    "action": validate(z.object({
-        x: z.number(),
-        y: z.number()
-    }), (client, payload) => {
-        //
-        // payload.x and payload.y are guaranteed to be numbers here.
-        //
-        console.log({ x: payload.x, y: payload.y });
-    })
-}
-```
-
----
-
-### Defining Room State
-
-Set the synchronizable room state. See [State Synchronization](/state/) and [Schema](/state/schema/) for more details.
-
-```typescript
-import { Room } from "colyseus";
-import { MyState } from "./MyState";
-
-export class MyRoom extends Room {
-    state = new MyState();
-}
-```
-
-<Callout type="warning">
-    The room's `state` is **mutable**. You should not reassign the `state` object, but rather mutate it directly when updating the state.
-</Callout>
-
----
-
-## Methods
-
-### Set Simulation Interval
+### Game Loop
 
 _Optional:_ Set a simulation interval that can change the state of the game. The simulation interval is your game loop. Default simulation interval: 16.6ms (60fps)
 
-```ts filename="Signature"
-this.setSimulationInterval (callback[, milliseconds=16.6])
-```
 
 ```ts filename="MyRoom.ts"
 onCreate () {
@@ -598,50 +590,7 @@ update (deltaTime) {
 
 ---
 
-### Set Patch Rate
-
-<Callout type="warning">
-    Deprecated: Use the [`patchRate`](#patchrate) property instead.
-</Callout>
-
-Set frequency the patched state should be sent to all clients. Default is `50ms` (20fps)
-
-```ts filename="Signature"
-this.setPatchRate (milliseconds)
-```
-
----
-
-
-### Set Private
-
-Set the room listing as private - or revert it to public, if `false` is provided.
-
-```ts filename="Signature"
-this.setPrivate (bool)
-```
-
----
-
-### Set Metadata
-
-Set metadata to this room. Each room instance may have metadata attached to it - the only purpose for attaching metadata is to differentiate one room from another when getting the list of available rooms via [Lobby Room](/room/built-in/lobby) or [Match-maker API](/matchmaker).
-
-```ts filename="Signature"
-this.setMetadata (metadata)
-```
-
-```ts filename="MyRoom.ts"
-onCreate(options) {
-    this.setMetadata({ friendlyFire: options.friendlyFire });
-}
-```
-
----
-
-### Set Matchmaking
-
-<Callout type="info">New in 0.17</Callout>
+### Matchmaking Properties
 
 Update multiple matchmaking/listing properties at once with a single persist operation. This is the recommended way to update room listing properties.
 
@@ -664,29 +613,30 @@ await this.setMatchmaking({
 });
 ```
 
----
+You can also set individual properties:
 
-### Set Seat Reservation Time
-
-<Callout type="warning">
-    Deprecated: Use the [`seatReservationTimeout`](#seatreservationtimeout) property instead.
-</Callout>
-
-Set the number of seconds a room can wait for a client to effectively join the room. You should consider how long your [`onAuth()`](#onauth) will have to wait for setting a different seat reservation time. The default value is 15 seconds.
-
-```ts filename="Signature"
-this.setSeatReservationTime (seconds)
-```
 
 ---
+
+### Configuration Properties
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `maxClients` | `Infinity` | Maximum number of clients allowed. Room is auto-locked when full. |
+| `patchRate` | `50` | Frequency to send state updates to clients, in milliseconds (20fps). |
+| `autoDispose` | `true` | Automatically dispose the room when last client disconnects. |
+| `maxMessagesPerSecond` | `Infinity` | Maximum messages a client can send per second. Exceeding disconnects the client. |
+| `seatReservationTimeout` | `15` | Seconds to wait for a client to effectively join after reserving a seat. |
+| `locked` | _(read-only)_ | Whether the room is currently locked (via `maxClients` or `lock()`). |
+
+---
+
+## Communication
 
 ### Broadcast Message
 
 Send a message to all connected clients.
 
-```ts filename="Signature"
-this.broadcast (type, payload, options?)
-```
 
 Available options are:
 
@@ -748,9 +698,6 @@ Available options are:
 
 Locking the room will remove it from the pool of available rooms for new clients to connect to.
 
-```ts filename="Signature"
-this.lock ()
-```
 
 ---
 
@@ -758,11 +705,63 @@ this.lock ()
 
 Unlocking the room returns it to the pool of available rooms for new clients to connect to.
 
-```ts filename="Signature"
-this.unlock ()
+
+---
+
+---
+
+### Has Reached Max Clients
+
+Returns whether the sum of connected clients and reserved seats exceeds the maximum number of clients.
+
+
+```ts filename="MyRoom.ts"
+onCreate(options) {
+    if (this.hasReachedMaxClients()) {
+        console.log("Room is full!");
+    }
+}
 ```
 
 ---
+
+---
+
+### Disconnect
+
+Disconnect all clients, then dispose.
+
+
+---
+
+### Broadcast Patch
+
+<Callout type="warning">
+    **You may not need this!** - This method is called automatically by the framework.
+</Callout>
+
+This method will check whether mutations have occurred in the `state`, and broadcast them to all connected clients.
+
+
+If you'd like to have control over when to broadcast patches, you can do this by disabling the default patch interval:
+
+```ts filename="MyRoom.ts"
+// disable automatic patches
+patchRate = null;
+
+onCreate() {
+    this.clock.setInterval(() => {
+        // only broadcast patches if your custom conditions are met.
+        if (yourCondition) {
+            this.broadcastPatch();
+        }
+    }, 2000);
+}
+```
+
+---
+
+## Reconnection
 
 ### Allow Reconnection
 
@@ -772,9 +771,6 @@ A reconnection may be [made manually](/sdk#manual-reconnection) (via `sdk.reconn
 
 The `.allowReconnection()` method should be called on [`onDrop()`](#on-drop) OR [`onLeave()`](#on-leave) method.
 
-```ts filename="Signature"
-this.allowReconnection (client, seconds)
-```
 
 - The `allowReconnection()` returns a `Deferred<Client>` instance.
 - The returned `Deferred` instance is a promise-like structure, you can forcibly reject the reconnection by calling `.reject()` on it. (see second example)
@@ -864,62 +860,6 @@ this.allowReconnection (client, seconds)
 
 ---
 
-### Has Reached Max Clients
-
-Returns whether the sum of connected clients and reserved seats exceeds the maximum number of clients.
-
-```ts filename="Signature"
-this.hasReachedMaxClients ()
-```
-
-```ts filename="MyRoom.ts"
-onCreate(options) {
-    if (this.hasReachedMaxClients()) {
-        console.log("Room is full!");
-    }
-}
-```
-
----
-
-### Disconnect
-
-Disconnect all clients, then dispose.
-
-```ts filename="Signature"
-this.disconnect ()
-```
-
----
-
-### Broadcast Patch
-
-<Callout type="warning">
-    **You may not need this!** - This method is called automatically by the framework.
-</Callout>
-
-This method will check whether mutations have occurred in the `state`, and broadcast them to all connected clients.
-
-```ts filename="Signature"
-this.broadcastPatch ()
-```
-
-If you'd like to have control over when to broadcast patches, you can do this by disabling the default patch interval:
-
-```ts filename="MyRoom.ts"
-// disable automatic patches
-patchRate = null;
-
-onCreate() {
-    this.clock.setInterval(() => {
-        // only broadcast patches if your custom conditions are met.
-        if (yourCondition) {
-            this.broadcastPatch();
-        }
-    }, 2000);
-}
-```
-
 ---
 
 ## Room Properties
@@ -965,14 +905,14 @@ onCreate(options) {
 ```
 
 <Callout type="warning">
-    The `metadata` setter can only be used during `onCreate()`. To update metadata after the room is created, use [`setMetadata()`](#set-metadata) or [`setMatchmaking()`](#set-matchmaking) instead.
+    The `metadata` setter can only be used during `onCreate()`. To update metadata after the room is created, use [`setMetadata()`](#matchmaking-properties) or [`setMatchmaking()`](#matchmaking-properties) instead.
 </Callout>
 
 ---
 
 ### `clients`
 
-The array of connected clients. See [Client instance](#client).
+The array of connected clients. See [Client Instance](#client-instance).
 
 #### Sending a message to a specific client
 
@@ -996,79 +936,9 @@ const client = this.clients.getById("UEsBFUBhK");
 
 ---
 
-### `maxClients`
-
-Maximum number of clients allowed to connect into the room. When room reaches
-this limit, it is locked automatically. Unless the room was explicitly locked by
-you via [lock()](#lock) method, the room will be unlocked as soon as a client
-disconnects from it.
-
----
-
-### `patchRate`
-
-Frequency to send the room state to connected clients, in milliseconds. Default is `50`ms (20fps).
-
-```ts
-class MyRoom extends Room {
-    patchRate = 50;
-}
-```
-
----
-
-### `autoDispose`
-
-Automatically dispose the room when last client disconnects. Default is `true`
-
-You may disable this, and let the room stay in memory forever by
-
-```ts
-class MyRoom extends Room {
-    autoDispose = false;
-}
-```
-
----
-
-### `maxMessagesPerSecond`
-
-Maximum number of messages a client can send to the server per second. If a client sends more messages than this limit, it will be disconnected. Default is `Infinity` (disabled).
-
-```ts
-class MyRoom extends Room {
-    maxMessagesPerSecond = 30;
-}
-```
-
----
-
-### `seatReservationTimeout`
-
-Set the number of seconds a room can wait for a client to effectively join the room. You should consider how long your [`onAuth()`](#onauth) will have to wait for setting a different seat reservation time. The default value is 15 seconds.
-
-```ts
-class MyRoom extends Room {
-    seatReservationTimeout = 15;
-}
-```
-
-You may set the `COLYSEUS_SEAT_RESERVATION_TIME` environment variable if you'd like to change the seat reservation time globally.
-
----
-
-### `locked` (read-only)
-
-This property will change on these situations:
-
-- The maximum number of allowed clients has been reached (`maxClients`)
-- You manually locked, or unlocked the room using [`lock()`](#lock) or [`unlock()`](#unlock).
-
----
-
 ### `clock`
 
-It is recommended to use the `clock` instance for `setTimeout` and `setInterval` methods, as timers and intervals are automatically cleared when the room is disposed - preventing memory leaks.
+The `clock` provides timing controls that automatically clean up when the room is disposed, preventing memory leaks. Use it instead of `setTimeout` and `setInterval`.
 
 ```ts filename="MyRoom.ts"
 // ...
@@ -1217,9 +1087,6 @@ onJoin(client, options) {
 
 Send a type of message to the client. Messages are encoded with MsgPack and can hold any JSON-serializable data structure.
 
-```ts filename="Signature"
-client.send(type, payload)
-```
 
 The `type` can be either a `string` or a `number`.
 
@@ -1245,9 +1112,6 @@ client.send(1, { kind: "ammo"});
 
 Send a raw byte array message to the client.
 
-```ts filename="Signature"
-client.sendBytes(type, bytes)
-```
 
 The `type` can be either a `string` or a `number`.
 
@@ -1271,9 +1135,6 @@ client.sendBytes(1, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 
 
 Force disconnection of the `client` with the room. You may send a custom `code` when closing the connection, with values between `4000` and `4999` (see [table of WebSocket close codes](#table-of-websocket-close-codes))
 
-```ts filename="Signature"
-client.leave(code?: number)
-```
 
 <Callout type="info">
     This will trigger [`room.onLeave`](/sdk/#on-leave) event on the frontend.
