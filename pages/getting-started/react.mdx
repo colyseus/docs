@@ -282,9 +282,9 @@ The returned `useLobby()` hook provides the same fields as `useLobbyRoom` (`room
 
 ---
 
-## Direct use of `@colyseus/sdk` in React
+## Using `@colyseus/sdk` directly
 
-If you prefer to manage the room connection manually, you can use the `@colyseus/sdk` directly in your React components. Just make sure to handle the connection lifecycle properly (joining, leaving on unmount, etc.).
+If you prefer manual control over the room lifecycle without the `@colyseus/react` package, you can use `@colyseus/sdk` directly with `useEffect`:
 
 ```typescript filename="RoomComponent.tsx"
 import { useEffect, useState, useRef } from "react";
@@ -293,28 +293,19 @@ import { Client, Room } from "@colyseus/sdk";
 const client = new Client("http://localhost:2567");
 
 function RoomComponent () {
-	const roomRef = useRef<Room>();
-
-    const [ isConnecting, setIsConnecting ] = useState(true);
+    const roomRef = useRef<Room>();
     const [ players, setPlayers ] = useState([]);
 
-	useEffect(() => {
-		const req = client.joinOrCreate("my_room", {});
+    useEffect(() => {
+        const req = client.joinOrCreate("my_room", {});
 
-		req.then((room) => {
-			roomRef.current = room;
+        req.then((room) => {
+            roomRef.current = room;
+            room.onStateChange((state) => setPlayers(state.players.toJSON()));
+        });
 
-			setIsConnecting(false);
-
-            // handle room events here
-			room.onStateChange((state) => setPlayers(state.players.toJSON()));
-		});
-
-		return () => {
-            // make sure to leave the room when the component is unmounted
-			req.then((room) => room.leave());
-		};
-	}, []);
+        return () => { req.then((room) => room.leave()); };
+    }, []);
 
     return (
         <div>
@@ -326,134 +317,9 @@ function RoomComponent () {
 }
 ```
 
-### Using a Context Provider for Room Management
-
-Alternatively, you can use a React Context Provider to manage the connection and room state across your application.
-
-```typescript filename="RoomContext.tsx"
-import React, { createContext, useContext } from 'react';
-import { Room } from '@colyseus/sdk';
-import type { MyRoomState } from "../../backend/src/rooms/MyRoomState";
-
-interface RoomContextType {
-    isConnecting: boolean;
-    isConnected: boolean;
-    room: Room;
-    join: () => void;
-    joinError: boolean;
-    state: any; // replace `any` with your state type
-}
-
-export const RoomContext = createContext<RoomContextType>({});
-
-export function useRoom() { return useContext(RoomContext); }
-
-let room!: Room;
-
-//
-// Workaround for React.StrictMode, to avoid multiple join requests
-//
-let hasActiveJoinRequest: boolean = false;
-
-export function RoomProvider({ children }: { children: React.ReactNode }) {
-
-    const [joinError, setJoinError] = React.useState(false);
-    const [isConnecting, setIsConnecting] = React.useState(false);
-    const [isConnected, setIsConnected] = React.useState(false);
-    const [state, setState] = React.useState<ReturnType<MyRoomState['toJSON']>>(undefined)
-
-    const join = async () => {
-        if (hasActiveJoinRequest) { return; }
-        hasActiveJoinRequest = true;
-
-        setIsConnecting(true);
-
-        try {
-            room = await client.joinOrCreate("my_room");
-
-        } catch (e) {
-            setJoinError(true);
-            setIsConnecting(false);
-            return;
-
-        } finally {
-            hasActiveJoinRequest = false;
-        }
-
-        //
-        // cache reconnection token, if user goes back to this URL, we can try re-connect to the room.
-        // TODO: do not cache reconnection token if user is spectating
-        //
-        localStorage.setItem("reconnection", JSON.stringify({
-            token: room.reconnectionToken,
-            roomId: room.roomId,
-        }));
-
-        room.onStateChange((state) => setState(state.toJSON()));
-        room.onLeave(() => setIsConnected(false));
-
-        setIsConnected(true);
-    };
-
-    return (
-        <RoomContext.Provider value={{ isConnecting, isConnected, room, join, joinError, state }}>
-            {children}
-        </RoomContext.Provider>
-    );
-}
-```
-
-### Using a Context Provider for Authentication
-
-You can also use a React Context Provider to manage the authentication state across your application. This is useful if you want to handle user authentication and authorization in a centralized way.
-
-The following example shows how to create an `AuthContext` that provides the authentication state and automatically signs in the user anonymously if no token is available.
-
-You can customize it to meet your specific authentication needs.
-
-```typescript filename="AuthContext.tsx"
-import { createContext, useContext, useState, useEffect } from 'react';
-import { Client } from "@colyseus/sdk";
-
-interface AuthContextType {
-  user: any;
-  loading: boolean;
-}
-
-const AuthContext = createContext<AuthContextType>(undefined);
-
-export function AuthProvider({ colyseusSDK, children }: { colyseusSDK: Client, children: React.ReactNode }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  const setUserData = (userData: any) => {
-    setUser(userData);
-    setLoading(false);
-  };
-
-  // Handle authentication on mount or token change
-  useEffect(() => {
-    colyseusSDK.auth.onChange((authData) =>
-      setUserData((authData.token) ? authData.user : null));
-
-    if (!colyseusSDK.auth.token) {
-        colyseusSDK.auth.signInAnonymously()
-            .then((response) => console.log("Anonymous login success:", response))
-            .catch((error) => console.error("Anonymous login error:", error));
-    }
-  }, [colyseusSDK]);
-
-  return (
-    <AuthContext.Provider value={{ user, loading, }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-export function useAuth () {
-  return useContext(AuthContext);
-};
-```
+<Callout type="info">
+    The `@colyseus/react` hooks handle StrictMode, cleanup, and reconnection automatically. Use direct SDK access only when you need full control over the connection lifecycle.
+</Callout>
 
 ## Next Steps
 

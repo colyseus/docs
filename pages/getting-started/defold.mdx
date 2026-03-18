@@ -57,6 +57,66 @@ npm start
 
 You should be able to see the server running at `http://localhost:2567`, and the example project will be able to connect to it.
 
+## Quick Example
+
+This example shows how to connect to a room, listen for state changes, send messages, and leave the room.
+
+```lua filename="network.script"
+local ColyseusSDK = require("colyseus.sdk")
+
+local client
+local room
+local callbacks
+
+function init(self)
+    client = ColyseusSDK.Client("ws://localhost:2567")
+
+    client:join_or_create("my_room", {}, function(err, _room)
+        if err then
+            print("JOIN ERROR: " .. err)
+            return
+        end
+
+        room = _room
+        print("Joined room: " .. room.id)
+
+        -- Get state callbacks handler
+        callbacks = ColyseusSDK.callbacks(room)
+
+        -- Listen for changes on a state property
+        callbacks:listen("currentTurn", function(currentValue, previousValue)
+            print("Turn changed: " .. tostring(previousValue) .. " -> " .. tostring(currentValue))
+        end)
+
+        -- Listen for players being added
+        callbacks:on_add("players", function(player, sessionId)
+            print("Player joined: " .. sessionId)
+
+            callbacks:listen(player, "hp", function(currentHp, previousHp)
+                print("Player " .. sessionId .. " hp: " .. tostring(currentHp))
+            end)
+        end)
+
+        -- Listen for players being removed
+        callbacks:on_remove("players", function(player, sessionId)
+            print("Player left: " .. sessionId)
+        end)
+
+        -- Send a message to the server
+        room:send("move", { x = 10, y = 20 })
+
+        -- Listen for messages from the server
+        room:on_message("chat", function(message)
+            print("Chat: " .. message)
+        end)
+
+        room:on_leave(function(code)
+            print("Left room: " .. code)
+        end)
+    end)
+end
+```
+
 ## SDK API
 
 Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select the **Lua (Defold)** tab.

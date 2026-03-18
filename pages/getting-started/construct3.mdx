@@ -30,23 +30,23 @@ Please explore this demonstration project to understand how to use Colyseus with
 - Open the `RawUsage.c3p` file on [Construct3 Editor ↗](https://www.construct.net/a/429195?t=construct3).
 - Start the local server by running `npm install` and then `npm start` on the `server` folder.
 
-Some of the concepts covered in this project:
+The example project covers the core concepts of using Colyseus with Construct 3:
 
 ### Joining a Room
 
-Joining a room, handling incoming messages from the server, and handling a connection close.
+Use the "Join Room" action to connect to a room on the server. Once connected, you can listen for incoming messages using "On Message" triggers, and handle disconnection with "On Leave".
 
 ![](/construct3/join-room-handle-messages.png)
 
-### Listing available Rooms in the server
-
-![](/construct3/matchmaking-rooms-available.png)
-
 ### Listening for changes in the State
+
+Use "On State Change" to react whenever the server updates the room state. Access individual state properties using the expression syntax to read synchronized values like scores, positions, or game phase.
 
 ![](/construct3/state-change.png)
 
 ### Listening for add/remove events on Maps and Arrays within the State
+
+Track when items are added to or removed from collections (Maps and Arrays) in the state. This is essential for handling dynamic lists like players joining/leaving or inventory changes.
 
 ![](/construct3/state-items-add-or-remove.png)
 

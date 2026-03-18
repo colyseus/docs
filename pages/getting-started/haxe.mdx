@@ -57,6 +57,69 @@ npm start
 
 You should be able to see the server running at `http://localhost:2567`, and the example project will be able to connect to it.
 
+## Quick Example
+
+This example shows how to connect to a room, listen for state changes, and send messages.
+
+```haxe
+import io.colyseus.Client;
+import io.colyseus.Room;
+import io.colyseus.serializer.schema.Callbacks;
+
+class NetworkManager {
+    var client:Client;
+    var room:Room<Dynamic>;
+
+    public function new() {
+        client = new Client("ws://localhost:2567");
+
+        client.joinOrCreate("my_room", [], Dynamic, function(err, room) {
+            if (err != null) {
+                trace("JOIN ERROR: " + err);
+                return;
+            }
+
+            this.room = room;
+            trace("Joined room: " + room.id);
+
+            // Get state callbacks handler
+            var callbacks = Callbacks.get(room);
+
+            // Listen for changes on a state property
+            callbacks.listen("currentTurn", function(currentValue, previousValue) {
+                trace("Turn changed: " + previousValue + " -> " + currentValue);
+            });
+
+            // Listen for players being added
+            callbacks.onAdd("players", function(player, sessionId) {
+                trace("Player joined: " + sessionId);
+
+                callbacks.listen(player, "hp", function(currentHp, previousHp) {
+                    trace("Player " + sessionId + " hp: " + currentHp);
+                });
+            });
+
+            // Listen for players being removed
+            callbacks.onRemove("players", function(player, sessionId) {
+                trace("Player left: " + sessionId);
+            });
+
+            // Send a message to the server
+            room.send("move", {x: 10, y: 20});
+
+            // Listen for messages from the server
+            room.onMessage("chat", function(message) {
+                trace("Chat: " + message);
+            });
+
+            room.onLeave = function(code) {
+                trace("Left room: " + code);
+            };
+        });
+    }
+}
+```
+
 ## SDK API
 
 Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select the **Haxe** tab.

@@ -64,6 +64,65 @@ npm start
 
 You should be able to see the server running at `http://localhost:2567`, and the example project will be able to connect to it.
 
+## Quick Example
+
+This example shows how to connect to a room, listen for state changes via Callbacks, and send messages.
+
+```csharp filename="NetworkManager.cs"
+using UnityEngine;
+using Colyseus;
+using Colyseus.Schema;
+
+public class NetworkManager : MonoBehaviour
+{
+    Client client;
+    Room<MyRoomState> room;
+
+    async void Start()
+    {
+        client = new Client("ws://localhost:2567");
+
+        room = await client.JoinOrCreate<MyRoomState>("my_room");
+        Debug.Log("Joined room: " + room.Id);
+
+        // Get state callbacks handler
+        var callbacks = Callbacks.Get(room);
+
+        // Listen for changes on a state property
+        callbacks.Listen(state => state.currentTurn, (currentValue, previousValue) => {
+            Debug.Log($"Turn changed: {previousValue} -> {currentValue}");
+        });
+
+        // Listen for players being added
+        callbacks.OnAdd(state => state.players, (sessionId, player) => {
+            Debug.Log($"Player joined: {sessionId}");
+
+            callbacks.Listen(player, p => p.hp, (currentHp, previousHp) => {
+                Debug.Log($"Player {sessionId} hp: {currentHp}");
+            });
+        });
+
+        // Listen for players being removed
+        callbacks.OnRemove(state => state.players, (sessionId, player) => {
+            Debug.Log($"Player left: {sessionId}");
+        });
+
+        // Send a message to the server
+        room.Send("move", new { x = 10f, y = 20f });
+
+        // Listen for messages from the server
+        room.OnMessage<string>("chat", (message) => {
+            Debug.Log("Chat: " + message);
+        });
+    }
+
+    async void OnDestroy()
+    {
+        if (room != null) await room.Leave();
+    }
+}
+```
+
 ## SDK API
 
 Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select the **C# (Unity)** tab.
