@@ -1269,7 +1269,7 @@ client.sendBytes(1, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 
 
 #### Leave Room
 
-Force disconnection of the `client` with the room. You may send a custom `code` when closing the connection, with values between `4000` and `4999` (see [table of WebSocket close codes](#websocket-close-codes-table))
+Force disconnection of the `client` with the room. You may send a custom `code` when closing the connection, with values between `4000` and `4999` (see [table of WebSocket close codes](#table-of-websocket-close-codes))
 
 ```ts filename="Signature"
 client.leave(code?: number)
@@ -1279,7 +1279,7 @@ client.leave(code?: number)
     This will trigger [`room.onLeave`](/sdk/#on-leave) event on the frontend.
 </Callout>
 
-**Table of WebSocket close codes**
+#### Table of WebSocket close codes
 
 | Close code (uint16) | Codename               | Internal | Customizable | Description |
 |---------------------|------------------------|----------|--------------|-------------|
