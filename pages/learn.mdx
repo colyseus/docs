@@ -2,26 +2,26 @@ import { Tabs, Callout } from "nextra/components";
 
 # Learn Multiplayer Game Development with Colyseus
 
-Learn how to build authoritative multiplayer games with Colyseus. Explore demo projects, watch talks, and see how the same game server powers clients across Unity, Godot, Defold, GameMaker, Haxe, Construct 3, and the Web.
+Explore working demo projects, watch conference talks, and see how a single authoritative Colyseus game server powers clients across Unity, Godot, Defold, GameMaker, Haxe, Construct 3, and the Web.
 
 ## Demo Projects
 
-Each demo shares a single authoritative server with multiple frontend implementations — one per game engine — so you can see exactly how each SDK integrates with Colyseus.
+Each demo runs from a single authoritative server with multiple client implementations — one per game engine. Browse the source code to see exactly how each SDK connects, synchronizes state, and handles real-time gameplay with Colyseus.
 
 <Tabs items={["Realtime Tanks Multiplayer", "Turn-based 'UNO' Card Game"]} storageKey="demo-project-tab">
 
     <Tabs.Tab>
 
-    | Client | Rendering | Platforms | Assets | Links | Screenshot |
-    |---|---|---|---|---|---|
-    | PlayCanvas | 3D | Web | [Pixel Tank](https://sketchfab.com/3d-models/pixel-tank-d04bf57ee1ae4504856032549bcfd810) by [Firewarden3D](https://sketchfab.com/Firewarden) | [Play](https://colyseus.io/realtime-tanks-demo/web-playcanvas/) · [Source](https://github.com/colyseus/realtime-tanks-demo/tree/master/web-playcanvas) | ![PlayCanvas](/demos/tanks/web-playcanvas.webp) |
-    | GameMaker | 2D | Windows, macOS, Linux, HTML5 | [Kenney Top-Down Tanks](https://kenney.nl/assets/top-down-tanks-redux) (CC0) | [Play](https://colyseus.io/realtime-tanks-demo/gamemaker/) · [Source](https://github.com/colyseus/realtime-tanks-demo/tree/master/gamemaker) | ![GameMaker](/demos/tanks/gamemaker.webp) |
-    | Godot | 3D | Windows, macOS, Linux, HTML5, iOS, Android | Procedural meshes | [Play](https://colyseus.io/realtime-tanks-demo/godot/) · [Source](https://github.com/colyseus/realtime-tanks-demo/tree/master/godot) | ![Godot](/demos/tanks/godot.webp) |
-    | Defold | 2D | Windows, macOS, Linux, HTML5, iOS, Android | [Kenney Top-Down Tanks](https://kenney.nl/assets/top-down-tanks-redux) (CC0) | [Play](https://colyseus.io/realtime-tanks-demo/defold/) · [Source](https://github.com/colyseus/realtime-tanks-demo/tree/master/defold) | ![Defold](/demos/tanks/defold.webp) |
-    | Haxe + Heaps | 3D | Web, Native (HL/C) | Procedural meshes | [Play](https://colyseus.io/realtime-tanks-demo/haxe/) · [Source](https://github.com/colyseus/realtime-tanks-demo/tree/master/haxe) | ![Haxe](/demos/tanks/haxe.webp) |
-    | Unity | 3D | Windows, macOS, Linux, WebGL, iOS, Android | Procedural primitives | [Play](https://colyseus.io/realtime-tanks-demo/unity/) · [Source](https://github.com/colyseus/realtime-tanks-demo/tree/master/unity) | ![Unity](/demos/tanks/unity.webp) |
-    | Three.js | 3D | Web | [Pixel Tank](https://sketchfab.com/3d-models/pixel-tank-d04bf57ee1ae4504856032549bcfd810) by [Firewarden3D](https://sketchfab.com/Firewarden) | [Play](https://colyseus.io/realtime-tanks-demo/web-threejs/) · [Source](https://github.com/colyseus/realtime-tanks-demo/tree/master/web-threejs) | ![Three.js](/demos/tanks/web-threejs.webp) |
-    | Construct 3 | 2D | Web | [Kenney Top-Down Tanks](https://kenney.nl/assets/top-down-tanks-redux) (CC0) | [Play](https://colyseus.io/realtime-tanks-demo/construct3/) · [Source](https://github.com/colyseus/realtime-tanks-demo/tree/master/construct3) | ![Construct 3](/demos/tanks/construct3.webp) |
+    | Client | Platforms | Links | Screenshot |
+    |---|---|---|---|
+    | PlayCanvas | Web | [Demo](https://colyseus.io/realtime-tanks-demo/web-playcanvas/) · [Source](https://github.com/colyseus/realtime-tanks-demo/tree/master/web-playcanvas) | ![Tanks demo in PlayCanvas](/demos/tanks/web-playcanvas.webp) |
+    | GameMaker | Windows, macOS, Linux, HTML5 | [Demo](https://colyseus.io/realtime-tanks-demo/gamemaker/) · [Source](https://github.com/colyseus/realtime-tanks-demo/tree/master/gamemaker) | ![Tanks demo in GameMaker](/demos/tanks/gamemaker.webp) |
+    | Godot | Windows, macOS, Linux, HTML5, iOS, Android | [Demo](https://colyseus.io/realtime-tanks-demo/godot/) · [Source](https://github.com/colyseus/realtime-tanks-demo/tree/master/godot) | ![Tanks demo in Godot](/demos/tanks/godot.webp) |
+    | Defold | Windows, macOS, Linux, HTML5, iOS, Android | [Demo](https://colyseus.io/realtime-tanks-demo/defold/) · [Source](https://github.com/colyseus/realtime-tanks-demo/tree/master/defold) | ![Tanks demo in Defold](/demos/tanks/defold.webp) |
+    | Haxe + Heaps | Web, Native (HL/C) | [Demo](https://colyseus.io/realtime-tanks-demo/haxe/) · [Source](https://github.com/colyseus/realtime-tanks-demo/tree/master/haxe) | ![Tanks demo in Haxe](/demos/tanks/haxe.webp) |
+    | Unity | Windows, macOS, Linux, WebGL, iOS, Android | [Demo](https://colyseus.io/realtime-tanks-demo/unity/) · [Source](https://github.com/colyseus/realtime-tanks-demo/tree/master/unity) | ![Tanks demo in Unity](/demos/tanks/unity.webp) |
+    | Three.js | Web | [Demo](https://colyseus.io/realtime-tanks-demo/web-threejs/) · [Source](https://github.com/colyseus/realtime-tanks-demo/tree/master/web-threejs) | ![Tanks demo in Three.js](/demos/tanks/web-threejs.webp) |
+    | Construct 3 | Web | [Demo](https://colyseus.io/realtime-tanks-demo/construct3/) · [Source](https://github.com/colyseus/realtime-tanks-demo/tree/master/construct3) | ![Tanks demo in Construct 3](/demos/tanks/construct3.webp) |
 
     > Source code: [colyseus/realtime-tanks-demo](https://github.com/colyseus/realtime-tanks-demo)
 
@@ -39,6 +39,6 @@ Each demo shares a single authoritative server with multiple frontend implementa
 
 ## Framework Overview Talk
 
-Watch Endel's talk for JS GameDev Summit 2022, organized by [GitNation](https://gitnation.org/).
+Watch Endel Dreyer's talk at JS GameDev Summit 2022, organized by [GitNation](https://gitnation.org/), for a walkthrough of how Colyseus handles authoritative game state, client synchronization, and room-based matchmaking.
 
-<iframe width="100%" height="400" src="https://www.youtube.com/embed/KnN6nRtfL44?start=260" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe width="100%" height="400" src="https://www.youtube.com/embed/KnN6nRtfL44?start=260" title="Colyseus Framework Overview - JS GameDev Summit 2022" style={{ border: 0 }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
