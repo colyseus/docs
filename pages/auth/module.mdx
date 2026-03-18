@@ -420,7 +420,7 @@ client.auth.token = "xxxx";
 
 ### Backend URL
 
-The public backend URL. Setting `auth.backend_url` is recommeded for security. The value is auto-detected upon the first request if not set.
+The public backend URL. Setting `auth.backend_url` is recommended for security. The value is auto-detected upon the first request if not set.
 
 The backend URL is used to:
 
@@ -555,7 +555,7 @@ auth.settings.onSendEmailConfirmation = async function(email, html, link) {
 
 #### On Email Confirmed
 
-This this callback to update the user's database record as verified.
+Use this callback to update the user's database record as verified.
 
 ```ts filename="Signature"
 auth.settings.onEmailConfirmed(email: string) => Promise<void>

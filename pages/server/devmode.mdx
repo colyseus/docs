@@ -3,7 +3,7 @@ title: "Development Mode"
 ---
 import { Callout } from "nextra/components";
 
-### How `devMode` works?
+## How Development Mode Works
 
 The `devMode` option has been introduced to speed up **local development** while updating your room implementation.
 
@@ -23,7 +23,7 @@ The clients are going to try to reconnect as soon as the server goes down, and k
 
 ---
 
-### Enabling `devMode`
+## Enabling Development Mode
 
 The `devMode` is disabled by default and it can be enabled via [Server option](/server/#optionsdevmode):
 
@@ -46,7 +46,7 @@ const server = defineServer({
 
 ---
 
-### Restoring data outside the room's `state`
+## Restoring External Data
 
 - By default, only the `state` of the room is cached and restored when the server restarts.
 - You can restore data outside the room's `state` by implementing the `onCacheRoom()` and `onRestoreRoom()` methods.

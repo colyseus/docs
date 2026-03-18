@@ -22,7 +22,7 @@ from your `Room` instance.
 
 The clock is provided as a useful mechanism to time events outside of a stateful simulation. An example use case could be: when a player collects an item you might `clock.setTimeout(...)` to create a new collectible. One advantage to using `this.clock` is that you do not have to be concerned with room updates and deltas and can instead focus on timing your events independently of the room state.
 
-### Public methods
+### Clock Methods
 
 *Note: `time` parameters are in milliseconds*
 
@@ -94,7 +94,7 @@ This method is called automatically at every simulation interval step. All
     See [Room#setSimiulationInterval()](/room#set-simulation-interval) for more details.
 </Callout>
 
-### Public properties
+### Clock Properties
 
 #### `clock.elapsedTime`
 

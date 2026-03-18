@@ -37,7 +37,7 @@ const server = defineServer({
 
 ---
 
-### Server `options`
+### Server Options
 
 #### Transport (`transport`)
 
@@ -162,7 +162,7 @@ const server = defineServer({
 
 ---
 
-#### Gracefully Shutdown (`gracefullyShutdown`)
+#### Graceful Shutdown (`gracefullyShutdown`)
 
 Wether to register shutdown routine automatically. Default is `true`.
 
@@ -421,7 +421,7 @@ if (process.env.NODE_ENV !== "production") {
 
 ---
 
-### Listen
+### Start Listening
 
 Binds the [Transport](/server/transport) layer into the specified port.
 
@@ -467,7 +467,7 @@ server.onShutdown(async () => {
 
 ---
 
-### Gracefully Shutdown
+### Graceful Shutdown
 
 Triggers the Graceful Shutdown routine.
 

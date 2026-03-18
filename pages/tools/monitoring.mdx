@@ -43,7 +43,7 @@ const server = defineServer({
 
 Access it in the browser via [http://localhost:2567/monitor](http://localhost:2567/monitor).
 
-## Restrict access to the panel using a password
+## Password Protection
 
 You can use an express middleware to enable authentication on the monitor route, such as `express-basic-middleware`:
 
@@ -69,7 +69,7 @@ const basicAuthMiddleware = basicAuth({
 app.use("/monitor", basicAuthMiddleware, monitor());
 ```
 
-## Setting custom room listing columns
+## Custom Room Listing Columns
 
 ``` typescript
 app.use("/monitor", basicAuthMiddleware, monitor({

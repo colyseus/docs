@@ -1,3 +1,7 @@
+---
+title: "Colyseus Client SDK"
+description: "Complete API reference for the Colyseus Client SDK. Connect to rooms, synchronize state, send messages, handle reconnection, and measure latency across TypeScript, Unity, Godot, Defold, and Haxe."
+---
 import { Callout, Cards, Tabs } from "nextra/components";
 import { ZapIcon, SyncIcon, ServerIcon, PasskeyFillIcon } from "@primer/octicons-react";
 import { SDKTabs } from "../components/SDKTabs"
@@ -13,11 +17,11 @@ The Client SDK provides everything you need to connect to a Colyseus server from
 
 ---
 
-## Set Up
+## Client Setup
 
 The `Client` instance is your entry point to connect to the server.
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
+<SDKTabs>
 
     <Tabs.Tab>
     ```ts filename="client.ts"
@@ -30,13 +34,6 @@ The `Client` instance is your entry point to connect to the server.
     ```
     </Tabs.Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
-    import Colyseus from "@colyseus/sdk";
-
-    const client = new Colyseus.Client("http://localhost:2567");
-    ```
-    </Tabs.Tab>
 
     <Tabs.Tab>
     ```cs filename="Client.cs"
@@ -69,13 +66,13 @@ The `Client` instance is your entry point to connect to the server.
     ```
     </Tabs.Tab>
 
-</Tabs>
+</SDKTabs>
 
 ---
 
-## Connecting to Rooms
+## Joining Rooms
 
-Once you have a client, you can connect to rooms. Choose the method that best fits your matchmaking needs.
+Once you have a client, you can join rooms. Choose the method that best fits your matchmaking needs.
 
 ### Join or Create (Recommended)
 
@@ -85,7 +82,7 @@ The most common way to connect. Joins an existing room if available, or creates 
 client.joinOrCreate (roomName: string, options: any)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
+<SDKTabs>
 
     <Tabs.Tab>
     ```ts filename="client.ts"
@@ -99,15 +96,6 @@ client.joinOrCreate (roomName: string, options: any)
     ```
     </Tabs.Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
-    client.joinOrCreate("battle", {/* options */}).then(room => {
-      console.log("joined successfully", room);
-    }).catch(e => {
-      console.error("join error", e);
-    });
-    ```
-    </Tabs.Tab>
 
     <Tabs.Tab>
     ```cs filename="Client.cs"
@@ -160,374 +148,37 @@ client.joinOrCreate (roomName: string, options: any)
     ```
     </Tabs.Tab>
 
-</Tabs>
+</SDKTabs>
 
 <Callout type="info">
     Locked or private rooms are ignored by this method.
 </Callout>
 
-### Create a New Room
+### Other Join Methods
 
-Always creates a new room instance, even if others exist.
+These methods use the same pattern as `joinOrCreate` — replace the method name accordingly.
 
-```ts filename="Signature"
-client.create (roomName: string, options: any)
-```
-
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
-
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    try {
-      const room = await client.create("battle", {/* options */});
-      console.log("joined successfully", room);
-
-    } catch (e) {
-      console.error("join error", e);
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="client.js"
-    client.create("battle", {/* options */}).then(room => {
-      console.log("joined successfully", room);
-    }).catch(e => {
-      console.error("join error", e);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    try {
-      Colyseus.Room<YourStateClass> room = await client.Create<YourStateClass>("battle", /* Dictionary of options */);
-      Debug.Log("joined successfully");
-
-    } catch (ex) {
-      Debug.Log("join error");
-      Debug.Log(ex.Message);
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    client:create("battle", {--[[options]]}, function(err, room)
-      if (err ~= nil) then
-        print("join error: " .. err)
-        return
-      end
-
-      print("joined successfully")
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    client.create("battle", [/* options */], YourStateClass, function(err, room) {
-      if (err != null) {
-        trace("join error: " + err);
-        return;
-      }
-
-      trace("joined successfully");
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
-    var room: ColyseusRoom = client.create("battle")
-
-    room.joined.connect(func():
-        print("joined successfully"))
-
-    room.error.connect(func(code: int, message: String):
-        printerr("join error: ", message))
-    ```
-    </Tabs.Tab>
-</Tabs>
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `create` | `client.create(roomName, options)` | Always creates a new room, even if others exist. |
+| `join` | `client.join(roomName, options)` | Joins an existing room. Fails if none available. Locked/private rooms are ignored. |
+| `joinById` | `client.joinById(roomId, options)` | Joins a specific room by its unique ID. **Private rooms can be joined by ID.** Useful for invite links. |
+| `consumeSeatReservation` | `client.consumeSeatReservation(reservation)` | Joins using a pre-reserved seat from the server. See [Match-maker → Reserve Seat For](/matchmaker#reserve-a-seat-for). |
 
 <Callout type="info">
-  You may dissallow the client from creating rooms. See [Matchmaker → API Restricting the frontend from creating rooms](/matchmaker#restricting-the-frontend-from-creating-rooms)
+  You may disallow the client from creating rooms. See [Matchmaker → Restricting the frontend from creating rooms](/matchmaker#restricting-the-frontend-from-creating-rooms)
 </Callout>
 
-### Join an Existing Room
+**Example: Creating an invite link with `joinById`**
 
-Joins an existing room by room name. Fails if no room is available.
-
-```ts filename="Signature"
-client.join (roomName: string, options: any)
-```
-
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
-
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    try {
-      const room = await client.join("battle", {/* options */});
-      console.log("joined successfully", room);
-
-    } catch (e) {
-      console.error("join error", e);
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="client.js"
-    client.join("battle", {/* options */}).then(room => {
-      console.log("joined successfully", room);
-    }).catch(e => {
-      console.error("join error", e);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    try {
-      Colyseus.Room<YourStateClass> room = await client.Join<YourStateClass>("battle", /* Dictionary of options */);
-      Debug.Log("joined successfully");
-
-    } catch (ex) {
-      Debug.Log("join error");
-      Debug.Log(ex.Message);
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    client:join("battle", {--[[options]]}, function(err, room)
-      if (err ~= nil) then
-        print("join error: " .. err)
-        return
-      end
-
-      print("joined successfully")
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    client.join("battle", [/* options */], YourStateClass, function(err, room) {
-      if (err != null) {
-        trace("join error: " + err);
-        return;
-      }
-
-      trace("joined successfully");
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
-    var room: ColyseusRoom = client.join("battle")
-
-    room.joined.connect(func():
-        print("joined successfully"))
-
-    room.error.connect(func(code: int, message: String):
-        printerr("join error: ", message))
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-<Callout type="info">
-    Locked or private rooms are ignored by this method.
-</Callout>
-
-### Join by Room ID
-
-Joins a specific room by its unique ID. This is useful for invite links or rejoining a specific game. **Private rooms can be joined by ID.**
-
-```ts filename="Signature"
-client.joinById (roomId: string, options: any)
-```
-
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
-
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    try {
-      const room = await client.joinById("KRYAKzRo2", {/* options */});
-      console.log("joined successfully", room);
-
-    } catch (e) {
-      console.error("join error", e);
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="client.js"
-    client.joinById("KRYAKzRo2", {/* options */}).then(room => {
-      console.log("joined successfully", room);
-    }).catch(e => {
-      console.error("join error", e);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    try {
-      Colyseus.Room<YourStateClass> room = await client.JoinById<YourStateClass>("battle", /* Dictionary of options */);
-      Debug.Log("joined successfully");
-
-    } catch (ex) {
-      Debug.Log("join error");
-      Debug.Log(ex.Message);
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    client:join_by_id("battle", {--[[options]]}, function(err, room)
-      if (err ~= nil) then
-        print("join error: " .. err)
-        return
-      end
-
-      print("joined successfully")
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    client.joinById("battle", [/* options */], YourStateClass, function(err, room) {
-      if (err != null) {
-        trace("join error: " + err);
-        return;
-      }
-
-      trace("joined successfully");
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
-    var room: ColyseusRoom = client.join_by_id("KRYAKzRo2")
-
-    room.joined.connect(func():
-        print("joined successfully"))
-
-    room.error.connect(func(code: int, message: String):
-        printerr("join error: ", message))
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-**Example: Creating an invite link**
-
-```js filename="client.js"
+```ts filename="client.ts"
 // Share the room ID with other players
 const inviteLink = `https://mygame.com/join?roomId=${room.roomId}`;
 
 // On the receiving end, parse the room ID and join
-let roomId = location.href.match(/roomId=([a-zA-Z0-9\-_]+)/)[1];
-client.joinById(roomId).then(room => {
-  // ...
-});
+const params = new URLSearchParams(window.location.search);
+const room = await client.joinById(params.get("roomId"));
 ```
-
-### Consume Seat Reservation
-
-Join a room using a pre-reserved seat.
-
-A **"seat reservation"** is a token generated by the server that allows a client to join a specific room instance. This is useful for scenarios where you want to control access to rooms, such as private matches or matchmaking systems.
-
-```ts filename="Signature"
-client.consumeSeatReservation (reservation)
-```
-
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
-
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    try {
-      const room = await client.consumeSeatReservation(reservation);
-      console.log("joined successfully", room);
-
-    } catch (e) {
-      console.error("join error", e);
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="client.js"
-    client.consumeSeatReservation(reservation).then(room => {
-      console.log("joined successfully", room);
-    }).catch(e => {
-      console.error("join error", e);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    try {
-      Colyseus.Room<YourStateClass> room = await client.ConsumeSeatReservation<YourStateClass>(reservation);
-      Debug.Log("joined successfully");
-
-    } catch (ex) {
-      Debug.Log("join error");
-      Debug.Log(ex.Message);
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    client:consume_seat_reservation(reservation, function(err, room)
-      if (err ~= nil) then
-        print("join error: " .. err)
-        return
-      end
-
-      print("joined successfully")
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    client.consumeSeatReservation(reservation, YourStateClass, function(err, room) {
-      if (err != null) {
-        trace("join error: " + err);
-        return;
-      }
-
-      trace("joined successfully");
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
-    var room: ColyseusRoom = client.consume_seat_reservation(reservation)
-
-    room.joined.connect(func():
-        print("joined successfully"))
-
-    room.error.connect(func(code: int, message: String):
-        printerr("join error: ", message))
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-<Callout type="info">
-  A "seat reservation" can be obtained from the backend using the Match-maker API. See [Match-maker API → Reserve Seat For](/matchmaker#reserve-a-seat-for)
-</Callout>
 
 ---
 
@@ -535,7 +186,7 @@ client.consumeSeatReservation (reservation)
 
 Once connected to a room, you can send and receive messages in real-time.
 
-### Send Message
+### Sending Messages
 
 Send messages to the room handler. Messages are encoded with MsgPack and can hold any JSON-serializable data.
 
@@ -543,7 +194,7 @@ Send messages to the room handler. Messages are encoded with MsgPack and can hol
 room.send (type, message)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
+<SDKTabs>
     <Tabs.Tab>
     ```ts filename="client.ts"
     //
@@ -558,19 +209,6 @@ room.send (type, message)
     ```
     </Tabs.Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
-    //
-    // sending message with string type
-    //
-    room.send("move", { direction: "left"});
-
-    //
-    // sending message with number type
-    //
-    room.send(0, { direction: "left"});
-    ```
-    </Tabs.Tab>
 
     <Tabs.Tab>
     ```cs filename="Client.cs"
@@ -623,7 +261,7 @@ room.send (type, message)
     room.send_message(0, {"direction": "left"})
     ```
     </Tabs.Tab>
-</Tabs>
+</SDKTabs>
 
 <Callout type="info">
     **Backend:** See [Room → Message Handling](/room#message-handling) for detailed documentation on receiving messages from the client.
@@ -649,11 +287,11 @@ room.sendBytes(0, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33
 room.sendBytes("some-bytes", [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
 ```
 
-### On Message
+### Receiving Messages
 
 Listen for messages sent from the server.
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
+<SDKTabs>
 
     <Tabs.Tab>
     ```ts filename="client.ts"
@@ -664,14 +302,6 @@ Listen for messages sent from the server.
     ```
     </Tabs.Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
-    room.onMessage("powerup", (message) => {
-      console.log("message received from server");
-      console.log(message);
-    });
-    ```
-    </Tabs.Tab>
 
     <Tabs.Tab>
     ```cs filename="Client.cs"
@@ -714,7 +344,7 @@ Listen for messages sent from the server.
     ```
     </Tabs.Tab>
 
-</Tabs>
+</SDKTabs>
 
 <Callout type="info">
     **Backend:** To send a message from the server to a client you'll need to use either [client.send()](/room#send-message) or [room.broadcast()](/room/#broadcast-message)
@@ -724,107 +354,78 @@ Listen for messages sent from the server.
 
 ## State Synchronization
 
-The room state is automatically synchronized from the server to all connected clients.
+The room state is automatically synchronized from the server to all connected clients. The `room.state` property always contains the latest state.
 
-### Accessing Room State
+### State Sync Callbacks (Recommended)
 
-The `room.state` property always contains the latest synchronized state from the server.
-
-```ts filename="Signature"
-room.state: any
-```
-
-### On State Change
-
-The `onStateChange` event fires whenever the server synchronizes state updates.
-
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    room.onStateChange.once((state) => {
-      console.log("this is the first room state!", state);
-    });
-
-    room.onStateChange((state) => {
-      console.log("the room state has been updated:", state);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="client.js"
-    room.onStateChange.once((state) => {
-      console.log("this is the first room state!", state);
-    });
-
-    room.onStateChange((state) => {
-      console.log("the room state has been updated:", state);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    room.OnStateChange += (state, isFirstState) => {
-      if (isFirstState) {
-        Debug.Log ("this is the first room state!");
-      }
-
-      Debug.Log ("the room state has been updated");
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    room:on("statechange", function(state)
-      print("new state:", state)
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    room.onStateChange += function(state) {
-      trace("new state:" + Std.string(state));
-    };
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
-    room.state_changed.connect(_on_state_changed)
-
-    func _on_state_changed():
-        var state = room.get_state()
-        print("the room state has been updated: ", state)
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-### State Sync Callbacks
-
-For better performance and control, listen to specific property changes instead of the entire state.
+Use `Callbacks` to listen for specific property changes with fine-grained control.
 
 <SDKTabs>
     <Tabs.Tab>
     ```ts filename="client.ts"
-    // get state callbacks handler
+    import { Callbacks } from "@colyseus/sdk";
+
     const callbacks = Callbacks.get(room);
+
+    callbacks.listen("currentTurn", (currentValue, previousValue) => {
+        console.log("Turn changed:", previousValue, "->", currentValue);
+    });
+
+    callbacks.onAdd("players", (player, sessionId) => {
+        console.log("Player joined:", sessionId);
+
+        callbacks.listen(player, "hp", (currentHp, previousHp) => {
+            console.log("Player", sessionId, "hp:", currentHp);
+        });
+    });
+
+    callbacks.onRemove("players", (player, sessionId) => {
+        console.log("Player left:", sessionId);
+    });
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
     ```cs filename="client.cs"
-    // get state callbacks handler
     var callbacks = Colyseus.Schema.Callbacks.Get(room);
+
+    callbacks.Listen(state => state.currentTurn, (currentValue, previousValue) => {
+        Debug.Log($"Turn changed: {previousValue} -> {currentValue}");
+    });
+
+    callbacks.OnAdd(state => state.players, (sessionId, player) => {
+        Debug.Log($"Player joined: {sessionId}");
+
+        callbacks.Listen(player, p => p.hp, (currentHp, previousHp) => {
+            Debug.Log($"Player {sessionId} hp: {currentHp}");
+        });
+    });
+
+    callbacks.OnRemove(state => state.players, (sessionId, player) => {
+        Debug.Log($"Player left: {sessionId}");
+    });
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
     ```lua filename="client.lua"
-    -- get state callbacks handler
     local callbacks = ColyseusSDK.callbacks(room)
+
+    callbacks:listen("currentTurn", function(currentValue, previousValue)
+        print("Turn changed: " .. tostring(previousValue) .. " -> " .. tostring(currentValue))
+    end)
+
+    callbacks:on_add("players", function(player, sessionId)
+        print("Player joined: " .. sessionId)
+
+        callbacks:listen(player, "hp", function(currentHp, previousHp)
+            print("Player " .. sessionId .. " hp: " .. tostring(currentHp))
+        end)
+    end)
+
+    callbacks:on_remove("players", function(player, sessionId)
+        print("Player left: " .. sessionId)
+    end)
     ```
     </Tabs.Tab>
 
@@ -832,25 +433,63 @@ For better performance and control, listen to specific property changes instead 
     ```haxe filename="client.hx"
     import io.colyseus.serializer.schema.Callbacks;
 
-    // get state callbacks handler
     var callbacks = Callbacks.get(room);
+
+    callbacks.listen("currentTurn", function(currentValue, previousValue) {
+        trace("Turn changed: " + previousValue + " -> " + currentValue);
+    });
+
+    callbacks.onAdd("players", function(player, sessionId) {
+        trace("Player joined: " + sessionId);
+
+        callbacks.listen(player, "hp", function(currentHp, previousHp) {
+            trace("Player " + sessionId + " hp: " + currentHp);
+        });
+    });
+
+    callbacks.onRemove("players", function(player, sessionId) {
+        trace("Player left: " + sessionId);
+    });
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
     ```gdscript filename="client.gd"
-    # get state callbacks handler
     var callbacks: ColyseusCallbacks = Colyseus.callbacks(room)
+
+    callbacks.listen("currentTurn", _on_turn_change)
+    callbacks.on_add("players", _on_player_add)
+    callbacks.on_remove("players", _on_player_remove)
+
+    func _on_turn_change(current_value, previous_value):
+        print("Turn changed: ", previous_value, " -> ", current_value)
+
+    func _on_player_add(player: Dictionary, key: String):
+        callbacks.listen(player, "hp", func(current_hp, previous_hp):
+            print("Player ", key, " hp: ", current_hp))
+
+    func _on_player_remove(player: Dictionary, key: String):
+        print("Player left: ", key)
     ```
     </Tabs.Tab>
 </SDKTabs>
 
 <Callout type="info">
-    Check out the [Client SDK → State Sync Callbacks](/sdk/state-sync-callbacks) section for detailed documentation on listening to specific state changes.
+    See the full [State Sync Callbacks](/sdk/state-sync-callbacks) documentation for all available methods including `listen`, `onAdd`, `onRemove`, and more.
 </Callout>
 
+### On State Change
+
+The `onStateChange` event fires whenever the server synchronizes state updates. Use this when you need to know _something_ changed, without tracking individual properties.
+
+```ts
+room.onStateChange((state) => {
+    console.log("the room state has been updated:", state);
+});
+```
+
 <Callout type="info">
-    Read more about [<SyncIcon/> State Sychronization](/state)
+    Read more about [<SyncIcon/> State Synchronization](/state)
 </Callout>
 
 ---
@@ -867,7 +506,7 @@ Disconnect from the room. Use `consented: true` (default) for intentional leaves
 room.leave (consented: boolean)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
+<SDKTabs>
     <Tabs.Tab>
     ```ts filename="client.ts"
     // consented leave
@@ -878,15 +517,6 @@ room.leave (consented: boolean)
     ```
     </Tabs.Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
-    // consented leave
-    room.leave();
-
-    // force unconsented leave
-    room.leave(false);
-    ```
-    </Tabs.Tab>
 
     <Tabs.Tab>
     ```cs filename="Client.cs"
@@ -924,17 +554,15 @@ room.leave (consented: boolean)
     room.leave()
     ```
     </Tabs.Tab>
-</Tabs>
+</SDKTabs>
 
 <Callout type="info">
     **Backend:** Use [Room → On Leave](/room#on-leave) to handle client disconnection.
 </Callout>
 
-### On Leave Event
+**Listening for the leave event:**
 
-Triggered when the client leaves the room (either intentionally or due to disconnection).
-
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
+<SDKTabs>
 
     <Tabs.Tab>
     ```ts filename="client.ts"
@@ -944,13 +572,6 @@ Triggered when the client leaves the room (either intentionally or due to discon
     ```
     </Tabs.Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
-    room.onLeave((code) => {
-      console.log("client left the room");
-    });
-    ```
-    </Tabs.Tab>
 
     <Tabs.Tab>
     ```cs filename="Client.cs"
@@ -984,7 +605,7 @@ Triggered when the client leaves the room (either intentionally or due to discon
         print("client left the room: ", reason)
     ```
     </Tabs.Tab>
-</Tabs>
+</SDKTabs>
 
 **Possible closing `code`s and their meaning:**
 
@@ -1004,7 +625,7 @@ The SDK automatically attempts to reconnect when the connection is unexpectedly 
 
 Triggered when the connection is unexpectedly dropped. The SDK will automatically attempt to reconnect.
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
+<SDKTabs>
     <Tabs.Tab>
     ```ts filename="client.ts"
     room.onDrop((code, reason) => {
@@ -1014,14 +635,6 @@ Triggered when the connection is unexpectedly dropped. The SDK will automaticall
     ```
     </Tabs.Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
-    room.onDrop((code, reason) => {
-      console.log("connection dropped, attempting to reconnect...");
-      console.log("code:", code, "reason:", reason);
-    });
-    ```
-    </Tabs.Tab>
 
     <Tabs.Tab>
     ```cs filename="Client.cs"
@@ -1058,7 +671,7 @@ Triggered when the connection is unexpectedly dropped. The SDK will automaticall
         print("connection error: ", message))
     ```
     </Tabs.Tab>
-</Tabs>
+</SDKTabs>
 
 <Callout type="info">
     The `onDrop` event is different from `onLeave`. While `onLeave` is triggered when the client intentionally leaves or the connection is permanently closed, `onDrop` indicates a temporary disconnection where reconnection will be attempted.
@@ -1076,7 +689,7 @@ Triggered when the connection is unexpectedly dropped. The SDK will automaticall
 
 Triggered when the client successfully reconnects after a connection drop. While disconnected, your `room.send()` calls will be queued and sent to the server when the client reconnects. The maximum number of queued messages is configurable using `room.reconnection.maxEnqueuedMessages`.
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
+<SDKTabs>
     <Tabs.Tab>
     ```ts filename="client.ts"
     room.onReconnect(() => {
@@ -1085,13 +698,6 @@ Triggered when the client successfully reconnects after a connection drop. While
     ```
     </Tabs.Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
-    room.onReconnect(() => {
-      console.log("successfully reconnected to the room!");
-    });
-    ```
-    </Tabs.Tab>
 
     <Tabs.Tab>
     ```cs filename="Client.cs"
@@ -1125,9 +731,9 @@ Triggered when the client successfully reconnects after a connection drop. While
         print("connected/reconnected to the room!"))
     ```
     </Tabs.Tab>
-</Tabs>
+</SDKTabs>
 
-#### Configuration Options
+#### Reconnection Options
 
 You may configure the reconnection behavior using `room.reconnection`.
 
@@ -1154,7 +760,7 @@ You may configure the reconnection behavior using `room.reconnection`.
 
 **Customizing reconnection behavior:**
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
+<SDKTabs>
     <Tabs.Tab>
     ```ts filename="client.ts"
     const room = await client.joinOrCreate("battle");
@@ -1166,16 +772,6 @@ You may configure the reconnection behavior using `room.reconnection`.
     ```
     </Tabs.Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
-    client.joinOrCreate("battle").then(room => {
-      // Customize reconnection options
-      room.reconnection.maxRetries = 10;
-      room.reconnection.maxDelay = 10000; // 10 seconds max delay
-      room.reconnection.minUptime = 3000; // Allow reconnection after 3 seconds
-    });
-    ```
-    </Tabs.Tab>
 
     <Tabs.Tab>
     ```cs filename="Client.cs"
@@ -1216,11 +812,11 @@ You may configure the reconnection behavior using `room.reconnection`.
     # Configuration options may vary - check the SDK documentation
     ```
     </Tabs.Tab>
-</Tabs>
+</SDKTabs>
 
 **Custom backoff function:**
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
+<SDKTabs>
     <Tabs.Tab>
     ```ts filename="client.ts"
     room.reconnection.backoff = (attempt: number, delay: number) => {
@@ -1229,13 +825,6 @@ You may configure the reconnection behavior using `room.reconnection`.
     ```
     </Tabs.Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
-    room.reconnection.backoff = (attempt, delay) => {
-      return Math.floor(Math.pow(2, attempt) * delay);
-    };
-    ```
-    </Tabs.Tab>
 
     <Tabs.Tab>
     ```cs filename="Client.cs"
@@ -1267,7 +856,7 @@ You may configure the reconnection behavior using `room.reconnection`.
     # The SDK uses a default exponential backoff strategy
     ```
     </Tabs.Tab>
-</Tabs>
+</SDKTabs>
 
 ### Manual Reconnection
 
@@ -1280,7 +869,7 @@ For more control, you can manually reconnect using a cached reconnection token. 
 client.reconnect (reconnectionToken)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
+<SDKTabs>
 
     <Tabs.Tab>
     ```ts filename="client.ts"
@@ -1294,15 +883,6 @@ client.reconnect (reconnectionToken)
     ```
     </Tabs.Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
-    client.reconnect(cachedReconnectionToken).then(room => {
-      console.log("joined successfully", room);
-    }).catch(e => {
-      console.error("join error", e);
-    });
-    ```
-    </Tabs.Tab>
 
     <Tabs.Tab>
     ```cs filename="Client.cs"
@@ -1354,35 +934,27 @@ client.reconnect (reconnectionToken)
         printerr("reconnect error: ", message))
     ```
     </Tabs.Tab>
-</Tabs>
+</SDKTabs>
 
 ### Error Handling
 
 Listen for errors that occur in the room.
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
+<SDKTabs>
     <Tabs.Tab>
     ```ts filename="client.ts"
     room.onError((code, message) => {
-      console.log("oops, error ocurred:");
+      console.log("oops, error occurred:");
       console.log(message);
     });
     ```
     </Tabs.Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
-    room.onError((code, message) => {
-      console.log("oops, error ocurred:");
-      console.log(message);
-    });
-    ```
-    </Tabs.Tab>
 
     <Tabs.Tab>
     ```cs filename="Client.cs"
     room.OnError += (code, message) => {
-      Debug.Log ("oops, error ocurred:");
+      Debug.Log ("oops, error occurred:");
       Debug.Log(message);
     }
     ```
@@ -1391,7 +963,7 @@ Listen for errors that occur in the room.
     <Tabs.Tab>
     ```lua filename="client.lua"
     room:on("error", function(code, message)
-      print("oops, error ocurred:")
+      print("oops, error occurred:")
       print(message)
     end)
     ```
@@ -1400,7 +972,7 @@ Listen for errors that occur in the room.
     <Tabs.Tab>
     ```haxe filename="client.hx"
     room.onError += function(code, message) {
-      trace("oops, error ocurred:");
+      trace("oops, error occurred:");
       trace(message);
     };
     ```
@@ -1414,7 +986,7 @@ Listen for errors that occur in the room.
         printerr("oops, error occurred: ", message)
     ```
     </Tabs.Tab>
-</Tabs>
+</SDKTabs>
 
 ### Removing Listeners
 
@@ -1432,7 +1004,7 @@ Measure network latency and choose optimal servers for your players.
 
 ### Measuring Latency
 
-#### On the Client
+#### Before Joining
 
 Create a temporary connection to measure latency before joining a room.
 
@@ -1444,7 +1016,7 @@ client.getLatency (options?: LatencyOptions): Promise<number>
 
 - `options.pingCount`: Number of pings to send (default: `1`). Returns the average latency when greater than 1.
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
+<SDKTabs>
     <Tabs.Tab>
     ```ts filename="client.ts"
     const latency = await client.getLatency();
@@ -1456,18 +1028,6 @@ client.getLatency (options?: LatencyOptions): Promise<number>
     ```
     </Tabs.Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
-    client.getLatency().then((latency) => {
-      console.log("Latency:", latency, "ms");
-    });
-
-    // With multiple pings for a more accurate average
-    client.getLatency({ pingCount: 5 }).then((avgLatency) => {
-      console.log("Average Latency:", avgLatency, "ms");
-    });
-    ```
-    </Tabs.Tab>
 
     <Tabs.Tab>
     ```cs filename="Client.cs"
@@ -1512,9 +1072,9 @@ client.getLatency (options?: LatencyOptions): Promise<number>
     # Check the SDK documentation for available methods
     ```
     </Tabs.Tab>
-</Tabs>
+</SDKTabs>
 
-#### On an Active Room
+#### During a Room Connection
 
 Measure round-trip time on an existing connection.
 
@@ -1522,7 +1082,7 @@ Measure round-trip time on an existing connection.
 room.ping (callback: (ms: number) => void)
 ```
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
+<SDKTabs>
     <Tabs.Tab>
     ```ts filename="client.ts"
     room.ping((latency) => {
@@ -1531,13 +1091,6 @@ room.ping (callback: (ms: number) => void)
     ```
     </Tabs.Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
-    room.ping((latency) => {
-      console.log("Latency:", latency, "ms");
-    });
-    ```
-    </Tabs.Tab>
 
     <Tabs.Tab>
     ```cs filename="Client.cs"
@@ -1569,7 +1122,7 @@ room.ping (callback: (ms: number) => void)
     # Check the SDK documentation for available methods
     ```
     </Tabs.Tab>
-</Tabs>
+</SDKTabs>
 
 <Callout type="info">
     If the connection is not open, calling `ping()` has no effect.
@@ -1589,7 +1142,7 @@ Client.selectByLatency (endpoints: Array<string | EndpointSettings>): Promise<Cl
 - `options`: Optional client options to pass to each client instance.
 - `latencyOptions.pingCount`: Number of pings to send per endpoint (default: `1`).
 
-<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe", "Godot (GDScript)"]} storageKey='sdk-tab-language'>
+<SDKTabs>
     <Tabs.Tab>
     ```ts filename="client.ts"
     import { Client } from "@colyseus/sdk";
@@ -1606,21 +1159,6 @@ Client.selectByLatency (endpoints: Array<string | EndpointSettings>): Promise<Cl
     ```
     </Tabs.Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
-    import Colyseus from "@colyseus/sdk";
-
-    // Select the best server from multiple regions
-    Colyseus.Client.selectByLatency([
-      "https://us-east.gameserver.com",
-      "https://eu-west.gameserver.com",
-      "https://asia.gameserver.com",
-    ]).then((client) => {
-      // Now use the client with the lowest latency
-      return client.joinOrCreate("game");
-    });
-    ```
-    </Tabs.Tab>
 
     <Tabs.Tab>
     ```cs filename="Client.cs"
@@ -1689,7 +1227,7 @@ Client.selectByLatency (endpoints: Array<string | EndpointSettings>): Promise<Cl
     client.set_endpoint(endpoints[0])  # Set your preferred endpoint
     ```
     </Tabs.Tab>
-</Tabs>
+</SDKTabs>
 
 <Callout type="info">
     The method logs the latency for each endpoint to the console for debugging purposes. If all endpoints fail to respond, an error is thrown.
@@ -1699,175 +1237,25 @@ Client.selectByLatency (endpoints: Array<string | EndpointSettings>): Promise<Cl
 
 ## HTTP Requests
 
-The `client.http` utility performs HTTP requests to your server endpoint.
+The `client.http` utility performs HTTP requests to your server endpoint. The `client.auth.token` is sent automatically as an `Authorization` header.
+
+```ts
+// GET
+const response = await client.http.get("/profile");
+
+// POST
+const response = await client.http.post("/profile", { body: { name: "Jake" } });
+
+// PUT
+const response = await client.http.put("/profile", { body: { name: "Jake" } });
+
+// DELETE
+const response = await client.http.delete("/profile");
+```
 
 <Callout type="info">
-    The `client.auth.token` property is sent automatically as `Authorization` header in all HTTP requests. See [<PasskeyFillIcon/> Authentication → HTTP Middleware](/auth/http) for more details.
+    See [<ServerIcon/> Server → HTTP Routes](/server/http-routes) for setting up HTTP endpoints on your server, and [<PasskeyFillIcon/> Authentication → HTTP Middleware](/auth/http) for securing them.
 </Callout>
-
-<Callout type="info">
-    See [<ServerIcon/> Server → HTTP Routes](/server/http-routes) for setting up HTTP endpoints on your server.
-</Callout>
-
-### GET
-
-<Tabs items={["Client", "Server Route (recommended)", "Server (express)"]}>
-    <Tabs.Tab>
-    ```js filename="client.js"
-    client.http.get("/profile").then((response) => {
-        console.log(response.data);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts filename="src/app.config.ts"
-    import { defineServer, createEndpoint } from "@colyseus/sdk";
-
-    const server = defineServer({
-        routes: createRouter({
-            profile: createEndpoint("/profile", { method: "GET" }, (ctx) => {
-                ctx.json({ name: "Jake Badlands" });
-            })
-        })
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts filename="src/app.config.ts"
-    import { defineServer } from "@colyseus/sdk";
-
-    const server = defineServer({
-        express: (app) => {
-            app.get("/profile", (req, res) => {
-                res.json({ name: "Jake Badlands" });
-            });
-        },
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-### POST
-
-<Tabs items={["Client", "Server Route (recommended)", "Server (express)"]}>
-    <Tabs.Tab>
-    ```js filename="client.js"
-    client.http.post("/profile", { body: { name: "Jake Badlands" } }).then((response) => {
-        console.log(response.data);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts filename="src/app.config.ts"
-    import { defineServer, createEndpoint } from "@colyseus/sdk";
-
-    const server = defineServer({
-        routes: createRouter({
-            profile: createEndpoint("/profile", { method: "POST" }, (ctx) => {
-                ctx.json(ctx.body);
-            })
-        })
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts filename="src/app.config.ts"
-    import { defineServer } from "@colyseus/sdk";
-
-    const server = defineServer({
-        express: (app) => {
-            app.post("/profile", (req, res) => {
-                res.json(req.body);
-            });
-        },
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-### PUT
-
-<Tabs items={["Client", "Server Route (recommended)", "Server (express)"]}>
-    <Tabs.Tab>
-    ```js filename="client.js"
-    client.http.put("/profile", { body: { name: "Jake Badlands" } }).then((response) => {
-        console.log(response.data);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts filename="src/app.config.ts"
-    import { defineServer, createEndpoint } from "@colyseus/sdk";
-
-    const server = defineServer({
-        routes: createRouter({
-            profile: createEndpoint("/profile", { method: "PUT" }, (ctx) => {
-                ctx.json(ctx.body);
-            })
-        })
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts filename="src/app.config.ts"
-    import { defineServer } from "@colyseus/sdk";
-
-    const server = defineServer({
-        express: (app) => {
-            app.put("/profile", (req, res) => {
-                res.json(req.body);
-            });
-        },
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-### DELETE
-
-<Tabs items={["Client", "Server Route (recommended)", "Server (express)"]}>
-    <Tabs.Tab>
-    ```js filename="client.js"
-    client.http.delete("/profile").then((response) => {
-        console.log(response.data);
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts filename="src/app.config.ts"
-    import { defineServer, createEndpoint } from "@colyseus/sdk";
-
-    const server = defineServer({
-        routes: createRouter({
-            profile: createEndpoint("/profile", { method: "DELETE" }, (ctx) => {
-                ctx.json({ deleted: true });
-            })
-        })
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts filename="src/app.config.ts"
-    import { defineServer } from "@colyseus/sdk";
-
-    const server = defineServer({
-        express: (app) => {
-            app.delete("/profile", (req, res) => {
-                res.json({ deleted: true });
-            });
-        },
-    });
-    ```
-    </Tabs.Tab>
-</Tabs>
 
 ---
 
