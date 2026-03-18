@@ -14,7 +14,7 @@ export default {
 
     // "concepts": { title: <span><BookIcon/> Core Concepts</span> },
     "getting-started": { title: <span><ZapIcon/> Getting Started</span> }, // "Getting Started"
-    "learn": { title: <span><FileCodeIcon/> Tutorials & Examples</span>},
+    "learn": { title: <span><FileCodeIcon/> Learn</span>},
 
     '-- API Reference': { type: 'separator', title: 'API Reference' },
     "sdk": { title: <span><DevicesIcon/> Client SDK</span>},
