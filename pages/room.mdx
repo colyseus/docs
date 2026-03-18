@@ -1303,7 +1303,12 @@ client.leave(code?: number)
 | `1016` - `1999`         |                        | Yes      | No           | Reserved for future use by the WebSocket standard. |
 | `2000` - `2999`         |                        | Yes      | Yes          | Reserved for use by WebSocket extensions |
 | `3000` - `3999`         |                        | No       | Yes          | 	Available for use by libraries and frameworks. May not be used by applications. Available for registration at the IANA via first-come, first-serve. |
-| `4000` - `4999`         |                        | No       | Yes          | **Available for applications** |
+| `4000`                | `CONSENTED`            | No       | No           | Client left intentionally (`room.leave()`) |
+| `4001`                | `SERVER_SHUTDOWN`      | No       | No           | Server graceful shutdown (production) |
+| `4002`                | `WITH_ERROR`           | No       | No           | Closed due to an error |
+| `4003`                | `FAILED_TO_RECONNECT`  | No       | No           | All reconnection attempts failed (client-side only) |
+| `4010`                | `MAY_TRY_RECONNECT`   | No       | No           | Server shutdown in dev mode (allows reconnect) |
+| `4011` - `4999` |              | No       | Yes          | Available for applications |
 
 ---
 
