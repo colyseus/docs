@@ -1,13 +1,12 @@
 ---
-title: "TypeScript SDK"
-description: "Install and set up the Colyseus TypeScript SDK for building real-time multiplayer games. Includes type-safe client, room connections, and state synchronization."
+title: "Colyseus SDK for TypeScript"
+description: "Install and set up the Colyseus JavaScript/TypeScript SDK for building real-time multiplayer games. Includes room connections, state synchronization, and full type safety."
 ---
 import _js_ts_header from "./_js_ts_header.mdx"
 import { Callout, Tabs } from 'nextra/components'
 import Image from 'next/image'
-import { typescript } from "../../components/icons/platforms"
 
-# TypeScript SDK
+# JavaScript / TypeScript SDK
 
 <_js_ts_header />
 
@@ -15,11 +14,33 @@ import { typescript } from "../../components/icons/platforms"
 
 ## Installation
 
+<Tabs items={['Package Manager', 'CDN', 'Download']}>
+<Tabs.Tab>
+
 ```sh npm2yarn
 npm install --save @colyseus/sdk
 ```
 
-The SDK includes TypeScript definitions, so you get full type support out of the box.
+The SDK includes TypeScript definitions out of the box.
+
+</Tabs.Tab>
+
+<Tabs.Tab>
+Include directly from unpkg. Replace `@x.x.x` with a version compatible with your server:
+
+```html
+<script src="https://unpkg.com/@colyseus/sdk@^0.17.0/dist/colyseus.js"></script>
+```
+</Tabs.Tab>
+
+<Tabs.Tab>
+Download the release binaries from [GitHub Releases](https://github.com/colyseus/@colyseus/sdk/releases) and include them in your project:
+
+```html
+<script src="colyseus.js"></script>
+```
+</Tabs.Tab>
+</Tabs>
 
 ## Initializing the SDK
 
@@ -29,9 +50,15 @@ import { Client } from "@colyseus/sdk";
 const client = new Client("http://localhost:2567");
 ```
 
+<Callout type="info">
+Use `https://` for secure connections in production.
+</Callout>
+
+## Type Safety (TypeScript)
+
 ### Full Type Safety: Room State and Messages
 
-It is recommended to provide the `typeof server` type as a generic to the client. This will allow the client to infer both the state type, and the message types for the room.
+Provide the `typeof server` type as a generic to the client. This allows the client to infer both the state type and the message types for the room.
 
 ```ts
 import { Client } from "@colyseus/sdk";
@@ -44,11 +71,11 @@ const client = new Client<typeof server>("http://localhost:2567");
 `import type` only imports type information at compile time—no server code is included in your client bundle.
 </Callout>
 
-#### Providing Room State Types
+### Providing Room State Types
 
 There are two ways to get type safety for your room's state:
 
-##### Option 1: Importing the Room **State** Type Only
+#### Option 1: Importing the Room **State** Type Only
 
 Use `import type` to import the state type and pass it as a generic to `joinOrCreate<T>()`. This gives you **type inference** for `room.state` and state callbacks.
 
@@ -67,7 +94,7 @@ room.state.invalid  // ✗ Compile error
 room.onMessage("...", (client, payload) => {}); // ?? Missing type here!
 ```
 
-##### Option 2: Importing the **Room** Type Only
+#### Option 2: Importing the **Room** Type Only
 
 Use `import type` and pass the type as a generic to `joinOrCreate<T>()`. This gives you **type inference** for `room.state` and state callbacks.
 
@@ -83,8 +110,6 @@ room.state.invalid  // ✗ Compile error
 
 room.onMessage("...", () => {}); // ✓ Type-safe
 ```
-
----
 
 ### Sharing Schema Classes with the Client
 
@@ -104,7 +129,9 @@ room.state.players  // ✓ Auto-complete works
 room.state.players.get("abc")?.customMethod()  // ✓ Custom methods available
 ```
 
-### Room Debug Panel
+---
+
+## Room Debug Panel
 
 The debug panel allows you to inspect the room state and messages in real-time during development, simulate high latency conditions, connection drops, and more.
 
@@ -139,4 +166,4 @@ This is required for the `@type()` decorators to work correctly in Schema classe
 - [Client SDK API Reference](/sdk) - Full API documentation for all methods, events, and room operations
 - [State Synchronization](/state) - Understanding Schema definitions
 - [State Sync Callbacks](/sdk/state-sync-callbacks) - Listen for state changes
-- [Phaser Tutorial](/tutorial/phaser) - Complete game example
+- [Phaser Tutorial](/learn/tutorial/phaser) - Complete game example

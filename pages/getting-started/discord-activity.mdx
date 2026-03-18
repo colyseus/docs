@@ -1,5 +1,5 @@
 ---
-title: "Discord Activity"
+title: "Colyseus SDK for Discord Activities"
 description: "Build multiplayer Discord Activities with Colyseus. Use the project template to create real-time HTML5 multiplayer experiences embedded in Discord."
 ---
 import { discord } from "../../components/icons/platforms"
@@ -17,7 +17,7 @@ import { Callout, Cards, Tabs } from "nextra/components";
 
 ## Project Structure
 
-This repository contains the front-end and back-end are separated into two different modules.
+The front-end and back-end are separated into two different modules.
 
 - `apps/client/` - Has the frontend project, using Pixi.js and Vite
 - `apps/server/` - Has the backend project, using Colyseus (Node.js)
@@ -97,3 +97,9 @@ You will need to configure your Discord Activity's URLs:
 - "OAuth2 → Redirect URL" to point to your deployed **client** project.
 - "URL Mappings → Root Mapping / Target" to point to your deployed **client** project.
 - "URL Mappings → Prefix `/colyseus` / Target" to point to your deployed **server** project.
+
+## Next Steps
+
+- [Client SDK API Reference](/sdk) - Full API documentation for all methods, events, and room operations
+- [State Synchronization](/state) - Understanding Schema definitions
+- [Room API](/room) - Server-side room implementation

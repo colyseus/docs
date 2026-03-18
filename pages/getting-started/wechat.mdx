@@ -1,5 +1,5 @@
 ---
-title: "WeChat SDK"
+title: "Colyseus SDK for WeChat"
 description: "Integrate Colyseus with WeChat mini-games for real-time multiplayer. Set up the JavaScript SDK in the WeChat development environment."
 ---
 import _js_ts_header from "./_js_ts_header.mdx"
@@ -17,7 +17,7 @@ As the WeChat JavaScript runtime is not fully compatible with the browser, you w
 </Callout>
 
 <Callout type="info">
-  The [JavaScript](javascript) or [TypeScript](typescript) SDK are compatible with WeChat after applying the necessary polyfills and monkey-patches.
+  The [JavaScript / TypeScript SDK](/getting-started/typescript) is compatible with WeChat after applying the necessary polyfills and monkey-patches.
 </Callout>
 
 ### `URL` Polyfill
@@ -60,3 +60,9 @@ WebSocket.prototype.send = function(data) {
     }
 }
 ```
+
+## Next Steps
+
+- [JavaScript / TypeScript SDK](/getting-started/typescript) - Full SDK setup guide
+- [Client SDK API Reference](/sdk) - Full API documentation for all methods, events, and room operations
+- [State Synchronization](/state) - Understanding Schema definitions

@@ -1,5 +1,5 @@
 ---
-title: "Cocos Creator SDK"
+title: "Colyseus SDK for Cocos Creator"
 description: "Set up Colyseus multiplayer in Cocos Creator 3. Install the SDK extension, import it in TypeScript components, and connect to Colyseus rooms."
 ---
 import { Callout, Steps } from "nextra/components";
@@ -9,7 +9,7 @@ import { cocos } from "../../components/icons/platforms"
 
 [Cocos Creator](https://cocos.com/creator) is a Cross-Platform 2D/3D Game Creation Tool.
 
-The Colyseus SDK for Cocos Creator works in the same way as the [TypeScript SDK](/getting-started/javascript/). The major difference is how to [import it from a TypeScript Component](#importing-from-the-extension) asset from Cocos Creator.
+The Colyseus SDK for Cocos Creator works in the same way as the [JavaScript / TypeScript SDK](/getting-started/typescript). The major difference is how to [import it from a TypeScript Component](#importing-from-the-extension) asset from Cocos Creator.
 
 <Callout type="info">
     **Example project:** Check out the [Tic Tac Toe Example](https://github.com/colyseus/cocos-demo-tictactoe).
@@ -127,3 +127,9 @@ Because we're using the `@property` decorator above, you can edit the `hostname`
 - **JavaScript**: require it using `const Colyseus = require("./colyseus-cocos-creator.js");`
 
 ![Import as plugin](/cocos/cocos-creator-import-as-plugin.png)
+
+## Next Steps
+
+- [Client SDK API Reference](/sdk) - Full API documentation for all methods, events, and room operations
+- [State Synchronization](/state) - Understanding Schema definitions
+- [Room API](/room) - Server-side room implementation

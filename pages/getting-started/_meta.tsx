@@ -2,7 +2,6 @@ import { javascript, typescript, react, unity, defold, construct3, cocos, haxe, 
 
 export default {
     "typescript": { title: <span>{typescript({ width: '19px', marginRight: '2px' })} TypeScript</span> },
-    "javascript": { title: <span>{javascript({ width: '19px', marginRight: '2px' })} JavaScript</span> },
     "react": { title: <span>{react({ width: '19px', marginRight: '2px' })} React</span> },
     "unity": { title: <span>{unity({ width: '19px', marginRight: '2px' })} Unity</span> },
     "godot": { title: <span>{godot({ width: '19px', marginRight: '2px' })} Godot</span> },

@@ -1,5 +1,5 @@
 ---
-title: "React SDK"
+title: "Colyseus SDK for React"
 description: "Use Colyseus with React using the @colyseus/react hooks package. Manage room connections and real-time state synchronization with idiomatic React patterns."
 ---
 import _js_ts_header from "./_js_ts_header.mdx"
@@ -287,7 +287,7 @@ The returned `useLobby()` hook provides the same fields as `useLobbyRoom` (`room
 If you prefer to manage the room connection manually, you can use the `@colyseus/sdk` directly in your React components. Just make sure to handle the connection lifecycle properly (joining, leaving on unmount, etc.).
 
 ```typescript filename="RoomComponent.tsx"
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Client, Room } from "@colyseus/sdk";
 
 const client = new Client("http://localhost:2567");
@@ -356,14 +356,13 @@ let room!: Room;
 let hasActiveJoinRequest: boolean = false;
 
 export function RoomProvider({ children }: { children: React.ReactNode }) {
-    const [searchParams, _] = useSearchParams();
 
     const [joinError, setJoinError] = React.useState(false);
     const [isConnecting, setIsConnecting] = React.useState(false);
     const [isConnected, setIsConnected] = React.useState(false);
     const [state, setState] = React.useState<ReturnType<MyRoomState['toJSON']>>(undefined)
 
-    const join = () => {
+    const join = async () => {
         if (hasActiveJoinRequest) { return; }
         hasActiveJoinRequest = true;
 
@@ -455,3 +454,9 @@ export function useAuth () {
   return useContext(AuthContext);
 };
 ```
+
+## Next Steps
+
+- [Client SDK API Reference](/sdk) - Full API documentation for all methods, events, and room operations
+- [State Synchronization](/state) - Understanding Schema definitions
+- [Room API](/room) - Server-side room implementation
