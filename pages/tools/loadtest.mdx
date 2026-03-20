@@ -1,15 +1,14 @@
 ---
-title: "Load testing"
+title: "Load Testing"
+description: "Stress test your Colyseus multiplayer server by simulating concurrent client connections with the @colyseus/loadtest tool."
 ---
 import { Tabs } from 'nextra/components'
 
 # Load Testing
 
-The `@colyseus/loadtest` tool is useful when you'd like to stress test your server and see how it is going to perform on a live environment.
+The `@colyseus/loadtest` tool lets you stress test your Colyseus server by simulating multiple concurrent client connections. Each simulated client runs a custom script where you can implement bot behavior — joining rooms, sending messages, and reacting to state changes — to verify how your server performs under load.
 
-[![asciicast](https://asciinema.org/a/229378.svg)](https://asciinema.org/a/229378)
-
-## Install the package
+## Installation
 
 This package is installed by default on new projects created via `npm create colyseus-app`.
 
@@ -19,16 +18,24 @@ npm install --save-dev @colyseus/loadtest
 
 ## Usage
 
-The `colyseus-loadtest` command requires a few arguments to work:
+Run the load test command with the following arguments:
 
-- `script`: The custom script the tool is going to use
-- `--endpoint`: Your server endpoint (by default uses `http://localhost:2567`)
-- `--room`: Name of the room you'd like to connect to
-- `--numClients`: Number of clients you'd like to connect into the room.
+- `script` — path to your custom client script
+- `--room` — name of the room to connect to
+- `--numClients` — number of simulated clients to spawn
+- `--endpoint` — your server endpoint (defaults to `http://localhost:2567`)
 
-### Example
+For example, to connect 50 clients into a `"battle"` room:
 
-This is an example scripting file. Based on the room lifecycle events for each connected client, you may implement a "bot" to interact with the room.
+```sh filename="Terminal"
+npx tsx loadtest/example.ts --room battle --numClients 50 --endpoint http://localhost:2567
+```
+
+[![asciicast](https://asciinema.org/a/229378.svg)](https://asciinema.org/a/229378)
+
+## Scripting
+
+Each simulated client executes the script you provide. Use room lifecycle events to implement bot behavior that interacts with the room during the test.
 
 <Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
     <Tabs.Tab>
@@ -103,9 +110,3 @@ This is an example scripting file. Based on the room lifecycle events for each c
 
     </Tabs.Tab>
 </Tabs>
-
-### Connecting 50 clients into a `"battle"` room
-
-```sh filename="Terminal"
-npx tsx loadtest/example.ts --room battle --numClients 50 --endpoint http://localhost:2567
-```
