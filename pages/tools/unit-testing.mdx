@@ -7,19 +7,23 @@ import { ServerIcon, DevicesIcon } from "@primer/octicons-react";
 
 # Unit Testing Your Server
 
-The `@colyseus/testing` package provides utility methods for testing your Colyseus application. It uses the JavaScript SDK to simulate client connections and send messages to the server.
+The `@colyseus/testing` package provides utility methods for testing your Colyseus application. It simulates client connections and message exchange using the JavaScript SDK, so you can validate both server and client behavior in a single test.
 
 <Callout type="info">
-    Use it with your favorite testing framework, such as [Mocha](https://mochajs.org/), or [Jest](https://jestjs.io/).
+    Use it with your favorite testing framework, such as [Vitest](https://vitest.dev/), [Mocha](https://mochajs.org/), or [Jest](https://jestjs.io/).
 </Callout>
 
+## Installation
 
-## Recommendations and best practices
+This package is installed by default on new projects created via `npm create colyseus-app`.
 
-- Make assertions on both backend and frontend structures after simulating an exchange of messages between them.
-- Room instances are disposed between tests - make sure each test you declare is creating the room you're going to perform tests and don't re-use room instances between tests.
-- Always declare your test cases with `async`.
-- Before running assertions make sure you [await for the server or client to process pending actions](#waiting-for-asynchronous-actions-to-process)
+```sh npm2yarn
+npm install --save-dev @colyseus/testing
+```
+
+## Getting Started
+
+Boot the test server with your `app.config.ts`, then create rooms and connect simulated clients inside each test case.
 
 <Tabs items={["Mocha + TypeScript", "Jest + TypeScript"]}>
     <Tabs.Tab>
@@ -85,14 +89,26 @@ The `@colyseus/testing` package provides utility methods for testing your Colyse
 
 </Tabs>
 
-## Waiting for asynchronous actions to process
+Then run your tests:
 
-When sending messages between server and client, it's important to wait for the server to process the message before making assertions.
+```sh filename="Terminal"
+npx vitest
+```
+
+## Best Practices
+
+- Assert on both server and client state after simulating message exchange.
+- Create a fresh room in each test — rooms are disposed between tests via `colyseus.cleanup()`, so do not reuse room instances.
+- Always declare test cases with `async`.
+- [Await for the server or client to process pending actions](#server-side-utilities) before running assertions.
+
+## Server-side Utilities
+
+When sending messages between server and client, wait for the server to process the message before making assertions.
 
 ### Wait For Message Type
 
 Wait for a particular message `type` to arrive in the server.
-
 
 ```ts {8} filename="App.test.ts"
 it("should receive message", async() => {
@@ -101,10 +117,9 @@ it("should receive message", async() => {
 
     client1.send("foo", "payload");
 
-    // wait for specific a message
+    // wait for a specific message
     const [ client, message ] = await room.waitForMessage("foo");
 
-    // ... message "foo" has been received and processed
     assert.strictEqual(client.sessionId, client1.sessionId);
     assert.strictEqual("payload", message);
 });
@@ -113,7 +128,6 @@ it("should receive message", async() => {
 ### Wait For Next Message
 
 Wait for any next message to arrive in the server.
-
 
 **Parameters**
 
@@ -140,7 +154,6 @@ it("should receive message", async() => {
 
 Wait for the server to send the latest patched state to all clients.
 
-
 ```ts {5} filename="App.test.ts"
 it("client state must match server's after patch is received", async() => {
     const room = await colyseus.createRoom("my_room");
@@ -148,7 +161,6 @@ it("client state must match server's after patch is received", async() => {
 
     await room.waitForNextPatch();
 
-    // server and client's state must match after the patch
     assert.deepStrictEqual(client1.state.toJSON(), room.state.toJSON());
 });
 ```
@@ -157,7 +169,6 @@ it("client state must match server's after patch is received", async() => {
 
 Wait for the next simulation tick to complete.
 
-
 ```ts {5} filename="App.test.ts"
 it("should assert something after room's simulation tick", async() => {
     const room = await colyseus.createRoom("my_room");
@@ -165,15 +176,14 @@ it("should assert something after room's simulation tick", async() => {
 
     await room.waitForNextSimulationTick();
 
-    // (this is just an illustration scenario)
-    // (assuming the room's state has a "tick" property that updates during setSimulationInterval())
+    // assuming the room's state has a "tick" property that updates during setSimulationInterval()
     assert.strictEqual(room.state.tick, 1);
 });
 ```
 
-## Frontend SDK methods & utilities
+## Client-side Utilities
 
-From your test-cases, you may call any of the frontend SDK methods through `colyseus.sdk`
+You can call any frontend SDK methods through `colyseus.sdk` to simulate client behavior:
 
 - [`colyseus.sdk.joinOrCreate()`](/sdk/#joinorcreate-roomname-string-options-any)
 - [`colyseus.sdk.create()`](/sdk/#create-roomname-string-options-any)
@@ -195,7 +205,6 @@ it("should connect into battle_room with options x, y, z", async () => {
 
 Wait for client state to be in sync with the server.
 
-
 ```ts {3} filename="App.test.ts"
 it("should do xyz after receiving message 'x'", async () => {
     const client = await colyseus.sdk.joinOrCreate("battle_room");
@@ -206,8 +215,7 @@ it("should do xyz after receiving message 'x'", async () => {
 
 ### Wait for Message Type
 
-Wait for a particular message `type` to arrive in the frontend.
-
+Wait for a particular message `type` to arrive in the client.
 
 ```ts {5} filename="App.test.ts"
 it("should do xyz after receiving message 'x'", async () => {
@@ -223,7 +231,6 @@ it("should do xyz after receiving message 'x'", async () => {
 
 Wait for any next message to arrive in the client.
 
-
 ```ts {5} filename="App.test.ts"
 it("should do xyz after receiving message 'x'", async () => {
     const client = await colyseus.sdk.joinOrCreate("battle_room");
@@ -236,7 +243,7 @@ it("should do xyz after receiving message 'x'", async () => {
 
 ## Testing HTTP Routes
 
-The `@colyseus/testing` also offers an HTTP client for requesting your custom http routes:
+The `@colyseus/testing` package also provides an HTTP client for testing your custom [HTTP routes](/server/http-routes):
 
 - `colyseus.http.get(url, opts)`
 - `colyseus.http.post(url, opts)`
