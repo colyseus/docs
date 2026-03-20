@@ -3,30 +3,11 @@ title: "Playground"
 description: "Use the Colyseus Playground to create room connections, inspect messages, and debug state synchronization in the browser."
 ---
 import { PackageIcon } from "@primer/octicons-react";
+import { Callout } from "nextra/components";
 
 # Playground
 
-The frontend playground allows you to easily create connections with rooms and inspect how they communicate with the server.
-
-## Features
-
-- Allows to `joinOrCreate` / `create` / `join` into rooms.
-- When `joinById` is selected, provides a list of active rooms by id
-- Easily authenticate with configured options from [<PackageIcon /> Auth Module](/auth/module)
-- Simulate room connection drops
-- Visualize the client state in JSON format
-- Allow the client to send messages by type (auto-detected)
-- Built-in viewer and tester for server HTTP endpoints (similar to Postman)
-
-### Screenshots
-
-#### Rooms
-
-![](/playground/rooms.webp)
-
-#### API Endpoints
-
-![](/playground/endpoints.webp)
+The Colyseus Playground is a browser-based development tool for real-time debugging of your multiplayer server. It lets you create and manage WebSocket room connections, inspect synchronized state, send and receive messages, and test HTTP endpoints — all without writing any client-side code.
 
 ## Installation
 
@@ -36,21 +17,68 @@ This package is installed by default on new projects created via `npm create col
 npm install --save @colyseus/playground
 ```
 
-Then, import and bind it to your express app instance:
+Then, import and mount it as an Express middleware:
 
-```ts {2,8} filename="app.config.ts"
+```ts {2,7} filename="app.config.ts"
 import { defineServer } from "colyseus";
 import { playground } from "@colyseus/playground";
 
 const server = defineServer({
     // ...
     express: (app) => {
-        // bind it as an express middleware
         app.use("/playground", playground());
     }
-    // ...
 });
 ```
+
+## Usage
+
+Once mounted, start your server and navigate to [http://localhost:2567/playground](http://localhost:2567/playground) in your browser.
+
+If you mounted the playground at a different path (e.g. `app.use("/my-path", playground())`), adjust the URL accordingly.
+
+<Callout type="warning">
+    The playground exposes full access to your rooms and server endpoints. Do not expose it in production without password protection. You can use `express-basic-auth` to restrict access:
+
+    ```sh npm2yarn
+    npm install --save express-basic-auth
+    ```
+
+    ```ts
+    import basicAuth from "express-basic-auth";
+
+    const basicAuthMiddleware = basicAuth({
+        users: { "admin": "admin" },
+        challenge: true
+    });
+
+    app.use("/playground", basicAuthMiddleware, playground());
+    ```
+</Callout>
+
+## Features
+
+- Create room connections via `joinOrCreate` / `create` / `join`
+- When `joinById` is selected, provides a list of active rooms by id
+- Authenticate using credentials auto-detected from [<PackageIcon /> Auth Module](/auth/module)
+- Simulate room connection drops to test reconnection logic
+- Visualize the client state in JSON format
+- Allow the client to send messages by type (auto-detected)
+- Built-in viewer and tester for server [HTTP endpoints](/server/http-routes) (similar to Postman)
+
+## Screenshots
+
+### Rooms
+
+All rooms defined in your server configuration are automatically listed here, allowing you to create connections, inspect state, send messages, and simulate disconnections.
+
+![](/playground/rooms.webp)
+
+### API Endpoints
+
+All [HTTP routes](/server/http-routes) registered on your server are automatically detected and listed here, letting you test requests and inspect responses directly from the browser.
+
+![](/playground/endpoints.webp)
 
 ## Contribute
 
