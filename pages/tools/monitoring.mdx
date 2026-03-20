@@ -1,23 +1,14 @@
 ---
 title: "Monitoring Panel"
+description: "Use the Colyseus Monitoring Panel to view active rooms, inspect state, manage clients, and debug your multiplayer server in real time."
 ---
+import { Callout } from "nextra/components";
 
 # Monitoring Panel
 
-The `@colyseus/monitor` is a handy tool that allows you to view and inspect the current list of rooms spawned by the server.
+The Colyseus Monitoring Panel is a browser-based administration tool for inspecting and managing your multiplayer server in real time. It gives you visibility into active rooms, connected clients, and room state — and lets you take actions like disposing rooms, disconnecting clients, or broadcasting messages.
 
-**Features**
-
-- List all active rooms
-    - Force to dispose a specific room
-- Inspect a specific room
-    - View room's state
-    - Send/broadcast messages for a client
-    - Force to disconnect a client.
-
-<img src="https://github.com/colyseus/colyseus-monitor/blob/master/media/demo.gif?raw=1" />
-
-## Install the package
+## Installation
 
 This package is installed by default on new projects created via `npm create colyseus-app`.
 
@@ -25,44 +16,54 @@ This package is installed by default on new projects created via `npm create col
 npm install --save @colyseus/monitor
 ```
 
-Include it in your project:
+Then, import and mount it as an Express middleware:
 
-```ts {2,8} filename="app.config.ts"
+```ts {2,7} filename="app.config.ts"
 import { defineServer } from "colyseus";
 import { monitor } from "@colyseus/monitor";
 
 const server = defineServer({
     // ...
     express: (app) => {
-        // bind it as an express middleware
         app.use("/monitor", monitor());
     }
-    // ...
 });
 ```
 
-Access it in the browser via [http://localhost:2567/monitor](http://localhost:2567/monitor).
+## Usage
+
+Once mounted, start your server and navigate to [http://localhost:2567/monitor](http://localhost:2567/monitor) in your browser.
+
+All active rooms spawned by your server are automatically listed, along with their clients and metadata.
+
+<img src="https://github.com/colyseus/colyseus-monitor/blob/master/media/demo.gif?raw=1" />
+
+### Features
+
+- List all active rooms
+    - Force dispose a specific room
+- Inspect a specific room
+    - View room's state
+    - Send/broadcast messages for a client
+    - Force disconnect a client
+
+<Callout type="warning">
+    The monitoring panel exposes full control over your rooms and clients. Do not expose it in production without password protection — see [Password Protection](#password-protection) below.
+</Callout>
 
 ## Password Protection
 
-You can use an express middleware to enable authentication on the monitor route, such as `express-basic-middleware`:
+You can use `express-basic-auth` to restrict access to the monitor route:
 
 ```sh npm2yarn
 npm install --save express-basic-auth
 ```
 
-Create a user and password using `express-basic-auth`.
-
-``` typescript
+```typescript
 import basicAuth from "express-basic-auth";
 
 const basicAuthMiddleware = basicAuth({
-    // list of users and passwords
-    users: {
-        "admin": "admin",
-    },
-    // sends WWW-Authenticate header, which will prompt the user to fill
-    // credentials in
+    users: { "admin": "admin" },
     challenge: true
 });
 
@@ -71,8 +72,10 @@ app.use("/monitor", basicAuthMiddleware, monitor());
 
 ## Custom Room Listing Columns
 
-``` typescript
-app.use("/monitor", basicAuthMiddleware, monitor({
+You can customize which columns appear in the room list by passing a `columns` option:
+
+```typescript
+app.use("/monitor", monitor({
   columns: [
     'roomId',
     'name',
@@ -84,4 +87,4 @@ app.use("/monitor", basicAuthMiddleware, monitor({
 }));
 ```
 
-If unspecified, the default room listing columns are: `['roomId', 'name', 'clients', 'maxClients', 'locked', 'elapsedTime']`.
+If unspecified, the default columns are: `['roomId', 'name', 'clients', 'maxClients', 'locked', 'elapsedTime']`.
