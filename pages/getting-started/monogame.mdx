@@ -17,24 +17,6 @@ dotnet add package Colyseus.MonoGame
 
 ---
 
-## Setup
-
-Register the `ColyseusGameComponent` in your game's `Initialize()` method. This MonoGame `GameComponent` automatically dispatches WebSocket events on the game loop, so all Colyseus room connections are handled without any manual polling.
-
-```csharp filename="Game1.cs"
-using Colyseus.MonoGame;
-
-protected override void Initialize()
-{
-    Components.Add(new ColyseusGameComponent(this));
-    base.Initialize();
-}
-```
-
-<Callout type="info">
-    Without `ColyseusGameComponent`, you would need to manually poll for WebSocket messages each frame. Adding this single component handles all dispatch automatically for every Colyseus room connection.
-</Callout>
-
 ## Quick Example
 
 This example shows how to connect to a room, listen for state changes via Callbacks, and send messages.
@@ -43,18 +25,11 @@ This example shows how to connect to a room, listen for state changes via Callba
 using Microsoft.Xna.Framework;
 using Colyseus;
 using Colyseus.Schema;
-using Colyseus.MonoGame;
 
 public class Game1 : Game
 {
     Client client;
     Room<MyRoomState> room;
-
-    protected override void Initialize()
-    {
-        Components.Add(new ColyseusGameComponent(this));
-        base.Initialize();
-    }
 
     protected override async void LoadContent()
     {
@@ -102,6 +77,20 @@ public class Game1 : Game
 }
 ```
 
+## Optional: ColyseusGameComponent
+
+The SDK automatically dispatches WebSocket messages internally via an async Task loop, so no extra setup is needed. However, you can optionally register the `ColyseusGameComponent` to synchronize message dispatching with MonoGame's `Update()` cycle:
+
+```csharp filename="Game1.cs"
+using Colyseus.MonoGame;
+
+protected override void Initialize()
+{
+    Components.Add(new ColyseusGameComponent(this));
+    base.Initialize();
+}
+```
+
 ## SDK API
 
 Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select the **C# (Unity)** tab.
@@ -116,6 +105,63 @@ npx schema-codegen src/rooms/schema/* --csharp --output ../MyGame/States/
 
 <Callout type="info">
     See the full [State Schema Codegen documentation](/sdk/state-sync-callbacks#frontend-schema-generation) for more options and details.
+</Callout>
+
+### DynamicSchema (Skip Code Generation)
+
+If you want to skip the code generation step entirely, you can use `DynamicSchema` instead of generated schema classes. `DynamicSchema` builds its type metadata at runtime from the server handshake, so no generated files are needed.
+
+```csharp filename="Game1.cs"
+using Microsoft.Xna.Framework;
+using Colyseus;
+using Colyseus.Schema;
+
+public class Game1 : Game
+{
+    Client client;
+    Room<DynamicSchema> room;
+
+    protected override async void LoadContent()
+    {
+        client = new Client("ws://localhost:2567");
+
+        room = await client.JoinOrCreate<DynamicSchema>("my_room");
+        System.Diagnostics.Debug.WriteLine("Joined room: " + room.Id);
+
+        // Access state fields dynamically
+        var players = room.State.Get<MapSchema<DynamicSchema>>("players");
+        var self = players[room.SessionId];
+        var hp = self.Get<int>("hp");
+
+        // Callbacks use string-based property names instead of expressions
+        var callbacks = Callbacks.Get(room);
+
+        callbacks.Listen<string>("currentTurn", (currentValue, previousValue) => {
+            System.Diagnostics.Debug.WriteLine($"Turn changed: {previousValue} -> {currentValue}");
+        });
+
+        callbacks.OnAdd<DynamicSchema>("players", (sessionId, player) => {
+            System.Diagnostics.Debug.WriteLine($"Player joined: {sessionId}");
+
+            // Access nested collections
+            var items = player.Get<ArraySchema<DynamicSchema>>("items");
+        });
+
+        callbacks.OnRemove<DynamicSchema>("players", (sessionId, player) => {
+            System.Diagnostics.Debug.WriteLine($"Player left: {sessionId}");
+        });
+    }
+
+    protected override void OnExiting(object sender, EventArgs args)
+    {
+        if (room != null) room.Leave();
+        base.OnExiting(sender, args);
+    }
+}
+```
+
+<Callout type="warning">
+    `DynamicSchema` trades compile-time type safety for convenience. You won't get IDE autocomplete on state fields, and type errors will only surface at runtime. For production projects, [Schema Codegen](#state-schema-codegen) is recommended.
 </Callout>
 
 ### Message Types Codegen

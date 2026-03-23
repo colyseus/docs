@@ -139,6 +139,62 @@ npx schema-codegen src/rooms/schema/* --csharp --output ../Assets/Scripts/States
     See the full [State Schema Codegen documentation](/sdk/state-sync-callbacks#frontend-schema-generation) for more options and details.
 </Callout>
 
+### DynamicSchema (Skip Code Generation)
+
+If you want to skip the code generation step entirely, you can use `DynamicSchema` instead of generated schema classes. `DynamicSchema` builds its type metadata at runtime from the server handshake, so no generated files are needed.
+
+```csharp filename="NetworkManager.cs"
+using UnityEngine;
+using Colyseus;
+using Colyseus.Schema;
+
+public class NetworkManager : MonoBehaviour
+{
+    Client client;
+    Room<DynamicSchema> room;
+
+    async void Start()
+    {
+        client = new Client("ws://localhost:2567");
+
+        room = await client.JoinOrCreate<DynamicSchema>("my_room");
+        Debug.Log("Joined room: " + room.Id);
+
+        // Access state fields dynamically
+        var players = room.State.Get<MapSchema<DynamicSchema>>("players");
+        var self = players[room.SessionId];
+        var hp = self.Get<int>("hp");
+
+        // Callbacks use string-based property names instead of expressions
+        var callbacks = Callbacks.Get(room);
+
+        callbacks.Listen<string>("currentTurn", (currentValue, previousValue) => {
+            Debug.Log($"Turn changed: {previousValue} -> {currentValue}");
+        });
+
+        callbacks.OnAdd<DynamicSchema>("players", (sessionId, player) => {
+            Debug.Log($"Player joined: {sessionId}");
+
+            // Access nested collections
+            var items = player.Get<ArraySchema<DynamicSchema>>("items");
+        });
+
+        callbacks.OnRemove<DynamicSchema>("players", (sessionId, player) => {
+            Debug.Log($"Player left: {sessionId}");
+        });
+    }
+
+    async void OnDestroy()
+    {
+        if (room != null) await room.Leave();
+    }
+}
+```
+
+<Callout type="warning">
+    `DynamicSchema` trades compile-time type safety for convenience. You won't get IDE autocomplete on state fields, and type errors will only surface at runtime. For production projects, [Schema Codegen](#state-schema-codegen) is recommended.
+</Callout>
+
 ### Message Types Codegen
 
 The same `schema-codegen` command also generates C# classes for any TypeScript interface containing `"Message"` in its name. This allows you to use strongly-typed message objects on the client side.
