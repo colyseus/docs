@@ -12,7 +12,15 @@ import { DevicesIcon } from '@primer/octicons-react'
 </Callout>
 
 <Callout type="info">
-    This extension does not support **Godot Mono**. We are working on a universal C# package for Godot Mono support.
+    This extension does not support **Godot Mono**. For Godot Mono (C#), install the `Colyseus` NuGet package by adding it to the `.csproj` file in your project root:
+
+    ```xml
+    <ItemGroup>
+        <PackageReference Include="Colyseus" Version="0.17.*" />
+    </ItemGroup>
+    ```
+
+    Godot automatically downloads and sets up NuGet packages the next time it builds the project. See the [Client SDK](/sdk) documentation for the C# API reference.
 </Callout>
 
 We are experimenting with our shared [Colyseus Native SDK](https://github.com/colyseus/native-sdk) for cross-platform support for Colyseus across different engines. Godot is the first engine to support this. The work on Native SDK is still in progress, so expect some breaking changes as we go.

@@ -1,0 +1,200 @@
+---
+title: "Colyseus SDK for MonoGame"
+description: "Install the Colyseus MonoGame SDK via NuGet. Build real-time multiplayer games in MonoGame with room management and state synchronization."
+---
+import { Callout } from 'nextra/components'
+import { DevicesIcon } from '@primer/octicons-react'
+
+# MonoGame SDK
+
+## Install package
+
+Add the `Colyseus.MonoGame` NuGet package to your project:
+
+```sh filename="Terminal"
+dotnet add package Colyseus.MonoGame
+```
+
+---
+
+## Setup
+
+Register the `ColyseusGameComponent` in your game's `Initialize()` method. This MonoGame `GameComponent` automatically dispatches WebSocket events on the game loop, so all Colyseus room connections are handled without any manual polling.
+
+```csharp filename="Game1.cs"
+using Colyseus.MonoGame;
+
+protected override void Initialize()
+{
+    Components.Add(new ColyseusGameComponent(this));
+    base.Initialize();
+}
+```
+
+<Callout type="info">
+    Without `ColyseusGameComponent`, you would need to manually poll for WebSocket messages each frame. Adding this single component handles all dispatch automatically for every Colyseus room connection.
+</Callout>
+
+## Quick Example
+
+This example shows how to connect to a room, listen for state changes via Callbacks, and send messages.
+
+```csharp filename="Game1.cs"
+using Microsoft.Xna.Framework;
+using Colyseus;
+using Colyseus.Schema;
+using Colyseus.MonoGame;
+
+public class Game1 : Game
+{
+    Client client;
+    Room<MyRoomState> room;
+
+    protected override void Initialize()
+    {
+        Components.Add(new ColyseusGameComponent(this));
+        base.Initialize();
+    }
+
+    protected override async void LoadContent()
+    {
+        client = new Client("ws://localhost:2567");
+
+        room = await client.JoinOrCreate<MyRoomState>("my_room");
+        System.Diagnostics.Debug.WriteLine("Joined room: " + room.Id);
+
+        // Get state callbacks handler
+        var callbacks = Callbacks.Get(room);
+
+        // Listen for changes on a state property
+        callbacks.Listen(state => state.currentTurn, (currentValue, previousValue) => {
+            System.Diagnostics.Debug.WriteLine($"Turn changed: {previousValue} -> {currentValue}");
+        });
+
+        // Listen for players being added
+        callbacks.OnAdd(state => state.players, (sessionId, player) => {
+            System.Diagnostics.Debug.WriteLine($"Player joined: {sessionId}");
+
+            callbacks.Listen(player, p => p.hp, (currentHp, previousHp) => {
+                System.Diagnostics.Debug.WriteLine($"Player {sessionId} hp: {currentHp}");
+            });
+        });
+
+        // Listen for players being removed
+        callbacks.OnRemove(state => state.players, (sessionId, player) => {
+            System.Diagnostics.Debug.WriteLine($"Player left: {sessionId}");
+        });
+
+        // Send a message to the server
+        room.Send("move", new { x = 10f, y = 20f });
+
+        // Listen for messages from the server
+        room.OnMessage<string>("chat", (message) => {
+            System.Diagnostics.Debug.WriteLine("Chat: " + message);
+        });
+    }
+
+    protected override void OnExiting(object sender, EventArgs args)
+    {
+        if (room != null) room.Leave();
+        base.OnExiting(sender, args);
+    }
+}
+```
+
+## SDK API
+
+Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select the **C# (Unity)** tab.
+
+### State Schema Codegen
+
+For compiled languages like C#, you need to generate client-side schema classes that match your server's state structure. Run the following command from your server directory:
+
+```sh filename="Terminal"
+npx schema-codegen src/rooms/schema/* --csharp --output ../MyGame/States/
+```
+
+<Callout type="info">
+    See the full [State Schema Codegen documentation](/sdk/state-sync-callbacks#frontend-schema-generation) for more options and details.
+</Callout>
+
+### Message Types Codegen
+
+The same `schema-codegen` command also generates C# classes for any TypeScript interface containing `"Message"` in its name. This allows you to use strongly-typed message objects on the client side.
+
+For example, given the following server-side code:
+
+```ts filename="src/rooms/MyRoom.ts"
+interface MoveMessage {
+  x: number;
+  y: number;
+}
+
+// ...
+
+messages = {
+  move: (client: Client, message: MoveMessage) => {
+    // handle move
+  }
+}
+```
+
+Running the codegen command will automatically generate a matching C# class:
+
+```csharp filename="Generated C# output"
+public class MoveMessage {
+    public float x;
+    public float y;
+}
+```
+
+You can then use these classes when sending and receiving messages on the client:
+
+```csharp filename="Sending a message to the server"
+room.Send("move", new MoveMessage() { x = 1.0f, y = 2.0f });
+```
+
+The same applies to messages sent from the server to the client. For example, given a server-side interface:
+
+```ts filename="src/rooms/MyRoom.ts"
+interface EventMessage {
+  type: string;
+  data: string;
+}
+
+// ...
+
+onJoin(client: Client) {
+  client.send("event", { type: "welcome", data: "Hello!" } as EventMessage);
+}
+```
+
+You can listen for it on the client with the generated type:
+
+```csharp filename="Receiving a message from the server"
+room.OnMessage<EventMessage>("event", (message) => {
+    System.Diagnostics.Debug.WriteLine(message.type);
+    System.Diagnostics.Debug.WriteLine(message.data);
+});
+```
+
+## Debugging
+
+### Breakpoints
+
+If you set a breakpoint in your application while the WebSocket connection is open, the connection will be closed automatically after 3 seconds due to inactivity. To prevent the WebSocket connection from dropping, use `pingInterval: 0` during development:
+
+```ts filename="app.config.ts"
+import { defineServer } from "colyseus";
+import { WebSocketTransport } from "@colyseus/ws-transport";
+
+const server = defineServer({
+    // ...
+    transport: new WebSocketTransport({
+        pingInterval: 0, // <--- HERE
+    }),
+    // ...
+});
+```
+
+Make sure to have a `pingInterval` higher than `0` on production. The default `pingInterval` value is `3000`.
