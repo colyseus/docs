@@ -61,8 +61,7 @@ The `Client` instance is your entry point to connect to the server.
 
     <Tabs.Tab>
     ```gdscript filename="client.gd"
-    var client: ColyseusClient = Colyseus.create_client()
-    client.set_endpoint("ws://localhost:2567")
+    var client = Colyseus.Client.new("ws://localhost:2567")
     ```
     </Tabs.Tab>
 
@@ -135,7 +134,7 @@ The most common way to connect. Joins an existing room if available, or creates 
 
     <Tabs.Tab>
     ```gdscript filename="client.gd"
-    var room: ColyseusRoom = client.join_or_create("battle")
+    var room: Colyseus.Room = client.join_or_create("battle")
 
     room.joined.connect(func():
         print("joined successfully"))
@@ -446,7 +445,7 @@ Use `Callbacks` to listen for specific property changes with fine-grained contro
 
     <Tabs.Tab>
     ```gdscript filename="client.gd"
-    var callbacks: ColyseusCallbacks = Colyseus.callbacks(room)
+    var callbacks = Colyseus.Callbacks.of(room)
 
     callbacks.listen("currentTurn", _on_turn_change)
     callbacks.on_add("players", _on_player_add)
@@ -910,7 +909,7 @@ For more control, you can manually reconnect using a cached reconnection token. 
 
     <Tabs.Tab>
     ```gdscript filename="client.gd"
-    var room: ColyseusRoom = client.reconnect(cached_reconnection_token)
+    var room: Colyseus.Room = client.reconnect(cached_reconnection_token)
 
     room.joined.connect(func():
         print("reconnected successfully"))
@@ -1196,8 +1195,7 @@ Automatically connect to the server with the lowest latency from a list of endpo
     ]
 
     # Select endpoint with lowest latency and create client
-    var client = Colyseus.create_client()
-    client.set_endpoint(endpoints[0])  # Set your preferred endpoint
+    var client = Colyseus.Client.new(endpoints[0])  # Set your preferred endpoint
     ```
     </Tabs.Tab>
 </SDKTabs>

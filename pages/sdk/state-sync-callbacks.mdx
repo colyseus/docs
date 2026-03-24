@@ -87,15 +87,14 @@ In order to register callbacks to Schema instances, you must access the instance
         <Tabs.Tab>
         ```gdscript {10} filename="client.gd"
         # initialize SDK
-        var client: ColyseusClient = Colyseus.create_client()
-        client.set_endpoint("ws://localhost:2567")
+        var client = Colyseus.Client.new("ws://localhost:2567")
 
         # join room
-        var room: ColyseusRoom = client.join_or_create("my_room")
+        var room = client.join_or_create("my_room")
 
         room.joined.connect(func():
             # get state callbacks handler
-            var callbacks: ColyseusCallbacks = Colyseus.callbacks(room))
+            var callbacks = Colyseus.Callbacks.of(room))
         ```
         </Tabs.Tab>
     </SDKTabs>
@@ -210,7 +209,7 @@ In order to register callbacks to Schema instances, you must access the instance
         # when an entity was added (ArraySchema or MapSchema)
         callbacks.on_add("entities", _on_entity_add)
 
-        func _on_entity_add(entity: Dictionary, session_id: String):
+        func _on_entity_add(entity, session_id):
             print("entity added: ", entity)
 
             callbacks.listen(entity, "hp", func(current_hp, previous_hp):
@@ -219,7 +218,7 @@ In order to register callbacks to Schema instances, you must access the instance
         # when an entity was removed (ArraySchema or MapSchema)
         callbacks.on_remove("entities", _on_entity_remove)
 
-        func _on_entity_remove(entity: Dictionary, session_id: String):
+        func _on_entity_remove(entity, session_id):
             print("entity removed: ", entity)
         ```
         </Tabs.Tab>
@@ -462,7 +461,7 @@ The On Change callback is invoked whenever a direct property of a `Schema` insta
     ```gdscript filename="client.gd"
     callbacks.on_add("entities", _on_entity_add)
 
-    func _on_entity_add(entity: Dictionary, session_id: String):
+    func _on_entity_add(entity, session_id):
         # ...
         callbacks.on_change(entity, func():
             # some property changed inside entity
@@ -550,7 +549,7 @@ By default, the callback is called immediately for existing items in the collect
     ```gdscript filename="client.gd"
     callbacks.on_add("players", _on_player_add)
 
-    func _on_player_add(player: Dictionary, session_id: String):
+    func _on_player_add(player, session_id):
         print("player has been added at ", session_id)
 
         # add your player entity to the game world!
@@ -615,7 +614,7 @@ The `onRemove` callback is called with the removed item and its key on holder ob
     ```gdscript filename="client.gd"
     callbacks.on_remove("players", _on_player_remove)
 
-    func _on_player_remove(player: Dictionary, session_id: String):
+    func _on_player_remove(player, session_id):
         print("player has been removed at ", session_id)
 
         # remove your player entity from the game world!

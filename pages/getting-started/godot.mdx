@@ -59,18 +59,17 @@ This example shows how to connect to a room, listen for state changes, send mess
 ```gdscript filename="Network.gd"
 extends Node
 
-var client: ColyseusClient
-var room: ColyseusRoom
-var callbacks: ColyseusCallbacks
+var client: Colyseus.Client
+var room: Colyseus.Room
+var callbacks: Colyseus.Callbacks
 
 func _ready():
-	# Create and connect client
-	client = Colyseus.create_client()
-	client.set_endpoint("ws://localhost:2567")
+	# Create client with endpoint
+	client = Colyseus.Client.new("ws://localhost:2567")
 
 	print("Connecting to: ", client.get_endpoint())
 
-	# Join or create a room
+	# Join or create a room (options are passed as Dictionary)
 	room = client.join_or_create("test_room")
 
 	# Connect signals
@@ -81,73 +80,82 @@ func _ready():
 		room.error.connect(_on_room_error)
 		room.left.connect(_on_room_left)
 
-func _process(delta):
-	# Poll the client for messages
-	# (Only required for web builds)
-	ColyseusClient.poll()
-
 func _on_room_joined():
-	print("✓ Joined room: ", room.get_id())
+	print("Joined room: ", room.get_id())
 	print("  Session ID: ", room.get_session_id())
 	print("  Room name: ", room.get_name())
 
 	# Get callbacks container for the room
-	callbacks = Colyseus.callbacks(room)
+	callbacks = Colyseus.Callbacks.of(room)
 
 	# Listen to root state property changes
 	callbacks.listen("currentTurn", _on_turn_change)
 
-	# Listen to collection additions/removals
+	# Listen to collection additions/removals/changes
 	callbacks.on_add("players", _on_player_add)
 	callbacks.on_remove("players", _on_player_remove)
 
 	# Send a message
-	var message = "Hello from Godot!".to_utf8_buffer()
 	room.send_message("add_item", {"name": "MY NEW ITEM"})
 
 func _on_turn_change(current_value, previous_value):
-	print("↻ Turn changed: ", previous_value, " -> ", current_value)
+	print("Turn changed: ", previous_value, " -> ", current_value)
 
-func _on_player_add(player: Dictionary, key: String):
+func _on_player_add(player, key: String):
 	print("+ Player joined: ", key)
 	# Listen to nested schema properties
 	callbacks.listen(player, "hp", _on_player_hp_change)
 	# Listen to nested collections
 	callbacks.on_add(player, "items", _on_item_add)
+	# Listen to any property change on this player
+	callbacks.on_change(player, _on_player_changed)
 
-func _on_player_remove(player: Dictionary, key: String):
+func _on_player_remove(player, key: String):
 	print("- Player left: ", key)
+
+func _on_players_change(key, value):
+	print("Players collection changed: ", key)
+
+func _on_player_changed():
+	print("  Player instance changed")
 
 func _on_player_hp_change(current_hp, previous_hp):
 	print("  HP changed: ", previous_hp, " -> ", current_hp)
 
-func _on_item_add(item: Dictionary, index: int):
+func _on_item_add(item, index: int):
 	print("  Item added at index: ", index, " -> ", item)
 
 	callbacks.listen(item, "name", func(name, _prev):
 		print("  Item name: ", name))
 
 func _on_state_changed():
-	print("↻ Room state changed")
-	# Access state as Dictionary
+	print("Room state changed")
 	var state = room.get_state()
 	if state:
 		print("  State: ", state)
 
 func _on_message_received(type: Variant, data: Variant):
-	# type is the message type (String or int for numeric types)
-	print("✉ Message received - type: ", type, " data: ", data)
+	print("Message received - type: ", type, " data: ", data)
 
 func _on_room_error(code: int, message: String):
-	printerr("✗ Room error [", code, "]: ", message)
+	printerr("Room error [", code, "]: ", message)
 
 func _on_room_left(code: int, reason: String):
-	print("← Left room [", code, "]: ", reason)
+	print("Left room [", code, "]: ", reason)
 
 func _exit_tree():
-	# Clean up when node is removed
-	if room and room.is_connected():
+	if room and room.connected:
 		room.leave()
+```
+
+### Polling
+
+The SDK automatically polls for network events every frame via an internal node added to the scene tree. No manual polling is needed in most cases.
+
+For **headless or test** scenarios where there is no scene tree, call `Colyseus.poll()` manually in your loop:
+
+```gdscript
+Colyseus.poll()
 ```
 
 ### State Schema Codegen
