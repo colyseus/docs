@@ -100,6 +100,53 @@ Password for the SSL file. (for SSL termination through the Node.js application.
 
 ---
 
+### Overriding the uWebSockets.js version
+
+The `@colyseus/uwebsockets-transport` package ships with a specific version of `uWebSockets.js` as a dependency. If you need to use a different version — for example, to pick up a bug fix or to match a specific platform requirement — you can override it directly from your project's `package.json`.
+
+<Tabs items={["npm", "yarn", "pnpm"]}>
+    <Tabs.Tab>
+    Use the [`overrides`](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#overrides) field:
+    ```json filename="package.json"
+    {
+      "overrides": {
+        "uWebSockets.js": "uNetworking/uWebSockets.js#v20.51.0"
+      }
+    }
+    ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+    Use the [`resolutions`](https://classic.yarnpkg.com/lang/en/docs/selective-version-resolutions/) field:
+    ```json filename="package.json"
+    {
+      "resolutions": {
+        "uWebSockets.js": "uNetworking/uWebSockets.js#v20.51.0"
+      }
+    }
+    ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+    Use the [`pnpm.overrides`](https://pnpm.io/package_json#pnpmoverrides) field:
+    ```json filename="package.json"
+    {
+      "pnpm": {
+        "overrides": {
+          "uWebSockets.js": "uNetworking/uWebSockets.js#v20.51.0"
+        }
+      }
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+After updating `package.json`, remove your `node_modules` directory and reinstall dependencies for the override to take effect.
+
+<Callout type="warning">
+    Check the [uWebSockets.js releases](https://github.com/uNetworking/uWebSockets.js/releases) for available versions.
+</Callout>
+
+---
+
 ### Troubleshooting
 
 #### 431 Request Header Fields Too Large
