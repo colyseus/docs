@@ -246,6 +246,26 @@ List of renamed protected members:
 | `this._events` | `this["_events"]` |
 | `this._reconnections` | `this["_reconnections"]` |
 
+#### `onMessage()` now supports multiple handlers per message type
+
+Previously, registering a new handler for the same message type would replace the existing one. Starting from 0.17, `onMessage()` supports multiple handlers for the same message type — all registered callbacks will be invoked when a matching message is received.
+
+```typescript
+this.onMessage("move", (client, message) => { /* handler 1 */ });
+this.onMessage("move", (client, message) => { /* handler 2 */ });
+// Both handlers will run when a "move" message is received.
+```
+
+If your code previously relied on re-registration to replace a handler, you must now explicitly unbind the previous one using the function returned by `onMessage()`:
+
+```typescript
+const unbind = this.onMessage("move", (client, message) => { /* ... */ });
+
+// Later, replace the handler:
+unbind();
+this.onMessage("move", (client, message) => { /* new handler */ });
+```
+
 #### Fallback for all messages
 
 If you were using the `onMessageHandlers` property directly to register a fallback for all messages, you need to update your code to use the `onMessageFallbacks` property instead.
