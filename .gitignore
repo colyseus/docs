@@ -3,3 +3,4 @@ out
 node_modules
 .cache
 .DS_Store
+GH_TOKEN
