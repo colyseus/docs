@@ -5,3 +5,106 @@ ul > li > ul { margin-top: 0 !important; }
 html:not(.dark) .platform-icon {
     filter: brightness(0) saturate(100%) invert(6%) sepia(19%) saturate(2226%) hue-rotate(185deg) brightness(100%) contrast(93%);
 }
+
+/* Sponsor sidebar (Drizzle-inspired tightly-packed grid) */
+.sponsor-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 1px;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.10);
+}
+html.dark .sponsor-grid {
+    background-color: rgba(255, 255, 255, 0.10);
+}
+
+.sponsor-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+}
+
+.sponsor-cell {
+    --cell-bg: #fafafa;
+    --cell-bg-hover: #f1f2f4;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85em 0.5em;
+    background-color: transparent;
+}
+html.dark .sponsor-cell {
+    --cell-bg: #1a1a1a;
+    --cell-bg-hover: #232323;
+}
+
+.sponsor-cell::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 240px;
+    height: 240px;
+    z-index: 0;
+    background: conic-gradient(
+        from 0deg at 50% 50%,
+        #f5a015 0deg,
+        rgba(245, 160, 21, 0) 45deg,
+        rgba(245, 160, 21, 0) 135deg,
+        #f5a015 180deg,
+        rgba(245, 160, 21, 0) 225deg,
+        rgba(245, 160, 21, 0) 315deg,
+        #f5a015 360deg
+    );
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(45deg) scale(1.45);
+    transition: opacity 200ms ease;
+    animation: sponsor-spin 10s linear infinite;
+    pointer-events: none;
+}
+
+.sponsor-cell::after {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    z-index: 1;
+    background-color: var(--cell-bg);
+    transition: background-color 150ms ease;
+    pointer-events: none;
+}
+
+.sponsor-cell img,
+.sponsor-cell svg {
+    position: relative;
+    z-index: 2;
+    filter: grayscale(1);
+    opacity: 0.6;
+    transition: filter 150ms ease, opacity 150ms ease;
+}
+
+.sponsor-cell:hover::before {
+    opacity: 1;
+}
+
+.sponsor-cell:hover::after {
+    background-color: var(--cell-bg-hover);
+}
+
+.sponsor-cell:hover img,
+.sponsor-cell:hover svg {
+    filter: none;
+    opacity: 1;
+}
+
+@keyframes sponsor-spin {
+    from { transform: translate(-50%, -50%) rotate(45deg) scale(1.45); }
+    to { transform: translate(-50%, -50%) rotate(405deg) scale(1.45); }
+}
+
+.sponsor-scorewarrior { color: #821890; }
+html.dark .sponsor-scorewarrior { color: #ffffff; }
