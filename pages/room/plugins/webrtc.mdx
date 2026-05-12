@@ -62,7 +62,11 @@ The plugin tracks which clients have explicitly opted into the mesh, so spectato
 
 ## Client-side usage
 
-Use `WebRTCClient` from `@colyseus/webrtc/client` to consume the signaling and manage `RTCPeerConnection` instances:
+Use `WebRTCClient` from `@colyseus/webrtc/client` to consume the signaling and manage `RTCPeerConnection` instances.
+
+<Callout type="info">
+  The source is a single ~170-line file you can read or fork — see the [reference implementation on GitHub](https://github.com/colyseus/webrtc/blob/main/src/client.ts).
+</Callout>
 
 ```ts filename="client.ts"
 import { Client } from "@colyseus/sdk";
