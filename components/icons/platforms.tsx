@@ -77,6 +77,12 @@ export const monogame = (props: IconProps = {}) => <Image
             width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
             alt="MonoGame" />
 
+export const c = (props: IconProps = {}) => <Image
+            className="platform-icon"
+            src={require('../../images/icons/c.png')}
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
+            alt="C" />
+
 export const gamemaker = (props: IconProps = {}) => <Image
             className="platform-icon"
             src={require('../../images/icons/gamemaker.png')}

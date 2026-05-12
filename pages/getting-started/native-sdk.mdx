@@ -1,0 +1,514 @@
+---
+title: "Colyseus Native SDK (C)"
+description: "Get started with the Colyseus Native SDK for C. Build multiplayer games with raw C integration, supporting desktop, mobile, and web platforms."
+---
+import { Callout } from "nextra/components";
+
+# Native SDK (C)
+
+<Callout type="warning">
+    The Native SDK is in **beta**, and may not be stable. Please [report any issues you find](https://github.com/colyseus/native-sdk/issues).
+</Callout>
+
+The [Colyseus Native SDK](https://github.com/colyseus/native-sdk) provides a pure C API for integrating Colyseus into any engine or framework. It is the shared foundation behind the Godot, GameMaker, and Defold SDKs, and can be used directly for custom engines or platforms such as Raylib, SDL, or embedded systems.
+
+See the [Raylib example project](https://github.com/colyseus/native-sdk/tree/main/platforms/raylib) for a complete working sample.
+
+## Platforms
+
+- Desktop (Windows, macOS, Linux)
+- iOS
+- Android
+- Web (Emscripten / WASM)
+
+## Installation
+
+The Native SDK is built with Zig and exposes a C-compatible API via static or shared libraries.
+
+1. Download the latest release from [GitHub Releases](https://github.com/colyseus/native-sdk/releases?q=%22Colyseus+Native+SDK+-+Static+Library%22&expanded=true)
+2. Add the `include/` directory to your compiler's include path
+3. Link against the `colyseus` library
+
+### Building from source
+
+Requires [Zig 0.15.2](https://ziglang.org/download/).
+
+```sh
+git clone https://github.com/colyseus/native-sdk.git
+cd native-sdk
+zig build
+```
+
+The build output will be in `zig-out/lib/` (library) and `zig-out/include/` (headers).
+
+### Headers
+
+```c
+#include <colyseus/client.h>       // Client creation and matchmaking
+#include <colyseus/schema.h>       // Schema serializer
+#include <colyseus/schema/callbacks.h>  // State change callbacks
+#include <colyseus/schema/collections.h> // ArraySchema / MapSchema
+#include <colyseus/messages.h>     // Message builder and reader
+```
+
+## State Schema Codegen
+
+Generate C structs from your server-side schema definitions:
+
+```sh filename="Terminal"
+npx schema-codegen src/rooms/schema/* --c --output client/schema/
+```
+
+This produces a header file with typed structs, field metadata, and vtables for each schema class. For example, a `Player` schema generates:
+
+```c filename="schema/player.h"
+typedef struct {
+    colyseus_schema_t __base;   // Must be the first field
+    double x;
+    double y;
+    bool isBot;
+    bool disconnected;
+} player_t;
+
+static const colyseus_field_t player_fields[] = {
+    {0, "x",            COLYSEUS_FIELD_NUMBER,  "number",  offsetof(player_t, x),            NULL, NULL},
+    {1, "y",            COLYSEUS_FIELD_NUMBER,  "number",  offsetof(player_t, y),            NULL, NULL},
+    {2, "isBot",        COLYSEUS_FIELD_BOOLEAN, "boolean", offsetof(player_t, isBot),        NULL, NULL},
+    {3, "disconnected", COLYSEUS_FIELD_BOOLEAN, "boolean", offsetof(player_t, disconnected), NULL, NULL},
+};
+
+static const colyseus_schema_vtable_t player_vtable = {
+    "Player",
+    sizeof(player_t),
+    (colyseus_schema_t* (*)(void))player_create,
+    player_destroy,
+    player_fields,
+    4
+};
+```
+
+The root state vtable is passed to `colyseus_room_set_state_type()` to enable automatic deserialization.
+
+<Callout type="info">
+    See the full [State Schema Codegen documentation](/sdk/state-sync-callbacks#frontend-schema-generation) for more options and details.
+</Callout>
+
+## Auto Schemas (Without Codegen)
+
+<details>
+<summary>Show how to use schemas without running the codegen step</summary>
+
+If you do **not** call `colyseus_room_set_state_type()`, the SDK automatically builds schema definitions at runtime from the server's reflection data sent during the handshake. This is useful for:
+
+- Prototyping without a build step
+- Supporting multiple server versions with different schemas
+- Scripting languages or runtimes where codegen is impractical
+
+In this mode, state objects are returned as `colyseus_dynamic_schema_t*` instead of typed structs, and fields are accessed by name through a hash table:
+
+```c
+#include <colyseus/schema/dynamic_schema.h>
+
+// Do NOT call colyseus_room_set_state_type() - the SDK will auto-detect.
+
+static void on_join(void* userdata) {
+    // State is a dynamic schema when no vtable is provided
+    colyseus_dynamic_schema_t* state =
+        (colyseus_dynamic_schema_t*)colyseus_room_get_state(room);
+
+    // Access fields by name
+    colyseus_dynamic_value_t* turn =
+        colyseus_dynamic_schema_get_by_name(state, "currentTurn");
+
+    if (turn && turn->type == COLYSEUS_FIELD_STRING) {
+        printf("Current turn: %s\n", turn->data.str);
+    }
+
+    // Access nested map
+    colyseus_dynamic_value_t* players =
+        colyseus_dynamic_schema_get_by_name(state, "players");
+
+    if (players && players->type == COLYSEUS_FIELD_MAP) {
+        colyseus_map_schema_foreach(players->data.map, on_player_entry, NULL);
+    }
+}
+```
+
+### Reading dynamic values
+
+Each `colyseus_dynamic_value_t` is a tagged union — check `value->type` and read the matching field from `value->data`:
+
+```c
+switch (value->type) {
+    case COLYSEUS_FIELD_STRING:  printf("%s\n", value->data.str); break;
+    case COLYSEUS_FIELD_NUMBER:  printf("%f\n", value->data.num); break;
+    case COLYSEUS_FIELD_BOOLEAN: printf("%d\n", value->data.boolean); break;
+    case COLYSEUS_FIELD_INT32:   printf("%d\n", value->data.i32); break;
+    case COLYSEUS_FIELD_REF:     // Nested schema
+        handle_dynamic((colyseus_dynamic_schema_t*)value->data.ref); break;
+    case COLYSEUS_FIELD_ARRAY:   // colyseus_array_schema_t*
+    case COLYSEUS_FIELD_MAP:     // colyseus_map_schema_t*
+    default: break;
+}
+```
+
+### Iterating fields
+
+To walk every field on a dynamic schema (useful for debugging or generic UIs):
+
+```c
+static void print_field(int index, const char* name,
+                        colyseus_dynamic_value_t* value, void* userdata) {
+    printf("[%d] %s (type=%d)\n", index, name, value->type);
+}
+
+colyseus_dynamic_schema_foreach(state, print_field, NULL);
+```
+
+### Map and array entries
+
+Items inside dynamic `MapSchema`/`ArraySchema` collections are themselves `colyseus_dynamic_schema_t*` (for object types) or raw primitive values:
+
+```c
+static void on_player_entry(const char* key, void* value, void* userdata) {
+    colyseus_dynamic_schema_t* player = (colyseus_dynamic_schema_t*)value;
+
+    colyseus_dynamic_value_t* x = colyseus_dynamic_schema_get_by_name(player, "x");
+    colyseus_dynamic_value_t* y = colyseus_dynamic_schema_get_by_name(player, "y");
+
+    printf("Player %s at (%.1f, %.1f)\n", key, x->data.num, y->data.num);
+}
+```
+
+### Callbacks with auto schemas
+
+The standard callbacks API works with dynamic schemas — pass the dynamic schema instance the same way you would a generated struct:
+
+```c
+colyseus_callbacks_t* callbacks = colyseus_callbacks_create(room->serializer->decoder);
+
+// Listen on the dynamic state by property name
+colyseus_callbacks_on_add(callbacks, state, "players",
+    on_player_add, NULL, true);
+```
+
+<Callout type="warning">
+    Auto schemas trade compile-time type safety and direct struct-offset access for runtime flexibility. For performance-critical paths, prefer codegen.
+</Callout>
+
+</details>
+
+## Quick Example
+
+This example shows how to connect to a server, join a room, listen for state changes, send messages, and handle cleanup.
+
+```c filename="main.c"
+#include <stdio.h>
+#include <string.h>
+#include <colyseus/client.h>
+#include <colyseus/schema.h>
+#include <colyseus/schema/callbacks.h>
+#include <colyseus/schema/collections.h>
+#include <colyseus/messages.h>
+#include "my_room_state.h"  // Generated schema header
+
+static colyseus_client_t* client = NULL;
+static colyseus_room_t* room = NULL;
+static colyseus_callbacks_t* callbacks = NULL;
+
+// --- Room event handlers ---
+
+static void on_join(void* userdata) {
+    printf("Joined room! Session: %s\n", colyseus_room_get_session_id(room));
+
+    // Access the decoded state
+    my_room_state_t* state = (my_room_state_t*)colyseus_room_get_state(room);
+
+    // Create callbacks manager for state change listening
+    callbacks = colyseus_callbacks_create(room->serializer->decoder);
+
+    // Listen for players being added to the map
+    colyseus_callbacks_on_add(callbacks, state, "players",
+        on_player_add, NULL, true);
+
+    // Listen for players being removed
+    colyseus_callbacks_on_remove(callbacks, state, "players",
+        on_player_remove, NULL);
+}
+
+static void on_state_change(void* userdata) {
+    // Called every time the room state is updated
+}
+
+static void on_error(int code, const char* message, void* userdata) {
+    printf("Room error (%d): %s\n", code, message);
+}
+
+static void on_leave(int code, const char* reason, void* userdata) {
+    printf("Left room (%d): %s\n", code, reason ? reason : "unknown");
+}
+
+// --- State change callbacks ---
+
+static void on_player_add(void* value, void* key, void* userdata) {
+    player_t* player = (player_t*)value;
+    const char* session_id = (const char*)key;
+    printf("Player joined: %s (x=%.1f, y=%.1f)\n",
+        session_id, player->x, player->y);
+
+    // Listen for changes on individual player properties
+    colyseus_callbacks_listen(callbacks, player, "x",
+        on_player_x_change, NULL, false);
+}
+
+static void on_player_remove(void* value, void* key, void* userdata) {
+    const char* session_id = (const char*)key;
+    printf("Player left: %s\n", session_id);
+}
+
+static void on_player_x_change(void* current, void* previous, void* userdata) {
+    double x = *(double*)current;
+    printf("Player x changed to: %.1f\n", x);
+}
+
+// --- Matchmaking callback ---
+
+static void on_room_success(colyseus_room_t* joined_room, void* userdata) {
+    room = joined_room;
+
+    // Set state schema type (must be done before event handlers)
+    colyseus_room_set_state_type(room, &my_room_state_vtable);
+
+    // Register room event handlers
+    colyseus_room_on_join(room, on_join, NULL);
+    colyseus_room_on_state_change(room, on_state_change, NULL);
+    colyseus_room_on_error(room, on_error, NULL);
+    colyseus_room_on_leave(room, on_leave, NULL);
+}
+
+static void on_matchmaking_error(int code, const char* message, void* userdata) {
+    printf("Failed to join: %s\n", message);
+}
+
+// --- Main ---
+
+int main(void) {
+    // Create settings
+    colyseus_settings_t* settings = colyseus_settings_create();
+    colyseus_settings_set_address(settings, "localhost");
+    colyseus_settings_set_port(settings, "2567");
+
+    // Create client
+    client = colyseus_client_create(settings);
+
+    // Join or create a room
+    colyseus_client_join_or_create(
+        client, "my_room", "{}",
+        on_room_success,
+        on_matchmaking_error,
+        NULL
+    );
+
+    // Main loop (integrate with your engine's loop)
+    while (running) {
+        // Your engine's frame update here...
+    }
+
+    // Cleanup
+    if (callbacks) colyseus_callbacks_free(callbacks);
+    if (room) {
+        colyseus_room_leave(room, true);
+        colyseus_room_free(room);
+    }
+    if (client) colyseus_client_free(client);
+    colyseus_settings_free(settings);
+
+    return 0;
+}
+```
+
+## Sending Messages
+
+Build messages using the message builder API. The `colyseus_message_map_put()` macro uses C11 `_Generic` to auto-detect value types.
+
+```c
+// Create a map message
+colyseus_message_t* msg = colyseus_message_map_create();
+colyseus_message_map_put(msg, "x", 100.0);
+colyseus_message_map_put(msg, "y", 200.0);
+colyseus_room_send(room, "move", msg);
+colyseus_message_free(msg);
+```
+
+You can also use explicit typed setters:
+
+```c
+colyseus_message_map_put_str(msg, "name", "Alice");
+colyseus_message_map_put_int(msg, "score", 42);
+colyseus_message_map_put_float(msg, "speed", 3.5);
+colyseus_message_map_put_bool(msg, "ready", true);
+```
+
+### Array messages
+
+```c
+colyseus_message_t* arr = colyseus_message_array_create();
+colyseus_message_array_push(arr, 10);
+colyseus_message_array_push(arr, 20);
+colyseus_room_send(room, "path", arr);
+colyseus_message_free(arr);
+```
+
+### Nested messages
+
+```c
+colyseus_message_t* inner = colyseus_message_map_create();
+colyseus_message_map_put(inner, "name", "sword");
+
+colyseus_message_t* outer = colyseus_message_map_create();
+colyseus_message_map_put_msg(outer, "item", inner);
+colyseus_room_send(room, "equip", outer);
+colyseus_message_free(outer);
+```
+
+## Receiving Messages
+
+Register message handlers on the room, then read values from the `colyseus_message_reader_t`:
+
+```c
+static void on_chat_message(colyseus_message_reader_t* reader, void* userdata) {
+    const char* text = NULL;
+    size_t len = 0;
+
+    if (colyseus_message_reader_map_get_str(reader, "text", &text, &len)) {
+        printf("Chat: %.*s\n", (int)len, text);
+    }
+
+    int64_t timestamp;
+    if (colyseus_message_reader_map_get_int(reader, "timestamp", &timestamp)) {
+        printf("At: %lld\n", timestamp);
+    }
+}
+
+// Register the handler
+colyseus_room_on_message(room, "chat", on_chat_message, NULL);
+```
+
+## State Callbacks
+
+After joining a room and receiving state, create a callbacks manager to listen for changes:
+
+```c
+// Create callbacks manager from the room's decoder
+colyseus_callbacks_t* callbacks = colyseus_callbacks_create(room->serializer->decoder);
+
+my_room_state_t* state = (my_room_state_t*)colyseus_room_get_state(room);
+
+// Listen for property changes on the root state
+// The last argument (true) triggers the callback immediately with the current value
+colyseus_callbacks_listen(callbacks, state, "currentTurn",
+    on_turn_change, NULL, true);
+
+// Listen for items added to a map
+colyseus_callbacks_on_add(callbacks, state, "players",
+    on_player_add, NULL, true);
+
+// Listen for items removed from a map
+colyseus_callbacks_on_remove(callbacks, state, "players",
+    on_player_remove, NULL);
+
+// Listen for any change on a specific schema instance
+colyseus_callbacks_on_change_instance(callbacks, some_player,
+    on_player_changed, NULL);
+```
+
+### Removing callbacks
+
+Each registration returns a `colyseus_callback_handle_t` that can be used to unsubscribe:
+
+```c
+colyseus_callback_handle_t handle = colyseus_callbacks_on_add(
+    callbacks, state, "players", on_player_add, NULL, true);
+
+// Later, remove the callback
+colyseus_callbacks_remove(callbacks, handle);
+```
+
+## Iterating Collections
+
+Access map and array data directly from the state:
+
+```c
+my_room_state_t* state = (my_room_state_t*)colyseus_room_get_state(room);
+
+// Iterate a MapSchema
+void print_player(const char* key, void* value, void* userdata) {
+    player_t* p = (player_t*)value;
+    printf("Player %s at (%.1f, %.1f)\n", key, p->x, p->y);
+}
+colyseus_map_schema_foreach(state->players, print_player, NULL);
+
+// Get a specific entry by key
+player_t* p = (player_t*)colyseus_map_schema_get(state->players, session_id);
+
+// Check if a key exists
+if (colyseus_map_schema_contains(state->players, session_id)) { ... }
+```
+
+## Settings
+
+```c
+colyseus_settings_t* settings = colyseus_settings_create();
+
+colyseus_settings_set_address(settings, "example.com");
+colyseus_settings_set_port(settings, "443");
+colyseus_settings_set_secure(settings, true);    // Use WSS
+
+// Custom headers
+colyseus_settings_add_header(settings, "Authorization", "Bearer token123");
+
+colyseus_client_t* client = colyseus_client_create(settings);
+```
+
+## HTTP & Auth
+
+The client exposes HTTP and Auth APIs for REST calls and authentication:
+
+```c
+// HTTP requests
+colyseus_http_t* http = colyseus_client_get_http(client);
+colyseus_http_set_auth_token(http, "my-token");
+colyseus_http_get(http, "/profile", on_http_success, on_http_error, NULL);
+colyseus_http_post(http, "/action", "{\"key\":\"value\"}", on_http_success, on_http_error, NULL);
+
+// Authentication
+colyseus_auth_t* auth = colyseus_client_get_auth(client);
+colyseus_auth_signin_anonymous(auth, "{}", on_auth_success, on_auth_error, NULL);
+colyseus_auth_signin_email_password(auth, "user@example.com", "password",
+    on_auth_success, on_auth_error, NULL);
+```
+
+## Memory Management
+
+The SDK follows a consistent `create`/`free` pattern. Every resource you create must be freed:
+
+```c
+// Always free in reverse order of creation
+colyseus_callbacks_free(callbacks);
+colyseus_room_leave(room, true);
+colyseus_room_free(room);
+colyseus_client_free(client);
+colyseus_settings_free(settings);
+```
+
+## Reconnection
+
+Use the reconnection token to resume a session after a disconnect:
+
+```c
+// Save the reconnection token before disconnect
+const char* token = colyseus_room_get_reconnection_token(room);
+
+// Later, reconnect
+colyseus_client_reconnect(client, token, on_room_success, on_error, NULL);
+```
