@@ -1,0 +1,175 @@
+---
+title: "WebRTCPlugin"
+description: "Add WebRTC peer-to-peer signaling (audio/video) to a Colyseus room with a single plugin — handles peer list, SDP offer/answer, ICE candidates, and peer-left events."
+---
+import { Callout, Tabs } from "nextra/components";
+
+# WebRTCPlugin
+
+Adds WebRTC peer-to-peer signaling to a room. Wires the four standard signaling messages (peer list + SDP offer/answer + ICE candidate relay) and broadcasts `peer-left` when a connected peer disconnects.
+
+**This is signaling only.** It handles the SDP/ICE exchange needed to establish WebRTC connections. The actual audio/video/data streams flow directly between peers — Colyseus state synchronization continues to work through the server as usual.
+
+## Installation
+
+The server-side plugin ships with the `colyseus` package — no extra install needed.
+
+```ts filename="VideoRoom.ts"
+import { Room, definePlugins } from "colyseus";
+import { WebRTCPlugin } from "colyseus/plugins/webrtc";
+
+export class VideoRoom extends Room {
+  plugins = definePlugins({
+    webrtc: new WebRTCPlugin(),
+  });
+}
+```
+
+The client-side helper ships in a separate browser-only package:
+
+```bash
+npm install @colyseus/webrtc
+```
+
+<Callout type="warning">
+  WebRTC SDP payloads can exceed the default `maxPayload` of 4KB. Increase it on your transport when adding the plugin:
+
+  ```ts filename="server.ts"
+  import { WebSocketTransport } from "@colyseus/ws-transport";
+
+  const server = defineServer({
+    transport: new WebSocketTransport({ maxPayload: 16 * 1024 }),
+    // ...
+  });
+  ```
+</Callout>
+
+## Signaling messages
+
+The plugin contributes the following messages to your room. You can listen to them or send them yourself if you need to extend the signaling flow.
+
+| Message               | Direction                  | Description                                                                                  |
+|-----------------------|----------------------------|----------------------------------------------------------------------------------------------|
+| `webrtc:join`         | client &rarr; server       | Client opts into the mesh. Server replies with the current peer list and broadcasts to others. |
+| `webrtc:offer`        | client &rarr; server &rarr; client | Relay SDP offer to the target peer.                                                          |
+| `webrtc:answer`       | client &rarr; server &rarr; client | Relay SDP answer to the target peer.                                                         |
+| `webrtc:ice-candidate`| client &rarr; server &rarr; client | Relay ICE candidate to the target peer.                                                      |
+| `webrtc:peers`        | server &rarr; client       | List of existing peer session IDs (sent on join).                                            |
+| `webrtc:peer-joined`  | server &rarr; client       | A new peer has joined the mesh.                                                              |
+| `webrtc:peer-left`    | server &rarr; client       | A peer has left the mesh. Only emitted for clients that opted in via `webrtc:join`.          |
+
+The plugin tracks which clients have explicitly opted into the mesh, so spectators and other non-WebRTC clients in the same room don't show up in peer events.
+
+## Client-side usage
+
+Use `WebRTCClient` from `@colyseus/webrtc/client` to consume the signaling and manage `RTCPeerConnection` instances:
+
+```ts filename="client.ts"
+import { Client } from "@colyseus/sdk";
+import { WebRTCClient } from "@colyseus/webrtc/client";
+
+const client = new Client("ws://localhost:2567");
+const room = await client.joinOrCreate("video");
+
+const webrtc = new WebRTCClient(room);
+
+webrtc.onLocalStream = (stream) => {
+  // Attach to a <video> element for self-preview
+  localVideo.srcObject = stream;
+};
+
+webrtc.onPeerConnected = (peerId, stream) => {
+  // Attach remote stream to a <video> element
+};
+
+webrtc.onPeerDisconnected = (peerId) => {
+  // Remove the peer's video element
+};
+
+// Request camera/mic and start signaling
+await webrtc.join({ audio: true, video: true });
+
+// Later, to stop and clean up:
+webrtc.leave();
+room.leave();
+```
+
+### `WebRTCClient` API
+
+#### Constructor
+
+```ts
+new WebRTCClient(room, options?)
+```
+
+- **`room`** — A Colyseus `Room` instance (or any object exposing `send(type, message)` and `onMessage(type, callback)`).
+- **`options.iceServers`** — Custom ICE servers. Defaults to Google's public STUN servers.
+
+#### Methods
+
+| Method                | Description                                                                                                                                            |
+|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `join(constraints?)`  | Request user media with the given [`MediaStreamConstraints`](https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamConstraints) and start signaling. Defaults to `{ audio: true, video: true }`. |
+| `leave()`             | Close all peer connections, stop local tracks, and unbind signaling listeners.                                                                         |
+
+#### Callbacks
+
+| Callback             | Signature                                          | Description                                              |
+|----------------------|----------------------------------------------------|----------------------------------------------------------|
+| `onLocalStream`      | `(stream: MediaStream) => void`                    | Fired after `getUserMedia` succeeds.                     |
+| `onPeerConnected`    | `(peerId: string, stream: MediaStream) => void`    | Fired when a remote peer's media stream is received.     |
+| `onPeerDisconnected` | `(peerId: string) => void`                         | Fired when a peer connection closes.                     |
+
+#### Properties
+
+| Property      | Type                              | Description                                       |
+|---------------|-----------------------------------|---------------------------------------------------|
+| `localStream` | `MediaStream \| null`             | The local media stream.                           |
+| `peers`       | `Map<string, RTCPeerConnection>`  | Active peer connections keyed by session ID.      |
+| `streams`     | `Map<string, MediaStream>`        | Remote media streams keyed by session ID.         |
+
+## Combining with your own messages
+
+The plugin's messages are merged into the room's `messages` map. You can define your own alongside without any conflict:
+
+```ts filename="VideoRoom.ts"
+import { Room, Client, definePlugins } from "colyseus";
+import { WebRTCPlugin } from "colyseus/plugins/webrtc";
+
+export class VideoRoom extends Room {
+  plugins = definePlugins({
+    webrtc: new WebRTCPlugin(),
+  });
+
+  messages = {
+    chat: (client: Client, message: string) => {
+      this.broadcast("chat", `${client.sessionId}: ${message}`);
+    },
+  };
+}
+```
+
+See [Room Plugins &rarr; Message handler rules](/room/plugins#message-handler-rules) for the conflict resolution semantics.
+
+## How it works
+
+```
+Client A                     Server                      Client B
+   |                            |                            |
+   |---- webrtc:join ---------->|                            |
+   |<--- webrtc:peers (B) ------|                            |
+   |                            |---- webrtc:peer-joined --->|
+   |---- webrtc:offer (B) ----->|---- webrtc:offer (A) ----->|
+   |<--- webrtc:answer (B) -----|<--- webrtc:answer (A) -----|
+   |---- webrtc:ice-candidate ->|---- webrtc:ice-candidate ->|
+   |                            |                            |
+   |<======================= RTCPeerConnection =============>|
+                          (direct, P2P)
+```
+
+Once signaling completes, audio/video/data flows directly between the browsers via `RTCPeerConnection` — it doesn't go through your Colyseus server.
+
+## See Also
+
+- [Room Plugins](/room/plugins) — overview of the plugin system
+- [`@colyseus/webrtc` on GitHub](https://github.com/colyseus/webrtc) — original standalone package and example app
