@@ -1,0 +1,126 @@
+---
+title: "UniqueSessionPlugin"
+description: "Enforce one (or N) concurrent room sessions per user — prevent two-tab abuse and stale matchmaking re-queues."
+---
+import { Callout } from "nextra/components";
+
+# UniqueSessionPlugin
+
+Enforces a max number of **concurrent sessions of this room type per user**. Default `max: 1` (strict singleton). A second join from the same user while the first is still active is either **rejected** or **replaces** the older session, depending on configuration.
+
+Typical uses:
+
+- Prevent a player from opening two tabs of the same game mode.
+- Block re-queueing while an old match-making session is still tracked.
+- Refresh-style UX where opening a new tab kicks the older one out.
+
+## Installation
+
+The plugin ships with the `colyseus` package:
+
+```ts filename="GameRoom.ts"
+import { Room, definePlugins } from "colyseus";
+import { UniqueSessionPlugin } from "colyseus/plugins/unique-session";
+
+export class GameRoom extends Room {
+  plugins = definePlugins([
+    new UniqueSessionPlugin({ max: 1 }),
+  ]);
+}
+```
+
+<Callout type="info">
+  **Auto-includes `TrackUserSessionsPlugin`.** The plugin reads the per-user reverse index that `TrackUserSessionsPlugin` maintains in Presence. You don't have to register the tracker yourself — `static dependencies` pulls it in.
+</Callout>
+
+## How it works
+
+When a client joins, the plugin:
+
+1. Resolves the user's stable id (default: `client.auth.id`, then `client.auth.userId`).
+2. Reads the per-user reverse index from Presence to see what other rooms-of-this-type they're in.
+3. Reconciles entries against live rooms (drops stragglers from crashed processes; cross-checks same-room entries against `this.room.clients` so a fast-disconnect ghost doesn't block reconnects).
+4. If the active count would exceed `max`, either rejects the join or kicks the oldest existing session.
+
+Anonymous clients (no resolvable userId) are **never** rejected — there's no stable identity to enforce against.
+
+## Options
+
+| Option           | Type                                            | Default              | Description                                                                                                                                                                       |
+|------------------|-------------------------------------------------|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `max`            | `number`                                        | `1`                  | Max concurrent sessions of this room type per user.                                                                                                                               |
+| `onDuplicate`    | `'reject' \| 'replace'`                         | `'reject'`           | Behavior when the limit is exceeded. `'replace'` kicks the **oldest** existing session(s) so the new join proceeds — useful for refresh-style UX.                                  |
+| `rejectCode`     | `number`                                        | `4400`               | `ServerError` code sent to the client when `onDuplicate: 'reject'`. The SDK surfaces it as `MatchMakeError.code`.                                                                  |
+| `rejectMessage`  | `string`                                        | `'already_in_room'`  | `ServerError` message sent to the client. The SDK exposes it as `e.message`.                                                                                                       |
+| `conflictsWith`  | `(entry) => boolean`                            | —                    | Predicate to scope the check more narrowly than "same `roomName`". Receives `{ roomId, roomName, joinedAt }`; return `true` when the entry should count against the limit.        |
+| `resolveUserId`  | `(client) => string \| undefined`               | reads `auth.id`/`auth.userId` | Custom identity extractor. Override for non-standard auth shapes (e.g. raw OIDC's `auth.profile.sub`).                                                                            |
+
+## Handling the rejection on the client
+
+The plugin throws a `ServerError(4400, "already_in_room")`. On the client:
+
+```ts filename="client.ts"
+try {
+  await client.joinOrCreate("game");
+} catch (err) {
+  if (err.code === 4400) {
+    showAlreadyInGameDialog();
+  }
+}
+```
+
+For custom codes, configure `rejectCode` / `rejectMessage`.
+
+## Examples
+
+### Allow up to two concurrent tabs
+
+```ts filename="GameRoom.ts"
+plugins = definePlugins([
+  new UniqueSessionPlugin({ max: 2 }),
+]);
+```
+
+A third join from the same user is rejected.
+
+### Replace the older session on duplicate
+
+```ts filename="GameRoom.ts"
+plugins = definePlugins([
+  new UniqueSessionPlugin({
+    max: 1,
+    onDuplicate: "replace",
+  }),
+]);
+```
+
+The oldest existing session is kicked with WS code `1000` and reason `'replaced'`. The new join proceeds.
+
+### Scope by game mode metadata
+
+```ts filename="GameRoom.ts"
+plugins = definePlugins([
+  new UniqueSessionPlugin({
+    max: 1,
+    conflictsWith: (entry) => entry.roomId.startsWith("ranked-"),
+  }),
+]);
+```
+
+Only ranked rooms count toward the singleton check; casual rooms run side-by-side.
+
+### Custom auth shape
+
+```ts filename="GameRoom.ts"
+plugins = definePlugins([
+  new UniqueSessionPlugin({
+    resolveUserId: (client) => (client as any).auth?.profile?.sub,
+  }),
+]);
+```
+
+## Caveats
+
+- **Race window.** Two near-simultaneous joins from the same user can both pass the check before either has written to the Presence index — both succeed. Acceptable for the "no two tabs" UX; if your game needs strict serialization (e.g. competitive matchmaking that can't double-book), layer your own atomic reservation on top.
+- **`TrackUserSessionsPlugin` is required.** Auto-included via `static dependencies`. If your app's `Room` somehow opts out of plugin tracking, the index stays empty and this plugin no-ops.
+- **Stale entries are best-effort cleaned up.** Reconciliation drops entries pointing at rooms the matchmaker no longer knows. Same-room entries are cross-checked against `this.room.clients` so reconnects after a missed `onLeave` aren't false-rejected.
