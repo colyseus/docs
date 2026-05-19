@@ -1,11 +1,11 @@
 ---
-title: "Database & Persistence"
+title: Database
 description: "Persist players, cloud saves, leaderboards, and live configs in Colyseus with the official @colyseus/database package — or bring your own ORM, query builder, or Firebase."
 ---
 import { Cards, Callout } from 'nextra/components'
 import { LinkExternalIcon, PasskeyFillIcon } from '@primer/octicons-react'
 
-# Database & Persistence
+# Database
 
 The recommended way to persist game data in Colyseus is **`@colyseus/database`** — the official persistence layer, built on [Drizzle ORM](https://orm.drizzle.team/). A single typed connection backs player accounts, cloud saves, leaderboards, live configs, analytics, moderation, and matchmaking.
 
@@ -35,7 +35,7 @@ A single `GameDatabase` instance exposes:
 npm install --save @colyseus/database
 ```
 
-`@colyseus/auth` is a peer dependency used for authentication. For PostgreSQL, also install the `postgres` driver:
+For PostgreSQL, also install the `postgres` driver:
 
 ```sh npm2yarn
 npm install --save postgres
@@ -74,6 +74,56 @@ export class MyRoom extends Room {
     }
 }
 ```
+
+### Authentication (built-in `@colyseus/auth` integration)
+
+When [`@colyseus/auth`](/auth/module) is installed alongside `@colyseus/database` and you pass `database:` to `defineServer`, the database becomes the user store and all auth routes mount automatically — no callbacks to write.
+
+**What's wired automatically:**
+
+- **HTTP routes** — every endpoint from `@colyseus/auth` (register, login, forgot/reset password, OAuth callback) is spread into your router under the configured prefix.
+- **User store** — `db.auth.settings` supplies the full set of [Backend API](/auth/module#backend-api) callbacks (`onFindUserByEmail`, `onRegisterWithEmailAndPassword`, `onRegisterAnonymously`, `onForgotPassword`, `onResetPassword`, `onCheckBanned`, …). You don't write any of them.
+- **Ban gating at login** — `onCheckBanned` rejects banned users and surfaces `{ reason, until }` from the row.
+- **JWT session revocation** — JWTs carry a `tokenVersion` claim; `db.auth.bumpTokenVersion(userId)` invalidates every previously-issued token for that user. This is what powers "Revoke sessions" and "Ban" actions in admin tooling.
+- **Password-hash handoff** — `@colyseus/auth` hashes passwords with `AUTH_SALT` (scrypt by default) before values reach the database; the DB never sees plaintext.
+
+The same env secrets (`AUTH_SALT`, `JWT_SECRET`, `SESSION_SECRET`) still apply — see [Auth Module → Required Environment Secrets](/auth/module#required-environment-secrets).
+
+#### Minimal setup
+
+Once `database:` is set on `defineServer`, the auth integration is live. No additional wiring is required:
+
+```ts {2,6} filename="src/app.config.ts"
+import { defineServer } from "colyseus";
+import { GameDatabase } from "@colyseus/database";
+
+export const db = new GameDatabase({ connectionString: process.env.DATABASE_URL });
+
+export default defineServer({
+    database: db, // ← wires @colyseus/auth routes + user store automatically
+});
+```
+
+#### Admin & moderation helpers
+
+`db.auth` exposes account-management methods called from admin tooling or moderation flows:
+
+```ts
+await db.auth.ban(userId, { reason: "cheating", until: new Date(Date.now() + 86_400_000) });
+const status = await db.auth.isBanned(userId); // { banned, reason?, until? }
+await db.auth.unban(userId);
+
+// Force-log-out: invalidates previously issued JWTs for this user
+await db.auth.bumpTokenVersion(userId);
+```
+
+#### Customizing callbacks
+
+`db.auth.settings` is a partial [`AuthSettings`](/auth/module#backend-api) object — wrap or replace individual callbacks (e.g. add an invite-code check during registration, customize the anonymous user payload) while keeping the rest of the integration intact. See the [Backend API](/auth/module#backend-api) catalog for the full list of hooks you can override.
+
+<Callout type="info">
+    Not using `@colyseus/database`? See [Auth Module](/auth/module) for the manual setup — implement the [Backend API](/auth/module#backend-api) callbacks against your own database.
+</Callout>
 
 ### Dialects & connection strings
 
@@ -115,19 +165,6 @@ new GameDatabase({
 ### Feature overview
 
 All examples below assume the exported `db` instance from the [quick start](#quick-start).
-
-#### Authentication
-
-`@colyseus/database` is the persistence backend for [`@colyseus/auth`](/auth/module) — registration, login, and password reset work out of the box once the `database` option is set. The `db.auth` service adds account-management helpers, typically called from admin tooling or moderation flows:
-
-```ts
-await db.auth.ban(userId, { reason: "cheating", until: new Date(Date.now() + 86_400_000) });
-const status = await db.auth.isBanned(userId); // { banned, reason?, until? }
-await db.auth.unban(userId);
-
-// Force-log-out: invalidates previously issued JWTs for this user
-await db.auth.bumpTokenVersion(userId);
-```
 
 #### Cloud saves
 
@@ -180,7 +217,7 @@ const configs = defineConfigs({
     matchmaking: z.object({
         minPlayers: z.number().int().default(2),
         maxPlayers: z.number().int().default(10),
-    }).default({ minPlayers: 2, maxPlayers: 10 }),
+    }).default({}), // inner field defaults fill the object
 });
 
 export const db = new GameDatabase({
@@ -253,9 +290,26 @@ export default defineServer({
 });
 ```
 
-### Custom schema
+### Customizing built-in table schemas
 
-Extend the built-in tables with your own columns using the per-dialect `tables` factory, then pass them via `schemas`. Services return your custom columns with full type inference.
+Every service in `@colyseus/database` is backed by a Drizzle table you can extend with your own columns. Use the per-dialect `tables` factory to spread the built-in columns into a custom table, then pass it via the `schemas` option — services keep working and return your custom columns with full type inference.
+
+#### Built-in tables
+
+| Key | Physical table | Used by | Purpose |
+|---|---|---|---|
+| `users` | `colyseus_users` | `db.auth` + [`@colyseus/auth`](/auth/module) | Player accounts (email, password hash, anonymous flag, ban fields, token version) |
+| `configs` | `colyseus_configs` | `db.configs` | Live-ops config key/value store |
+| `cloudSaves` | `colyseus_cloud_saves` | `db.saves` | Per-user, per-slot save data with version |
+| `leaderboards` | `colyseus_leaderboards` | `db.leaderboards` | Leaderboard definitions |
+| `leaderboardEntries` | `colyseus_leaderboard_entries` | `db.leaderboards` | Score rows per (board, user, season) |
+| `analyticsEvents` | `colyseus_analytics_events` | `db.analytics` | Event log written by `track()` |
+| `roles` | `colyseus_roles` | `db.moderation` | Moderation roles + scoped collection permissions |
+| `userNotes` | `colyseus_user_notes` | `db.notes` | Admin notes attached to users |
+| `adminAudit` | `colyseus_admin_audit` | `db.audit` | Admin action audit log |
+| `roomCaches` | `colyseus_room_caches` | [`DatabaseDriver`](/server/driver) | Matchmaker room cache (driver-owned; customize via the driver's `schema` option, not `schemas`) |
+
+#### Example: extending `users`
 
 ```ts filename="src/app.config.ts"
 import { GameDatabase, tables } from "@colyseus/database";
@@ -271,6 +325,8 @@ export const db = new GameDatabase({
     schemas: { users },
 });
 ```
+
+The factory is available on both dialects: `tables.sqlite.<name>` and `tables.pg.<name>`. For finer control, you can also spread the column maps directly — `columns.sqlite.<name>` / `columns.pg.<name>` — into a hand-rolled `sqliteTable(...)` / `pgTable(...)`.
 
 The raw Drizzle instance is available as `db.drizzle` (typed against your resolved schema) for any query the services don't cover.
 

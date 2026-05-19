@@ -64,6 +64,28 @@ export const secureEndpoint = createEndpoint("/secure", {
 });
 ```
 
+### JWT Authentication
+
+For JWT-based auth, [`@colyseus/auth`](/auth/module) exports `auth.middleware()` — a middleware that verifies the `Authorization: Bearer <token>` header and exposes the decoded payload on `ctx.context.auth`. It's the canonical way to gate an endpoint behind a logged-in user.
+
+```ts
+import { createEndpoint } from "colyseus";
+import { auth } from "@colyseus/auth";
+
+export const profile = createEndpoint("/profile", {
+    method: "GET",
+    use: [auth.middleware()],
+}, async (ctx) => {
+    return { user: ctx.context.auth };
+});
+```
+
+<Callout type="info">
+    When [`@colyseus/database`](/database) is in use, `auth.middleware()` is **revocation-aware** automatically: `db.auth.bumpTokenVersion(userId)` invalidates live JWTs and bans gate at the token layer — no per-route check needed. See [Database → Authentication](/database#authentication-built-in-colyseusauth-integration).
+</Callout>
+
+See [Authentication → HTTP Middleware](/auth/http) for the dual Express/`createEndpoint` modes, and [Auth Module](/auth/module) for backend setup.
+
 ### Basic Authentication
 
 `basicAuth` is a built-in middleware for HTTP Basic Auth. Drop it into any

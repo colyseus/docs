@@ -14,6 +14,10 @@ You can authenticate your users using the `onAuth` method in your room. This met
 
 If left non-implemented, it always returns `true` - allowing any client to connect.
 
+<Callout type="info">
+    **Using [`@colyseus/database`](/database)?** `JWT.verify` becomes revocation-aware automatically — banned users and tokens invalidated via `db.auth.bumpTokenVersion()` are rejected at the token layer, before `onAuth` even runs. See [Database → Authentication](/database#authentication-built-in-colyseusauth-integration).
+</Callout>
+
 <Steps>
 
 ## Server: `onAuth` method
@@ -106,6 +110,26 @@ client.joinOrCreate("my_room").then((room) => {
 ```
 
 </Steps>
+
+## With `@colyseus/database`
+
+When the [`@colyseus/database`](/database#authentication-built-in-colyseusauth-integration) integration is active, `JWT.verify` already enforces session revocation. You only need an explicit `onAuth` check when you want additional, room-level rejection logic — for example, bouncing a banned user before they reach `onJoin`:
+
+```ts {2,7-10} filename="src/rooms/MyRoom.ts"
+import { Room, ServerError } from "colyseus";
+import { db } from "../app.config";
+
+class MyRoom extends Room {
+    async onAuth(client, options, context) {
+        // client.auth is already populated by @colyseus/auth's default onAuth
+        const { banned, reason } = await db.auth.isBanned(client.auth.id);
+        if (banned) {
+            throw new ServerError(403, reason ?? "You are banned.");
+        }
+        return client.auth;
+    }
+}
+```
 
 ## `onAuth` Context
 

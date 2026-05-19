@@ -33,14 +33,31 @@ client.http.get("/profile").then((response) => {
 
 ## Server: Validate the auth token
 
-If you are using the `@colyseus/auth` module, you can use the `auth.middleware()` method to validate the authentication token in your routes.
+If you are using the `@colyseus/auth` module, `auth.middleware()` works in both the [HTTP Routes](/server/http-routes) system (`createEndpoint` / `createMiddleware`) and as an Express middleware. The decoded JWT payload is exposed on `ctx.context.auth` (HTTP routes) or `req.auth` (Express).
 
-<Tabs items={["Using @colyseus/auth", "Custom authentication"]}>
+<Tabs items={["HTTP Routes (createEndpoint)", "Express middleware", "Custom authentication"]}>
+    <Tabs.Tab>
+    ```ts filename="src/endpoints/profile.ts"
+    import { createEndpoint } from "colyseus";
+    import { auth } from "@colyseus/auth";
+
+    export const profile = createEndpoint("/profile", {
+        method: "GET",
+        use: [auth.middleware()],
+    }, async (ctx) => {
+        console.log("authenticated user:", ctx.context.auth);
+        return ctx.context.auth;
+    });
+    ```
+
+    See [HTTP Routes](/server/http-routes) for how endpoints are mounted via `createRouter`.
+    </Tabs.Tab>
+
     <Tabs.Tab>
     ```ts filename="src/app.config.ts"
     import { defineServer } from "colyseus";
     import { auth } from "@colyseus/auth";
-    
+
     const server = defineServer({
         // ...
         express: (app) => {
@@ -68,5 +85,9 @@ If you are using the `@colyseus/auth` module, you can use the `auth.middleware()
     ```
     </Tabs.Tab>
 </Tabs>
+
+<Callout type="info">
+    With [`@colyseus/database`](/database) wired, `auth.middleware()` becomes **revocation-aware** automatically: bans and `db.auth.bumpTokenVersion(userId)` invalidate live JWTs at the token layer — no per-route check needed. See [Database → Authentication](/database#authentication-built-in-colyseusauth-integration).
+</Callout>
 
 </Steps>

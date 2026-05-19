@@ -1,13 +1,16 @@
 import { Steps, Tabs, Cards, Callout } from "nextra/components"
-import { SignInIcon, ShieldCheckIcon, PackageIcon } from "@primer/octicons-react"
+import { SignInIcon, ShieldCheckIcon, PackageIcon, DatabaseIcon } from "@primer/octicons-react"
 
 # Authentication
 
 Authentication is the process of verifying the identity of a user. Colyseus provides built-in tools to help you authenticate your clients into your application.
 
-You may bring your own token validation logic, or use [<PackageIcon/> Auth Module](/auth/module/) to manage the authentication flow.
+The fastest path is the built-in [`@colyseus/auth`](/auth/module) ↔ [`@colyseus/database`](/database) integration: pass a `GameDatabase` to `defineServer` and the database becomes the user store, all auth routes mount automatically, and JWTs become revocation-aware. See [Database → Authentication](/database#authentication-built-in-colyseusauth-integration).
+
+You can also bring your own token validation logic, or wire [<PackageIcon/> Auth Module](/auth/module/) against your own database.
 
 <Cards>
+    <Cards.Card icon={<DatabaseIcon/>} title="Database-backed (recommended)" href="/database#authentication-built-in-colyseusauth-integration" arrow />
     <Cards.Card icon={<SignInIcon/>} title="Room onAuth" href="/auth/room" arrow />
     <Cards.Card icon={<ShieldCheckIcon/>} title="HTTP Middleware" href="/auth/http" arrow />
     <Cards.Card icon={<PackageIcon/>} title="Auth Module" href="/auth/module" arrow />
