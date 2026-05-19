@@ -23,11 +23,11 @@ export default {
     "state": { title: <span><SyncIcon/> State Synchronization</span> },
     "matchmaker": { title: <span><StackIcon/> Matchmaker API</span> },
     "auth": { title: <span><PasskeyFillIcon/> Authentication</span> },
+    "database": { title: <span><DatabaseIcon/> Database</span> },
 
     '-- Tools': { type: 'separator', title: 'Tools' },
     "tools": { title: <span><ToolsIcon/> Built-in Tools</span> },
     "payments": { title: <span><CreditCardIcon/> Payments</span> },
-    "database": { title: <span><DatabaseIcon/> Database</span> },
     "3rd-party-packages": { title: <span><PackageIcon/> 3rd Party Packages</span> },
 
     '-- Infrastructure': { type: 'separator', title: 'Infrastructure' },
