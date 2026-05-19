@@ -8,6 +8,21 @@ import { Callout } from "nextra/components";
 
 The Colyseus Monitoring Panel is a browser-based administration tool for inspecting and managing your multiplayer server in real time. It gives you visibility into active rooms, connected clients, and room state — and lets you take actions like disposing rooms, disconnecting clients, or broadcasting messages.
 
+<img src="https://github.com/colyseus/colyseus-monitor/blob/master/media/demo.gif?raw=1" />
+
+## Features
+
+- List all active rooms
+    - Force dispose a specific room
+- Inspect a specific room
+    - View room's state
+    - Send/broadcast messages for a client
+    - Force disconnect a client
+
+<Callout type="warning">
+    The monitoring panel exposes full control over your rooms and clients. Do not expose it in production without password protection — see [Password protection](#password-protection) below.
+</Callout>
+
 ## Installation
 
 This package is installed by default on new projects created via `npm create colyseus-app`.
@@ -16,7 +31,28 @@ This package is installed by default on new projects created via `npm create col
 npm install --save @colyseus/monitor
 ```
 
-Then, import and mount it as an Express middleware:
+## Mounting
+
+The monitor can be mounted in two ways.
+
+### Standard router (recommended)
+
+Spread `monitor()` into `createRouter`. It is served at `/monitor` by default — customize the mount path with the `prefix` option:
+
+```ts {2,6} filename="app.config.ts"
+import { defineServer, createRouter } from "colyseus";
+import { monitor } from "@colyseus/monitor";
+
+const server = defineServer({
+    routes: createRouter({
+        ...monitor(), // served at /monitor by default
+    })
+});
+```
+
+### Express middleware
+
+Use this mode if you rely on existing Express middleware or libraries:
 
 ```ts {2,7} filename="app.config.ts"
 import { defineServer } from "colyseus";
@@ -30,61 +66,63 @@ const server = defineServer({
 });
 ```
 
+In express-middleware mode the `prefix` option is ignored — Express strips its own mount path before dispatching.
+
 ## Usage
 
 Once mounted, start your server and navigate to [http://localhost:2567/monitor](http://localhost:2567/monitor) in your browser.
 
+If you mounted the monitor at a different path, adjust the URL accordingly.
+
 All active rooms spawned by your server are automatically listed, along with their clients and metadata.
 
-<img src="https://github.com/colyseus/colyseus-monitor/blob/master/media/demo.gif?raw=1" />
+## Password protection
 
-### Features
+The monitoring panel exposes full control over your rooms and clients. **Do not expose it in production without password protection.** Pass a guard middleware through the monitor's `use` option — Colyseus ships with a built-in [`basicAuth`](/server/http-routes#basic-authentication):
 
-- List all active rooms
-    - Force dispose a specific room
-- Inspect a specific room
-    - View room's state
-    - Send/broadcast messages for a client
-    - Force disconnect a client
+```ts {1,4,8} filename="app.config.ts"
+import { defineServer, createRouter, basicAuth } from "colyseus";
+import { monitor } from "@colyseus/monitor";
 
-<Callout type="warning">
-    The monitoring panel exposes full control over your rooms and clients. Do not expose it in production without password protection — see [Password Protection](#password-protection) below.
-</Callout>
+const guard = basicAuth({ users: { admin: "s3cret" } });
 
-## Password Protection
-
-You can use `express-basic-auth` to restrict access to the monitor route:
-
-```sh npm2yarn
-npm install --save express-basic-auth
-```
-
-```typescript
-import basicAuth from "express-basic-auth";
-
-const basicAuthMiddleware = basicAuth({
-    users: { "admin": "admin" },
-    challenge: true
+const server = defineServer({
+    routes: createRouter({
+        ...monitor({ use: [guard] }),
+    })
 });
-
-app.use("/monitor", basicAuthMiddleware, monitor());
 ```
 
-## Custom Room Listing Columns
+The `use` option works in both mounting modes, so you can pass the same guard when mounting via Express:
 
-You can customize which columns appear in the room list by passing a `columns` option:
+```ts filename="app.config.ts"
+app.use("/monitor", monitor({ use: [guard] }));
+```
 
-```typescript
-app.use("/monitor", monitor({
-  columns: [
-    'roomId',
-    'name',
-    'clients',
-    { metadata: "spectators" }, // display 'spectators' from metadata
-    'locked',
-    'elapsedTime'
-  ]
-}));
+See [HTTP Routes → Basic authentication](/server/http-routes#basic-authentication) for `basicAuth` options and behavior.
+
+## Custom room listing columns
+
+Customize which columns appear in the room list by passing a `columns` option:
+
+```ts filename="app.config.ts"
+import { defineServer, createRouter } from "colyseus";
+import { monitor } from "@colyseus/monitor";
+
+const server = defineServer({
+    routes: createRouter({
+        ...monitor({
+            columns: [
+                'roomId',
+                'name',
+                'clients',
+                { metadata: "spectators" }, // display 'spectators' from metadata
+                'locked',
+                'elapsedTime',
+            ],
+        }),
+    })
+});
 ```
 
 If unspecified, the default columns are: `['roomId', 'name', 'clients', 'maxClients', 'locked', 'elapsedTime']`.
