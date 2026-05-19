@@ -1,18 +1,19 @@
-import { Steps, Tabs, Cards, Callout } from "nextra/components"
-import { SignInIcon, ShieldCheckIcon, PackageIcon, DatabaseIcon } from "@primer/octicons-react"
+import { Callout } from "nextra/components"
 
 # Authentication
 
-Authentication is the process of verifying the identity of a user. Colyseus provides built-in tools to help you authenticate your clients into your application.
+Colyseus provides built-in tools to verify the identity of your clients — both at room-join time and on HTTP endpoints. You can use the official [`@colyseus/auth`](/auth/module) module, bring your own token validation logic, or — for the fastest path — combine `@colyseus/auth` with [`@colyseus/database`](/database) to get the user store, auth routes, and JWT revocation wired automatically.
 
-The fastest path is the built-in [`@colyseus/auth`](/auth/module) ↔ [`@colyseus/database`](/database) integration: pass a `GameDatabase` to `defineServer` and the database becomes the user store, all auth routes mount automatically, and JWTs become revocation-aware. See [Database → Authentication](/database#authentication-built-in-colyseusauth-integration).
+<Callout type="info">
+    **Recommended:** pass a `GameDatabase` to `defineServer` and the database becomes the user store, all auth routes mount automatically, and JWTs become revocation-aware. See [Database → Authentication](/database#authentication-built-in-colyseusauth-integration).
+</Callout>
 
-You can also bring your own token validation logic, or wire [<PackageIcon/> Auth Module](/auth/module/) against your own database.
+## Where to go next
 
-<Cards>
-    <Cards.Card icon={<DatabaseIcon/>} title="Database-backed (recommended)" href="/database#authentication-built-in-colyseusauth-integration" arrow />
-    <Cards.Card icon={<SignInIcon/>} title="Room onAuth" href="/auth/room" arrow />
-    <Cards.Card icon={<ShieldCheckIcon/>} title="HTTP Middleware" href="/auth/http" arrow />
-    <Cards.Card icon={<PackageIcon/>} title="Auth Module" href="/auth/module" arrow />
-</Cards>
-
+| Reader's question | Lands on | What you'll find |
+|---|---|---|
+| "I want auth in one line — what's the integrated path?" | [Database → Authentication](/database#authentication-built-in-colyseusauth-integration) | The fastest path — `database:` wires the user store, routes, ban gating, and JWT revocation |
+| "How do I authenticate a room join?" | [Room `onAuth`](/auth/room) | Static `onAuth` with `JWT.verify`; ban-aware checks via `db.auth.isBanned()` |
+| "How do I authenticate an HTTP endpoint?" | [HTTP Middleware](/auth/http) | `auth.middleware()` in both Express and `createEndpoint` modes; automatic revocation when DB is wired |
+| "How do I gate a new HTTP route I'm writing?" | [HTTP Routes → JWT Authentication](/server/http-routes#jwt-authentication) | `auth.middleware()` documented inline as the canonical JWT gate |
+| "I need full manual control over the auth backend." | [Auth Module](/auth/module) | Backend callback reference for `onFindUserByEmail`, OAuth providers, email templates, etc. |
