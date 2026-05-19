@@ -64,6 +64,56 @@ export const secureEndpoint = createEndpoint("/secure", {
 });
 ```
 
+### Basic Authentication
+
+`basicAuth` is a built-in middleware for HTTP Basic Auth. Drop it into any
+endpoint's `use:` array to gate it behind the browser's native credentials
+prompt.
+
+```ts
+import { createEndpoint, basicAuth } from "colyseus";
+
+export const adminStats = createEndpoint("/admin-stats", {
+    method: "GET",
+    use: [ basicAuth({ users: { admin: "s3cret" } }) ],
+}, async (ctx) => {
+    return { onlineUsers: 123 };
+});
+```
+
+A common use is protecting the [Playground](/tools/playground) and
+[Monitor](/tools/monitor) in production — both accept a `use:` array:
+
+```ts filename="app.config.ts"
+import { defineServer, createRouter, basicAuth } from "colyseus";
+import { playground } from "@colyseus/playground";
+import { monitor } from "@colyseus/monitor";
+
+const guard = basicAuth({ users: { admin: "s3cret" } });
+
+const server = defineServer({
+    routes: createRouter({
+        ...playground({ use: [guard] }),
+        ...monitor({    use: [guard] }),
+    })
+});
+```
+
+**Options**
+
+| Option | Description |
+|--------|-------------|
+| `users` | `Record<string, string>` mapping username → password. The common static case. |
+| `validate` | `(username, password) => boolean \| Promise<boolean>` — custom/DB-backed check. Takes precedence over `users`. |
+| `realm` | Label shown in the browser prompt. Default `"Restricted"`. |
+
+<Callout type="info">
+    On a missing or invalid credential the middleware responds `401` with a
+    `WWW-Authenticate: Basic` header, so browsers show the native login dialog.
+    Passwords are compared in constant time. You must provide at least one of
+    `users` or `validate`.
+</Callout>
+
 ### Endpoint Options
 
 `createEndpoint(path, options, handler)` accepts the following options:
