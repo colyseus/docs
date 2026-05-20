@@ -87,7 +87,7 @@ If you are using the `@colyseus/auth` module, `auth.middleware()` works in both 
 </Tabs>
 
 <Callout type="info">
-    With [`@colyseus/database`](/database) wired, `auth.middleware()` becomes **revocation-aware** automatically: bans and `db.auth.bumpTokenVersion(userId)` invalidate live JWTs at the token layer — no per-route check needed. See [Database → Authentication](/database#authentication-built-in-colyseusauth-integration).
+    With [`@colyseus/database`](/database) wired, `auth.middleware()` becomes **revocation-aware** automatically: `db.auth.ban(userId)` and `db.auth.bumpTokenVersion(userId)` both invalidate live JWTs at the token layer — no per-route check needed. See [Database → Authentication](/database#authentication-built-in-colyseusauth-integration).
 </Callout>
 
 </Steps>
