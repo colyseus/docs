@@ -1,0 +1,157 @@
+---
+title: "Authentication & RBAC"
+description: "How admin sessions, roles, and the admin.guard() middleware work — JWT cookies, three-role hierarchy, scoped mod assignments, password reset, and gating sibling tools."
+---
+import { Callout } from "nextra/components"
+
+# Authentication & RBAC
+
+The admin panel uses **session-based JWT cookies** for authentication and a three-role hierarchy (`admin` / `mod` / `user`) for authorization. Both reuse the underlying [`@colyseus/database`](/database) and [`@colyseus/auth`](/auth/module) machinery, so revocation, password hashing, and JWT signing follow the same rules as your application's player auth.
+
+## Sessions
+
+When an admin signs in (`POST /admin-api/auth/login`), the panel sets an HttpOnly cookie carrying a signed JWT with `userId`, `role`, `iat`, `exp`, and `tv` (token-version) claims.
+
+| Property | Default | Notes |
+|---|---|---|
+| Cookie name | `colyseus_admin_session` | Configurable via `session.name` |
+| `HttpOnly` | `true` | Always — not configurable |
+| `SameSite` | `strict` | Configurable via `session.sameSite` |
+| `Secure` | `true` in production | Auto-set based on `NODE_ENV`; override via `session.secure` |
+| `maxAge` | 7 days | Configurable via `session.maxAge` (seconds) |
+| `domain` | `undefined` | Set explicitly when serving from a subdomain |
+
+Sessions are stateless — the cookie is the only source of truth. Two consequences:
+
+- **Logout** clears the cookie client-side. The JWT itself remains technically valid until it expires unless its `tokenVersion` is bumped (see below).
+- **Revocation** happens by incrementing the user's `tokenVersion` column. `db.auth.bumpTokenVersion(userId)` invalidates every session issued before the call on its next verification. The admin "Revoke sessions" action does exactly this; `db.auth.ban()` does it atomically with the ban itself.
+
+See [Database → Authentication](/database#authentication-built-in-colyseusauth-integration) for the full revocation story.
+
+## Roles
+
+Every user row carries a `role` (set via `db.moderation.setRole(userId, role)`). Three roles exist:
+
+| Role | Default access |
+|---|---|
+| `admin` | Full access — all resources, all actions, all rooms. |
+| `mod` | Read everywhere by default; create/update on collections the user is explicitly assigned to via `db.moderation.assignMod()`. No delete, no role management. |
+| `user` | Read-only on most resources; the default role for newly-registered users. |
+
+Roles are read from the live DB on every request — a demotion takes effect immediately without re-issuing the cookie.
+
+### Promoting a user to admin
+
+From anywhere with access to the database instance (e.g. a one-off script or an admin-only endpoint):
+
+```ts
+await db.moderation.setRole(userId, "admin");
+```
+
+The first admin is created by the [bootstrap flow](/admin#first-run-bootstrap) on first visit; subsequent admins are typically promoted from the panel's user-management UI.
+
+### Scoping a moderator to specific resources
+
+Mods get full mod-level access only on the resources they're explicitly assigned to. Assignments are per-resource:
+
+```ts
+await db.moderation.assignMod(userId, "guilds");        // mod on `guilds`
+await db.moderation.assignMod(userId, "leaderboards");  // also mod on leaderboards
+await db.moderation.unassignMod(userId, "guilds");      // revoke
+```
+
+This pattern lets you give a community manager full control over guilds without exposing every other table. See [Resources & CRUD → Policies](/admin/resources#policies) for how to declare per-action role gates on individual resources.
+
+## `admin.guard()`
+
+The `admin.guard()` middleware checks the same session cookie used by the panel itself, so you can gate other HTTP routes — the Monitor, the Playground, or any custom endpoint — behind a single admin login.
+
+```ts {1,5-6} filename="src/app.config.ts"
+import { admin } from "@colyseus/admin";
+import { playground } from "@colyseus/playground";
+import { monitor } from "@colyseus/monitor";
+
+routes: createRouter({
+    ...playground({ use: [admin.guard()] }),
+    ...monitor({    use: [admin.guard({ role: "mod" })] }),
+    ...admin({ database: db }),
+}),
+```
+
+### Behavior
+
+The guard sniffs the `Accept` header to decide how to reject:
+
+| Request type | Missing/invalid session | Insufficient role |
+|---|---|---|
+| Browser navigation (`Accept: text/html`) | `302` → `<loginUrl>?next=<originalUrl>` | `302` → login, **session cookie cleared** to break redirect loops |
+| XHR / fetch / curl | `401` JSON body | `403` JSON body |
+
+The "cookie cleared" behavior on insufficient role is intentional: a lower-role user trying to visit `/monitor` (gated to `mod` or higher) would otherwise see the login page treat them as already authenticated and redirect right back through the guard, creating a loop. Clearing the cookie forces a real re-authentication.
+
+### Options
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `database` | `GameDatabase` | `GameDatabase.current` | Database to validate the session against. |
+| `role` | `'admin' \| 'mod' \| 'user'` | `'admin'` | Minimum role required. Hierarchy: admin > mod > user. |
+| `loginUrl` | `string` | `'/admin'` | Where to send unauthenticated browser visits. Match `uiPath` if you customized it. |
+| `apiOnly` | `boolean` | `false` | Force JSON responses even for browser navigations. Set to `true` when wrapping non-HTML endpoints. |
+
+## Password reset
+
+The panel ships with a complete forgot-password flow that mirrors the player-side flow in `@colyseus/auth`:
+
+1. User clicks "Forgot password?" on the login screen.
+2. `POST /admin-api/auth/request-reset` is called with the email.
+3. The panel calls your `onResetRequest({ email, userId, token, url })` callback (configured on the [`admin()` options](/admin#options-reference)).
+4. The callback delivers the URL — typically via a transactional email service. The `token` is a short-lived signed JWT bound to that user.
+5. The user opens the URL, which loads the panel's `/reset?token=<token>` page.
+6. They submit a new password; the panel calls `POST /admin-api/auth/reset` to verify the token and update the hash via `db.auth.setPasswordHash()`.
+7. The reset endpoint also bumps `tokenVersion` to terminate any active sessions.
+
+<Callout type="info">
+    The default `onResetRequest` logs the URL via the admin logger — fine for local development, but you must override it before going to production. The request endpoint always returns `200` regardless of whether the email exists, so it cannot be used to enumerate users.
+</Callout>
+
+```ts filename="src/app.config.ts"
+admin({
+    database: db,
+    onResetRequest: async ({ email, url }) => {
+        await mailer.send({
+            to: email,
+            subject: "Reset your admin password",
+            html: `<p>Click <a href="${url}">here</a> to reset your password. The link expires in 1 hour.</p>`,
+        });
+    },
+}),
+```
+
+## Rate limits
+
+The auth endpoints are rate-limited to slow down brute-force attacks. Defaults are in-memory token buckets per limiter — sufficient for single-process deployments. Replace with a Redis-backed `RateLimiter` for multi-node setups so the buckets are shared.
+
+| Endpoint | Default limit | Option |
+|---|---|---|
+| `/auth/login` | 10/min per IP + email | `rateLimit.login` |
+| `/auth/bootstrap` | 5/min per IP | `rateLimit.bootstrap` |
+| `/auth/request-reset` | ~1/min per IP + email | `rateLimit.requestReset` |
+
+Pass `false` per slot to disable a specific limiter (e.g. behind your own WAF), or a custom `RateLimiter` to swap the implementation:
+
+```ts
+import { admin } from "@colyseus/admin";
+
+admin({
+    database: db,
+    rateLimit: {
+        login: createRedisLimiter({ capacity: 5, refillPerSec: 1/30 }),
+        bootstrap: false,
+    },
+}),
+```
+
+## Next steps
+
+- [Resources & CRUD](/admin/resources) — per-resource policies (the third layer of access control, on top of role + scope).
+- [Hardening for production](/admin#hardening-for-production) — cookie domain, secrets rotation, and email delivery.

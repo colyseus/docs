@@ -1,0 +1,82 @@
+---
+title: "Live rooms"
+description: "Inspect and operate on running Colyseus rooms from the admin panel — browse active rooms, view and mutate state, kick clients, lock/unlock for matchmaking, and force-dispose."
+---
+import { Callout } from "nextra/components"
+
+# Live rooms
+
+The admin panel ships with a **live room inspector** that lists every active room across the cluster and exposes the operational actions you'd otherwise have to wire by hand: kick a client, lock or unlock for matchmaking, edit state in place, or force-dispose a stuck room. No per-room wiring required — the inspector works against any [matchmaker driver](/server/driver) supported by `@colyseus/core`.
+
+## Listing rooms
+
+The **Rooms** resource in the panel lists every room the matchmaker driver knows about, including:
+
+- `roomId` and handler `name`
+- Current `clients` count and `maxClients`
+- `locked` / `private` / `unlisted` flags
+- `createdAt` and elapsed time
+- `processId` (which Node process is hosting the room — useful in multi-process deployments)
+- Any `metadata` keys set by your room (e.g. game mode, region)
+- Live `state` tree, accessible from the room's detail page
+
+Clicking through to a room's detail page loads the state tree, the client list, and the action buttons below.
+
+## Actions
+
+Every mutation listed here is recorded to the [audit log](/admin/resources#audit-log) with `resource: "rooms"` and the relevant action enum.
+
+### Kick a client
+
+Drop a single client from a room with an optional reason. The reason surfaces in the client's WebSocket close frame so the game can react meaningfully (show a message, redirect, etc.).
+
+Records `action: "room.kick"` with payload `{ sessionId, reason }`.
+
+### Lock / unlock
+
+Toggle the room's `locked` flag. Locked rooms are skipped by the matchmaker — useful for draining a room (let current clients finish; no new joins) or holding it for a private match.
+
+Records `action: "room.lock"` or `"room.unlock"`.
+
+### Edit state
+
+The detail page renders the room's state tree as JSON. You can mutate values directly from the panel — useful for adjusting in-flight match state (revert a bug, grant a permission, set a flag) without a server restart.
+
+<Callout type="warning">
+    State edits are immediate and broadcast to all connected clients on the next patch. Use sparingly and prefer adding a dedicated custom action for repeatable workflows (see [Resources → Custom actions](/admin/resources#custom-actions)).
+</Callout>
+
+Records `action: "room.state.edit"` with a before/after diff of the touched paths, or `action: "room.state.delete"` when removing fields.
+
+### Force-dispose
+
+Terminate a room immediately, regardless of its current state. All clients are disconnected; the room is removed from the matchmaker.
+
+Records `action: "room.dispose"`.
+
+## Multi-process visibility
+
+The room inspector reads from your configured [matchmaker driver](/server/driver), so visibility scales with the driver:
+
+| Driver | Visibility |
+|---|---|
+| `LocalDriver` (default) | Only rooms on the current process. Fine for development. |
+| `RedisDriver`, [`DatabaseDriver`](/server/driver) | All rooms across all processes. Recommended for production. |
+
+If you don't see rooms you expect, confirm the driver is shared across processes (Redis or DB-backed) rather than the default in-memory `LocalDriver`.
+
+## RBAC
+
+By default, the rooms resource follows the standard role rules:
+
+- **Admin**: full read + all actions.
+- **Mod**: read-only by default; the `rooms` scope is required for mutating actions. Assign with `db.moderation.assignMod(userId, "rooms")`.
+- **User**: read-only.
+
+Override per-action with `policies` on a `defineAdminResource()` for the `rooms` resource if you want different gating — e.g. restrict `dispose` to admins even when `kick` is mod-allowed. See [Resources → Policies](/admin/resources#policies).
+
+## Next steps
+
+- [Resources & CRUD](/admin/resources) — custom actions, policies, and the audit log.
+- [Authentication & RBAC](/admin/authentication) — sessions and role assignment.
+- [Server → Driver](/server/driver) — matchmaker driver options and the implications for cluster-wide visibility.

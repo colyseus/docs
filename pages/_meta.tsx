@@ -1,4 +1,4 @@
-import { HomeIcon, FileCodeIcon, ServerIcon, ThumbsupIcon, DevicesIcon, DatabaseIcon, ToolsIcon, QuestionIcon, VersionsIcon, HeartFillIcon, DownloadIcon, CodeIcon, ZapIcon, BookIcon, SyncIcon, PasskeyFillIcon, RocketIcon, ListOrderedIcon, RepoIcon, TasklistIcon, ListUnorderedIcon, CodeSquareIcon, FlameIcon, LightBulbIcon, CreditCardIcon, RowsIcon, PeopleIcon, StackIcon, CloudIcon, PackageIcon, DuplicateIcon } from '@primer/octicons-react';
+import { HomeIcon, FileCodeIcon, ServerIcon, ThumbsupIcon, DevicesIcon, DatabaseIcon, ToolsIcon, QuestionIcon, VersionsIcon, HeartFillIcon, DownloadIcon, CodeIcon, ZapIcon, BookIcon, SyncIcon, PasskeyFillIcon, RocketIcon, ListOrderedIcon, RepoIcon, TasklistIcon, ListUnorderedIcon, CodeSquareIcon, FlameIcon, LightBulbIcon, CreditCardIcon, RowsIcon, PeopleIcon, StackIcon, CloudIcon, PackageIcon, DuplicateIcon, ShieldLockIcon } from '@primer/octicons-react';
 
 export default {
     '-- Intro': {
@@ -24,6 +24,7 @@ export default {
     "matchmaker": { title: <span><StackIcon/> Matchmaker API</span> },
     "auth": { title: <span><PasskeyFillIcon/> Authentication</span> },
     "database": { title: <span><DatabaseIcon/> Database</span> },
+    "admin": { title: <span><ShieldLockIcon/> Admin Panel</span> },
 
     '-- Tools': { type: 'separator', title: 'Tools' },
     "tools": { title: <span><ToolsIcon/> Built-in Tools</span> },

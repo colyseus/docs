@@ -1,5 +1,6 @@
-import { Callout, Cards } from "nextra/components"
-import { SignInIcon, ShieldCheckIcon, SignOutIcon, PackageIcon, GlobeIcon, GearIcon, DevicesIcon, ServerIcon } from "@primer/octicons-react"
+import { Callout } from "nextra/components"
+import { SignInIcon, ShieldCheckIcon, SignOutIcon, PackageIcon, GlobeIcon, GearIcon, DevicesIcon } from "@primer/octicons-react"
+import { ScenarioGrid, ScenarioCard } from "../components/scenario-card"
 
 # Authentication
 
@@ -11,59 +12,26 @@ Colyseus authenticates clients on two surfaces: **room joins** (via an `onAuth` 
 
 ## Common scenarios
 
-### Authenticate a room join
-
-Colyseus exposes an `onAuth` hook that runs before a client joins a room. It receives the token sent by the client so you can verify it, reject invalid sessions, and forward user data into `onJoin`. With the database integration active, the default `onAuth` already verifies JWTs and rejects revoked sessions (bans and `bumpTokenVersion()` both invalidate live tokens at the token layer) — you only need to override `onAuth` for room-specific logic on top.
-
-<Cards>
-    <Cards.Card icon={<SignInIcon/>} title="Room onAuth" href="/auth/room" arrow />
-</Cards>
-
-### Protect an HTTP endpoint
-
-Colyseus ships a single authentication middleware that gates any endpoint behind a valid JWT. It works with both Express handlers and the typed HTTP routes system, and exposes the verified user payload to your route handler. When the database integration is active, the same middleware also enforces session revocation — no per-route bookkeeping required.
-
-<Cards>
-    <Cards.Card icon={<ShieldCheckIcon/>} title="HTTP Middleware" href="/auth/http" arrow />
-    <Cards.Card icon={<ServerIcon/>} title="HTTP Routes — JWT" href="/server/http-routes#jwt-authentication" arrow />
-</Cards>
-
-### Revoke a session or force-logout a user
-
-With `@colyseus/database`, every JWT carries a per-user version. `db.auth.ban()` bumps that version atomically with the ban fields, so a banned user's existing tokens are rejected on their next verification — *and* new login attempts are gated via `onCheckBanned`. For non-ban scenarios (password change, suspicious activity, manual "sign out everywhere"), call `db.auth.bumpTokenVersion(userId)` directly.
-
-<Cards>
-    <Cards.Card icon={<SignOutIcon/>} title="Database → Authentication" href="/database#authentication-built-in-colyseusauth-integration" arrow />
-</Cards>
-
-### Bring your own database
-
-The integration with `@colyseus/database` is optional. `@colyseus/auth` exposes a set of backend callbacks — find user, register, hash password, send email, OAuth lookups — that you implement against your own storage. Every flow described on this page works without the database package; you trade zero-config wiring for full control over the data layer.
-
-<Cards>
-    <Cards.Card icon={<PackageIcon/>} title="Auth Module — Backend API" href="/auth/module#backend-api" arrow />
-</Cards>
-
-### OAuth, anonymous login, and password reset
-
-All supported out of the box. The module bundles 200+ OAuth providers (Discord, Google, X, …), anonymous-user registration, and forgot/reset password flows with customizable email templates. With `@colyseus/database`, the persistence side is already wired — you only need to configure providers and email delivery.
-
-<Cards>
-    <Cards.Card icon={<GlobeIcon/>} title="Auth Module" href="/auth/module" arrow />
-</Cards>
-
-### Customize individual callbacks
-
-The database integration exposes its callback set as an extensible bag — override any individual hook (e.g. to add an invite-code check on registration, or to customize the anonymous user payload) while keeping the rest of the wiring intact. You get a defaults-plus-overrides composition rather than an all-or-nothing choice.
-
-<Cards>
-    <Cards.Card icon={<GearIcon/>} title="Database → Customizing callbacks" href="/database#customizing-callbacks" arrow />
-</Cards>
-
-### Use the frontend client SDK
-
-The `@colyseus/auth` client SDK provides typed methods for register, sign-in (email/password, anonymous, OAuth), password reset, and sign-out. The auth token is stored on the client and sent automatically on subsequent room joins and HTTP requests, so you generally don't manage it by hand.
-
-<Cards>
-    <Cards.Card icon={<DevicesIcon/>} title="Auth Module — Frontend API" href="/auth/module#frontend-api" arrow />
-</Cards>
+<ScenarioGrid>
+    <ScenarioCard icon={<SignInIcon size={18}/>} title="Authenticate a room join" href="/auth/room">
+        Verify JWTs and reject revoked sessions in your room's <code>onAuth</code> hook. The database integration handles revocation automatically.
+    </ScenarioCard>
+    <ScenarioCard icon={<ShieldCheckIcon size={18}/>} title="Protect an HTTP endpoint" href="/auth/http">
+        Gate any HTTP route behind a valid JWT with <code>auth.middleware()</code> — works for both Express handlers and the typed <code>createEndpoint</code> HTTP routes.
+    </ScenarioCard>
+    <ScenarioCard icon={<SignOutIcon size={18}/>} title="Revoke a session or force-logout" href="/database#authentication-built-in-colyseusauth-integration">
+        Atomic ban with <code>tokenVersion</code> bump (existing JWTs invalidated), or call <code>bumpTokenVersion()</code> standalone for non-ban revocations like password change.
+    </ScenarioCard>
+    <ScenarioCard icon={<PackageIcon size={18}/>} title="Bring your own database" href="/auth/module#backend-api">
+        Implement <code>@colyseus/auth</code>'s backend callbacks against your own storage. The <code>@colyseus/database</code> integration is optional — every flow works without it.
+    </ScenarioCard>
+    <ScenarioCard icon={<GlobeIcon size={18}/>} title="OAuth, anonymous login, password reset" href="/auth/module">
+        200+ OAuth providers (Discord, Google, X, …), anonymous registration, and forgot/reset password flows with customizable email templates.
+    </ScenarioCard>
+    <ScenarioCard icon={<GearIcon size={18}/>} title="Customize individual callbacks" href="/database#customizing-callbacks">
+        Override specific hooks (e.g. add an invite-code check on registration) while keeping the rest of the database integration intact.
+    </ScenarioCard>
+    <ScenarioCard icon={<DevicesIcon size={18}/>} title="Use the frontend client SDK" href="/auth/module#frontend-api">
+        Typed client methods for register, sign-in (email/password, anonymous, OAuth), password reset, and sign-out. The auth token is sent automatically.
+    </ScenarioCard>
+</ScenarioGrid>
