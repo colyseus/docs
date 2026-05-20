@@ -1,0 +1,55 @@
+---
+title: "Authentication"
+description: "How @colyseus/database becomes the user store for @colyseus/auth — auto-mounted routes, ban gating, JWT revocation, admin helpers, and callback customization."
+---
+import { Callout } from 'nextra/components'
+
+# Authentication
+
+When [`@colyseus/auth`](/auth/module) is installed alongside `@colyseus/database` and you pass `database:` to `defineServer`, the database becomes the user store and all auth routes mount automatically — no callbacks to write.
+
+**What's wired automatically:**
+
+- **HTTP routes** — every endpoint from `@colyseus/auth` (register, login, forgot/reset password, OAuth callback) is spread into your router under the configured prefix.
+- **User store** — `db.auth.settings` supplies the full set of [Backend API](/auth/module#backend-api) callbacks (`onFindUserByEmail`, `onRegisterWithEmailAndPassword`, `onRegisterAnonymously`, `onForgotPassword`, `onResetPassword`, `onCheckBanned`, …). You don't write any of them.
+- **Ban gating at login** — `onCheckBanned` rejects banned users and surfaces `{ reason, until }` from the row.
+- **JWT session revocation** — JWTs carry a `tokenVersion` claim. `db.auth.ban()` atomically bumps the version alongside the ban fields, so any previously-issued JWT for that user is rejected on its next verification. `db.auth.bumpTokenVersion(userId)` is also available standalone for password changes, "sign out everywhere", and forced rotation.
+- **Password-hash handoff** — `@colyseus/auth` hashes passwords with `AUTH_SALT` (scrypt by default) before values reach the database; the DB never sees plaintext.
+
+The same env secrets (`AUTH_SALT`, `JWT_SECRET`, `SESSION_SECRET`) still apply — see [Auth Module → Required Environment Secrets](/auth/module#required-environment-secrets).
+
+## Minimal setup
+
+Once `database:` is set on `defineServer`, the auth integration is live. No additional wiring is required:
+
+```ts {2,6} filename="src/app.config.ts"
+import { defineServer } from "colyseus";
+import { GameDatabase } from "@colyseus/database";
+
+export const db = new GameDatabase({ connectionString: process.env.DATABASE_URL });
+
+export default defineServer({
+    database: db, // ← wires @colyseus/auth routes + user store automatically
+});
+```
+
+## Admin & moderation helpers
+
+`db.auth` exposes account-management methods called from admin tooling or moderation flows:
+
+```ts
+await db.auth.ban(userId, { reason: "cheating", until: new Date(Date.now() + 86_400_000) });
+const status = await db.auth.isBanned(userId); // { banned, reason?, until? }
+await db.auth.unban(userId);
+
+// Force-log-out: invalidates previously issued JWTs for this user
+await db.auth.bumpTokenVersion(userId);
+```
+
+## Customizing callbacks
+
+`db.auth.settings` is a partial [`AuthSettings`](/auth/module#backend-api) object — wrap or replace individual callbacks (e.g. add an invite-code check during registration, customize the anonymous user payload) while keeping the rest of the integration intact. See the [Backend API](/auth/module#backend-api) catalog for the full list of hooks you can override.
+
+<Callout type="info">
+    Not using `@colyseus/database`? See [Auth Module](/auth/module) for the manual setup — implement the [Backend API](/auth/module#backend-api) callbacks against your own database.
+</Callout>

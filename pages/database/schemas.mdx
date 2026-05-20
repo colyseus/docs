@@ -1,0 +1,44 @@
+---
+title: "Customizing schemas"
+description: "Extend @colyseus/database's built-in drizzle tables with your own columns — table factory, manual column-spread pattern, and the full reference of built-in tables."
+---
+
+# Customizing built-in table schemas
+
+Every service in `@colyseus/database` is backed by a Drizzle table you can extend with your own columns. Use the per-dialect `tables` factory to spread the built-in columns into a custom table, then pass it via the `schemas` option — services keep working and return your custom columns with full type inference.
+
+## Built-in tables
+
+| Key | Physical table | Used by | Purpose |
+|---|---|---|---|
+| `users` | `colyseus_users` | `db.auth` + [`@colyseus/auth`](/auth/module) | Player accounts (email, password hash, anonymous flag, ban fields, token version) |
+| `configs` | `colyseus_configs` | `db.configs` | Live-ops config key/value store |
+| `cloudSaves` | `colyseus_cloud_saves` | `db.saves` | Per-user, per-slot save data with version |
+| `leaderboards` | `colyseus_leaderboards` | `db.leaderboards` | Leaderboard definitions |
+| `leaderboardEntries` | `colyseus_leaderboard_entries` | `db.leaderboards` | Score rows per (board, user, season) |
+| `analyticsEvents` | `colyseus_analytics_events` | `db.analytics` | Event log written by `track()` |
+| `roles` | `colyseus_roles` | `db.moderation` | Moderation roles + scoped collection permissions |
+| `userNotes` | `colyseus_user_notes` | `db.notes` | Admin notes attached to users |
+| `adminAudit` | `colyseus_admin_audit` | `db.audit` | Admin action audit log |
+| `roomCaches` | `colyseus_room_caches` | [`DatabaseDriver`](/server/driver) | Matchmaker room cache (driver-owned; customize via the driver's `schema` option, not `schemas`) |
+
+## Example: extending `users`
+
+```ts filename="src/app.config.ts"
+import { GameDatabase, tables } from "@colyseus/database";
+import { text, integer } from "drizzle-orm/sqlite-core";
+
+const users = tables.sqlite.users("users", {
+    displayName: text("display_name"),
+    level: integer("level").notNull().default(1),
+});
+
+export const db = new GameDatabase({
+    connectionString: "./game.db",
+    schemas: { users },
+});
+```
+
+The factory is available on both dialects: `tables.sqlite.<name>` and `tables.pg.<name>`. For finer control, you can also spread the column maps directly — `columns.sqlite.<name>` / `columns.pg.<name>` — into a hand-rolled `sqliteTable(...)` / `pgTable(...)`.
+
+The raw Drizzle instance is available as `db.drizzle` (typed against your resolved schema) for any query the services don't cover.

@@ -7,7 +7,7 @@ import { ScenarioGrid, ScenarioCard } from "../components/scenario-card"
 Colyseus authenticates clients on two surfaces: **room joins** (via an `onAuth` hook) and **HTTP routes** (via middleware). The official [`@colyseus/auth`](/auth/module) module powers both surfaces and pairs with [`@colyseus/database`](/database) for a zero-config user store, automatic route mounting, and revocation-aware sessions.
 
 <Callout type="info">
-    **Fastest setup:** add a `GameDatabase` to `defineServer` and `@colyseus/auth` wires itself — user store, register/login routes, ban gating, and revocation-aware JWTs, all from one option. → [Database → Authentication](/database#authentication-built-in-colyseusauth-integration)
+    **Fastest setup:** add a `GameDatabase` to `defineServer` and `@colyseus/auth` wires itself — user store, register/login routes, ban gating, and revocation-aware JWTs, all from one option. → [Database → Authentication](/database/authentication)
 </Callout>
 
 ## Common scenarios
@@ -19,7 +19,7 @@ Colyseus authenticates clients on two surfaces: **room joins** (via an `onAuth` 
     <ScenarioCard icon={<ShieldCheckIcon size={18}/>} title="Protect an HTTP endpoint" href="/auth/http">
         Gate any HTTP route behind a valid JWT with <code>auth.middleware()</code> — works for both Express handlers and the typed <code>createEndpoint</code> HTTP routes.
     </ScenarioCard>
-    <ScenarioCard icon={<SignOutIcon size={18}/>} title="Revoke a session or force-logout" href="/database#authentication-built-in-colyseusauth-integration">
+    <ScenarioCard icon={<SignOutIcon size={18}/>} title="Revoke a session or force-logout" href="/database/authentication">
         Atomic ban with <code>tokenVersion</code> bump (existing JWTs invalidated), or call <code>bumpTokenVersion()</code> standalone for non-ban revocations like password change.
     </ScenarioCard>
     <ScenarioCard icon={<PackageIcon size={18}/>} title="Bring your own database" href="/auth/module#backend-api">
@@ -28,7 +28,7 @@ Colyseus authenticates clients on two surfaces: **room joins** (via an `onAuth` 
     <ScenarioCard icon={<GlobeIcon size={18}/>} title="OAuth, anonymous login, password reset" href="/auth/module">
         200+ OAuth providers (Discord, Google, X, …), anonymous registration, and forgot/reset password flows with customizable email templates.
     </ScenarioCard>
-    <ScenarioCard icon={<GearIcon size={18}/>} title="Customize individual callbacks" href="/database#customizing-callbacks">
+    <ScenarioCard icon={<GearIcon size={18}/>} title="Customize individual callbacks" href="/database/authentication#customizing-callbacks">
         Override specific hooks (e.g. add an invite-code check on registration) while keeping the rest of the database integration intact.
     </ScenarioCard>
     <ScenarioCard icon={<DevicesIcon size={18}/>} title="Use the frontend client SDK" href="/auth/module#frontend-api">

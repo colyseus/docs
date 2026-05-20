@@ -26,7 +26,7 @@ Sessions are stateless — the cookie is the only source of truth. Two consequen
 - **Logout** clears the cookie client-side. The JWT itself remains technically valid until it expires unless its `tokenVersion` is bumped (see below).
 - **Revocation** happens by incrementing the user's `tokenVersion` column. `db.auth.bumpTokenVersion(userId)` invalidates every session issued before the call on its next verification. The admin "Revoke sessions" action does exactly this; `db.auth.ban()` does it atomically with the ban itself.
 
-See [Database → Authentication](/database#authentication-built-in-colyseusauth-integration) for the full revocation story.
+See [Database → Authentication](/database/authentication) for the full revocation story.
 
 ## Roles
 

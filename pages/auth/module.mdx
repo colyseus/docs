@@ -11,7 +11,7 @@ import { DevicesIcon, GearIcon, LinkIcon, MailIcon, GlobeIcon } from '@primer/oc
 </Callout>
 
 <Callout type="info">
-    **Using [`@colyseus/database`](/database)?** It wires up the user store, registration/login routes, ban gating, and session revocation for you — you can skip the [Backend API](#backend-api) callbacks below. See [Database → Authentication](/database#authentication-built-in-colyseusauth-integration) for the integration overview.
+    **Using [`@colyseus/database`](/database)?** It wires up the user store, registration/login routes, ban gating, and session revocation for you — you can skip the [Backend API](#backend-api) callbacks below. See [Database → Authentication](/database/authentication) for the integration overview.
 </Callout>
 
 The `@colyseus/auth` module is highly configurable and allows you to implement your own authentication backend.
@@ -401,7 +401,7 @@ client.auth.token = "xxxx";
 
 ## Backend API
 
-Implement these callbacks when you're bringing your own database. With [`@colyseus/database`](/database), they're wired automatically — see [Database & Persistence → Authentication](/database#authentication-built-in-colyseusauth-integration).
+Implement these callbacks when you're bringing your own database. With [`@colyseus/database`](/database), they're wired automatically — see [Database & Persistence → Authentication](/database/authentication).
 
 ### Backend URL
 

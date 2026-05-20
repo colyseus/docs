@@ -81,7 +81,7 @@ export const profile = createEndpoint("/profile", {
 ```
 
 <Callout type="info">
-    When [`@colyseus/database`](/database) is in use, `auth.middleware()` is **revocation-aware** automatically: `db.auth.ban(userId)` and `db.auth.bumpTokenVersion(userId)` both invalidate live JWTs at the token layer — no per-route check needed. See [Database → Authentication](/database#authentication-built-in-colyseusauth-integration).
+    When [`@colyseus/database`](/database) is in use, `auth.middleware()` is **revocation-aware** automatically: `db.auth.ban(userId)` and `db.auth.bumpTokenVersion(userId)` both invalidate live JWTs at the token layer — no per-route check needed. See [Database → Authentication](/database/authentication).
 </Callout>
 
 See [Authentication → HTTP Middleware](/auth/http) for the dual Express/`createEndpoint` modes, and [Auth Module](/auth/module) for backend setup.

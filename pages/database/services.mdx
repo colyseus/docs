@@ -1,0 +1,115 @@
+---
+title: "Services"
+description: "The @colyseus/database service surface — cloud saves, leaderboards, live configs, analytics, moderation, notes — plus the room plugins that wire them into the room lifecycle."
+---
+
+# Services
+
+Each `GameDatabase` instance exposes a set of services — read-and-write APIs over the built-in tables. All examples below assume the exported `db` instance from the [Quick start](/database#quick-start).
+
+## Cloud saves
+
+Per-user save data with monotonic versioning. The `slot` is optional and defaults to `0` — pass a different slot for multiple save files per player. Pass an `expectedVersion` for optimistic locking; a stale write throws `VersionConflictError`.
+
+```ts
+import { VersionConflictError } from "@colyseus/database";
+
+// save(userId, data, slot = 0, expectedVersion?)
+const { version } = await db.saves.save(userId, { hp: 100, level: 7 });
+
+const save = await db.saves.load(userId); // { data, version } | null
+
+try {
+    // pass the expected version for optimistic locking
+    await db.saves.save(userId, newData, 0, save.version);
+} catch (e) {
+    if (e instanceof VersionConflictError) {
+        // client had a stale copy — reload and merge
+    }
+}
+
+await db.saves.listSlots(userId); // [{ slot, version, updatedAt }]
+await db.saves.delete(userId);    // delete slot 0 for this user
+```
+
+## Leaderboards
+
+Keep-best scoring with optional seasons.
+
+```ts
+await db.leaderboards.ensure("global", "Global Leaderboard");
+await db.leaderboards.submit("global", userId, 1750);          // only kept if it beats the current best
+await db.leaderboards.submit("global", userId, 999, "season-1"); // isolated per season
+
+const top = await db.leaderboards.top("global", 10);
+const nearby = await db.leaderboards.aroundMe("global", userId, 5);
+```
+
+## Live configs
+
+Declare typed configuration keys with [Standard Schema](https://standardschema.dev/) validators (Zod, Valibot, etc.) via `defineConfigs`. Values are validated on write, cached in memory, and — when a `presence` is provided — invalidated across all server instances when changed (e.g. from an admin panel).
+
+```ts filename="src/app.config.ts"
+import { defineServer, RedisPresence } from "colyseus";
+import { GameDatabase, defineConfigs } from "@colyseus/database";
+import { z } from "zod";
+
+const configs = defineConfigs({
+    matchmaking: z.object({
+        minPlayers: z.number().int().default(2),
+        maxPlayers: z.number().int().default(10),
+    }).default({}), // inner field defaults fill the object
+});
+
+export const db = new GameDatabase({
+    connectionString: process.env.DATABASE_URL,
+    configsRegistry: configs,
+    presence: new RedisPresence(), // cross-instance invalidation (optional)
+});
+```
+
+```ts filename="src/rooms/Lobby.ts"
+const mm = await db.configs.get("matchmaking"); // typed: { minPlayers, maxPlayers }
+
+const unsubscribe = db.configs.subscribe("matchmaking", (value) => {
+    // re-applied live whenever an admin changes it
+});
+```
+
+## Analytics, moderation & notes
+
+```ts
+await db.analytics.track("match_completed", userId, { mode: "ranked", durationMs: 312_000 });
+
+await db.moderation.setRole(userId, "mod");
+await db.moderation.can(userId, "delete", "guilds"); // boolean
+
+await db.notes.add(userId, "Refunded once on 2026-04-12", authorId);
+await db.notes.deleteAllForUser(userId); // GDPR cleanup
+```
+
+## Room plugins
+
+For common patterns, `@colyseus/database` ships [Room Plugins](/room/plugins) that wire the services above into the room lifecycle automatically — no manual `onJoin`/`onLeave` glue:
+
+- **`CloudSavesPlugin`** — load a player's save on join, persist it on leave
+- **`LeaderboardsPlugin`** — submit scores on dispose
+- **`AnalyticsPlugin`** — track room `create`/`join`/`leave`/`dispose` events
+
+```ts filename="src/rooms/MyRoom.ts"
+import { Room, definePlugins } from "colyseus";
+import { CloudSavesPlugin } from "@colyseus/database";
+import { db } from "../app.config";
+
+export class MyRoom extends Room {
+    plugins = definePlugins([
+        new CloudSavesPlugin({
+            database: db,
+            payload: (room, client) => room.state.players.get(client.sessionId).toJSON(),
+            apply: (room, client, data) => room.state.players.get(client.sessionId).assign(data),
+        }),
+    ]);
+}
+```
+
+See [Room Plugins](/room/plugins) for how plugins attach and expose methods.
