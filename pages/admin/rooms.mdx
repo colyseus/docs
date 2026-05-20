@@ -6,7 +6,7 @@ import { Callout } from "nextra/components"
 
 # Live rooms
 
-The admin panel ships with a **live room inspector** that lists every active room across the cluster and exposes the operational actions you'd otherwise have to wire by hand: kick a client, lock or unlock for matchmaking, edit state in place, or force-dispose a stuck room. No per-room wiring required — the inspector works against any [matchmaker driver](/server/driver) supported by `@colyseus/core`.
+The admin panel includes a **live room inspector** that lists every active room across the cluster and exposes the operational actions you'd otherwise have to wire by hand: kick a client, lock or unlock for matchmaking, edit state in place, or force-dispose a stuck room. No per-room wiring required — the inspector works against any [matchmaker driver](/server/driver) supported by `@colyseus/core`.
 
 ## Listing rooms
 
@@ -28,7 +28,7 @@ Every mutation listed here is recorded to the [audit log](/admin/resources#audit
 
 ### Kick a client
 
-Drop a single client from a room with an optional reason. The reason surfaces in the client's WebSocket close frame so the game can react meaningfully (show a message, redirect, etc.).
+Drop a single client from a room with an optional reason. The reason surfaces in the client's WebSocket close frame so the game can react (show a message, redirect, etc.).
 
 Records `action: "room.kick"` with payload `{ sessionId, reason }`.
 

@@ -259,7 +259,7 @@ await db.audit.recordUpdate({
 });
 ```
 
-Failures during audit recording are logged but do not propagate to the request — you never want to fail a successful mutation because the log was unavailable.
+Failures during audit recording are logged but do not propagate to the request — a failed audit write should not block a successful mutation.
 
 ## Next steps
 

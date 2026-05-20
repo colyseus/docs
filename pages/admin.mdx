@@ -6,13 +6,13 @@ import { Callout, Tabs } from "nextra/components"
 
 # Admin Panel
 
-The **Colyseus Admin Panel** (`@colyseus/admin`) is a browser-based operations console for any project using [`@colyseus/database`](/database). It bundles user management (browse, ban, revoke sessions), generic CRUD over your drizzle tables, a live room inspector, and a customizable dashboard — all behind session-based admin login with role-based access control and an append-only audit log.
+`@colyseus/admin` is a browser-based operations console for projects using [`@colyseus/database`](/database). It provides user management (browse, ban, revoke sessions), CRUD over your drizzle tables, a live room inspector, and a customizable dashboard — all gated by session-based login with role-based access control and an append-only audit log.
 
-For a lightweight, no-auth dashboard intended for casual room and process inspection, see the [Monitoring Panel](/tools/monitoring) instead. The admin panel is the heavier counterpart, intended for production operations and game-team workflows.
+For a lightweight, no-auth dashboard intended for room and process inspection, see the [Monitoring Panel](/tools/monitoring) instead — the admin panel is the heavier counterpart, built for production operations.
 
 ## Installation
 
-`@colyseus/admin` depends on [`@colyseus/database`](/database) (for the user store, audit log, and drizzle table introspection) and [`@colyseus/auth`](/auth/module) (for JWT signing and password hashing). Both are peer dependencies; install them together if you haven't already:
+`@colyseus/admin` has two peer dependencies: [`@colyseus/database`](/database) (user store, audit log, drizzle table introspection) and [`@colyseus/auth`](/auth/module) (JWT signing, password hashing). Install all three together:
 
 ```sh npm2yarn
 npm install --save @colyseus/admin @colyseus/database @colyseus/auth
@@ -20,7 +20,7 @@ npm install --save @colyseus/admin @colyseus/database @colyseus/auth
 
 ## Mounting
 
-The admin panel can be mounted in two ways — pick the one that matches your stack:
+The admin panel mounts in two ways:
 
 <Tabs items={["Standard router (recommended)", "Express middleware"]}>
     <Tabs.Tab>
@@ -43,7 +43,7 @@ The admin panel can be mounted in two ways — pick the one that matches your st
     </Tabs.Tab>
 
     <Tabs.Tab>
-    Use this mode if you rely on existing Express middleware or libraries. The return value of `admin(...)` is also a valid Express middleware:
+    For Express-based stacks, `admin(...)` is also a valid Express middleware:
 
     ```ts {2,6-7} filename="src/app.config.ts"
     import { defineServer } from "colyseus";
@@ -65,7 +65,7 @@ The admin panel can be mounted in two ways — pick the one that matches your st
 
 ## First-run bootstrap
 
-The admin panel ships with **no built-in admin user**. The first time anyone visits `/admin`, the UI checks for the existence of any admin account and — if none exists — renders a one-time bootstrap form.
+The admin panel includes **no built-in admin user**. The first visit to `/admin` checks for an existing admin account and, if none exists, renders a one-time bootstrap form.
 
 After bootstrap:
 
@@ -81,7 +81,7 @@ After bootstrap:
 
 Once mounted, start your server and navigate to `http://localhost:2567/admin` in your browser. If you customized `uiPath`, adjust the URL accordingly.
 
-The REST API mounts in parallel at `http://localhost:2567/admin-api` and is consumed by the SPA — you generally don't call it directly, but the endpoints are normal `createEndpoint(...)` routes and respect the same `admin.guard()` semantics if you wrap them.
+The REST API mounts in parallel at `http://localhost:2567/admin-api` and is consumed by the SPA. The endpoints are normal `createEndpoint(...)` routes and respect the same `admin.guard()` semantics if you wrap them for use elsewhere.
 
 ## Hardening for production
 
@@ -89,8 +89,8 @@ The defaults are tuned for local development. Before exposing the panel to the p
 
 - **Set a strong `JWT_SECRET` and `SESSION_SECRET`** — see [Auth Module → Required Environment Secrets](/auth/module#required-environment-secrets). Rotating either invalidates all admin sessions.
 - **Wire [`auth.settings.onResetPassword`](/auth/module#on-reset-password)** to deliver password reset emails through your transactional email provider — the same hook that powers your player-side reset flow.
-- **Tighten the session cookie** via the `session` option — set an explicit `domain`, longer or shorter `maxAge` to taste, and confirm `Secure`/`SameSite` flags match your deployment.
-- **Disable `allowDevHeader`** if you don't explicitly need it. It auto-disables when `NODE_ENV === "production"`, but set it to `false` explicitly if you're unsure.
+- **Tighten the session cookie** via the `session` option — set an explicit `domain`, an appropriate `maxAge`, and confirm the `Secure`/`SameSite` flags match your deployment.
+- **Disable `allowDevHeader`** if you don't need it. It auto-disables when `NODE_ENV === "production"`, but setting it to `false` explicitly avoids surprises in mixed environments.
 - **Swap the in-memory rate limiters for a Redis-backed implementation** on multi-process deployments — the default token buckets don't share state across instances.
 - **Gate the Monitor and Playground** behind `admin.guard()` so you don't have multiple unauthenticated panels exposed:
 

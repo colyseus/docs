@@ -6,7 +6,7 @@ import { Callout } from "nextra/components"
 
 # Dashboard & widgets
 
-The admin panel homepage hosts a grid of **widgets** — small cards that surface live data from your database or runtime. Five **preset widgets** ship out of the box (all enabled by default), and you can append **custom widgets** for anything else you want at a glance.
+The admin panel homepage hosts a grid of **widgets** — small cards that surface live data from your database or runtime. Five **preset widgets** are enabled by default, and you can append **custom widgets** for anything else you want at a glance.
 
 ```ts {4-15} filename="src/app.config.ts"
 routes: createRouter({
@@ -104,7 +104,7 @@ Both accept only the base options (`title`, `icon`, `span`). No preset-specific 
 
 ## Custom widgets
 
-Append your own widgets via `dashboard.widgets`. Each widget runs server-side on the dashboard request and ships its output to the client:
+Append your own widgets via `dashboard.widgets`. Each widget runs server-side on the dashboard request and sends its output to the client:
 
 ```ts
 widgets: [{

@@ -6,7 +6,7 @@ import { Callout } from "nextra/components"
 
 # Authentication & RBAC
 
-The admin panel uses **session-based JWT cookies** for authentication and a three-role hierarchy (`admin` / `mod` / `user`) for authorization. Both reuse the underlying [`@colyseus/database`](/database) and [`@colyseus/auth`](/auth/module) machinery, so revocation, password hashing, and JWT signing follow the same rules as your application's player auth.
+The admin panel uses **session-based JWT cookies** for authentication and a three-role hierarchy (`admin` / `mod` / `user`) for authorization. Both reuse [`@colyseus/database`](/database) and [`@colyseus/auth`](/auth/module), so revocation, password hashing, and JWT signing follow the same rules as your application's player auth.
 
 ## Sessions
 
@@ -48,11 +48,11 @@ From anywhere with access to the database instance (e.g. a one-off script or an 
 await db.moderation.setRole(userId, "admin");
 ```
 
-The first admin is created by the [bootstrap flow](/admin#first-run-bootstrap) on first visit; subsequent admins are typically promoted from the panel's user-management UI.
+The first admin is created by the [bootstrap flow](/admin#first-run-bootstrap) on first visit; subsequent admins are promoted from the panel's user-management UI.
 
 ### Scoping a moderator to specific resources
 
-Mods get full mod-level access only on the resources they're explicitly assigned to. Assignments are per-resource:
+Mods get mod-level access only on the resources they're assigned to. Assignments are per-resource:
 
 ```ts
 await db.moderation.assignMod(userId, "guilds");        // mod on `guilds`
@@ -100,7 +100,7 @@ The "cookie cleared" behavior on insufficient role is intentional: a lower-role 
 
 ## Password reset
 
-The panel ships with a complete forgot-password flow that mirrors the player-side flow in `@colyseus/auth`:
+The panel's forgot-password flow mirrors the player-side flow in `@colyseus/auth`:
 
 1. User clicks "Forgot password?" on the login screen.
 2. `POST /admin-api/auth/request-reset` is called with the email.
@@ -129,7 +129,7 @@ admin({
 
 ## Rate limits
 
-The auth endpoints are rate-limited to slow down brute-force attacks. Defaults are in-memory token buckets per limiter — sufficient for single-process deployments. Replace with a Redis-backed `RateLimiter` for multi-node setups so the buckets are shared.
+The auth endpoints are rate-limited to slow down brute-force attacks. Defaults are in-memory token buckets per limiter — sufficient for single-process deployments. Replace with a Redis-backed `RateLimiter` for multi-node setups so the buckets are shared across instances.
 
 | Endpoint | Default limit | Option |
 |---|---|---|
