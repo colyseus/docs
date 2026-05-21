@@ -300,6 +300,27 @@ const room = await matchMaker.getLocalRoomById("xxxxxxxxx");
 room.clients[0].send("hello", "world");
 ```
 
+### Batch Lookup by Room Id
+
+Resolve a set of known roomIds in a single backend round trip. Use this when you already have a list of roomIds (for example, from a reverse-index lookup) and want their current matchmaker records — it's bounded at one wire op for any `K`, where `query()` would scan the whole room cache.
+
+**Parameters:**
+
+- **`roomIds`**: array of room ids to look up.
+
+```typescript
+const rooms = await matchMaker.findRoomsByIds(["roomId-a", "roomId-b", "roomId-missing"]);
+console.log(rooms);
+/*
+  Map {
+    "roomId-a" => { "roomId": "roomId-a", "processId": "...", "name": "battle", ... },
+    "roomId-b" => { "roomId": "roomId-b", "processId": "...", "name": "battle", ... }
+  }
+*/
+```
+
+Missing roomIds are absent from the returned `Map`. Prefer this over `matchMaker.query({})` whenever you know the exact roomIds — the cost stays the same as your cluster grows.
+
 ### Remote Room Call
 
 Call a method or return a property on a remote room.
