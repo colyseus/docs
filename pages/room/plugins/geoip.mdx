@@ -1,0 +1,262 @@
+---
+title: "GeoIPPlugin"
+description: "Resolve a client's country from their IP at auth time and attach it to client.geoip before onJoin runs. Three pluggable database delivery modes: bring-your-own MMDB file, auto-download from MaxMind, or use the bundled DB-IP Lite snapshot."
+---
+import { Callout } from "nextra/components";
+
+# GeoIPPlugin
+
+Looks up the client's IP at auth time and exposes the resolved country
+as `client.geoip` before `onJoin` runs. Useful for region-locked
+matchmaking, GDPR-aware routing, locale defaults, geo-blocking, and
+country-of-origin analytics.
+
+**Footprint:** one MMDB file loaded into memory per process (~6 MB for
+MaxMind GeoLite2-Country, ~3 MB for DB-IP Lite). Lookups are
+synchronous and complete in microseconds — no async cost on the join
+path. Across N rooms in one process, a single reader is shared via a
+module-level cache.
+
+## Installation
+
+`@colyseus/geoip` ships as a separate package because it pulls in the
+[`maxmind`](https://github.com/runk/node-maxmind) library and (optional)
+database files:
+
+```sh npm2yarn
+npm install @colyseus/geoip
+```
+
+```ts filename="MyRoom.ts"
+import { Room, definePlugins } from "colyseus";
+import { GeoIPPlugin } from "@colyseus/geoip";
+
+export class MyRoom extends Room {
+  plugins = definePlugins([
+    new GeoIPPlugin({ dbPath: "./GeoLite2-Country.mmdb" }),
+  ]);
+
+  async onJoin(client) {
+    console.log(client.geoip);
+    // { isoCode: "BR", name: "Brazil", continent: "SA", isInEU: false }
+  }
+}
+```
+
+`client.geoip` is typed via TypeScript module augmentation on
+`@colyseus/core`'s `Client` interface — no manual type imports needed.
+
+<Callout type="info">
+  `client.geoip` is `undefined` for unresolvable IPs — loopback,
+  RFC1918 private ranges, IPv6 link-local, or simply absent from your
+  database. Lookup failures never block the join.
+</Callout>
+
+## `GeoIPData`
+
+```ts
+interface GeoIPData {
+  /** ISO 3166-1 alpha-2 country code, e.g. "BR", "US". */
+  isoCode: string;
+  /** Human-readable English name, e.g. "Brazil". */
+  name: string;
+  /** ISO 3166-1 continent code: AF, AN, AS, EU, NA, OC, SA. */
+  continent?: string;
+  /** EU member flag — present in MaxMind country records, useful for GDPR routing. */
+  isInEU?: boolean;
+}
+```
+
+## Database delivery modes
+
+The plugin reads any [MMDB](https://maxmind.github.io/MaxMind-DB/) file —
+the binary format shared by MaxMind GeoLite2 and DB-IP Lite. Three ways
+to point it at one:
+
+### 1. `dbPath` — bring your own file
+
+```ts
+new GeoIPPlugin({ dbPath: "/var/lib/geoip/GeoLite2-Country.mmdb" })
+```
+
+Use this with MaxMind's [`geoipupdate`](https://github.com/maxmind/geoipupdate)
+cron, a custom build step that fetches DB-IP, or any other workflow you
+already have.
+
+| Option   | Type     | Default    | Description                       |
+|----------|----------|------------|-----------------------------------|
+| `dbPath` | `string` | _required_ | Absolute path to the MMDB file.   |
+
+### 2. `accountId` + `licenseKey` — auto-fetch from MaxMind
+
+```ts
+new GeoIPPlugin({
+  accountId: process.env.MAXMIND_ACCOUNT_ID,
+  licenseKey: process.env.MAXMIND_LICENSE_KEY,
+})
+```
+
+Downloads `GeoLite2-Country.mmdb` under your MaxMind credentials on the
+first boot, caches to disk, and refreshes weekly. Sign up free at
+[maxmind.com/en/geolite2/signup](https://www.maxmind.com/en/geolite2/signup)
+to get credentials.
+
+| Option              | Type     | Default                              | Description                                                                                |
+|---------------------|----------|--------------------------------------|--------------------------------------------------------------------------------------------|
+| `accountId`         | `string` | _required_                           | MaxMind account ID.                                                                        |
+| `licenseKey`        | `string` | _required_                           | MaxMind license key (issued alongside the account).                                        |
+| `cacheDir`          | `string` | `os.tmpdir() + '/colyseus-geoip'`    | Directory where the fetched `.mmdb` is cached on disk.                                     |
+| `edition`           | `string` | `'GeoLite2-Country'`                 | Which MaxMind edition to fetch. Stick to a Country edition unless you've extended the reader. |
+| `refreshIntervalMs` | `number` | `7 * 24 * 60 * 60 * 1000` (weekly)   | How often to re-fetch the database in the background.                                      |
+
+<Callout type="info">
+  Cross-process safety: when multiple processes share the same
+  `cacheDir`, each writes to PID-scoped temp paths and rechecks before
+  the atomic rename. Concurrent peers never clobber each other's
+  intermediate writes. For larger fleets, point all replicas at a shared
+  volume populated by a single `geoipupdate` sidecar.
+</Callout>
+
+### 3. Bundled — no configuration
+
+```ts
+new GeoIPPlugin()
+```
+
+Loads a DB-IP Lite Country snapshot shipped inside the package
+(CC-BY-4.0; can be redistributed). Updated on every release; for
+fresher data switch to mode 1 or 2.
+
+## Examples
+
+### Region-locked matchmaking
+
+```ts filename="EuropeRoom.ts"
+import { Room, definePlugins } from "colyseus";
+import { GeoIPPlugin } from "@colyseus/geoip";
+
+export class EuropeRoom extends Room {
+  plugins = definePlugins([
+    new GeoIPPlugin({ dbPath: "./GeoLite2-Country.mmdb" }),
+  ]);
+
+  async onAuth(client, options, context) {
+    if (client.geoip?.continent !== "EU") {
+      throw new ServerError(403, "EU-only room");
+    }
+    return true;
+  }
+}
+```
+
+<Callout type="info">
+  `client.geoip` is populated by the plugin's `onAuth` hook, which
+  runs *before* the room's own `onAuth`. You can rely on it being set
+  by the time your auth logic runs.
+</Callout>
+
+### Locale defaults at join
+
+```ts filename="LobbyRoom.ts"
+async onJoin(client) {
+  const defaultLocale = pickLocale(client.geoip?.isoCode);
+  client.send("locale", defaultLocale);
+}
+```
+
+### GDPR-aware analytics routing
+
+```ts filename="GameRoom.ts"
+async onJoin(client) {
+  if (client.geoip?.isInEU) {
+    analytics.useEUPipeline(client.sessionId);
+  } else {
+    analytics.useGlobalPipeline(client.sessionId);
+  }
+}
+```
+
+### Manual lookup from room code
+
+The plugin exposes its reader as `this.plugins.geoip.lookup(ip)` —
+useful when you need a geo result outside the auth path (e.g.
+re-resolving on reconnect, annotating analytics events, or running an
+anti-fraud check against an unrelated IP):
+
+```ts filename="GameRoom.ts"
+async onReconnect(client) {
+  // If you tracked the client's current IP separately, re-resolve it
+  // here. `client.geoip` itself is not refreshed on reconnect.
+  const ip = this.state.players.get(client.sessionId)?.lastIp;
+  const freshGeo = ip && this.plugins.geoip.lookup(ip);
+  if (freshGeo && freshGeo.isoCode !== client.geoip?.isoCode) {
+    this.log.warn("country changed during reconnect", {
+      sessionId: client.sessionId,
+      from: client.geoip?.isoCode,
+      to: freshGeo.isoCode,
+    });
+  }
+}
+```
+
+`lookup()` returns `undefined` for unresolvable, malformed, or
+not-in-database IPs — same semantics as the `client.geoip` field. It
+never throws.
+
+## Licensing and attribution
+
+This plugin reads two independently-licensed databases. **What you owe
+depends on which mode you use.**
+
+### MaxMind GeoLite2 (modes 1 & 2)
+
+GeoLite2 data is provided under the
+[GeoLite2 EULA](https://www.maxmind.com/en/geolite2/eula). Key terms:
+
+- Free for use under your MaxMind account, including commercial use.
+- **Cannot be redistributed** — each user must download under their
+  own credentials. The plugin does **not** bundle MaxMind data.
+- Cannot be used for FCRA-regulated decisions (credit, insurance,
+  employment, government benefits).
+- Attribution required if you expose the data: *"This product includes
+  GeoLite2 data created by MaxMind, available from
+  [maxmind.com](https://www.maxmind.com)."*
+
+### DB-IP Lite (mode 3)
+
+DB-IP's Lite databases are licensed under
+[Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/).
+Free to redistribute including commercially, provided attribution
+travels with the data. The bundled snapshot inside `@colyseus/geoip`
+already includes the required attribution; you don't need to surface
+it to your players.
+
+## Privacy
+
+The plugin derives country from the client's IP. The IP is already
+visible to your server; the resolved country is the same class of
+personal data and should be treated as such under GDPR/CCPA/etc. If you
+persist `client.geoip` beyond the session, disclose it in your privacy
+policy.
+
+## Caveats
+
+- **`x-forwarded-for` chains:** the plugin uses the left-most entry on
+  the assumption your reverse proxy populates that position with the
+  originating client. If your proxy reverses or appends entries
+  differently, your geo data will be wrong — verify the chain shape
+  before trusting `client.geoip` for production routing.
+- **Reconnections:** `client.geoip` is set during the initial join's
+  `onAuth`. A reconnecting client whose IP has changed in the meantime
+  will still carry the original geo data through the reconnect path. If
+  you need fresh-on-reconnect semantics, re-resolve manually with the
+  public lookup method (see below).
+- **Country granularity only:** the plugin's bundled reader maps a
+  small subset of MMDB fields. City, ASN, accuracy radius, and other
+  richer GeoIP2-City fields are intentionally not exposed — point the
+  reader at a city DB and extend `MMDBReader` if you need them.
+
+## See Also
+
+- [Room Plugins](/room/plugins) — overview of the plugin system
+- [`onAuth`](/room/auth) — pre-join hook the plugin attaches to
