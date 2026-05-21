@@ -2,7 +2,7 @@
 title: "Room Plugins"
 description: "Compose Colyseus rooms with reusable plugins that contribute message handlers, lifecycle hooks, and public methods."
 ---
-import { Callout, Cards, Tabs } from "nextra/components";
+import { Callout, Tabs } from "nextra/components";
 
 # Room Plugins
 
@@ -13,6 +13,18 @@ A **Room Plugin** is a composable extension to a `Room`. Each plugin can contrib
 - **Public methods** — callable from the room as `this.plugins.<key>.someMethod()`.
 
 The framework instantiates one plugin per room, wires `this.room` after the room is fully constructed, and merges everything in once per `Room` subclass (cached on the class — there's no per-instance setup cost).
+
+## Available plugins
+
+| Plugin | What it does |
+|--------|--------------|
+| [IdleKickPlugin](/room/plugins/idle-kick) | Auto-disconnects clients that haven't sent a message within a configurable timeout. Zero per-message overhead. |
+| [GeoIPPlugin](/room/plugins/geoip) | Resolves a client's country from their IP at auth time and exposes it as `client.geoip` before `onJoin` runs. |
+| [WebRTCPlugin](/room/plugins/webrtc) | WebRTC peer-to-peer signaling (peer list, SDP offer/answer, ICE candidate relay) for audio/video/data channels. |
+| [UniqueSessionPlugin](/room/plugins/unique-session) | Enforces a max number of concurrent sessions of this room type per user (default: one). |
+| [TrackUserSessionsPlugin](/room/plugins/track-user-sessions) | Maintains a per-user reverse index in Presence — powers admin by-user inspection and session-revocation. |
+
+All plugins above ship with the `colyseus` package — no extra dependency to install.
 
 ## Attaching plugins to a Room
 
@@ -48,15 +60,6 @@ plugins = definePlugins({
 ```
 
 Both forms produce the same runtime shape (`Record<string, RoomPlugin>`). The array form is recommended when each plugin has a single canonical key; reach for the record form when neither holds.
-
-## Available plugins
-
-<Cards>
-  <Cards.Card title="IdleKickPlugin" href="/room/plugins/idle-kick" arrow />
-  <Cards.Card title="WebRTCPlugin" href="/room/plugins/webrtc" arrow />
-  <Cards.Card title="UniqueSessionPlugin" href="/room/plugins/unique-session" arrow />
-  <Cards.Card title="TrackUserSessionsPlugin" href="/room/plugins/track-user-sessions" arrow />
-</Cards>
 
 ## Writing your own plugin
 
