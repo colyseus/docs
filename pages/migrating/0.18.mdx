@@ -1,0 +1,90 @@
+---
+title: "Migrating to 0.18"
+description: "Migration guide from Colyseus 0.17 to 0.18. Covers the AUTH_SALT deprecation, the password-reset requirement for @colyseus/auth users, and the new @colyseus/database / @colyseus/admin packages."
+---
+import { Callout } from 'nextra/components'
+
+# Migrating to version 0.18 (from 0.17)
+
+<Callout type="info">
+    See [0.18 release notes](https://github.com/colyseus/colyseus/releases/tag/0.18) for the full changelog.
+</Callout>
+
+## Upgrading packages
+
+Get all the latest 0.18.x versions for the package names you already have in your `package.json`:
+
+```json filename="package.json"
+{
+    "dependencies": {
+        "colyseus": "^0.18.0",
+        "@colyseus/core": "^0.18.0",
+        "@colyseus/tools": "^0.18.0",
+        "@colyseus/ws-transport": "^0.18.0",
+        "@colyseus/monitor": "^0.18.0",     // (optional)
+        "@colyseus/playground": "^0.18.0",  // (optional)
+        "@colyseus/redis-driver": "^0.18.0", // (optional)
+        "@colyseus/redis-presence": "^0.18.0", // (optional)
+        "@colyseus/auth": "^0.18.0",        // (optional)
+        "@colyseus/loadtest": "^0.18.0",    // (optional)
+        "@colyseus/testing": "^0.18.0",     // (optional)
+        "@colyseus/uwebsockets-transport": "^0.18.0" // (optional)
+    }
+}
+```
+
+### New packages in 0.18
+
+Two new official packages ship alongside the framework. Both are optional — install them only if you want the features they provide:
+
+- [`@colyseus/database`](/database) — the recommended persistence layer (Drizzle ORM, SQLite/PostgreSQL, user store, cloud saves, leaderboards, configs, analytics, audit log).
+- [`@colyseus/admin`](/admin) — the production operations console (CRUD over your tables, live room inspector, dashboard, RBAC). Depends on `@colyseus/database` and `@colyseus/auth`.
+
+```sh npm2yarn
+npm install --save @colyseus/database @colyseus/admin
+```
+
+## Breaking Changes
+
+### `Room#setMetadata()` now replaces instead of merging
+
+In 0.17, `room.setMetadata({ ... })` (and `room.setMatchmaking({ metadata: { ... } })`) would shallow-merge the provided fields into the existing metadata. In 0.18 these calls **replace** metadata wholesale — matching the behaviour of the `this.metadata = ...` setter and the rest of `setMatchmaking()`.
+
+To preserve the previous merging behaviour, spread `this.metadata` yourself at the call site:
+
+```ts
+// ❌ 0.17 — partial update, other fields were preserved
+await this.setMetadata({ status: "in_progress" });
+
+// ✅ 0.18 — spread existing fields explicitly to merge
+await this.setMetadata({ ...this.metadata, status: "in_progress" });
+
+// Same applies to setMatchmaking()
+await this.setMatchmaking({
+  metadata: { ...this.metadata, status: "in_progress" },
+});
+```
+
+The type of the `meta` parameter changed from `Partial<Metadata>` to the full `Metadata` to reflect the new semantics.
+
+### `@colyseus/auth`: password hashing changed
+
+`@colyseus/auth` 0.18 ships a new default password hasher that derives its own per-password salt. The legacy `scrypt` hasher (used in 0.17 and earlier) relied on a global `AUTH_SALT` environment variable and is now deprecated.
+
+**Existing email/password users will need to reset their passwords.** Their pre-0.18 hashes cannot be verified by the new hasher and stay in the database until each user runs through the password-reset flow.
+
+#### Migration steps
+
+1. **Keep `AUTH_SALT` set in your environment** during the transition. The legacy hasher remains available to verify pre-0.18 hashes so existing sessions and legacy verification paths continue to work while you roll out the change.
+
+2. **Notify your email/password users and force a password reset.** Two ways:
+    - **Email everyone a reset link** through the standard [forgot-password flow](/auth/module#send-password-reset-email). When the user submits a new password, the 0.18 default hasher writes a fresh hash with its own salt.
+    - **Invalidate sessions to force the reset on next login** — call `db.auth.bumpTokenVersion(userId)` (or your own equivalent if you're not using `@colyseus/database`) so existing JWTs are rejected and the user is sent through the login → reset flow.
+
+3. **After every user has reset their password, remove `AUTH_SALT`** from your environment. New deployments and post-reset users don't need it; the legacy hasher has no remaining hashes to verify.
+
+<Callout type="info">
+    New 0.18 projects (no pre-existing users) can skip setting `AUTH_SALT` entirely. The variable is only relevant to upgrades that need to verify pre-0.18 hashes during the transition.
+</Callout>
+
+See [Auth Module → Required Environment Secrets](/auth/module#required-environment-secrets) for the up-to-date secrets list.
