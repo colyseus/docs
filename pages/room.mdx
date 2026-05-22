@@ -164,6 +164,31 @@ messages = {
 }
 ```
 
+#### Responding to a message (request/response)
+
+A message handler can **return a value** to answer a client that's waiting for a reply via [`room.request()` or `room.send(type, payload, callback)`](/sdk#requestresponse). The same handlers serve both plain (fire-and-forget) sends and requests — the return value is sent back only when the client awaited a reply, and ignored otherwise.
+
+```ts filename="MyRoom.ts"
+messages = {
+    // Return a value (sync or async) — it becomes the client's response.
+    "get-profile": async (client, { userId }) => {
+        return await db.profiles.findById(userId);
+    },
+
+    // Throwing (or rejecting) settles the client's request as an error.
+    "buy-item": (client, { itemId }) => {
+        if (!this.canAfford(client, itemId)) {
+            throw new Error("not enough coins");
+        }
+        return { ok: true };
+    },
+}
+```
+
+- The handler's return value is **awaited** before being sent, so returning a `Promise` works.
+- If the handler throws or its `Promise` rejects, the client's request rejects with that error instead of timing out.
+- Only the handler registered for the message's specific type can answer a request. The [`"*"` fallback](#fallback-for-all-messages) is **not** eligible, and a request for a type with no handler rejects with a `no_handler` error.
+
 ---
 
 ## Lifecycle Events
