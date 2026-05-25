@@ -1,0 +1,138 @@
+---
+title: "Vite Plugin"
+description: "Run your Colyseus server inside Vite's dev server for full hot module replacement (HMR) of client and room code, then build a standalone production server — all from a single Vite project."
+---
+import { Callout } from "nextra/components";
+
+# Vite Plugin
+
+The Colyseus Vite plugin runs your game server **inside** Vite's dev server using Vite's [Environment API](https://vite.dev/guide/api-environment). A single `vite` process serves your frontend and hosts the Colyseus server, with [Hot Module Replacement](https://vite.dev/guide/features#hot-module-replacement) (HMR) for both client components **and** server-side room definitions — no process restart between edits.
+
+It also drives the production build: `vite build` emits your static client and a standalone server bundle.
+
+## Requirements
+
+- A Vite project (`vite >= 6.0.0`).
+- The `colyseus` package — the plugin ships with it under the `colyseus/vite` subpath.
+
+## Setup
+
+Add the `colyseus()` plugin to your Vite config, alongside any frontend plugins (such as `@vitejs/plugin-react`):
+
+```ts {3,8-10} filename="vite.config.ts"
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { colyseus } from 'colyseus/vite';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    colyseus({
+      serverEntry: '/src/server/index.ts',
+    }),
+  ],
+});
+```
+
+The `serverEntry` file must export your server configuration as `server` (from [`defineServer()`](/server)) or a `rooms` map. A default export of `{ server }` / `{ rooms }` also works.
+
+```ts filename="src/server/index.ts"
+import { defineServer, defineRoom, createRouter, createEndpoint } from "colyseus";
+import { MyRoom } from "./MyRoom.ts";
+
+export const server = defineServer({
+  rooms: {
+    my_room: defineRoom(MyRoom),
+  },
+
+  // Type-safe HTTP routes — hot-swapped on reload
+  routes: createRouter({
+    hello: createEndpoint("/hello", { method: "GET" }, async () => {
+      return { message: "Hello world!" };
+    }),
+  }),
+
+  // Express middleware — set up once, persists across reloads
+  express: (app) => {
+    app.get('/express-hello', (_req, res) => {
+      res.json({ message: 'Hello from Express!' });
+    });
+  },
+});
+```
+
+Start everything with the usual Vite command:
+
+```bash
+npm run dev
+```
+
+Editing `MyRoom.ts` reloads the server in place; editing your frontend reloads the browser — both without restarting the process. The Colyseus server attaches to Vite's own HTTP server, so your client and server share a single origin and port — no dev proxy required.
+
+## Options
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `serverEntry` | `string` | *(required)* | Path to the module exporting `server` (or `rooms`). |
+| `port` | `number` | `2567` | Port the **production** server listens on. Dev mode reuses Vite's port. |
+| `serveClient` | `boolean` | `false` | In the production build, serve the built client via `express.static()` with an SPA fallback to `index.html`. No effect in dev. |
+| `quiet` | `boolean` | `false` | Suppress the plugin's reload/room logs. |
+| `httpServer` | `http.Server` | — | Required only when running Vite in [middleware mode](#middleware-mode). |
+| `loadWsTransport` | `() => Promise<…>` | — | Provide a custom WebSocket transport loader. Defaults to `@colyseus/ws-transport`. |
+
+## How server HMR works
+
+The plugin enables Colyseus [Development Mode](/server/devmode) internally. When you save a server file:
+
+1. The server module is re-imported, picking up your new code.
+2. HTTP routes and room definitions are swapped for the new ones.
+3. Active rooms are cached, disposed, and restored — state and seat reservations are preserved, and connected clients reconnect automatically.
+
+Because this reuses the dev-mode machinery, the same hooks and caveats apply:
+
+- Implement [`onCacheRoom()` / `onRestoreRoom()`](/server/devmode#restoring-external-data) to preserve data held outside the room `state`.
+- On the frontend, the `onAdd` schema callbacks fire again after a reload — be ready to ignore duplicate calls during development.
+
+<Callout type="warning">
+    Like `devMode`, this is for **local development only**. The production build (below) runs a normal Colyseus server with HMR disabled.
+</Callout>
+
+## Production build
+
+```bash
+vite build --app
+```
+
+This produces:
+
+- `dist/client/` — your static frontend assets.
+- `dist/server/server.mjs` — a standalone server that imports your entry and calls `server.listen()`.
+
+Run it with Node:
+
+```bash
+node dist/server/server.mjs
+```
+
+To have the server also serve the built client (single deployable), enable `serveClient`:
+
+```ts {4} filename="vite.config.ts"
+colyseus({
+  serverEntry: '/src/server/index.ts',
+  port: 2567,
+  serveClient: true,
+})
+```
+
+With `serveClient`, the production server mounts `dist/client/` via `express.static()` and adds an SPA fallback that returns `index.html` for unmatched `GET` requests.
+
+## Middleware mode
+
+In standalone dev mode the plugin attaches the WebSocket transport to Vite's own HTTP server. When you run Vite in [middleware mode](https://vite.dev/guide/ssr) — embedding it inside your own Express/HTTP server — that server owns the socket, so you must pass it explicitly:
+
+```ts
+colyseus({
+  serverEntry: '/src/server/index.ts',
+  httpServer: myHttpServer,
+})
+```

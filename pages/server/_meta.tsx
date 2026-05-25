@@ -5,6 +5,7 @@ export default {
     "driver": "",
     "transport": "",
     "devmode": "",
+    "vite": "",
     "debugging": "",
     "graceful-shutdown": "",
     "logging": "",
