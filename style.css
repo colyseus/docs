@@ -108,6 +108,40 @@ html.dark .sponsor-cell {
 
 .sponsor-scorewarrior { color: #821890; }
 html.dark .sponsor-scorewarrior { color: #ffffff; }
+
+/* when the button would sit alone in the left column, span the full row
+   instead of leaving an empty cell (works for both odd/even sponsor counts) */
+.sponsor-become:nth-child(odd) {
+    grid-column: 1 / -1;
+}
+/* full-width row has room for the heart inline with the label */
+.sponsor-become:nth-child(odd) span {
+    flex-direction: row;
+}
+
+.sponsor-become span {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.45em;
+    font-size: 0.7em;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    opacity: 0.6;
+    transition: opacity 150ms ease, color 150ms ease;
+}
+.sponsor-become svg {
+    width: 15px;
+    height: 15px;
+}
+.sponsor-become:hover span {
+    opacity: 1;
+    color: #f5a015;
+}
+
 /* Scenario cards — reusable grid for landing-page intent indexes
    (see pages/auth.mdx, pages/admin.mdx). */
 .scenario-grid {
