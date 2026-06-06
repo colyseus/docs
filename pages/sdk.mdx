@@ -974,8 +974,53 @@ Listen for errors that occur in the room.
 
 ### Removing Listeners
 
-Remove all event listeners from the room.
+Remove event listeners from the room.
 
+<SDKTabs>
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    // Removes all listeners at once.
+    room.removeAllListeners();
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    // Remove each handler you registered with -= (you will need to keep a reference to each one you added)
+    room.OnStateChange -= OnStateChange;
+    room.OnError -= OnError;
+    room.OnLeave -= OnLeave;
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    -- call without any event name to remove all listeners for every event
+    room:off()
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    // Remove each handler you registered with -= (you will need to keep a reference to each one you added)
+    room.onStateChange -= onStateChange;
+    room.onError -= onError;
+    room.onLeave -= onLeave;
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript filename="client.gd"
+    # Disconnect a specific handler:
+    room.error.disconnect(_on_room_error)
+
+    # Or remove every handler connected to a given signal:
+    for connection in room.error.get_connections():
+        room.error.disconnect(connection["callable"])
+    ```
+    </Tabs.Tab>
+
+</SDKTabs>
 
 ---
 
