@@ -14,9 +14,9 @@ When [`@colyseus/auth`](/auth/module) is installed alongside `@colyseus/database
 - **User store** — `db.auth.settings` supplies the full set of [Backend API](/auth/module#backend-api) callbacks (`onFindUserByEmail`, `onRegisterWithEmailAndPassword`, `onRegisterAnonymously`, `onForgotPassword`, `onResetPassword`, `onCheckBanned`, …). You don't write any of them.
 - **Ban gating at login** — `onCheckBanned` rejects banned users and surfaces `{ reason, until }` from the row.
 - **JWT session revocation** — JWTs carry a `tokenVersion` claim. `db.auth.ban()` atomically bumps the version alongside the ban fields, so any previously-issued JWT for that user is rejected on its next verification. `db.auth.bumpTokenVersion(userId)` is also available standalone for password changes, "sign out everywhere", and forced rotation.
-- **Password-hash handoff** — `@colyseus/auth` hashes passwords with `AUTH_SALT` (scrypt by default) before values reach the database; the DB never sees plaintext.
+- **Password-hash handoff** — `@colyseus/auth` hashes passwords before they reach the database; the DB never sees plaintext.
 
-The same env secrets (`AUTH_SALT`, `JWT_SECRET`, `SESSION_SECRET`) still apply — see [Auth Module → Required Environment Secrets](/auth/module#required-environment-secrets).
+The same env secrets (`JWT_SECRET`, `SESSION_SECRET`) still apply — see [Auth Module → Required Environment Secrets](/auth/module#required-environment-secrets).
 
 ## Minimal setup
 

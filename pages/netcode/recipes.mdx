@@ -1,0 +1,93 @@
+---
+title: "Netcode Recipes"
+description: "Task-oriented Colyseus netcode patterns: predicted projectiles, dead-reckoned AI, remote smoothing-mode selection, physics-engine prediction with predict.sim, and swept hit tests."
+---
+import { Callout } from 'nextra/components'
+
+# Netcode Recipes
+
+Task-oriented patterns that build on the [Client Prediction](/netcode/client-prediction), [Server Input](/netcode/server-input), and [Lag Compensation](/netcode/lag-compensation) APIs.
+
+<Callout type="info">
+    **Available in Colyseus 0.18+.**
+</Callout>
+
+## Choosing a remote smoothing mode
+
+`Predict.attachAll` smooths entities you don't control. Pick the mode by what the entity *is*:
+
+- **`lerp`** — remote **players**. Faithful (renders exactly where the server put them, a little in the past). The default for anything you also want lag-compensated, because rewind can match the interpolated instant.
+- **`reckon`** — **AI / NPCs** you can forward-simulate from a known step function. Renders at ≈ `serverNow`, hiding latency; pair with `lagComp: "reckon"` on the type so hits line up.
+- **`damped`** — **cosmetic** entities where "never jittery" beats "exact" (floating pickups, ambient critters). No fixed delay, so it can't be exactly lag-compensated.
+
+## Predicted projectiles
+
+Give the shooter zero-latency feedback by predicting their **own** shot the moment they fire, while the server stays authoritative:
+
+- **Predict on fire** — spawn the local projectile immediately on input, before the server confirms it.
+- **Age incoming projectiles** — when a server-spawned projectile arrives, advance it by `room.clock.serverNow() − spawnTime` so it appears where it *should* be now, not where it was emitted. This is lag-invariant.
+- **Sweep the hit check** — for fast projectiles, test the swept **segment** between last and current position, not a point, so a frame-step doesn't tunnel the projectile through a thin target.
+
+```ts
+// Age a freshly-received projectile to "now".
+const age = room.clock.serverNow() - projectile.spawnTime;
+const x = projectile.x0 + projectile.vx * (age / 1000);
+const y = projectile.y0 + projectile.vy * (age / 1000);
+```
+
+## Dead-reckoned AI (server-driven)
+
+For entities nobody controls directly but that move predictably (patrolling AI, ballistics), declare the lag-comp timeline **once on the type** so the server rewind and the client `Predict` mode agree:
+
+```ts
+// shared schema
+schema({ x: t.float32(), y: t.float32(), /* ... */ }, "Enemy").with({ lagComp: "reckon" });
+```
+
+The client's `predict.attachAll("enemies", ...)` then infers `mode: "reckon"` for these entities, and the server's `rewind.attachAll(this.state.enemies, ...)` aims at the client's reconstructed send instant — no double compensation. For discrete movers (teleporters), keep snaps sharp under rewind with `interpolate`:
+
+```ts
+this.rewind.attachAll(this.state.enemies, {
+  fields: ["x", "y"],
+  interpolate: (e) => (e.kind === "teleporter" ? "step" : "linear"),
+});
+```
+
+## Physics-engine prediction (`predict.sim` + Rapier)
+
+When the local simulation is an opaque engine, bridge it into `predict.sim`'s `step` — the engine handle is your `world`. On the server, consume one input per tick with `next()` and step the world once:
+
+```ts
+// server
+step(ctx) {
+  for (const [sid, body] of this.bodies) {
+    const cmd = this.input(sid).next();
+    if (cmd) applyInput(body, cmd);
+  }
+  this.world.step(ctx.dt);
+}
+```
+
+```ts
+// client — same applyInput, same dt
+const me = predict.sim({
+  input,
+  world: { world, body },
+  step:  (ctx, cmd, w) => { applyInput(w.body, cmd); w.world.step(ctx.dt); },
+  adopt: (w) => { w.body.setTranslation({ x: self.x, y: self.y }, true);
+                  w.body.setLinvel({ x: self.vx, y: self.vy }, true); },
+  pose:  (w) => { const t = w.body.translation(); return { x: t.x, y: t.y }; },
+});
+```
+
+<Callout type="warning">
+    Reseed **every** scalar the sim depends on in `adopt` (position **and** velocity). Engine-internal non-scalar state isn't rolled back — see [the warning on `predict.sim`](/netcode/client-prediction#composite--engine-state-predictsim).
+</Callout>
+
+## Composite scalars (`predict.sim`, no engine)
+
+When an input pushes more than your own entity — a paddle that strikes a puck — reconcile both together as a composite `world`. See the full example in [Client Prediction → Composite & engine state](/netcode/client-prediction#composite--engine-state-predictsim). The `demos/kaplay-colyseus` air-hockey demo is the canonical reference.
+
+## Hand-rolled simulation (no physics engine)
+
+You don't need an engine. The `test/prediction` platformer is plain math: `applyInput` integrates velocity and gravity by hand, shared verbatim between client and server. This is the simplest way to satisfy [the determinism contract](/netcode/determinism) — there's no engine build to keep in sync.

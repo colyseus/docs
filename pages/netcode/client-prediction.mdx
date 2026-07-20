@@ -1,0 +1,190 @@
+---
+title: "Client Prediction & Reconciliation"
+description: "Predict your local entity with zero latency, reconcile to the authoritative server state via rollback and replay, and smooth remote entities — the client half of Colyseus 0.18 netcode using room.input() and Predict."
+---
+import { Callout } from 'nextra/components'
+
+# Client Prediction & Reconciliation
+
+This is the **client half** of the netcode stack: send input, predict your own entity, reconcile to the server's authoritative state, and smooth the entities you don't control. The matching server half lives in [Server Input & Timestep](/netcode/server-input).
+
+<Callout type="info">
+    **Available in Colyseus 0.18+.** Imported from `@colyseus/sdk`.
+</Callout>
+
+## At a glance
+
+```ts
+import { Predict } from "@colyseus/sdk";
+import { applyInput } from "./shared/applyInput";   // SAME function the server runs
+
+const predict = Predict.get(room, { mode: "lerp", delay: 100, name: "players" });
+
+// Remote players: render 100ms in the past, interpolated between snapshots.
+predict.attachAll("players", { mode: "lerp", fields: ["x", "y"] });
+
+// Local player: server-reconciled prediction. delta:false is mandatory.
+const input = room.input({ type: MoveInput, mode: "reliable", delta: false, renderDelay: 100 });
+const me = predict.reconciler(self, {
+  input,
+  fields: ["x", "y", "vx", "vy", "grounded"],
+  step: (ctx, s, cmd) => applyInput(s, cmd, LEVEL, ctx.dt),
+  smoothing: 15,
+});
+
+function frame(now) {
+  predict.tick(now);                       // single driver: reconcile + decay + smooth remotes
+  const n = me.beginFrame(dtMs);           // how many fixed steps to run now
+  for (let i = 0; i < n; i++) me.input(sampleInput());   // predict + buffer + send
+  draw(me.value("x"), me.value("y"));                    // smoothed local pose
+  for (const [, p] of room.state.players) draw(predict.value(p, "x"), predict.value(p, "y"));
+  requestAnimationFrame(frame);
+}
+```
+
+## `room.input(options)`
+
+Returns a per-room [`InputHandle`](#inputhandle-reference): the channel you stage input on and send through. The predicted channel **must** use `delta: false` (see [the contract](/netcode/determinism#the-contract)).
+
+```ts
+const input = room.input({
+  type: MoveInput,          // input schema constructor (matches the server's defineInput)
+  mode: "reliable",         // reliable for the predicted channel
+  delta: false,             // MANDATORY for prediction
+  renderDelay: 100,         // your remote interp buffer (ms) — see Lag Compensation
+});
+```
+
+Stage fields on `input.data`, then `input.send()`:
+
+```ts
+input.data.moveX = 1;
+input.data.jump = true;
+input.send();
+```
+
+The handle also surfaces the server-advertised rates from the handshake — `input.tickRate`, `input.stepSeconds`, `input.stepMs`, `input.patchRate`, `input.subSteps`, `input.subStepSeconds`. Predict at `input.stepSeconds` so your replay stays bit-identical with the server.
+
+<Callout type="warning">
+    The server must advertise a fixed rate (via `setFixedTimestep`) for `input.tickRate` to be defined. A robust client asserts it:
+    ```ts
+    if (input.tickRate === undefined) throw new Error("server did not advertise a fixed tick rate");
+    ```
+</Callout>
+
+## `Predict.get(room, options)`
+
+The entry point for all client-side smoothing and prediction. One instance per room (idempotent):
+
+```ts
+const predict = Predict.get(room, { mode: "lerp", delay: 100, name: "players" });
+```
+
+Call `predict.tick(now)` **once per render frame** — it reconciles on new acks, decays correction error, and advances all smoothing.
+
+### Remote entities
+
+For entities you **don't** control, attach smoothing. `attachAll` dead-reckons / interpolates every entry of a collection; `attach` does a single instance:
+
+```ts
+predict.attachAll("players", { mode: "lerp", fields: ["x", "y"] });
+```
+
+Read the smoothed value with `predict.value(entity, field)`. Smoothing modes:
+
+| Mode | Behaviour | Use for |
+|---|---|---|
+| `lerp` | Interpolate snapshots at `now − delay` — smooth, lagged, faithful | Remote players |
+| `extrapolate` | Forecast forward — live, can overshoot | Low-latency-critical movers |
+| `damped` | Ease toward the latest value — never exact, never jittery | Cosmetic entities |
+| `reckon` | Dead-reckon forward via a step fn | Server-driven AI / ballistics |
+| `raw` | Unsmoothed (the live synced value) | Debugging |
+
+### `reconciler` — your own entity (flat fields)
+
+Active prediction for **one** entity you control, mirrored off a flat `fields` list:
+
+```ts
+const me = predict.reconciler(self, {
+  input,
+  fields: ["x", "y", "vx", "vy", "grounded"],
+  step: (ctx, state, cmd) => applyInput(state, cmd, LEVEL, ctx.dt),
+  smoothing: 15,
+});
+```
+
+- `step(ctx, state, cmd)` — the deterministic step function, **shared with the server**. `ctx.isReplay` is `true` while replaying unacked inputs during rollback — gate one-shot side effects on `!ctx.isReplay`.
+- `me.beginFrame(frameDtMs)` returns how many fixed steps to run this frame; call `me.input(cmd)` that many times (each predicts, buffers, and sends).
+- `me.value(field)` reads the smoothed **render** pose; `me.state` reads the raw predicted state.
+
+### Composite & engine state: `predict.sim`
+
+When your inputs affect **more** than one flat-field entity — a paddle *and* the puck it strikes, or an opaque physics engine — use `predict.sim`. You own a `world` (any object) and the SDK runs the same predict → adopt-on-ack → replay loop through three callbacks:
+
+```ts
+const me = predict.sim({
+  input,
+  world: {
+    paddle: { x: player.x, y: player.y },
+    puck:   { x: s.puck.x, y: s.puck.y, vx: s.puck.vx, vy: s.puck.vy },
+  },
+  step:  (ctx, cmd, w) => stepWorld(w, cmd, ctx.dt),    // the SAME fn the server runs
+  adopt: (w) => {                                        // seed server truth on each ack
+    w.paddle.x = player.x;  w.paddle.y = player.y;
+    w.puck.x = s.puck.x;    w.puck.y = s.puck.y;
+    w.puck.vx = s.puck.vx;  w.puck.vy = s.puck.vy;
+  },
+  pose:  (w) => ({ x: w.paddle.x, y: w.paddle.y, puckX: w.puck.x, puckY: w.puck.y }),
+});
+draw(me.value("x"), me.value("puckX"));                 // flat pose key — no path eval
+```
+
+- `step(ctx, cmd, world)` — deterministic, shared with the server; advance `world` by `ctx.dt`. Gate one-shot effects on `!ctx.isReplay`.
+- `adopt(world)` — seed the server's authoritative scalars into `world` on each ack, before replay. Close over your sources; there is **no** bound instance argument.
+- `pose(world)` — read `world` into a flat render pose (`{ x, puckX, … }`); smoothing operates on these numbers. Read them with `me.value("puckX")`.
+
+For an opaque engine (Rapier), the `world` is the solver + body handle:
+
+```ts
+const me = predict.sim({
+  input,
+  world: { world, body },
+  step:  (ctx, cmd, w) => { applyInput(w.body, cmd); w.world.step(); },   // timestep = ctx.dt
+  adopt: (w) => { w.body.setTranslation({ x: self.x, y: self.y }, true); },
+  pose:  (w) => { const t = w.body.translation(); return { x: t.x, y: t.y }; },
+});
+```
+
+<Callout type="warning">
+    `adopt` reseeds **scalars**; replay re-derives the rest. Engine-internal non-scalar state (contact caches, sleeping islands, solver accumulators) is **not** rolled back across reconcile — only what `adopt` restores plus what replay re-runs. Reseed every scalar your sim depends on (position **and** velocity).
+</Callout>
+
+## `room.clock`
+
+Auto-populated from the TIMED prefix that rides input acks — **only when the room called `defineInput()`**:
+
+- `room.clock.serverNow()` — estimated server time (ms since room start).
+- `room.clock.smoothedRtt()` — EMA-smoothed round-trip time (ms).
+- `room.clock.lastServerTime()` — raw server time of the most recent patch.
+
+Without `defineInput()` the clock is a stub: `serverNow()` falls back to `performance.now()`, and `rtt`/`lastServerTime` are 0.
+
+## `InputHandle` reference
+
+| Member | Role |
+|---|---|
+| `data` | Mutable schema instance — stage fields, then `send()` |
+| `send()` | Encode and transmit on the channel chosen at construction |
+| `reset()` | Drop the buffer / re-mark fields dirty (scene transitions, reconnection) |
+| `at(seq)` | The buffered input sent as `seq`, for replay (reused instance — read synchronously) |
+| `lastProcessed` | Last input seq the server acked **processing** (the canonical reconcile ack) |
+| `sentCount` | Reliable inputs transmitted = the seq the server will ack |
+| `pendingCount` | In-flight (unacked) inputs = `sentCount − lastProcessed` |
+| `tickRate` / `stepSeconds` / `stepMs` | Server-advertised fixed step |
+| `patchRate` | Server state-patch interval (ms) — the correction cadence |
+| `subSteps` / `subStepSeconds` / `subStepMs` | Physics sub-steps per input tick |
+
+## Next
+
+→ [Lag Compensation](/netcode/lag-compensation) — make the server judge your shots against what you saw.<br/>
+→ [Determinism & The Contract](/netcode/determinism) — the rules that keep prediction matching the server.

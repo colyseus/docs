@@ -1,0 +1,79 @@
+---
+title: "Determinism & The Contract"
+description: "The load-bearing rules of Colyseus client-side prediction: delta:false, one shared step function, identical fixed dt, flat-primitive inputs, and a troubleshooting table for rubber-banding, jitter, and missed hits."
+---
+import { Callout } from 'nextra/components'
+
+# Determinism & The Contract
+
+Client prediction only matches the server if **both run the same simulation**. This page collects the rules that are easy to miss and the symptoms you'll see when one is broken. Read it alongside [Client Prediction](/netcode/client-prediction) and [Server Input](/netcode/server-input).
+
+<Callout type="info">
+    **Available in Colyseus 0.18+.**
+</Callout>
+
+## The contract
+
+These are load-bearing — break one and prediction drifts or hits stop registering:
+
+<Callout type="warning">
+    **`delta:false` is mandatory for the predicted input channel.** The reconciler replays *sent* inputs; with `delta:true`, unchanged inputs are dropped, so the predicted set ≠ the server-applied set → backward drift.
+</Callout>
+
+<Callout type="warning">
+    **Inputs must be flat primitives** — no nested schemas or collections in an input.
+</Callout>
+
+<Callout type="warning">
+    **Input rate = fixed-step rate = server tick.** Change one, change all. Send **one input per fixed step** (not per render frame). Lowering `tickRate` to save bandwidth therefore also lowers the simulation rate — unless you [sub-step](/netcode/server-input#sub-stepping-high-rate-physics-on-a-low-network-rate): physics can run at `tickRate × subSteps` while the wire stays at `tickRate`.
+</Callout>
+
+<Callout type="warning">
+    **`lastProcessed` is the server's consumed count**, echoed via the TIMED prefix — it advances when the server `drain()`s / `next()`s / `clear()`s. Reconcile triggers when it advances; there is no seq field to manage.
+</Callout>
+
+<Callout type="warning">
+    **`room.clock` requires `defineInput()`.** Without it the clock is a stub (`serverNow()` falls back to `performance.now()`; `rtt` / `lastServerTime` are 0).
+</Callout>
+
+<Callout type="warning">
+    **Lag comp rewinds to the *acting client's* render time, not the server's now.** [`rewind.lastSeenBy(shooterId)`](/netcode/lag-compensation#rewindlastseenbysessionid) gets the direction right for you.
+</Callout>
+
+## Determinism
+
+Prediction matches the server only if both run the **same** simulation:
+
+- **One shared `step` / `applyInput` function** — a single source of truth, imported by both client and server. Don't maintain two copies.
+- **Identical fixed `dt` on both sides** — `setFixedTimestep` advertises it; the client `reconciler` / `sim` read it back through `ctx.dt` / `input.stepSeconds`. Never hand-write `1/60` on the client.
+- **Matching engine versions** for physics — e.g. the same Rapier build on client and server. Different builds produce different floating-point results and diverge.
+
+Divergence shows up as **constant small corrections** (rubber-banding) even on a LAN. **Jitter** shows up as *occasional* corrections that scale with packet loss — that's the network, not your simulation.
+
+### A determinism check
+
+To confirm your `step` is deterministic in isolation, run the same input sequence through it twice from the same starting state and assert the outputs are bit-identical:
+
+```ts
+function isDeterministic(start, inputs, dt) {
+  const a = clone(start), b = clone(start);
+  for (const cmd of inputs) applyInput(a, cmd, dt);
+  for (const cmd of inputs) applyInput(b, cmd, dt);
+  return JSON.stringify(a) === JSON.stringify(b);   // must be true
+}
+```
+
+If this fails, the culprit is inside `step` — `Math.random()`, `Date.now()`, iteration order over an unordered map, or reading mutable shared state.
+
+## Troubleshooting
+
+| Symptom | Likely cause |
+|---|---|
+| Local player rubber-bands constantly | Non-determinism: different `dt`, divergent `step`, or engine-version mismatch. |
+| Remotes stutter / teleport | Interp `delay` too small (buffer underruns); raise it past 1–2 patch intervals, or check the patch rate. |
+| "I hit them but no damage" on moving targets | Not rewinding (or rewinding to server-now). Use [`rewind.lastSeenBy(shooterId)`](/netcode/lag-compensation). |
+| Hits register *behind* a dead-reckoned target | The type renders forward-reckoned but rewinds to the raw stamp (double compensation). Declare `schema({...}, "Enemy").with({ lagComp: "reckon" })` on the type. |
+| Hits land slightly *ahead* of the crosshair | `maxRewindMs` too small — it truncates the real rewind (`renderDelay + RTT + a tick`); raise it. |
+| `rewind.lastSeenBy` throws | The room didn't enable `defineInput({ renderTime: true })`; or use `rewind.at(time)` with your own time. |
+| `room.clock` returns `performance.now()` | The room never called `defineInput()` (the clock rides input acks). |
+| Bullet overshoots / tunnels past a target | Point hit test on a fast projectile — use a swept (segment) test. See [Recipes](/netcode/recipes). |

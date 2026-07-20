@@ -1,0 +1,129 @@
+---
+title: "Lag Compensation — What You See Is What You Hit"
+description: "Server-side lag compensation in Colyseus 0.18: rewind entities to the shooter's render time with allowRewindState() and rewind.lastSeenBy() so hits on moving targets register — favor-the-shooter hit registration."
+---
+import { Callout } from 'nextra/components'
+
+# Lag Compensation
+
+A shooter sees remote targets **interpolated in the past** (the `delay` of their interp buffer) and **delayed by the network** (≈ `rtt/2`). To honor a well-aimed shot, the server **rewinds** each target to the moment the shooter saw it — "what you see is what you hit." This is the server-side dual of [client prediction](/netcode/client-prediction): where the client forward-predicts entities it *receives*, the server rewinds entities it *owns*.
+
+<Callout type="info">
+    **Available in Colyseus 0.18+.** `allowRewindState()` / `Rewind` / `RewindView` are from `@colyseus/core`. This page spans both halves: a client `renderDelay` and a server rewind.
+</Callout>
+
+## Two pieces
+
+### Client — tell the server the render time
+
+With `renderTime: true` on the server's [`defineInput`](/netcode/server-input#defineinputtype-options), the SDK auto-stamps every reliable input with `serverNow() − renderDelay − rtt/2` (0 until the clock syncs). Set `renderDelay` to your remote **interp buffer** — the `Predict` `lerp` delay. The SDK adds the latency term itself, so pass **only** the interp buffer:
+
+```ts
+room.input({ type: MoveInput, mode: "reliable", delta: false, renderDelay: 100 });   // 100 = lerp delay
+```
+
+### Server — rewind targets to where the shooter saw them
+
+```ts
+import { Room } from "@colyseus/core";
+
+class GameRoom extends Room {
+  rewind = this.allowRewindState({ maxRewindMs: 500 });
+
+  onCreate() {
+    this.rewind.attachAll(this.state.players, { fields: ["x", "y"] });
+    this.setFixedTimestep((ctx) => this.step(ctx), 30);
+  }
+
+  // In your hit test, for a shot fired by `shooterId`:
+  fire(shooterId, bullet) {
+    const seen = this.rewind.lastSeenBy(shooterId);     // clamp + live-fallback baked in
+    for (const [, target] of this.state.players) {
+      if (overlaps(bullet, seen.value(target, "x"), seen.value(target, "y"), HIT_RADIUS)) {
+        this.hit(target);
+      }
+    }
+  }
+}
+```
+
+## `allowRewindState({ maxRewindMs })`
+
+Enables lag compensation and returns a `Rewind`. The framework records attached entities once per simulation tick automatically, after each step. `maxRewindMs` (default 500) sizes the per-entity history ring and bounds how far back a hit can rewind.
+
+### `rewind.attachAll(collection, options)` / `rewind.attach(instance, options)`
+
+Track the numeric `fields` of every entity in a collection (or a single instance, e.g. a boss). The element type is inferred from the live collection — no state-type generic:
+
+```ts
+this.rewind.attachAll(this.state.players, { fields: ["x", "y"] });
+
+// Per-entity interpolation: hold discrete-motion snaps sharp under rewind.
+this.rewind.attachAll(this.state.enemies, {
+  fields: ["x", "y"],
+  interpolate: (e) => (e.kind === "teleporter" ? "step" : "linear"),
+});
+```
+
+Options:
+
+- **`fields`** — the numeric fields to record (an array, or a per-entity function). Fields a type doesn't declare are skipped and read live.
+- **`interpolate`** — `"linear"` (default, continuous motion) or `"step"` (hold the last sample — discrete motion like teleports, where a lerp would smear across the jump). May be a per-entity function.
+- **`mode`** — the rewind **timeline** (see [snapshot vs reckon](#snapshot-vs-reckon)).
+- **`maxRewindMs`** — per-attach override of the default window.
+
+## `rewind.lastSeenBy(sessionId)`
+
+Returns a [`RewindView`](#rewindview) of the world as that client last saw it. It resolves the client's stamped render time, **clamps** it to `[now − maxRewindMs, now]` (anti-spoof / clock-skew bound), and **falls back to the live position** when the client hasn't synced yet.
+
+A client that merely hasn't stamped yet (clock still syncing, or unknown `sessionId`) is **not** an error — it reads live. `lastSeenBy` does require the framework input API (`defineInput`); if you stamp render times yourself, use `rewind.at(time)` and supply the time.
+
+### `RewindView`
+
+The view assumes nothing about your schema — you name the fields at the call site (same shape as the client's `predict.value`):
+
+```ts
+const seen = this.rewind.lastSeenBy(shooterId);
+
+seen.value(target, "x");                         // one tracked numeric field
+const pos = seen.read(target, ["x", "y"]);       // batch → { x, y }
+seen.read(enemy, ENEMY_POS, this.seenScratch);   // zero-alloc: fills + returns a reused scratch
+```
+
+<Callout type="info">
+    `at()` / `lastSeenBy()` re-aim and return the room's **internal default view** — the usual one-view-at-a-time flow is zero-alloc with nothing to declare. Need two views alive at once (compare two shooters)? Pass your own as `out`:
+    ```ts
+    const a = this.rewind.lastSeenBy(shooterA);                     // shared default view
+    const b = this.rewind.lastSeenBy(shooterB, new RewindView());   // independent second view
+    ```
+    Don't store a view across calls or ticks — the default is re-aimed by the next call, and any view's clamp goes stale at the next record.
+</Callout>
+
+## Snapshot vs reckon
+
+The rewind **timeline** must match how the **client displays** the target — "what you see is what you hit":
+
+- **`"snapshot"`** (default) — rewind to the client's `renderTime`, for targets it shows **interpolated** (`Predict` `lerp`/`damped`), behind real time by its interp buffer + `rtt/2`.
+- **`"reckon"`** — rewind to the client's `reckonTime` (≈ its `serverNow`), for targets it **forward-extrapolates** (`Predict` `reckon`). Rewinding a forward-reckoned target to the raw snapshot stamp would double-compensate.
+
+Declare it **once on the entity type** so both sides agree from a single source — the server's rewind aim and the client's `Predict.attachAll` mode are both inferred from it:
+
+```ts
+schema({ /* ... */ }, "Enemy").with({ lagComp: "reckon" });
+// or: @entity({ lagComp: "reckon" })
+```
+
+`"snapshot"` reads at the raw stamp; `"none"` records no history (reads are live). You can also set `mode` directly per `attachAll` group, and attach the same collection twice with disjoint `fields` to mix timelines.
+
+<Callout type="warning">
+    **Keep the two delays equal.** The `Predict` lerp `delay` (client) and the input `renderDelay` (client) must be the same value — a single shared constant — or the server rewinds to a different instant than the one on screen. Reverting remotes to `damped` (no fixed delay) silently breaks the exact match; the rewind then only approximates.
+</Callout>
+
+## Tuning `maxRewindMs`
+
+The real rewind distance is roughly `renderDelay + RTT + one tick`. If `maxRewindMs` is **smaller** than that, the clamp truncates legitimate rewinds and hits land slightly **ahead** of the crosshair — raise it. Too large only widens the anti-spoof window; 500ms is a sane default for most games.
+
+## Next
+
+→ [Recipes](/netcode/recipes) — projectiles, dead-reckoned AI, and physics-engine hit tests.<br/>
+→ [Determinism & The Contract](/netcode/determinism#troubleshooting) — troubleshooting "I hit them but no damage".

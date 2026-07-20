@@ -1,6 +1,6 @@
 ---
 title: "Migrating to 0.18"
-description: "Migration guide from Colyseus 0.17 to 0.18. Covers the AUTH_SALT deprecation, the password-reset requirement for @colyseus/auth users, and the new @colyseus/database / @colyseus/admin packages."
+description: "Migration guide from Colyseus 0.17 to 0.18. Covers the AUTH_SALT deprecation, the password-reset requirement for @colyseus/auth users, the new @colyseus/database / @colyseus/admin packages, built-in client-side prediction & lag compensation, and the setSimulationInterval → setTimestep rename."
 ---
 import { Callout } from 'nextra/components'
 
@@ -43,6 +43,29 @@ Two new official packages ship alongside the framework. Both are optional — in
 ```sh npm2yarn
 npm install --save @colyseus/database @colyseus/admin
 ```
+
+### Client-side prediction & lag compensation
+
+0.18 adds first-class primitives for **server-authoritative simulation with client-side prediction** — zero-latency local control, smooth remote entities, and "what you see is what you hit" lag-compensated hits, without hand-rolling a netcode stack:
+
+- **Server:** `defineInput()` (per-client input + buffering), `setFixedTimestep()` (fixed-rate authoritative loop), `allowRewindState()` (lag compensation).
+- **Client:** `room.input()` and `Predict` (`reconciler` / `sim` for rollback, `attachAll` for remote smoothing).
+
+These are additive — existing rooms are unaffected. See [Client Prediction](/netcode) for the full guide.
+
+### `setSimulationInterval()` → `setTimestep()`
+
+`setSimulationInterval()` was renamed to **`setTimestep()`**. The old name still works (it forwards), so this is **not** a breaking change:
+
+```ts
+// ✅ still works (deprecated alias)
+this.setSimulationInterval((deltaTime) => this.update(deltaTime));
+
+// ✅ preferred
+this.setTimestep((deltaTime) => this.update(deltaTime));
+```
+
+For client-predicted games, use the new fixed-step loop `setFixedTimestep(step, tickRate)` instead — see [Server Input & Fixed Timestep](/netcode/server-input).
 
 ## Breaking Changes
 

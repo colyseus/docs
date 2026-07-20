@@ -1,0 +1,71 @@
+---
+title: "Client-Side Prediction & Netcode"
+description: "Server-authoritative simulation with client-side prediction, server reconciliation, and lag compensation in Colyseus 0.18 — zero-latency local control, smooth remote entities, and what-you-see-is-what-you-hit hits."
+---
+import { Callout, Cards } from 'nextra/components'
+import { ServerIcon, DevicesIcon, GoalIcon, ChecklistIcon, BeakerIcon } from '@primer/octicons-react'
+
+# Client-Side Prediction & Netcode
+
+Colyseus 0.18 ships first-class primitives for **server-authoritative simulation with client-side prediction**: zero-latency local control, smooth remote entities, and "what you see is what you hit" lag-compensated hits — without hand-rolling a netcode stack.
+
+<Callout type="info">
+    **Available in Colyseus 0.18+.** These APIs (`room.input()`, `Predict`, `defineInput()`, `setFixedTimestep()`, `allowRewindState()`) are new in 0.18 and have no equivalent in earlier versions.
+</Callout>
+
+## The mental model
+
+The stack is one loop split across the server and the client. Each half is configured independently, but they only make sense together:
+
+- The **server** runs the authoritative simulation at a **fixed tick rate**.
+- The **client predicts** its own entity locally from the same step function, then **reconciles** to the server's authoritative state — rollback and replay of unacknowledged inputs, smoothly correcting any mismatch.
+- **Remote** entities are smoothed from the server stream (interpolated a little in the past, or dead-reckoned forward).
+- For hits, the server **rewinds** other entities to where the shooter *saw* them (their render time), so a well-aimed shot at a moving target registers.
+
+> One input per fixed step; one `predict.tick(now)` per render frame drives everything.
+
+```
+        CLIENT                                         SERVER
+  ┌────────────────────┐                       ┌──────────────────────┐
+  │ sample input       │ ── room.input().send ─▶ defineInput() buffer  │
+  │ predict own entity │                       │ setFixedTimestep()    │
+  │ (reconciler / sim) │                       │   step(ctx) @ tickRate│
+  │                    │ ◀── state patch + ack ─ broadcast + lastProc. │
+  │ reconcile (replay) │                       │ allowRewindState()    │
+  │ smooth remotes     │                       │   record() each tick  │
+  │ (Predict lerp)     │ ── renderTime stamp ──▶ rewind.lastSeenBy()   │
+  └────────────────────┘                       └──────────────────────┘
+```
+
+## Which primitive for which interaction?
+
+| Interaction | Primitive | Page |
+|---|---|---|
+| Your own movement (one entity, flat fields) | `predict.reconciler` | [Client Prediction](/netcode/client-prediction) |
+| Anything your inputs push / carry / throw (paddle + puck, vehicle + cargo) | `predict.sim` (composite scalars) | [Client Prediction](/netcode/client-prediction#composite--engine-state-predictsim) |
+| Your movement inside a physics engine (Rapier/crashcat) | `predict.sim` (engine handle) | [Client Prediction](/netcode/client-prediction#composite--engine-state-predictsim) |
+| Remote players you don't control | `Predict` `lerp` | [Client Prediction](/netcode/client-prediction#remote-entities) |
+| Server-driven ballistics nobody touches | `Predict` `reckon` | [Recipes](/netcode/recipes) |
+| Hitscan against others (instantaneous, server-owned target) | `allowRewindState` + `rewind.lastSeenBy` | [Lag Compensation](/netcode/lag-compensation) |
+
+## Read in order
+
+<Cards>
+  <Cards.Card icon={<ServerIcon />} title="Server Input & Timestep" href="/netcode/server-input" />
+  <Cards.Card icon={<DevicesIcon />} title="Client Prediction" href="/netcode/client-prediction" />
+  <Cards.Card icon={<GoalIcon />} title="Lag Compensation" href="/netcode/lag-compensation" />
+  <Cards.Card icon={<ChecklistIcon />} title="Determinism & The Contract" href="/netcode/determinism" />
+  <Cards.Card icon={<BeakerIcon />} title="Recipes" href="/netcode/recipes" />
+</Cards>
+
+## Runnable references
+
+The examples throughout this section are drawn from three demos:
+
+- **`test/prediction`** — a hand-rolled platformer (no physics engine): the minimal `reconciler` + `reckon` rewind setup.
+- **`demos/kaplay-colyseus`** — a 2D air-hockey game using `predict.sim` to reconcile a paddle *and* the puck it strikes.
+- **`demos/fps-demo`** — a 3D FPS: the full stack with hitscan + capsule hitboxes lag-compensated through `rewind.lastSeenBy`.
+
+<Callout type="info">
+    Coming from the manual approach? The [Phaser tutorial](/learn/tutorial/phaser/linear-interpolation) builds prediction, interpolation, and a fixed tick rate **by hand** to teach the concepts. This section documents the built-in 0.18 API that does the same work for you.
+</Callout>

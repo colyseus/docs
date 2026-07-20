@@ -27,7 +27,7 @@ As a baseline, a small cloud server (1 vCPU, 1GB RAM) can typically handle 1,000
 
 ### Does Colyseus help me with client-prediction?
 
-Not yet—client-prediction is planned for a future release (see [Roadmap](/roadmap)). For now, see our [Phaser tutorial](/learn/tutorial/phaser/client-predicted-input) for a reference implementation.
+Yes. Colyseus 0.18 ships first-class **client-side prediction and lag compensation** — `room.input()` / `Predict` on the client, `defineInput()` / `setFixedTimestep()` / `allowRewindState()` on the server. See [Client Prediction](/netcode) for the full stack. To learn the underlying concepts from scratch, the [Phaser tutorial](/learn/tutorial/phaser/client-predicted-input) builds them by hand.
 
 ---
 

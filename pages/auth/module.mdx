@@ -65,12 +65,15 @@ npm install --save @colyseus/auth
 
 It is required to provide the following environment variables to your application:
 
-- `AUTH_SALT` - Used to hash the user's password. ([`scrypt` algorithm is used by default](#on-hash-password))
 - `JWT_SECRET` - Used to sign the JWT token.
 - `SESSION_SECRET` - Used to sign the session cookie. (only used during OAuth flow)
 
 <Callout type="info">
     **How to generate a random string** - You may use the following command to generate a random string `openssl rand -base64 32`. Alternatively, you can use [an online strong password generator](https://1password.com/password-generator/).
+</Callout>
+
+<Callout type="warning">
+    **`AUTH_SALT` is legacy.** Required only when upgrading an existing deployment from a version prior to 0.18 — the legacy `scrypt`-based hasher reads it to verify passwords created before the upgrade. New 0.18 projects don't need it; the default hasher derives its own per-password salt.
 </Callout>
 
 <Callout type="error" emoji="🚨">
@@ -80,9 +83,9 @@ It is required to provide the following environment variables to your applicatio
 
     If any of these secrets are compromised, you must rotate them immediately. The implications of rotating them are:
 
-    - Rotating `AUTH_SALT` will invalidate all user's passwords. Users will need to reset their password.
     - Rotating `JWT_SECRET` will invalidate all JWT tokens. Users will need to login again.
     - Rotating `SESSION_SECRET` will invalidate all session cookies. (only used during OAuth flow)
+    - Rotating `AUTH_SALT` (legacy upgrades only) will invalidate every pre-upgrade password hash. Users created before the upgrade will need to reset their password.
 </Callout>
 
 ### Backend Configuration

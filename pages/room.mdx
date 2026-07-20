@@ -599,12 +599,13 @@ onBeforeShutdown() {
 
 ### Game Loop
 
-_Optional:_ Set a simulation interval that can change the state of the game. The simulation interval is your game loop. Default simulation interval: 16.6ms (60fps)
+_Optional:_ Set a game loop that can change the state of the game. Default interval: 16.6ms (60fps).
 
+Use **`setTimestep(callback, delay?)`** for a variable-step loop — the callback receives the measured wall-clock `deltaTime`:
 
 ```ts filename="MyRoom.ts"
 onCreate () {
-    this.setSimulationInterval((deltaTime) => this.update(deltaTime));
+    this.setTimestep((deltaTime) => this.update(deltaTime));
 }
 
 update (deltaTime) {
@@ -612,6 +613,10 @@ update (deltaTime) {
     // this is a good place to update the room state
 }
 ```
+
+<Callout type="info">
+    `setSimulationInterval()` is the previous name for `setTimestep()` and still works (it forwards). For **client-predicted** games, use the fixed-step loop **`setFixedTimestep(step, tickRate)`** instead — it advances by a constant `dt` and advertises the rate to predicting clients, which a variable step can't do deterministically. See [Server Input & Fixed Timestep](/netcode/server-input).
+</Callout>
 
 ---
 
