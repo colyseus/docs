@@ -19,12 +19,11 @@ import { Room } from "@colyseus/core";
 import { MoveInput } from "./shared/MoveInput";
 import { applyInput } from "./shared/applyInput";
 
-class GameRoom extends Room {
+class GameRoom extends Room<{ input: MoveInput }> {
   state = new GameState();
 
-  // Per-client input schema (flat primitives only). `renderTime: true`
-  // auto-stamps each input with the client's render time for lag comp.
-  input = this.defineInput(MoveInput, { bufferMaxSize: 64, renderTime: true });
+  // Per-client input schema (flat primitives only), buffered per session.
+  inputs = this.defineInput(MoveInput, { bufferMaxSize: 64 });
 
   // Records attached entities' positions per tick (auto, after each step).
   rewind = this.allowRewindState({ maxRewindMs: 500 });
@@ -37,7 +36,7 @@ class GameRoom extends Room {
 
   step(ctx) {
     for (const [sid, p] of this.state.players) {
-      const cmd = this.input(sid).next();          // one input per tick
+      const cmd = this.inputs.get(sid).next();     // one input per tick
       if (cmd) applyInput(p, cmd, ctx.dt);          // SAME fn the client predicts with
     }
     // ...advance world, then hit tests (see Lag Compensation).
@@ -47,11 +46,17 @@ class GameRoom extends Room {
 
 ## `defineInput(type, options)`
 
-Declares the per-client input schema and buffers inbound frames. Call it once (typically as a class field, or in `onCreate`); it returns a per-client accessor.
+Declares the per-client input schema and buffers inbound frames. Assign it once (typically as a class field): it returns the input API you consume as `this.inputs.get(sessionId)` — the same per-session lookup verb as `room.clients.get()`.
 
 ```ts
-input = this.defineInput(MoveInput, { bufferMaxSize: 64, renderTime: true });
+inputs = this.defineInput(MoveInput, { bufferMaxSize: 64 });
 ```
+
+Options and their defaults:
+
+- **`bufferMaxSize`** — per-client buffer depth (default 32). `0` disables buffering (only `.latest` remains readable).
+- **`seqField`** — opt-in: name a monotonic numeric field of the input to enable dedupe and `at(value)` lookup (lockstep / hand-rolled rollback). Leave unset for reliable, in-order channels where every frame is unique — the framework tracks its own sequence.
+- **`sanitize`** / **`idle`** — see below.
 
 Inputs are **flat schemas — primitives only**. No nested schemas or collections in an input. Use `int8`/`uint8`/`float32` etc. and refine the legal set with generics (`t.int8<-1 | 0 | 1>()`):
 
@@ -67,40 +72,41 @@ export const MoveInput = schema({
 ```
 
 <Callout type="info">
-    Calling `defineInput()` is what powers the client's [`room.clock`](/netcode/client-prediction#roomclock) (clock-sync and RTT ride the input acks). A room that never calls it leaves the client clock as a stub.
+    Calling `defineInput()` is what powers the client's [`room.clock`](/netcode/client-prediction#roomclock) (clock-sync and RTT ride the input acks), and lets `room.input()` resolve the schema without a client-side constructor. A room that never calls it leaves the client clock as a stub.
 </Callout>
 
-### Consuming input: `drain()` vs `next()`
+### Consuming input
 
-The accessor `this.input(sessionId)` exposes the per-client buffer. Pick **one** consumption style per room:
+The accessor `this.inputs.get(sessionId)` exposes the per-client buffered stream. Pick **one** consumption style per room:
 
-- **`drain()`** — take **all** buffered frames. Right when each entity integrates itself (N inputs ⇒ N sub-steps). The ack (`lastProcessed`) lands on the newest frame.
+- **Iterate** — the per-entity loop. Consumes one at a time, so the lag-comp `renderTime` stamp tracks each individual input:
 
   ```ts
-  for (const cmd of this.input(sid).drain()) applyInput(p, cmd, ctx.dt);
+  for (const cmd of this.inputs.get(sid)) applyInput(p, cmd, ctx.dt);
   ```
 
-- **`next()`** — take **exactly one**. Right for a single shared solver step that moves every body together (consume one input per entity, then step the world once).
+- **`next()`** — take **exactly one**. Right for a single shared solver step that moves every body together (consume one input per entity, then step the world once):
 
   ```ts
-  const cmd = this.input(sid).next();
+  const cmd = this.inputs.get(sid).next();
   if (cmd) applyInput(p, cmd, ctx.dt);
   ```
+
+- **`drain()`** — take **all** buffered frames as an array. The ack (`lastProcessed`) lands on the newest frame.
 
 <Callout type="warning">
     Draining all frames but simulating only the latest jumps the ack past inputs you never ran — the client then reconciles against state it can't reproduce. Match the consumption style to how you step.
 </Callout>
 
-You can also read `this.input(sid).latest` (the most recent decoded frame without consuming) and `this.input(sid).renderTime` / `.reckonTime` (the lag-comp stamps of the last consumed input — but prefer [`rewind.lastSeenBy()`](/netcode/lag-compensation)).
+The accessor also exposes non-consuming reads and bookkeeping: `latest` (most recent decoded frame), `peek()` / `take(n)` / `size`, `consumedCount` (the reconcile ack the client sees), `wasIdle` (last read was a synthesized idle frame), and the lag-comp instants `renderTime` (raw stamp of the last consumed input, `0` until stamped) and `reckonTime` (always usable — resolves to the room clock's current time until a reckon-stamped input is consumed, so `channel.reckonTime` needs no fallback) — though for hit tests, prefer [`rewind.lastSeenBy()`](/netcode/lag-compensation).
 
 ### Never trust the wire: `sanitize`
 
 The wire carries whatever the client encodes — an `int8` axis can arrive as `127` (a speed hack), a `float32` as `NaN`. Declare each field's legal domain **once** at `defineInput`; every decoded frame is fixed up **in place** before anything reads it:
 
 ```ts
-input = this.defineInput(MoveInput, {
+inputs = this.defineInput(MoveInput, {
   bufferMaxSize: 64,
-  renderTime: true,
   sanitize: {                                // map form — range clamps
     moveX: [-1, 1],
     moveZ: [-1, 1],
@@ -117,15 +123,14 @@ input = this.defineInput(MoveInput, {
 
 ### Empty ticks: the `idle` policy
 
-What does "no input this tick" mean? Three policies, declared **once** at `defineInput({ idle })` and applied automatically by `drain()`/`next()`:
+What does "no input this tick" mean? Three policies, declared **once** at `defineInput({ idle })` and applied automatically when you consume:
 
 - **Skip** (default) — don't declare `idle`: `drain()` returns `[]`, the loop doesn't run. Right for strict fixed-timestep where the client sends one input per step.
 - **Synthesize** — declare a policy; an empty tick yields one frame (the schema's **defaults** overlaid with your overrides). Gravity keeps integrating; action guards like `if (f.fire)` naturally no-op on defaults. The callback runs lazily (only on actually-empty ticks) and closes over the room:
 
   ```ts
-  input = this.defineInput(MoveInput, {
+  inputs = this.defineInput(MoveInput, {
     bufferMaxSize: 64,
-    renderTime: true,
     idle: ({ latest, sessionId }) => {
       const p = this.state.players.get(sessionId);
       if (!p) return true;                                // skip absent

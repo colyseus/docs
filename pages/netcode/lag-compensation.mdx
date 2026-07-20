@@ -9,18 +9,24 @@ import { Callout } from 'nextra/components'
 A shooter sees remote targets **interpolated in the past** (the `delay` of their interp buffer) and **delayed by the network** (≈ `rtt/2`). To honor a well-aimed shot, the server **rewinds** each target to the moment the shooter saw it — "what you see is what you hit." This is the server-side dual of [client prediction](/netcode/client-prediction): where the client forward-predicts entities it *receives*, the server rewinds entities it *owns*.
 
 <Callout type="info">
-    **Available in Colyseus 0.18+.** `allowRewindState()` / `Rewind` / `RewindView` are from `@colyseus/core`. This page spans both halves: a client `renderDelay` and a server rewind.
+    **Available in Colyseus 0.18+.** `allowRewindState()` / `Rewind` / `RewindView` are from `@colyseus/core`.
 </Callout>
 
 ## Two pieces
 
-### Client — tell the server the render time
+### Client — the render-time stamp
 
-With `renderTime: true` on the server's [`defineInput`](/netcode/server-input#defineinputtype-options), the SDK auto-stamps every reliable input with `serverNow() − renderDelay − rtt/2` (0 until the clock syncs). Set `renderDelay` to your remote **interp buffer** — the `Predict` `lerp` delay. The SDK adds the latency term itself, so pass **only** the interp buffer:
+Each input carries a timestamp telling the server *when* the client's view of the world was. This is automatic: once the room enables rewind, the SDK stamps every input, and wiring the handle through `predict.reconciler` / `predict.sim` binds the stamp's interp-buffer term to the `Predict` lerp `delay` — the buffer you render at and the instant the server rewinds to come from **one number** and can't drift apart.
 
 ```ts
-room.input({ type: MoveInput, mode: "reliable", delta: false, renderDelay: 100 });   // 100 = lerp delay
+const predict = Predict.get(room, { mode: "lerp", delay: 100 });
+const input = room.input({ type: MoveInput });   // stamp auto-derived from delay: 100
 ```
+
+Two knobs, both optional:
+
+- **`renderDelay`** — pass it to `room.input()` only when you smooth remotes *outside* `Predict`; it must equal your actual interp buffer. The SDK adds the latency term itself — pass only the buffer.
+- **`allowRewind`** — a per-input predicate gating which inputs carry the stamp, as a bandwidth trim: `room.input({ allowRewind: (d) => d.fire })` stamps only the inputs the server actually rewinds for. Don't use it when your *own* step hit-tests at `ctx.reckonTime` — then every input needs the stamp.
 
 ### Server — rewind targets to where the shooter saw them
 
@@ -49,7 +55,7 @@ class GameRoom extends Room {
 
 ## `allowRewindState({ maxRewindMs })`
 
-Enables lag compensation and returns a `Rewind`. The framework records attached entities once per simulation tick automatically, after each step. `maxRewindMs` (default 500) sizes the per-entity history ring and bounds how far back a hit can rewind.
+Enables lag compensation and returns a `Rewind`. The framework auto-records attached entities on **each broadcast** — snapshotting exactly what clients receive, so the rewind reproduces the client's interpolation even when the broadcast rate differs from the sim rate (`patchRate ≠ timestep`). Call `rewind.record()` yourself during a tick to take over that cadence (you then own correctness against your own broadcast rate). `maxRewindMs` (default 500) sizes the per-entity history ring and bounds how far back a hit can rewind.
 
 ### `rewind.attachAll(collection, options)` / `rewind.attach(instance, options)`
 
@@ -80,7 +86,7 @@ A client that merely hasn't stamped yet (clock still syncing, or unknown `sessio
 
 ### `RewindView`
 
-The view assumes nothing about your schema — you name the fields at the call site (same shape as the client's `predict.value`):
+The view assumes nothing about your schema — you name the fields at the call site (same shape as the client's `predict.value`, and the batch is mirrored too: `seen.read` ⇄ [`predict.read`](/netcode/client-prediction#reading-values)):
 
 ```ts
 const seen = this.rewind.lastSeenBy(shooterId);
@@ -101,27 +107,32 @@ seen.read(enemy, ENEMY_POS, this.seenScratch);   // zero-alloc: fills + returns 
 
 ## Snapshot vs reckon
 
-The rewind **timeline** must match how the **client displays** the target — "what you see is what you hit":
+The rewind **timeline** must match how the **client displays** the target — "what you see is what you hit". Declare it per attach group with `mode`:
 
 - **`"snapshot"`** (default) — rewind to the client's `renderTime`, for targets it shows **interpolated** (`Predict` `lerp`/`damped`), behind real time by its interp buffer + `rtt/2`.
 - **`"reckon"`** — rewind to the client's `reckonTime` (≈ its `serverNow`), for targets it **forward-extrapolates** (`Predict` `reckon`). Rewinding a forward-reckoned target to the raw snapshot stamp would double-compensate.
 
-Declare it **once on the entity type** so both sides agree from a single source — the server's rewind aim and the client's `Predict.attachAll` mode are both inferred from it:
-
 ```ts
-schema({ /* ... */ }, "Enemy").with({ lagComp: "reckon" });
-// or: @entity({ lagComp: "reckon" })
+// Players are lerped by clients; AI is dead-reckoned — two groups, two timelines:
+this.rewind.attachAll(this.state.players, { fields: ["x", "y"] });                     // snapshot
+this.rewind.attachAll(this.state.enemies, { fields: ["x", "y"], mode: "reckon" });
 ```
 
-`"snapshot"` reads at the raw stamp; `"none"` records no history (reads are live). You can also set `mode` directly per `attachAll` group, and attach the same collection twice with disjoint `fields` to mix timelines.
+Keep the pairing in one shared constant if you like — the server's `mode` and the client's `predict.attachAll` mode describe the same decision. You can attach the same collection twice with disjoint `fields` to mix timelines on one entity. The room ships exactly the stamp(s) its attached groups need — nothing extra crosses the wire.
 
 <Callout type="warning">
-    **Keep the two delays equal.** The `Predict` lerp `delay` (client) and the input `renderDelay` (client) must be the same value — a single shared constant — or the server rewinds to a different instant than the one on screen. Reverting remotes to `damped` (no fixed delay) silently breaks the exact match; the rewind then only approximates.
+    **Don't break the delay pairing.** When the input handle is wired through `predict.reconciler`/`predict.sim`, the lerp `delay` and the rewind stamp share one source — nothing to keep in sync. If you pass `renderDelay` explicitly, it must equal the delay your remotes actually render at; and reverting remotes to `damped` (no fixed delay) silently degrades the rewind to an approximation.
 </Callout>
 
 ## Tuning `maxRewindMs`
 
 The real rewind distance is roughly `renderDelay + RTT + one tick`. If `maxRewindMs` is **smaller** than that, the clamp truncates legitimate rewinds and hits land slightly **ahead** of the crosshair — raise it. Too large only widens the anti-spoof window; 500ms is a sane default for most games.
+
+## Predicting the verdict client-side
+
+The shooter's *own* step can pre-judge the hit with the same timeline the server will use: `ctx.reckonTime` is the same value the server reads for that input, and `predict.valueAt(target, field, ctx.reckonTime)` samples the target where the rewind will place it — or batch the pose with `predict.readAt(target, fields, ctx.reckonTime)`, which runs one reckon integration per target instead of one per field. Pair it with an [optimistic event](/netcode/client-prediction#optimistic-events-defineevent) for instant feedback that auto-rejects if the server disagrees.
+
+`ctx.reckonTime` is **always a usable instant** — a seq that wasn't stamped (the room doesn't rewind, the clock is still syncing) resolves to the live `serverNow()` automatically, mirroring the server side, where `channel.reckonTime` resolves unstamped reads to the room clock. There is no fallback to hand-write on either end. The rare consumer that needs the distinction — "was this seq actually stamped for lag comp?" — reads `ctx.lagCompActive`.
 
 ## Next
 

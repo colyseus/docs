@@ -370,6 +370,18 @@ room.onReconnect(() => {
 
 ---
 
+## State After Reconnection
+
+On a successful reconnection the server sends a **full state snapshot**, and the SDK **reconciles** it into the state tree you already hold — it does not rebuild the tree from scratch:
+
+- Entities that changed while you were offline are **updated in place**. Your references into the tree and any state callbacks you attached stay valid — there is nothing to re-subscribe.
+- Entities **added** while you were offline arrive as ordinary additions — `onAdd` fires.
+- Entities **deleted** (or hidden from your view) while you were offline are **pruned** — `onRemove` fires for each, exactly as if the removal had arrived live.
+
+In other words, after `onReconnect()` the state is guaranteed to match the server again, and your existing callbacks and UI bindings observe the offline gap as a normal sequence of changes. Prediction controllers follow automatically too — the SDK resets the input handle on reconnect and observing reconcilers pick it up; see [Client Prediction](/netcode/client-prediction).
+
+---
+
 ## Close Codes Reference
 
 | Code | Name | Description |

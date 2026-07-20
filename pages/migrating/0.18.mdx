@@ -49,9 +49,9 @@ npm install --save @colyseus/database @colyseus/admin
 0.18 adds first-class primitives for **server-authoritative simulation with client-side prediction** — zero-latency local control, smooth remote entities, and "what you see is what you hit" lag-compensated hits, without hand-rolling a netcode stack:
 
 - **Server:** `defineInput()` (per-client input + buffering), `setFixedTimestep()` (fixed-rate authoritative loop), `allowRewindState()` (lag compensation).
-- **Client:** `room.input()` and `Predict` (`reconciler` / `sim` for rollback, `attachAll` for remote smoothing).
+- **Client:** `room.input()` (reliable or unreliable input channel) and `Predict` (`reconciler` / `sim` for rollback, `attachAll` for remote smoothing, `defineEvent` for optimistic events, `spawns` for predicted projectiles).
 
-These are additive — existing rooms are unaffected. See [Client Prediction](/netcode) for the full guide.
+These are additive — existing rooms are unaffected. See [Netcode](/netcode) for the full guide.
 
 ### `setSimulationInterval()` → `setTimestep()`
 

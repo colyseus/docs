@@ -364,7 +364,7 @@ room.send("get-profile", { userId: 42 }, (profile, error) => {
 });
 ```
 
-The promise rejects (or the callback receives an `error`) when the handler throws, no handler is registered for that type, the connection closes first, or no reply arrives within the timeout. The default timeout is `room.requestTimeout` (10000 ms).
+The promise rejects (or the callback receives an `error`) when the handler throws, no handler is registered for that type, the connection closes first, or no reply arrives within the timeout. The default timeout is `Room.defaultRequestTimeout` (10000 ms), overridable per request via the `timeout` option.
 
 <Callout type="info">
     Request/response is currently available in the **JavaScript/TypeScript** SDK.
@@ -1278,7 +1278,7 @@ Quick reference for room properties.
 ## Next Steps
 
 - [State Sync Callbacks](/sdk/state-sync-callbacks) - Listen for state changes on the client
-- [Client Prediction](/netcode) - Predict local input and reconcile to server state
+- [Netcode](/netcode) - Predict local input and reconcile to server state
 - [Room API](/room) - Server-side room implementation
 - [Authentication](/auth) - Secure your room connections
 - [Tutorials](/learn/tutorial) - Step-by-step game implementations

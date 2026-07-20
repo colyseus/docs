@@ -1,4 +1,4 @@
-import { HomeIcon, FileCodeIcon, ServerIcon, ThumbsupIcon, DevicesIcon, DatabaseIcon, ToolsIcon, QuestionIcon, VersionsIcon, HeartFillIcon, DownloadIcon, CodeIcon, ZapIcon, BookIcon, SyncIcon, PasskeyFillIcon, RocketIcon, ListOrderedIcon, RepoIcon, TasklistIcon, ListUnorderedIcon, CodeSquareIcon, FlameIcon, LightBulbIcon, CreditCardIcon, RowsIcon, PeopleIcon, StackIcon, CloudIcon, PackageIcon, DuplicateIcon, ShieldLockIcon, NorthStarIcon } from '@primer/octicons-react';
+import { HomeIcon, FileCodeIcon, ServerIcon, ThumbsupIcon, DevicesIcon, DatabaseIcon, ToolsIcon, QuestionIcon, VersionsIcon, HeartFillIcon, DownloadIcon, CodeIcon, ZapIcon, SyncIcon, PasskeyFillIcon, RocketIcon, ListOrderedIcon, RepoIcon, TasklistIcon, ListUnorderedIcon, CodeSquareIcon, FlameIcon, LightBulbIcon, CreditCardIcon, RowsIcon, PeopleIcon, StackIcon, CloudIcon, PackageIcon, DuplicateIcon, ShieldLockIcon, NorthStarIcon } from '@primer/octicons-react';
 
 export default {
     '-- Intro': {
@@ -12,7 +12,6 @@ export default {
         // }
     },
 
-    // "concepts": { title: <span><BookIcon/> Core Concepts</span> },
     "getting-started": { title: <span><NorthStarIcon/> Getting Started</span> }, // "Getting Started"
     "learn": { title: <span><FileCodeIcon/> Learn</span>},
 
@@ -21,7 +20,7 @@ export default {
     "server": { title: <span><ServerIcon/> Server</span> },
     "room": { title: <span><PeopleIcon/> Rooms</span> },
     "state": { title: <span><SyncIcon/> State Sync</span> },
-    "netcode": { title: <span><ZapIcon/> Client Prediction</span> },
+    "netcode": { title: <span><ZapIcon/> Netcode</span> },
     "matchmaker": { title: <span><StackIcon/> Matchmaker API</span> },
     "auth": { title: <span><PasskeyFillIcon/> Authentication</span> },
     "database": { title: <span><DatabaseIcon/> Database</span> },

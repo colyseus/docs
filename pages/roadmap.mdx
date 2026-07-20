@@ -38,7 +38,7 @@ Colyseus is an independent open-source project that has been around since 2015. 
         - Released the [Native SDK](/getting-started/native-sdk), with dedicated [Godot](/getting-started/godot) and [GameMaker](/getting-started/gamemaker) integrations.
 - **State Sync:**
     - ~**Client-side prediction:** Allow to specify client-side prediction techniques on the frontend~
-        - Added first-class client-side prediction and lag compensation via `defineInput()` / `setFixedTimestep()` / `allowRewindState()` (server) and `room.input()` / `Predict` (client) — see [Client Prediction](/netcode).
+        - Added first-class client-side prediction and lag compensation via `defineInput()` / `setFixedTimestep()` / `allowRewindState()` (server) and `room.input()` / `Predict` (client) — see [Netcode](/netcode).
 - **General improvements:**
     - ~Add request/response model to rooms ([#331](https://github.com/colyseus/colyseus/issues/331))~
         - Added a request/response model to room [messages](/room#responding-to-a-message-requestresponse): the client awaits a reply with `room.request(type, payload)` or `room.send(type, payload, callback)`, and the server answers by returning a value from its matching `onMessage(type, ...)` handler.

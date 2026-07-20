@@ -1,11 +1,11 @@
 ---
-title: "Client-Side Prediction & Netcode"
+title: "Netcode"
 description: "Server-authoritative simulation with client-side prediction, server reconciliation, and lag compensation in Colyseus 0.18 — zero-latency local control, smooth remote entities, and what-you-see-is-what-you-hit hits."
 ---
 import { Callout, Cards } from 'nextra/components'
 import { ServerIcon, DevicesIcon, GoalIcon, ChecklistIcon, BeakerIcon } from '@primer/octicons-react'
 
-# Client-Side Prediction & Netcode
+# Netcode
 
 Colyseus 0.18 ships first-class primitives for **server-authoritative simulation with client-side prediction**: zero-latency local control, smooth remote entities, and "what you see is what you hit" lag-compensated hits — without hand-rolling a netcode stack.
 
@@ -46,6 +46,8 @@ The stack is one loop split across the server and the client. Each half is confi
 | Your movement inside a physics engine (Rapier/crashcat) | `predict.sim` (engine handle) | [Client Prediction](/netcode/client-prediction#composite--engine-state-predictsim) |
 | Remote players you don't control | `Predict` `lerp` | [Client Prediction](/netcode/client-prediction#remote-entities) |
 | Server-driven ballistics nobody touches | `Predict` `reckon` | [Recipes](/netcode/recipes) |
+| Discrete events your timeline produces (a goal, a kill, a pickup) | `predict.defineEvent` + `ctx.predict` | [Client Prediction](/netcode/client-prediction#optimistic-events-defineevent) |
+| Projectiles you spawn (predicted → authoritative handoff) | `predict.spawns` | [Recipes](/netcode/recipes#predicted-projectiles-predictspawns) |
 | Hitscan against others (instantaneous, server-owned target) | `allowRewindState` + `rewind.lastSeenBy` | [Lag Compensation](/netcode/lag-compensation) |
 
 ## Read in order
@@ -58,13 +60,9 @@ The stack is one loop split across the server and the client. Each half is confi
   <Cards.Card icon={<BeakerIcon />} title="Recipes" href="/netcode/recipes" />
 </Cards>
 
-## Runnable references
+## Runnable reference
 
-The examples throughout this section are drawn from three demos:
-
-- **`test/prediction`** — a hand-rolled platformer (no physics engine): the minimal `reconciler` + `reckon` rewind setup.
-- **`demos/kaplay-colyseus`** — a 2D air-hockey game using `predict.sim` to reconcile a paddle *and* the puck it strikes.
-- **`demos/fps-demo`** — a 3D FPS: the full stack with hitscan + capsule hitboxes lag-compensated through `rewind.lastSeenBy`.
+The [**Prediction Playground**](https://github.com/colyseus/prediction-playground) is an interactive tour of this whole section: eleven small labs, each isolating one concept — rollback and reconciliation, the interpolation modes, dead reckoning, lag compensation, optimistic events, predicted spawns, composite worlds — with a live latency slider and visualizations of what the SDK is doing (server ghosts, pending-input chips, rewind markers). Every lab displays the exact SDK-facing code it runs.
 
 <Callout type="info">
     Coming from the manual approach? The [Phaser tutorial](/learn/tutorial/phaser/linear-interpolation) builds prediction, interpolation, and a fixed tick rate **by hand** to teach the concepts. This section documents the built-in 0.18 API that does the same work for you.
