@@ -1,0 +1,82 @@
+---
+title: "Room Visibility & Access: locked, private, unlisted"
+description: "How the locked, private, and unlisted room flags differ in Colyseus, how each behaves on join(), joinById(), and lobby listings, and how to lock, unlock, and password-protect a room."
+---
+import { Callout } from "nextra/components";
+
+# Room Visibility & Access
+
+Which rooms a player can discover, and which they can actually enter, are two
+different questions. Three flags answer them.
+
+## Matchmaking Properties
+
+Three boolean flags control who can find and join a room — `locked`, `private`, and `unlisted`. They sound similar but behave differently on each join path:
+
+| | `join()` / `joinOrCreate()` | `joinById()` | Lobby / listing queries |
+|---|---|---|---|
+| **`locked`** | skipped | rejected (`"room is locked"`) | listed (as locked) |
+| **`private`** | skipped | **allowed** | hidden |
+| **`unlisted`** | **matched** | allowed | hidden |
+
+- **`locked`** — no new clients can join, on any path. Set automatically when the room fills up (`maxClients` reached — releases itself when a seat frees), or explicitly via [`lock()`](#lock-room). [Reconnections](/room/reconnection) still work: a reconnecting client returns to the seat it already owned.
+- **`private`** — invite-only. Never matched by `join()`/`joinOrCreate()` and never shown in listings, but anyone holding the room ID can enter through `joinById()`. Use it for invite links and party codes. Set via `setPrivate()` or `setMatchmaking({ private: true })`.
+- **`unlisted`** — hidden, but still matchmade. The room doesn't show up in lobby/listing queries, yet `join()`/`joinOrCreate()` keep filling it normally. Use it to keep rooms out of your room browser without pulling them from matchmaking. Set via `setMatchmaking({ unlisted: true })`.
+
+<Callout type="info">
+    **Looking for passwords?** There is no built-in password concept — `private` does not imply a password. To gate a room behind a password, combine `filterBy()`, `unlisted`, and an `onAuth()` check: see [Password Protect Room](/recipes/password-protect-room).
+</Callout>
+
+### `setMatchmaking(updates)`
+
+Updates multiple matchmaking/listing properties at once, with a single persist operation. This is the recommended way to update room listing properties.
+
+- `metadata` (optional): room metadata — **replaces** the existing value
+- `private` (optional): whether the room should be private
+- `locked` (optional): whether the room should be locked
+- `maxClients` (optional): maximum number of clients allowed
+- `unlisted` (optional): whether the room should be hidden from listing queries
+
+```ts filename="MyRoom.ts"
+// Update multiple properties at once
+await this.setMatchmaking({
+    metadata: { difficulty: "hard", rating: 1500 },
+    private: true,
+    locked: true,
+    maxClients: 10
+});
+```
+
+<Callout type="warning">
+    `metadata` is **replaced**, never merged. To merge, spread the current value yourself:
+    `setMatchmaking({ metadata: { ...this.metadata, round: 2 } })`.
+</Callout>
+
+You can also set individual properties:
+
+- **`setPrivate(bool?)`** — toggle `private` (defaults to `true`)
+- **`setMetadata(meta)`** — replace `metadata`
+- **[`lock()`](#lock-room) / [`unlock()`](#unlock-room)** — toggle `locked`
+- **`this.maxClients = N`** — forwards to `setMatchmaking({ maxClients: N })`
+
+---
+
+## Lock Room
+
+Locking removes the room from matchmaking — `join()`/`joinOrCreate()` skip it, and `joinById()` rejects with `"room is locked"`. No new clients can join until it's unlocked.
+
+```ts filename="MyRoom.ts"
+this.lock();
+```
+
+The room also locks **automatically** when it reaches `maxClients`. The two differ in how they release: an automatic lock releases itself as soon as a seat frees up, while an explicit `lock()` is sticky — the room stays locked until you call `unlock()`.
+
+---
+
+## Unlock Room
+
+Returns the room to the pool of available rooms — new clients can join again, as long as `maxClients` hasn't been reached.
+
+```ts filename="MyRoom.ts"
+this.unlock();
+```

@@ -12,7 +12,7 @@ The built-in `LobbyRoom` provides a live listing of available rooms in your game
 - Automatic updates when rooms are created, joined, left, or disposed.
 - Filter support by `name` and `metadata`.
 
-Rooms flagged [`private` or `unlisted`](/room#matchmaking-properties) never appear in the lobby listing. (`locked` rooms remain listed, marked as locked.)
+Rooms flagged [`private` or `unlisted`](/room/visibility#matchmaking-properties) never appear in the lobby listing. (`locked` rooms remain listed, marked as locked.)
 
 <Callout type="info">
   The source-code for `LobbyRoom` is available [here](https://github.com/colyseus/colyseus/blob/master/packages/core/src/rooms/LobbyRoom.ts). You can extend it for custom listing behavior.

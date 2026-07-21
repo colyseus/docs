@@ -1,7 +1,28 @@
 import { Callout, Tabs, Cards } from 'nextra/components'
 import { SyncIcon, BookIcon } from '@primer/octicons-react'
+import { MovedAnchors } from '../components/moved-anchors'
 
 # Rooms
+
+{/* Lifecycle and visibility moved to child pages; keep old deep links working. */}
+<MovedAnchors map={{
+    "matchmaking-properties": "/room/visibility#matchmaking-properties",
+    "setmatchmakingupdates": "/room/visibility#setmatchmakingupdates",
+    "lock-room": "/room/visibility#lock-room",
+    "unlock-room": "/room/visibility#unlock-room",
+    "on-create": "/room/lifecycle#on-create",
+    "on-auth": "/room/lifecycle#on-auth",
+    "on-join": "/room/lifecycle#on-join",
+    "on-drop": "/room/lifecycle#on-drop",
+    "on-reconnect": "/room/lifecycle#on-reconnect",
+    "on-leave": "/room/lifecycle#on-leave",
+    "on-dispose": "/room/lifecycle#on-dispose",
+    "on-unhandled-exception": "/room/lifecycle#on-unhandled-exception",
+    "on-before-patch": "/room/lifecycle#on-before-patch",
+    "on-cache-room-devmode": "/room/lifecycle#on-cache-room-devmode",
+    "on-restore-room-devmode": "/room/lifecycle#on-restore-room-devmode",
+    "on-before-shutdown": "/room/lifecycle#on-before-shutdown",
+}} />
 
 The `Room` class is the core building block of Colyseus. Each room instance represents an isolated game session where clients can interact through shared state and messages.
 
@@ -193,405 +214,10 @@ messages = {
 
 ## Lifecycle Events
 
-The room's lifecycle events are called automatically. [`async`/`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) is supported in all of them.
-
-<Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
-    <Tabs.Tab>
-    ```ts filename="MyRoom.ts"
-    import { Room, Client, AuthContext } from "colyseus";
-
-    export class MyRoom extends Room {
-        // (optional) Validate client auth token before joining/creating the room
-        onAuth (client: Client, options: any, context: AuthContext) { }
-
-        // When room is initialized
-        onCreate (options: any) { }
-
-        // When the client successfully joins the room
-        onJoin (client: Client, options: any, auth: any) { }
-
-        // When a client disconnects unexpectedly (use allowReconnection here)
-        onDrop (client: Client, code?: number) { }
-
-        // When a client successfully reconnects
-        onReconnect (client: Client) { }
-
-        // When a client effectively leaves the room
-        onLeave (client: Client, code?: number) { }
-
-        // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
-        onDispose () { }
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```js filename="MyRoom.js"
-    import { Room } from "colyseus";
-
-    export class MyRoom extends Room {
-        // (optional) Validate client auth token before joining/creating the room
-        onAuth (client, options, context) { }
-
-        // When room is initialized
-        onCreate (options) { }
-
-        // When the client successfully joins the room
-        onJoin (client, options, auth) { }
-
-        // When a client disconnects unexpectedly (use allowReconnection here)
-        onDrop (client, code) { }
-
-        // When a client successfully reconnects
-        onReconnect (client) { }
-
-        // When a client effectively leaves the room
-        onLeave (client, code) { }
-
-        // Cleanup callback, called after there are no more clients in the room. (see `autoDispose`)
-        onDispose () { }
-    }
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-### On Create
-
-Called once, when the room is created by the matchmaker. `options` is the merged values specified on [Server#define()](/server/#define-room-type) with the options provided from the SDK at [`.joinOrCreate()`](/sdk#join-or-create-recommended) or [`.join()`](/sdk#other-join-methods).
-
-```ts filename="MyRoom.ts"
-onCreate (options) {
-    /**
-     * This is a good place to initialize your room state.
-     */
-}
-```
-
-The server may overwrite options during [`.define()`](/server/#define-room-type) for authority over client-provided options:
-
-<Tabs items={["Backend", "Frontend"]}>
-    <Tabs.Tab>
-
-        ```ts filename="app.config.ts"
-        // (backend)
-        const server = defineServer({
-          rooms: {
-            my_room: defineRoom(MyRoom, { map: "cs_assault" })
-          }
-        })
-        ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-        The `options` argument is provided by the client upon room creation:
-
-        ```js filename="client.js"
-        // (frontend - using the javascript sdk)
-        // ...
-        client.joinOrCreate("my_room", {
-            name: "Jake",
-            map: "de_dust2"
-        })
-        ```
-    </Tabs.Tab>
-</Tabs>
-
-On this example, the `map` option is `"cs_assault"` during `onCreate()`, and `"de_dust2"` during `onJoin()`.
-
----
-
-### On Auth
-
-The `onAuth` method is called before `onJoin`, and it is responsible for validating the client's request to join a room.
-
-<Tabs items={["Instance onAuth", "Static onAuth"]}>
-    <Tabs.Tab>
-    ```ts filename="MyRoom.ts"
-    async onAuth (client, options, context) {
-        /**
-         * This is a good place to validate the client's auth token.
-         */
-    }
-    ```
-    **Arguments**
-    - `client`: A reference to the client that is trying to join the room.
-    - `options`: Options provided by the frontend SDK.
-    - `context`: The request context, containing:
-        - `.token` - the authentication token sent by the client.
-        - `.headers` - the headers sent by the client.
-        - `.ip` - the IP address of the client.
-
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```ts filename="MyRoom.ts"
-    static async onAuth (token, options, context) {
-        /**
-         * This is a good place to validate the client's auth token.
-         */
-    }
-    ```
-    **Arguments**
-    - `token`: The authentication token sent by the client.
-    - `options`: Options provided by the frontend SDK.
-    - `context`: The request context, containing:
-        - `.token` - the authentication token sent by the client.
-        - `.headers` - the headers sent by the client.
-        - `.ip` - the IP address of the client.
-
-    </Tabs.Tab>
-</Tabs>
-
-<Callout type="info">
-    See [Authentication](/auth/room) for more details.
-</Callout>
-
----
-
-### On Join
-
-Triggered when a client successfully joins the room, after a successful `onAuth`.
-
-**Parameters:**
-
-- `client`: A reference to the client that joined the room.
-- `options`: Options provided by the Client SDK. _(Merged with default values provided by [Server#define()](/server#define-room-type))_
-- `auth`: _(optional)_ auth data returned by [`onAuth`](#on-auth) method.
-
-```ts filename="MyRoom.ts"
-async onJoin (client, options, auth?) {
-    /**
-     * This is a good place to add the client to the state.
-     */
-}
-```
-
-<Callout type="info">
-    See Client SDK on [`.joinOrCreate()`](/sdk#join-or-create-recommended) and [`.join()`](/sdk#other-join-methods).
-</Callout>
-
----
-
-### On Drop
-
-<Callout type="info">
-    New in 0.17. See [Automatic Reconnection](/room/reconnection) for more details.
-</Callout>
-
-Triggered when a client disconnects unexpectedly (without consent). This is the recommended place to use `allowReconnection()`.
-
-**Parameters:**
-
-- `client`: The client that was dropped from the room.
-- `code`: _(optional)_ The close code of the leave event.
-
-```ts filename="MyRoom.ts"
-async onDrop (client, code) {
-    await this.allowReconnection(client, 20);
-}
-```
-
-<Callout type="info">
-    If `onDrop` is not defined, `onLeave` will be called for both consented and non-consented disconnections.
-</Callout>
-
----
-
-### On Reconnect
-
-<Callout type="info">
-    New in 0.17. See [Automatic Reconnection](/room/reconnection) for more details.
-</Callout>
-
-
-Triggered when a client successfully reconnects to the room after calling `allowReconnection()`.
-
-**Parameters:**
-
-- `client`: The client that reconnected to the room.
-
-```ts filename="MyRoom.ts"
-onReconnect (client) {
-    /**
-     * Client has reconnected successfully.
-     */
-    console.log(client.sessionId, "reconnected!");
-}
-```
-
----
-
-### On Leave
-
-Triggered when a client effectively leaves the room.
-
-- If `onDrop` is defined: `onLeave` is called only for consented disconnections (client called `.leave()`).
-- If `onDrop` is not defined: `onLeave` is called for both consented and non-consented disconnections.
-
-**Parameters:**
-
-- `client`: The client that left the room.
-- `code`: _(optional)_ The close code of the leave event.
-
-```ts filename="MyRoom.ts"
-async onLeave (client, code) {
-    /**
-     * This is a good place to remove the client from the state.
-     */
-}
-```
-
-You may define this function as `async`:
-
-<Tabs items={["Synchronous", "Asynchronous"]}>
-    <Tabs.Tab>
-    ``` typescript
-    onLeave(client, code) {
-        if (this.state.players.has(client.sessionId)) {
-            this.state.players.delete(client.sessionId);
-        }
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ``` typescript
-    async onLeave(client, code) {
-        const player = this.state.players.get(client.sessionId);
-        await persistUserOnDatabase(player);
-    }
-    ```
-    </Tabs.Tab>
-</Tabs>
-
-<Callout type="info">
-    At [Graceful Shutdown](/server/graceful-shutdown), `onLeave` is called with `code = CloseCode.SERVER_SHUTDOWN` for all clients.
-</Callout>
-
----
-
-### On Dispose
-
-The `onDispose()` method is called before the room is destroyed, which happens when:
-
-- there are no more clients left in the room, and `autoDispose` is set to `true` (default)
-- you manually call [`.disconnect()`](#disconnect).
-
-```ts filename="MyRoom.ts"
-async onDispose() {
-    /**
-     * This is a good place to perform cleanup tasks.
-     */
-}
-```
-
-You may define `async onDispose()` an asynchronous method in order to persist some data in the database. In fact, this is a great place to persist player's data in the database after a game match ends.
-
-<Callout type="info">
-    At [Graceful Shutdown](/server/graceful-shutdown), `onDispose` is called for all rooms.
-</Callout>
-
----
-
-### On Unhandled Exception
-
-Opt-in to catch unhandled exceptions in your room. This method is called when an unhandled exception occurs in any of the lifecycle methods.
-
-```ts filename="MyRoom.ts"
-onUncaughtException (err: Error, methodName: string) {
-    console.error("An error occurred in", methodName, ":", err);
-    err.cause // original unhandled error
-    err.message // original error message
-}
-```
-
-<Callout type="info">
-    See [Exception Handling](/room/exception-handling) for more details.
-</Callout>
-
----
-
-### On Before Patch
-
-The `onBeforePatch` lifecycle hook is triggered before state synchronization, at patch rate frequency. (see [`patchRate`](#configuration-properties))
-
-```ts filename="MyRoom.ts"
-onBeforePatch(state) {
-    /*
-     * Here you can mutate something in the state just before it is encoded &
-     * synchronized with all clients
-     */
-}
-```
-
----
-
-### On Cache Room (`devMode`)
-
-An optional hook to cache external data when [`devMode`](devmode) is enabled.
-(See [restoring data outside the room's state](/server/devmode#restoring-external-data))
-
-```ts filename="MyRoom.ts"
-export class MyRoom extends Room {
-  // ...
-
-  onCacheRoom() {
-    return { foo: "bar" };
-  }
-}
-```
-
----
-
-### On Restore Room (`devMode`)
-
-An optional hook to reprocess/restore data which was returned and stored from the previous hook [`onCacheRoom`](/room#on-cache-room-devmode) when [Development Mode](devmode) is enabled.
-
-```ts filename="MyRoom.ts"
-export class MyRoom extends Room {
-  // ...
-
-  onRestoreRoom(cachedData: any): void {
-    console.log("ROOM HAS BEEN RESTORED!", cachedData);
-
-    this.state.players.forEach(player => {
-      player.method(cachedData["foo"]);
-    });
-  }
-}
-```
-
-<Callout type="info">
-    See [Restoring data outside the room's `state`](/server/devmode#restoring-external-data)
-</Callout>
-
----
-
-### On Before Shutdown
-
-The `onBeforeShutdown` lifecycle hook is called as part of the [Graceful Shutdown](/server/graceful-shutdown/) process. The process will only truly shutdown after all rooms have been disposed.
-
-By default, the room will disconnect all clients and dispose itself immediately.
-
-You may customize how the room should behave during the shutdown process:
-
-```ts filename="MyRoom.ts"
-onBeforeShutdown() {
-    //
-    // Notify users that process is shutting down, they may need to save their progress and join a new room
-    //
-    this.broadcast("going-down", "Server is shutting down. Please save your progress and join a new room.");
-
-    //
-    // Disconnect all clients after 5 minutes
-    //
-    this.clock.setTimeout(() => this.disconnect(), 5 * 60 * 1000);
-}
-```
-
-<Callout type="info">
-    See [graceful shutdown](/server/graceful-shutdown) for more details.
-</Callout>
+Rooms expose a hook for every stage a client passes through — `onCreate`,
+`onAuth`, `onJoin`, `onDrop`, `onReconnect`, `onLeave`, and `onDispose` — plus
+the `devMode` and graceful-shutdown hooks. See
+**[Room Lifecycle Events](/room/lifecycle)** for the full reference.
 
 ---
 
@@ -620,77 +246,11 @@ update (deltaTime) {
 
 ---
 
-### Matchmaking Properties
+### Visibility & Access
 
-Three boolean flags control who can find and join a room — `locked`, `private`, and `unlisted`. They sound similar but behave differently on each join path:
-
-| | `join()` / `joinOrCreate()` | `joinById()` | Lobby / listing queries |
-|---|---|---|---|
-| **`locked`** | skipped | rejected (`"room is locked"`) | listed (as locked) |
-| **`private`** | skipped | **allowed** | hidden |
-| **`unlisted`** | **matched** | allowed | hidden |
-
-- **`locked`** — no new clients can join, on any path. Set automatically when the room fills up (`maxClients` reached — releases itself when a seat frees), or explicitly via [`lock()`](#lock-room). [Reconnections](/room/reconnection) still work: a reconnecting client returns to the seat it already owned.
-- **`private`** — invite-only. Never matched by `join()`/`joinOrCreate()` and never shown in listings, but anyone holding the room ID can enter through `joinById()`. Use it for invite links and party codes. Set via `setPrivate()` or `setMatchmaking({ private: true })`.
-- **`unlisted`** — hidden, but still matchmade. The room doesn't show up in lobby/listing queries, yet `join()`/`joinOrCreate()` keep filling it normally. Use it to keep rooms out of your room browser without pulling them from matchmaking. Set via `setMatchmaking({ unlisted: true })`.
-
-<Callout type="info">
-    **Looking for passwords?** There is no built-in password concept — `private` does not imply a password. To gate a room behind a password, combine `filterBy()`, `unlisted`, and an `onAuth()` check: see [Password Protect Room](/recipes/password-protect-room).
-</Callout>
-
-#### `setMatchmaking(updates)`
-
-Updates multiple matchmaking/listing properties at once, with a single persist operation. This is the recommended way to update room listing properties.
-
-- `metadata` (optional): room metadata — **replaces** the existing value
-- `private` (optional): whether the room should be private
-- `locked` (optional): whether the room should be locked
-- `maxClients` (optional): maximum number of clients allowed
-- `unlisted` (optional): whether the room should be hidden from listing queries
-
-```ts filename="MyRoom.ts"
-// Update multiple properties at once
-await this.setMatchmaking({
-    metadata: { difficulty: "hard", rating: 1500 },
-    private: true,
-    locked: true,
-    maxClients: 10
-});
-```
-
-<Callout type="warning">
-    `metadata` is **replaced**, never merged. To merge, spread the current value yourself:
-    `setMatchmaking({ metadata: { ...this.metadata, round: 2 } })`.
-</Callout>
-
-You can also set individual properties:
-
-- **`setPrivate(bool?)`** — toggle `private` (defaults to `true`)
-- **`setMetadata(meta)`** — replace `metadata`
-- **[`lock()`](#lock-room) / [`unlock()`](#unlock-room)** — toggle `locked`
-- **`this.maxClients = N`** — forwards to `setMatchmaking({ maxClients: N })`
-
----
-
-### Lock Room
-
-Locking removes the room from matchmaking — `join()`/`joinOrCreate()` skip it, and `joinById()` rejects with `"room is locked"`. No new clients can join until it's unlocked.
-
-```ts filename="MyRoom.ts"
-this.lock();
-```
-
-The room also locks **automatically** when it reaches `maxClients`. The two differ in how they release: an automatic lock releases itself as soon as a seat frees up, while an explicit `lock()` is sticky — the room stays locked until you call `unlock()`.
-
----
-
-### Unlock Room
-
-Returns the room to the pool of available rooms — new clients can join again, as long as `maxClients` hasn't been reached.
-
-```ts filename="MyRoom.ts"
-this.unlock();
-```
+Three flags — `locked`, `private`, and `unlisted` — control who can find and
+join a room, alongside `lock()`, `unlock()`, and `setMatchmaking()`. See
+**[Room Visibility & Access](/room/visibility)** for the full reference.
 
 ---
 
@@ -829,7 +389,7 @@ Allow the client to reconnect into the room.
 
 A reconnection may be [made manually](/sdk#manual-reconnection) (via `sdk.reconnect()`), or [automatically](/sdk#automatic-reconnection) in case of temporary network issues.
 
-The `.allowReconnection()` method should be called on [`onDrop()`](#on-drop) OR [`onLeave()`](#on-leave) method.
+The `.allowReconnection()` method should be called on [`onDrop()`](/room/lifecycle#on-drop) OR [`onLeave()`](/room/lifecycle#on-leave) method.
 
 
 - The `allowReconnection()` returns a `Deferred<Client>` instance.
@@ -965,7 +525,7 @@ onCreate(options) {
 ```
 
 <Callout type="warning">
-    The `metadata` setter can only be used during `onCreate()`. To update metadata after the room is created, use [`setMetadata()`](#matchmaking-properties) or [`setMatchmaking()`](#matchmaking-properties) instead.
+    The `metadata` setter can only be used during `onCreate()`. To update metadata after the room is created, use [`setMetadata()`](/room/visibility#matchmaking-properties) or [`setMatchmaking()`](/room/visibility#matchmaking-properties) instead.
 </Callout>
 
 ---
@@ -1051,7 +611,7 @@ onCreate() {
 
 The `client` instance from the backend is responsible for the **transport** layer between the server and the client. It should not be confused with the [`Client` from the frontend SDK](/sdk/), as they have completely different purposes.
 
-You operate on `client` instances from [`this.clients`](#clients), [`Room#onJoin()`](#on-join), [`Room#onLeave()`](#on-leave) and [`Room#onMessage()`](#on-messages).
+You operate on `client` instances from [`this.clients`](#clients), [`Room#onJoin()`](/room/lifecycle#on-join), [`Room#onLeave()`](/room/lifecycle#on-leave) and [`Room#onMessage()`](#on-messages).
 
 ### Properties
 
@@ -1092,7 +652,7 @@ onLeave(client)  {
 
 #### `auth`
 
-The `client.auth` property holds the data returned by the [`onAuth()`](#on-auth) method.
+The `client.auth` property holds the data returned by the [`onAuth()`](/room/lifecycle#on-auth) method.
 
 ```ts filename="MyRoom.ts"
 onAuth(token, request) {

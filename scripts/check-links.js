@@ -97,16 +97,22 @@ for (const route of anchors.keys()) {
     for (let i = 1; i < parts.length; i++) dirRoutes.add('/' + parts.slice(0, i).join('/'))
 }
 
+const LINK_PATTERNS = [
+    /\]\((\/[^)\s]*|#[^)\s]*)\)/g,        // markdown [text](/path#anchor)
+    /(?:href|src)="(\/[^"]*|#[^"]*)"/g,   // JSX href/src
+    // Bare "/path#anchor" string literals in JSX props — covers the <MovedAnchors>
+    // redirect maps, whose targets would otherwise never be validated.
+    /"(\/[^"\s]*#[^"\s]*)"/g,
+]
+
 function extractLinks(content) {
-    const lines = linkLines(content)
-    const links = []
-    const patterns = [/\]\((\/[^)\s]*|#[^)\s]*)\)/g, /(?:href|src)="(\/[^"]*|#[^"]*)"/g]
-    lines.forEach((line, i) => {
-        for (const re of patterns) {
-            for (const m of line.matchAll(re)) links.push({ target: m[1], line: i + 1 })
+    const links = new Map() // "line:target" -> entry, so overlapping patterns don't double-report
+    linkLines(content).forEach((line, i) => {
+        for (const re of LINK_PATTERNS) {
+            for (const m of line.matchAll(re)) links.set(`${i + 1}:${m[1]}`, { target: m[1], line: i + 1 })
         }
     })
-    return links
+    return [...links.values()]
 }
 
 const broken = []
