@@ -5,5 +5,5 @@ export default {
     "reconnection": "Reconnection Handling",
     "exception-handling": "Exception Handling",
     "plugins": "Room Plugins",
-    "built-in": "Built-in Rooms",
+    "relay": "Relay Room",
 }

@@ -50,6 +50,10 @@ import { NotFoundPage } from 'nextra-theme-docs'
             { from: "/room/visibility", to: "/matchmaker/visibility", replace: true },
             { from: "/room/built-in/lobby", to: "/matchmaker/lobby", replace: true },
             { from: "/room/built-in/queue", to: "/matchmaker/queue", replace: true },
+            // Built-in Rooms section dissolved: Relay promoted to /room/relay,
+            // the index became a section on /room. Bare entry last — first-hit.
+            { from: "/room/built-in/relay", to: "/room/relay", replace: true },
+            { from: "/room/built-in", to: "/room#built-in-rooms" },
 
             // before the /client catch-all, which would otherwise hijack these
             // (yielding dead paths like /sdk-prediction, /sdk/room)
