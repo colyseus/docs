@@ -187,7 +187,7 @@ The driver creates a `roomcaches_v1` table with the following structure:
 | `metadata` | `jsonb` | Custom room metadata |
 | `publicAddress` | `varchar(255)` | Public address for the room |
 | `createdAt` | `timestamp` | Room creation timestamp |
-| `unlisted` | `boolean` | Whether the room is unlisted from queries |
+| `unlisted` | `boolean` | Whether the room is hidden from lobby/listing queries (still matched by `join()`/`joinOrCreate()`) |
 
 ---
 
