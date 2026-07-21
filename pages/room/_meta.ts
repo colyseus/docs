@@ -1,8 +1,8 @@
 export default {
     "messages": "Message Composability",
-    "plugins": "Room Plugins",
+    "timing-events": "Timing Events",
     "reconnection": "Reconnection Handling",
-    "timing-events": "",
-    "exception-handling": "",
-    "built-in": "",
+    "exception-handling": "Exception Handling",
+    "plugins": "Room Plugins",
+    "built-in": "Built-in Rooms",
 }
