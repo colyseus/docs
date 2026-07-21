@@ -9,11 +9,12 @@ import { NotFoundPage } from 'nextra-theme-docs'
             { from: "/getting-started/unity3d-client", to: "/getting-started/unity" },
             { from: "/getting-started/unity-sdk", to: "/getting-started/unity" },
             { from: "/getting-started/haxe-client", to: "/getting-started/haxe" },
-            { from: "/cloud/typescript-compilation-errors", to: "/deployment/cloud/typescript-compilation-errors" },
+            { from: "/deployment/cloud/typescript-compilation-errors", to: "/cloud/typescript-compilation-errors" },
             { from: "/server/api#constructor-options", to: "/server#server-options" },
             { from: "/server/api", to: "/server" },
             { from: "/server/exception-handling", to: "/room/exception-handling" },
             { from: "/server/room/exception-handling", to: "/room/exception-handling" },
+            { from: "/colyseus/server/room#leavecode-number", to: "/room#leave-room" },
             { from: "/server/room#allowreconnection-client-seconds", to: "/room#allow-reconnection" },
             { from: "/server/room/timing-events", to: "/room/timing-events" },
             { from: "/server/room", to: "/room" },
@@ -21,31 +22,33 @@ import { NotFoundPage } from 'nextra-theme-docs'
             { from: "/debugging", to: "/server/debugging" },
             { from: "/tools/monitor", to: "/tools/monitoring" },
 
-            { from: "/demo/shooting-gallery", to: "/tutorial/unity/shooting-gallery" },
-            { from: "/demo/starboss", to: "/tutorial/unity/starboss" },
-            { from: "/demo/turn-based-tanks", to: "/tutorial/unity/turn-based-tanks" },
-            { from: "/demo/mmo", to: "/tutorial/unity/mmo" },
-            { from: "/demo/cocos/mmo", to: "/tutorial/cocos/mmo" },
+            { from: "/demo/shooting-gallery", to: "/learn/tutorial/unity/shooting-gallery" },
+            { from: "/demo/starboss", to: "/learn/tutorial/unity/starboss" },
+            { from: "/demo/turn-based-tanks", to: "/learn/tutorial/unity/turn-based-tanks" },
+            { from: "/demo/mmo", to: "/learn/tutorial/unity/mmo" },
+            { from: "/demo/cocos/mmo", to: "/learn/tutorial/cocos/mmo" },
 
-            { from: "/demo/babylonjs-editor/hide-and-seek", to: "/examples/babylonjs-editor/hide-and-seek" },
+            { from: "/demo/babylonjs-editor/hide-and-seek", to: "/learn/tutorial/babylonjs/hide-and-seek" },
             { from: "/community/custom-room-id", to: "/recipes/custom-room-id" },
-            { from: "/unity", to: "/getting-started/unity" },
-            { from: "/colyseus/server/room#leavecode-number", to: "/room#leave-room" },
             { from: "/state/schema-callbacks", to: "/state/callbacks" },
             { from: "/state/best-practices", to: "/state#limitations-and-best-practices" },
             { from: "/server/custom-http-routes", to: "/server/http-routes" },
             { from: "/upgrading/0.15", to: "/migrating/0.15" },
             { from: "/upgrading/0.16", to: "/migrating/0.16" },
             { from: "/upgrading", to: "/migrating" },
-            { from: "/recipes/custom-cors-headers", to: "/server/http-routes#cors-cross-origin-resource-sharing" },
+            { from: "/recipes/custom-cors-headers", to: "/server/http-routes#cors" },
 
-            { from: "/room/examples", to: "/examples" },
+            { from: "/room/examples", to: "/learn/examples" },
 
             // state-sync-callbacks moved back home under /state (it lived at
             // /state/callbacks before its detour through /sdk). replace: true
             // maps the /react and /custom children and carries anchors over.
             { from: "/sdk/state-sync-callbacks", to: "/state/callbacks", replace: true },
 
+            // before the /client catch-all, which would otherwise hijack these
+            // (yielding dead paths like /sdk-prediction, /sdk/room)
+            { from: "/client-prediction", to: "/netcode" },
+            { from: "/client/room", to: "/room" },
             {
                 from: "/client",
                 to: "/sdk",
@@ -57,9 +60,12 @@ import { NotFoundPage } from 'nextra-theme-docs'
                 replace: true, // replace all /client with /sdk
             },
 
-            { from: "/examples", to: "/learn/examples" },
-            { from: "/examples/babylonjs", to: "/learn/examples/babylonjs" },
+            // specific before general — matching is includes() + first-hit
             { from: "/examples/babylonjs-editor/hide-and-seek", to: "/learn/tutorial/babylonjs/hide-and-seek" },
+            { from: "/examples/babylonjs", to: "/learn/examples/babylonjs" },
+            { from: "/examples", to: "/learn/examples" },
+            // after the /tutorial catch-all above, so /tutorial/unity/* isn't hijacked
+            { from: "/unity", to: "/getting-started/unity" },
             { from: "/colyseus/state/schema/", to: "/state/schema" },
 
             { from: "/deployment/cloud", to: "/cloud" },
@@ -76,7 +82,6 @@ import { NotFoundPage } from 'nextra-theme-docs'
             { from: "/recommendations", to: "/recipes" },
 
             { from: "/prediction", to: "/netcode" },
-            { from: "/client-prediction", to: "/netcode" },
             { from: "/concepts", to: "/getting-started" },
             { from: "/lag-compensation", to: "/netcode/lag-compensation" },
             { from: "/netcode/server", to: "/netcode/server-input" },
@@ -87,14 +92,12 @@ import { NotFoundPage } from 'nextra-theme-docs'
             { from: "/migrating/0.12", to: "/migrating/0.17" },
             { from: "/migrating/0.13", to: "/migrating/0.17" },
             { from: "/migrating/0.14", to: "/migrating/0.17" },
-            { from: "/colyseus", to: "/" },
-            { from: "/client/room", to: "/room" },
             { from: "/colyseus/room", to: "/room" },
+            { from: "/colyseus", to: "/" },
             { from: "/quickstart", to: "/getting-started" },
             { from: "/server/getting-started", to: "/getting-started" },
-            { from: "/colyseus", to: "/" },
-            { from: "/authentication", to: "/auth" },
             { from: "/server/authentication", to: "/auth" },
+            { from: "/authentication", to: "/auth" },
             { from: "/server/deployment", to: "/deployment" },
         ];
 

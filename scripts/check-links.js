@@ -117,6 +117,46 @@ function extractLinks(content) {
 
 const broken = []
 
+// ---- 404.mdx redirect-map lint ----
+// The map's entries aren't markdown links, so the main pass skips the file.
+// Three failure modes rot silently without this: a `to:` target that doesn't
+// resolve (page or anchor), a `from:` that matches a live route (the entry can
+// never fire — usually a reversed mapping), and an entry shadowed by an earlier
+// one (matching is `currentPath.includes(from)` + first-hit).
+{
+    const file = path.join(pagesDir, '404.mdx')
+    const src = fs.readFileSync(file, 'utf8')
+    const lineAt = (idx) => src.slice(0, idx).split('\n').length
+    const report = (line, target, reason) => broken.push({ file, line, target, reason })
+
+    const entries = []
+    for (const m of src.matchAll(/from:\s*"([^"]+)"/g)) entries.push({ from: m[1], line: lineAt(m.index) })
+
+    for (const m of src.matchAll(/to:\s*"([^"]+)"/g)) {
+        const line = lineAt(m.index)
+        const hashAt = m[1].indexOf('#')
+        const route = (hashAt === -1 ? m[1] : m[1].slice(0, hashAt)).replace(/\/$/, '') || '/'
+        const anchor = hashAt === -1 ? '' : m[1].slice(hashAt + 1)
+        if (!anchors.has(route)) {
+            if (!dirRoutes.has(route)) report(line, m[1], 'redirect target not found')
+        } else if (anchor && !anchors.get(route).has(anchor)) {
+            report(line, m[1], `no such heading on ${route}`)
+        }
+    }
+
+    for (let i = 0; i < entries.length; i++) {
+        const { from, line } = entries[i]
+        // A live route serves 200 (with or without a fragment), so the 404 page
+        // — and this entry — can never run for it.
+        const fromRoute = (from.split('#')[0]).replace(/\/$/, '') || '/'
+        if (anchors.has(fromRoute)) {
+            report(line, from, 'from: matches a live route — entry can never fire')
+        }
+        const shadow = entries.slice(0, i).find((e) => from.includes(e.from))
+        if (shadow) report(line, from, `shadowed by earlier entry "${shadow.from}" (line ${shadow.line})`)
+    }
+}
+
 for (const file of files) {
     if (SKIP_FILES.has(file)) continue
     const selfRoute = routeOf(file)
