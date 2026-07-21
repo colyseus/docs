@@ -41,7 +41,10 @@ import { NotFoundPage } from 'nextra-theme-docs'
 
             { from: "/room/examples", to: "/examples" },
 
-            { from: "/state/callbacks", to: "/sdk/state-sync-callbacks" },
+            // state-sync-callbacks moved back home under /state (it lived at
+            // /state/callbacks before its detour through /sdk). replace: true
+            // maps the /react and /custom children and carries anchors over.
+            { from: "/sdk/state-sync-callbacks", to: "/state/callbacks", replace: true },
 
             {
                 from: "/client",
