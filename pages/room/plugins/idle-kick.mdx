@@ -19,9 +19,9 @@ import { Room, definePlugins } from "colyseus";
 import { IdleKickPlugin } from "colyseus/plugins/idle-kick";
 
 export class MyRoom extends Room {
-  plugins = definePlugins({
-    idle: new IdleKickPlugin({ timeoutMs: 60_000 }),
-  });
+  plugins = definePlugins([
+    new IdleKickPlugin({ timeoutMs: 60_000 }),
+  ]);
 }
 ```
 
@@ -53,19 +53,19 @@ room.onLeave((code, reason) => {
 ### Exempt admins
 
 ```ts filename="MyRoom.ts"
-plugins = definePlugins({
-  idle: new IdleKickPlugin({
+plugins = definePlugins([
+  new IdleKickPlugin({
     timeoutMs: 30_000,
     isExempt: (client) => client.auth?.role === "admin",
   }),
-});
+]);
 ```
 
 ### Broadcast a notice before kicking
 
 ```ts filename="MyRoom.ts"
-plugins = definePlugins({
-  idle: new IdleKickPlugin({
+plugins = definePlugins([
+  new IdleKickPlugin({
     timeoutMs: 60_000,
     onKick: (client, idleMs) => {
       this.broadcast("player-afk", {
@@ -74,11 +74,11 @@ plugins = definePlugins({
       });
     },
   }),
-});
+]);
 ```
 
 <Callout type="info">
-  `this` inside `onKick` is the plugin instance. To call back into the room, capture it from a closure or use the plugin handle (`this.plugins.idle`) from inside your own room methods instead.
+  The arrow function above works because class-field initializers bind `this` lexically — inside the arrow, `this` is the **room**. A plain `function () {}` callback would instead get the plugin instance as `this`, and `this.broadcast` would fail. Stick to arrows here.
 </Callout>
 
 ### Custom close code
@@ -86,13 +86,13 @@ plugins = definePlugins({
 If you'd rather signal a domain-specific reason (e.g., to differentiate from a generic 1000 disconnect), use a custom code in the WS application range (`4000`–`4999`):
 
 ```ts filename="MyRoom.ts"
-plugins = definePlugins({
-  idle: new IdleKickPlugin({
+plugins = definePlugins([
+  new IdleKickPlugin({
     timeoutMs: 60_000,
     closeCode: 4040,
     reason: "afk",
   }),
-});
+]);
 ```
 
 ## Caveats

@@ -6,13 +6,13 @@ import { Callout, Tabs } from "nextra/components";
 
 # Room Plugins
 
-A **Room Plugin** is a composable extension to a `Room`. Each plugin can contribute any subset of:
+Cross-cutting room behavior — AFK kicks, session limits, geo lookups — tends to get copy-pasted between room classes. A **Room Plugin** packages that behavior once, as a composable extension to a `Room`. Each plugin can contribute any subset of:
 
 - **Message handlers** — merged into the room's `messages` map.
-- **Lifecycle hooks** — `onCreate`, `onJoin`, `onLeave`, `onDispose` — composed with the room's own hooks (with configurable before/after ordering).
+- **Lifecycle hooks** — `onCreate`, `onAuth`, `onJoin`, `onLeave`, `onDispose` — composed with the room's own hooks (with configurable before/after ordering).
 - **Public methods** — callable from the room as `this.plugins.<key>.someMethod()`.
 
-The framework instantiates one plugin per room, wires `this.room` after the room is fully constructed, and merges everything in once per `Room` subclass (cached on the class — there's no per-instance setup cost).
+Each room gets its own plugin instances, and the framework wires `this.room` once the room is fully constructed. The merge itself is computed once per `Room` subclass and cached on the class — there's no per-instance setup cost.
 
 ## Available plugins
 
@@ -24,7 +24,7 @@ The framework instantiates one plugin per room, wires `this.room` after the room
 | [UniqueSessionPlugin](/room/plugins/unique-session) | Enforces a max number of concurrent sessions of this room type per user (default: one). |
 | [TrackUserSessionsPlugin](/room/plugins/track-user-sessions) | Maintains a per-user reverse index in Presence — powers admin by-user inspection and session-revocation. |
 
-All plugins above ship with the `colyseus` package — no extra dependency to install.
+All plugins above ship with the `colyseus` package — no extra dependency to install — except `GeoIPPlugin`, which lives in its own package ([`@colyseus/geoip`](/room/plugins/geoip)) because it pulls in the MMDB reader and database files.
 
 ## Attaching plugins to a Room
 
@@ -59,7 +59,9 @@ plugins = definePlugins({
 });
 ```
 
-Both forms produce the same runtime shape (`Record<string, RoomPlugin>`). The array form is recommended when each plugin has a single canonical key; reach for the record form when neither holds.
+Both forms produce the same runtime shape (`Record<string, RoomPlugin>`). Prefer the array form; reach for the record form when you want to pick the keys yourself.
+
+A plugin can also accept its `pluginName` as a constructor argument, which lets the array form host two instances too. Unless the plugin threads that name's literal type through a generic, though, `this.plugins.<key>` loses its typing — the record form is the simpler road.
 
 ## Writing your own plugin
 
@@ -95,7 +97,7 @@ export class ChatPlugin extends RoomPlugin {
 ```
 
 <Callout type="warning">
-  **Always declare lifecycle hooks (`onCreate` / `onJoin` / `onLeave` / `onDispose`), `messages`, and `order` as `protected`.** They're protected on the base `RoomPlugin` class — TypeScript silently widens to `public` on subclass overrides if you omit the modifier, leaking those framework slots into `this.plugins.<key>.<member>` autocomplete. The `pluginName` field stays `public` so type inference can read its literal.
+  **Always declare lifecycle hooks (`onCreate` / `onAuth` / `onJoin` / `onLeave` / `onDispose`), `messages`, and `order` as `protected`.** They're protected on the base `RoomPlugin` class — TypeScript silently widens to `public` on subclass overrides if you omit the modifier, leaking those framework slots into `this.plugins.<key>.<member>` autocomplete. The `pluginName` field stays `public` so type inference can read its literal.
 </Callout>
 
 Use it like any other plugin:
@@ -146,9 +148,12 @@ By default, plugins run **before** the room's hook for setup-style events and **
 | Hook        | Default order vs the room's own hook | Rationale                                  |
 |-------------|--------------------------------------|--------------------------------------------|
 | `onCreate`  | Plugins run **before**               | Plugins set up guards/state the room reads |
+| `onAuth`    | Plugins run **before**               | Plugins vet/decorate the client before the room's auth logic |
 | `onJoin`    | Plugins run **before**               | Plugins can validate/decorate the client   |
 | `onLeave`   | Plugins run **after**                | Capture the final state the room left      |
 | `onDispose` | Plugins run **after**                | Run cleanup after the room's teardown      |
+
+A plugin's `onAuth(client, options, context)` differs from the room's in one way: it returns nothing. It exists to vet or decorate the client — throw to reject the join, or attach data for downstream hooks. That's how [`GeoIPPlugin`](/room/plugins/geoip) makes `client.geoip` available before your own `onAuth` runs; producing `client.auth` data remains the room's job.
 
 To override the default for a specific hook:
 
@@ -174,7 +179,7 @@ export class MyPlugin extends RoomPlugin {
 - If the **room** defines the same message key as a plugin, the room wins — the plugin's handler is silently dropped. This is the documented escape hatch for _"use the plugin but override one message"_.
 - If **two plugins** define the same key, the framework throws at class-init time naming both plugin keys. Resolve by giving one a different key or by overriding on the room's own `messages`.
 
-The plugin's message handler keys also flow through to the SDK's `room.send(...)` / `room.onMessage(...)` for typed client-side use — see [SDK type extraction](../../client-server/messages) for details.
+The plugin's message handler keys also flow through to the SDK's `room.send(...)` / `room.onMessage(...)` for typed client-side use — see [Send and Receive Messages](/sdk#send-and-receive-messages) for the client-side view.
 
 ## Typed access to room state
 

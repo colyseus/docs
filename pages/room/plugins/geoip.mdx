@@ -190,7 +190,7 @@ async onReconnect(client) {
   const ip = this.state.players.get(client.sessionId)?.lastIp;
   const freshGeo = ip && this.plugins.geoip.lookup(ip);
   if (freshGeo && freshGeo.isoCode !== client.geoip?.isoCode) {
-    this.log.warn("country changed during reconnect", {
+    console.warn("country changed during reconnect", {
       sessionId: client.sessionId,
       from: client.geoip?.isoCode,
       to: freshGeo.isoCode,
@@ -250,7 +250,7 @@ policy.
   `onAuth`. A reconnecting client whose IP has changed in the meantime
   will still carry the original geo data through the reconnect path. If
   you need fresh-on-reconnect semantics, re-resolve manually with the
-  public lookup method (see below).
+  public lookup method (see [Manual lookup from room code](#manual-lookup-from-room-code)).
 - **Country granularity only:** the plugin's bundled reader maps a
   small subset of MMDB fields. City, ASN, accuracy radius, and other
   richer GeoIP2-City fields are intentionally not exposed — point the
@@ -259,4 +259,4 @@ policy.
 ## See Also
 
 - [Room Plugins](/room/plugins) — overview of the plugin system
-- [`onAuth`](/room/auth) — pre-join hook the plugin attaches to
+- [`onAuth`](/auth/room) — pre-join hook the plugin attaches to

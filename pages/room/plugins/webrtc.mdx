@@ -19,9 +19,9 @@ import { Room, definePlugins } from "colyseus";
 import { WebRTCPlugin } from "colyseus/plugins/webrtc";
 
 export class VideoRoom extends Room {
-  plugins = definePlugins({
-    webrtc: new WebRTCPlugin(),
-  });
+  plugins = definePlugins([
+    new WebRTCPlugin(),
+  ]);
 }
 ```
 
@@ -141,9 +141,9 @@ import { Room, Client, definePlugins } from "colyseus";
 import { WebRTCPlugin } from "colyseus/plugins/webrtc";
 
 export class VideoRoom extends Room {
-  plugins = definePlugins({
-    webrtc: new WebRTCPlugin(),
-  });
+  plugins = definePlugins([
+    new WebRTCPlugin(),
+  ]);
 
   messages = {
     chat: (client: Client, message: string) => {
