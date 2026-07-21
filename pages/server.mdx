@@ -75,7 +75,7 @@ The match-making driver. Rooms are cached and queried against a Driver implement
 
 #### Presence (`presence`)
 
-When scaling Colyseus through multiple processes / machines, you need to provide a presence server. Read more about [Scalability](/scalability), and the [`Presence API`](/server/presence#api).
+When scaling Colyseus through multiple processes / machines, you need to provide a presence server. Read more about [Scalability](/scalability), and the [`Presence API`](/server/presence#presence-api).
 
 ``` typescript
 import { defineServer, RedisPresence } from "colyseus";
@@ -166,7 +166,7 @@ const server = defineServer({
 
 Wether to register shutdown routine automatically. Default is `true`.
 
-If disabled, you should call [`gracefullyShutdown()`](#gracefully-shutdown) method manually in your shutdown process.
+If disabled, you should call [`gracefullyShutdown()`](#graceful-shutdown) method manually in your shutdown process.
 
 ```ts {4} filename="app.config.ts"
 import { defineServer } from "colyseus";
@@ -190,7 +190,7 @@ const server = defineServer({
 Define room types for the match-maker using the `rooms` configuration in `defineServer()`.
 
 - Rooms are **not created** during configuration
-- Rooms are created upon client request ([See frontend methods](/sdk/#methods))
+- Rooms are created upon client request ([See frontend methods](/sdk#joining-rooms))
 
 
 **Parameters:**

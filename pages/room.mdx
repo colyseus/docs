@@ -356,7 +356,7 @@ Triggered when a client successfully joins the room, after a successful `onAuth`
 
 - `client`: A reference to the client that joined the room.
 - `options`: Options provided by the Client SDK. _(Merged with default values provided by [Server#define()](/server#define-room-type))_
-- `auth`: _(optional)_ auth data returned by [`onAuth`](#onauth) method.
+- `auth`: _(optional)_ auth data returned by [`onAuth`](#on-auth) method.
 
 ```ts filename="MyRoom.ts"
 async onJoin (client, options, auth?) {
@@ -513,7 +513,7 @@ onUncaughtException (err: Error, methodName: string) {
 
 ### On Before Patch
 
-The `onBeforePatch` lifecycle hook is triggered before state synchronization, at patch rate frequency. (see [`patchRate`](#patchrate))
+The `onBeforePatch` lifecycle hook is triggered before state synchronization, at patch rate frequency. (see [`patchRate`](#configuration-properties))
 
 ```ts filename="MyRoom.ts"
 onBeforePatch(state) {
@@ -529,7 +529,7 @@ onBeforePatch(state) {
 ### On Cache Room (`devMode`)
 
 An optional hook to cache external data when [`devMode`](devmode) is enabled.
-(See [restoring data outside the room's state](/server/devmode#restoring-data-outside-the-rooms-state))
+(See [restoring data outside the room's state](/server/devmode#restoring-external-data))
 
 ```ts filename="MyRoom.ts"
 export class MyRoom extends Room {
@@ -562,7 +562,7 @@ export class MyRoom extends Room {
 ```
 
 <Callout type="info">
-    See [Restoring data outside the room's `state`](/server/devmode#restoring-data-outside-the-rooms-state)
+    See [Restoring data outside the room's `state`](/server/devmode#restoring-external-data)
 </Callout>
 
 ---
@@ -765,7 +765,7 @@ Available options are:
 </Tabs>
 
 <Callout type="info">
-    The client will receive the message in the [`onMessage()`](/sdk/#on-message) callback.
+    The client will receive the message in the [`onMessage()`](/sdk#receiving-messages) callback.
 </Callout>
 
 ---
@@ -1051,7 +1051,7 @@ onCreate() {
 
 The `client` instance from the backend is responsible for the **transport** layer between the server and the client. It should not be confused with the [`Client` from the frontend SDK](/sdk/), as they have completely different purposes.
 
-You operate on `client` instances from [`this.clients`](#clients), [`Room#onJoin()`](#onjoin), [`Room#onLeave()`](#onleave) and [`Room#onMessage()`](#onmessage).
+You operate on `client` instances from [`this.clients`](#clients), [`Room#onJoin()`](#on-join), [`Room#onLeave()`](#on-leave) and [`Room#onMessage()`](#on-messages).
 
 ### Properties
 
@@ -1068,7 +1068,7 @@ onJoin(client, options) {
 ```
 
 <Callout type="info">
-    In the frontend, you can find the [`sessionId` in the `room` instance](/sdk/#sessionid-string).
+    In the frontend, you can find the [`sessionId` in the `room` instance](/sdk#room-reference).
 </Callout>
 
 ---
@@ -1092,7 +1092,7 @@ onLeave(client)  {
 
 #### `auth`
 
-The `client.auth` property holds the data returned by the [`onAuth()`](#onauth) method.
+The `client.auth` property holds the data returned by the [`onAuth()`](#on-auth) method.
 
 ```ts filename="MyRoom.ts"
 onAuth(token, request) {
@@ -1163,7 +1163,7 @@ client.send(1, { kind: "ammo"});
 ```
 
 <Callout type="info">
-    [See how to handle `onMessage` from the frontend SDK](/sdk/#on-message)
+    [See how to handle `onMessage` from the frontend SDK](/sdk#receiving-messages)
 </Callout>
 
 ---
@@ -1197,7 +1197,7 @@ Force disconnection of the `client` with the room. You may send a custom `code` 
 
 
 <Callout type="info">
-    This will trigger [`room.onLeave`](/sdk/#on-leave) event on the frontend.
+    This will trigger [`room.onLeave`](/sdk#leaving-a-room) event on the frontend.
 </Callout>
 
 #### Table of WebSocket close codes

@@ -274,7 +274,7 @@ Sign in with OAuth provider and return userdata. This method modifies the `clien
     </Tabs.Tab>
 
     <Tabs.Tab>
-    Each provider requires a different configuration. See the [OAuth providers](#oauth-providers-discord-google-x-twitter-etc) section for more information.
+    Each provider requires a different configuration. See the [OAuth providers](#oauth-providers-discord-google-x-etc) section for more information.
 
     ```ts filename="src/config/auth.ts"
     import { auth } from "@colyseus/auth";
@@ -294,7 +294,7 @@ Sign in with OAuth provider and return userdata. This method modifies the `clien
     - A popup window to is opened `/auth/provider/[PROVIDER-ID]`
     - The user is redirected to the OAuth provider's website
     - The user authenticates with the OAuth provider
-    - The user is redirected back to `/auth/provider/[PROVIDER-ID]/callback` (see [OAuth Provider Callback](#oauth-provider-callback-authoauthoncallback))
+    - The user is redirected back to `/auth/provider/[PROVIDER-ID]/callback` (see [OAuth Provider Callback](#oauth-callback))
     - The popup window is closed and userdata is returned
 </Callout>
 

@@ -185,10 +185,10 @@ it("should assert something after room's simulation tick", async() => {
 
 You can call any frontend SDK methods through `colyseus.sdk` to simulate client behavior:
 
-- [`colyseus.sdk.joinOrCreate()`](/sdk/#joinorcreate-roomname-string-options-any)
-- [`colyseus.sdk.create()`](/sdk/#create-roomname-string-options-any)
-- [`colyseus.sdk.join()`](/sdk/#join-roomname-string-options-any)
-- [`colyseus.sdk.joinById()`](/sdk/#joinbyid-roomid-string-options-any)
+- [`colyseus.sdk.joinOrCreate()`](/sdk#join-or-create-recommended)
+- [`colyseus.sdk.create()`](/sdk#other-join-methods)
+- [`colyseus.sdk.join()`](/sdk#other-join-methods)
+- [`colyseus.sdk.joinById()`](/sdk#other-join-methods)
 
 ```ts filename="App.test.ts"
 it("should connect into battle_room with options x, y, z", async () => {

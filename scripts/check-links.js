@@ -1,0 +1,161 @@
+/**
+ * Internal link checker for the docs.
+ *
+ * Validates every internal markdown/JSX link in `pages/`:
+ *
+ * - **page links** (`/room`) resolve to an `.mdx` file or a directory route
+ * - **anchors** (`/room#game-loop`, `#game-loop`) resolve to a real heading on
+ *   the target page, slugged with `github-slugger` — the same slugger Nextra
+ *   uses, so the results match what actually ships
+ * - **assets** (`/images/foo.png`) resolve to a file in `public/`
+ *
+ * Anchor checking is the point: a link to a heading that was renamed still
+ * loads the page, so it never shows up as a 404 and rots silently.
+ *
+ * Usage: `npm run check-links`. Exits non-zero when anything is broken.
+ */
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import GithubSlugger from 'github-slugger'
+
+const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
+const pagesDir = path.join(root, 'pages')
+const publicDir = path.join(root, 'public')
+
+const ASSET_RE = /\.(png|jpe?g|gif|svg|webp|ico|pdf|mp4|webm|mp3|wav|zip|json|txt)$/i
+
+// `pages/404.mdx` holds the redirect map — its "links" are old URLs by design.
+const SKIP_FILES = new Set([path.join(pagesDir, '404.mdx')])
+
+function walk(dir, out = []) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const full = path.join(dir, entry.name)
+        if (entry.isDirectory()) walk(full, out)
+        else if (entry.name.endsWith('.mdx')) out.push(full)
+    }
+    return out
+}
+
+/** Replace a matched span with blanks, preserving its newlines (line numbers stay put). */
+const blank = (s) => s.replace(/[^\n]/g, ' ')
+
+/**
+ * Blank out regions that only look like content: fenced code blocks and
+ * JSX/HTML comments (commented-out `<Cards.Card href>` entries are common here).
+ * Line numbers are preserved so reports stay accurate.
+ */
+function stripNonContent(content) {
+    let fenced = false
+    return content.split('\n').map((line) => {
+        if (/^\s*(```|~~~)/.test(line)) { fenced = !fenced; return '' }
+        return fenced ? '' : line
+    }).join('\n')
+        .replace(/\{\/\*[\s\S]*?\*\/\}/g, blank)
+        .replace(/<!--[\s\S]*?-->/g, blank)
+}
+
+/** Lines safe to scan for headings. Inline code is kept — `### `roomId`` is a real heading. */
+const headingLines = (content) => stripNonContent(content).split('\n')
+
+/** Lines safe to scan for links. Also drops inline code, so `` `[a](/b)` `` isn't a link. */
+const linkLines = (content) => stripNonContent(content).replace(/`[^`\n]*`/g, blank).split('\n')
+
+function routeOf(file) {
+    const rel = path.relative(pagesDir, file).replace(/\\/g, '/').replace(/\.mdx$/, '')
+    return rel === 'index' ? '/' : '/' + rel.replace(/\/index$/, '')
+}
+
+const files = walk(pagesDir)
+
+// route -> Set of heading slugs. One slugger per file so duplicate headings get
+// the same -1/-2 suffixes Nextra assigns.
+const anchors = new Map()
+for (const file of files) {
+    const slugger = new GithubSlugger()
+    const slugs = new Set()
+    for (const line of headingLines(fs.readFileSync(file, "utf8"))) {
+        const m = /^#{1,6}\s+(.+?)\s*$/.exec(line)
+        if (!m) continue
+        // Slug the *rendered* heading text: unwrap `[label](url)`, drop code ticks
+        // and emphasis, so `## Self-hosting on [Vultr](https://…)` -> self-hosting-on-vultr.
+        const text = m[1]
+            .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
+            .replace(/[`*_]/g, '')
+            .trim()
+        slugs.add(slugger.slug(text))
+    }
+    const route = routeOf(file)
+    anchors.set(route, slugs)
+}
+
+// Directory routes (a folder with pages under it) are valid link targets even
+// without their own .mdx.
+const dirRoutes = new Set()
+for (const route of anchors.keys()) {
+    const parts = route.split('/').filter(Boolean)
+    for (let i = 1; i < parts.length; i++) dirRoutes.add('/' + parts.slice(0, i).join('/'))
+}
+
+function extractLinks(content) {
+    const lines = linkLines(content)
+    const links = []
+    const patterns = [/\]\((\/[^)\s]*|#[^)\s]*)\)/g, /(?:href|src)="(\/[^"]*|#[^"]*)"/g]
+    lines.forEach((line, i) => {
+        for (const re of patterns) {
+            for (const m of line.matchAll(re)) links.push({ target: m[1], line: i + 1 })
+        }
+    })
+    return links
+}
+
+const broken = []
+
+for (const file of files) {
+    if (SKIP_FILES.has(file)) continue
+    const selfRoute = routeOf(file)
+
+    for (const { target, line } of extractLinks(fs.readFileSync(file, 'utf8'))) {
+        const hashAt = target.indexOf('#')
+        let route = hashAt === -1 ? target : target.slice(0, hashAt)
+        const anchor = hashAt === -1 ? '' : target.slice(hashAt + 1)
+
+        // Bare "#anchor" points at the current page.
+        route = route === '' ? selfRoute : route.replace(/\/$/, '') || '/'
+
+        const report = (reason) => broken.push({ file, line, target, reason })
+
+        if (ASSET_RE.test(route)) {
+            if (!fs.existsSync(path.join(publicDir, route))) report('asset not found')
+            continue
+        }
+
+        if (!anchors.has(route)) {
+            if (!dirRoutes.has(route)) report('page not found')
+            continue // directory route — no page of its own, so no anchors to check
+        }
+
+        if (anchor && !anchors.get(route).has(anchor)) {
+            report(`no such heading on ${route}`)
+        }
+    }
+}
+
+if (broken.length === 0) {
+    console.log(`✓ ${files.length} pages checked — no broken internal links`)
+    process.exit(0)
+}
+
+const byFile = new Map()
+for (const b of broken) {
+    const key = path.relative(root, b.file)
+    if (!byFile.has(key)) byFile.set(key, [])
+    byFile.get(key).push(b)
+}
+
+for (const [file, items] of [...byFile].sort()) {
+    console.log(`\n${file}`)
+    for (const b of items) console.log(`  ${b.line}: ${b.target}  — ${b.reason}`)
+}
+console.log(`\n✗ ${broken.length} broken internal link(s) across ${byFile.size} file(s)`)
+process.exit(1)
