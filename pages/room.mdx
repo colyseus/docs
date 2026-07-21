@@ -1,6 +1,7 @@
-import { Callout, Tabs, Cards } from 'nextra/components'
-import { SyncIcon, BookIcon } from '@primer/octicons-react'
+import { Callout, Tabs } from 'nextra/components'
+import { SyncIcon, BookIcon, RowsIcon, ListOrderedIcon, BroadcastIcon } from '@primer/octicons-react'
 import { MovedAnchors } from '../components/moved-anchors'
+import { ScenarioGrid, ScenarioCard } from '../components/scenario-card'
 
 # Rooms
 
@@ -798,11 +799,17 @@ Force disconnection of the `client` with the room. You may send a custom `code` 
 Colyseus ships pre-built room types you can use directly or extend — Lobby and
 Queue are documented under Matchmaking, since that's the job they do:
 
-<Cards>
-    <Cards.Card title="Lobby Room — live room listing" href="/matchmaker/lobby" arrow />
-    <Cards.Card title="Queue Room — group players into matches" href="/matchmaker/queue" arrow />
-    <Cards.Card title="Relay Room — broadcast-only relay" href="/room/relay" arrow />
-</Cards>
+<ScenarioGrid>
+    <ScenarioCard icon={<RowsIcon size={18}/>} title="Lobby Room" href="/matchmaker/lobby">
+        A live listing of available rooms — the backend for a room browser UI.
+    </ScenarioCard>
+    <ScenarioCard icon={<ListOrderedIcon size={18}/>} title="Queue Room" href="/matchmaker/queue">
+        A matchmaking queue that groups players over time and spawns a match room when a group is ready.
+    </ScenarioCard>
+    <ScenarioCard icon={<BroadcastIcon size={18}/>} title="Relay Room" href="/room/relay">
+        A lightweight relay that broadcasts client messages to everyone else — no authoritative state.
+    </ScenarioCard>
+</ScenarioGrid>
 
 ## Next Steps
 

@@ -2,8 +2,10 @@
 title: "Matchmaking"
 description: "How matchmaking works in Colyseus: room visibility flags, filterBy and sortBy matchmaking filters, lobby and queue rooms, and the server-side matchMaker API."
 ---
-import { Callout, Tabs, Cards } from 'nextra/components'
+import { Callout, Tabs } from 'nextra/components'
+import { EyeClosedIcon, RowsIcon, ListOrderedIcon, ServerIcon } from '@primer/octicons-react'
 import { MovedAnchors } from '../components/moved-anchors'
+import { ScenarioGrid, ScenarioCard } from '../components/scenario-card'
 
 # Matchmaking
 
@@ -20,12 +22,20 @@ connection. See [Joining Rooms](/sdk#joining-rooms) for the client side.
 
 Which rooms are eligible, and in what order, is up to you:
 
-<Cards>
-    <Cards.Card title="Visibility & Access — locked, private, unlisted" href="/matchmaker/visibility" arrow />
-    <Cards.Card title="Lobby Room — live room listing" href="/matchmaker/lobby" arrow />
-    <Cards.Card title="Queue Room — group players into matches" href="/matchmaker/queue" arrow />
-    <Cards.Card title="Standalone Match-maker — dedicated process" href="/matchmaker/standalone" arrow />
-</Cards>
+<ScenarioGrid>
+    <ScenarioCard icon={<EyeClosedIcon size={18}/>} title="Visibility & Access" href="/matchmaker/visibility">
+        How the <code>locked</code>, <code>private</code>, and <code>unlisted</code> flags control who can find and join a room.
+    </ScenarioCard>
+    <ScenarioCard icon={<RowsIcon size={18}/>} title="Lobby Room" href="/matchmaker/lobby">
+        A live listing of available rooms — the backend for a room browser UI.
+    </ScenarioCard>
+    <ScenarioCard icon={<ListOrderedIcon size={18}/>} title="Queue Room" href="/matchmaker/queue">
+        A matchmaking queue that groups players over time and spawns a match room when a group is ready.
+    </ScenarioCard>
+    <ScenarioCard icon={<ServerIcon size={18}/>} title="Standalone Match-maker" href="/matchmaker/standalone">
+        Run matchmaking on a dedicated process, separate from your game servers.
+    </ScenarioCard>
+</ScenarioGrid>
 
 ## Matchmaking Options
 
