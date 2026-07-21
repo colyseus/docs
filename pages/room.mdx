@@ -187,7 +187,7 @@ messages = {
 
 #### Responding to a message (request/response)
 
-A message handler can **return a value** to answer a client that's waiting for a reply via [`room.request()` or `room.send(type, payload, callback)`](/sdk#requestresponse). The same handlers serve both plain (fire-and-forget) sends and requests — the return value is sent back only when the client awaited a reply, and ignored otherwise.
+A message handler can **return a value** to answer a client that's waiting for a reply via [`room.request()` or `room.send(type, payload, callback)`](/sdk/messages#requestresponse). The same handlers serve both plain (fire-and-forget) sends and requests — the return value is sent back only when the client awaited a reply, and ignored otherwise.
 
 ```ts filename="MyRoom.ts"
 messages = {
@@ -325,7 +325,7 @@ Available options are:
 </Tabs>
 
 <Callout type="info">
-    The client will receive the message in the [`onMessage()`](/sdk#receiving-messages) callback.
+    The client will receive the message in the [`onMessage()`](/sdk/messages#receiving-messages) callback.
 </Callout>
 
 ---
@@ -387,7 +387,7 @@ onCreate() {
 
 Allow the client to reconnect into the room.
 
-A reconnection may be [made manually](/sdk#manual-reconnection) (via `sdk.reconnect()`), or [automatically](/sdk#automatic-reconnection) in case of temporary network issues.
+A reconnection may be [made manually](/sdk/connection#manual-reconnection) (via `sdk.reconnect()`), or [automatically](/sdk/connection#automatic-reconnection) in case of temporary network issues.
 
 The `.allowReconnection()` method should be called on [`onDrop()`](/room/lifecycle#on-drop) OR [`onLeave()`](/room/lifecycle#on-leave) method.
 
@@ -723,7 +723,7 @@ client.send(1, { kind: "ammo"});
 ```
 
 <Callout type="info">
-    [See how to handle `onMessage` from the frontend SDK](/sdk#receiving-messages)
+    [See how to handle `onMessage` from the frontend SDK](/sdk/messages#receiving-messages)
 </Callout>
 
 ---
@@ -757,7 +757,7 @@ Force disconnection of the `client` with the room. You may send a custom `code` 
 
 
 <Callout type="info">
-    This will trigger [`room.onLeave`](/sdk#leaving-a-room) event on the frontend.
+    This will trigger [`room.onLeave`](/sdk/connection#leaving-a-room) event on the frontend.
 </Callout>
 
 #### Table of WebSocket close codes

@@ -179,7 +179,7 @@ export class MyPlugin extends RoomPlugin {
 - If the **room** defines the same message key as a plugin, the room wins — the plugin's handler is silently dropped. This is the documented escape hatch for _"use the plugin but override one message"_.
 - If **two plugins** define the same key, the framework throws at class-init time naming both plugin keys. Resolve by giving one a different key or by overriding on the room's own `messages`.
 
-The plugin's message handler keys also flow through to the SDK's `room.send(...)` / `room.onMessage(...)` for typed client-side use — see [Send and Receive Messages](/sdk#send-and-receive-messages) for the client-side view.
+The plugin's message handler keys also flow through to the SDK's `room.send(...)` / `room.onMessage(...)` for typed client-side use — see [Send and Receive Messages](/sdk/messages) for the client-side view.
 
 ## Typed access to room state
 
