@@ -257,7 +257,7 @@ The room's lifecycle events are called automatically. [`async`/`await`](https://
 
 ### On Create
 
-Called once, when the room is created by the matchmaker. `options` is the merged values specified on [Server#define()](/server/#define-room-type) with the options provided from the SDK at [`.joinOrCreate()`](/sdk#join-or-create-a-room) or [`.join()`](/sdk#join-existing-room).
+Called once, when the room is created by the matchmaker. `options` is the merged values specified on [Server#define()](/server/#define-room-type) with the options provided from the SDK at [`.joinOrCreate()`](/sdk#join-or-create-recommended) or [`.join()`](/sdk#other-join-methods).
 
 ```ts filename="MyRoom.ts"
 onCreate (options) {
@@ -367,7 +367,7 @@ async onJoin (client, options, auth?) {
 ```
 
 <Callout type="info">
-    See Client SDK on [`.joinOrCreate()`](/sdk#join-or-create-a-room) and [`.join()`](/sdk#join-existing-room).
+    See Client SDK on [`.joinOrCreate()`](/sdk#join-or-create-recommended) and [`.join()`](/sdk#other-join-methods).
 </Callout>
 
 ---
@@ -716,7 +716,7 @@ Send a message to all connected clients.
 
 Available options are:
 
-- **`except`**: a [`Client`](/room#client), or array of `Client` instances not to send the message to
+- **`except`**: a [`Client`](/room#client-instance), or array of `Client` instances not to send the message to
 - **`afterNextPatch`**: waits until next patch to broadcast the message
 
 <Tabs items={["Broadcast to all", "Broadcast except for sender", "Broadcast after state patch"]}>
