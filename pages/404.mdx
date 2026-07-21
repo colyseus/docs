@@ -45,6 +45,12 @@ import { NotFoundPage } from 'nextra-theme-docs'
             // maps the /react and /custom children and carries anchors over.
             { from: "/sdk/state-sync-callbacks", to: "/state/callbacks", replace: true },
 
+            // Unified Matchmaking section absorbed these pages. replace: true
+            // carries anchors over (heading slugs were preserved).
+            { from: "/room/visibility", to: "/matchmaker/visibility", replace: true },
+            { from: "/room/built-in/lobby", to: "/matchmaker/lobby", replace: true },
+            { from: "/room/built-in/queue", to: "/matchmaker/queue", replace: true },
+
             // before the /client catch-all, which would otherwise hijack these
             // (yielding dead paths like /sdk-prediction, /sdk/room)
             { from: "/client-prediction", to: "/netcode" },

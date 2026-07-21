@@ -1,6 +1,5 @@
 export default {
     "lifecycle": "Lifecycle Events",
-    "visibility": "Visibility & Access",
     "messages": "Message Composability",
     "timing-events": "Timing Events",
     "reconnection": "Reconnection Handling",

@@ -1,6 +1,163 @@
-import { Callout, Tabs } from 'nextra/components'
+---
+title: "Matchmaking"
+description: "How matchmaking works in Colyseus: room visibility flags, filterBy and sortBy matchmaking filters, lobby and queue rooms, and the server-side matchMaker API."
+---
+import { Callout, Tabs, Cards } from 'nextra/components'
+import { MovedAnchors } from '../components/moved-anchors'
 
-# Match-maker API
+# Matchmaking
+
+{/* "Match-making" was renamed to "Methods" in the restructure. */}
+<MovedAnchors map={{
+    "match-making": "/matchmaker#methods",
+}} />
+
+Every join call from the SDK goes through the matchmaker. It picks the room a
+client lands in — `joinOrCreate()` finds a compatible room or spawns one,
+`join()` requires one to exist, `joinById()` targets a specific room — and
+answers with a **seat reservation** the SDK consumes to establish the room
+connection. See [Joining Rooms](/sdk#joining-rooms) for the client side.
+
+Which rooms are eligible, and in what order, is up to you:
+
+<Cards>
+    <Cards.Card title="Visibility & Access — locked, private, unlisted" href="/matchmaker/visibility" arrow />
+    <Cards.Card title="Lobby Room — live room listing" href="/matchmaker/lobby" arrow />
+    <Cards.Card title="Queue Room — group players into matches" href="/matchmaker/queue" arrow />
+    <Cards.Card title="Standalone Match-maker — dedicated process" href="/matchmaker/standalone" arrow />
+</Cards>
+
+## Matchmaking Options
+
+Room types accept matchmaking options at definition time — which client
+`options` distinguish rooms from each other, and which candidate fills first.
+
+### Filter By (`.filterBy()`)
+
+Whenever a room is created by the `create()` or `joinOrCreate()` methods, only the `options` defined by the `filterBy()` method are going to be stored internally, and used to filter out rooms in further `join()` or `joinOrCreate()` calls.
+
+
+**Parameters**
+
+- `options: string[]` - a list of option names
+
+**Examples**
+
+<Tabs items={['Filter by "mode" provided by the client', 'Filter by "maxClients" server config']}>
+    <Tabs.Tab>
+    Filter match-making by `mode` option.
+
+    ```ts filename="server.ts"
+    const server = defineServer({
+      rooms: {
+        battle: defineRoom(BattleRoom).filterBy(['mode'])
+      }
+    })
+    ```
+
+    Whenever the room is created, the `mode` option is going to be stored internally.
+
+    ```js filename="client.js"
+    client.joinOrCreate("battle", { mode: "duo" }).then(room => {/* ... */});
+    ```
+
+    You can handle the provided option in the `onCreate()` and/or `onJoin()` to implement the requested feature inside your room implementation.
+
+    ```ts filename="BattleRoom.ts"
+    class BattleRoom extends Room {
+        onCreate(options) {
+            if (options.mode === "duo") {
+                // do something!
+            }
+        }
+        onJoin(client, options) {
+            if (options.mode === "duo") {
+                // put this player into a team!
+            }
+        }
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    Filter match-making by built-in `maxClients` value.
+
+    The `maxClients` is an internal variable stored for matchmaking, and can be used for filtering too.
+
+    ```ts filename="server.ts"
+    const server = defineServer({
+      rooms: {
+        battle: defineRoom(BattleRoom).filterBy(['maxClients'])
+      }
+    })
+    ```
+
+    The client can then ask to join a room capable of handling a certain number of players.
+
+    ```js filename="client.js"
+    client.joinOrCreate("battle", { maxClients: 10 }).then(room => {/* ... */});
+    client.joinOrCreate("battle", { maxClients: 20 }).then(room => {/* ... */});
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+---
+
+### Sort By (`.sortBy()`)
+
+You can also give a different priority for joining rooms depending on their information upon creation.
+
+
+The `options` parameter is a key-value object containing the field name in the left, and the sorting direction in the right. Sorting direction can be one of these values: `-1`, `"desc"`, `"descending"`, `1`, `"asc"` or `"ascending"`.
+
+**Example**
+
+<Tabs items={['Sorting by the built-in "clients"']}>
+    <Tabs.Tab>
+    The `clients` is an internal variable stored for matchmaking, which contains the current number of connected clients. On the example below, the rooms with the highest amount of clients connected will have priority. Use `-1`, `"desc"` or `"descending"` for descending order:
+
+    ```typescript
+    const server = defineServer({
+      rooms: {
+        battle: defineRoom(BattleRoom).sortBy({ clients: -1 })
+      }
+    })
+    ```
+
+    To sort by the fewest amount of players, you can do the opposite. Use `1`, `"asc"` or `"ascending"` for ascending order:
+
+    ```typescript
+    const server = defineServer({
+      rooms: {
+        battle: defineRoom(BattleRoom).sortBy({ clients: 1 })
+      }
+    })
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+
+---
+
+### Realtime Listing for Lobby
+
+To allow the `LobbyRoom` to receive updates from a specific room type, you should define them with realtime listing enabled:
+
+```typescript
+const server = defineServer({
+  rooms: {
+    battle: defineRoom(BattleRoom).enableRealtimeListing()
+  }
+})
+```
+
+<Callout type="info">
+    See [Built-in Rooms → LobbyRoom](/matchmaker/lobby) for more details.
+</Callout>
+
+---
+
+## Match-maker API
 
 The Match-maker API gives you server-side control over room management and player matchmaking in Colyseus.
 
@@ -10,11 +167,11 @@ You can programmatically create rooms, join players to existing rooms, query and
 import { matchMaker } from "colyseus";
 ```
 
-## Stats
+### Stats
 
 Colyseus internally keeps track of statistics for the matchmaker.
 
-### Fetch All
+#### Fetch All
 
 Fetch all stats from all processes.
 
@@ -35,7 +192,7 @@ console.log(stats);
 // ]
 ```
 
-### Get Global CCU
+#### Get Global CCU
 
 Get the total number of connected clients across all processes.
 
@@ -47,7 +204,7 @@ console.log(globalCCU);
 // => 190
 ```
 
-### Get Local CCU
+#### Get Local CCU
 
 Get the number of connected clients on the current process.
 
@@ -55,7 +212,7 @@ Get the number of connected clients on the current process.
 matchMaker.stats.local.ccu
 ```
 
-### Get Local Room Count
+#### Get Local Room Count
 
 Get the number of rooms on the current process.
 
@@ -63,9 +220,9 @@ Get the number of rooms on the current process.
 matchMaker.stats.local.roomCount
 ```
 
-## Match-making
+### Methods
 
-### Create a Room
+#### Create a Room
 
 Creates a new room and return its cached data.
 
@@ -87,7 +244,7 @@ console.log(room);
     The Room may be created on a different process. The `processId` to create the room is selected via `selectProcessIdToCreateRoom` method.
 </Callout>
 
-### Join or Create a Room
+#### Join or Create a Room
 
 Join or create a room and return a client seat reservation.
 
@@ -112,7 +269,7 @@ console.log(reservation);
     **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the frontend](/sdk#other-join-methods) to join the room by its reserved seat.
 </Callout>
 
-### Reserve A Seat For
+#### Reserve A Seat For
 
 Creates a seat reservation in a specific room.
 
@@ -139,7 +296,7 @@ console.log(reservation);
     **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the frontend](/sdk#other-join-methods) to join the room by its reserved seat.
 </Callout>
 
-### Join existing Room
+#### Join existing Room
 
 Join a room and return seat reservation. An exception is thrown if there are no rooms available for `roomName`.
 
@@ -164,7 +321,7 @@ console.log(reservation);
     **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the frontend](/sdk#other-join-methods) to join the room by its reserved seat.
 </Callout>
 
-### Join Room by ID
+#### Join Room by ID
 
 Join a room by ID and return client seat reservation. An exception is thrown if a room is not found for `roomId`.
 
@@ -189,7 +346,7 @@ console.log(reservation);
     **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the frontend](/sdk#other-join-methods) to join the room by its reserved seat.
 </Callout>
 
-### Create and Reserve a Seat
+#### Create and Reserve a Seat
 
 Create a new room and return client seat reservation.
 
@@ -214,7 +371,7 @@ console.log(reservation);
     **Consuming the seat reservation** - You can use [`consumeSeatReservation()` from the frontend](/sdk#other-join-methods) to join the room by its reserved seat.
 </Callout>
 
-### Search for Rooms
+#### Search for Rooms
 
 Perform a query against cached rooms.
 
@@ -251,9 +408,9 @@ Perform a query against cached rooms.
     </Tabs.Tab>
 </Tabs>
 
-### Find One Room Available
+#### Find One Room Available
 
-Find an available room the same way `join()`/`joinOrCreate()` do: rooms flagged [`locked` or `private`](/room/visibility#matchmaking-properties) are skipped (`unlisted` rooms still match).
+Find an available room the same way `join()`/`joinOrCreate()` do: rooms flagged [`locked` or `private`](/matchmaker/visibility#matchmaking-properties) are skipped (`unlisted` rooms still match).
 
 
 **Parameters:**
@@ -269,7 +426,7 @@ console.log(room);
 */
 ```
 
-### Get Room by ID
+#### Get Room by ID
 
 Get room data by ID. This method will return the cached room data. It is safe to call from any process.
 
@@ -286,7 +443,7 @@ console.log(room);
 */
 ```
 
-### Get Local Room by ID
+#### Get Local Room by ID
 
 Get the actual Room instance by ID. This method only returns the room instance if it's available in the current process, otherwise it will return `undefined`.
 
@@ -300,7 +457,7 @@ const room = await matchMaker.getLocalRoomById("xxxxxxxxx");
 room.clients[0].send("hello", "world");
 ```
 
-### Batch Lookup by Room Id
+#### Batch Lookup by Room Id
 
 Resolve a set of known roomIds in a single backend round trip. Use this when you already have a list of roomIds (for example, from a reverse-index lookup) and want their current matchmaker records — it's bounded at one wire op for any `K`, where `query()` would scan the whole room cache.
 
@@ -321,7 +478,7 @@ console.log(rooms);
 
 Missing roomIds are absent from the returned `Map`. Prefer this over `matchMaker.query({})` whenever you know the exact roomIds — the cost stays the same as your cluster grows.
 
-### Remote Room Call
+#### Remote Room Call
 
 Call a method or return a property on a remote room.
 
@@ -339,7 +496,7 @@ await matchMaker.remoteRoomCall("xxxxxxxxx", "lock");
 
 ---
 
-## Restricting the frontend from creating rooms
+### Restricting the frontend from creating rooms
 
 You can restrict the frontend to be allowed only to call specific matchmaking methods.
 
@@ -359,4 +516,3 @@ Possible values for `exposedMethods` are:
 - `'joinById'`
 - `'joinOrCreate'`
 - `'reconnect'`
-

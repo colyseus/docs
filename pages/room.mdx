@@ -6,10 +6,10 @@ import { MovedAnchors } from '../components/moved-anchors'
 
 {/* Lifecycle and visibility moved to child pages; keep old deep links working. */}
 <MovedAnchors map={{
-    "matchmaking-properties": "/room/visibility#matchmaking-properties",
-    "setmatchmakingupdates": "/room/visibility#setmatchmakingupdates",
-    "lock-room": "/room/visibility#lock-room",
-    "unlock-room": "/room/visibility#unlock-room",
+    "matchmaking-properties": "/matchmaker/visibility#matchmaking-properties",
+    "setmatchmakingupdates": "/matchmaker/visibility#setmatchmakingupdates",
+    "lock-room": "/matchmaker/visibility#lock-room",
+    "unlock-room": "/matchmaker/visibility#unlock-room",
     "on-create": "/room/lifecycle#on-create",
     "on-auth": "/room/lifecycle#on-auth",
     "on-join": "/room/lifecycle#on-join",
@@ -250,7 +250,7 @@ update (deltaTime) {
 
 Three flags — `locked`, `private`, and `unlisted` — control who can find and
 join a room, alongside `lock()`, `unlock()`, and `setMatchmaking()`. See
-**[Room Visibility & Access](/room/visibility)** for the full reference.
+**[Room Visibility & Access](/matchmaker/visibility)** for the full reference.
 
 ---
 
@@ -525,7 +525,7 @@ onCreate(options) {
 ```
 
 <Callout type="warning">
-    The `metadata` setter can only be used during `onCreate()`. To update metadata after the room is created, use [`setMetadata()`](/room/visibility#matchmaking-properties) or [`setMatchmaking()`](/room/visibility#matchmaking-properties) instead.
+    The `metadata` setter can only be used during `onCreate()`. To update metadata after the room is created, use [`setMetadata()`](/matchmaker/visibility#matchmaking-properties) or [`setMatchmaking()`](/matchmaker/visibility#matchmaking-properties) instead.
 </Callout>
 
 ---

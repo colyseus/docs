@@ -96,10 +96,10 @@ Only components that read `players` will re-render when the players map changes.
 #### `useLobbyRoom(callback, deps?)`
 
 <Callout type="info">
-  This hook is designed to connect to a Colyseus [Lobby Room](/room/built-in/lobby) and manage the list of available rooms. If you're connecting to a regular game room, use `useRoom()` instead.
+  This hook is designed to connect to a Colyseus [Lobby Room](/matchmaker/lobby) and manage the list of available rooms. If you're connecting to a regular game room, use `useRoom()` instead.
 </Callout>
 
-Connects to a [Lobby Room](/room/built-in/lobby) and provides a live-updating list of available rooms. The list is automatically maintained as rooms are created, updated, and removed.
+Connects to a [Lobby Room](/matchmaker/lobby) and provides a live-updating list of available rooms. The list is automatically maintained as rooms are created, updated, and removed.
 
 ```tsx
 import { Client } from "@colyseus/sdk";
@@ -139,10 +139,10 @@ function Lobby() {
 #### `useQueueRoom(connect, consume, deps?)`
 
 <Callout type="info">
-  This hook is designed to manage the full lifecycle of a [Queue Room](/room/built-in/queue): connecting to the queue room, tracking group size, receiving a seat reservation, confirming, and consuming the seat to join the match room. If you're connecting to a regular game room, use `useRoom()` instead.
+  This hook is designed to manage the full lifecycle of a [Queue Room](/matchmaker/queue): connecting to the queue room, tracking group size, receiving a seat reservation, confirming, and consuming the seat to join the match room. If you're connecting to a regular game room, use `useRoom()` instead.
 </Callout>
 
-Manages the full lifecycle of a [Queue Room](/room/built-in/queue): connecting to the queue room, tracking group size, receiving a seat reservation, confirming, and consuming the seat to join the match room. Cleans up both rooms on unmount.
+Manages the full lifecycle of a [Queue Room](/matchmaker/queue): connecting to the queue room, tracking group size, receiving a seat reservation, confirming, and consuming the seat to join the match room. Cleans up both rooms on unmount.
 
 ```tsx
 import { Client } from "@colyseus/sdk";
