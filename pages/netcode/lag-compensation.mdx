@@ -6,7 +6,9 @@ import { Callout } from 'nextra/components'
 
 # Lag Compensation
 
-A shooter sees remote targets **interpolated in the past** (the `delay` of their interp buffer) and **delayed by the network** (≈ `rtt/2`). To honor a well-aimed shot, the server **rewinds** each target to the moment the shooter saw it — "what you see is what you hit." This is the server-side dual of [client prediction](/netcode/client-prediction): where the client forward-predicts entities it *receives*, the server rewinds entities it *owns*.
+When you aim at another player, you're aiming at the past. The target on your screen is delayed by the network (≈ `rtt/2`) and rendered further behind on purpose (the `delay` of your interp buffer). If the server judged shots against where targets are *now*, every player would have to lead moving targets by their own latency. Lag compensation removes that burden: the server **rewinds** each target to the moment the shooter saw it, then runs the hit test — "what you see is what you hit."
+
+It's the server-side dual of [client prediction](/netcode/client-prediction): where the client forward-predicts entities it *receives*, the server rewinds entities it *owns*.
 
 <Callout type="info">
     **Available in Colyseus 0.18+.** `allowRewindState()` / `Rewind` / `RewindView` are from `@colyseus/core`.
@@ -14,9 +16,11 @@ A shooter sees remote targets **interpolated in the past** (the `delay` of their
 
 ## Two pieces
 
+Enabling it takes a stamp on the client's inputs and a rewind on the server — and the first one is automatic.
+
 ### Client — the render-time stamp
 
-Each input carries a timestamp telling the server *when* the client's view of the world was. This is automatic: once the room enables rewind, the SDK stamps every input, and wiring the handle through `predict.reconciler` / `predict.sim` binds the stamp's interp-buffer term to the `Predict` lerp `delay` — the buffer you render at and the instant the server rewinds to come from **one number** and can't drift apart.
+Each input carries a timestamp telling the server *when* the client's view of the world was. Once the room enables rewind, the SDK stamps every input on its own; and wiring the handle through `predict.reconciler` / `predict.sim` binds the stamp's interp-buffer term to the `Predict` lerp `delay` — the buffer you render at and the instant the server rewinds to come from **one number** and can't drift apart.
 
 ```ts
 const predict = Predict.get(room, { mode: "lerp", delay: 100 });
@@ -82,7 +86,7 @@ Options:
 
 Returns a [`RewindView`](#rewindview) of the world as that client last saw it. It resolves the client's stamped render time, **clamps** it to `[now − maxRewindMs, now]` (anti-spoof / clock-skew bound), and **falls back to the live position** when the client hasn't synced yet.
 
-A client that merely hasn't stamped yet (clock still syncing, or unknown `sessionId`) is **not** an error — it reads live. `lastSeenBy` does require the framework input API (`defineInput`); if you stamp render times yourself, use `rewind.at(time)` and supply the time.
+A client that merely hasn't stamped yet (clock still syncing, or an unknown `sessionId`) is **not** an error — the view just reads live. `lastSeenBy` does require the framework input API (`defineInput`); if you stamp render times yourself, use `rewind.at(time)` and supply the time.
 
 ### `RewindView`
 
@@ -107,7 +111,7 @@ seen.read(enemy, ENEMY_POS, this.seenScratch);   // zero-alloc: fills + returns 
 
 ## Snapshot vs reckon
 
-The rewind **timeline** must match how the **client displays** the target — "what you see is what you hit". Declare it per attach group with `mode`:
+The rewind **timeline** must match how the **client displays** the target — that's the "what you see" half of "what you see is what you hit". Declare it per attach group with `mode`:
 
 - **`"snapshot"`** (default) — rewind to the client's `renderTime`, for targets it shows **interpolated** (`Predict` `lerp`/`damped`), behind real time by its interp buffer + `rtt/2`.
 - **`"reckon"`** — rewind to the client's `reckonTime` (≈ its `serverNow`), for targets it **forward-extrapolates** (`Predict` `reckon`). Rewinding a forward-reckoned target to the raw snapshot stamp would double-compensate.
@@ -130,7 +134,7 @@ The real rewind distance is roughly `renderDelay + RTT + one tick`. If `maxRewin
 
 ## Predicting the verdict client-side
 
-The shooter's *own* step can pre-judge the hit with the same timeline the server will use: `ctx.reckonTime` is the same value the server reads for that input, and `predict.valueAt(target, field, ctx.reckonTime)` samples the target where the rewind will place it — or batch the pose with `predict.readAt(target, fields, ctx.reckonTime)`, which runs one reckon integration per target instead of one per field. Pair it with an [optimistic event](/netcode/client-prediction#optimistic-events-defineevent) for instant feedback that auto-rejects if the server disagrees.
+The shooter's *own* step can pre-judge the hit with the same timeline the server will use. `ctx.reckonTime` is the same value the server reads for that input, and `predict.valueAt(target, field, ctx.reckonTime)` samples the target where the rewind will place it — so your client-side verdict matches the server's by construction. Batch the pose with `predict.readAt(target, fields, ctx.reckonTime)` to run one reckon integration per target instead of one per field. Pair it with an [optimistic event](/netcode/client-prediction#optimistic-events-defineevent) for instant feedback that auto-rejects if the server disagrees.
 
 `ctx.reckonTime` is **always a usable instant** — a seq that wasn't stamped (the room doesn't rewind, the clock is still syncing) resolves to the live `serverNow()` automatically, mirroring the server side, where `channel.reckonTime` resolves unstamped reads to the room clock. There is no fallback to hand-write on either end. The rare consumer that needs the distinction — "was this seq actually stamped for lag comp?" — reads `ctx.lagCompActive`.
 

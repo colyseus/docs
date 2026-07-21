@@ -7,7 +7,9 @@ import { ServerIcon, DevicesIcon, GoalIcon, ChecklistIcon, BeakerIcon } from '@p
 
 # Netcode
 
-Colyseus 0.18 ships first-class primitives for **server-authoritative simulation with client-side prediction**: zero-latency local control, smooth remote entities, and "what you see is what you hit" lag-compensated hits — without hand-rolling a netcode stack.
+Fast-paced games can't wait for the network. If your character only moves after a round-trip to the server, controls feel underwater — but if the client simply moves itself, the server is no longer in charge and cheating becomes trivial.
+
+Colyseus 0.18 gives you both: the server stays authoritative, and the client **predicts**. Your own movement responds instantly, remote players move smoothly, and a well-aimed shot at a moving target actually lands — no hand-rolled netcode stack required.
 
 <Callout type="info">
     **Available in Colyseus 0.18+.** These APIs (`room.input()`, `Predict`, `defineInput()`, `setFixedTimestep()`, `allowRewindState()`) are new in 0.18 and have no equivalent in earlier versions.
@@ -18,7 +20,7 @@ Colyseus 0.18 ships first-class primitives for **server-authoritative simulation
 The stack is one loop split across the server and the client. Each half is configured independently, but they only make sense together:
 
 - The **server** runs the authoritative simulation at a **fixed tick rate**.
-- The **client predicts** its own entity locally from the same step function, then **reconciles** to the server's authoritative state — rollback and replay of unacknowledged inputs, smoothly correcting any mismatch.
+- The **client predicts** its own entity by running the same step function locally. When the server's authoritative state arrives, it **reconciles**: roll back, replay the inputs the server hasn't processed yet, and smoothly correct any mismatch.
 - **Remote** entities are smoothed from the server stream (interpolated a little in the past, or dead-reckoned forward).
 - For hits, the server **rewinds** other entities to where the shooter *saw* them (their render time), so a well-aimed shot at a moving target registers.
 
@@ -39,6 +41,8 @@ The stack is one loop split across the server and the client. Each half is confi
 
 ## Which primitive for which interaction?
 
+Every interaction in your game maps onto a small set of primitives. Find the row that matches, then jump to the page that documents it:
+
 | Interaction | Primitive | Page |
 |---|---|---|
 | Your own movement (one entity, flat fields) | `predict.reconciler` | [Client Prediction](/netcode/client-prediction) |
@@ -52,6 +56,8 @@ The stack is one loop split across the server and the client. Each half is confi
 
 ## Read in order
 
+New to prediction? Read top to bottom — each page builds on the one before it:
+
 <Cards>
   <Cards.Card icon={<ServerIcon />} title="Server Input & Timestep" href="/netcode/server-input" />
   <Cards.Card icon={<DevicesIcon />} title="Client Prediction" href="/netcode/client-prediction" />
@@ -62,7 +68,7 @@ The stack is one loop split across the server and the client. Each half is confi
 
 ## Runnable reference
 
-The [**Prediction Playground**](https://github.com/colyseus/prediction-playground) is an interactive tour of this whole section: eleven small labs, each isolating one concept — rollback and reconciliation, the interpolation modes, dead reckoning, lag compensation, optimistic events, predicted spawns, composite worlds — with a live latency slider and visualizations of what the SDK is doing (server ghosts, pending-input chips, rewind markers). Every lab displays the exact SDK-facing code it runs.
+Prefer to learn by poking at something live? The [**Prediction Playground**](https://github.com/colyseus/prediction-playground) is an interactive tour of this whole section: eleven small labs, each isolating one concept — rollback and reconciliation, the interpolation modes, dead reckoning, lag compensation, optimistic events, predicted spawns, composite worlds. Every lab has a live latency slider, visualizations of what the SDK is doing (server ghosts, pending-input chips, rewind markers), and shows the exact SDK-facing code it runs.
 
 <Callout type="info">
     Coming from the manual approach? The [Phaser tutorial](/learn/tutorial/phaser/linear-interpolation) builds prediction, interpolation, and a fixed tick rate **by hand** to teach the concepts. This section documents the built-in 0.18 API that does the same work for you.

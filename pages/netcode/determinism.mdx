@@ -6,7 +6,7 @@ import { Callout } from 'nextra/components'
 
 # Determinism & The Contract
 
-Client prediction only matches the server if **both run the same simulation**. This page collects the rules that are easy to miss and the symptoms you'll see when one is broken. Read it alongside [Client Prediction](/netcode/client-prediction) and [Server Input](/netcode/server-input).
+Client prediction only matches the server if **both run the same simulation**. None of the rules below is hard to follow, but each is easy to break by accident — and the resulting bugs look mysterious: rubber-banding, re-firing sounds, hits that don't land. This page collects the rules and the symptom each break produces. Read it alongside [Client Prediction](/netcode/client-prediction) and [Server Input](/netcode/server-input).
 
 <Callout type="info">
     **Available in Colyseus 0.18+.**
@@ -64,7 +64,7 @@ Divergence shows up as **constant small corrections** (rubber-banding) even on a
 
 ### Diagnosing divergence vs jitter
 
-You don't have to guess from feel — every `reconciler`/`sim` controller keeps rolling drift telemetry (fed once per reconcile, not per frame) that separates the two:
+You don't have to guess from feel. Every `reconciler`/`sim` controller keeps rolling drift telemetry (fed once per reconcile, not per frame) that separates the two:
 
 - **`me.drift.ema`** — EMA of the correction magnitude: the **persistent** component. Steadily above ~0 means the two simulations genuinely disagree — divergence.
 - **`me.drift.peak`** — a decaying max: **recent spikes**. A high `peak` over a near-zero `ema` is network jitter (loss / reorder), not a bug; smoothing absorbs it.
@@ -80,7 +80,7 @@ The dev panel (`import "@colyseus/sdk/debug"`) classifies through the **same rul
 
 ### A determinism check
 
-To confirm your `step` is deterministic in isolation, run the same input sequence through it twice from the same starting state and assert the outputs are bit-identical:
+Suspect your `step` itself? Test it in isolation: run the same input sequence through it twice from the same starting state and assert the outputs are bit-identical:
 
 ```ts
 function isDeterministic(start, inputs, dt) {
