@@ -65,10 +65,15 @@ import { NotFoundPage } from 'nextra-theme-docs'
             { from: "/deployment/cloud", to: "/cloud" },
             { from: "/deployment/scalability", to: "/scalability" },
 
-            { from: "/recommendations/3rd-party-packages", to: "/tools/3rd-party-packages" },
-            { from: "/recommendations/command-pattern", to: "/best-practices/command-pattern" },
+            { from: "/recommendations/3rd-party-packages", to: "/3rd-party-packages" },
+            { from: "/recommendations/command-pattern", to: "/recipes/command-pattern" },
 
-            { from: "/recommendations", to: "/best-practices" },
+            // Best Practices merged into Recipes & Guides. Keep the
+            // command-pattern entry above the bare /best-practices one —
+            // matching is includes() + first-hit.
+            { from: "/best-practices/command-pattern", to: "/recipes/command-pattern" },
+            { from: "/best-practices", to: "/recipes" },
+            { from: "/recommendations", to: "/recipes" },
 
             { from: "/prediction", to: "/netcode" },
             { from: "/client-prediction", to: "/netcode" },

@@ -41,8 +41,7 @@ export default {
     "cloud": { title: <span><CloudIcon/> Colyseus Cloud</span> },
 
     '-- Resources': { type: 'separator', title: 'Resources' },
-    "best-practices": { title: <span><ThumbsupIcon/> Best Practices</span> },
-    "recipes": { title: <span><LightBulbIcon /> Recipes</span> },
+    "recipes": { title: <span><LightBulbIcon /> Recipes & Guides</span> },
     "faq": {title: <span><QuestionIcon/> FAQ</span>},
     "migrating": { title: <span><VersionsIcon/> Migrating Versions</span> }, // "Migrating Versions"
     "community": { title: <span><HeartFillIcon/> Community</span> },

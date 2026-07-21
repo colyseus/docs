@@ -1,4 +1,5 @@
 export default {
+    "command-pattern": "The Command Pattern",
     "custom-room-id": "Custom Room ID",
     "deny-player-join-a-room": "Deny a Player Joining a Room",
     "password-protect-room": "Password Protect Room",
