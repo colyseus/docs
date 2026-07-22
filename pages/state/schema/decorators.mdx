@@ -165,8 +165,8 @@ See [Versioning](/state/schema#versioning-and-backwardsforwards-compability) for
 
 ## Legacy: `defineTypes()`
 
-<Callout type="error">
-    The `defineTypes()` method was **removed** in Colyseus 0.18 (schema 5) — this legacy example no longer runs and is kept only to help you recognize old code. Migrate to [`schema()` with `t.*` builders](/state/schema).
+<Callout type="warning">
+    `defineTypes()` is **deprecated** — it still works, but logs a deprecation warning at runtime and in `schema-codegen`. Migrate to [`schema()` with `t.*` builders](/state/schema). (It was briefly removed in early schema 5 releases, 5.0.0–5.0.8 — update `@colyseus/schema` if you hit a missing-export error.)
 </Callout>
 
 ```js filename="MyState.js"
@@ -178,5 +178,7 @@ defineTypes(MyState, {
     currentTurn: "string",
 });
 ```
+
+`defineTypes()` delegates to the same pipeline as the `@type()` decorator, so unlike `schema()` it still accepts raw type strings (`"string"`, `"number"`) as field values.
 
 See the [0.18 migration guide](/migrating/0.18) for upgrade steps.
