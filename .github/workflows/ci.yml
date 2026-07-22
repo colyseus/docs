@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # reads the pinned pnpm version from package.json's "packageManager"
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # validates every internal link and anchor, plus the 404.mdx redirect map
+      - run: pnpm run check-links
+
+      # `next build` occasionally fails page-data collection on a random page
+      # and passes on retry — retry once before calling it a real failure
+      - run: pnpm run build || pnpm run build
