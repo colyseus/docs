@@ -34,7 +34,7 @@ The stack is one loop split across the server and the client. Each half is confi
   │ (reconciler / sim) │                       │   step(ctx) @ tickRate│
   │                    │ ◀── state patch + ack ─ broadcast + lastProc. │
   │ reconcile (replay) │                       │ allowRewindState()    │
-  │ smooth remotes     │                       │   record() each tick  │
+  │ smooth remotes     │                       │   record()/broadcast  │
   │ (Predict lerp)     │ ── renderTime stamp ──▶ rewind.lastSeenBy()   │
   └────────────────────┘                       └──────────────────────┘
 ```

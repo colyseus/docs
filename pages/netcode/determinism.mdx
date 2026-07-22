@@ -29,7 +29,7 @@ These are load-bearing — break one and prediction drifts or hits stop register
 </Callout>
 
 <Callout type="warning">
-    **One-shot effects never go raw inside `step`.** A step replays 0..N times during rollback. Use `ctx.predict` for events (a sound, a celebration — fires on the live step only) and `ctx.memo` for values replay can't re-derive (an RNG roll, a lag-comp'd collision). Branching on `ctx.isReplay` by hand is the fallback, not the idiom.
+    **One-shot effects never go raw inside `step`.** A step replays 0..N times during rollback. Use `ctx.predict` for events (a sound, a celebration — fires on the live step only) and `ctx.memo` for values replay can't re-derive (an RNG roll, a lag-comp'd collision). For fire-and-forget presentation (particles, camera shake), a plain `if (!ctx.isReplay)` branch is itself the idiom.
 </Callout>
 
 <Callout type="warning">
@@ -76,7 +76,7 @@ Set **`warnOnDivergence`** (a tolerance in world units) on the controller to get
 const me = predict.reconciler(self, { input, step, warnOnDivergence: 0.05 });
 ```
 
-The dev panel (`import "@colyseus/sdk/debug"`) classifies through the **same rule** and shows a per-controller verdict — **✓ matched** (both ~0), **~ jitter** (spikes that decay out), **✗ diverging** (persistent `ema`) — so the panel and the warning can never disagree about what the numbers mean. A hard resync (a respawn absorbed by `snap`, or `me.reset()`) zeroes the telemetry, so a deliberate pose jump doesn't read as divergence.
+The dev panel (`import "@colyseus/sdk/debug"`) classifies through the **same rule** and shows a per-controller verdict — **✓ matched** (both ~0), **~ jitter** (spikes that decay out), **✗ diverging** (persistent `ema`) — so the panel and the warning can never disagree about what the numbers mean. `me.reset()` zeroes the telemetry, and a `snap`-absorbed correction is excluded from it — so a deliberate pose jump doesn't read as divergence.
 
 ### A determinism check
 

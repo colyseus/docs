@@ -25,7 +25,7 @@ class GameRoom extends Room<{ input: MoveInput }> {
   // Per-client input schema (flat primitives only), buffered per session.
   inputs = this.defineInput(MoveInput, { bufferMaxSize: 64 });
 
-  // Records attached entities' positions per tick (auto, after each step).
+  // Records attached entities' positions (auto, on each broadcast).
   rewind = this.allowRewindState({ maxRewindMs: 500 });
 
   onCreate() {
@@ -61,7 +61,7 @@ Options and their defaults:
 Inputs are **flat schemas — primitives only**. No nested schemas or collections in an input. Use `int8`/`uint8`/`float32` etc. and refine the legal set with generics (`t.int8<-1 | 0 | 1>()`):
 
 ```ts filename="shared/MoveInput.ts"
-import { schema, type as t } from "@colyseus/schema";
+import { schema, t, type SchemaType } from "@colyseus/schema";
 
 export const MoveInput = schema({
   moveX: t.int8<-1 | 0 | 1>(),
@@ -69,6 +69,9 @@ export const MoveInput = schema({
   jump:  t.boolean(),
   yaw:   t.float32(),
 });
+
+// schema() returns a value — derive the TS type for Room<{ input: ... }>:
+export type MoveInput = SchemaType<typeof MoveInput>;
 ```
 
 <Callout type="info">
@@ -138,7 +141,7 @@ What should happen on a tick where a client sent nothing? Pick one of three poli
     bufferMaxSize: 64,
     idle: ({ latest, sessionId }) => {
       const p = this.state.players.get(sessionId);
-      if (!p) return true;                                // skip absent
+      if (!p) return true;                    // defaults frame for the empty seat
       return { yaw: p.yaw, jump: false };                 // defaults ⊕ overrides
     },
   });
@@ -148,7 +151,7 @@ What should happen on a tick where a client sent nothing? Pick one of three poli
 
   ```ts
   idle: ({ latest, sessionId }) =>
-    (this.clients.getById(sessionId)?.state === ClientState.JOINED && latest) || true,
+    (this.clients.get(sessionId)?.state === ClientState.JOINED && latest) || true,
   ```
 
 The policy also covers **absent sessions**. A player who dropped but is still inside their `allowReconnection` window lingers in `state` — and the input accessor resolves through a registry that outlives the connection, so your loop keeps synthesizing idle frames for the empty seat. No `if (!cmd) continue` needed.

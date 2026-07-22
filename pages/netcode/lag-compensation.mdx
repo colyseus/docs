@@ -80,7 +80,7 @@ Options:
 - **`fields`** — the numeric fields to record (an array, or a per-entity function). Fields a type doesn't declare are skipped and read live.
 - **`interpolate`** — `"linear"` (default, continuous motion) or `"step"` (hold the last sample — discrete motion like teleports, where a lerp would smear across the jump). May be a per-entity function.
 - **`mode`** — the rewind **timeline** (see [snapshot vs reckon](#snapshot-vs-reckon)).
-- **`maxRewindMs`** — per-attach override of the default window.
+- **`maxRewindMs`** — per-attach history-ring size for this group. The anti-spoof rewind clamp always uses the room-level `allowRewindState({ maxRewindMs })` default — a larger per-attach window does not extend how far a view rewinds.
 
 ## `rewind.lastSeenBy(sessionId)`
 

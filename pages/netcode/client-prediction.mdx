@@ -88,7 +88,7 @@ The handle also surfaces the server-advertised rates from the handshake — `inp
 
 ## `Predict.get(room, options)`
 
-The entry point for all client-side smoothing and prediction. One instance per room (idempotent):
+The entry point for all client-side smoothing and prediction. Create one per room and share the instance — each `Predict.get` call constructs a fresh, independent `Predict`:
 
 ```ts
 const predict = Predict.get(room, { mode: "lerp", delay: 100 });
@@ -191,7 +191,7 @@ const me = predict.sim({
 Three reads, split by purpose:
 
 - **Rendering** — `predict.value(instance, field)`, the smoothed render read. One idiom for everything: passively-smoothed remotes, your reconciled entity, sim-bound instances. Falls back to the raw synced value before spawn / after dispose. The batch form `predict.read(instance, fields, out?)` reads every listed field into one object — the client mirror of the server's [`seen.read`](/netcode/lag-compensation#rewindview). On per-frame paths, pass a reused scratch and hoist the `fields` array; extra scratch properties are left untouched.
-- **Game logic** — `me.state` (reconciler) / `me.world` (sim), the exact predicted state with no smoothing offset. A hit test against the smoothed render value would lag the truth by the correction offset. (`predict.valueAt(instance, field, room.clock.serverNow())` is the same offset-free read through the instance.)
+- **Game logic** — `me.state` (reconciler) / `me.world` (sim), the exact predicted state with no smoothing offset. A hit test against the smoothed render value would lag the truth by the correction offset.
 - **A moment in time** — `predict.valueAt(instance, field, time)`, a remote entity reckoned at an arbitrary server-time instant. Sample remotes at `ctx.reckonTime` inside your step and your client-side hit verdict matches the server's lag-comp rewind by construction — see [Lag Compensation](/netcode/lag-compensation). The batch form `predict.readAt(instance, fields, time, out?)` runs one forward reckon integration per entity instead of one per field.
 
 ## Optimistic events: `defineEvent`
