@@ -36,23 +36,22 @@ When a client loses connection unexpectedly (e.g., network switch, temporary con
 6. **If reconnection fails/times out** → `onLeave()` is triggered on both sides
 
 ```mermaid
-sequenceDiagram
-    participant Client
-    participant Server
-    Note over Client,Server: ❌ Connection lost (network issue)
-    Client->>Client: onDrop(code, reason)
-    Server->>Server: onDrop(client, code)
-    Server->>Server: allowReconnection(client, 30)
-    loop Auto-retry with exponential backoff
-        Client--)Server: reconnect attempt
-    end
-    alt Reconnection succeeds
-        Client->>Client: onReconnect()<br/>enqueued messages sent
-        Server->>Server: onReconnect(client)<br/>client restored
-    else Fails or times out
-        Client->>Client: onLeave(code, reason)
-        Server->>Server: onLeave(client, code)
-    end
+flowchart TD
+    lost(["❌ Connection lost<br/>(any non-consented close)"])
+    drop["<b>onDrop</b> fires on both sides<br/>client: show reconnecting UI<br/>server: allowReconnection(client, 30)"]
+    retry{"SDK auto-retries with<br/>exponential backoff"}
+    ok["<b>onReconnect</b> fires on both sides<br/>state reconciles, queued messages flush"]
+    gone["<b>onLeave</b> fires on both sides<br/>client receives FAILED_TO_RECONNECT (4003)"]
+
+    lost --> drop
+    drop --> retry
+    retry -->|"reconnected in time"| ok
+    retry -->|"fails or times out"| gone
+
+    classDef good stroke:#22c55e,stroke-width:2px
+    classDef bad stroke:#ef4444,stroke-width:2px
+    class ok good
+    class gone bad
 ```
 
 ---
