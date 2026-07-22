@@ -243,7 +243,7 @@ onReconnect (client) {
 
 Triggered when a client effectively leaves the room.
 
-- If `onDrop` is defined: `onLeave` is called only for consented disconnections (client called `.leave()`).
+- If `onDrop` is defined: `onLeave` is called for consented disconnections (client called `.leave()`), and also after a drop once reconnection fails, times out, or was not allowed.
 - If `onDrop` is not defined: `onLeave` is called for both consented and non-consented disconnections.
 
 **Parameters:**

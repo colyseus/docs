@@ -98,16 +98,11 @@ class MyRoom extends Room {
 }
 ```
 
-**When `onDrop()` is called:**
-- `CloseCode.ABNORMAL_CLOSURE` (1006) — Connection closed unexpectedly
-- `CloseCode.GOING_AWAY` (1001) — Browser/tab closed without consent
-- `CloseCode.NO_STATUS_RECEIVED` (1005) — No close status received
-- `CloseCode.MAY_TRY_RECONNECT` (4010) — Server shutdown in dev mode
+**When `onDrop()` is called:** every non-consented disconnection — abnormal closures (1006), browser/tab closed (1001), no close status (1005), dev-mode restarts (4010), server errors (4002), and custom close codes alike.
 
 **When `onDrop()` is NOT called (goes directly to `onLeave()`):**
 - `CloseCode.CONSENTED` (4000) — Client called `room.leave()` with consent
-- `CloseCode.SERVER_SHUTDOWN` (4001) — Server graceful shutdown (production)
-- Other custom close codes
+- A reconnection already in progress was denied or failed
 
 ### `onReconnect(client)`
 
@@ -269,7 +264,7 @@ room.onLeave((code, reason) => {
 ### Complete Client Example
 
 ```typescript
-import { Client, CloseCode } from "colyseus.js";
+import { Client, CloseCode } from "@colyseus/sdk";
 
 const client = new Client("ws://localhost:2567");
 

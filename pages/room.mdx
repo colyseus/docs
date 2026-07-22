@@ -87,7 +87,7 @@ You can define a Room using a class that extends `Room`.
         state = new MyState();
 
         onCreate(options: MyMetadata) {
-            this.metadata.difficulty  = options.difficulty;
+            this.metadata = { difficulty: options.difficulty, rating: options.rating };
         }
 
         onJoin(client: Client, options: any) {
@@ -167,7 +167,7 @@ messages = {
 
 #### Message input validation
 
-You may provide a validation schema using the `validate()` helper with a Zod schema. If validation fails, the message will be ignored.
+You may provide a validation schema using the `validate()` helper with a Zod schema. If validation fails, the client is disconnected with close code `4002` (`WITH_ERROR`) — or, for a request, the request settles as an error.
 
 The validated and typed data will be passed as `payload` on the message handler.
 
@@ -462,7 +462,7 @@ The `.allowReconnection()` method should be called on [`onDrop()`](/room/lifecyc
     }
 
     onReconnect(client: Client) {
-        if (client.userData.reconnection) {
+        if (client.userData.reconnectionInterval) {
             // clear the interval after successful reconnection.
             // not doing so may lead to dangling intervals.
             client.userData.reconnectionInterval.clear();
@@ -555,7 +555,7 @@ this.clients.forEach((client) => {
 
 ```ts filename="MyRoom.ts"
 // ...
-const client = this.clients.getById("UEsBFUBhK");
+const client = this.clients.get("UEsBFUBhK");
 // ...
 ```
 
@@ -648,7 +648,7 @@ onJoin(client, options) {
   client.userData = { team: (this.clients.length % 2 === 0) ? "red" : "blue" };
 }
 onLeave(client)  {
-  console.log(client.userData.playerNumber);
+  console.log(client.userData.team);
 }
 // ...
 ```
@@ -660,7 +660,7 @@ onLeave(client)  {
 The `client.auth` property holds the data returned by the [`onAuth()`](/room/lifecycle#on-auth) method.
 
 ```ts filename="MyRoom.ts"
-onAuth(token, request) {
+onAuth(client, options, context) {
     return { userId: "123" };
 }
 
@@ -746,19 +746,19 @@ This is useful if you'd like to manually encode a message, rather than the defau
 //
 // sending message of string type ("powerup")
 //
-client.sendBytes("powerup", [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
+client.sendBytes("powerup", new Uint8Array([ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]));
 
 //
 // sending message of number type (1)
 //
-client.sendBytes(1, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
+client.sendBytes(1, new Uint8Array([ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]));
 ```
 
 ---
 
 #### Leave Room
 
-Force disconnection of the `client` with the room. You may send a custom `code` when closing the connection, with values between `4000` and `4999` (see [table of WebSocket close codes](#table-of-websocket-close-codes))
+Force disconnection of the `client` with the room. You may send a custom `code` when closing the connection, with values between `4011` and `4999` (codes `4000`–`4010` are reserved by the framework) (see [table of WebSocket close codes](#table-of-websocket-close-codes))
 
 
 <Callout type="info">
@@ -770,16 +770,16 @@ Force disconnection of the `client` with the room. You may send a custom `code` 
 | Close code (uint16) | Codename               | Internal | Customizable | Description |
 |---------------------|------------------------|----------|--------------|-------------|
 | `0` - `999`             |                        | Yes      | No           | Unused |
-| `1000`                | `CLOSE_NORMAL`         | No       | No           | Successful operation / regular socket shutdown |
-| `1001`                | `CLOSE_GOING_AWAY`     | No       | No           | Client is leaving (browser tab closing) |
-| `1002`                | `CLOSE_PROTOCOL_ERROR` | Yes      | No           | Endpoint received a malformed frame |
-| `1003`                | `CLOSE_UNSUPPORTED`    | Yes      | No           | Endpoint received an unsupported frame (e.g. binary-only endpoint received text frame) |
+| `1000`                | `NORMAL_CLOSURE`         | No       | No           | Successful operation / regular socket shutdown |
+| `1001`                | `GOING_AWAY`     | No       | No           | Client is leaving (browser tab closing) |
+| `1002`                | *Protocol error* | Yes      | No           | Endpoint received a malformed frame |
+| `1003`                | *Unsupported frame*    | Yes      | No           | Endpoint received an unsupported frame (e.g. binary-only endpoint received text frame) |
 | `1004`                |                        | Yes      | No           | Reserved |
-| `1005`                | `CLOSED_NO_STATUS`     | Yes      | No           | Expected close status, received none |
-| `1006`                | `CLOSE_ABNORMAL`       | Yes      | No           | No close code frame has been received |
+| `1005`                | `NO_STATUS_RECEIVED`     | Yes      | No           | Expected close status, received none |
+| `1006`                | `ABNORMAL_CLOSURE`       | Yes      | No           | No close code frame has been received |
 | `1007`                | *Unsupported payload*  | Yes      | No           | Endpoint received inconsistent message (e.g. malformed UTF-8) |
 | `1008`                | *Policy violation*     | No       | No           | Generic code used for situations other than 1003 and 1009 |
-| `1009`                | `CLOSE_TOO_LARGE`      | No       | No           | Endpoint won't process large frame |
+| `1009`                | *Frame too large*      | No       | No           | Endpoint won't process large frame |
 | `1010`                | *Mandatory extension*  | No       | No           | Client wanted an extension which server did not negotiate |
 | `1011`                | *Server error*         | No       | No           | Internal server error while operating |
 | `1012`                | *Service restart*      | No       | No           | Server/service is restarting |
@@ -792,7 +792,7 @@ Force disconnection of the `client` with the room. You may send a custom `code` 
 | `4000`                | `CONSENTED`            | No       | No           | Client left intentionally (`room.leave()`) |
 | `4001`                | `SERVER_SHUTDOWN`      | No       | No           | Server graceful shutdown (production) |
 | `4002`                | `WITH_ERROR`           | No       | No           | Closed due to an error |
-| `4003`                | `FAILED_TO_RECONNECT`  | No       | No           | All reconnection attempts failed (client-side only) |
+| `4003`                | `FAILED_TO_RECONNECT`  | No       | No           | All reconnection attempts failed, or the server denied/failed the reconnection |
 | `4010`                | `MAY_TRY_RECONNECT`   | No       | No           | Server shutdown in dev mode (allows reconnect) |
 | `4011` - `4999` |              | No       | Yes          | Available for applications |
 

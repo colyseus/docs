@@ -29,7 +29,7 @@ const server = defineServer({
   rooms: {
     your_relayed_room: defineRoom(RelayRoom, {
       maxClients: 4,
-      allowReconnectionTime: 120
+      allowReconnectionTime: 40 // seconds — values above 40 are clamped to 40
     })
   }
 })
@@ -57,10 +57,14 @@ const relay = await client.joinOrCreate("your_relayed_room", {
 ### Registering callbacks when players join and leave
 
 ```ts filename="client.ts"
+import { Callbacks } from "@colyseus/sdk";
+
+const callbacks = Callbacks.get(relay);
+
 //
 // Detect when a player joined the room.
 //
-relay.state.players.onAdd((player, sessionId) => {
+callbacks.onAdd("players", (player, sessionId) => {
   if (relay.sessionId === sessionId) {
     console.log("It's me!", player.name);
 
@@ -72,21 +76,23 @@ relay.state.players.onAdd((player, sessionId) => {
 //
 // Detect when a player left the room.
 //
-relay.state.players.onRemove((player, sessionId) => {
+callbacks.onRemove("players", (player, sessionId) => {
   console.log("Opponent left!", player, sessionId);
 })
 
 //
 // Detect when the connectivity of a player has changed.
-// (only available if you provided `allowReconnection: true` in the backend)
+// (only relevant if you provided `allowReconnectionTime` in the backend)
 //
-relay.state.players.onChange((player, sessionId) => {
-  if (player.connected) {
-    console.log("Opponent has reconnected!", player, sessionId);
+callbacks.onAdd("players", (player, sessionId) => {
+  callbacks.listen(player, "connected", (connected) => {
+    if (connected) {
+      console.log("Opponent has reconnected!", player, sessionId);
 
-  } else {
-    console.log("Opponent has disconnected!", player, sessionId);
-  }
+    } else {
+      console.log("Opponent has disconnected!", player, sessionId);
+    }
+  });
 })
 ```
 
