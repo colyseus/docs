@@ -13,10 +13,14 @@ You can authenticate your users using the `onAuth` method in your room. This met
 - If `onAuth()` returns a [falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy) value, the client is immediatelly rejected, causing the matchmaking function call from the frontend to fail.
 - You may also throw a `ServerError` to expose a custom error to be handled in the frontend.
 
-If left non-implemented, it always returns `true` - allowing any client to connect.
+With the `colyseus` bundle (which includes `@colyseus/auth`), the default **static** `onAuth` verifies the client's JWT — a malformed or expired token is rejected with `AUTH_FAILED`. A client that sends no token passes through with no auth data.
+
+<Callout type="warning">
+    **Static `onAuth` runs first — and short-circuits the instance `onAuth`.** The static hook runs at matchmake time; whatever it returns becomes `client.auth`, and when it produced a payload (any token-bearing client), the **instance** `onAuth` is skipped entirely. Override the *static* `onAuth` when you need custom token validation; use the instance form only for rooms whose clients join without tokens.
+</Callout>
 
 <Callout type="info">
-    **Using [`@colyseus/database`](/database)?** A default `onAuth` is installed for you that verifies the JWT and rejects revoked sessions — `db.auth.ban()` and `db.auth.bumpTokenVersion()` both invalidate live tokens at the token layer, so you only need to write a custom `onAuth` for room-specific checks on top. See [Database → Authentication](/database/authentication).
+    **Using [`@colyseus/database`](/database)?** The default static `onAuth` also enforces `tokenVersion`-based revocation — `db.auth.ban()` and `db.auth.bumpTokenVersion()` both reject stale tokens on the next room join. See [Database → Authentication](/database/authentication).
 </Callout>
 
 <Steps>
@@ -114,20 +118,21 @@ client.joinOrCreate("my_room").then((room) => {
 
 ## With `@colyseus/database`
 
-When the [`@colyseus/database`](/database/authentication) integration is active, the default `onAuth` verifies the JWT and enforces `tokenVersion`-based revocation — bans and explicit `bumpTokenVersion()` calls both reject stale tokens automatically. Override `onAuth` only for room-specific logic — for example, surfacing the ban reason in the close frame instead of a generic AUTH_FAILED:
+When the [`@colyseus/database`](/database/authentication) integration is active, the default `onAuth` verifies the JWT and enforces `tokenVersion`-based revocation — bans and explicit `bumpTokenVersion()` calls both reject stale tokens automatically. Override the **static** `onAuth` only for room-specific logic — for example, surfacing the ban reason in the close frame instead of a generic AUTH_FAILED. Note that overriding it replaces the default, so you re-do the token verification yourself:
 
-```ts {2,7-10} filename="src/rooms/MyRoom.ts"
+```ts {2-3,7-13} filename="src/rooms/MyRoom.ts"
 import { Room, ServerError } from "colyseus";
+import { JWT } from "@colyseus/auth";
 import { db } from "../app.config";
 
 class MyRoom extends Room {
-    async onAuth(client, options, context) {
-        // client.auth is already populated by @colyseus/auth's default onAuth
-        const { banned, reason } = await db.auth.isBanned(client.auth.id);
+    static async onAuth(token, options, context) {
+        const payload = await JWT.verify(token); // throws on invalid/expired
+        const { banned, reason } = await db.auth.isBanned(payload.id);
         if (banned) {
             throw new ServerError(403, reason ?? "You are banned.");
         }
-        return client.auth;
+        return payload; // becomes client.auth
     }
 }
 ```

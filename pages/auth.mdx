@@ -24,7 +24,7 @@ Colyseus authenticates clients on two surfaces: **room joins** (via an `onAuth` 
         Gate any HTTP route behind a valid JWT with <code>auth.middleware()</code> — works for both Express handlers and the typed <code>createEndpoint</code> HTTP routes.
     </ScenarioCard>
     <ScenarioCard icon={<SignOutIcon size={18}/>} title="Revoke a session or force-logout" href="/database/authentication">
-        Atomic ban with <code>tokenVersion</code> bump (existing JWTs invalidated), or call <code>bumpTokenVersion()</code> standalone for non-ban revocations like password change.
+        Atomic ban with <code>tokenVersion</code> bump (existing JWTs rejected on the next room join), or call <code>bumpTokenVersion()</code> standalone for non-ban revocations like password change.
     </ScenarioCard>
     <ScenarioCard icon={<PackageIcon size={18}/>} title="Bring your own database" href="/auth/module#backend-api">
         Implement <code>@colyseus/auth</code>'s backend callbacks against your own storage. The <code>@colyseus/database</code> integration is optional — every flow works without it.

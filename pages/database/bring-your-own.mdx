@@ -49,7 +49,7 @@ async onAuth(client, options) {
     return user;
 }
 
-onJoin (client, options) {
+async onJoin (client, options) {
     // ...
     await db.query('UPDATE users SET online = true WHERE id = ?', [client.auth.id]);
 }

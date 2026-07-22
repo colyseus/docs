@@ -6,14 +6,14 @@ import { Callout } from 'nextra/components'
 
 # Authentication
 
-When [`@colyseus/auth`](/auth/module) is installed alongside `@colyseus/database` and you pass `database:` to `defineServer`, the database becomes the user store and all auth routes mount automatically — no callbacks to write.
+When [`@colyseus/auth`](/auth/module) is installed alongside `@colyseus/database` and you pass `database:` to `defineServer`, the database becomes the user store and all auth routes mount automatically — the only callbacks left to write are the email-delivery ones.
 
 **What's wired automatically:**
 
 - **HTTP routes** — every endpoint from `@colyseus/auth` (register, login, forgot/reset password, OAuth callback) is spread into your router under the configured prefix.
-- **User store** — `db.auth.settings` supplies the full set of [Backend API](/auth/module#backend-api) callbacks (`onFindUserByEmail`, `onRegisterWithEmailAndPassword`, `onRegisterAnonymously`, `onForgotPassword`, `onResetPassword`, `onCheckBanned`, …). You don't write any of them.
+- **User store** — `db.auth.settings` supplies the user-store [Backend API](/auth/module#backend-api) callbacks (`onFindUserByEmail`, `onRegisterWithEmailAndPassword`, `onRegisterAnonymously`, `onResetPassword`, `onOAuthProviderCallback`, `onCheckBanned`). **Email delivery is not included** — wire `onForgotPassword` (and `onSendEmailConfirmation` / `onEmailConfirmed` if you use email verification) yourself, or those flows silently no-op.
 - **Ban gating at login** — `onCheckBanned` rejects banned users and surfaces `{ reason, until }` from the row.
-- **JWT session revocation** — JWTs carry a `tokenVersion` claim. `db.auth.ban()` atomically bumps the version alongside the ban fields, so any previously-issued JWT for that user is rejected on its next verification. `db.auth.bumpTokenVersion(userId)` is also available standalone for password changes, "sign out everywhere", and forced rotation.
+- **JWT session revocation** — JWTs carry a `tokenVersion` claim. `db.auth.ban()` atomically bumps the version alongside the ban fields, so any previously-issued JWT for that user is rejected **on its next room join** (HTTP routes verify only signature and expiry — see [HTTP API Auth](/auth/http)). `db.auth.bumpTokenVersion(userId)` is also available standalone for password changes, "sign out everywhere", and forced rotation.
 - **Password-hash handoff** — `@colyseus/auth` hashes passwords before they reach the database; the DB never sees plaintext.
 
 The same env secrets (`JWT_SECRET`, `SESSION_SECRET`) still apply — see [Auth Module → Required Environment Secrets](/auth/module#required-environment-secrets).
@@ -42,13 +42,30 @@ await db.auth.ban(userId, { reason: "cheating", until: new Date(Date.now() + 86_
 const status = await db.auth.isBanned(userId); // { banned, reason?, until? }
 await db.auth.unban(userId);
 
-// Force-log-out: invalidates previously issued JWTs for this user
+// Force-log-out: previously issued JWTs are rejected on the next room join
 await db.auth.bumpTokenVersion(userId);
 ```
 
 ## Customizing callbacks
 
-`db.auth.settings` is a partial [`AuthSettings`](/auth/module#backend-api) object — wrap or replace individual callbacks (e.g. add an invite-code check during registration, customize the anonymous user payload) while keeping the rest of the integration intact. See the [Backend API](/auth/module#backend-api) catalog for the full list of hooks you can override.
+To wrap or replace individual callbacks (e.g. add an invite-code check during registration, customize the anonymous user payload), override keys on the `auth.settings` singleton **after** the server boots — the database wiring copies `db.auth.settings` into `auth.settings` at listen time, so overrides applied earlier are clobbered:
+
+```ts filename="src/index.ts"
+import { auth } from "@colyseus/auth";
+
+await server.listen(2567);
+
+// after listen(): wrap the database-provided callback
+const original = auth.settings.onRegisterWithEmailAndPassword;
+auth.settings.onRegisterWithEmailAndPassword = async (email, password, options) => {
+    if (options.inviteCode !== process.env.INVITE_CODE) {
+        throw new Error("invalid invite code");
+    }
+    return original(email, password, options);
+};
+```
+
+See the [Backend API](/auth/module#backend-api) catalog for the full list of hooks. (Note: assigning onto `db.auth.settings` directly has no effect — that getter builds a fresh object on every access.)
 
 <Callout type="info">
     Not using `@colyseus/database`? See [Auth Module](/auth/module) for the manual setup — implement the [Backend API](/auth/module#backend-api) callbacks against your own database.

@@ -12,7 +12,7 @@ import { DevicesIcon, GearIcon, LinkIcon, MailIcon, GlobeIcon } from '@primer/oc
 </Callout>
 
 <Callout type="info">
-    **Using [`@colyseus/database`](/database)?** It wires up the user store, registration/login routes, ban gating, and session revocation for you — you can skip the [Backend API](#backend-api) callbacks below. See [Database → Authentication](/database/authentication) for the integration overview.
+    **Using [`@colyseus/database`](/database)?** It wires up the user store, registration/login routes, ban gating, and session revocation for you — you can skip the user-store [Backend API](#backend-api) callbacks below. Email delivery (`onForgotPassword`, `onSendEmailConfirmation`, `onEmailConfirmed`) is still yours to wire. See [Database → Authentication](/database/authentication) for the integration overview.
 </Callout>
 
 The `@colyseus/auth` module is highly configurable and allows you to implement your own authentication backend.
@@ -67,7 +67,7 @@ npm install --save @colyseus/auth
 It is required to provide the following environment variables to your application:
 
 - `JWT_SECRET` - Used to sign the JWT token.
-- `SESSION_SECRET` - Used to sign the session cookie. (only used during OAuth flow)
+- `SESSION_SECRET` - Used to sign the OAuth state cookie. Recommended for OAuth; falls back to `JWT_SECRET` when unset.
 
 <Callout type="info">
     **How to generate a random string** - You may use the following command to generate a random string `openssl rand -base64 32`. Alternatively, you can use [an online strong password generator](https://1password.com/password-generator/).
@@ -188,7 +188,7 @@ The `options` argument may contain user data you can use when creating the user'
     }
 
     auth.settings.onRegisterWithEmailAndPassword = async function (email, password, options) {
-        return await User.insert({ name, email, password, });
+        return await User.insert({ email, password });
     }
     ```
     </Tabs.Tab>
@@ -456,7 +456,7 @@ auth.settings.onFindUserByEmail = async function (email) {
 
 Use this callback to insert a new user into your database.
 
-The password provided is already hashed. You may use the [`onHashPassword`](#on-hash-password) callback to hash the password.
+The password provided is already hashed (with `Hash.make`). To change the hashing algorithm, set [`Hash.algorithm`](#on-hash-password).
 
 If an error is thrown, its message will be sent to the client.
 
@@ -464,7 +464,7 @@ If an error is thrown, its message will be sent to the client.
 import { auth } from "@colyseus/auth";
 
 auth.settings.onRegisterWithEmailAndPassword = async function (email, password, options) {
-    return await User.insert({ name, email, password, });
+    return await User.insert({ email, password });
 }
 ```
 
@@ -691,7 +691,6 @@ You may customize the following settings:
 
 - `auth.settings.onParseToken`: to parse JWT token provided by the frontend
 - `auth.settings.onGenerateToken`: to generate the auth token
-- `auth.settings.onHashPassword`: to hash the user's password
 
 #### On Parse Token
 
@@ -721,24 +720,17 @@ auth.settings.onGenerateToken = async function (userdata) {
 
 #### On Hash Password
 
-Use this callback to customize how to hash the user's password. The default hashing algorithm is `scrypt`.
-
-
-```typescript
-import { auth } from "@colyseus/auth";
-
-auth.settings.onHashPassword = async function (password: string) {
-    return Hash.make(password);
-};
-```
-
-You may also use the `Hash` class provided by the `@colyseus/auth` set a different hashing algorithm. The other ones available are `scrypt` and `sha1`.
+Password hashing is customized through the `Hash` class — the default algorithm is `scrypt`, with `sha1` available as the only other built-in:
 
 ```ts filename="src/config/auth.ts"
 import { Hash } from "@colyseus/auth";
 
-Hash.algorithm = "scrypt";
+Hash.algorithm = "sha1"; // default: "scrypt"
 ```
+
+<Callout type="warning">
+    The `auth.settings.onHashPassword` callback exists on the settings object but is **not invoked by any endpoint in 0.18** — overriding it has no effect. Use `Hash.algorithm` / `Hash.algorithms` instead.
+</Callout>
 
 ---
 

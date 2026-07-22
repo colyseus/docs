@@ -62,11 +62,10 @@ import { Room } from "colyseus";
 import { db } from "../app.config";
 
 export class MyRoom extends Room {
-    async onAuth(client, options) {
-        const banned = await db.auth.isBanned(client.auth.id);
-        if (banned.banned) {
-            throw new Error(banned.reason ?? "You are banned.");
-        }
+    async onJoin(client, options) {
+        // client.auth was populated by the default static onAuth,
+        // which already rejects banned/revoked tokens automatically.
+        await db.cloudSaves.load(client.auth.id);
     }
 }
 ```
