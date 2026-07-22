@@ -249,6 +249,7 @@ You may configure the reconnection behavior using `room.reconnection`.
 
 | Option | Default | Description |
 |--------|---------|-------------|
+| `enabled` | `true` | Set to `false` to disable automatic reconnection entirely |
 | `maxRetries` | `15` | Maximum reconnection attempts |
 | `minDelay` | `100` | Minimum delay between attempts (ms) |
 | `maxDelay` | `5000` | Maximum delay between attempts (ms) |
@@ -263,7 +264,7 @@ You may configure the reconnection behavior using `room.reconnection`.
 |----------|------|------------|
 | `isReconnecting` | boolean | Whether currently reconnecting |
 | `retryCount` | number | Current reconnection attempt count |
-| `enqueuedMessages` | number | Buffered messages |
+| `enqueuedMessages` | array | Messages buffered while disconnected (count: `.length`) |
 
 
 **Customizing reconnection behavior:**
@@ -495,4 +496,12 @@ Listen for errors that occur in the room.
 
 ## Removing Listeners
 
-Remove all event listeners from the room.
+Remove all event listeners from the room — `onJoin`, `onStateChange`, `onError`, `onLeave`, `onReconnect`, `onDrop`, registered message handlers, and schema callbacks:
+
+```ts filename="client.ts"
+room.removeAllListeners();
+```
+
+<Callout type="info">
+    The SDK calls `removeAllListeners()` automatically when the room is left, so you only need it to detach early — e.g. when tearing down a UI screen while staying connected.
+</Callout>

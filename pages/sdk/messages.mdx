@@ -89,20 +89,23 @@ Send messages to the room handler. Messages are encoded with MsgPack and can hol
 
 ## Send Raw Bytes
 
-For custom encoding, send raw byte arrays (numbers from `0` to `255`).
-
+For custom encoding, send a `Uint8Array` of raw bytes.
 
 ```js filename="client.js"
 //
 // sending message with number type
 //
-room.sendBytes(0, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
+room.sendBytes(0, new Uint8Array([ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]));
 
 //
 // sending message with string type
 //
-room.sendBytes("some-bytes", [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
+room.sendBytes("some-bytes", new Uint8Array([ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]));
 ```
+
+<Callout type="warning">
+    The payload must be a `Uint8Array` — a plain `number[]` array silently sends an **empty** message, since the SDK reads `.byteLength` from the payload.
+</Callout>
 
 ## Receiving Messages
 
