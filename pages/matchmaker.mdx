@@ -92,9 +92,19 @@ Whenever a room is created by the `create()` or `joinOrCreate()` methods, only t
     </Tabs.Tab>
 
     <Tabs.Tab>
-    Filter matchmaking by built-in `maxClients` value.
+    Filter matchmaking by the room's `maxClients` capacity.
 
-    The `maxClients` is an internal variable stored for matchmaking, and can be used for filtering too.
+    `maxClients` is stored top-level in the matchmaking cache from the **room instance's actual value** — not from the client's option — so the room must apply the option for the filter to work:
+
+    ```ts filename="BattleRoom.ts"
+    class BattleRoom extends Room {
+        onCreate(options) {
+            // apply the requested capacity — the filter compares against
+            // the room's real maxClients, not the stored client option
+            this.maxClients = options.maxClients;
+        }
+    }
+    ```
 
     ```ts filename="server.ts"
     const server = defineServer({
@@ -104,7 +114,7 @@ Whenever a room is created by the `create()` or `joinOrCreate()` methods, only t
     })
     ```
 
-    The client can then ask to join a room capable of handling a certain number of players.
+    The client can then ask to join a room with a specific capacity — each value fills its own set of rooms:
 
     ```js filename="client.js"
     client.joinOrCreate("battle", { maxClients: 10 }).then(room => {/* ... */});
@@ -271,8 +281,10 @@ const reservation = await matchMaker.joinOrCreate("battle", { mode: "duo" });
 console.log(reservation);
 /*
   {
+    "name": "battle",
     "sessionId": "zzzzzzzzz",
-    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+    "roomId": "xxxxxxxxx",
+    "processId": "yyyyyyyyy"
   }
 */
 ```
@@ -294,12 +306,14 @@ Creates a seat reservation in a specific room.
 
 ```ts filename="server.ts"
 const room = await matchMaker.findOneRoomAvailable("battle", { mode: "duo" });
-const reservation = await matchMaker.reserveSeatFor(room);
+const reservation = await matchMaker.reserveSeatFor(room, {});
 console.log(reservation);
 /*
   {
+    "name": "battle",
     "sessionId": "zzzzzzzzz",
-    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+    "roomId": "xxxxxxxxx",
+    "processId": "yyyyyyyyy"
   }
 */
 ```
@@ -323,8 +337,10 @@ const reservation = await matchMaker.join("battle", { mode: "duo" });
 console.log(reservation);
 /*
   {
+    "name": "battle",
     "sessionId": "zzzzzzzzz",
-    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+    "roomId": "xxxxxxxxx",
+    "processId": "yyyyyyyyy"
   }
 */
 ```
@@ -348,8 +364,10 @@ const reservation = await matchMaker.joinById("xxxxxxxxx", {});
 console.log(reservation);
 /*
   {
+    "name": "battle",
     "sessionId": "zzzzzzzzz",
-    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+    "roomId": "xxxxxxxxx",
+    "processId": "yyyyyyyyy"
   }
 */
 ```
@@ -373,8 +391,10 @@ const reservation = await matchMaker.create("battle", { mode: "duo" });
 console.log(reservation);
 /*
   {
+    "name": "battle",
     "sessionId": "zzzzzzzzz",
-    "room": { "roomId": "xxxxxxxxx", "processId": "yyyyyyyyy", "name": "battle", "locked": false }
+    "roomId": "xxxxxxxxx",
+    "processId": "yyyyyyyyy"
   }
 */
 ```
@@ -427,8 +447,9 @@ Find an available room the same way `join()`/`joinOrCreate()` do: rooms flagged 
 
 **Parameters:**
 
-- **`roomName`**: the id of a specific room instance.
-- **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`).
+- **`roomName`**: the identifier you defined in the `rooms` configuration of `defineServer()`.
+- **`filterOptions`**: options matched against the room type's [`filterBy()`](#filter-by-filterby) fields.
+- **`additionalSortOptions`**: _(optional)_ extra sort criteria applied on top of the room type's `sortBy()`.
 
 ``` typescript
 const room = await matchMaker.findOneRoomAvailable("battle", { mode: "duo" });

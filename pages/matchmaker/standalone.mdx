@@ -81,7 +81,7 @@ const server = defineServer({
 When `isStandaloneMatchMaker` is enabled, the process:
 
 - **Skips IPC subscription** — it will not receive or handle remote room creation requests
-- **Skips health checks** — it does not register itself in the process stats, so game servers will never try to create rooms on it
+- **Skips health checks** — it does not register itself in the process stats, so game servers will never try to create rooms on it while at least one healthy game server is registered. Two fallbacks can still land a room on the matchmaker process: when **no** game-server stats exist yet, and when a remote room-creation request times out over IPC.
 - **Delegates room creation** — when a matchmaking request requires a new room, the default `selectProcessIdToCreateRoom` will select one of the available game server processes
 
 <Callout type="warning">

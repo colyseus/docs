@@ -15,7 +15,7 @@ Three boolean flags control who can find and join a room — `locked`, `private`
 
 | | `join()` / `joinOrCreate()` | `joinById()` | Lobby / listing queries |
 |---|---|---|---|
-| **`locked`** | skipped | rejected (`"room is locked"`) | listed (as locked) |
+| **`locked`** | skipped | rejected (`room "…" is locked`) | listed (as locked) |
 | **`private`** | skipped | **allowed** | hidden |
 | **`unlisted`** | **matched** | allowed | hidden |
 
@@ -63,7 +63,7 @@ You can also set individual properties:
 
 ## Lock Room
 
-Locking removes the room from matchmaking — `join()`/`joinOrCreate()` skip it, and `joinById()` rejects with `"room is locked"`. No new clients can join until it's unlocked.
+Locking removes the room from matchmaking — `join()`/`joinOrCreate()` skip it, and `joinById()` rejects with a `room "<roomId>" is locked` error. No new clients can join until it's unlocked.
 
 ```ts filename="MyRoom.ts"
 this.lock();
