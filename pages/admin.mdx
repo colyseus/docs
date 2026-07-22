@@ -87,8 +87,8 @@ The REST API mounts in parallel at `http://localhost:2567/admin-api` and is cons
 
 The defaults are tuned for local development. Before exposing the panel to the public internet:
 
-- **Set a strong `JWT_SECRET` and `SESSION_SECRET`** — see [Auth Module → Required Environment Secrets](/auth/module#required-environment-secrets). Rotating either invalidates all admin sessions.
-- **Wire [`auth.settings.onResetPassword`](/auth/module#on-reset-password)** to deliver password reset emails through your transactional email provider — the same hook that powers your player-side reset flow.
+- **Set a strong `JWT_SECRET` and `SESSION_SECRET`** — see [Auth Module → Required Environment Secrets](/auth/module#required-environment-secrets). Rotating `JWT_SECRET` invalidates all admin sessions (`SESSION_SECRET` only signs OAuth state cookies).
+- **Wire [`auth.settings.onForgotPassword`](/auth/module#on-forgot-password)** to deliver password reset emails through your transactional email provider — the same hook that powers your player-side reset flow.
 - **Tighten the session cookie** via the `session` option — set an explicit `domain`, an appropriate `maxAge`, and confirm the `Secure`/`SameSite` flags match your deployment.
 - **Disable `allowDevHeader`** if you don't need it. It auto-disables when `NODE_ENV === "production"`, but setting it to `false` explicitly avoids surprises in mixed environments.
 - **Swap the in-memory rate limiters for a Redis-backed implementation** on multi-process deployments — the default token buckets don't share state across instances.
@@ -114,12 +114,12 @@ The defaults are tuned for local development. Before exposing the panel to the p
 | `uiPath` | `string` | `"/admin"` | Mount path for the admin SPA. |
 | `apiPath` | `string` | `"/admin-api"` | Mount path for the admin REST API. |
 | `uiDistDir` | `string` | _built-in_ | Absolute path to the built UI assets. Defaults to the bundled `build/` directory inside the package. |
-| `session` | `SessionConfig` | _see below_ | Cookie config: `maxAge`, `domain`, `sameSite`, `secure`. |
+| `session` | `SessionConfig` | _see below_ | Cookie config: `ttlSeconds`, `cookieDomain`, `cookieSameSite`, `cookieSecure`. |
 | `resolveUserId` | `(ctx) => Promise<string \| undefined>` | session cookie → `X-User-Id` (dev) | Override the identity resolver to integrate with another auth scheme. |
 | `enforceRbac` | `boolean` | `true` | Set to `false` to skip RBAC entirely (development only). |
 | `allowDevHeader` | `boolean` | `true` in dev, `false` in prod | Permit `X-User-Id: <id>` as a fallback identity for curl/puppeteer testing. |
-| `minPasswordLength` | `number` | `8` | Minimum password length accepted by bootstrap and reset endpoints. Plain length check — layer on stronger rules in `onResetRequest` if needed. |
-| `onResetRequest` | `(ctx) => void \| Promise<void>` | logs to stdout | Panel-specific override for the password-reset email. Most projects should configure [`auth.settings.onResetPassword`](/auth/module#on-reset-password) instead and reuse their player-side delivery. Receives `{ email, userId, token, url }`. |
+| `minPasswordLength` | `number` | `8` | Minimum password length accepted by bootstrap and reset endpoints. Plain length check applied by the bootstrap and reset endpoints. |
+| `onResetRequest` | `(ctx) => void \| Promise<void>` | logs to stdout | Panel-specific override for the password-reset email. Most projects should configure [`auth.settings.onForgotPassword`](/auth/module#on-forgot-password) instead and reuse their player-side delivery. Receives `{ email, userId, token, url }`. |
 | `rateLimit` | `{ login, bootstrap, requestReset }` | in-memory token buckets | Per-endpoint rate limiters. Pass `false` per slot to disable, or a custom `RateLimiter` to swap in a Redis-backed implementation. |
 | `dashboard` | `{ presets, widgets }` | all presets enabled | Configure the dashboard homepage. See [Dashboard & widgets](/admin/dashboard). |
 | `logger` | `Logger \| null` | JSON stdout | Pino-compatible logger. Pass `null` to silence the panel's internal logs. |
@@ -130,10 +130,10 @@ The `session` config controls the JWT cookie. Defaults:
 
 ```ts
 session: {
-    maxAge: 7 * 24 * 60 * 60, // 1 week (seconds)
-    sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
-    // domain: undefined  ← set explicitly when serving from a subdomain
+    ttlSeconds: 7 * 24 * 60 * 60, // 1 week
+    cookieSameSite: "Strict",
+    cookieSecure: process.env.NODE_ENV === "production",
+    // cookieDomain: undefined  ← host-only; set explicitly when serving from a subdomain
 }
 ```
 

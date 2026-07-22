@@ -29,6 +29,7 @@ Boot the test server with your `app.config.ts`, then create rooms and connect si
     <Tabs.Tab>
 
     ```ts filename="App.test.ts"
+    import assert from "assert";
     import { ColyseusTestServer, boot } from "@colyseus/testing";
 
     // import your "app.config.ts" file here.
@@ -89,10 +90,11 @@ Boot the test server with your `app.config.ts`, then create rooms and connect si
 
 </Tabs>
 
-Then run your tests:
+Then run your tests with the framework of the tab you followed:
 
 ```sh filename="Terminal"
-npx vitest
+npx mocha --require ts-node/register App.test.ts   # Mocha
+npx jest                                           # Jest
 ```
 
 ## Best Practices

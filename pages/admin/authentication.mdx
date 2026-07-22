@@ -14,12 +14,12 @@ When an admin signs in (`POST /admin-api/auth/login`), the panel sets an HttpOnl
 
 | Property | Default | Notes |
 |---|---|---|
-| Cookie name | `colyseus_admin_session` | Configurable via `session.name` |
+| Cookie name | `colyseus_admin_session` | Fixed — not configurable |
 | `HttpOnly` | `true` | Always — not configurable |
-| `SameSite` | `strict` | Configurable via `session.sameSite` |
-| `Secure` | `true` in production | Auto-set based on `NODE_ENV`; override via `session.secure` |
-| `maxAge` | 7 days | Configurable via `session.maxAge` (seconds) |
-| `domain` | `undefined` | Set explicitly when serving from a subdomain |
+| `SameSite` | `Strict` | Configurable via `session.cookieSameSite` (`'Strict' \| 'Lax' \| 'None'`) |
+| `Secure` | `true` in production | Auto-set based on `NODE_ENV`; override via `session.cookieSecure` |
+| TTL | 7 days | Configurable via `session.ttlSeconds` |
+| Domain | host-only | Set via `session.cookieDomain` when serving from a subdomain |
 
 Sessions are stateless — the cookie is the only source of truth. Two consequences:
 
@@ -30,13 +30,13 @@ See [Database → Authentication](/database/authentication) for the full revocat
 
 ## Roles
 
-Every user row carries a `role` (set via `db.moderation.setRole(userId, role)`). Three roles exist:
+Each admin-panel user has a row in the `roles` table (set via `db.moderation.setRole(userId, role)`). Three roles exist:
 
 | Role | Default access |
 |---|---|
 | `admin` | Full access — all resources, all actions, all rooms. |
-| `mod` | Read everywhere by default; create/update on collections the user is explicitly assigned to via `db.moderation.assignMod()`. No delete, no role management. |
-| `user` | Read-only on most resources; the default role for newly-registered users. |
+| `mod` | **Only** on collections explicitly assigned via `db.moderation.assignMod()`: list, read, and update. No access at all outside assigned scopes, no create, no delete, and the roles table is always blocked. |
+| `user` | Cannot use the panel — the UI requires an operator role (`admin`/`mod`) and returns 403. (Raw API list/read calls do pass the permission check.) |
 
 Roles are read from the live DB on every request — a demotion takes effect immediately without re-issuing the cookie.
 
@@ -111,7 +111,7 @@ The panel's forgot-password flow mirrors the player-side flow in `@colyseus/auth
 7. The reset endpoint also bumps `tokenVersion` to terminate any active sessions.
 
 <Callout type="info">
-    The default `onResetRequest` logs the URL via the admin logger — fine for local development, but you must override it before going to production. The request endpoint always returns `200` regardless of whether the email exists, so it cannot be used to enumerate users.
+    The default `onResetRequest` forwards through `auth.settings.onForgotPassword` when configured, falling back to logging the URL via the admin logger — fine for local development, but you must override it before going to production. The request endpoint always returns `200` regardless of whether the email exists, so it cannot be used to enumerate users.
 </Callout>
 
 ```ts filename="src/app.config.ts"
@@ -121,7 +121,7 @@ admin({
         await mailer.send({
             to: email,
             subject: "Reset your admin password",
-            html: `<p>Click <a href="${url}">here</a> to reset your password. The link expires in 1 hour.</p>`,
+            html: `<p>Click <a href="${url}">here</a> to reset your password. The link expires in 15 minutes.</p>`,
         });
     },
 }),
@@ -134,7 +134,7 @@ The auth endpoints are rate-limited to slow down brute-force attacks. Defaults a
 | Endpoint | Default limit | Option |
 |---|---|---|
 | `/auth/login` | 10/min per IP + email | `rateLimit.login` |
-| `/auth/bootstrap` | 5/min per IP | `rateLimit.bootstrap` |
+| `/auth/bootstrap` | burst of 5, refill 1/min per IP | `rateLimit.bootstrap` |
 | `/auth/request-reset` | ~1/min per IP + email | `rateLimit.requestReset` |
 
 Pass `false` per slot to disable a specific limiter (e.g. behind your own WAF), or a custom `RateLimiter` to swap the implementation:
@@ -145,7 +145,7 @@ import { admin } from "@colyseus/admin";
 admin({
     database: db,
     rateLimit: {
-        login: createRedisLimiter({ capacity: 5, refillPerSec: 1/30 }),
+        login: myRedisLimiter, // your own RateLimiter implementation
         bootstrap: false,
     },
 }),

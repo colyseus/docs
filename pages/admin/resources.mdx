@@ -12,17 +12,19 @@ Every drizzle table you pass to the admin panel becomes a browse-able **resource
 
 The following tables come pre-registered with sensible defaults:
 
-| Resource | Source table | Default access |
+| Resource | Source table | Notes |
 |---|---|---|
-| Users | `colyseus_users` | Admin: full CRUD. Mod: read; update with `users` scope. |
-| Configs | `colyseus_configs` | Admin only. |
-| Cloud saves | `colyseus_cloud_saves` | Admin: full. Mod: read; update with scope. |
-| Leaderboards | `colyseus_leaderboards` | Admin: full. Mod: read; update with scope. |
-| Leaderboard entries | `colyseus_leaderboard_entries` | Admin: full. Mod: read. |
-| Analytics events | `colyseus_analytics_events` | Admin: read + delete. Append-only on the write path. |
-| Roles | `colyseus_roles` | Admin only — modifying this would bypass the role system. |
-| User notes | `colyseus_user_notes` | Admin: full. Mod: full. `authorId` auto-filled from session. |
-| Audit log | `colyseus_admin_audit` | Admin: **read-only**. All writes denied (append-only contract). |
+| Users | `colyseus_users` | |
+| Configs | `colyseus_configs` | |
+| Cloud saves | `colyseus_cloud_saves` | |
+| Leaderboards | `colyseus_leaderboards` | |
+| Leaderboard entries | `colyseus_leaderboard_entries` | |
+| Analytics events | `colyseus_analytics_events` | Append-only on the write path. |
+| Roles | `colyseus_roles` | Always blocked for mods — modifying this would bypass the role system. |
+| User notes | `colyseus_user_notes` | `authorId` auto-filled from session on create. |
+| Audit log | `colyseus_admin_audit` | **Read-only** via policies — all writes denied (append-only contract). |
+
+Unless a table declares its own [policies](#policies) (only the audit log does by default), access follows the standard role rule everywhere: **admin** has full CRUD, **mod** gets list/read/update only on collections they're [scoped to](/admin/authentication#scoping-a-moderator-to-specific-resources), and **user**-role accounts have raw-API list/read only (the panel UI itself requires an operator role).
 
 ## `defineAdminResource()`
 
@@ -34,7 +36,7 @@ import { guilds } from "./db/schema";
 
 const guildResource = defineAdminResource(guilds, {
     label: "Guilds",
-    icon: "shield",
+    icon: "safety",
     list: {
         columns: ["name", "ownerId", "memberCount", "createdAt"],
         sortable: ["name", "createdAt"],
@@ -184,7 +186,7 @@ policies: {
 }
 ```
 
-Policies are evaluated *after* the role + scope check, so they refine (rather than replace) the standard RBAC. The default for an action with no policy is the standard `db.moderation.can(userId, action, resource)` rule.
+A policy set for an action **replaces** the standard RBAC rule for that action on that resource — it is not layered on top. Only actions with no policy fall back to the standard `db.moderation.can(userId, action, resource)` rule.
 
 ### Custom action policies
 
@@ -198,7 +200,9 @@ actions: [{
 }]
 ```
 
-Admin always has access regardless of `roles`. Set `roles: []` to deny the action entirely.
+<Callout type="warning">
+    A non-empty `roles` list is checked literally — **it does not implicitly include admins**, so always list `"admin"` explicitly. And an empty `roles: []` skips the role check entirely, allowing *any* authenticated identity to invoke the action — to remove an action, omit it from the resource definition instead.
+</Callout>
 
 ## FK auto-linking
 
@@ -218,7 +222,7 @@ columns: {
 
 ## Icons
 
-The `icon` field accepts the names of icons from the panel's built-in icon set — types are surfaced as the `AdminIconName` union. Common picks: `users`, `team`, `shield`, `trophy`, `note`, `gear`, `chart`, `database`, `bolt`. See `ADMIN_ICON_NAMES` in `@colyseus/admin` for the full list.
+The `icon` field accepts the names of icons from the panel's built-in icon set — types are surfaced as the `AdminIconName` union. Common picks: `user`, `team`, `safety`, `trophy`, `file-text`, `setting`, `line-chart`, `database`, `thunderbolt`. See `ADMIN_ICON_NAMES` in `@colyseus/admin` for the full list.
 
 ## Audit log
 
@@ -247,7 +251,7 @@ await db.audit.record({
 });
 ```
 
-For updates where you want a structured before/after diff, use `recordUpdate()` — it captures both states:
+For updates where you want a structured diff, use `recordUpdate()` — it stores a column-level diff of the changed fields (not both full rows):
 
 ```ts
 await db.audit.recordUpdate({
@@ -259,7 +263,7 @@ await db.audit.recordUpdate({
 });
 ```
 
-Failures during audit recording are logged but do not propagate to the request — a failed audit write should not block a successful mutation.
+The panel's own endpoints swallow audit-write failures (logged, not propagated) so a failed audit write never blocks a successful mutation — but a direct `db.audit.record()` call from your own code **throws** on failure; wrap it yourself if you want the same behavior.
 
 ## Next steps
 

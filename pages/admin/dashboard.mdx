@@ -20,7 +20,7 @@ routes: createRouter({
             },
             widgets: [{
                 title: "Active events",
-                icon: "bolt",
+                icon: "thunderbolt",
                 render: "kpi",
                 data: async () => ({ live: 12, queued: 3 }),
             }],
@@ -36,8 +36,8 @@ routes: createRouter({
 | `totals` | KPI | Row counts per registered table — useful "DB is healthy" snapshot. |
 | `recentUsers` | Table | Newest user registrations with deep-link to each user's show page. |
 | `liveRooms` | Table | Currently-active rooms from the matchmaker driver with deep-link to the room inspector. |
-| `health` | KPI | Node process metrics — CPU, memory, uptime, connection count. |
-| `segments` | List | Player segment definitions and their current sizes. |
+| `health` | KPI | Database connectivity check — reports status and query latency. |
+| `segments` | KPI | Player segment definitions and their current sizes. |
 
 All presets are enabled by default. Configure each via `dashboard.presets.<name>`:
 
@@ -57,7 +57,7 @@ Every preset shares three base options (`title`, `icon`, `span`) and adds preset
 totals: {
     title?: string;
     icon?: AdminIconName;
-    span?: number;            // 12-column grid span
+    span?: number;            // 24-column grid span (antd convention)
     only?: string[];          // restrict to a subset of table names
 }
 ```
@@ -109,9 +109,9 @@ Append your own widgets via `dashboard.widgets`. Each widget runs server-side on
 ```ts
 widgets: [{
     title: "Active events",          // also the basis for the auto-derived id
-    icon: "bolt",                    // AdminIconName
+    icon: "thunderbolt",                    // AdminIconName
     render: "kpi",                   // 'kpi' | 'table' | 'list' | 'json' (default 'json')
-    span: 6,                         // 12-column grid span
+    span: 12,                        // 24-column grid span (half width)
     refreshIntervalMs: 5000,         // poll for live updates
     data: async ({ database, userId }) => ({ live: 12, queued: 3 }),
 }]
@@ -125,7 +125,7 @@ interface DashboardWidget {
     title: string;
     icon?: AdminIconName;
     render?: WidgetRender;   // 'kpi' | 'table' | 'list' | 'json' — default 'json'
-    span?: number;           // 12-column grid; default per render type
+    span?: number;           // 24-column grid; default per render type
     refreshIntervalMs?: number;
     data: (ctx: { database: GameDatabase; userId: string }) => Promise<unknown>;
 }
@@ -136,7 +136,7 @@ interface DashboardWidget {
 | `id` | Stable identifier for `data-testid` selectors. Defaults to `slugify(title)` (e.g. `"Live events"` → `"live-events"`). Must not collide with a preset id. |
 | `data` | Server-side resolver. Receives the resolved `GameDatabase` and the requesting admin's `userId`. Errors are caught and surfaced to the panel as `{ error }`. |
 | `refreshIntervalMs` | When set, the client polls `GET /admin-api/_dashboard/<id>` at this cadence and refreshes the card in place — no full dashboard reload. |
-| `span` | 12-column grid span. Defaults to a sensible per-render-type value. |
+| `span` | 24-column grid span (antd convention). Defaults: `kpi`/`table`/`json` full width (24), `list` half (12). |
 
 ### Render modes
 

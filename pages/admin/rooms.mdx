@@ -14,11 +14,10 @@ The **Rooms** resource in the panel lists every room the matchmaker driver knows
 
 - `roomId` and handler `name`
 - Current `clients` count and `maxClients`
-- `locked` / `private` / `unlisted` flags
+- `locked` / `private` flags, and the room's `publicAddress`
 - `createdAt` and elapsed time
 - `processId` (which Node process is hosting the room — useful in multi-process deployments)
-- Any `metadata` keys set by your room (e.g. game mode, region)
-- Live `state` tree, accessible from the room's detail page
+- Live `state` tree and `metadata`, accessible from the room's detail page
 
 Clicking through to a room's detail page loads the state tree, the client list, and the action buttons below.
 
@@ -46,7 +45,7 @@ The detail page renders the room's state tree as JSON. You can mutate values dir
     State edits are immediate and broadcast to all connected clients on the next patch. Use sparingly and prefer adding a dedicated custom action for repeatable workflows (see [Resources → Custom actions](/admin/resources#custom-actions)).
 </Callout>
 
-Records `action: "room.state.edit"` with a before/after diff of the touched paths, or `action: "room.state.delete"` when removing fields.
+Records `action: "room.state.edit"` with the touched path and its new value, or `action: "room.state.delete"` when removing fields.
 
 ### Force-dispose
 
@@ -70,10 +69,8 @@ If you don't see rooms you expect, confirm the driver is shared across processes
 By default, the rooms resource follows the standard role rules:
 
 - **Admin**: full read + all actions.
-- **Mod**: read-only by default; the `rooms` scope is required for mutating actions. Assign with `db.moderation.assignMod(userId, "rooms")`.
-- **User**: read-only.
-
-Override per-action with `policies` on a `defineAdminResource()` for the `rooms` resource if you want different gating — e.g. restrict `dispose` to admins even when `kick` is mod-allowed. See [Resources → Policies](/admin/resources#policies).
+- **Mod**: no access without the `rooms` scope. Assign with `db.moderation.assignMod(userId, "rooms")` — scoped mods get read plus kick/lock/state edits. Dispose stays admin-only regardless (it maps to the `delete` action, which mods never have).
+- **User**: raw-API read only (the panel UI requires an operator role).
 
 ## Next steps
 

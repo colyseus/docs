@@ -66,7 +66,7 @@ const server = defineServer({
 });
 ```
 
-In express-middleware mode the `prefix` option is ignored — Express strips its own mount path before dispatching.
+In express-middleware mode the Express mount path must match the monitor's `prefix` (default `/monitor`) — the monitor dispatches on the full original URL, so a mismatched mount path silently 404s. Pass a matching `prefix` when mounting elsewhere.
 
 ## Usage
 

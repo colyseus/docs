@@ -23,7 +23,7 @@ Run the load test command with the following arguments:
 - `script` — path to your custom client script
 - `--room` — name of the room to connect to
 - `--numClients` — number of simulated clients to spawn
-- `--endpoint` — your server endpoint (defaults to `http://localhost:2567`)
+- `--endpoint` — your server endpoint (defaults to `ws://localhost:2567`)
 
 For example, to connect 50 clients into a `"battle"` room:
 
@@ -60,8 +60,8 @@ Each simulated client executes the script you provide. Use room lifecycle events
             console.log(room.sessionId, "new state:", state);
         });
 
-        room.onError((err) => {
-            console.log(room.sessionId, "!! ERROR !!", err.message);
+        room.onError((code, message) => {
+            console.log(room.sessionId, "!! ERROR !!", message);
         })
 
         room.onLeave((code) => {
@@ -96,8 +96,8 @@ Each simulated client executes the script you provide. Use room lifecycle events
             console.log(room.sessionId, "new state:", state);
         });
 
-        room.onError((err) => {
-            console.log(room.sessionId, "!! ERROR !!", err.message);
+        room.onError((code, message) => {
+            console.log(room.sessionId, "!! ERROR !!", message);
         })
 
         room.onLeave((code) => {
