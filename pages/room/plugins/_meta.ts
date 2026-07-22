@@ -1,7 +1,7 @@
 export default {
-  "idle-kick": "IdleKickPlugin",
-  "geoip": "GeoIPPlugin",
-  "webrtc": "WebRTCPlugin",
-  "unique-session": "UniqueSessionPlugin",
-  "track-user-sessions": "TrackUserSessionsPlugin",
+  "idle-kick": "Kick Idle",
+  "geoip": "GeoIP",
+  "webrtc": "WebRTC",
+  "unique-session": "Unique Session",
+  "track-user-sessions": "Track User Sessions",
 };
