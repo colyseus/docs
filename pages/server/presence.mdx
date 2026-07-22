@@ -458,23 +458,6 @@ console.log(newScore); // => 110
 
 ---
 
-### hincrbyex
-
-Increment a hash field and set an expiration on the hash key.
-
-
-This is useful for rate limiting or temporary counters.
-
-```ts filename="MyRoom.ts"
-// Increment and expire in 60 seconds
-const count = await this.presence.hincrbyex("rate:user:123", "requests", 1, 60);
-if (count > 100) {
-    console.log("Rate limit exceeded");
-}
-```
-
----
-
 ## List Methods
 
 Lists are ordered collections of strings, supporting push/pop operations from both ends.

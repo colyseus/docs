@@ -197,14 +197,14 @@ The driver creates a `roomcaches_v1` table with the following structure:
 
 ### MongoDB Driver
 
-The `MongoDriver` stores room data in a MongoDB database. This driver is not actively maintained and is not recommended for production environments.
+The `MongooseDriver` stores room data in a MongoDB database. This driver is not actively maintained and is not recommended for production environments.
 
 ```ts {2,5} filename="app.config.ts"
 import { defineServer } from "colyseus";
 import { MongooseDriver } from "@colyseus/mongoose-driver";
 
 const server = defineServer({
-    driver: new MongooseDriver(/* connection options */),
+    driver: new MongooseDriver(/* connection URI — falls back to MONGO_URI env, then mongodb://127.0.0.1:27017/colyseus */),
     // ...
 });
 ```

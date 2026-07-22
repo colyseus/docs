@@ -152,7 +152,7 @@ const server = defineServer({
 | `use` | Array of middlewares created with `createMiddleware`. |
 | `requireHeaders` | When `true`, requires `headers` when calling the endpoint as a function. |
 | `requireRequest` | When `true`, requires a `request` object when calling the endpoint as a function. |
-| `metadata.scope` | `"rpc"` (default): available to RPC client. `"server"`: callable directly only. `"http"`: routed only. |
+| `metadata.scope` | `"rpc"` (default): available to RPC client. `"server"`: routed and callable directly, hidden from the typed RPC client. `"http"`: routed only. |
 | `metadata.allowedMediaTypes` | Restricts accepted `Content-Type` values for this endpoint. |
 
 ### Handler Context
@@ -182,8 +182,8 @@ The handler signature is `async (ctx) => response`.
 | `ctx.setHeader(name, value)` | Set a response header. |
 | `ctx.setCookie(name, value, options?)` | Set a response cookie. |
 | `ctx.getCookie(name)` | Read a request cookie. |
-| `ctx.setSignedCookie(name, value, options?)` | Set a signed cookie. |
-| `ctx.getSignedCookie(name)` | Read a signed cookie. |
+| `ctx.setSignedCookie(name, value, secret, options?)` | Set a signed cookie. |
+| `ctx.getSignedCookie(name, secret)` | Read a signed cookie. |
 
 ---
 

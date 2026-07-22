@@ -107,7 +107,7 @@ The `selectProcessIdToCreateRoom` is a callback that allows you to customize whi
 By default, the process with the **least amount of rooms** is selected to create a new room.
 
 ```ts {4-8} filename="app.config.ts"
-import { defineServer } from "colyseus";
+import { defineServer, matchMaker } from "colyseus";
 
 const server = defineServer({
     selectProcessIdToCreateRoom: async function (roomName: string, clientOptions: any) {
@@ -121,7 +121,7 @@ const server = defineServer({
 A common alternative is to use the process with least amount of **connections**:
 
 ```ts {4-8} filename="app.config.ts"
-import { defineServer } from "colyseus";
+import { defineServer, matchMaker } from "colyseus";
 
 const server = defineServer({
     selectProcessIdToCreateRoom: async function (roomName: string, clientOptions: any) {
@@ -209,7 +209,7 @@ Define room types for the matchmaker using the `rooms` configuration in `defineS
 
 - `room_name` - The public name of the room. You'll use this name when joining the room from the frontend
 - `RoomClass` - The `Room` class
-- `defaultOptions` - _(optional)_ Default options to provide for room creation and `onAuth`/`onJoin` methods
+- `defaultOptions` - _(optional)_ Default options merged into the client-provided options for `onCreate()` (room creation only)
 
 ```ts
 const server = defineServer({
@@ -245,9 +245,11 @@ You can listen for matchmaking events from outside the room instance scope, such
 - `"create"` - when a room has been created
 - `"dispose"` - when a room has been disposed
 - `"join"` - when a client join a room
-- `"leave"` - when a client leave a room
+- `"leave"` - when a client leave a room (`(room, client, willDispose)`)
 - `"lock"` - when a room has been locked
 - `"unlock"` - when a room has been unlocked
+- `"visibility-change"` - when a room's listing visibility changed (`(room, isVisible)`)
+- `"metadata-change"` - when a room's metadata changed
 
 **Usage:**
 
@@ -353,7 +355,7 @@ Triggers the Graceful Shutdown routine.
 server.gracefullyShutdown();
 ```
 
-This method is called automatically when the process received `SIGINT` or `SIGTERM` signal.
+This method is called automatically when the process receives a `SIGINT`, `SIGTERM`, or `SIGUSR2` signal, or an `uncaughtException`.
 
 If `gracefullyShutdown: false` has been provided on `Server` constructor, you should call this method manually.
 

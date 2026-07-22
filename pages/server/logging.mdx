@@ -1,6 +1,6 @@
 ---
 title: "Logging"
-description: "Use the built-in Colyseus logger — debug, log, info, warn, error — and customize or replace it with your own logger implementation."
+description: "Use the built-in Colyseus logger — trace, debug, info, warn, error — and customize or replace it with your own logger implementation."
 ---
 import { Callout, Cards } from "nextra/components";
 
@@ -14,7 +14,6 @@ import { logger } from "@colyseus/core";
 // ...
 
 logger.debug("this is debug");
-logger.log("this is a log");
 logger.info("this is information");
 logger.warn("this is a warning");
 logger.error("this is an error");
@@ -70,7 +69,7 @@ import pino from "pino";
 const server = defineServer({
   // ...
   logger: pino({
-    level: 50,
+    level: "error",
     msgPrefix: '[HTTP] '
   }),
   // ...

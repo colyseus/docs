@@ -22,33 +22,33 @@ npm install --save @colyseus/h3-transport
 
 **Usage**
 
-```ts {2,6-8} filename="app.config.ts"
+```ts {2-3,9-13} filename="app.config.ts"
+import express from "express";
 import { defineServer } from "colyseus";
 import { H3Transport } from "@colyseus/h3-transport"
+
+const app = express();
+app.get("/hello", (req, res) => {
+  res.json({ hello: "world!" });
+});
 
 const server = defineServer({
   // ...
   transport: new H3Transport({
-    /* H3Transport options */
+    app, // required — H3Transport serves HTTP through this Express app
+    /* other H3Transport options */
   }),
-
-  //
-  // bind express routes
-  //
-  express: (app) => {
-
-    app.get("/hello", (req, res) => {
-      res.json({ hello: "world!" });
-    });
-
-  },
   // ...
 });
 ```
 
+<Callout type="warning">
+    Pass your Express app via the transport's `app` option. The `defineServer({ express })` callback is **not** supported by `H3Transport` — it is silently ignored.
+</Callout>
+
 ## Available options
 
-- `app`: The Express app.
+- `app`: **(required)** The Express app served over HTTP/3.
 - `cert`: Certificate contents (cert.pem)
 - `key`: Private key contents (key.pem)
 - `secret`: (?)

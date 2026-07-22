@@ -14,18 +14,15 @@ The uWebSockets.js generally performs better than the default WebSockets impleme
 
 ## Installation
 
-<Tabs items={["Express v5", "Express v4"]}>
-    <Tabs.Tab>
-    ```sh npm2yarn
-    npm install --save @colyseus/uwebsockets-transport@^2.0.1
-    ```
-    </Tabs.Tab>
-    <Tabs.Tab>
-    ```sh npm2yarn
-    npm install --save @colyseus/uwebsockets-transport@^1.4.1
-    ```
-    </Tabs.Tab>
-</Tabs>
+```sh npm2yarn
+npm install --save @colyseus/uwebsockets-transport@^0.18.0
+```
+
+To use the `express:` option with this transport, also install the optional [`uwebsockets-express`](https://github.com/colyseus/uWebSockets-express) compatibility layer — `^2.0.1` for Express v5, `^1.4.1` for Express v4:
+
+```sh npm2yarn
+npm install --save uwebsockets-express
+```
 
 **Usage**
 
