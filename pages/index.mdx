@@ -1,12 +1,12 @@
 ---
 title: "Colyseus - Multiplayer Game Framework for Node.js"
-description: "Colyseus is an open-source multiplayer framework for Node.js. Build authoritative game servers with real-time state synchronization, matchmaking, and integration with any game engine."
+description: "Colyseus is an open-source multiplayer framework for Node.js. Build authoritative game servers with real-time state synchronization, matchmaking, built-in client prediction, and SDKs for every major game engine."
 # toc: false
 ---
 
 import Image from 'next/image'
 import { Callout, Steps, Tabs, Cards } from 'nextra/components'
-import { CodeIcon, PeopleIcon, SyncIcon, ServerIcon, CloudIcon, DownloadIcon, RepoIcon, FileCodeIcon } from '@primer/octicons-react'
+import { CodeIcon, PeopleIcon, SyncIcon, ServerIcon, CloudIcon, DownloadIcon, RepoIcon, FileCodeIcon, ZapIcon, DevicesIcon, PasskeyFillIcon } from '@primer/octicons-react'
 
 {/* <Image src={require('../images/hero-christmas.webp')} width={0} height={0} style={{ width: '100%', height: 'auto' }} alt="Colyseus Hero Image" /> */}
 <Image src={require('../images/hero.png')} width={0} height={0} style={{ width: '100%', height: 'auto' }} alt="Colyseus Hero Image" />
@@ -17,12 +17,15 @@ Colyseus is an open-source Node.js framework for building authoritative game ser
 
 ## Key Features
 
-- [**<PeopleIcon /> Rooms and Matchmaking**](/room) — From a single Room definition, clients are matched into multiple Room instances.
-- [**<SyncIcon /> State Synchronization**](/state) — Define your state on the server, and it's automatically synchronized to all connected clients.
-- [**<ServerIcon /> Scalable**](/scalability) — Built for horizontal and vertical scalability across multiple processes.
-- [**<CloudIcon /> Deploy Anywhere**](/deployment) — Self-host for free, or use [Colyseus Cloud](https://cloud.colyseus.io/) for managed hosting.
+- [**<PeopleIcon /> Rooms & Matchmaking**](/room) — From a single Room definition, clients are matched into multiple room instances — with [visibility flags, lobbies, and ranked queues](/matchmaker).
+- [**<SyncIcon /> State Synchronization**](/state) — Define your state on the server; clients receive binary delta patches automatically.
+- [**<ZapIcon /> Prediction-Ready Netcode**](/netcode) — Built-in client prediction, rollback, interpolation, and lag compensation — new in 0.18.
+- [**<CodeIcon /> Full-Stack Type Safety**](/sdk) — Share your server's types with the SDK: typed messages, typed join options, typed state.
+- [**<PasskeyFillIcon /> Batteries Included**](/auth) — Authentication (JWT + OAuth), [database services](/database), [room plugins](/room/plugins), [admin panel](/admin), and [dev tools](/tools) out of the box.
+- [**<DevicesIcon /> Any Engine**](/getting-started) — Official SDKs for the Web, Unity, Godot, Defold, GameMaker, Construct, Haxe, and more.
+- [**<ServerIcon /> Scale & Deploy Anywhere**](/scalability) — Horizontal scaling across processes; [self-host](/deployment) for free or use [Colyseus Cloud](https://cloud.colyseus.io/).
 
-## How does it look like?
+## What does it look like?
 
 <Steps>
 
@@ -82,7 +85,7 @@ export class MyState extends Schema {
 Define the game logic and client interactions with the game state within your Room code.
 
 ```ts filename="src/rooms/MyRoom.ts"
-import { Room, Client } from "@colyseus/core";
+import { Room, Client } from "colyseus";
 import { MyState, Player } from "./MyState";
 
 export class MyRoom extends Room {
@@ -104,7 +107,7 @@ export class MyRoom extends Room {
     }
 
     // Called when a client leaves the room
-    onLeave(client: Client, options: any) {
+    onLeave(client: Client, code: number) {
         this.state.players.delete(client.sessionId);
     }
 
