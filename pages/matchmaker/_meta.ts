@@ -3,5 +3,5 @@ export default {
     "visibility": "Visibility & Access",
     "lobby": "Lobby Room",
     "queue": "Queue Room",
-    "standalone": "Standalone Match-maker",
+    "standalone": "Standalone Matchmaker",
 }

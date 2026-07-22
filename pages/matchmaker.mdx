@@ -9,9 +9,11 @@ import { ScenarioGrid, ScenarioCard } from '../components/scenario-card'
 
 # Matchmaking
 
-{/* "Match-making" was renamed to "Methods" in the restructure. */}
+{/* Old heading slugs: "Match-making" (hyphenated) became "Methods"; the
+    page's former H1 "Match-maker API" became the "Matchmaker API" section. */}
 <MovedAnchors map={{
     "match-making": "/matchmaker#methods",
+    "match-maker-api": "/matchmaker#matchmaker-api",
 }} />
 
 Every join call from the SDK goes through the matchmaker. It picks the room a
@@ -32,7 +34,7 @@ Which rooms are eligible, and in what order, is up to you:
     <ScenarioCard icon={<ListOrderedIcon size={18}/>} title="Queue Room" href="/matchmaker/queue">
         A matchmaking queue that groups players over time and spawns a match room when a group is ready.
     </ScenarioCard>
-    <ScenarioCard icon={<ServerIcon size={18}/>} title="Standalone Match-maker" href="/matchmaker/standalone">
+    <ScenarioCard icon={<ServerIcon size={18}/>} title="Standalone Matchmaker" href="/matchmaker/standalone">
         Run matchmaking on a dedicated process, separate from your game servers.
     </ScenarioCard>
 </ScenarioGrid>
@@ -55,7 +57,7 @@ Whenever a room is created by the `create()` or `joinOrCreate()` methods, only t
 
 <Tabs items={['Filter by "mode" provided by the client', 'Filter by "maxClients" server config']}>
     <Tabs.Tab>
-    Filter match-making by `mode` option.
+    Filter matchmaking by `mode` option.
 
     ```ts filename="server.ts"
     const server = defineServer({
@@ -90,7 +92,7 @@ Whenever a room is created by the `create()` or `joinOrCreate()` methods, only t
     </Tabs.Tab>
 
     <Tabs.Tab>
-    Filter match-making by built-in `maxClients` value.
+    Filter matchmaking by built-in `maxClients` value.
 
     The `maxClients` is an internal variable stored for matchmaking, and can be used for filtering too.
 
@@ -162,14 +164,14 @@ const server = defineServer({
 ```
 
 <Callout type="info">
-    See [Built-in Rooms → LobbyRoom](/matchmaker/lobby) for more details.
+    See [Lobby Room](/matchmaker/lobby) for more details.
 </Callout>
 
 ---
 
-## Match-maker API
+## Matchmaker API
 
-The Match-maker API gives you server-side control over room management and player matchmaking in Colyseus.
+The Matchmaker API gives you server-side control over room management and player matchmaking in Colyseus.
 
 You can programmatically create rooms, join players to existing rooms, query and search for available rooms, reserve seats for players, monitor statistics like connected users (CCU) and room counts across processes, and even call methods on rooms running in different processes—all programmatically from your server code rather than relying solely on client requests.
 

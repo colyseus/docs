@@ -181,7 +181,7 @@ These methods use the same pattern as `joinOrCreate` — replace the method name
 | `create` | `client.create(roomName, options)` | Always creates a new room, even if others exist. |
 | `join` | `client.join(roomName, options)` | Joins an existing room. Fails if none available. Locked/private rooms are ignored. |
 | `joinById` | `client.joinById(roomId, options)` | Joins a specific room by its unique ID. **Private rooms can be joined by ID.** Useful for invite links. |
-| `consumeSeatReservation` | `client.consumeSeatReservation(reservation)` | Joins using a pre-reserved seat from the server. See [Match-maker → Reserve Seat For](/matchmaker#reserve-a-seat-for). |
+| `consumeSeatReservation` | `client.consumeSeatReservation(reservation)` | Joins using a pre-reserved seat from the server. See [Matchmaker → Reserve Seat For](/matchmaker#reserve-a-seat-for). |
 
 <Callout type="info">
   You may disallow the client from creating rooms. See [Matchmaker → Restricting the frontend from creating rooms](/matchmaker#restricting-the-frontend-from-creating-rooms)

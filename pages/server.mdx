@@ -75,7 +75,7 @@ const server = defineServer({
 
 #### Driver (`driver`)
 
-The match-making driver. Rooms are cached and queried against a Driver implementation. When scaling your Colyseus servers, you may need to provide a `driver` option that fits your needs.
+The matchmaking driver. Rooms are cached and queried against a Driver implementation. When scaling your Colyseus servers, you may need to provide a `driver` option that fits your needs.
 
 <Callout type="info">
     See [Driver](/server/driver) for more details.
@@ -130,7 +130,7 @@ const server = defineServer({
 
 ---
 
-#### Standalone Match-maker (`isStandaloneMatchMaker`)
+#### Standalone Matchmaker (`isStandaloneMatchMaker`)
 
 When set to `true`, this process will only handle matchmaking and will **not** spawn rooms locally. Room creation is delegated to other game server processes via IPC.
 
@@ -145,7 +145,7 @@ const server = defineServer({
 ```
 
 <Callout type="info">
-    See [Standalone Match-maker](/matchmaker/standalone) for a full setup guide.
+    See [Standalone Matchmaker](/matchmaker/standalone) for a full setup guide.
 </Callout>
 
 ---
@@ -195,7 +195,7 @@ const server = defineServer({
 
 ### Define Room Type
 
-Define room types for the match-maker using the `rooms` configuration in `defineServer()`.
+Define room types for the matchmaker using the `rooms` configuration in `defineServer()`.
 
 - Rooms are **not created** during configuration
 - Rooms are created upon client request ([See frontend methods](/sdk#joining-rooms))
