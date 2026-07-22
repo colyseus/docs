@@ -33,22 +33,21 @@ import { HashIcon } from '@primer/octicons-react'
 
     <Tabs.Tab>
         <Callout type="info">
-            This syntax was introduced in Colyseus 0.16,
-            It is now the recommended syntax for defining state structures when using plain JavaScript
+            The `schema()` helper is the recommended way to define state structures in plain JavaScript. Since schema 5 (Colyseus 0.18) each field takes a `t.*` builder — raw strings like `"string"` are no longer accepted and throw at definition time.
         </Callout>
 
         ```js filename="MyState.js"
-        import { schema } from "@colyseus/schema";
+        import { schema, t } from "@colyseus/schema";
 
         const MyState = schema({
-            currentTurn: "string"
+            currentTurn: t.string(),
         });
         ```
     </Tabs.Tab>
 
     <Tabs.Tab>
         <Callout type="error">
-            The `defineTypes()` method will be removed in future versions of Colyseus. It is recommended to use the `schema()` method instead.
+            The `defineTypes()` method was **removed** in Colyseus 0.18 (schema 5) — this legacy example no longer runs and is kept only to help you recognize old code. Migrate to `schema()` with `t.*` builders.
         </Callout>
 
         ```js filename="MyState.js"
@@ -57,7 +56,7 @@ import { HashIcon } from '@primer/octicons-react'
         class MyState extends Schema {
         }
         defineTypes(MyState, {
-            currentTurn: "string"
+            currentTurn: t.string(),
         });
         ```
     </Tabs.Tab>
@@ -102,14 +101,14 @@ export class MyRoom extends Room {
 - `int8`, `int16`,  `int32`, `int64`: signed number types.
 - `uint8`, `uint16`, `uint32`, `uint64`: unsigned number types.
 - `float32`, `float64`: floating-point number types.
-- `bigInt64`, `bigUint64`: unsigned / signed 64-bit bigint type.
+- `bigint64`, `biguint64`: unsigned / signed 64-bit bigint type.
 
 #### Table of types and their limitations
 
 | Type | Description | Limitation |
 |------|-------------|------------|
 | `"string"` | length-prefixed utf8 strings | maximum byte size of `4294967295` |
-| `"number"` | also known as "variable length encoding". Auto-detects the number type to use. (may use one extra byte when encoding to identify the type) | `5e-324` to `5e+324` (float64 limits) |
+| `"number"` | also known as "variable length encoding". Auto-detects the number type to use. (may use one extra byte when encoding to identify the type) | ±`1.7976931348623157e+308` (float64 limits) |
 | `"boolean"` | `true` or `false` | `0` or `1` |
 | `"int64"` and `"uint64"` | JavaScript numbers are 64 bit floats and thus cannot represent full 64 bit integers safely | The minimum/maximum integer that can be safely represented by float64 is `-9007199254740991` to `9007199254740991` (53 bits of precision) |
 
@@ -128,8 +127,8 @@ Specialized number types:
 | `"uint64"` | unsigned 64-bit integer (`number` type) | `0` to `2^53-1 (9007199254740991)` (safely) |
 | `"float32"` | single-precision floating-point number | `-3.40282347e+38` to `3.40282347e+38`|
 | `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |
-| `"bigInt64"` | signed 64-bit integer (`bigint` type) | `-2^63 (-9223372036854775808)` to `2^63-1 (9223372036854775807)` |
-| `"bigUint64"` | unsigned 64-bit integer (`bigint` type) | `0` to `2^64-1 (18446744073709551615)` |
+| `"bigint64"` | signed 64-bit integer (`bigint` type) | `-2^63 (-9223372036854775808)` to `2^63-1 (9223372036854775807)` |
+| `"biguint64"` | unsigned 64-bit integer (`bigint` type) | `0` to `2^64-1 (18446744073709551615)` |
 
 ### `Schema` type
 
@@ -156,12 +155,12 @@ A `Schema` type can define properties as primitives, other `Schema` types, or co
     <Tabs.Tab>
 
     ```js filename="MyState.js"
-    import { schema } from "@colyseus/schema";
+    import { schema, t } from "@colyseus/schema";
 
     const World = schema({
-      width: "number",
-      height: "number",
-      items: "number"
+      width: t.number(),
+      height: t.number(),
+      items: t.number(),
     });
 
     const MyState = schema({
@@ -198,10 +197,10 @@ You can't mix types inside `ArraySchema`.
             <Tabs.Tab>
 
             ```js filename="MyState.js"
-            import { schema } from "@colyseus/schema";
+            import { schema, t } from "@colyseus/schema";
 
             const MyState = schema({
-                animals: [ "string" ]
+                animals: t.array("string"),
             });
             ```
             </Tabs.Tab>
@@ -229,15 +228,15 @@ You can't mix types inside `ArraySchema`.
             <Tabs.Tab>
 
             ```js filename="MyState.js"
-            import { schema } from "@colyseus/schema";
+            import { schema, t } from "@colyseus/schema";
 
             const Block = schema({
-                x: "number",
-                y: "number"
+                x: t.number(),
+                y: t.number(),
             });
 
             const MyState = schema({
-                blocks: [ Block ]
+                blocks: t.array(Block),
             });
             ```
             </Tabs.Tab>
@@ -441,15 +440,15 @@ Maps are recommended to track your game entities by id, such as players, enemies
     <Tabs.Tab>
 
     ```js filename="MyState.js"
-    import { schema } from "@colyseus/schema";
+    import { schema, t } from "@colyseus/schema";
 
     const Player = schema({
-        x: "number",
-        y: "number"
+        x: t.number(),
+        y: t.number(),
     });
 
     const MyState = schema({
-        players: { map: Player, default: new Map() }
+        players: t.map(Player)
     });
     ```
     </Tabs.Tab>
@@ -592,14 +591,14 @@ The usage of `SetSchema` is very similar to [`CollectionSchema`], the biggest di
     <Tabs.Tab>
 
     ```js filename="MyState.js"
-    import { schema } from "@colyseus/schema";
+    import { schema, t } from "@colyseus/schema";
 
     const Effect = schema({
-        radius: "number"
+        radius: t.number(),
     });
 
     const Player = schema({
-        effects: { set: Effect }
+        effects: t.set(Effect)
     });
     ```
     </Tabs.Tab>
@@ -625,7 +624,7 @@ set.add(3);
 Delete an item by its value.
 
 ``` typescript
-set.delete("three");
+set.delete(3);
 ```
 
 ---
@@ -635,7 +634,7 @@ set.delete("three");
 Returns a boolean value whether an item exists in the Collection or not.
 
 ``` typescript
-if (set.has("two")) {
+if (set.has(2)) {
     console.log("Exists!");
 } else {
     console.log("Does not exist!");
@@ -699,14 +698,14 @@ The `CollectionSchema` works similarly as the `ArraySchema`, with the caveat tha
     <Tabs.Tab>
 
     ```js filename="MyState.js"
-    import { schema } from "@colyseus/schema";
+    import { schema, t } from "@colyseus/schema";
 
     const Item = schema({
-        damage: "number"
+        damage: t.number(),
     });
 
     const Player = schema({
-        items: { collection: Item }
+        items: t.collection(Item)
     });
     ```
     </Tabs.Tab>
@@ -869,7 +868,7 @@ The following example is supported:
     <Tabs.Tab>
 
     ```ts {3-5,8,12-13} filename="MyState.ts"
-    import { Schema, type } from "@colyseus/schema";
+    import { Schema, MapSchema, type } from "@colyseus/schema";
 
     class Item extends Schema {/* base Item fields */}
     class Weapon extends Item {/* specialized Weapon fields */}
@@ -888,14 +887,14 @@ The following example is supported:
     <Tabs.Tab>
 
     ```js  {3-5,8,12-13} filename="MyState.js"
-    import { schema } from "@colyseus/schema";
+    import { schema, t } from "@colyseus/schema";
 
     const Item = schema({/* base Item fields */});
     const Weapon = Item.extend({/* specialized Weapon fields */});
     const Shield = Item.extend({/* specialized Shield fields */});
 
     const Inventory = schema({
-        items: { map: Item }
+        items: t.map(Item)
     });
 
     const inventory = new Inventory();

@@ -325,7 +325,7 @@ Listens for a single property change within a `Schema` instance.
 
     <Tabs.Tab>
     ```haxe filename="client.hx"
-    var unbindCallbacks = callbacks.listen("currentTurn", function (currentValue, previousValue) {
+    var unbindCallback = callbacks.listen("currentTurn", function (currentValue, previousValue) {
         // ...
     });
 
@@ -652,7 +652,7 @@ Usage (C#/Unity)
     schema-codegen src/Schema.ts --output frontend/ --csharp --namespace MyGame.Schema
 
 Valid options:
-    --output: fhe output directory for generated frontend schema files
+    --output: the output directory for generated client-side schema files
     --c: generate for C
     --csharp: generate for C#/Unity
     --cpp: generate for C++
@@ -661,9 +661,12 @@ Valid options:
     --ts: generate for TypeScript
     --js: generate for JavaScript
     --java: generate for Java
+    --lua: generate for Lua
 
 Optional:
     --namespace: generate namespace on output code
+    --bundle: bundle all schemas into a single output file
+    --decorator: custom decorator name (default: "type")
 ```
 
 ### Example: Unity / C#
@@ -671,7 +674,7 @@ Optional:
 Below is a real example to generate the C# schema files from the [demo Unity project](https://github.com/colyseus/colyseus-unity3d/blob/aa9a722a50b2958ce01785969cd8ecb8aee24fd0/Server/package.json#L12).
 
 ```sh filename="Terminal"
-npx schema-codegen src/rooms/schema/* --csharp --output ../Assets/Scripts/States/"
+npx schema-codegen src/rooms/schema/* --csharp --output ../Assets/Scripts/States/
 generated: Player.cs
 generated: State.cs
 ```

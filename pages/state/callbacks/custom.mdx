@@ -12,24 +12,16 @@ The standard way of attaching callbacks uses the same "flavor" as Colyseus is us
 This is an example of how you can bring your own callback system:
 
 ```ts filename="client.ts"
-import { Room } from "@colyseus/sdk";
-import { DataChange } from "@colyseus/schema";
+import { getRawChangesCallback } from "@colyseus/schema";
 
-function getRawChangesCallback(room: Room, callback: (changes: DataChange[]) => void) {
-    room['serializer']['decoder'].triggerChanges = callback;
-
-    // .refs => contains a map of all Schema instances
-    room['serializer']['decoder'].root.refs
-
-    // .refIds => contains a map of all refIds by Schema instances
-    room['serializer']['decoder'].root.refIds
-
-    // .refCounts => contains a map of all reference counts by refId
-    room['serializer']['decoder'].root.refCounts
-}
+// Also available on the decoder root:
+// - decoder.root.refs        => map of all Schema instances by refId
+// - decoder.root.refCount    => map of reference counts by refId
+// - instance[$refId]         => a ref's id, stored on the instance itself
+//                               ($refId is exported from @colyseus/schema)
 
 const room = await client.joinOrCreate("my_room");
-getRawChangesCallback(room, (changes) => {
+getRawChangesCallback(room['serializer']['decoder'], (changes) => {
     console.log("raw list of changes", changes);
 });
 ```

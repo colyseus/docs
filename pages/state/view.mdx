@@ -100,8 +100,6 @@ if (client.view.has(player)) {
 }
 ```
 
-The frontend will receive either an "On Remove" or "Listen" callback, depending on which structure the schema instance is part of.
-
 ## Specialized tags with `@view(tag: number)`
 
 Sometimes you may want to have multiple views with different fields.
@@ -148,7 +146,7 @@ The following table shows the relation between type annotations and the visibili
 
 ## Items of `ArraySchema` and `MapSchema`
 
-When you tag an array or map with `@view()`, each element of the array or map must be added to the client's `StateView` individually.
+When you tag an array or map with `@view()`, elements added to the collection **later** must be added to the client's `StateView` individually. (Calling `view.add(collection)` also brings in the elements it holds at that moment.)
 
 ```ts {7} filename="MyState.ts"
 class Player extends Schema {

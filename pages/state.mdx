@@ -30,7 +30,7 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
     <Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
         <Tabs.Tab>
         ```ts filename="src/rooms/MyState.ts"
-        import { Schema, type } from "@colyseus/schema";
+        import { Schema, MapSchema, type } from "@colyseus/schema";
 
         export class Player extends Schema {
             @type("string") name: string;
@@ -45,16 +45,16 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
         </Tabs.Tab>
         <Tabs.Tab>
         ```js filename="src/rooms/MyState.js"
-        import { schema } from "@colyseus/schema";
+        import { schema, t } from "@colyseus/schema";
 
         export const Player = schema({
-            name: "string",
-            x: "number",
-            y: "number",
+            name: t.string(),
+            x: t.number(),
+            y: t.number(),
         })
 
         export const MyState = schema({
-            players: { map: Player, default: new Map() }
+            players: t.map(Player)
         })
         ```
         </Tabs.Tab>
@@ -210,7 +210,7 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 
 - Each `Schema` structure can hold up to `64` serialized fields. If you need more fields, use nested `Schema` structures.
 - `NaN` and `Infinity` are encoded as `0` (integer encoding only).
-- `null` strings are encoded as `""` (both "string" and "cstring" encoding).
+- `null` strings are encoded as `""`.
 - Multi-dimensional arrays are not supported. [See how to use 1D arrays as multi-dimensional](https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid/212813#212813)
 - `@colyseus/schema` encoding order is based on field definition order.
     - Both encoder (server) and decoder (client) must have the same schema definition.
