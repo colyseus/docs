@@ -63,7 +63,7 @@ const server = defineServer({
 | `matchRoomName` | `string` | **required** | Name of the room to create when a group is ready. |
 | `maxPlayers` | `number` | `4` | Number of players per match group. |
 | `maxWaitingCycles` | `number` | `15` | Cycles after which a group can be marked ready if `allowIncompleteGroups` is true. |
-| `maxWaitingCyclesForPriority` | `number` | `10` | Cycles after which a client becomes high-priority and can bypass `compare`. ⚠ In 0.18.1 this one is **not** applied from `defineRoom` options — override the class field in a subclass to change it. |
+| `maxWaitingCyclesForPriority` | `number` | `10` | Cycles after which a client becomes high-priority and can bypass `compare`. ⚠ Not applied from `defineRoom` options in 0.18.1 — subclass to change it. |
 | `maxTeamSize` | `number` | — | Enables team-based grouping and limits team size per match. |
 | `allowIncompleteGroups` | `boolean` | `false` | Allows groups to start before reaching `maxPlayers` (expect bots). |
 | `compare` | `(client, group) => boolean` | built-in | Compatibility check for assigning a client to a group. |

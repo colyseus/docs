@@ -65,7 +65,7 @@ auth.settings.onRegisterWithEmailAndPassword = async (email, password, options) 
 };
 ```
 
-See the [Backend API](/auth/module#backend-api) catalog for the full list of hooks. (Note: assigning onto `db.auth.settings` directly has no effect — that getter builds a fresh object on every access.)
+See the [Backend API](/auth/module#backend-api) catalog for the full list of hooks. Assign onto `auth.settings` — not `db.auth.settings`, whose getter returns a fresh throwaway object on every access.
 
 <Callout type="info">
     Not using `@colyseus/database`? See [Auth Module](/auth/module) for the manual setup — implement the [Backend API](/auth/module#backend-api) callbacks against your own database.
