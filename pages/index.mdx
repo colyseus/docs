@@ -7,6 +7,7 @@ description: "Colyseus is an open-source multiplayer framework for Node.js. Buil
 import Image from 'next/image'
 import { Callout, Steps, Tabs, Cards } from 'nextra/components'
 import { CodeIcon, PeopleIcon, SyncIcon, ServerIcon, CloudIcon, DownloadIcon, RepoIcon, FileCodeIcon, ZapIcon, DevicesIcon, PasskeyFillIcon } from '@primer/octicons-react'
+import { ScenarioGrid, ScenarioCard } from '../components/scenario-card'
 
 {/* <Image src={require('../images/hero-christmas.webp')} width={0} height={0} style={{ width: '100%', height: 'auto' }} alt="Colyseus Hero Image" /> */}
 <Image src={require('../images/hero.png')} width={0} height={0} style={{ width: '100%', height: 'auto' }} alt="Colyseus Hero Image" />
@@ -17,13 +18,29 @@ Colyseus is an open-source Node.js framework for building authoritative game ser
 
 ## Key Features
 
-- [**<PeopleIcon /> Rooms & Matchmaking**](/room) — From a single Room definition, clients are matched into multiple room instances — with [visibility flags, lobbies, and ranked queues](/matchmaker).
-- [**<SyncIcon /> State Synchronization**](/state) — Define your state on the server; clients receive binary delta patches automatically.
-- [**<ZapIcon /> Prediction-Ready Netcode**](/netcode) — Built-in client prediction, rollback, interpolation, and lag compensation — new in 0.18.
-- [**<CodeIcon /> Full-Stack Type Safety**](/sdk) — Share your server's types with the SDK: typed messages, typed join options, typed state.
-- [**<PasskeyFillIcon /> Batteries Included**](/auth) — Authentication (JWT + OAuth), [database services](/database), [room plugins](/room/plugins), [admin panel](/admin), and [dev tools](/tools) out of the box.
-- [**<DevicesIcon /> Any Engine**](/getting-started) — Official SDKs for the Web, Unity, Godot, Defold, GameMaker, Construct, Haxe, and more.
-- [**<ServerIcon /> Scale & Deploy Anywhere**](/scalability) — Horizontal scaling across processes; [self-host](/deployment) for free or use [Colyseus Cloud](https://cloud.colyseus.io/).
+<ScenarioGrid>
+    <ScenarioCard icon={<PeopleIcon size={18}/>} title="Rooms & Matchmaking" href="/room">
+        From a single Room definition, clients are matched into multiple room instances — with visibility flags, lobbies, and ranked queues.
+    </ScenarioCard>
+    <ScenarioCard icon={<SyncIcon size={18}/>} title="State Synchronization" href="/state">
+        Define your state on the server; clients receive binary delta patches automatically.
+    </ScenarioCard>
+    <ScenarioCard icon={<ZapIcon size={18}/>} title="Prediction-Ready Netcode" href="/netcode">
+        Built-in client prediction, rollback, interpolation, and lag compensation — new in 0.18.
+    </ScenarioCard>
+    <ScenarioCard icon={<CodeIcon size={18}/>} title="Full-Stack Type Safety" href="/sdk">
+        Share your server's types with the SDK: typed messages, typed join options, typed state.
+    </ScenarioCard>
+    <ScenarioCard icon={<PasskeyFillIcon size={18}/>} title="Batteries Included" href="/auth">
+        Authentication (JWT + OAuth), database services, room plugins, admin panel, and dev tools out of the box.
+    </ScenarioCard>
+    <ScenarioCard icon={<DevicesIcon size={18}/>} title="Any Engine" href="/getting-started">
+        Official SDKs for the Web, Unity, Godot, Defold, GameMaker, Construct, Haxe, and more.
+    </ScenarioCard>
+    <ScenarioCard icon={<ServerIcon size={18}/>} title="Scale & Deploy Anywhere" href="/scalability">
+        Horizontal scaling across processes. Self-host for free, or use Colyseus Cloud for managed hosting.
+    </ScenarioCard>
+</ScenarioGrid>
 
 ## What does it look like?
 
