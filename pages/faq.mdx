@@ -73,7 +73,7 @@ async onLeave(client, code) {
 
 ### Why is my room state not synchronizing with the client?
 
-If you are using TypeScript to target ES2022/ESNext, you need to provide `"useDefineForClassFields": false` on your tsconfig to make sure `@type()` decorators are defining property accessors properly.
+If you define your state with [`@type()` decorators](/state/schema/decorators) and use TypeScript to target ES2022/ESNext, you need to provide `"useDefineForClassFields": false` on your tsconfig to make sure the decorators are defining property accessors properly. (The [`schema()` builder](/state/schema) does not need any tsconfig flags.)
 
 ```json filename="tsconfig.json"
 {
@@ -120,7 +120,7 @@ Make sure you have `es2015` or higher in your `tsconfig.json`:
 
 ### TypeScript decorators aren't working
 
-Ensure these settings in your `tsconfig.json`:
+Ensure these settings in your `tsconfig.json` (see [Decorators](/state/schema/decorators) for details):
 
 ```json filename="tsconfig.json"
 {

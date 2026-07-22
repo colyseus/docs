@@ -15,7 +15,7 @@ By default, the entire state is visible to all clients. However, you may want to
 **You can do so by:**
 
 1. Assigning a `StateView` instance to the client
-2. Tag state fields with the `@view()` decorator
+2. Tag state fields with the `.view()` field modifier
 3. Manually `.add()` schema instances to the `StateView`
 4. Manually `.remove()` schema instances from the `StateView`
 
@@ -42,22 +42,22 @@ import { StateView } from "@colyseus/schema";
 
     - Each `StateView` instance is going to add a new encoding step for state serialization.
     - You may re-use the same `StateView` instance for multiple clients, or create a new one for each client.
-    - Internally, all "shared" properties (properties not tagged with `@view()`) are serialized first, and then each `StateView` is serialized with its own set of properties.
+    - Internally, all "shared" properties (properties not tagged with `.view()`) are serialized first, and then each `StateView` is serialized with its own set of properties.
 </Callout>
 
 
-## Tagging fields with `@view()`
+## Tagging fields with `.view()`
 
-The `@view()` decorator is used to tag a field as only visible to `StateView` instances that contain that `Schema` instance.
+The `.view()` field modifier is used to tag a field as only visible to `StateView` instances that contain that `Schema` instance.
 
 ```ts {6} filename="MyState.ts"
-class Player extends Schema {
+const Player = schema({
     // visible to all
-    @type("string") name: string;
+    name: t.string(),
 
     // only visible to clients containing this schema instance on their `StateView`
-    @view() @type("number") position: number;
-}
+    position: t.number().view(),
+}, "Player");
 ```
 
 In the example above, the `position` field is only visible to clients that contain this `Player` instance in their `StateView`.
@@ -100,29 +100,29 @@ if (client.view.has(player)) {
 }
 ```
 
-## Specialized tags with `@view(tag: number)`
+## Specialized tags with `.view(tag: number)`
 
 Sometimes you may want to have multiple views with different fields.
 
 ```ts {9} filename="MyState.ts"
-class Player extends Schema {
+const Player = schema({
     // visible to all
-    @type("string") name: string;
+    name: t.string(),
 
     // any `.add(player)` will see this field
-    @view() @type("number") health: number;
+    health: t.number().view(),
 
     // only `.add(player, 1)` will see this field
-    @view(1) @type("number") position: number;
-}
+    position: t.number().view(1),
+}, "Player");
 ```
 
-By assigning a numeric tag to the `@view()` decorator, that field will only be visible to clients that contain this `Schema` instance on their `StateView` with the same tag:
+By assigning a numeric tag to the `.view()` modifier, that field will only be visible to clients that contain this `Schema` instance on their `StateView` with the same tag:
 
 ```ts {6,7} filename="MyRoom.ts"
 // ...
     onJoin(client, options) {
-        const player = new Player().assign({ name: "Player 1", health: 100, position: 0 });
+        const player = new Player({ name: "Player 1", health: 100, position: 0 });
         this.state.players.set(client.sessionId, player);
 
         client.view = new StateView();
@@ -138,25 +138,25 @@ In the example above, the `position` field is only visible to clients that conta
 
 The following table shows the relation between type annotations and the visibility of each field on the frontend:
 
-| Annotations              | Without `view.add()` | `view.add(instance)` | `view.add(instance, 1)` |
+| Field declaration        | Without `view.add()` | `view.add(instance)` | `view.add(instance, 1)` |
 |-----------------------------------|----------------------|-------------------------|-----------------|
-| `@type(...)`                      | ✅                   | ✅                       | ✅              |
-| `@view() @type(...)`              | ❌                   | ✅                       | ✅              |
-| `@view(1) @type(...)`             | ❌                   | ❌                       | ✅              |
+| `t.*(...)`                        | ✅                   | ✅                       | ✅              |
+| `t.*(...).view()`                 | ❌                   | ✅                       | ✅              |
+| `t.*(...).view(1)`                | ❌                   | ❌                       | ✅              |
 
 ## Items of `ArraySchema` and `MapSchema`
 
-When you tag an array or map with `@view()`, elements added to the collection **later** must be added to the client's `StateView` individually. (Calling `view.add(collection)` also brings in the elements it holds at that moment.)
+When you tag an array or map with `.view()`, elements added to the collection **later** must be added to the client's `StateView` individually. (Calling `view.add(collection)` also brings in the elements it holds at that moment.)
 
 ```ts {7} filename="MyState.ts"
-class Player extends Schema {
-    @type("string") name: string;
-    @type("number") position: number;
-}
+const Player = schema({
+    name: t.string(),
+    position: t.number(),
+}, "Player");
 
-class MyState extends Schema {
-    @view() @type({ map: Player }) players = new MapSchema<Player>();
-}
+const MyState = schema({
+    players: t.map(Player).view(),
+}, "MyState");
 ```
 
 The instance must be assigned to the state and added to the `StateView`:

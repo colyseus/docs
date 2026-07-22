@@ -1,0 +1,182 @@
+---
+title: "Decorators (@type)"
+description: "Define Colyseus schema state with TypeScript @type() decorators: tsconfig setup, collections, default values, inheritance, @view() and @deprecated(). Fully supported alternative to the schema() builder."
+---
+import { Callout } from 'nextra/components'
+
+# Schema Definition with Decorators
+
+The `@type()` decorator style is the classic way of defining schema structures, and remains **fully supported**. The [schema builder](/state/schema) (`schema()` + `t.*`) is the recommended style for new code, but both produce the identical wire format and interoperate freely — `t.array(DecoratorClass)` and `@type(BuilderClass)` both work.
+
+This page documents the decorator equivalents of the [main schema reference](/state/schema).
+
+## TypeScript Config
+
+The decorator style requires two settings in your `tsconfig.json` — enable `experimentalDecorators` and disable `useDefineForClassFields`:
+
+```json filename="tsconfig.json"
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "useDefineForClassFields": false
+    }
+}
+```
+
+These flags are needed **only** for decorators — the [`schema()` builder](/state/schema) works without any compiler configuration. (See [#510](https://github.com/colyseus/colyseus/issues/510) for the discussion behind `useDefineForClassFields`.)
+
+## What is `@type()`?
+
+<Callout type="info">
+    `@type()` uses an upcoming JavaScript feature that is yet to be formally established by TC39. `type` is actually just a function imported from the `@colyseus/schema` module. By calling `type` with the `@` prefix at the property level means we're calling it as a _property decorator_. [See the decorators proposal here](https://github.com/tc39/proposal-decorators).
+</Callout>
+
+## Defining fields
+
+Extend the `Schema` class and decorate each synchronizable field with `@type()`, passing one of the [primitive type strings](/state/schema#primitive-types):
+
+```ts filename="MyState.ts"
+import { Schema, type } from "@colyseus/schema";
+
+export class MyState extends Schema {
+    @type("string") currentTurn: string;
+}
+```
+
+## Child schemas
+
+Pass the class itself to `@type()` to nest one schema inside another:
+
+```ts filename="MyState.ts"
+import { Schema, type } from "@colyseus/schema";
+
+class World extends Schema {
+    @type("number") width: number;
+    @type("number") height: number;
+    @type("number") items: number = 10;
+}
+
+class MyState extends Schema {
+    @type(World) world: World = new World();
+}
+```
+
+## Collections
+
+Collection fields take the child type wrapped in the collection shape — `[...]` for arrays, `{ map: ... }`, `{ set: ... }`, or `{ collection: ... }`. Initialize each field with its collection instance:
+
+```ts filename="MyState.ts"
+import { Schema, ArraySchema, MapSchema, SetSchema, CollectionSchema, type } from "@colyseus/schema";
+
+class Block extends Schema {
+    @type("number") x: number;
+    @type("number") y: number;
+}
+
+class Player extends Schema {
+    @type([ "string" ]) animals = new ArraySchema<string>();
+    @type([ Block ]) blocks = new ArraySchema<Block>();
+    @type({ map: Block }) blocksByName = new MapSchema<Block>();
+    @type({ set: Block }) effects = new SetSchema<Block>();
+    @type({ collection: Block }) items = new CollectionSchema<Block>();
+}
+```
+
+The collection instances themselves work exactly as documented in the [main reference](/state/schema#data-types) — only the field declaration differs between the two styles.
+
+## Default values
+
+Use regular class property initializers:
+
+```ts filename="MyState.ts"
+import { Schema, MapSchema, type } from "@colyseus/schema";
+
+class MyState extends Schema {
+    @type("number") countdown: number = 60;
+    @type({ map: Player }) players = new MapSchema<Player>();
+}
+```
+
+## Inheritance
+
+Subclasses may define their own serialized fields, and collections accept inherited types of the same base:
+
+```ts filename="MyState.ts"
+import { Schema, MapSchema, type, entity } from "@colyseus/schema";
+
+class Item extends Schema {/* base Item fields */}
+
+class Weapon extends Item {
+    @type("number") damage: number;
+}
+
+// A subclass that adds NO new @type() fields must be registered
+// explicitly with @entity — field decorators are what register a
+// class with the serializer, and this class has none of its own.
+@entity
+class Shield extends Item {}
+
+class Inventory extends Schema {
+    @type({ map: Item }) items = new MapSchema<Item>();
+}
+
+const inventory = new Inventory();
+inventory.items.set("left", new Weapon());
+inventory.items.set("right", new Shield());
+```
+
+## View tags
+
+Fields visible only to selected clients take the `@view()` decorator alongside `@type()`:
+
+```ts filename="MyState.ts"
+import { Schema, type, view } from "@colyseus/schema";
+
+class Player extends Schema {
+    // visible to all
+    @type("string") name: string;
+
+    // any `view.add(player)` will see this field
+    @view() @type("number") health: number;
+
+    // only `view.add(player, 1)` will see this field
+    @view(1) @type("number") position: number;
+}
+```
+
+See [State View](/state/view) for how `StateView` works — everything there applies equally to both definition styles.
+
+## Deprecating fields
+
+Flag a retired field with `@deprecated()` while keeping its slot in the encoding order:
+
+```ts filename="MyState.ts"
+import { Schema, type, deprecated } from "@colyseus/schema";
+
+class MyState extends Schema {
+    @deprecated() @type("string") myField: string;
+
+    // new fields always at the end of the structure
+    @type("string") newField: string;
+}
+```
+
+See [Versioning](/state/schema#versioning-and-backwardsforwards-compability) for the full backwards/forwards compatibility workflow.
+
+## Legacy: `defineTypes()`
+
+<Callout type="error">
+    The `defineTypes()` method was **removed** in Colyseus 0.18 (schema 5) — this legacy example no longer runs and is kept only to help you recognize old code. Migrate to [`schema()` with `t.*` builders](/state/schema).
+</Callout>
+
+```js filename="MyState.js"
+import { Schema, defineTypes } from "@colyseus/schema";
+
+class MyState extends Schema {
+}
+defineTypes(MyState, {
+    currentTurn: "string",
+});
+```
+
+See the [0.18 migration guide](/migrating/0.18) for upgrade steps.

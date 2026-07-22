@@ -183,7 +183,7 @@ import "@colyseus/sdk/debug";
 
 ## Troubleshooting: `tsconfig.json` Configuration
 
-If you're using ES2022 or ESNext and experiencing issues with state synchronization, ensure your `tsconfig.json` includes:
+If you define your state with the [`@type()` decorator style](/state/schema/decorators) and target ES2022 or ESNext, ensure your `tsconfig.json` includes:
 
 ```json filename="tsconfig.json"
 {
@@ -195,7 +195,7 @@ If you're using ES2022 or ESNext and experiencing issues with state synchronizat
 }
 ```
 
-This is required for the `@type()` decorators to work correctly in Schema classes.
+These flags are required only for `@type()` decorators — the recommended [`schema()` builder](/state/schema) works without them.
 
 ## Next Steps
 

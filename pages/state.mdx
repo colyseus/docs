@@ -4,8 +4,14 @@ description: "How state synchronization works in Colyseus: the server holds auth
 ---
 import { Cards, Steps, Tabs } from 'nextra/components'
 import { CodeSquareIcon, FileBinaryIcon, EyeIcon, StarIcon } from '@primer/octicons-react'
+import { MovedAnchors } from '../components/moved-anchors'
 
 # State Synchronization
+
+{/* The decorator tsconfig section moved to the decorators page; keep old deep links working. */}
+<MovedAnchors map={{
+    "typescript-config": "/state/schema/decorators#typescript-config",
+}} />
 
 <Cards>
     <Cards.Card icon={<FileBinaryIcon/>} title="Schema Definition" href="/state/schema" />
@@ -17,7 +23,7 @@ import { CodeSquareIcon, FileBinaryIcon, EyeIcon, StarIcon } from '@primer/octic
 
 Colyseus uses a schema-based approach to define the state of a room. The server is responsible for mutating the state, and the client listens for state changes to keep the user interface in sync.
 
-- The room's state is defined using the `Schema` class from `@colyseus/schema`. Only the server can directly mutate the state.
+- The room's state is defined using `schema()` from `@colyseus/schema`. Only the server can directly mutate the state.
 - Clients send messages to the server to request state changes. Your room code processes these requests and updates the state.
 - Colyseus optimizes performance and bandwidth by tracking property-level changes. Only the latest mutation of each property is queued and sent to clients during the [patchRate](/room#configuration-properties) interval.
 - On the client side, you listen for state changes to keep the user interface in sync.
@@ -25,40 +31,25 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 <Steps>
 	### Backend: Define your state structures
 
-    Define your state structures by extending the `Schema` class from `@colyseus/schema`:
+    Define your state structures using `schema()` and `t.*` field builders from `@colyseus/schema`:
 
-    <Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
-        <Tabs.Tab>
-        ```ts filename="src/rooms/MyState.ts"
-        import { Schema, MapSchema, type } from "@colyseus/schema";
+    ```ts filename="src/rooms/MyState.ts"
+    import { schema, t, type SchemaType } from "@colyseus/schema";
 
-        export class Player extends Schema {
-            @type("string") name: string;
-            @type("number") x: number;
-            @type("number") y: number;
-        }
+    export const Player = schema({
+        name: t.string(),
+        x: t.number(),
+        y: t.number(),
+    }, "Player");
+    export type Player = SchemaType<typeof Player>;
 
-        export class MyState extends Schema {
-            @type({ map: Player }) players = new MapSchema<Player>();
-        }
-        ```
-        </Tabs.Tab>
-        <Tabs.Tab>
-        ```js filename="src/rooms/MyState.js"
-        import { schema, t } from "@colyseus/schema";
+    export const MyState = schema({
+        players: t.map(Player),
+    }, "MyState");
+    export type MyState = SchemaType<typeof MyState>;
+    ```
 
-        export const Player = schema({
-            name: t.string(),
-            x: t.number(),
-            y: t.number(),
-        })
-
-        export const MyState = schema({
-            players: t.map(Player)
-        })
-        ```
-        </Tabs.Tab>
-    </Tabs>
+    The `type` aliases are TypeScript-only sugar — `schema()` returns a value, and `SchemaType` derives the instance type under the same name. Plain JavaScript users omit those lines.
 
 
     ### ... assign and mutate the state
@@ -212,7 +203,7 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 - `NaN` and `Infinity` are encoded as `0` (integer encoding only).
 - `null` strings are encoded as `""`.
 - Multi-dimensional arrays are not supported. [See how to use 1D arrays as multi-dimensional](https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid/212813#212813)
-- `@colyseus/schema` encoding order is based on field definition order.
+- `@colyseus/schema` encoding order is based on field definition order — the order fields appear in the `schema()` object literal (or, for decorators, declaration order).
     - Both encoder (server) and decoder (client) must have the same schema definition.
     - The order of the fields must be the same.
 
@@ -231,24 +222,14 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 
 ## Troubleshooting
 
-### TypeScript Config
-
-If you are using TypeScript, make sure to enable the `experimentalDecorators` and disable `useDefineForClassFields` in your `tsconfig.json` file.
-
-```json filename="tsconfig.json"
-{
-    "compilerOptions": {
-        "experimentalDecorators": true,
-        "useDefineForClassFields": false
-    }
-}
-```
+The `schema()` builder needs no compiler configuration. If you use the [`@type()` decorator style](/state/schema/decorators), two `tsconfig.json` flags are required — see [Decorators → TypeScript Config](/state/schema/decorators#typescript-config).
 
 ---
 
 ## Next Steps
 
 - [Schema Definition](/state/schema) - Complete reference for defining state structures
+- [Decorators (@type)](/state/schema/decorators) - The classic decorator-based definition style
 - [State Sync Callbacks](/state/callbacks) - All methods for listening to state changes
 - [State View](/state/view) - Control which parts of state each client can see
 - [Best Practices](/state#limitations-and-best-practices) - Tips for efficient state design

@@ -45,13 +45,13 @@ The server and client must process the input and apply the same update loop logi
 
 A common technique we can apply is to enqueue player inputs, and process them all at the next server tick.
 
-Let's update the server's `Player` definition to hold a queue of inputs:
+Let's update the server's `Player` definition to hold a queue of inputs. The `.noSync()` modifier keeps the field on the instance without ever synchronizing it to clients:
 
 ```typescript
-export class Player extends Schema {
+export const Player = schema({
   // (...)
-  inputQueue: any[] = [];
-}
+  inputQueue: t.ref(Array).noSync().default(() => []),
+}, "Player");
 ```
 
 Now, when receiving the player input messages, instead of processing them immediately, we are going to enqueue them to be processed later:
