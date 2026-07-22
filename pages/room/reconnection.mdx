@@ -3,14 +3,26 @@ title: "Reconnection"
 description: "Handle client reconnection in Colyseus. Allow players to rejoin rooms after disconnects with automatic reconnection support."
 ---
 import { Callout, Tabs } from 'nextra/components'
+import { MovedAnchors } from '../../components/moved-anchors'
 
 # Reconnection
+
+{/* Client-side reference consolidated into /sdk/connection; keep old deep links working. */}
+<MovedAnchors map={{
+    "roomondrop": "/sdk/connection#on-drop-event",
+    "roomonreconnect": "/sdk/connection#on-reconnect-event",
+    "roomonleave": "/sdk/connection#leaving-a-room",
+    "complete-client-example": "/room/reconnection#client-side",
+    "reconnection-options": "/sdk/connection#reconnection-options",
+    "option-details": "/sdk/connection#reconnection-options",
+    "message-buffering": "/sdk/connection#automatic-reconnection",
+}} />
 
 <Callout type="info">
     This feature has been introduced in version 0.17
 </Callout>
 
-Colyseus provides built-in automatic reconnection support to handle temporary network disconnections gracefully. This guide explains how to use `onDrop()`, `onReconnect()`, and `onLeave()` on both the client and server sides.
+Colyseus provides built-in automatic reconnection support to handle temporary network disconnections gracefully. This guide covers the server-side hooks — `onDrop()`, `allowReconnection()`, `onReconnect()`, `onLeave()` — and how the client experiences the same flow.
 
 ## Overview
 
@@ -79,7 +91,9 @@ When a client loses connection unexpectedly (e.g., network switch, temporary con
 
 Called when a client disconnects **without consent** (abnormal closure, network issues, etc.). This is where you should call `allowReconnection()` to allow the client to reconnect.
 
-> **Note:** The `onDrop()` method is **optional**, but recommended for code clarity. You may implement the same functionality directly inside `onLeave()` by checking if the close code is `CloseCode.CONSENTED`. See [Alternative: Handling Reconnection in onLeave()](#alternative-handling-reconnection-in-onleave) for an example.
+<Callout type="info">
+    `onDrop()` is **optional**, but recommended for code clarity. You may implement the same functionality directly inside `onLeave()` by checking if the close code is `CloseCode.CONSENTED` — see [the alternative pattern](#alternative-handling-reconnection-in-onleave).
+</Callout>
 
 ```typescript
 import { Room, Client, CloseCode } from "colyseus";
@@ -103,6 +117,23 @@ class MyRoom extends Room {
 **When `onDrop()` is NOT called (goes directly to `onLeave()`):**
 - `CloseCode.CONSENTED` (4000) — Client called `room.leave()` with consent
 - A reconnection already in progress was denied or failed
+
+### `allowReconnection(client, seconds)`
+
+Call this method inside `onDrop()` to allow the client to reconnect within the specified time window.
+
+```typescript
+// Allow reconnection for 30 seconds
+this.allowReconnection(client, 30);
+
+// Allow reconnection indefinitely (manual mode)
+const reconnection = this.allowReconnection(client, "manual");
+
+// Later, you can reject the reconnection manually
+reconnection.reject(new Error("Game has ended"));
+```
+
+**Returns:** A `Deferred<Client>` promise that resolves when the client reconnects or rejects if the timeout expires.
 
 ### `onReconnect(client)`
 
@@ -146,23 +177,6 @@ class MyRoom extends Room {
   }
 }
 ```
-
-### `allowReconnection(client, seconds)`
-
-Call this method inside `onDrop()` to allow the client to reconnect within the specified time window.
-
-```typescript
-// Allow reconnection for 30 seconds
-this.allowReconnection(client, 30);
-
-// Allow reconnection indefinitely (manual mode)
-const reconnection = this.allowReconnection(client, "manual");
-
-// Later, you can reject the reconnection manually
-reconnection.reject(new Error("Game has ended"));
-```
-
-**Returns:** A `Deferred<Client>` promise that resolves when the client reconnects or rejects if the timeout expires.
 
 ---
 
@@ -219,149 +233,32 @@ class GameRoom extends Room<{ state: MyState }> {
 
 ## Client-Side
 
-### `room.onDrop`
-
-Triggered when the connection is lost unexpectedly. The client will automatically attempt to reconnect.
-
-```typescript
-room.onDrop((code, reason) => {
-  console.log(`Connection dropped! Code: ${code}, Reason: ${reason}`);
-  // Show "Reconnecting..." UI to the user
-  showReconnectingOverlay();
-});
-```
-
-### `room.onReconnect`
-
-Triggered when the client successfully reconnects to the room.
-
-```typescript
-room.onReconnect(() => {
-  console.log("Reconnected successfully!");
-  // Hide the reconnecting overlay
-  hideReconnectingOverlay();
-});
-```
-
-### `room.onLeave`
-
-Triggered when the client permanently leaves the room (either by choice or when reconnection fails).
-
-```typescript
-room.onLeave((code, reason) => {
-  console.log(`Left room. Code: ${code}, Reason: ${reason}`);
-
-  if (code === CloseCode.FAILED_TO_RECONNECT) {
-    // Reconnection failed after all retries
-    showConnectionFailedScreen();
-  } else {
-    // Normal leave
-    returnToLobby();
-  }
-});
-```
-
-### Complete Client Example
+The SDK detects the drop, retries with exponential backoff, and fires three events — this is the whole client-side integration:
 
 ```typescript
 import { Client, CloseCode } from "@colyseus/sdk";
 
-const client = new Client("ws://localhost:2567");
+const client = new Client("http://localhost:2567");
+const room = await client.joinOrCreate("game_room");
 
-async function joinGame() {
-  const room = await client.joinOrCreate("game_room");
-
-  room.onStateChange((state) => {
-    // Update game state
-    updateGameUI(state);
-  });
-
-  room.onDrop((code, reason) => {
-    console.log(`Disconnected: ${code} - ${reason}`);
-    showReconnectingUI();
-  });
-
-  room.onReconnect(() => {
-    console.log("Reconnected!");
-    hideReconnectingUI();
-  });
-
-  room.onLeave((code, reason) => {
-    console.log(`Left room: ${code}`);
-
-    if (code === CloseCode.FAILED_TO_RECONNECT) {
-      showError("Failed to reconnect. Please try again.");
-    }
-
-    // Clean up and return to menu
-    cleanupGame();
-  });
-
-  room.onError((code, message) => {
-    console.error(`Room error: ${code} - ${message}`);
-  });
-}
-```
-
----
-
-## Reconnection Options
-
-The client-side `room.reconnection` object allows you to customize the reconnection behavior:
-
-```typescript
-const room = await client.joinOrCreate("my_room");
-
-// Customize reconnection options
-room.reconnection.enabled = true;          // Enable/disable auto-reconnection (default: true)
-room.reconnection.maxRetries = 15;        // Maximum reconnection attempts (default: 15)
-room.reconnection.delay = 100;            // Initial delay in ms (default: 100)
-room.reconnection.minDelay = 100;         // Minimum delay in ms (default: 100)
-room.reconnection.maxDelay = 5000;        // Maximum delay in ms (default: 5000)
-room.reconnection.minUptime = 5000;       // Minimum uptime before auto-reconnect (default: 5000)
-room.reconnection.maxEnqueuedMessages = 10; // Max buffered messages (default: 10)
-
-// Custom backoff function (default: exponential)
-room.reconnection.backoff = (attempt, delay) => {
-  return Math.floor(Math.pow(2, attempt) * delay);
-};
-```
-
-### Option Details
-
-| Option | Default | Description |
-|--------|---------|-------------|
-| `enabled` | `true` | Set to `false` to disable automatic reconnection entirely. When disabled, a dropped connection triggers `onLeave` immediately with the original close code. |
-| `maxRetries` | 15 | Maximum number of reconnection attempts |
-| `delay` | 100ms | Initial delay between attempts |
-| `minDelay` | 100ms | Minimum delay between attempts |
-| `maxDelay` | 5000ms | Maximum delay between attempts |
-| `minUptime` | 5000ms | Room must be connected for this long before auto-reconnect kicks in |
-| `maxEnqueuedMessages` | 10 | Number of messages to buffer while disconnected |
-| `backoff` | exponential | Function to calculate delay between attempts |
-| `retryCount` | 0 | Current number of reconnection attempts (read-only) |
-| `isReconnecting` | false | Whether the room is currently reconnecting (read-only) |
-
----
-
-## Message Buffering
-
-When disconnected, messages sent via `room.send()` are automatically buffered (up to `maxEnqueuedMessages`). Once reconnected, these messages are sent in order.
-
-```typescript
-room.onDrop(() => {
-  // These messages will be queued and sent after reconnection
-  room.send("action", { type: "move", x: 100, y: 200 });
-  room.send("action", { type: "attack", targetId: "enemy1" });
+room.onDrop((code, reason) => {
+  // connection lost — the SDK is already retrying
+  showReconnectingUI();
 });
 
 room.onReconnect(() => {
-  // Queued messages have been automatically sent
-  console.log("Actions sent after reconnection");
+  hideReconnectingUI();
+});
+
+room.onLeave((code, reason) => {
+  if (code === CloseCode.FAILED_TO_RECONNECT) {
+    showError("Failed to reconnect. Please try again.");
+  }
+  cleanupGame();
 });
 ```
 
-**Note:** `room.sendUnreliable()` messages are NOT buffered and will be dropped if the connection is not open.
+Everything tunable on the client — retry and backoff options, disabling auto-reconnection, message buffering while offline, and manual reconnection via `reconnectionToken` — is documented in **[Connection Lifecycle & Reconnection](/sdk/connection)**.
 
 ---
 
@@ -390,6 +287,8 @@ In other words, after `onReconnect()` the state is guaranteed to match the serve
 | 4002 | `WITH_ERROR` | Closed due to an error |
 | 4003 | `FAILED_TO_RECONNECT` | All reconnection attempts failed |
 | 4010 | `MAY_TRY_RECONNECT` | Server shutdown in dev mode (allows reconnect) |
+
+See the [full table of WebSocket close codes](/room#table-of-websocket-close-codes) for the complete range breakdown.
 
 ---
 
@@ -428,4 +327,4 @@ Using separate `onDrop()` and `onReconnect()` methods is recommended for cleaner
 3. **Mark players as "disconnected" in state** so other clients can show appropriate UI
 4. **Set reasonable reconnection timeouts** based on your game type (e.g., 30s for fast-paced games, 5min for turn-based)
 5. **Handle `FAILED_TO_RECONNECT` on the client** to show appropriate error messages
-6. **Buffer important actions** — messages sent during disconnection are queued automatically
+6. **Buffer important actions** — messages sent during disconnection are [queued automatically](/sdk/connection#automatic-reconnection)
