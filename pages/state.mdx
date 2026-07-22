@@ -31,25 +31,46 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 <Steps>
 	### Backend: Define your state structures
 
-    Define your state structures using `schema()` and `t.*` field builders from `@colyseus/schema`:
+    Define your state structures using `schema()` and `t.*` field builders from `@colyseus/schema` — or the classic [`@type()` decorator style](/state/schema/decorators):
 
-    ```ts filename="src/rooms/MyState.ts"
-    import { schema, t, type SchemaType } from "@colyseus/schema";
+    <Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
+        <Tabs.Tab>
+        ```ts filename="src/rooms/MyState.ts"
+        import { schema, t, type SchemaType } from "@colyseus/schema";
 
-    export const Player = schema({
-        name: t.string(),
-        x: t.number(),
-        y: t.number(),
-    }, "Player");
-    export type Player = SchemaType<typeof Player>;
+        export const Player = schema({
+            name: t.string(),
+            x: t.number(),
+            y: t.number(),
+        }, "Player");
+        export type Player = SchemaType<typeof Player>;
 
-    export const MyState = schema({
-        players: t.map(Player),
-    }, "MyState");
-    export type MyState = SchemaType<typeof MyState>;
-    ```
+        export const MyState = schema({
+            players: t.map(Player),
+        }, "MyState");
+        export type MyState = SchemaType<typeof MyState>;
+        ```
 
-    The `type` aliases are TypeScript-only sugar — `schema()` returns a value, and `SchemaType` derives the instance type under the same name. Plain JavaScript users omit those lines.
+        The `type` aliases are TypeScript-only sugar — `schema()` returns a value, and `SchemaType` derives the instance type under the same name. Plain JavaScript users omit those lines.
+        </Tabs.Tab>
+        <Tabs.Tab>
+        ```ts filename="src/rooms/MyState.ts"
+        import { Schema, MapSchema, type } from "@colyseus/schema";
+
+        export class Player extends Schema {
+            @type("string") name: string;
+            @type("number") x: number;
+            @type("number") y: number;
+        }
+
+        export class MyState extends Schema {
+            @type({ map: Player }) players = new MapSchema<Player>();
+        }
+        ```
+
+        The decorator style requires two `tsconfig.json` flags — see [Decorators → TypeScript Config](/state/schema/decorators#typescript-config).
+        </Tabs.Tab>
+    </Tabs>
 
 
     ### ... assign and mutate the state

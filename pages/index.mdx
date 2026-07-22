@@ -84,18 +84,36 @@ bun run src/index.ts
 
 The Room state is the data structure that will be synchronized between the server and the connected clients:
 
-```ts filename="src/rooms/MyState.ts"
-import { schema, t } from "@colyseus/schema";
+<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
+    <Tabs.Tab>
+    ```ts filename="src/rooms/MyState.ts"
+    import { schema, t } from "@colyseus/schema";
 
-export const Player = schema({
-    x: t.number().default(0),
-    y: t.number().default(0),
-}, "Player");
+    export const Player = schema({
+        x: t.number().default(0),
+        y: t.number().default(0),
+    }, "Player");
 
-export const MyState = schema({
-    players: t.map(Player),
-}, "MyState");
-```
+    export const MyState = schema({
+        players: t.map(Player),
+    }, "MyState");
+    ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+    ```ts filename="src/rooms/MyState.ts"
+    import { Schema, MapSchema, type } from "@colyseus/schema";
+
+    export class Player extends Schema {
+        @type("number") x: number = 0;
+        @type("number") y: number = 0;
+    }
+
+    export class MyState extends Schema {
+        @type({ map: Player }) players = new MapSchema<Player>();
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
 
 ### Create your Room code
 

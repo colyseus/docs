@@ -2,7 +2,7 @@
 title: "State View"
 description: "StateView gives each Colyseus client a filtered view of the room state — per-player visibility without sending the full state to everyone."
 ---
-import { Callout } from 'nextra/components'
+import { Callout, Tabs } from 'nextra/components'
 
 # Per-client State Visibility with `StateView`
 
@@ -48,17 +48,35 @@ import { StateView } from "@colyseus/schema";
 
 ## Tagging fields with `.view()`
 
-The `.view()` field modifier is used to tag a field as only visible to `StateView` instances that contain that `Schema` instance.
+The `.view()` field modifier (or `@view()` decorator) is used to tag a field as only visible to `StateView` instances that contain that `Schema` instance.
 
-```ts {6} filename="MyState.ts"
-const Player = schema({
-    // visible to all
-    name: t.string(),
+<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
+    <Tabs.Tab>
 
-    // only visible to clients containing this schema instance on their `StateView`
-    position: t.number().view(),
-}, "Player");
-```
+    ```ts {6} filename="MyState.ts"
+    const Player = schema({
+        // visible to all
+        name: t.string(),
+
+        // only visible to clients containing this schema instance on their `StateView`
+        position: t.number().view(),
+    }, "Player");
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+
+    ```ts {6} filename="MyState.ts"
+    class Player extends Schema {
+        // visible to all
+        @type("string") name: string;
+
+        // only visible to clients containing this schema instance on their `StateView`
+        @view() @type("number") position: number;
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
 
 In the example above, the `position` field is only visible to clients that contain this `Player` instance in their `StateView`.
 
@@ -104,25 +122,46 @@ if (client.view.has(player)) {
 
 Sometimes you may want to have multiple views with different fields.
 
-```ts {9} filename="MyState.ts"
-const Player = schema({
-    // visible to all
-    name: t.string(),
+<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
+    <Tabs.Tab>
 
-    // any `.add(player)` will see this field
-    health: t.number().view(),
+    ```ts {9} filename="MyState.ts"
+    const Player = schema({
+        // visible to all
+        name: t.string(),
 
-    // only `.add(player, 1)` will see this field
-    position: t.number().view(1),
-}, "Player");
-```
+        // any `.add(player)` will see this field
+        health: t.number().view(),
+
+        // only `.add(player, 1)` will see this field
+        position: t.number().view(1),
+    }, "Player");
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+
+    ```ts {9} filename="MyState.ts"
+    class Player extends Schema {
+        // visible to all
+        @type("string") name: string;
+
+        // any `.add(player)` will see this field
+        @view() @type("number") health: number;
+
+        // only `.add(player, 1)` will see this field
+        @view(1) @type("number") position: number;
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
 
 By assigning a numeric tag to the `.view()` modifier, that field will only be visible to clients that contain this `Schema` instance on their `StateView` with the same tag:
 
 ```ts {6,7} filename="MyRoom.ts"
 // ...
     onJoin(client, options) {
-        const player = new Player({ name: "Player 1", health: 100, position: 0 });
+        const player = new Player().assign({ name: "Player 1", health: 100, position: 0 });
         this.state.players.set(client.sessionId, player);
 
         client.view = new StateView();
@@ -138,26 +177,45 @@ In the example above, the `position` field is only visible to clients that conta
 
 The following table shows the relation between type annotations and the visibility of each field on the frontend:
 
-| Field declaration        | Without `view.add()` | `view.add(instance)` | `view.add(instance, 1)` |
-|-----------------------------------|----------------------|-------------------------|-----------------|
-| `t.*(...)`                        | ✅                   | ✅                       | ✅              |
-| `t.*(...).view()`                 | ❌                   | ✅                       | ✅              |
-| `t.*(...).view(1)`                | ❌                   | ❌                       | ✅              |
+| Field declaration                        | Without `view.add()` | `view.add(instance)` | `view.add(instance, 1)` |
+|------------------------------------------|----------------------|-------------------------|-----------------|
+| `t.*(...)` / `@type(...)`                | ✅                   | ✅                       | ✅              |
+| `t.*(...).view()` / `@view() @type(...)` | ❌                   | ✅                       | ✅              |
+| `t.*(...).view(1)` / `@view(1) @type(...)` | ❌                 | ❌                       | ✅              |
 
 ## Items of `ArraySchema` and `MapSchema`
 
 When you tag an array or map with `.view()`, elements added to the collection **later** must be added to the client's `StateView` individually. (Calling `view.add(collection)` also brings in the elements it holds at that moment.)
 
-```ts {7} filename="MyState.ts"
-const Player = schema({
-    name: t.string(),
-    position: t.number(),
-}, "Player");
+<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
+    <Tabs.Tab>
 
-const MyState = schema({
-    players: t.map(Player).view(),
-}, "MyState");
-```
+    ```ts {7} filename="MyState.ts"
+    const Player = schema({
+        name: t.string(),
+        position: t.number(),
+    }, "Player");
+
+    const MyState = schema({
+        players: t.map(Player).view(),
+    }, "MyState");
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+
+    ```ts {7} filename="MyState.ts"
+    class Player extends Schema {
+        @type("string") name: string;
+        @type("number") position: number;
+    }
+
+    class MyState extends Schema {
+        @view() @type({ map: Player }) players = new MapSchema<Player>();
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
 
 The instance must be assigned to the state and added to the `StateView`:
 

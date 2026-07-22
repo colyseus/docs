@@ -252,18 +252,36 @@ Let's go back to editing the Server code, and define our Room State in the Serve
 
 We need to handle multiple `Player` instances, and each `Player` will have `x`, `y` and `z` coordinates:
 
-```ts filename="MyRoomState.ts"
-import { schema, t } from "@colyseus/schema";
+<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
+    <Tabs.Tab>
+    ```ts filename="MyRoomState.ts"
+    import { schema, t } from "@colyseus/schema";
 
-export const Player = schema({
-    x: t.number(),
-    y: t.number(),
-}, "Player");
+    export const Player = schema({
+        x: t.number(),
+        y: t.number(),
+    }, "Player");
 
-export const MyRoomState = schema({
-    players: t.map(Player),
-}, "MyRoomState");
-```
+    export const MyRoomState = schema({
+        players: t.map(Player),
+    }, "MyRoomState");
+    ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+    ```ts filename="MyRoomState.ts"
+    import { MapSchema, Schema, type } from "@colyseus/schema";
+
+    export class Player extends Schema {
+        @type("number") x: number;
+        @type("number") y: number;
+    }
+
+    export class MyRoomState extends Schema {
+        @type({ map: Player }) players = new MapSchema<Player>();
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
 
 <Callout type="info">
     See [State Synchronization → Schema Definition](/state/schema/).
