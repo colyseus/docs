@@ -144,8 +144,10 @@ plugins = definePlugins([
     // Allow one session per Node process — useful if you run the
     // game in multiple regions and want a user to be able to play
     // in EU and US at the same time.
+    // `existing.room` is undefined for same-room conflicts — those are
+    // always same-process, so treat them as conflicting.
     conflictsWith: (existing) =>
-      existing.room?.processId === matchMaker.processId,
+      !existing.room || existing.room.processId === matchMaker.processId,
   }),
 ]);
 ```

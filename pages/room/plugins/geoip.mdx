@@ -132,7 +132,7 @@ fresher data switch to mode 1 or 2.
 ### Region-locked matchmaking
 
 ```ts filename="EuropeRoom.ts"
-import { Room, definePlugins } from "colyseus";
+import { Room, definePlugins, ServerError } from "colyseus";
 import { GeoIPPlugin } from "@colyseus/geoip";
 
 export class EuropeRoom extends Room {

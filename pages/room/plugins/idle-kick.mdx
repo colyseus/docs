@@ -83,7 +83,7 @@ plugins = definePlugins([
 
 ### Custom close code
 
-If you'd rather signal a domain-specific reason (e.g., to differentiate from a generic 1000 disconnect), use a custom code in the WS application range (`4000`–`4999`):
+If you'd rather signal a domain-specific reason (e.g., to differentiate from a generic 1000 disconnect), use a custom code in the range `4011`–`4999` (Colyseus reserves `4000`–`4003` and `4010`; picking `4010` would trigger the SDK's auto-reconnect instead of a kick):
 
 ```ts filename="MyRoom.ts"
 plugins = definePlugins([
