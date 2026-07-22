@@ -208,6 +208,26 @@ including raw byte payloads and request/response. See
 
 ---
 
+## Sending Input (Netcode)
+
+For prediction-ready rooms — rooms that call [`defineInput()`](/netcode/server-input) on the server — `room.input()` returns a typed input channel: stage fields on `input.data`, then `input.send()` once per fixed step.
+
+```ts filename="client.ts"
+const input = room.input();   // input schema arrives from the server's defineInput()
+
+input.data.moveX = 1;
+input.data.jump = true;
+input.send();
+```
+
+Inputs are buffered and acknowledged, and power [client-side prediction](/netcode/client-prediction) and [lag compensation](/netcode/lag-compensation). See **[`room.input(options)`](/netcode/client-prediction#roominputoptions)** for the full reference — reliability modes, redundancy, and the `InputHandle` surface.
+
+<Callout type="info">
+    The netcode APIs (`room.input()`, `room.clock`, `Predict`) are available in the **JavaScript SDK only** (Colyseus 0.18+).
+</Callout>
+
+---
+
 ## State Synchronization
 
 The room state is automatically synchronized from the server to all connected clients. The `room.state` property always contains the latest state.
@@ -621,6 +641,7 @@ Quick reference for room properties.
 | `name` | `string` | Name of the room handler (e.g., `"battle"`) |
 | `reconnectionToken` | `string` | Token for manual reconnection |
 | `reconnection` | `ReconnectionOptions` | Automatic reconnection configuration |
+| `clock` | `RoomClock` | Server time & latency estimates (`serverNow()`, `rtt()`) — see [`room.clock`](/netcode/client-prediction#roomclock) |
 
 ---
 
