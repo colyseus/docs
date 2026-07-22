@@ -35,52 +35,24 @@ When a client loses connection unexpectedly (e.g., network switch, temporary con
 5. **Reconnection succeeds** → `onReconnect()` is triggered on both client and server
 6. **If reconnection fails/times out** → `onLeave()` is triggered on both sides
 
-```
-┌───────────────────────────────────────────────────────────────────────────┐
-│                         RECONNECTION FLOW                                 │
-├───────────────────────────────────────────────────────────────────────────┤
-│                                                                           │
-│   CLIENT                                    SERVER                        │
-│   ──────                                    ──────                        │
-│                                                                           │
-│   [Connected]                               [Client connected]            │
-│       │                                          │                        │
-│       ▼                                          ▼                        │
-│   ╔═══════════════════════════════════════════════════════════════════╗   │
-│   ║              ❌ CONNECTION LOST (network issue)                   ║   │
-│   ╚═══════════════════════════════════════════════════════════════════╝   │
-│       │                                          │                        │
-│       ▼                                          ▼                        │
-│   onDrop(code, reason)                      onDrop(client, code)          │
-│       │                                          │                        │
-│       │                                          ▼                        │
-│       │                                    allowReconnection(client, 30)  │
-│       │                                          │                        │
-│       ▼                                          │                        │
-│   [Auto-retry with                               │                        │
-│    exponential backoff]                          │                        │
-│       │                                          │                        │
-│       └──────────────────────────────────────────┘                        │
-│                          │                                                │
-│                          ▼                                                │
-│   ╔══════════════════════════════════════════════════════════════════╗    │
-│   ║              ✅ RECONNECTION SUCCESSFUL                          ║    │
-│   ╚══════════════════════════════════════════════════════════════════╝    │
-│       │                                          │                        │
-│       ▼                                          ▼                        │
-│   onReconnect()                             onReconnect(client)           │
-│       │                                          │                        │
-│       ▼                                          ▼                        │
-│   [Enqueued messages sent]                  [Client restored]             │
-│                                                                           │
-│ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ │
-│                                                                           │
-│   [If reconnection fails or times out]                                    │
-│       │                                          │                        │
-│       ▼                                          ▼                        │
-│   onLeave(code, reason)                     onLeave(client, code)         │
-│                                                                           │
-└───────────────────────────────────────────────────────────────────────────┘
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Server
+    Note over Client,Server: ❌ Connection lost (network issue)
+    Client->>Client: onDrop(code, reason)
+    Server->>Server: onDrop(client, code)
+    Server->>Server: allowReconnection(client, 30)
+    loop Auto-retry with exponential backoff
+        Client--)Server: reconnect attempt
+    end
+    alt Reconnection succeeds
+        Client->>Client: onReconnect()<br/>enqueued messages sent
+        Server->>Server: onReconnect(client)<br/>client restored
+    else Fails or times out
+        Client->>Client: onLeave(code, reason)
+        Server->>Server: onLeave(client, code)
+    end
 ```
 
 ---
