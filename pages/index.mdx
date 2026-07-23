@@ -6,7 +6,7 @@ description: "Colyseus is an open-source multiplayer framework for Node.js. Buil
 
 import Image from 'next/image'
 import { Callout, Steps, Tabs, Cards } from 'nextra/components'
-import { CodeIcon, PeopleIcon, SyncIcon, ServerIcon, CloudIcon, DownloadIcon, RepoIcon, FileCodeIcon, ZapIcon, DevicesIcon, PasskeyFillIcon } from '@primer/octicons-react'
+import { CodeIcon, PeopleIcon, SyncIcon, ServerIcon, CloudIcon, DownloadIcon, RepoIcon, FileCodeIcon, ZapIcon, DevicesIcon } from '@primer/octicons-react'
 import { ScenarioGrid, ScenarioCard } from '../components/scenario-card'
 
 {/* <Image src={require('../images/hero-christmas.webp')} width={0} height={0} style={{ width: '100%', height: 'auto' }} alt="Colyseus Hero Image" /> */}
@@ -14,7 +14,7 @@ import { ScenarioGrid, ScenarioCard } from '../components/scenario-card'
 
 # Colyseus Multiplayer Framework
 
-Colyseus is an open-source Node.js framework for building authoritative game servers — with real-time state synchronization, matchmaking, and effortless integration into any game engine or frontend.
+Colyseus is an open-source Node.js framework for building authoritative game servers — with real-time state synchronization, matchmaking, and effortless integration into any game engine or frontend. Authentication, database services, an admin panel, and dev tooling ship out of the box.
 
 ## Key Features
 
@@ -30,9 +30,6 @@ Colyseus is an open-source Node.js framework for building authoritative game ser
     </ScenarioCard>
     <ScenarioCard icon={<CodeIcon size={18}/>} title="Full-Stack Type Safety" href="/sdk">
         Share your server's types with the SDK: typed messages, typed join options, typed state.
-    </ScenarioCard>
-    <ScenarioCard icon={<PasskeyFillIcon size={18}/>} title="Batteries Included" href="/auth">
-        Authentication (JWT + OAuth), database services, room plugins, admin panel, and dev tools out of the box.
     </ScenarioCard>
     <ScenarioCard icon={<DevicesIcon size={18}/>} title="Any Engine" href="/getting-started">
         Official SDKs for the Web, Unity, Godot, Defold, GameMaker, Construct, Haxe, and more.
