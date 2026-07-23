@@ -27,28 +27,26 @@ The stack is one loop split across the server and the client. Each half is confi
 > One input per fixed step; one `predict.tick(now)` per render frame drives everything.
 
 ```mermaid
-flowchart LR
+flowchart TB
+    subgraph S["SERVER — authoritative"]
+        buffer["<b>defineInput()</b><br/>input buffer"]
+        step["<b>setFixedTimestep()</b><br/>step(ctx) at tickRate"]
+        rewind["<b>allowRewindState()</b><br/>record() / rewind.lastSeenBy()"]
+    end
+
     subgraph C["CLIENT — predicts"]
-        direction TB
         input["sample input"]
         predict["predict own entity<br/>(<b>reconciler</b> / <b>sim</b>)"]
         reconcile["reconcile: roll back, replay<br/>inputs newer than the ack"]
         remotes["smooth remotes<br/>(<b>Predict</b> lerp)"]
     end
 
-    subgraph S["SERVER — authoritative"]
-        direction TB
-        buffer["<b>defineInput()</b><br/>input buffer"]
-        step["<b>setFixedTimestep()</b><br/>step(ctx) at tickRate"]
-        rewind["<b>allowRewindState()</b><br/>record() / rewind.lastSeenBy()"]
-    end
-
     input --> predict
-    reconcile --> predict
     input ==>|"<b>room.input().send()</b>"| buffer
     buffer --> step
     step --> rewind
     step ==>|"state patch + ack"| reconcile
+    reconcile --> predict
     remotes -.->|"renderTime stamp"| rewind
 ```
 
