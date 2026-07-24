@@ -60,7 +60,7 @@ The room inspector reads from your configured [matchmaker driver](/server/driver
 | Driver | Visibility |
 |---|---|
 | `LocalDriver` (default) | Only rooms on the current process. Fine for development. |
-| `RedisDriver`, [`DatabaseDriver`](/server/driver) | All rooms across all processes. Recommended for production. |
+| `RedisDriver`, `DatabaseDriver` | All rooms across all processes. Recommended for production. |
 
 If you don't see rooms you expect, confirm the driver is shared across processes (Redis or DB-backed) rather than the default in-memory `LocalDriver`.
 
@@ -70,7 +70,7 @@ By default, the rooms resource follows the standard role rules:
 
 - **Admin**: full read + all actions.
 - **Mod**: no access without the `rooms` scope. Assign with `db.moderation.assignMod(userId, "rooms")` — scoped mods get read plus kick/lock/state edits. Dispose stays admin-only regardless (it maps to the `delete` action, which mods never have).
-- **User**: raw-API read only (the panel UI requires an operator role).
+- **User**: cannot open the panel UI (403), but direct API calls to list/read endpoints are permitted.
 
 ## Next steps
 

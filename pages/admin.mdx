@@ -10,6 +10,10 @@ import { Callout, Tabs } from "nextra/components"
 
 For a lightweight, no-auth dashboard intended for room and process inspection, see the [Monitoring Panel](/tools/monitoring) instead — the admin panel is the heavier counterpart, built for production operations.
 
+<Callout type="warning">
+    `@colyseus/admin` is in **beta** — APIs may change between releases as we incorporate community feedback. Share yours on the [public roadmap](/roadmap).
+</Callout>
+
 ## Installation
 
 `@colyseus/admin` has two peer dependencies: [`@colyseus/database`](/database) (user store, audit log, drizzle table introspection) and [`@colyseus/auth`](/auth/module) (JWT signing, password hashing). Install all three together:
@@ -45,9 +49,12 @@ The admin panel mounts in two ways:
     <Tabs.Tab>
     For Express-based stacks, `admin(...)` is also a valid Express middleware:
 
-    ```ts {2,6-7} filename="src/app.config.ts"
+    ```ts {3,9-10} filename="src/app.config.ts"
     import { defineServer } from "colyseus";
+    import { GameDatabase } from "@colyseus/database";
     import { admin } from "@colyseus/admin";
+
+    export const db = new GameDatabase({ connectionString: process.env.DATABASE_URL });
 
     export default defineServer({
         database: db,
@@ -63,6 +70,12 @@ The admin panel mounts in two ways:
     The `database` option defaults to `GameDatabase.current` — set automatically when you construct `new GameDatabase(...)`. Multi-database deployments should pass `database` explicitly (e.g. `admin({ database: db })`) to disambiguate which instance the panel drives.
 </Callout>
 
+## Usage
+
+Once mounted, start your server and navigate to `http://localhost:2567/admin` in your browser. If you customized `uiPath`, adjust the URL accordingly.
+
+The REST API mounts in parallel at `http://localhost:2567/admin-api` and is consumed by the SPA. The endpoints are normal `createEndpoint(...)` routes and respect the same `admin.guard()` semantics if you wrap them for use elsewhere.
+
 ## First-run bootstrap
 
 The admin panel includes **no built-in admin user**. The first visit to `/admin` checks for an existing admin account and, if none exists, renders a one-time bootstrap form.
@@ -76,12 +89,6 @@ After bootstrap:
 <Callout type="info">
     See [Authentication & RBAC](/admin/authentication) for the full session, role, and revocation story.
 </Callout>
-
-## Usage
-
-Once mounted, start your server and navigate to `http://localhost:2567/admin` in your browser. If you customized `uiPath`, adjust the URL accordingly.
-
-The REST API mounts in parallel at `http://localhost:2567/admin-api` and is consumed by the SPA. The endpoints are normal `createEndpoint(...)` routes and respect the same `admin.guard()` semantics if you wrap them for use elsewhere.
 
 ## Hardening for production
 
@@ -115,10 +122,10 @@ The defaults are tuned for local development. Before exposing the panel to the p
 | `apiPath` | `string` | `"/admin-api"` | Mount path for the admin REST API. |
 | `uiDistDir` | `string` | _built-in_ | Absolute path to the built UI assets. Defaults to the bundled `build/` directory inside the package. |
 | `session` | `SessionConfig` | _see below_ | Cookie config: `ttlSeconds`, `cookieDomain`, `cookieSameSite`, `cookieSecure`. |
-| `resolveUserId` | `(ctx) => Promise<string \| undefined>` | session cookie → `X-User-Id` (dev) | Override the identity resolver to integrate with another auth scheme. |
+| `resolveUserId` | `(ctx) => Promise<string \| undefined>` | session cookie, falling back to the `X-User-Id` header in dev | Override the identity resolver to integrate with another auth scheme. |
 | `enforceRbac` | `boolean` | `true` | Set to `false` to skip RBAC entirely (development only). |
 | `allowDevHeader` | `boolean` | `true` in dev, `false` in prod | Permit `X-User-Id: <id>` as a fallback identity for curl/puppeteer testing. |
-| `minPasswordLength` | `number` | `8` | Minimum password length accepted by bootstrap and reset endpoints. Plain length check applied by the bootstrap and reset endpoints. |
+| `minPasswordLength` | `number` | `8` | Minimum password length accepted by the bootstrap and reset endpoints. Plain length check — no complexity rules. |
 | `onResetRequest` | `(ctx) => void \| Promise<void>` | logs to stdout | Panel-specific override for the password-reset email. Most projects should configure [`auth.settings.onForgotPassword`](/auth/module#on-forgot-password) instead and reuse their player-side delivery. Receives `{ email, userId, token, url }`. |
 | `rateLimit` | `{ login, bootstrap, requestReset }` | in-memory token buckets | Per-endpoint rate limiters. Pass `false` per slot to disable, or a custom `RateLimiter` to swap in a Redis-backed implementation. |
 | `dashboard` | `{ presets, widgets }` | all presets enabled | Configure the dashboard homepage. See [Dashboard & widgets](/admin/dashboard). |

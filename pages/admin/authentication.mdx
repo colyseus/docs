@@ -35,8 +35,8 @@ Each admin-panel user has a row in the `roles` table (set via `db.moderation.set
 | Role | Default access |
 |---|---|
 | `admin` | Full access — all resources, all actions, all rooms. |
-| `mod` | **Only** on collections explicitly assigned via `db.moderation.assignMod()`: list, read, and update. No access at all outside assigned scopes, no create, no delete, and the roles table is always blocked. |
-| `user` | Cannot use the panel — the UI requires an operator role (`admin`/`mod`) and returns 403. (Raw API list/read calls do pass the permission check.) |
+| `mod` | List, read, and update — only on resources assigned via `db.moderation.assignMod()`. No create or delete, no access outside assigned scopes, and the roles table is always blocked. |
+| `user` | Cannot open the panel UI (403 — an operator role is required), but direct API calls to list/read endpoints are permitted. |
 
 Roles are read from the live DB on every request — a demotion takes effect immediately without re-issuing the cookie.
 

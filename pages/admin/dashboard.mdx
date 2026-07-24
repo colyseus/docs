@@ -2,9 +2,14 @@
 title: "Dashboard & widgets"
 description: "Configure the admin panel homepage — built-in preset widgets (totals, recent users, live rooms, system health, player segments) plus custom widgets in KPI, table, list, or JSON render modes."
 ---
-import { Callout } from "nextra/components"
+import { MovedAnchors } from '../../components/moved-anchors'
 
 # Dashboard & widgets
+
+{/* Layout section folded into Widget shape; keep old deep links working. */}
+<MovedAnchors map={{
+    "layout": "/admin/dashboard#widget-shape",
+}} />
 
 The admin panel homepage hosts a grid of **widgets** — small cards that surface live data from your database or runtime. Five **preset widgets** are enabled by default, and you can append **custom widgets** for anything else you want at a glance.
 
@@ -109,7 +114,7 @@ Append your own widgets via `dashboard.widgets`. Each widget runs server-side on
 ```ts
 widgets: [{
     title: "Active events",          // also the basis for the auto-derived id
-    icon: "thunderbolt",                    // AdminIconName
+    icon: "thunderbolt",             // AdminIconName
     render: "kpi",                   // 'kpi' | 'table' | 'list' | 'json' (default 'json')
     span: 12,                        // 24-column grid span (half width)
     refreshIntervalMs: 5000,         // poll for live updates
@@ -136,7 +141,7 @@ interface DashboardWidget {
 | `id` | Stable identifier for `data-testid` selectors. Defaults to `slugify(title)` (e.g. `"Live events"` → `"live-events"`). Must not collide with a preset id. |
 | `data` | Server-side resolver. Receives the resolved `GameDatabase` and the requesting admin's `userId`. Errors are caught and surfaced to the panel as `{ error }`. |
 | `refreshIntervalMs` | When set, the client polls `GET /admin-api/_dashboard/<id>` at this cadence and refreshes the card in place — no full dashboard reload. |
-| `span` | 24-column grid span (antd convention). Defaults: `kpi`/`table`/`json` full width (24), `list` half (12). |
+| `span` | 24-column grid span (antd convention). Defaults: `kpi`/`table`/`json` full width (24), `list` half (12). The grid collapses to a single column on mobile widths regardless of span. |
 
 ### Render modes
 
@@ -218,11 +223,7 @@ When `linkTo` is set, the panel makes each row clickable and navigates to that r
 
 ## Refresh and polling
 
-By default, widgets resolve once when the dashboard loads. For live data, set `refreshIntervalMs` to enable client-side polling of `GET /admin-api/_dashboard/<id>`. Only the affected card re-renders.
-
-<Callout type="info">
-    Polling is per-widget — the rest of the dashboard remains static. Use this for "live rooms count" or "active sessions" without paying for a full dashboard refresh.
-</Callout>
+By default, widgets resolve once when the dashboard loads. For live data, set `refreshIntervalMs` to enable client-side polling of `GET /admin-api/_dashboard/<id>`. Only the affected card re-renders — useful for a live rooms count or active sessions card without paying for a full dashboard refresh.
 
 ```ts
 {
@@ -234,19 +235,6 @@ By default, widgets resolve once when the dashboard loads. For live data, set `r
     }),
 }
 ```
-
-## Layout
-
-Widgets share a 12-column responsive grid. Each widget has a default `span` based on its render mode:
-
-| Render | Default span |
-|---|---|
-| `kpi` | 6 (half-width) |
-| `table` | 12 (full-width) |
-| `list` | 6 |
-| `json` | 12 |
-
-Override per widget via the `span` field. The grid collapses to single-column on mobile widths regardless of the configured span.
 
 ## Next steps
 

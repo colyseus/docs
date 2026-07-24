@@ -20,11 +20,11 @@ The following tables come pre-registered with sensible defaults:
 | Leaderboards | `colyseus_leaderboards` | — |
 | Leaderboard entries | `colyseus_leaderboard_entries` | — |
 | Analytics events | `colyseus_analytics_events` | Append-only on the write path. |
-| Roles | `colyseus_roles` | Always blocked for mods — modifying this would bypass the role system. |
+| Roles | `colyseus_roles` | Blocked for mods by the core role rule itself (not a policy) — modifying it would bypass the role system. |
 | User notes | `colyseus_user_notes` | `authorId` auto-filled from session on create. |
 | Audit log | `colyseus_admin_audit` | **Read-only** via policies — all writes denied (append-only contract). |
 
-Unless a table declares its own [policies](#policies) (only the audit log does by default), access follows the standard role rule everywhere: **admin** has full CRUD, **mod** gets list/read/update only on collections they're [scoped to](/admin/authentication#scoping-a-moderator-to-specific-resources), and **user**-role accounts have raw-API list/read only (the panel UI itself requires an operator role).
+Unless a table declares its own [policies](#policies) (only the audit log does by default), access follows the standard role rule everywhere: **admin** has full CRUD; **mod** gets list, read, and update only on resources they're [scoped to](/admin/authentication#scoping-a-moderator-to-specific-resources); **user**-role accounts cannot open the panel UI (403), but direct API calls to list/read endpoints are permitted.
 
 ## `defineAdminResource()`
 
@@ -99,7 +99,7 @@ defineAdminResource(table, {
 | `show` | `fields` | Columns shown on the read-only detail page. |
 | `create` | `defaults` | `(ctx) => Record<string, any>` — server-side defaults merged into the body before INSERT. Receives `{ operatorId, resource }`. The user's request body wins on conflict. |
 | `columns` | `<col>.label` | Override the auto-humanized column label. |
-|           | `<col>.linkTo` | Decorate the cell as a link to another resource's show page. Static: `{ resource: "users" }`. Dynamic: `{ resourceFromColumn: "resource" }` (reads the row's value at that sibling column to pick the target). |
+|           | `<col>.linkTo` | Decorate the cell as a link to another resource's show page. Static: `{ resource: "users" }`; for the dynamic form, see [FK auto-linking](#fk-auto-linking). |
 | `relations` | `<rel>.label` | Override the auto-humanized relation tab label. |
 | `actions` | `ResourceAction[]` | Custom per-row or bulk operations. See below. |
 | `policies` | `list \| read \| create \| update \| delete` | Per-action RBAC. See [Policies](#policies). |
