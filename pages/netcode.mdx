@@ -4,6 +4,7 @@ description: "Server-authoritative simulation with client-side prediction, serve
 ---
 import { Callout, Cards } from 'nextra/components'
 import { ServerIcon, DevicesIcon, GoalIcon, ChecklistIcon, BeakerIcon } from '@primer/octicons-react'
+import { DemoGrid, DemoCard } from '../components/demo-card'
 
 # Netcode
 
@@ -80,6 +81,33 @@ New to prediction? Read top to bottom — each page builds on the one before it:
 ## Runnable reference
 
 Prefer to learn by poking at something live? The [**Prediction Playground**](https://github.com/colyseus/prediction-playground) is an interactive tour of this whole section: eleven small labs, each isolating one concept — rollback and reconciliation, the interpolation modes, dead reckoning, lag compensation, optimistic events, predicted spawns, composite worlds. Every lab has a live latency slider, visualizations of what the SDK is doing (server ghosts, pending-input chips, rewind markers), and shows the exact SDK-facing code it runs.
+
+### Official demos
+
+The playground isolates each concept; these five open-source games put them all together. Each is a complete Colyseus 0.18 + Three.js game — authoritative server, client prediction, smoothed remotes and lag compensation running as one stack. Play them live, then read the source.
+
+<DemoGrid>
+    <DemoCard title="Air Hockey" image="/demos/netcode/air-hockey.webp"
+        play="https://air-hockey.colyseus.dev" source="https://github.com/colyseus/air-hockey-demo">
+        3D air hockey where everything is predicted — your mallet, the puck, hits and even goals resolve locally and are settled by the server. First to 7 wins.
+    </DemoCard>
+    <DemoCard title="ColyBlast (FPS)" image="/demos/netcode/fps.webp"
+        play="https://fps.colyseus.dev" source="https://github.com/colyseus/fps-demo">
+        First-person shooter: predicted movement with reconciliation, server-validated hitscan with lag compensation, and objective game modes.
+    </DemoCard>
+    <DemoCard title="MOBA" image="/demos/netcode/moba.webp"
+        play="https://moba.colyseus.dev" source="https://github.com/endel/moba-colyseus">
+        A 3-lane MOBA on a deterministic shared simulation — fixed timestep and client prediction driving heroes, creeps, towers and 5v5 bot matches.
+    </DemoCard>
+    <DemoCard title="Platformer" image="/demos/netcode/platformer.webp"
+        play="https://platformer.colyseus.dev" source="https://github.com/colyseus/platformer-demo">
+        2.5D platformer built as a prediction harness — reconciled movement, rideable moving platforms, and stomps and dashes that hold up under lag.
+    </DemoCard>
+    <DemoCard title="Colyseus Karts" image="/demos/netcode/racing.webp"
+        play="https://racing.colyseus.dev" source="https://github.com/colyseus/racing-demo">
+        Kart racing with hold-to-drift mini-turbos, item boxes and rockets — rollback prediction, dead-reckoned projectiles, and rewind-based hit checks.
+    </DemoCard>
+</DemoGrid>
 
 <Callout type="info">
     Coming from the manual approach? The [Phaser tutorial](/learn/tutorial/phaser/linear-interpolation) builds prediction, interpolation, and a fixed tick rate **by hand** to teach the concepts. This section documents the built-in 0.18 API that does the same work for you.

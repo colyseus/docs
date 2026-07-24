@@ -182,3 +182,60 @@ html.dark .sponsor-scorewarrior { color: #ffffff; }
     opacity: 0.72;
     line-height: 1.5;
 }
+
+/* Demo showcase cards — gameplay screenshot + Play/Source links
+   (see components/demo-card.tsx, pages/netcode.mdx). */
+.demo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+.demo-card {
+    border: 1px solid rgba(127, 127, 127, 0.22);
+    border-radius: 0.6rem;
+    overflow: hidden;
+    transition: border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+}
+.demo-card:hover {
+    border-color: rgba(127, 127, 127, 0.55);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+.demo-card__media {
+    display: block;
+    aspect-ratio: 16 / 9;
+    background: #10131c;
+}
+.demo-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    margin: 0;
+}
+.demo-card__body {
+    padding: 0.85rem 1rem 0.95rem;
+}
+.demo-card__title {
+    font-weight: 600;
+    font-size: 0.98rem;
+    margin-bottom: 0.3rem;
+}
+.demo-card__desc {
+    font-size: 0.85rem;
+    opacity: 0.72;
+    line-height: 1.5;
+}
+.demo-card__links {
+    display: flex;
+    gap: 1.1rem;
+    margin-top: 0.65rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.demo-card__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
