@@ -97,7 +97,7 @@ export class ChatPlugin extends RoomPlugin {
 ```
 
 <Callout type="warning">
-  **Always declare lifecycle hooks (`onCreate` / `onAuth` / `onJoin` / `onLeave` / `onDispose`), `messages`, and `order` as `protected`.** They're protected on the base `RoomPlugin` class — TypeScript silently widens to `public` on subclass overrides if you omit the modifier, leaking those framework slots into `this.plugins.<key>.<member>` autocomplete. The `pluginName` field stays `public` so type inference can read its literal.
+  **Always declare lifecycle hooks (`onCreate` / `onAuth` / `onJoin` / `onLeave` / `onDispose`), `messages`, and `order` as `protected`.** They're protected on the base `RoomPlugin` class. If you omit the modifier on a subclass override, TypeScript silently widens it to `public`, which leaks those framework slots into `this.plugins.<key>.<member>` autocomplete. The `pluginName` field stays `public` so type inference can read its literal.
 </Callout>
 
 Use it like any other plugin:

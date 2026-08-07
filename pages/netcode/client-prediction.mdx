@@ -269,7 +269,7 @@ const hit = ctx.memo(() => collide(state, ctx.reckonTime));
 if (hit) state.vx = hit.vx;   // re-applied identically on every replay
 ```
 
-Call `memo` on every step and let `compute` decide the value — return `undefined` for "nothing" (stored sparsely). Need more than one memo per step? Disambiguate with a key: `ctx.memo("collide", …)`. The key-less form is **one shared slot per step**, so two calls landing on the same slot — two key-less calls, or a repeated key — silently corrupt replay with one frozen value for both; with the dev panel active the SDK warns on the collision. And prefer reconciled `fields` when the value **is** derivable by re-running the step — that replays *and* self-corrects for free.
+Call `memo` on every step and let `compute` decide the value — return `undefined` for "nothing" (stored sparsely). Need more than one memo per step? Disambiguate with a key: `ctx.memo("collide", …)`. The key-less form is **one shared slot per step**. Two calls landing on that slot — two key-less calls, or a repeated key — silently corrupt replay with one frozen value for both. With the dev panel active, the SDK warns on the collision. Prefer reconciled `fields` when the value **is** derivable by re-running the step: that replays *and* self-corrects for free.
 
 ## `room.clock`
 

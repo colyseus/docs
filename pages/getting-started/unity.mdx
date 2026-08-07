@@ -123,6 +123,31 @@ public class NetworkManager : MonoBehaviour
 }
 ```
 
+### Waiting for the first state
+
+A resolved join does **not** mean the state has been synchronized yet: `room.State` is instantiated when you join, but its collections (`players`, nested refs, …) are only populated by the first full state sync, which arrives a moment later. Code that reads `room.State` right after joining can find `null` maps.
+
+`WaitForFirstState()` covers the gap — it is the C# analogue of the JavaScript SDK's `room.onStateChange.once(...)`:
+
+```csharp
+room = await client.JoinOrCreate<MyRoomState>("my_room");
+
+// wait for the first full state sync before reading room.State
+await room.WaitForFirstState();
+
+Debug.Log($"{room.State.players.Count} players already in the room");
+```
+
+It resolves immediately when the state has already synchronized, so it is always safe to await — including after reconnections.
+
+<Callout type="warning">
+    Never poll for state with `Task.Delay` on **WebGL** builds — WebGL has no thread-pool timers, so `Task.Delay` never resumes and the wait hangs forever. `WaitForFirstState()` is timer-free: it completes on the message pump and works on every platform, including WebGL.
+</Callout>
+
+<Callout type="info">
+    Registering `Callbacks` (as in the Quick Example above) is safe *before* the first sync — callbacks are driven by the decoder and fire as the initial state decodes. `WaitForFirstState()` is for code that reads `room.State` directly.
+</Callout>
+
 ## SDK API
 
 Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select the **C# (Unity)** tab.
@@ -159,6 +184,9 @@ public class NetworkManager : MonoBehaviour
 
         room = await client.JoinOrCreate<DynamicSchema>("my_room");
         Debug.Log("Joined room: " + room.Id);
+
+        // collections are null until the first full state sync
+        await room.WaitForFirstState();
 
         // Access state fields dynamically
         var players = room.State.Get<MapSchema<DynamicSchema>>("players");
@@ -197,7 +225,7 @@ public class NetworkManager : MonoBehaviour
 
 ### Message Types Codegen
 
-The same `schema-codegen` command also generates C# classes for any TypeScript interface containing `"Message"` in its name. This allows you to use strongly-typed message objects on the client side.
+The same `schema-codegen` command also generates C# classes for any TypeScript interface containing `"Message"` in its name. This allows you to use strongly-typed message objects on the frontend.
 
 For example, given the following server-side code:
 

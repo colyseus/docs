@@ -112,7 +112,7 @@ to get credentials.
 <Callout type="info">
   Cross-process safety: when multiple processes share the same
   `cacheDir`, each writes to PID-scoped temp paths and rechecks before
-  the atomic rename. Concurrent peers never clobber each other's
+  the atomic rename. Concurrent peers never overwrite each other's
   intermediate writes. For larger fleets, point all replicas at a shared
   volume populated by a single `geoipupdate` sidecar.
 </Callout>

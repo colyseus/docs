@@ -27,9 +27,10 @@ import { ScenarioGrid, ScenarioCard } from '../components/scenario-card'
     "on-cache-room-devmode": "/room/lifecycle#on-cache-room-devmode",
     "on-restore-room-devmode": "/room/lifecycle#on-restore-room-devmode",
     "on-before-shutdown": "/room/lifecycle#on-before-shutdown",
+    "callback-for-specific-type-of-message": "/room#handler-for-specific-type-of-message",
 }} />
 
-The `Room` class is the core building block of Colyseus. Each room instance represents an isolated game session where clients can interact through shared state and messages.
+The `Room` class is the core building block of Colyseus. Each room instance holds one group of clients, who interact through shared state and messages.
 
 ## Why Rooms?
 
@@ -119,17 +120,17 @@ export class MyRoom extends Room {
 
 ## Message Handling
 
-Room handlers have these methods available.
+Rooms have these methods available.
 
 ### On Messages
 
-Register callbacks to process messages sent by the frontend.
+Register handlers to process messages sent by the frontend.
 
 
 - The `type` argument can be either `string` or `number`.
-- You can only define a single callback per message type.
+- You can only define a single handler per message type.
 
-#### Callback for specific type of message
+#### Handler for specific type of message
 
 ```ts filename="MyRoom.ts"
 messages = {
@@ -145,7 +146,7 @@ messages = {
 
 #### Fallback for all messages
 
-You can register a single callback as a fallback to handle **other** types of messages.
+You can register a single handler as a fallback to handle **other** types of messages.
 
 ```ts filename="MyRoom.ts"
 messages = {

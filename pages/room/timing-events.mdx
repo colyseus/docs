@@ -15,7 +15,7 @@ from your `Room` instance.
 </Callout>
 
 <Callout type="warning">
-    The built-in [`setTimeout`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout) and [`setInterval`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setInterval) methods rely on CPU load, which may delay an unexpected amount of time to execute.
+    The built-in [`setTimeout`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout) and [`setInterval`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setInterval) methods are affected by CPU load. Under load they can fire much later than requested.
 </Callout>
 
 ## Clock
@@ -87,7 +87,7 @@ Stop counting time.
 
 #### `clock.tick()`
 
-This method is called automatically at every simulation interval step. All
+This method is called automatically at every timestep. All
 `Delayed` instances are checked during `tick`.
 
 <Callout type="info">

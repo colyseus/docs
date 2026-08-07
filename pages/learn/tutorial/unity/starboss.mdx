@@ -39,13 +39,13 @@ Start the player in the scene "StarBossLobby" located at `Assets\StarBoss\Scenes
 ## Demo Overview
 
 ### Creating and Listing Rooms with Different Game Modes
-In the overridden `CreateRoom` function in `StarBossLobbyController.cs` on the client side, you can see where we determine if we're launching a room of type Team Deathmatch or Co-op:
+In the overridden `CreateRoom` function in `StarBossLobbyController.cs` on the frontend, you can see where we determine if we're launching a room of type Team Deathmatch or Co-op:
 ```csharp
 string gameModeLogic = coopToggle.isOn ? "starBossCoop" : "starBossTDM";
 roomOptions = new Dictionary<string, object> {{"logic", gameModeLogic }, { "scoreToWin", 3 } };
 LoadMainScene(() => { ExampleManager.Instance.CreateNewRoom(selectRoomMenu.RoomCreationName, roomOptions);
 ```
-On the server side in `StarBossRoom.ts` we receive these `roomOptions` and use the `logic` member to determine which type of room we're going to create:
+On the backend in `StarBossRoom.ts` we receive these `roomOptions` and use the `logic` member to determine which type of room we're going to create:
 ```javascript
 // Retrieve the custom logic for the room
 const  customLogic = await  this.getCustomLogic(options["logic"]);
@@ -64,9 +64,9 @@ In this line:
 ```javascript
 this.setMetadata({isCoop:  options["logic"] == "starBossCoop" });
 ```
-We set the value for `isCoop` in the room's metadata, which we can then use on the client side to display the type of room.
+We set the value for `isCoop` in the room's metadata, which we can then use on the frontend to display the type of room.
 
-To accomplish this, on the client side we created a Serializable class `StarBossRoomMetaData.cs` that contains the `isCoop` value. We then use this class within our custom `StarBossRoomAvailable` which inherits from `Colyseus.RoomAvailable`:
+To accomplish this, on the frontend we created a Serializable class `StarBossRoomMetaData.cs` that contains the `isCoop` value. We then use this class within our custom `StarBossRoomAvailable` which inherits from `Colyseus.RoomAvailable`:
 ```csharp
 [System.Serializable]
 public class StarBossRoomAvailable : Colyseus.RoomAvailable {
@@ -106,13 +106,13 @@ As you play around with this demo, you may want to make some adjustments to bett
 
 ### Team Deathmatch Score to Win
 
-The maximum score to win in a Team Deathmatch is currently set to 3 on the client side in the overridden `CreateRoom` function in `StarBossLobbyController.cs`:
+The maximum score to win in a Team Deathmatch is currently set to 3 on the frontend in the overridden `CreateRoom` function in `StarBossLobbyController.cs`:
 ```csharp
 roomOptions = new Dictionary<string, object> {{"logic", gameModeLogic }, { "scoreToWin", 3 } };
 LoadMainScene(() => { ExampleManager.Instance.CreateNewRoom(selectRoomMenu.RoomCreationName, roomOptions);
 ```
 
-On the server side, we receive these `roomOptions` and use them to initialize the game logic. Only if we're initializing a Team Deathmatch room, do we make use of the `scoreToWin` option as seen in `starBossTDM.js`:
+On the backend, we receive these `roomOptions` and use them to initialize the game logic. Only if we're initializing a Team Deathmatch room, do we make use of the `scoreToWin` option as seen in `starBossTDM.js`:
 ```javascript
 roomRef.tdmScoreToWin = options["scoreToWin"] ? Number(options["scoreToWin"]) : 10;
 ```

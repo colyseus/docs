@@ -20,7 +20,7 @@ Enabling it takes a stamp on the client's inputs and a rewind on the server — 
 
 ### Client — the render-time stamp
 
-Each input carries a timestamp telling the server *when* the client's view of the world was. Once the room enables rewind, the SDK stamps every input on its own; and wiring the handle through `predict.reconciler` / `predict.sim` binds the stamp's interp-buffer term to the `Predict` lerp `delay` — the buffer you render at and the instant the server rewinds to come from **one number** and can't drift apart.
+Each input carries a timestamp telling the server *when* the client's view of the world was. Once the room enables rewind, the SDK stamps every input on its own. Wiring the handle through `predict.reconciler` / `predict.sim` then binds the stamp's interp-buffer term to the `Predict` lerp `delay`. The buffer you render at and the instant the server rewinds to come from **one number**, so they can't drift apart.
 
 ```ts
 const predict = Predict.get(room, { mode: "lerp", delay: 100 });
@@ -136,7 +136,7 @@ The real rewind distance is roughly `renderDelay + RTT + one tick`. If `maxRewin
 
 The shooter's *own* step can pre-judge the hit with the same timeline the server will use. `ctx.reckonTime` is the same value the server reads for that input, and `predict.valueAt(target, field, ctx.reckonTime)` samples the target where the rewind will place it — so your client-side verdict matches the server's by construction. Batch the pose with `predict.readAt(target, fields, ctx.reckonTime)` to run one reckon integration per target instead of one per field. Pair it with an [optimistic event](/netcode/client-prediction#optimistic-events-defineevent) for instant feedback that auto-rejects if the server disagrees.
 
-`ctx.reckonTime` is **always a usable instant** — a seq that wasn't stamped (the room doesn't rewind, the clock is still syncing) resolves to the live `serverNow()` automatically, mirroring the server side, where `channel.reckonTime` resolves unstamped reads to the room clock. There is no fallback to hand-write on either end. The rare consumer that needs the distinction — "was this seq actually stamped for lag comp?" — reads `ctx.lagCompActive`.
+`ctx.reckonTime` is **always a usable instant** — a seq that wasn't stamped (the room doesn't rewind, the clock is still syncing) resolves to the live `serverNow()` automatically, mirroring the backend, where `channel.reckonTime` resolves unstamped reads to the room clock. There is no fallback to hand-write on either end. The rare consumer that needs the distinction — "was this seq actually stamped for lag comp?" — reads `ctx.lagCompActive`.
 
 ## Next
 

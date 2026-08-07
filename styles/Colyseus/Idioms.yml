@@ -1,0 +1,20 @@
+---
+# Idioms and phrasal verbs are the main comprehension barrier for readers whose
+# first language is not English. Deliberate metaphor in a section opener is
+# fine — see STYLE.md#rules-we-deliberately-reject — so this stays a warning.
+extends: substitution
+message: "Prefer '%s' over the idiom '%s'."
+level: warning
+ignorecase: true
+swap:
+  'under the hood': internally
+  'out of the box': built in
+  'take care of': handle
+  'takes care of': handles
+  'figure out': determine
+  'run into': encounter
+  'up and running': running
+  'keep in mind': remember
+  'a good idea to': "better to"
+  'clobber(s|ed)?': overwrite
+  'swallow(s|ed)?': discard

@@ -20,7 +20,7 @@ Every join call from the SDK goes through the matchmaker. It picks the room a
 client lands in — `joinOrCreate()` finds a compatible room or spawns one,
 `join()` requires one to exist, `joinById()` targets a specific room — and
 answers with a **seat reservation** the SDK consumes to establish the room
-connection. See [Joining Rooms](/sdk#joining-rooms) for the client side.
+connection. See [Joining Rooms](/sdk#joining-rooms) for the frontend.
 
 Which rooms are eligible, and in what order, is up to you:
 
@@ -183,7 +183,7 @@ const server = defineServer({
 
 The Matchmaker API gives you server-side control over room management and player matchmaking in Colyseus.
 
-You can programmatically create rooms, join players to existing rooms, query and search for available rooms, reserve seats for players, monitor statistics like connected users (CCU) and room counts across processes, and even call methods on rooms running in different processes—all programmatically from your server code rather than relying solely on client requests.
+From your server code, you can create rooms, join players to existing rooms, query available rooms, and reserve seats. You can also monitor statistics across processes — connected users (CCU) and room counts — and call methods on rooms running in a different process. None of it depends on a client request.
 
 ``` typescript
 import { matchMaker } from "colyseus";

@@ -42,7 +42,7 @@ callbacks.onChange(player, () => {
 });
 ```
 
-By doing so, the result is "choppy" because the frequency of updates received from the server is lower than the frequency the frontend render each frame.
+The result is "choppy": the server sends updates less often than the frontend renders frames.
 
 Colyseus sends state updates to the client at every **50ms** (_20fps_) by default, whereas the frontend re-renders at every **16.6ms** (_60fps_).
 

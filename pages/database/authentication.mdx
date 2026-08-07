@@ -48,7 +48,7 @@ await db.auth.bumpTokenVersion(userId);
 
 ## Customizing callbacks
 
-To wrap or replace individual callbacks (e.g. add an invite-code check during registration, customize the anonymous user payload), override keys on the `auth.settings` singleton **after** the server boots — the database wiring copies `db.auth.settings` into `auth.settings` at listen time, so overrides applied earlier are clobbered:
+To wrap or replace individual callbacks — for example, to add an invite-code check during registration, or to customize the anonymous user payload — override keys on the `auth.settings` singleton **after** the server boots. The database wiring copies `db.auth.settings` into `auth.settings` at listen time, so any override applied earlier is overwritten:
 
 ```ts filename="src/index.ts"
 import { auth } from "@colyseus/auth";

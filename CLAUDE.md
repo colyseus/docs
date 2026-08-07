@@ -6,10 +6,14 @@
 
 ## Writing quality
 
+- Follow @STYLE.md — sentence limits, voice, and the approved terminology table.
+  It also records the rules we deliberately reject (gerund headings, contractions,
+  second person), so don't "fix" those.
 - Should always strive for practical, simple and technical language.
 - Plain, approachable prose. Skip marketing copy and hedging adverbs; keep the why alongside the what.
 - Keep content organized and self-contained within their categories.
 - Always perform deep structural analysis before adding, changing, or removing content.
+- Run `npm run lint:prose` alongside `npm run check-links` before committing.
 
 ## Page references
 

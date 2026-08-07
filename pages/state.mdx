@@ -26,7 +26,7 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 - The room's state is defined using `schema()` from `@colyseus/schema`. Only the server can directly mutate the state.
 - Clients send messages to the server to request state changes. Your room code processes these requests and updates the state.
 - Colyseus optimizes performance and bandwidth by tracking property-level changes. Only the latest mutation of each property is queued and sent to clients during the [patchRate](/room#configuration-properties) interval.
-- On the client side, you listen for state changes to keep the user interface in sync.
+- On the frontend, you listen for state changes to keep the user interface in sync.
 
 <Steps>
 	### Backend: Define your state structures

@@ -158,7 +158,7 @@ DEMO_DATABASE=mongodb://localhost:27017/demo?retryWrites=true&w=majority
 
 ### Chat Message Life Time
 
-On the client side, you can change the length of time a message shows for by changing the public `messageShowTime` variable on `ChatManager.ts` which will then be sent to the server when Joining/Creating a room in `MMOManager.ts`:
+On the frontend, you can change the length of time a message shows for by changing the public `messageShowTime` variable on `ChatManager.ts` which will then be sent to the server when Joining/Creating a room in `MMOManager.ts`:
 
 ```javascript
 private async joinChatRoom() {
@@ -254,7 +254,7 @@ interactableObject.availableTimestamp =
     this.state.serverTime + interactableObject.useDuration;
 ```
 
-The server then checks during each `simulationInterval`:
+The server then checks on each timestep:
 
 ```javascript
 checkObjectReset() {

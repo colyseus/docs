@@ -183,7 +183,7 @@ The driver creates a `roomcaches_v1` table with the following structure:
 |--------|------|-------------|
 | `roomId` | `varchar(9)` | Primary key, unique room identifier |
 | `processId` | `varchar(9)` | ID of the process hosting the room |
-| `name` | `varchar(64)` | Room handler name |
+| `name` | `varchar(64)` | Room type name |
 | `clients` | `integer` | Current number of connected clients |
 | `maxClients` | `integer` | Maximum allowed clients |
 | `locked` | `boolean` | Whether the room is locked |

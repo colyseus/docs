@@ -24,7 +24,11 @@ The following tables come pre-registered with sensible defaults:
 | User notes | `colyseus_user_notes` | `authorId` auto-filled from session on create. |
 | Audit log | `colyseus_admin_audit` | **Read-only** via policies — all writes denied (append-only contract). |
 
-Unless a table declares its own [policies](#policies) (only the audit log does by default), access follows the standard role rule everywhere: **admin** has full CRUD; **mod** gets list, read, and update only on resources they're [scoped to](/admin/authentication#scoping-a-moderator-to-specific-resources); **user**-role accounts cannot open the panel UI (403), but direct API calls to list/read endpoints are permitted.
+Unless a table declares its own [policies](#policies), access follows the standard role rule everywhere. Only the audit log declares its own by default.
+
+- **admin** — full CRUD.
+- **mod** — list, read, and update, only on resources they're [scoped to](/admin/authentication#scoping-a-moderator-to-specific-resources).
+- **user** — cannot open the panel UI (403). Direct API calls to list/read endpoints are still permitted.
 
 ## `defineAdminResource()`
 
@@ -263,7 +267,7 @@ await db.audit.recordUpdate({
 });
 ```
 
-The panel's own endpoints swallow audit-write failures (logged, not propagated) so a failed audit write never blocks a successful mutation — but a direct `db.audit.record()` call from your own code **throws** on failure; wrap it yourself if you want the same behavior.
+The panel's own endpoints log audit-write failures without propagating them, so a failed audit write never blocks a successful mutation. A direct `db.audit.record()` call from your own code **throws** on failure instead. Wrap it yourself if you want the same behavior.
 
 ## Next steps
 

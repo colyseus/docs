@@ -24,6 +24,14 @@ jobs:
       # validates every internal link and anchor, plus the 404.mdx redirect map
       - run: pnpm run check-links
 
+      # terminology (STYLE.md) fails the build; style warnings are reported only
+      - uses: errata-ai/vale-action@v2.1.1
+        with:
+          version: 3.17.1
+          files: pages
+          fail_on_error: true
+          reporter: github-pr-check
+
       # `next build` occasionally fails page-data collection on a random page
       # and passes on retry — retry once before calling it a real failure
       - run: pnpm run build || pnpm run build
