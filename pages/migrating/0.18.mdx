@@ -44,7 +44,7 @@ The `@colyseus/schema` package is now at version **5.0.x** — 0.18 requires it 
 +   "@colyseus/schema": "^5.0.8",
 ```
 
-On the front-end, bump `@colyseus/sdk` as well:
+On the frontend, bump `@colyseus/sdk` as well:
 
 ```diff filename="package.json"
 -   "@colyseus/sdk": "^0.17.26",
@@ -109,6 +109,16 @@ this.setTimestep((deltaTime) => this.update(deltaTime));
 ```
 
 For client-predicted games, use the new fixed-step loop `setFixedTimestep(step, tickRate)` instead — see [Server Input & Fixed Timestep](/netcode/server-input).
+
+`@colyseus/testing` follows the same rename in 0.18.2 — `room.waitForNextSimulationTick()` became [`room.waitForNextTimestep()`](/tools/unit-testing#wait-for-next-timestep), with the old name kept as a forwarding alias:
+
+```ts
+// ✅ still works (deprecated alias)
+await room.waitForNextSimulationTick();
+
+// ✅ preferred
+await room.waitForNextTimestep();
+```
 
 ## Breaking Changes
 

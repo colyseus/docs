@@ -89,13 +89,13 @@ messages = {
 
 We need to have an update loop in the backend with the same implementation we do for the frontend.
 
-For this, we use `this.setSimulationInterval()` to register the update loop:
+For this, we use `this.setTimestep()` to register the update loop:
 
 ```ts filename="MyRoom.ts"
 // (...)
 onCreate() {
     // (...)
-    this.setSimulationInterval((deltaTime) => {
+    this.setTimestep((deltaTime) => {
         this.update(deltaTime);
     });
 }
@@ -182,7 +182,7 @@ Let's do the same for the backend now:
 // (...)
 onCreate() {
     let elapsedTime = 0;
-    this.setSimulationInterval((deltaTime) => {
+    this.setTimestep((deltaTime) => {
         elapsedTime += deltaTime;
 
         while (elapsedTime >= this.fixedTimeStep) {

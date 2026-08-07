@@ -4,8 +4,14 @@ description: "Write unit tests for your Colyseus server rooms using the built-in
 ---
 import { Callout, Steps, Tabs } from 'nextra/components'
 import { ServerIcon, DevicesIcon } from "@primer/octicons-react";
+import { MovedAnchors } from '../../components/moved-anchors'
 
 # Unit Testing Your Server
+
+{/* waitForNextSimulationTick was renamed to waitForNextTimestep in @colyseus/testing 0.18.2. */}
+<MovedAnchors map={{
+    "wait-for-next-simulation-tick": "/tools/unit-testing#wait-for-next-timestep",
+}} />
 
 The `@colyseus/testing` package provides utility methods for testing your Colyseus application. It simulates client connections and message exchange using the JavaScript SDK, so you can validate both server and client behavior in a single test.
 
@@ -167,21 +173,25 @@ it("client state must match server's after patch is received", async() => {
 });
 ```
 
-### Wait For Next Simulation Tick
+### Wait For Next Timestep
 
-Wait for the next simulation tick to complete.
+Wait for the next timestep to complete. Works with either loop — `setTimestep()` and `setFixedTimestep()` both drive the same interval.
 
 ```ts {5} filename="App.test.ts"
-it("should assert something after room's simulation tick", async() => {
+it("should assert something after room's timestep", async() => {
     const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
 
-    await room.waitForNextSimulationTick();
+    await room.waitForNextTimestep();
 
-    // assuming the room's state has a "tick" property that updates during setSimulationInterval()
+    // assuming the room's state has a "tick" property that updates during setTimestep()
     assert.strictEqual(room.state.tick, 1);
 });
 ```
+
+<Callout type="info">
+    `waitForNextSimulationTick()` is the previous name and still works (it forwards). Requires `@colyseus/testing` 0.18.2 or newer for `waitForNextTimestep()`.
+</Callout>
 
 ## Client-side Utilities
 

@@ -97,7 +97,7 @@ if(disconnectRoom) {
 ### Pausing the Room
 
 Since this is an example of an asynchronous game, our room could have no users connected to it for any amount of time. When there are no users connected to the room the server doesn't need to update the simulation loop.
-When users disconnect from the room a check is performed to look if there are no more users connected to the room. When no more users are connected to the room the simulation interval effectively gets paused by setting the delay to a high value. In this case the value is a little more than 24 days.
+When users disconnect from the room a check is performed to look if there are no more users connected to the room. When no more users are connected to the room the timestep effectively gets paused by setting the delay to a high value. In this case the value is a little more than 24 days.
 ``` javascript
 
 // Within the room's `onLeave` handler
@@ -119,18 +119,18 @@ if(anyConnected == false) {
 private setServerPause(pause: boolean) {
 
     if(pause) {
-        this.setSimulationInterval(dt => this.gameLoop(dt), this.pauseDelay);
+        this.setTimestep(dt => this.gameLoop(dt), this.pauseDelay);
     }
     else {
-        // Set the Simulation Interval callback
-        this.setSimulationInterval(dt => this.gameLoop(dt));
+        // Set the timestep callback
+        this.setTimestep(dt => this.gameLoop(dt));
     }
 
     this.serverPaused = pause;
 }
 ```
 
-When users rejoin a room that has been paused, the simulation interval is restored.
+When users rejoin a room that has been paused, the timestep is restored.
 ``` javascript
 
 // Within the room's `onJoin` handler
