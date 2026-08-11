@@ -216,7 +216,7 @@ Owns the per-frame driver: calls `predict.tick(now)` once per frame and hands yo
 
 ```tsx
 const input = useInput(room);
-const jump = useLatch();
+const jump = useInputBuffer();
 
 usePredictLoop(room, (steps) => {
   for (let i = 0; i < steps; i++) {
@@ -279,14 +279,14 @@ const me = useSessionEntity(room, "players");
 const flag = useEntityInstance(room, (state) => state.ctf.flag);
 ```
 
-#### `useLatch()`
+#### `useInputBuffer()`
 
-The ["latch, then consume"](/netcode/recipes#taps-between-steps-latch-then-consume) input recipe as a hook. Input is sampled once per fixed step, not per render frame — a tap on a 0-step frame must not be lost, and a tap spanning a multi-step frame must not fire twice. Call `latch()` in the React event handler, `consume()` inside the send loop so the tap lands on exactly one fixed step:
+The ["buffer, then consume"](/netcode/recipes#taps-between-steps-buffer-then-consume) input recipe as a hook. Input is sampled once per fixed step, not per render frame — a tap on a 0-step frame must not be lost, and a tap spanning a multi-step frame must not fire twice. Call `press()` in the React event handler, `consume()` inside the send loop so the tap lands on exactly one fixed step:
 
 ```tsx
-const jump = useLatch();
+const jump = useInputBuffer();
 
-<button onPointerDown={jump.latch}>Jump</button>
+<button onPointerDown={jump.press}>Jump</button>
 
 // inside the usePredictLoop callback:
 input.data.jump = jump.consume();

@@ -22,22 +22,22 @@ Task-oriented patterns that build on the [Client Prediction](/netcode/client-pre
 
 Full behavior reference: [the modes table](/netcode/client-prediction#remote-entities).
 
-## Taps between steps: latch, then consume
+## Taps between steps: buffer, then consume
 
 Input is sampled once per **fixed step**, not per render frame — and frames and steps don't line up. A 120 Hz display on a 30 Hz tick runs a step every ~4th frame, and a hitchy frame can run several steps at once. Two traps follow: a tap on a **0-step frame** must not be lost (it belongs to the next step), and a tap spanning a **multi-step frame** must not fire twice. "Is the key down right now?" sampling gets both wrong.
 
-**Latch the press when it happens; consume it inside the step loop on exactly one step:**
+**Buffer the press when it happens; consume it inside the step loop on exactly one step:**
 
 ```ts
-let jumpLatched = false;
-onKeyDown("Space", () => jumpLatched = true);   // latch: the tap happened
+let jumpBuffered = false;
+onKeyDown("Space", () => jumpBuffered = true);  // buffer: the tap happened
 
 function frame(now) {
   const n = predict.tick(now);
   for (let i = 0; i < n; i++) {
-    input.data.moveX = readAxis();    // held state: sample live, no latch
-    input.data.jump = jumpLatched;
-    jumpLatched = false;              // consume: fires on exactly one step
+    input.data.moveX = readAxis();    // held state: sample live, no buffer
+    input.data.jump = jumpBuffered;
+    jumpBuffered = false;             // consume: fires on exactly one step
     input.send();
   }
 }
@@ -45,11 +45,11 @@ function frame(now) {
 
 Variants of the same shape:
 
-- **Held buttons** (movement, auto-fire) sample the live state directly — no latch.
-- **Buffered presses** (a jump buffer): latch with a timestamp; the consuming step decides whether it's still fresh.
+- **Held buttons** (movement, auto-fire) sample the live state directly — no buffer.
+- **Buffer windows** (a jump buffer with a grace period): buffer a timestamp instead of a flag; the consuming step decides whether it's still fresh.
 - **Analog deltas** (pointer aim, mouselook): accumulate into a pending total and let each step consume its budget (`pending -= taken`) — fast motion carries over to later steps instead of clipping.
 
-Latch outside the loop, consume inside it — draining an edge anywhere else either drops taps (0-step frames) or double-fires them (multi-step frames).
+Buffer outside the loop, consume inside it — draining an edge anywhere else either drops taps (0-step frames) or double-fires them (multi-step frames).
 
 ## Unreliable input over WebTransport
 
