@@ -84,27 +84,36 @@ Prefer to learn by poking at something live? The [**Prediction Playground**](htt
 
 ### Official demos
 
-The playground isolates each concept; these five open-source games put them all together. Each is a complete Colyseus 0.18 + Three.js game — authoritative server, client prediction, smoothed remotes and lag compensation running as one stack. Play them live, then read the source.
+The playground isolates each concept; these five games put them all together. Each is a complete Colyseus 0.18 + Three.js game — authoritative server, client prediction, smoothed remotes and lag compensation running as one stack.
+
+{/*
+    The demos are pending publication — the repos below exist but are private,
+    and the play hosts have no DNS yet. When they launch, restore the props:
+
+    Air Hockey:     play="https://air-hockey.colyseus.dev" source="https://github.com/colyseus/air-hockey-demo"
+    ColyBlast:      play="https://fps.colyseus.dev"        source="https://github.com/colyseus/fps-demo"
+    MOBA:           play="https://moba.colyseus.dev"       source="https://github.com/endel/moba-colyseus"
+    Platformer:     play="https://platformer.colyseus.dev" source="https://github.com/colyseus/platformer-demo"
+    Colyseus Karts: play="https://racing.colyseus.dev"     source="https://github.com/colyseus/racing-demo"
+
+    Also restore in the intro above: "Play them live, then read the source."
+    and reinstate "open-source" before "games".
+*/}
 
 <DemoGrid>
-    <DemoCard title="Air Hockey" image="/demos/netcode/air-hockey.webp"
-        play="https://air-hockey.colyseus.dev" source="https://github.com/colyseus/air-hockey-demo">
+    <DemoCard title="Air Hockey" image="/demos/netcode/air-hockey.webp">
         3D air hockey where everything is predicted — your mallet, the puck, hits and even goals resolve locally and are settled by the server. First to 7 wins.
     </DemoCard>
-    <DemoCard title="ColyBlast (FPS)" image="/demos/netcode/fps.webp"
-        play="https://fps.colyseus.dev" source="https://github.com/colyseus/fps-demo">
+    <DemoCard title="ColyBlast (FPS)" image="/demos/netcode/fps.webp">
         First-person shooter: predicted movement with reconciliation, server-validated hitscan with lag compensation, and objective game modes.
     </DemoCard>
-    <DemoCard title="MOBA" image="/demos/netcode/moba.webp"
-        play="https://moba.colyseus.dev" source="https://github.com/endel/moba-colyseus">
+    <DemoCard title="MOBA" image="/demos/netcode/moba.webp">
         A 3-lane MOBA on a deterministic shared simulation — fixed timestep and client prediction driving heroes, creeps, towers and 5v5 bot matches.
     </DemoCard>
-    <DemoCard title="Platformer" image="/demos/netcode/platformer.webp"
-        play="https://platformer.colyseus.dev" source="https://github.com/colyseus/platformer-demo">
+    <DemoCard title="Platformer" image="/demos/netcode/platformer.webp">
         2.5D platformer built as a prediction harness — reconciled movement, rideable moving platforms, and stomps and dashes that hold up under lag.
     </DemoCard>
-    <DemoCard title="Colyseus Karts" image="/demos/netcode/racing.webp"
-        play="https://racing.colyseus.dev" source="https://github.com/colyseus/racing-demo">
+    <DemoCard title="Colyseus Karts" image="/demos/netcode/racing.webp">
         Kart racing with hold-to-drift mini-turbos, item boxes and rockets — rollback prediction, dead-reckoned projectiles, and rewind-based hit checks.
     </DemoCard>
 </DemoGrid>

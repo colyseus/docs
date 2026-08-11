@@ -32,22 +32,25 @@ export function DemoCard({
 }: {
     title: string;
     image: string;
-    play: string;
-    source: string;
+    play?: string;
+    source?: string;
     children: React.ReactNode;
 }) {
+    const media = <img src={image} alt={`${title} — gameplay screenshot`} loading="lazy" />;
     return (
         <div className="demo-card">
-            <a href={play} target="_blank" rel="noopener" className="demo-card__media">
-                <img src={image} alt={`${title} — gameplay screenshot`} loading="lazy" />
-            </a>
+            {play
+                ? <a href={play} target="_blank" rel="noopener" className="demo-card__media">{media}</a>
+                : <div className="demo-card__media">{media}</div>}
             <div className="demo-card__body">
                 <div className="demo-card__title">{title}</div>
                 <div className="demo-card__desc">{children}</div>
-                <div className="demo-card__links">
-                    <a href={play} target="_blank" rel="noopener"><LinkExternalIcon size={14} /> Play</a>
-                    <a href={source} target="_blank" rel="noopener"><MarkGithubIcon size={14} /> Source</a>
-                </div>
+                {(play || source) && (
+                    <div className="demo-card__links">
+                        {play && <a href={play} target="_blank" rel="noopener"><LinkExternalIcon size={14} /> Play</a>}
+                        {source && <a href={source} target="_blank" rel="noopener"><MarkGithubIcon size={14} /> Source</a>}
+                    </div>
+                )}
             </div>
         </div>
     );
