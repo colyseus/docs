@@ -7,11 +7,12 @@ import { HashIcon } from '@primer/octicons-react'
 
 # Schema Definition
 
-- Schema structures are defined on the backend and represent the state of your game within a room.
-- Only fields declared with a `t.*` builder are synchronized.
+- Schema structures are defined on the backend and describe data that is continuously synchronized between server and client.
+- A field is synchronized when it is **declared** — with a `t.*` builder, or with a [`@type()` decorator](/state/schema/decorators). Plain class properties are invisible to the serializer.
+- A declared field can opt out with [`.noSync()`](#field-modifiers), and *how* it reaches clients is tunable with [delivery modifiers](#delivery-modifiers).
 
 <Callout type="warning">
-    `Schema` structures should be used within the **state only**. Do not use `Schema` structures for messages, or other data that is not related to your state.
+    `Schema` is for the two things that synchronize continuously: your room's **state**, and the **[input](/netcode/server-input)** clients send back. Don't reach for it elsewhere — [room messages](/room/messages) and other one-off payloads have their own serialization and don't need a schema.
 </Callout>
 
 <Callout type="info">
@@ -142,8 +143,95 @@ Every `t.*` builder accepts chainable modifiers:
 | `.deprecated(throws?)` | Retire a field while keeping encoding order — see [Versioning](#versioning-and-backwardsforwards-compability) |
 | `.optional()` | Type becomes `T \| undefined`; skips auto-instantiation |
 | `.noSync()` | Local-only field: typed and initialized, but never synchronized |
+| `.unreliable()` | Tick patches carry the field on the unreliable channel — see [Delivery modifiers](#delivery-modifiers) |
+| `.patchOnly()` | Sent on tick patches only, never in a full state sync — see [Delivery modifiers](#delivery-modifiers) |
+| `.fullStateOnly()` | Sent in the full state sync only, never in a tick patch — see [Delivery modifiers](#delivery-modifiers) |
+| `.stream()` | Drip-feed a collection's additions across ticks — see [Streaming](/state/streaming) |
 
-Netcode-oriented modifiers — `.owned()`, `.unreliable()`, `.transient()`, `.static()`, `.stream()`, `.priority()` — and the `t.quantized()` / `t.angle()` factories are covered in the [Netcode section](/netcode/server-input).
+### Delivery modifiers
+
+The modifiers above answer *what* a field is. These three answer **when and how it reaches a client** — the value and its type are unaffected, only its delivery.
+
+`.unreliable()` combines freely with either of the other two. `.patchOnly()` and `.fullStateOnly()` are **mutually exclusive** — they name the only two delivery channels, so a field marked both would never reach a client at all; that throws at `schema()` time.
+
+<Callout type="info">
+    All three are server-side encoder concerns. Nothing changes on the client: a decoder just receives the field, or doesn't. No client-side setup is required.
+</Callout>
+
+#### `.unreliable()`
+
+Tick patches carry the field on the **unreliable transport channel** — dropped rather than retransmitted when the network is congested. For a value that is fully replaced every tick anyway, a dropped packet costs nothing: the next tick supersedes it. Retransmitting it would only add latency.
+
+```ts
+const Player = schema({
+    x:    t.number(),                  // reliable — every change must land
+    y:    t.number(),
+    aimYaw: t.angle().unreliable(),    // replaced every tick; a drop is free
+}, "Player");
+```
+
+Use it for continuously-overwritten values (look angles, interpolated positions, a cosmetic animation blend). Do **not** use it for anything a client must not miss — inventory, score, health, or any value read as a delta rather than an absolute.
+
+The field is still written to the full state sync, so a late joiner gets the current value on arrival. Combine with `.patchOnly()` to leave it out of that too.
+
+<Callout type="warning">
+    Requires a datagram-capable transport (WebTransport). Over plain WebSocket every field is delivered reliably and the modifier has no effect — it is safe to leave in your schema either way.
+</Callout>
+
+#### `.patchOnly()`
+
+The field travels on **tick patches only**. It is never written to a full state sync, so a client that joins mid-game does not receive it at all — the field appears only when it next changes:
+
+```ts
+const Explosion = schema({
+    x: t.number(),
+    y: t.number(),
+    flashIntensity: t.number().patchOnly(),  // meaningless to a late joiner
+}, "Explosion");
+```
+
+Use it for values that are only meaningful *as they happen* — a hit flash, a one-frame impulse, a "last damage taken" readout. Sending them in a full state sync would show a late joiner an event that already finished.
+
+Orthogonal to `.unreliable()`: `.patchOnly()` controls whether the field is included in a full state sync, `.unreliable()` controls which channel patches use. A field marked both is skipped in full syncs *and* sent unreliably in patches.
+
+#### `.fullStateOnly()`
+
+For **map and room-wide data** that every client needs once: the level layout, the tile grid, spawn points, the match configuration. Data that is decided when the room is created and then simply *is*.
+
+The field ships in the **full state sync only** — a client receives it on join, and never again.
+
+```ts
+const MyState = schema({
+    // decided at room creation, sent once to each client
+    mapWidth:  t.uint16().fullStateOnly(),
+    mapHeight: t.uint16().fullStateOnly(),
+    tiles:     t.array("uint8").fullStateOnly(),
+    spawns:    t.array(SpawnPoint).fullStateOnly(),
+
+    // the actual game state, patched every tick
+    players: t.map(Player),
+}, "MyState");
+```
+
+Room-wide data like this tends to be **large and constant** — exactly the combination you don't want anywhere near a per-tick patch. The modifier is a guarantee rather than an optimization you have to keep verifying: the field cannot end up in a patch, however the surrounding code evolves.
+
+That makes it the exact mirror of `.patchOnly()`:
+
+| | In the full state sync | In tick patches |
+|---|---|---|
+| *(default)* | ✅ | ✅ |
+| `.patchOnly()` | ❌ | ✅ |
+| `.fullStateOnly()` | ✅ | ❌ |
+
+<Callout type="warning">
+    Writes after a client has joined are **silently dropped** — no error, and that client keeps the value it joined with. Populate these fields during `onCreate()`, before anyone is connected. If clients need to see a field change while they're connected, it can't be `.fullStateOnly()`.
+</Callout>
+
+The field itself is not frozen — it stays an ordinary, mutable property on the server. Only its propagation to clients stops. On a [streamed](/state/streaming) field the same rule applies per *element*: a client receives each element as it was when sent, and no later update to it.
+
+<Callout type="info">
+    `.unreliable()` and `.patchOnly()` also exist as decorators (`@unreliable`, `@patchOnly`). `.fullStateOnly()`, `.stream()` and `.priority()` are builder-only.
+</Callout>
 
 ## Data Types
 
@@ -194,6 +282,46 @@ Specialized number types:
 | `"float64"` | double-precision floating-point number | `-1.7976931348623157e+308` to `1.7976931348623157e+308` |
 | `"bigint64"` | signed 64-bit integer (`bigint` type) | `-2^63 (-9223372036854775808)` to `2^63-1 (9223372036854775807)` |
 | `"biguint64"` | unsigned 64-bit integer (`bigint` type) | `0` to `2^64-1 (18446744073709551615)` |
+
+#### Quantized floats (`t.quantized()` / `t.angle()`)
+
+A float that changes every tick within a **known range** — a look angle, a normalized scalar, a unit-vector component — doesn't need all 4 bytes of a `float32`. `t.quantized()` maps the range onto an 8-, 16- or 32-bit unsigned integer on the wire, at a precision you choose:
+
+```ts
+const Input = schema({
+    yaw:      t.angle(),                                          // 2 bytes, wraps
+    pitch:    t.quantized({ min: -Math.PI/2, max: Math.PI/2 }),   // 2 bytes, clamps
+    throttle: t.quantized({ min: 0, max: 1, bits: 8 }),           // 1 byte
+}, "Input");
+```
+
+Your code reads and writes a plain `number`. The conversion is invisible.
+
+| Option | Default | Meaning |
+|--------|---------|---------|
+| `min` | *(required)* | Inclusive lower bound of the value domain |
+| `max` | *(required)* | Upper bound — inclusive when clamping, exclusive when wrapping |
+| `bits` | `16` | Wire width: `8`, `16` or `32`. Schema fields are byte-aligned, so only these three change the size |
+| `mode` | `"clamp"` | `"clamp"` or `"wrap"` — see below |
+
+**Picking `mode`** is the only real decision, and the wire size is identical either way:
+
+- **`"clamp"`** — the value has **hard walls**. A pitch limit, a health bar, a 0–1 throttle. Both endpoints are exact and distinct; out-of-range input clamps to the nearest end. Looking past the pitch limit stops *at* the limit.
+- **`"wrap"`** — the value is **cyclic**: `min` and `max` are the same point. An angle, a compass bearing, a hue, a phase. Any input is reduced modulo the range first, so a large accumulated or negative angle folds back in — a yaw keeps spinning instead of jamming.
+
+> Ask: does one step past the top land you back at the bottom, as the same physical thing? → `"wrap"`. Is the top a wall you can't cross? → `"clamp"`.
+
+`t.angle(opts?)` is sugar for a full-circle wrapping angle in radians — `t.quantized({ min: 0, max: 2π, mode: "wrap", bits: opts?.bits ?? 16 })`. At the 16-bit default that's ~0.0055° per step, finer than any mouse can resolve, in 2 bytes.
+
+<Callout type="warning">
+    **Choosing the wrong mode is a real bug.** A clamped heading jams at the `0`/`2π` seam. A wrapped pitch flips the camera the instant you look a hair too far up.
+</Callout>
+
+<Callout type="info">
+    **Quantization is lossy — but identically lossy on both peers.** The field only ever yields the dequantized value, so a client's prediction and the server's simulation read the *same* number and a predicted hitscan ray matches the server's. The loss is against the original float, never between the two peers.
+
+    For a cyclic field that you also *interpolate* on the client, `"wrap"` fixes the wire seam, not the rendering — lerp it shortest-arc as well, or it unwinds the long way around.
+</Callout>
 
 ### `Schema` type
 

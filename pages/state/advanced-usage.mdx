@@ -14,6 +14,7 @@ customize:
 - [Byte-level encoding](#byte-level-encoding)
 - [Byte-level decoding](#byte-level-decoding)
 - [Encoding non-`Schema` structures](#encoding-non-schema-structures)
+- [Instance pooling](#instance-pooling)
 
 ## Custom types and encoding
 
@@ -213,3 +214,71 @@ const vec3 = new Vec3();
 Schema.initialize(vec3);
 
 ```
+
+## Instance pooling
+
+Constructing a `Schema` is not free — each instance gets its own change-tracking state, a property descriptor, and a values array, multiplied by every node in its entity tree. A room that spawns and despawns entities continuously (projectiles, ECS entities, bots) pays that cost over and over.
+
+`createPool()` recycles instances instead:
+
+```ts
+import { createPool } from "@colyseus/schema";
+
+const pool = createPool(Entity, { preallocate: 1000 });
+
+// spawn
+const entity = pool.acquire();
+entity.x = 10;
+entity.y = 20;
+state.entities.set(id, entity);
+
+// despawn — detach from the state tree FIRST, then release
+state.entities.delete(id);
+pool.release(entity);
+```
+
+| Member | Description |
+|--------|-------------|
+| `createPool(ctor, opts?)` | Creates a pool for a zero-argument `Schema` class |
+| `pool.acquire()` | Returns a free instance, or constructs one if the pool is empty |
+| `pool.release(instance)` | Resets the instance and returns it to the pool |
+| `pool.size` | Instances currently available for reuse |
+
+Options:
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `preallocate` | `0` | Construct this many instances up front, so early spawns reuse rather than allocate |
+| `maxSize` | *unbounded* | Cap on retained free instances; releases beyond it are dropped and garbage-collected |
+
+### Reuse is invisible on the wire
+
+`release()` resets the instance to its construction defaults and drops its internal ref id, so re-adding it acquires a fresh one. A pooled instance therefore encodes **byte-identically** to a freshly constructed one — clients cannot tell the difference, and a late joiner receiving a full state sync sees a consistent state regardless of how much churn preceded it.
+
+### Order matters: detach, then release
+
+<Callout type="warning">
+    Remove the instance from its parent collection **before** calling `release()`. Releasing an instance that is still attached throws — it would otherwise be reset while the encoder still considered it part of the state tree.
+</Callout>
+
+```ts
+state.entities.delete(id);   // detach first
+pool.release(entity);        // then release
+```
+
+### Re-assign every field after `acquire()`
+
+<Callout type="warning">
+    **Pooling does not clear primitive values.** An acquired instance still carries the numbers, strings and booleans from its previous life, and those retained values *are* re-encoded when it re-enters the state tree. A field you forget to re-assign will silently ship the previous entity's value to clients.
+</Callout>
+
+Treat `acquire()` as `new` and assign every field you would have set on a fresh instance. Ref-type children (nested schemas, collections) *are* reset recursively, so a pooled entity's collections come back empty.
+
+### Restrictions
+
+`release()` throws when the instance is:
+
+- **still attached** to the state tree (see above);
+- **shared across multiple parents** — another owner may still hold it, so recycling it is unsafe;
+- **decoder-side** — client mirror instances aren't change-tracked and can't be pooled. Pooling is a server-side optimization only;
+- **holding a [streamed](/state/streaming) collection field** — a `.stream()` map, set, collection or array cannot be reset, since per-client delivery state outlives the instance.

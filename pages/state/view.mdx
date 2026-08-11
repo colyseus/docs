@@ -187,6 +187,10 @@ The following table shows the relation between type annotations and the visibili
 
 When you tag an array or map with `.view()`, elements added to the collection **later** must be added to the client's `StateView` individually. (Calling `view.add(collection)` also brings in the elements it holds at that moment.)
 
+<Callout type="info">
+    To grant a client every future element automatically, [subscribe to the collection](#subscribing-to-a-collection) instead of adding each element by hand.
+</Callout>
+
 <Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
     <Tabs.Tab>
 
@@ -231,3 +235,32 @@ import { StateView } from "@colyseus/schema";
     }
 // ...
 ```
+
+## Subscribing to a collection
+
+`view.add(instance)` is a **one-shot**: it grants visibility of that instance, and nothing else. For a collection that keeps gaining elements, that means calling `.add()` again for every new one — and forgetting a call silently leaves that client behind.
+
+`view.subscribe(collection)` makes it standing. The view receives **all future content changes** of that collection, with no further bookkeeping:
+
+```ts {8} filename="MyRoom.ts"
+import { StateView } from "@colyseus/schema";
+// ...
+    onJoin(client, options) {
+        client.view = new StateView();
+
+        // every enemy — present and future — reaches this client
+        client.view.subscribe(this.state.enemies);
+    }
+// ...
+```
+
+Subscribing brings in the collection's current contents as well as future ones, so it replaces the initial `view.add(collection)` rather than supplementing it. It is idempotent — subscribing to an already-subscribed collection is a no-op.
+
+How new elements are delivered depends on the collection kind:
+
+- **`ArraySchema` / `MapSchema` / `SetSchema` / `CollectionSchema`** — new children are shipped immediately, as they're added.
+- **[Streamed](/state/streaming) collections** (`t.stream(X)`, or any collection with `.stream()`) — new elements enter the view's pending queue and drain a bounded number per tick, in priority order.
+
+<Callout type="info">
+    Subscribing is per-view. If several clients share one `StateView` instance, one `subscribe()` call covers all of them.
+</Callout>

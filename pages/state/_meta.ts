@@ -4,5 +4,6 @@ export default {
     "schema": "",
     "callbacks": "",
     "view": "",
+    "streaming": "",
     "advanced-usage": "",
 }
