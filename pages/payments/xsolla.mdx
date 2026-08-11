@@ -309,11 +309,6 @@ In the next sections, we will cover each step in detail.
         The Pay Station UI triggers many events which you can listen to via post-message from the frontend.
 
         ```typescript filename="client.ts"
-        /**
-         * Listen to events from the Pay Station UI
-         */
-        window.addEventListener('message', postMessageListener);
-
         const postMessageListener = (event) => {
             if (!event.origin.endsWith(".xsolla.com")) {
                 /* Skip messages from other origins except Xsolla */
@@ -340,6 +335,11 @@ In the next sections, we will cover each step in detail.
                     break;
             }
         };
+
+        /**
+         * Listen to events from the Pay Station UI
+         */
+        window.addEventListener('message', postMessageListener);
         ```
     </details>
 
@@ -414,29 +414,36 @@ Use the following implementation as a reference to handle the webhooks in your C
 You will need to bring your own implementation for the `handleUserValidation()`, `handleOrderPaid()`, `handleOrderCanceled()`, `handleCreateSubscription()`, `handleUpdateSubscription()`, `handleCancelSubscription()`, and `handleRefund()` methods.
 
 ```typescript filename="src/app.config.ts"
-import express, { type Request, type Response } from "express";
+import { defineServer } from "colyseus";
+import { type Request, type Response } from "express";
 import crypto from "crypto";
 
-app.post('/webhook', (req: Request, res: Response) => {
-    // Read raw body for signature verification
-    let rawBody = '';
-    req.on('data', chunk => rawBody += chunk);
-    req.on('end', () => {
-        try {
-            // Verify the webhook signature
-            if (!verifySignature(req, rawBody)) {
-                console.error('Invalid webhook signature');
-                res.status(401).json({ error: { code: "INVALID_SIGNATURE" } });
-                return;
-            }
+const server = defineServer({
+    // ...your rooms, routes, etc.
 
-            // Process the webhook
-            processWebhook(JSON.parse(rawBody), res);
-        } catch (err: any) {
-            console.error('Error processing Xsolla webhook:', err);
-            res.status(500).json({ error: { code: "INTERNAL_SERVER_ERROR", message: err.message } });
-        }
-    });
+    express: (app) => {
+        app.post('/webhook', (req: Request, res: Response) => {
+            // Read raw body for signature verification
+            let rawBody = '';
+            req.on('data', chunk => rawBody += chunk);
+            req.on('end', () => {
+                try {
+                    // Verify the webhook signature
+                    if (!verifySignature(req, rawBody)) {
+                        console.error('Invalid webhook signature');
+                        res.status(401).json({ error: { code: "INVALID_SIGNATURE" } });
+                        return;
+                    }
+
+                    // Process the webhook
+                    processWebhook(JSON.parse(rawBody), res);
+                } catch (err: any) {
+                    console.error('Error processing Xsolla webhook:', err);
+                    res.status(500).json({ error: { code: "INTERNAL_SERVER_ERROR", message: err.message } });
+                }
+            });
+        });
+    },
 });
 
 /**
@@ -452,7 +459,10 @@ function verifySignature(req: Request, rawBody: string): boolean {
         .update(rawBody + process.env.XSOLLA_WEBHOOK_SECRET_KEY)
         .digest("hex");
 
-    return signature === expectedSignature;
+    // Constant-time comparison — a plain === leaks timing information
+    const received = Buffer.from(signature);
+    const expected = Buffer.from(expectedSignature);
+    return received.length === expected.length && crypto.timingSafeEqual(received, expected);
 }
 
 /**

@@ -2,46 +2,55 @@
 title: Deny a Player Joining a Room
 description: "How to deny a player from joining a Colyseus room based on custom conditions using onAuth or onJoin."
 ---
+import { Callout } from 'nextra/components'
 
 # Deny a Player Joining a Room
 
-You can deny a player connection by throwing an error during `onAuth()` or `onJoin()` methods.
+You can deny a player connection by throwing a `ServerError` during the `onAuth()` or `onJoin()` methods.
 
-The implementation of when to deny a player connection will depend on your use-case.
+When to deny a player connection will depend on your use-case.
 
-Below you can see an example validating an authentication token, and retrieving a `Hero` record linked with the user id.
+Below you can see an example validating the client's auth token, and retrieving a `Hero` record linked with the user id. The check lives in the **static** `onAuth` — for token-bearing clients, the instance `onAuth` is skipped entirely (see [Room Authentication](/auth/room)).
 
 ```ts filename="BattleRoom.ts"
+import { Room, ServerError } from "colyseus";
+import { JWT } from "@colyseus/auth";
+import { Hero } from "../models/Hero"; // your own database model
+
+const LEVEL_REQUIRED = 10;
+
 export class BattleRoom extends Room {
 
-  onCreate(options) {
-    this.levelRequired = 10;
-  }
-
-  async onAuth(client, options) {
-    const userId = verifyToken(options.token)._id;
+  static async onAuth(token, options, context) {
+    const userId = (await JWT.verify(token))._id;
     const hero = await Hero.findOne({ userId });
 
     if (!hero) {
-      throw new Error("'Hero' not found in the database!");
+      throw new ServerError(400, "'Hero' not found in the database!");
 
-    } else if (hero.level < this.levelRequired) {
-      throw new Error("player do not have the level required to be on this room.");
-
+    } else if (hero.level < LEVEL_REQUIRED) {
+      throw new ServerError(400, "Player does not have the level required for this room.");
     }
 
+    // becomes `client.auth` / the 3rd argument of onJoin()
     return hero;
   }
 
 }
 ```
 
-The client will then receive an error when trying to join the room:
+The client sends its token and receives the error when trying to join the room:
 
 ```js filename="client.js"
+client.auth.token = "YOUR AUTH TOKEN";
+
 client.joinOrCreate("battle", {}).then(room => {
   // ...
 }).catch(e => {
-  console.log(e) // "'Hero' not found in the database!"
+  console.log(e.message) // "'Hero' not found in the database!"
 })
 ```
+
+<Callout type="info">
+    A room-specific gate that needs the room instance — the current phase, connected clients — belongs in `onJoin()` instead: throwing a `ServerError` there rejects the join as well. See [Room Authentication](/auth/room) for the full `onAuth` semantics.
+</Callout>

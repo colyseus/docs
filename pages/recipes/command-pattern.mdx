@@ -88,7 +88,7 @@ How a command implementation looks like:
     }> {
 
       execute({ sessionId }) {
-        this.state.players[sessionId] = new Player();
+        this.state.players.set(sessionId, new Player());
       }
 
     }
@@ -102,7 +102,7 @@ How a command implementation looks like:
     export class OnJoinCommand extends Command {
 
       execute({ sessionId }) {
-        this.state.players[sessionId] = new Player();
+        this.state.players.set(sessionId, new Player());
       }
 
     }

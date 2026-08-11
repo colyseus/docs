@@ -14,7 +14,7 @@ To ensure we don't accidentally use the same room ID twice, we use the presence 
 2. Generate room IDs until you generate one that is not already used.
 3. Register the new room ID with the Presence API.
 
-Step 2 here will most likely take only a single iteration, even with millions of rooms, with a 4 letter room ID. Using the Presence API in this way also has the advantage of getting you part of the way to running your server on multiple machines (by switching to the [RedisPresence](https://docs.colyseus.io/server/presence/#redispresence-clientopts)).
+Step 2 here will most likely take only a single iteration, even with millions of rooms, with a 4 letter room ID. Using the Presence API in this way also has the advantage of getting you part of the way to running your server on multiple machines (by switching to the [RedisPresence](/server/presence#redis-presence)).
 
 See the code below:
 
@@ -55,7 +55,7 @@ export class MyRoom extends Room {
     }
 
     // Free up the roomId that this room used.
-    async onDispose(options: any) {
+    async onDispose() {
         this.presence.srem(this.LOBBY_CHANNEL, this.roomId);
     }
 }
