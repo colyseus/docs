@@ -176,6 +176,136 @@ The first argument connects to the queue room. The second argument is called wit
 | `error` | `Error \| undefined` | Connection or matchmaking error |
 | `isWaiting` | `boolean` | `true` while connected to the queue and waiting for a match |
 
+### Netcode Hooks (Colyseus 0.18+)
+
+React bindings for the `@colyseus/sdk` Predict tools — client prediction, reconciliation and remote smoothing. See [Client Prediction & Reconciliation](/netcode/client-prediction) for the underlying concepts.
+
+<Callout type="warning">
+  **The one rule:** structure renders through snapshots, motion renders through predict reads. `useRoomState` re-renders at patch rate with **raw synced values** — rendering positions from it gives you jittery patch-rate motion. Predicted/smoothed values change every frame and must stay out of the React render cycle: read them with `predict.value(instance, field)` inside your frame loop (R3F `useFrame`, or the `usePredictLoop` callback) and write into refs.
+</Callout>
+
+Every hook below exists in two forms: standalone, taking the `room` as its first argument (as documented here), and bound — returned by [`createRoomContext()`](#createroomcontext), no room argument needed. Pass Predict options once via the context:
+
+```tsx
+const {
+  RoomProvider, useRoom, useRoomState,
+  usePredict, useInput, usePredictLoop, useReconciler,
+  useAttachAll, useEventChannel, useEntityInstance, useSessionEntity,
+} = createRoomContext({ predict: { mode: "lerp", delay: 100 } });
+```
+
+#### `usePredict(room, options?)`
+
+Returns the room's shared `Predict` instance. `Predict.get()` constructs a fresh instance per call, so the hook memoizes one per room, reference-counts consumers, and disposes the instance when the last consumer unmounts. Works correctly with React StrictMode.
+
+```tsx
+const predict = usePredict(room);
+
+useFrame(() => {
+  meshRef.current.position.x = predict.value(entity, "x");
+});
+```
+
+#### `useInput(room, options?)`
+
+Returns the room's `InputHandle` (`room.input()` — idempotent, stable per room). Stage fields on `input.data`, then `input.send()` once per fixed step inside the `usePredictLoop` callback.
+
+#### `usePredictLoop(room, onSteps, options?)`
+
+Owns the per-frame driver: calls `predict.tick(now)` once per frame and hands you the number of fixed steps due — stage + send exactly that many inputs inside the callback ("send before you read"):
+
+```tsx
+const input = useInput(room);
+const jump = useLatch();
+
+usePredictLoop(room, (steps) => {
+  for (let i = 0; i < steps; i++) {
+    input.data.moveX = readAxis();     // held state: sample live
+    input.data.jump = jump.consume();  // tap: true on at most one step
+    input.send();
+  }
+});
+```
+
+By default it runs its own `requestAnimationFrame` loop. With `{ external: true }` it returns a `drive(now?)` function to call from a frame loop you already have:
+
+```tsx
+// React Three Fiber — drive at an early priority so ticks precede reads:
+const drive = usePredictLoop(room, onSteps, { external: true });
+useFrame(() => drive(), -1);
+```
+
+#### `useReconciler(room, select, options)`
+
+Active prediction for the entity you control — `predict.reconciler()` with the lifecycle handled: waits for the entity to spawn (`select: (state, room) => instance`), recreates the controller if the server replaces the instance, and disposes on unmount. `options.input` defaults to the room's input handle.
+
+```tsx
+const me = useReconciler(
+  room,
+  (state, room) => state.players.get(room.sessionId),
+  { step: (ctx, p, cmd) => applyInput(p, cmd, ctx.dt), smoothing: 15, snap: 5 },
+);
+```
+
+#### `useAttachAll(room, key, config, deps?)`
+
+Passive smoothing for a root-state collection — `predict.attachAll()` as an effect, detached on unmount. Attach angular fields in a separate call:
+
+```tsx
+useAttachAll(room, "players", { mode: "lerp", fields: ["x", "y", "z"] });
+useAttachAll(room, "players", { mode: "lerp", fields: ["heading"], angle: true });
+```
+
+#### `useEventChannel(room, options)`
+
+Optimistic event channel — `predict.defineEvent()` with teardown on unmount, **plus reactivity**: the calling component re-renders whenever the channel settles (predict / confirm / reject / unpredicted), so flag-shaped derives work in plain render code:
+
+```tsx
+const pickups = useEventChannel(room, {
+  confirmOn: { collection: "items", field: "alive", equals: false },
+});
+
+const hidden = !item.alive || pickups?.has(id);   // reactive
+```
+
+The returned object is the real SDK channel — hand it to `ctx.predict` inside a reconciler step, or call `channel.predict(payload)` from UI code.
+
+#### `useEntityInstance(room, select)` / `useSessionEntity(room, collectionKey)`
+
+Select a **decoded schema instance** (what the Predict APIs key off), re-rendering only when its identity changes — never on field updates. `useSessionEntity` is the common case: your own entity by `sessionId`:
+
+```tsx
+const me = useSessionEntity(room, "players");
+const flag = useEntityInstance(room, (state) => state.ctf.flag);
+```
+
+#### `useLatch()`
+
+The ["latch, then consume"](/netcode/recipes#taps-between-steps-latch-then-consume) input recipe as a hook. Input is sampled once per fixed step, not per render frame — a tap on a 0-step frame must not be lost, and a tap spanning a multi-step frame must not fire twice. Call `latch()` in the React event handler, `consume()` inside the send loop so the tap lands on exactly one fixed step:
+
+```tsx
+const jump = useLatch();
+
+<button onPointerDown={jump.latch}>Jump</button>
+
+// inside the usePredictLoop callback:
+input.data.jump = jump.consume();
+```
+
+#### `getSchemaInstance(snapshot)`
+
+Not a hook — bridges `useRoomState` snapshots back to their decoded instance, for `predict.value()` reads on entities you render from snapshot lists:
+
+```tsx
+const source = getSchemaInstance(playerSnapshot);
+
+useFrame(() => {
+  meshRef.current.position.x = predict.value(source, "x");
+});
+```
+
+For a complete working example (R3F + prediction + remote lerp), see [r3f-lobby-car-prototype](https://github.com/endel/r3f-lobby-car-prototype).
+
 ### Contexts
 
 #### `createRoomContext()`
@@ -223,6 +353,8 @@ function UI() {
 ```
 
 The returned `useRoom()` and `useRoomState(selector?)` work identically to the standalone hooks but don't require you to pass the room as an argument.
+
+On Colyseus 0.18+, the context also returns room-bound versions of every [netcode hook](#netcode-hooks-colyseus-018) — `usePredict`, `useInput`, `usePredictLoop`, `useReconciler`, `useAttachAll`, `useEventChannel`, `useEntityInstance`, `useSessionEntity` — with shared Predict options passed once via `createRoomContext({ predict: { mode: "lerp", delay: 100 } })`.
 
 #### `createLobbyContext()`
 
@@ -324,5 +456,6 @@ function RoomComponent () {
 ## Next Steps
 
 - [Client SDK API Reference](/sdk) - Full API documentation for all methods, events, and room operations
+- [Client Prediction & Reconciliation](/netcode/client-prediction) - The netcode concepts behind the Predict hooks
 - [State Synchronization](/state) - Understanding Schema definitions
 - [Room API](/room) - Server-side room implementation
