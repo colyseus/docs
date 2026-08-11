@@ -100,9 +100,120 @@ const server = defineServer({
 
 ---
 
+#### Routes (`routes`)
+
+Type-safe HTTP endpoints for your server, built with `createRouter()` and `createEndpoint()`.
+
+```ts {5-9} filename="app.config.ts"
+import { defineServer, createRouter, createEndpoint } from "colyseus";
+
+const server = defineServer({
+    // ...
+    routes: createRouter({
+        hello: createEndpoint("/hello", { method: "GET" }, async (ctx) => {
+            return { message: "Hello, world!" };
+        }),
+    }),
+});
+```
+
+<Callout type="info">
+    See [HTTP Routes](/server/http-routes) for the full reference, including middleware and CORS.
+</Callout>
+
+#### Express (`express`)
+
+A callback that receives an Express-compatible `app`, for binding routes with the classic Express API. With `uWebSocketsTransport`, the app is provided via the `uwebsockets-express` compatibility layer.
+
+```ts {5-9} filename="app.config.ts"
+import { defineServer } from "colyseus";
+
+const server = defineServer({
+    // ...
+    express: (app) => {
+        app.get("/", (req, res) => {
+            res.send("Hello, world!");
+        });
+    },
+});
+```
+
+<Callout type="info">
+    Prefer [`routes`](#routes-routes) for new code — endpoints defined there are type-checked end to end, including on the client SDK.
+</Callout>
+
+#### Before Listen (`beforeListen`)
+
+An optional callback executed before the server starts listening. Use it to connect to a database or other services first. `async` is supported — the server waits for it.
+
+```ts {5-7} filename="app.config.ts"
+import { defineServer } from "colyseus";
+
+const server = defineServer({
+    // ...
+    beforeListen: async () => {
+        await connectToMyDatabase();
+    },
+});
+```
+
+#### Database (`database`)
+
+Boots a database module — usually `@colyseus/database`'s `db` instance — before the matchmaker accepts connections. The database may also contribute default routes, such as the auth endpoints.
+
+```ts {2,6} filename="app.config.ts"
+import { defineServer } from "colyseus";
+import { db } from "./db";
+
+const server = defineServer({
+    // ...
+    database: db,
+});
+```
+
+<Callout type="info">
+    See [Database](/database) for the full setup.
+</Callout>
+
+#### Auth (`auth`)
+
+Controls mounting of the [`@colyseus/auth`](/auth/module) routes. Pass an options object to mount them explicitly — useful when `database` is not in use — or `false` to disable auto-mounting even when a `database` would provide defaults.
+
+```ts filename="app.config.ts"
+const server = defineServer({
+    // ...
+    auth: {
+        oauth: true,
+        prefix: "/auth",
+    },
+});
+```
+
+#### Public Address (`publicAddress`)
+
+The public address advertised for this process (e.g. `"server-1.example.com"`). When scaling across multiple machines, each process should advertise its own address. The seat reservation returned to the SDK carries it, so clients connect to the right machine directly.
+
+<Callout type="info">
+    See [Scalability](/scalability) for the multi-process setup.
+</Callout>
+
+#### Logger (`logger`)
+
+Replace the built-in logger — an alias to `console` by default — with your own implementation, such as `pino` or `winston`.
+
+<Callout type="info">
+    See [Logging](/server/logging) for ready-made configurations.
+</Callout>
+
+#### Greeting Banner (`greet`)
+
+Whether to display the Colyseus greeting banner on server start. Default is `true`.
+
+---
+
 #### Select Process ID to Create Room
 
-The `selectProcessIdToCreateRoom` is a callback that allows you to customize which processs the new rooms should be created at, when your deployment uses multiple Colyseus processes.
+The `selectProcessIdToCreateRoom` is a callback that allows you to customize which process the new rooms should be created at, when your deployment uses multiple Colyseus processes.
 
 By default, the process with the **least amount of rooms** is selected to create a new room.
 
@@ -176,7 +287,7 @@ const server = defineServer({
 
 #### Graceful Shutdown (`gracefullyShutdown`)
 
-Wether to register shutdown routine automatically. Default is `true`.
+Whether to register the shutdown routine automatically. Default is `true`.
 
 If disabled, you should call [`gracefullyShutdown()`](#graceful-shutdown) method manually in your shutdown process.
 
@@ -227,7 +338,7 @@ const server = defineServer({
 ```
 
 <Callout type="info">
-    You may define the same room type multiple times with different `options`. When [Room#onCreate()](/room/lifecycle#on-create) is called, the `options` will contain the merged values you specified on [Server#define()](/server/#define-room-type) with the options provided by the client SDK.
+    You may define the same room type multiple times with different `options`. When [Room#onCreate()](/room/lifecycle#on-create) is called, the `options` will contain the merged values you specified on [`defineRoom()`](/server/#define-room-type) with the options provided by the client SDK.
 </Callout>
 
 ---
@@ -273,7 +384,7 @@ const server = defineServer({
 
 ### Remove Room Type
 
-Revert a `.define()` call. Makes a `roomName` unavailable for matchmaking. This
+Revert a room definition — makes a `roomName` unavailable for matchmaking. This
 method is usually not recommended but it may be useful in some scenarios.
 
 ```ts

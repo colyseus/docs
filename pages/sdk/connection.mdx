@@ -119,7 +119,8 @@ Disconnect from the room. Use `consented: true` (default) for intentional leaves
 
 - `1000` - Regular socket shutdown
 - Between `1001` and `1015` - Abnormal socket shutdown
-- Between `4000` and `4999` - Custom socket close code (See [more details](/room/#table-of-websocket-close-codes))
+- Between `4000` and `4010` - Reserved by the framework (`CONSENTED`, `SERVER_SHUTDOWN`, `FAILED_TO_RECONNECT`, …)
+- Between `4011` and `4999` - Custom application close code (See [more details](/room/#table-of-websocket-close-codes))
 
 ## Automatic Reconnection
 
@@ -372,7 +373,7 @@ You may configure the reconnection behavior using `room.reconnection`.
 For more control, you can manually reconnect using a cached reconnection token. Because this method returns a new room instance on the client, you must reattach all event listeners to the room after reconnecting.
 
 - You must store/cache the `room.reconnectionToken` from an active room connection.
-- The server needs to call [`.allowReconnection()`](/room#allow-reconnection) for that client.
+- The server needs to call [`.allowReconnection()`](/room/reconnection#allowreconnectionclient-seconds) for that client.
 
 
 <SDKTabs>

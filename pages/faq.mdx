@@ -108,12 +108,12 @@ Support for per-client state visibility was introduced in version `0.16`. You ca
 
 ### I'm getting this error: `Class constructor Room cannot be invoked without 'new'"`, what should I do?
 
-Make sure you have `es2015` or higher in your `tsconfig.json`:
+This error appears when the `target` in your `tsconfig.json` is below `es2015`. The official template uses `ESNext`:
 
 ```json filename="tsconfig.json"
 {
     "compilerOptions": {
-        "target": "es2015"
+        "target": "ESNext"
     }
 }
 ```

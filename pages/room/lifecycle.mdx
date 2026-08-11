@@ -75,7 +75,7 @@ The room's lifecycle events are called automatically. [`async`/`await`](https://
 
 ## On Create
 
-Called once, when the room is created by the matchmaker. `options` is the merged values specified on [Server#define()](/server/#define-room-type) with the options provided from the SDK at [`.joinOrCreate()`](/sdk#join-or-create-recommended) or [`.join()`](/sdk#other-join-methods).
+Called once, when the room is created by the matchmaker. `options` is the merged values specified on [`defineRoom()`](/server/#define-room-type) with the options provided from the SDK at [`.joinOrCreate()`](/sdk#join-or-create-recommended) or [`.join()`](/sdk#other-join-methods).
 
 ```ts filename="MyRoom.ts"
 onCreate (options) {
@@ -85,7 +85,7 @@ onCreate (options) {
 }
 ```
 
-The server may overwrite options during [`.define()`](/server/#define-room-type) for authority over client-provided options:
+The server may overwrite options in [`defineRoom()`](/server/#define-room-type) for authority over client-provided options:
 
 <Tabs items={["Backend", "Frontend"]}>
     <Tabs.Tab>

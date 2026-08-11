@@ -28,6 +28,7 @@ import { ScenarioGrid, ScenarioCard } from '../components/scenario-card'
     "on-restore-room-devmode": "/room/lifecycle#on-restore-room-devmode",
     "on-before-shutdown": "/room/lifecycle#on-before-shutdown",
     "callback-for-specific-type-of-message": "/room#handler-for-specific-type-of-message",
+    "allow-reconnection": "/room/reconnection#allowreconnectionclient-seconds",
 }} />
 
 The `Room` class is the core building block of Colyseus. Each room instance holds one group of clients, who interact through shared state and messages.
@@ -126,7 +127,6 @@ Rooms have these methods available.
 
 Register handlers to process messages sent by the frontend.
 
-
 - The `type` argument can be either `string` or `number`.
 - You can only define a single handler per message type.
 
@@ -163,6 +163,31 @@ messages = {
         //
         console.log(client.sessionId, "sent", type, payload);
     }
+}
+```
+
+#### Registering handlers at runtime
+
+The declarative `messages` map covers most cases. You may also register a handler imperatively with `this.onMessage()` — it returns a function that removes the handler when called.
+
+```ts filename="MyRoom.ts"
+onCreate() {
+    const unbind = this.onMessage("action", (client, payload) => {
+        // ...
+    });
+
+    // stop handling "action" messages
+    unbind();
+}
+```
+
+Use `this.onMessageBytes()` to receive raw `Uint8Array` messages sent via [`room.sendBytes()`](/sdk/messages) from the client SDK, skipping the default MsgPack decoding.
+
+```ts filename="MyRoom.ts"
+onCreate() {
+    this.onMessageBytes("raw-input", (client, bytes) => {
+        // bytes is a Uint8Array — decode it yourself
+    });
 }
 ```
 
@@ -209,11 +234,21 @@ messages = {
         }
         return { ok: true };
     },
+
+    // The 3rd argument (ctx) allows deliberate rejections with a typed reason.
+    "join-team": (client, { team }, ctx) => {
+        if (this.isTeamFull(team)) {
+            return ctx.reject({ code: "TEAM_FULL", team });
+        }
+        return { ok: true };
+    },
 }
 ```
 
 - The handler's return value is **awaited** before being sent, so returning a `Promise` works.
 - If the handler throws or its `Promise` rejects, the client's request rejects with that error instead of timing out.
+- Every handler also receives a third `ctx` argument. Call `ctx.reject(reason)` to settle the request as **rejected** — a deliberate business-logic "no", distinct from an error. On the client, the rejection arrives as an `Error` with `name: "rejected"` and the raw `reason` on its `.reason` property — see [Request/Response on the SDK](/sdk/messages#requestresponse).
+- `ctx.resolve(value)` answers the request explicitly. Use it when the handler must keep working after replying — a plain `return` is equivalent otherwise.
 - Only the handler registered for the message's specific type can answer a request. The [`"*"` fallback](#fallback-for-all-messages) is **not** eligible, and a request for a type with no handler rejects with a `no_handler` error.
 
 ---
@@ -279,7 +314,6 @@ join a room, alongside `lock()`, `unlock()`, and `setMatchmaking()`. See
 
 Send a message to all connected clients.
 
-
 Available options are:
 
 - **`except`**: a [`Client`](/room#client-instance), or array of `Client` instances not to send the message to
@@ -336,10 +370,19 @@ Available options are:
 
 ---
 
+### Broadcast Message (in bytes)
+
+Send a raw byte array to all connected clients, skipping the default MsgPack encoding. The counterpart of [`client.sendBytes()`](#send-message-in-bytes) for broadcasts.
+
+```ts filename="MyRoom.ts"
+this.broadcastBytes("raw-update", new Uint8Array([ 1, 2, 3 ]), { except: client });
+```
+
+---
+
 ### Has Reached Max Clients
 
 Returns whether the sum of connected clients and reserved seats exceeds the maximum number of clients.
-
 
 ```ts filename="MyRoom.ts"
 onCreate(options) {
@@ -351,12 +394,31 @@ onCreate(options) {
 
 ---
 
+### Has Reserved Seat
+
+Returns whether a seat reservation exists for the given `sessionId` — reserved but not yet consumed, or held for a [reconnection](/room/reconnection). Pass the client's `reconnectionToken` as the second argument to check a reconnection reservation specifically.
+
+```ts filename="MyRoom.ts"
+if (this.hasReservedSeat(sessionId)) {
+    // a client with this sessionId is expected to join
+}
+```
+
 ---
 
 ### Disconnect
 
-Disconnect all clients, then dispose.
+Disconnect all clients, then dispose of the room. Returns a `Promise` that resolves when every client has been disconnected.
 
+The optional `closeCode` is delivered to each client's [`onLeave` listener](/sdk/connection#leaving-a-room). The default is `CONSENTED` (`4000`); custom application codes use `4011`–`4999` — see the [close-code table](#table-of-websocket-close-codes).
+
+```ts filename="MyRoom.ts"
+// disconnect all clients, then dispose of the room
+await this.disconnect();
+
+// same, with a custom close code
+await this.disconnect(4020);
+```
 
 ---
 
@@ -367,7 +429,6 @@ Disconnect all clients, then dispose.
 </Callout>
 
 This method will check whether mutations have occurred in the `state`, and broadcast them to all connected clients.
-
 
 If you'd like to have control over when to broadcast patches, you can do this by disabling the default patch interval:
 
@@ -389,102 +450,9 @@ onCreate() {
 
 ## Reconnection
 
-### Allow Reconnection
-
-Allow the client to reconnect into the room.
-
-A reconnection may be [made manually](/sdk/connection#manual-reconnection) (via `sdk.reconnect()`), or [automatically](/sdk/connection#automatic-reconnection) in case of temporary network issues.
-
-The `.allowReconnection()` method should be called on [`onDrop()`](/room/lifecycle#on-drop) OR [`onLeave()`](/room/lifecycle#on-leave) method.
-
-
-- The `allowReconnection()` returns a `Deferred<Client>` instance.
-- The returned `Deferred` instance is a promise-like structure, you can forcibly reject the reconnection by calling `.reject()` on it. (see second example)
-- `Deferred` type can forcibly reject the promise by calling `.reject()` (see second example)
-
-<Tabs items={["Reject reconnection after timeout", "Manual rejection"]}>
-
-    <Tabs.Tab>
-    **Example:** Rejecting the reconnection after a 20 second timeout.
-
-    ```ts filename="MyRoom.ts"
-    async onDrop (client: Client, code: number) {
-        // flag client as inactive for other users
-        this.state.players.get(client.sessionId).connected = false;
-
-        // allow disconnected client to reconnect into this room until 20 seconds
-        await this.allowReconnection(client, 20);
-    }
-
-    onReconnect(client: Client) {
-        // client returned! let's re-activate it.
-        this.state.players.get(client.sessionId).connected = true;
-    }
-
-    onLeave (client: Client, code: number) {
-        // Client left by consent, remove from state immediately
-        this.state.players.delete(client.sessionId);
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    **Example:**  Manually rejecting the reconnection using custom logic.
-
-    ```ts filename="MyRoom.ts"
-    async onDrop (client: Client, code: number) {
-        // flag client as inactive for other users
-        this.state.players.get(client.sessionId).connected = false;
-
-        const reconnection = this.allowReconnection(client, "manual");
-
-        //
-        // here is the custom logic for rejecting the reconnection.
-        // for demonstration purposes of the API, an interval is created
-        // rejecting the reconnection if the player has missed 2 rounds,
-        // (assuming he's playing a turn-based game)
-        //
-        // in a real scenario, you would store the `reconnection` in
-        // your Player instance, for example, and perform this check during your
-        // game loop logic
-        //
-        const currentRound = this.state.currentRound;
-
-        client.userData.reconnectionInterval = this.clock.setInterval(() => {
-            // manually reject the client reconnection
-            const missedRounds = this.state.currentRound - currentRound;
-            if (missedRounds > 2) {
-                reconnection.reject();
-                client.userData.reconnectionInterval.clear();
-            }
-        }, 1000);
-
-        await reconnection;
-    }
-
-    onReconnect(client: Client) {
-        if (client.userData.reconnectionInterval) {
-            // clear the interval after successful reconnection.
-            // not doing so may lead to dangling intervals.
-            client.userData.reconnectionInterval.clear();
-
-            // clear any stored reconnection reference
-            delete client.userData.reconnectionInterval;
-        }
-
-        // client returned! let's re-activate it.
-        this.state.players.get(client.sessionId).connected = true;
-    }
-
-    onLeave (client: Client, code: number) {
-        // Client left by consent, remove from state immediately
-        this.state.players.delete(client.sessionId);
-    }
-    ```
-    </Tabs.Tab>
-</Tabs>
-
----
+`allowReconnection()` lets a dropped client return to the room within a time
+window, or under manual control. See **[Reconnection](/room/reconnection)** for
+the full server-side and client-side reference.
 
 ---
 
@@ -713,7 +681,6 @@ onJoin(client, options) {
 
 Send a type of message to the client. Messages are encoded with MsgPack and can hold any JSON-serializable data structure.
 
-
 The `type` can be either a `string` or a `number`.
 
 ```ts filename="MyRoom.ts"
@@ -738,7 +705,6 @@ client.send(1, { kind: "ammo"});
 
 Send a raw byte array message to the client.
 
-
 The `type` can be either a `string` or a `number`.
 
 This is useful if you'd like to manually encode a message, rather than the default encoding (MsgPack).
@@ -761,6 +727,13 @@ client.sendBytes(1, new Uint8Array([ 172, 72, 101, 108, 108, 111, 32, 119, 111, 
 
 Force disconnection of the `client` with the room. You may send a custom `code` when closing the connection, with values between `4011` and `4999` — codes `4000`–`4010` are reserved by the framework. See the [table of WebSocket close codes](#table-of-websocket-close-codes) below.
 
+```ts filename="MyRoom.ts"
+// disconnect this client with the default code (4000, CONSENTED)
+client.leave();
+
+// disconnect this client with a custom code
+client.leave(4020);
+```
 
 <Callout type="info">
     This will trigger [`room.onLeave`](/sdk/connection#leaving-a-room) event on the frontend.

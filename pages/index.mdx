@@ -167,7 +167,7 @@ const server = defineServer({
 
 Communication between the client and server occurs through room connections. Below are examples for each SDK showing how to join a room and listen for state changes:
 
-<Tabs items={["TypeScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
+<Tabs items={["TypeScript", "JavaScript", "Unity (C#)", "Defold (Lua)", "Haxe"]} storageKey='sdk-tab-language'>
 
     <Tabs.Tab>
     ```ts filename="client.ts"
@@ -197,6 +197,33 @@ Communication between the client and server occurs through room connections. Bel
     }
 
     connect();
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.js"
+    import * as Colyseus from "@colyseus/sdk";
+
+    const client = new Colyseus.Client('http://localhost:2567');
+
+    client.joinOrCreate('my_room', {
+        /* custom join options */
+    }).then(function(room) {
+        const callbacks = Colyseus.Callbacks.get(room);
+
+        // Listen to 'player' instance additions
+        callbacks.onAdd("players", (player, sessionId) => {
+            console.log('Player joined:', player);
+        });
+
+        // Listen to 'player' instance removals
+        callbacks.onRemove("players", (player, sessionId) => {
+            console.log('Player left:', player);
+        });
+
+        // Send messages to the server
+        room.send("doSomething", {/* ... */});
+    });
     ```
     </Tabs.Tab>
 
