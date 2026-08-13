@@ -62,6 +62,13 @@ Disconnect from the room. Use `consented: true` (default) for intentional leaves
     room.leave()
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    // consented leave
+    await room.leave();
+    ```
+    </Tabs.Tab>
 </SDKTabs>
 
 <Callout type="info">
@@ -111,6 +118,14 @@ Disconnect from the room. Use `consented: true` (default) for intentional leaves
 
     func _on_room_left(code: int, reason: String):
         print("client left the room: ", reason)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    room.onLeave.listen((code) {
+      print('client left the room');
+    });
     ```
     </Tabs.Tab>
 </SDKTabs>
@@ -180,6 +195,15 @@ Triggered when the connection is unexpectedly dropped. The SDK will automaticall
         print("connection error: ", message))
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    room.onDrop.listen((error) {
+      print('connection dropped, attempting to reconnect...');
+      print('code: ${error.code} reason: ${error.message}');
+    });
+    ```
+    </Tabs.Tab>
 </SDKTabs>
 
 <Callout type="info">
@@ -238,6 +262,14 @@ Triggered when the client successfully reconnects after a connection drop. While
     # The joined signal will fire again after successful reconnection
     room.joined.connect(func():
         print("connected/reconnected to the room!"))
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    room.onReconnect.listen((_) {
+      print('successfully reconnected to the room!');
+    });
     ```
     </Tabs.Tab>
 </SDKTabs>
@@ -322,6 +354,19 @@ You may configure the reconnection behavior using `room.reconnection`.
     # Configuration options may vary - check the SDK documentation
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    final room = await client.joinOrCreate('battle');
+
+    // Customize reconnection options
+    room.setReconnectionOptions(
+      maxRetries: 10,
+      maxDelayMs: 10000, // 10 seconds max delay
+      minUptimeMs: 3000, // Allow reconnection after 3 seconds
+    );
+    ```
+    </Tabs.Tab>
 </SDKTabs>
 
 **Custom backoff function:**
@@ -364,6 +409,13 @@ You may configure the reconnection behavior using `room.reconnection`.
     ```gdscript filename="client.gd"
     # Custom backoff functions are not currently exposed in the Godot SDK
     # The SDK uses a default exponential backoff strategy
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    // Custom backoff functions are not exposed in the Flutter SDK.
+    // The native core uses a default exponential backoff strategy.
     ```
     </Tabs.Tab>
 </SDKTabs>
@@ -441,6 +493,18 @@ For more control, you can manually reconnect using a cached reconnection token. 
         printerr("reconnect error: ", message))
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    try {
+      final room = await client.reconnect(cachedReconnectionToken);
+      print('joined successfully');
+
+    } catch (e) {
+      print('join error: $e');
+    }
+    ```
+    </Tabs.Tab>
 </SDKTabs>
 
 ## Error Handling
@@ -491,6 +555,15 @@ Listen for errors that occur in the room.
 
     func _on_room_error(code: int, message: String):
         printerr("oops, error occurred: ", message)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    room.onError.listen((error) {
+      print('oops, error occurred:');
+      print('${error.code}: ${error.message}');
+    });
     ```
     </Tabs.Tab>
 </SDKTabs>

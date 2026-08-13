@@ -81,6 +81,20 @@ Send messages to the room. Messages are encoded with MsgPack and can hold any JS
     room.send_message(0, {"direction": "left"})
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    //
+    // sending message with string type
+    //
+    room.send('move', {'direction': 'left'});
+
+    //
+    // sending message with number type
+    //
+    room.sendInt(0, {'direction': 'left'});
+    ```
+    </Tabs.Tab>
 </SDKTabs>
 
 <Callout type="info">
@@ -161,6 +175,15 @@ Listen for messages sent from the server.
     func _on_message_received(type: Variant, message: Variant):
         print("message received from server")
         print(message)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    room.onMessage('powerup').listen((message) {
+      print('message received from server');
+      print(message);
+    });
     ```
     </Tabs.Tab>
 

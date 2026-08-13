@@ -1,6 +1,6 @@
 ---
 title: "Colyseus Client SDK"
-description: "Complete API reference for the Colyseus Client SDK. Connect to rooms, synchronize state, send messages, handle reconnection, and measure latency across TypeScript, Unity, Godot, Defold, and Haxe."
+description: "Complete API reference for the Colyseus Client SDK. Connect to rooms, synchronize state, send messages, handle reconnection, and measure latency across TypeScript, Unity, Godot, Defold, Haxe, and Flutter."
 ---
 import { Callout, Cards, Tabs } from "nextra/components";
 import { ZapIcon, SyncIcon, ServerIcon, PasskeyFillIcon } from "@primer/octicons-react";
@@ -87,6 +87,14 @@ The `Client` instance is your entry point to connect to the server.
     ```
     </Tabs.Tab>
 
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    import 'package:colyseus/colyseus.dart';
+
+    final client = ColyseusClient('ws://localhost:2567');
+    ```
+    </Tabs.Tab>
+
 </SDKTabs>
 
 ---
@@ -166,6 +174,19 @@ The most common way to connect. Joins an existing room if available, or creates 
     ```
     </Tabs.Tab>
 
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    try {
+      final room = await client.joinOrCreate('battle',
+          options: {/* options */}, stateType: MyRoomState.new);
+      print('joined successfully');
+
+    } catch (e) {
+      print('join error: $e');
+    }
+    ```
+    </Tabs.Tab>
+
 </SDKTabs>
 
 <Callout type="info">
@@ -223,7 +244,7 @@ input.send();
 Inputs are buffered and acknowledged, and power [client-side prediction](/netcode/client-prediction) and [lag compensation](/netcode/lag-compensation). See **[`room.input(options)`](/netcode/client-prediction#roominputoptions)** for the full reference — reliability modes, redundancy, and the `InputHandle` surface.
 
 <Callout type="info">
-    The netcode APIs (`room.input()`, `room.clock`, `Predict`) are available in the **JavaScript SDK only** (Colyseus 0.18+).
+    The netcode APIs (`room.input()`, `room.clock`, `Predict`) are available in Colyseus 0.18+ **across the official SDKs** — see [Client Prediction](/netcode/client-prediction).
 </Callout>
 
 ---
@@ -348,6 +369,29 @@ Use `Callbacks` to listen for specific property changes with fine-grained contro
         print("Player left: ", key)
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    final callbacks = Callbacks.get(room);
+    final state = room.state!;   // joined with stateType: MyRoomState.new
+
+    callbacks.listen(state, 'currentTurn', (String value, String? previous) {
+      print('Turn changed: $previous -> $value');
+    });
+
+    callbacks.onAdd(state.players, (sessionId, player) {
+      print('Player joined: $sessionId');
+
+      callbacks.listen(player, 'hp', (double hp, double? previous) {
+        print('Player $sessionId hp: $hp');
+      });
+    });
+
+    callbacks.onRemove(state.players, (sessionId, player) {
+      print('Player left: $sessionId');
+    });
+    ```
+    </Tabs.Tab>
 </SDKTabs>
 
 <Callout type="info">
@@ -449,6 +493,13 @@ Create a temporary connection to measure latency before joining a room.
     # Check the SDK documentation for available methods
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    // Not available in the Flutter SDK.
+    // Measure round-trip time on a live connection with room.ping() instead.
+    ```
+    </Tabs.Tab>
 </SDKTabs>
 
 #### During a Room Connection
@@ -494,6 +545,13 @@ Measure round-trip time on an existing connection.
     ```gdscript filename="client.gd"
     # Ping API may vary in the Godot SDK
     # Check the SDK documentation for available methods
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    final latency = await room.ping();
+    print('Latency: $latency ms');
     ```
     </Tabs.Tab>
 </SDKTabs>
@@ -595,6 +653,14 @@ Automatically connect to the server with the lowest latency from a list of endpo
 
     # Select endpoint with lowest latency and create client
     var client = Colyseus.Client.new(endpoints[0])  # Set your preferred endpoint
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    // Multi-region selection is not available in the Flutter SDK.
+    // Pick an endpoint yourself and create the client for it:
+    final client = ColyseusClient('wss://us-east.gameserver.com');
     ```
     </Tabs.Tab>
 </SDKTabs>
