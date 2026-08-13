@@ -1,0 +1,398 @@
+---
+title: "Colyseus SDK for Flutter"
+description: "Get started with Colyseus multiplayer in Flutter. Install the Dart SDK, connect to a room, sync real-time game state, and predict player movement."
+---
+import { Callout } from "nextra/components";
+
+# Flutter
+
+<Callout type="warning">
+    The Flutter SDK is in **beta**, and may not be stable. Please [report any issues you find](https://github.com/colyseus/native-sdk/issues).
+</Callout>
+
+The Flutter SDK is `dart:ffi` bindings over the shared [Colyseus Native SDK](https://github.com/colyseus/native-sdk), which provides cross-platform support for Colyseus across different engines. The work on Native SDK is still in progress, so expect some breaking changes as we go.
+
+## Platforms
+
+- macOS (10.15+)
+- iOS (13.0+)
+- Android (API 21+)
+- Linux (x86_64)
+- Windows (x86_64)
+
+Web is not supported. That target needs the SDK's Emscripten build and a different transport.
+
+The package requires Dart `3.3.0` or newer and Flutter `3.19.0` or newer. Prebuilt native libraries ship inside the package, so there is no toolchain to install.
+
+## Installation
+
+```sh filename="Terminal"
+flutter pub add colyseus
+```
+
+Then import the single entry point:
+
+```dart
+import 'package:colyseus/colyseus.dart';
+```
+
+### macOS and iOS
+
+Both platforms need the outbound-network entitlement, `com.apple.security.network.client`. Add it to **both** `macos/Runner/DebugProfile.entitlements` and `macos/Runner/Release.entitlements`:
+
+```xml filename="macos/Runner/Release.entitlements"
+<key>com.apple.security.network.client</key>
+<true/>
+```
+
+<Callout type="warning">
+    `flutter create` does not add the entitlement. Without it every connection fails silently inside the sandbox, with no error to catch.
+</Callout>
+
+### Android
+
+The plugin declares no permissions of its own, so your app must request internet access:
+
+```xml filename="android/app/src/main/AndroidManifest.xml"
+<uses-permission android:name="android.permission.INTERNET"/>
+```
+
+## Project Setup
+
+By default the SDK polls the network on its own 16 ms timer, and you can join a room without any further setup.
+
+Games that render every frame should drive the SDK instead. Set `Colyseus.autoPoll` to `false` once, then call `Colyseus.pump()` at the top of your frame callback. Decoding, prediction and rendering then all observe the same state within a frame:
+
+```dart filename="lib/game.dart"
+class _GameState extends State<Game> with SingleTickerProviderStateMixin {
+  late final Ticker _ticker;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Colyseus.autoPoll = false; // the app owns the frame from here on
+    _ticker = createTicker(_onFrame)..start();
+  }
+
+  void _onFrame(Duration _) {
+    Colyseus.pump(); // decode inbound traffic, then deliver listeners
+
+    // read room state and draw
+  }
+
+  @override
+  void dispose() {
+    _ticker.dispose();
+    super.dispose();
+  }
+}
+```
+
+## Quick Example
+
+This example shows how to connect to a room, listen for state changes, send messages and leave the room.
+
+```dart filename="lib/network.dart"
+import 'package:colyseus/colyseus.dart';
+
+ColyseusClient? client;
+ColyseusRoom? room;
+
+Future<void> connect() async {
+  client = ColyseusClient('ws://localhost:2567');
+
+  // Options are optional, and are JSON-encoded before they are sent.
+  final joined =
+      await client!.joinOrCreate('my_room', options: {'name': 'Player 1'});
+  room = joined;
+
+  print('Joined ${joined.name} (${joined.id}) as ${joined.sessionId}');
+
+  joined.onStateChange.listen((_) {
+    final players = joined.state?.getMap('players');
+    print('players: ${players?.length ?? 0}');
+  });
+
+  joined.onMessage('chat').listen((data) => print('chat: ${data['text']}'));
+
+  joined.onError.listen((e) => print('error ${e.code}: ${e.message}'));
+  joined.onLeave.listen((code) => print('left with code $code'));
+
+  joined.send('move', {'x': 10, 'y': 20});
+}
+
+Future<void> disconnect() async {
+  await room?.leave();
+
+  // Dispose the room before the client: the room owns the decoder and any
+  // prediction layers built over it.
+  room?.dispose();
+  client?.dispose();
+}
+```
+
+Every join method returns a `Future<ColyseusRoom>`. `options:` is JSON-encoded and sent to the server; `stateType:` types the room (see [Reading State](#reading-state)):
+
+| Method | Description |
+| --- | --- |
+| `joinOrCreate(roomName, options: ..., stateType: ...)` | Join an available room, or create one |
+| `join(roomName, ...)` | Join an existing room only |
+| `create(roomName, ...)` | Always create a new room |
+| `joinById(roomId, ...)` | Join a specific room by its id |
+| `reconnect(reconnectionToken, stateType: ...)` | Rejoin a room this client was dropped from |
+
+<Callout type="info">
+    The join future resolves as soon as the server confirms the seat, which can happen before the first state patch arrives. Code that looks for its own entity in the state should wait for `onStateChange` rather than reading immediately.
+</Callout>
+
+## Sending Messages
+
+```dart
+room.send('move', {'x': 10, 'y': 20}); // Map, List, String, num, bool or null
+room.send('ready');                    // payload is optional
+
+room.sendInt(1, [10, 20]);             // numeric message type
+room.sendBytes('snapshot', bytes);     // raw Uint8List
+```
+
+## Receiving Messages
+
+Room events are Dart broadcast streams, so you subscribe with `listen` instead of assigning a handler:
+
+```dart
+room.onMessage('chat').listen((data) {
+  print(data['text']);
+});
+
+// Every message, whatever its type.
+room.onMessageAny.listen((entry) {
+  print('${entry.key}: ${entry.value}');
+});
+```
+
+The room exposes these listeners:
+
+| Listener | Type | Fires when |
+| --- | --- | --- |
+| `onJoin` | `Stream<void>` | the client is seated in the room |
+| `onStateChange` | `Stream<void>` | a state patch has been applied |
+| `onMessage(type)` | `Stream<dynamic>` | the server sends a message of `type` |
+| `onMessageAny` | `Stream<MapEntry<String, dynamic>>` | the server sends any message |
+| `onError` | `Stream<ColyseusError>` | the server reports an error, with `code` and `message` |
+| `onLeave` | `Stream<int>` | the room closes, carrying the close code |
+| `onDrop` | `Stream<ColyseusError>` | the connection drops and automatic reconnection starts |
+| `onReconnect` | `Stream<void>` | automatic reconnection succeeds |
+
+## Reading State
+
+Generate one Dart class per schema from your server's types. Codegen is optional, and it buys type safety and autocomplete in your IDE:
+
+```sh filename="Terminal"
+npx schema-codegen src/rooms/schema/* --dart --bundle --output ../client/lib/gen/
+```
+
+<Callout type="info">
+    See the full [State Schema Codegen documentation](/state/callbacks#frontend-schema-generation) for more options and details.
+</Callout>
+
+Join with the generated root class, the Dart spelling of C#'s `JoinOrCreate<MyRoomState>("my_room")`. The room is then typed end to end: `room.state` is a `MyRoomState?`, and `onStateChange` fires with it after every patch.
+
+```dart
+import 'gen/schema.dart';
+
+final room = await client.joinOrCreate('my_room', stateType: MyRoomState.new);
+final state = await room.onStateChange.first;   // MyRoomState, first patch
+
+for (final entry in state.players.entries) {
+  print('${entry.key}: ${entry.value.x}, ${entry.value.y}');
+}
+
+final me = state.players[room.sessionId]!;
+print(me.hp);
+```
+
+Reading `room.state` every frame is the intended pattern. The room keeps the wrapper while the underlying instance lives and rebuilds it on reconnect, when the decoder replaces the state wholesale. `room.stateAs(OtherClass.new)` still exists for narrowing the root to a class other than the room's own `stateType:`.
+
+### Without codegen
+
+The same state reads dynamically. `room.state` is the root instance; collections come back as `SchemaMap` and `SchemaArray`:
+
+```dart
+final players = room.state!.getMap('players')!;
+
+for (final entry in players.entries) {
+  final player = entry.value as SchemaInstance;
+  print('${entry.key}: ${player['x']}, ${player['y']}');
+}
+
+final me = players[room.sessionId] as SchemaInstance;
+print(me['hp']);
+```
+
+| Accessor | Returns |
+| --- | --- |
+| `instance['field']` | the field value, typed from the schema |
+| `instance.getMap('field')` | a `SchemaMap`, or null |
+| `instance.getArray('field')` | a `SchemaArray`, or null |
+| `instance.getRef('field')` | a nested `SchemaInstance`, or null |
+| `instance.fieldNames` | every field declared on the type |
+
+<Callout type="warning">
+    Schema handles are raw native pointers. The decoder frees and replaces instances on a full resync or a reconnect. Read instances afresh from `room.state` rather than caching one across frames; the typed wrappers handle this for you.
+</Callout>
+
+### Fast reads
+
+`SchemaInstance` looks a field up by name on every read, which is fine for occasional access. A step function running dozens of times per frame during rollback replay wants `SchemaView` instead. A view resolves each name once, then costs a single leaf call per access:
+
+```dart
+final view = SchemaView(me.handle);
+
+final x = view['x'];              // double; booleans read as 0 or 1
+final alive = view.getBool('alive');
+final name = view.getString('name');
+
+view['x'] = view['x'] + view['vx'] * dt;
+```
+
+Re-create views for decoded state when `onReconnect` fires, for the same reason instances must be re-read.
+
+## State Callbacks
+
+Schema callbacks live on their own object, obtained with `Callbacks.get(room)`, and follow the C# SDK's shape. Registration takes the field to observe, and collection handlers receive `(key, value)`. Passing a generated getter's value (`state.players`) is the Dart equivalent of C#'s `OnAdd(s => s.players, ...)`. The wrapper records which field it came from, so the registration binds to the field itself:
+
+```dart
+final callbacks = Callbacks.get(room);
+final state = room.state!;   // joined with stateType: MyRoomState.new
+
+callbacks.listen(state, 'currentTurn', (String value, String? previous) {
+  print('turn: $previous -> $value');
+});
+
+callbacks.onAdd(state.players, (sessionId, player) {
+  print('+ player joined: $sessionId');
+
+  callbacks.listen(player, 'hp', (double hp, double? previous) {
+    print('$sessionId hp: $previous -> $hp');
+  });
+
+  callbacks.onChange(player, () {
+    print('$sessionId changed');
+  });
+});
+
+callbacks.onRemove(state.players, (sessionId, player) {
+  print('- player left: $sessionId');
+});
+
+callbacks.listenRef(state, 'host', Player.new, (host) {
+  print('host changed: $host');
+});
+```
+
+Map keys arrive as `String` and array indexes as `int`, both statically typed from the collection. The same registrations work by field name, with no generated classes:
+
+```dart
+callbacks.listen(room.state!, 'currentTurn', (value, previous) { ... });
+
+callbacks.onAddByName(room.state!, 'players', (key, value) {
+  callbacks.listen(value as SchemaInstance, 'hp', (hp, previous) { ... });
+});
+
+callbacks.onRemoveByName(room.state!, 'players', (key, value) { ... });
+```
+
+Registration replays what already decoded, so a late subscription still sees every player and `listen` fires with the current value (pass `immediate: false` to skip the replay). Each call returns a `StreamSubscription`; cancelling it releases the native callback.
+
+## Prediction
+
+Waiting for the server to confirm your own movement costs a round trip. The predict layer applies each input immediately and reconciles when the server disagrees. See [Client Prediction](/netcode/client-prediction) for the concepts. Your room class must declare [`defineInput()`](/netcode/server-input) before any of this works.
+
+```dart filename="lib/gameplay.dart"
+Colyseus.autoPoll = false; // the app drives the frame
+
+final predict = Predict.get(room);
+final input = room.input()!;
+
+// Other players are smoothed, since their inputs aren't yours to predict.
+predict.attachAll('players',
+    config: {'x': PredictMode.damped, 'y': PredictMode.damped},
+    exceptKey: room.sessionId);
+
+// Yours is predicted and reconciled.
+final me = room.state!.players[room.sessionId]!;
+final recon = predict.reconciler(me,
+  input: input,
+  fields: const ['x', 'y', 'vx', 'vy'],
+  step: (ctx, state, cmd) => stepPlayer(state, cmd, ctx.dt), // shared with the server
+);
+
+void onFrame() {
+  Colyseus.pump();                    // decode inbound, deliver events
+
+  final steps = predict.tick(room.clock.now);
+  for (var i = 0; i < steps; i++) {
+    input.data['moveX'] = keyboard.x;
+    input.send();                     // applied locally right away
+  }
+
+  draw(recon.value('x'), recon.value('y'));
+}
+```
+
+Points worth knowing before you build on it:
+
+- `room.input()` returns `null` when the server room declares no `defineInput()`, and throws if you call it before the join future resolves.
+- `predict.tick()` takes `room.clock.now`, never `DateTime.now()`. The room clock is the timebase the server shares.
+- `step` has to compute exactly what the server computes. When it does, `recon.drift.ema` stays at the floating-point noise floor; when it drifts, that number tells you.
+- Guard one-shot effects inside a step on `!ctx.isReplay`, or raise them through `ctx.predict()`, which is replay-safe.
+- Call `input.reset()` on `onReconnect`. Sequence numbers restart at zero, so replaying the old ones would corrupt the mirror.
+
+`Predict` also covers dead reckoning (`attachAllReckon`), optimistic events (`defineEvent`), predicted spawns (`spawns`) and composite simulations (`sim`).
+
+## HTTP & Auth
+
+`client.http` resolves paths against the client endpoint. A non-2xx reply throws `ColyseusHttpException`:
+
+```dart
+final res = await client.http.get('/test');
+print(res.statusCode);
+print(res.json['things']);
+
+await client.http.post('/save', body: {'name': 'endel'});
+```
+
+`client.auth` covers the [authentication](/auth) endpoints, and throws `ColyseusAuthException` on a rejected call:
+
+```dart
+final data = await client.auth.signInAnonymously();
+print(data.user?['anonymousId']);
+
+await client.auth.signInWithEmailAndPassword('user@example.com', 'secret');
+await client.auth.registerWithEmailAndPassword('user@example.com', 'secret');
+await client.auth.sendPasswordResetEmail('user@example.com');
+
+// The token is shared with client.http, so later requests are authenticated.
+client.auth.onChange.listen((d) {
+  if (d.token == null) showLoginScreen();
+});
+
+client.auth.signOut();
+```
+
+<Callout type="info">
+    The token persists in the platform's secure storage under one process-wide key, so it survives a restart. A test suite that signs in should sign out again, or set `client.auth.storageKey`, otherwise later clients send a token the next server rejects.
+</Callout>
+
+## Known Limitations
+
+- **Request and response is not bound.** `room.request()` has no Dart equivalent yet. Use `send` with a matching `onMessage` listener instead.
+- **Prediction does not link on Windows.** The predict layer is dead-stripped out of the Windows DLL. Every other platform links it.
+- **Automatic reconnection works once per room.** A second drop leaves the room reconnecting indefinitely. The defect is in the shared core, so every Colyseus native binding has it.
+
+## Next Steps
+
+- [Netcode: Prediction & Lag Comp](/netcode) - The prediction stack, and the server settings it needs
+- [State Synchronization](/state) - Understanding Schema definitions
+- [Room API](/room) - Server-side room implementation
