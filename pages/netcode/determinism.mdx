@@ -2,7 +2,8 @@
 title: "Determinism & The Contract"
 description: "The load-bearing rules of Colyseus client-side prediction: one shared step function, one input per fixed step, identical fixed dt, flat-primitive inputs, replay-safe one-shots, and a troubleshooting table for rubber-banding, jitter, and missed hits."
 ---
-import { Callout } from 'nextra/components'
+import { Callout, Tabs } from 'nextra/components'
+import { SDKTabs } from "../../components/SDKTabs"
 
 # Determinism & The Contract
 
@@ -52,9 +53,54 @@ You don't have to guess from feel. Every `reconciler`/`sim` controller keeps rol
 
 Set **`warnOnDivergence`** (a tolerance in world units) on the controller to get a console warning when the persistent component crosses it — telemetry runs while watched (this option set, or the dev panel active):
 
-```ts
-const me = predict.reconciler(self, { input, step, warnOnDivergence: 0.05 });
-```
+<SDKTabs>
+
+    <Tabs.Tab>
+    ```ts
+    const me = predict.reconciler(self, { input, step, warnOnDivergence: 0.05 });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs
+    var me = predict.Reconciler(self, new ReconcilerOptions<Player, MoveInput> {
+        Input = input,
+        Step = (ctx, s, cmd) => ApplyInput(s, cmd, ctx.Dt),
+        WarnOnDivergence = 0.05,
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua
+    local me = predict:reconciler(self_player, {
+      input = input, step = step, warn_on_divergence = 0.05,
+    })
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe
+    var me = predict.reconciler(self, { input: input, step: step, warnOnDivergence: 0.05 });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript
+    # No warnOnDivergence option — read the drift telemetry yourself:
+    if me.drift_ema > 0.05:
+        push_warning("prediction diverging from the server")
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart
+    // No warnOnDivergence option — read the drift telemetry yourself:
+    if (me.drift.ema > 0.05) log('prediction diverging from the server');
+    ```
+    </Tabs.Tab>
+
+</SDKTabs>
 
 The dev panel (`import "@colyseus/sdk/debug"`) classifies through the **same rule** and shows a per-controller verdict — **✓ matched** (both ~0), **~ jitter** (spikes that decay out), **✗ diverging** (persistent `ema`) — so the panel and the warning can never disagree about what the numbers mean. `me.reset()` zeroes the telemetry, and a `snap`-absorbed correction is excluded from it — so a deliberate pose jump doesn't read as divergence.
 

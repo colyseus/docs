@@ -2,7 +2,8 @@
 title: "Lag Compensation — What You See Is What You Hit"
 description: "Server-side lag compensation in Colyseus 0.18: rewind entities to the shooter's render time with allowRewindState() and rewind.lastSeenBy() so hits on moving targets register — favor-the-shooter hit registration."
 ---
-import { Callout } from 'nextra/components'
+import { Callout, Tabs } from 'nextra/components'
+import { SDKTabs } from "../../components/SDKTabs"
 
 # Lag Compensation
 
@@ -22,15 +23,76 @@ Enabling it takes a stamp on the client's inputs and a rewind on the server — 
 
 Each input carries a timestamp telling the server *when* the client's view of the world was. Once the room enables rewind, the SDK stamps every input on its own. Wiring the handle through `predict.reconciler` / `predict.sim` then binds the stamp's interp-buffer term to the `Predict` lerp `delay`. The buffer you render at and the instant the server rewinds to come from **one number**, so they can't drift apart.
 
-```ts
-const predict = Predict.get(room, { mode: "lerp", delay: 100 });
-const input = room.input({ type: MoveInput });   // stamp auto-derived from delay: 100
-```
+<SDKTabs>
+
+    <Tabs.Tab>
+    ```ts
+    const predict = Predict.get(room, { mode: "lerp", delay: 100 });
+    const input = room.input({ type: MoveInput });   // stamp auto-derived from delay: 100
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs
+    var predict = Predict.For(room);
+    predict.AttachAll("players", new AttachConfig {
+        ["x"] = new PredictFieldOptions { Mode = PredictMode.Lerp, Delay = 100 },
+        ["y"] = new PredictFieldOptions { Mode = PredictMode.Lerp, Delay = 100 },
+    });
+    var input = room.Input(cmd);   // stamp auto-derived from the lerp delay
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua
+    local predict = Predict.for_room(room)
+    predict:attach_all("players", {
+      x = { mode = "lerp", delay = 100 },
+      y = { mode = "lerp", delay = 100 },
+    })
+    local input = room:input()   -- stamp auto-derived from the lerp delay
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe
+    var predict = Predict.forRoom(room);
+    predict.attachAll("players", {
+        x: { mode: "lerp", delay: 100 },
+        y: { mode: "lerp", delay: 100 },
+    });
+    var input = room.input({ type: MoveInput });   // stamp auto-derived from the lerp delay
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript
+    var predict = Colyseus.Predict.of(room)
+    predict.attach_all("players", {
+        "x": { "mode": Colyseus.Predict.LERP, "delay": 100 },
+        "y": { "mode": Colyseus.Predict.LERP, "delay": 100 },
+    }, room.get_session_id())
+    var input = room.input()   # stamp auto-derived from the lerp delay
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart
+    final predict = Predict.get(room);
+    predict.attachAll('players', config: {
+      'x': FieldOptions(mode: PredictMode.lerp, delay: 100),
+      'y': FieldOptions(mode: PredictMode.lerp, delay: 100),
+    }, exceptKey: room.sessionId);
+    final input = room.input()!;   // stamp auto-derived from the lerp delay
+    ```
+    </Tabs.Tab>
+
+</SDKTabs>
 
 Two knobs, both optional:
 
 - **`renderDelay`** — pass it to `room.input()` only when you smooth remotes *outside* `Predict`; it must equal your actual interp buffer. The SDK adds the latency term itself — pass only the buffer.
-- **`allowRewind`** — a per-input predicate gating which inputs carry the stamp, as a bandwidth trim: `room.input({ allowRewind: (d) => d.fire })` stamps only the inputs the server actually rewinds for. Don't use it when your *own* step hit-tests at `ctx.reckonTime` — then every input needs the stamp.
+- **`allowRewind`** — a per-input predicate gating which inputs carry the stamp, as a bandwidth trim: `room.input({ allowRewind: (d) => d.fire })` stamps only the inputs the server actually rewinds for. Don't use it when your *own* step hit-tests at `ctx.reckonTime` — then every input needs the stamp. In GDScript, call `input.set_rewind_field("fire")` instead; in Dart, pass `allowRewind:` a predicate over the input view.
 
 ### Server — rewind targets to where the shooter saw them
 
