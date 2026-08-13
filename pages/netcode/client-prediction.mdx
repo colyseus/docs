@@ -104,7 +104,7 @@ This is the **client half** of the netcode stack: send input, predict your own e
     })
 
     function update(self, dt)                   -- once per render frame
-      local steps = predict:tick(socket.gettime() * 1000)
+      local steps = predict:tick(room.clock:now())
       for _ = 1, steps do
         input.data.moveX = move_x()             -- stage the wire input
         input.data.jump = jump()

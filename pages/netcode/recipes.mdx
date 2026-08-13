@@ -76,7 +76,7 @@ Input is sampled once per **fixed step**, not per render frame — and frames an
     end
 
     function update(self, dt)
-      local steps = predict:tick(socket.gettime() * 1000)
+      local steps = predict:tick(room.clock:now())
       for _ = 1, steps do
         input.data.moveX = read_axis()    -- held state: sample live, no buffer
         input.data.jump = jump_buffered
