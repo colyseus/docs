@@ -25,7 +25,7 @@ The stack is one loop split across the server and the client. Each half is confi
 - **Remote** entities are smoothed from the server stream (interpolated a little in the past, or dead-reckoned forward).
 - For hits, the server **rewinds** other entities to where the shooter *saw* them (their render time), so a well-aimed shot at a moving target registers.
 
-> One input per fixed step; one `predict.tick(now)` per render frame drives everything.
+> One input per fixed step; one `predict.tick()` per render frame drives everything.
 
 ```mermaid
 flowchart TB

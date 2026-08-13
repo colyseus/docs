@@ -17,11 +17,11 @@ Client prediction only matches the server if **both run the same simulation**. N
 
 These are load-bearing — break one and prediction drifts or hits stop registering:
 
-1. **One `input.send()` per fixed step.** `predict.tick(now)` returns how many fixed steps are due this frame; stage and send exactly that many inputs. Every `send()` transmits one input (a body-less frame when nothing changed), so the predicted set equals the server-applied set. Don't send per render frame, and don't skip sends while predicting movement.
+1. **One `input.send()` per fixed step.** `predict.tick()` returns how many fixed steps are due this frame; stage and send exactly that many inputs. Every `send()` transmits one input (a body-less frame when nothing changed), so the predicted set equals the server-applied set. Don't send per render frame, and don't skip sends while predicting movement.
 
 2. **Everything the step reads must live on the input schema.** `step` receives the buffered *wire* input (`input.at(seq)`) — the exact value the server decodes — on the live step and on every replay. State you read from outside the input (a captured variable, a DOM read) won't replay and diverges silently.
 
-3. **Send before you read.** Within a frame: `predict.tick(now)` → the send loop → render reads. A `predict.value()` read between `tick()` and the sends renders one step stale (the SDK warns once).
+3. **Send before you read.** Within a frame: `predict.tick()` → the send loop → render reads. A `predict.value()` read between `tick()` and the sends renders one step stale (the SDK warns once).
 
 4. **One-shot effects never go raw inside `step`.** A step replays 0..N times during rollback. Use `ctx.predict` for events (a sound, a celebration — fires on the live step only) and `ctx.memo` for values replay can't re-derive (an RNG roll, a lag-comp'd collision). For fire-and-forget presentation (particles, camera shake), a plain `if (!ctx.isReplay)` branch is itself the idiom.
 

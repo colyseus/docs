@@ -213,10 +213,10 @@ This is the **client half** of the netcode stack: send input, predict your own e
 
 </SDKTabs>
 
-The reconciler is a pure **observer**: it watches the handle's sends and predicts each one. You never feed input to the reconciler directly — the frame driver runs `predict.tick(now)`, sends that many inputs through the handle, and everything downstream reacts. For taps and edges that must land on exactly one step, see [buffer, then consume](/netcode/recipes#taps-between-steps-buffer-then-consume).
+The reconciler is a pure **observer**: it watches the handle's sends and predicts each one. You never feed input to the reconciler directly — the frame driver runs `predict.tick()`, sends that many inputs through the handle, and everything downstream reacts. For taps and edges that must land on exactly one step, see [buffer, then consume](/netcode/recipes#taps-between-steps-buffer-then-consume).
 
 <Callout type="warning">
-    **Send before you read.** Within a frame, run the send loop right after `predict.tick(now)`, then read render values. A `predict.value()` read between `tick()` and the sends is one step stale (the SDK warns once).
+    **Send before you read.** Within a frame, run the send loop right after `predict.tick()`, then read render values. A `predict.value()` read between `tick()` and the sends is one step stale (the SDK warns once).
 </Callout>
 
 ## `room.input(options)`
