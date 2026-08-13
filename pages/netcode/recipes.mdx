@@ -2,7 +2,8 @@
 title: "Netcode Recipes"
 description: "Task-oriented Colyseus netcode patterns: predicted projectiles with predict.spawns, optimistic hit FX and pickups, dead-reckoned AI, cooldown clocks, teleports, and physics-engine prediction with predict.sim."
 ---
-import { Callout } from 'nextra/components'
+import { Callout, Tabs } from 'nextra/components'
+import { SDKTabs } from "../../components/SDKTabs"
 
 # Netcode Recipes
 
@@ -28,20 +29,118 @@ Input is sampled once per **fixed step**, not per render frame — and frames an
 
 **Buffer the press when it happens; consume it inside the step loop on exactly one step:**
 
-```ts
-let jumpBuffered = false;
-onKeyDown("Space", () => jumpBuffered = true);  // buffer: the tap happened
+<SDKTabs>
 
-function frame(now) {
-  const n = predict.tick(now);
-  for (let i = 0; i < n; i++) {
-    input.data.moveX = readAxis();    // held state: sample live, no buffer
-    input.data.jump = jumpBuffered;
-    jumpBuffered = false;             // consume: fires on exactly one step
-    input.send();
-  }
-}
-```
+    <Tabs.Tab>
+    ```ts
+    let jumpBuffered = false;
+    onKeyDown("Space", () => jumpBuffered = true);  // buffer: the tap happened
+
+    function frame(now) {
+      const n = predict.tick(now);
+      for (let i = 0; i < n; i++) {
+        input.data.moveX = readAxis();    // held state: sample live, no buffer
+        input.data.jump = jumpBuffered;
+        jumpBuffered = false;             // consume: fires on exactly one step
+        input.send();
+      }
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs
+    bool jumpBuffered = false;
+    void OnJumpPressed() => jumpBuffered = true;    // buffer: the tap happened
+
+    void Update() {
+        int steps = predict.Tick(RoomClock.GetNow());
+        for (int i = 0; i < steps; i++) {
+            cmd.moveX = ReadAxis();       // held state: sample live, no buffer
+            cmd.jump = jumpBuffered;
+            jumpBuffered = false;         // consume: fires on exactly one step
+            input.Send();
+        }
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua
+    local jump_buffered = false
+
+    function on_input(self, action_id, action)
+      if action_id == hash("jump") and action.pressed then
+        jump_buffered = true              -- buffer: the tap happened
+      end
+    end
+
+    function update(self, dt)
+      local steps = predict:tick(socket.gettime() * 1000)
+      for _ = 1, steps do
+        input.data.moveX = read_axis()    -- held state: sample live, no buffer
+        input.data.jump = jump_buffered
+        jump_buffered = false             -- consume: fires on exactly one step
+        input:send()
+      end
+    end
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe
+    var jumpBuffered = false;
+    onKeyDown(Space, () -> jumpBuffered = true);  // buffer: the tap happened
+
+    function frame(now: Float) {
+        var steps = predict.tick(now);
+        for (_ in 0...steps) {
+            cmd.moveX = readAxis();       // held state: sample live, no buffer
+            cmd.jump = jumpBuffered;
+            jumpBuffered = false;         // consume: fires on exactly one step
+            input.send();
+        }
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript
+    var jump_buffered := false
+
+    func _input(event):
+        if event.is_action_pressed("jump"):
+            jump_buffered = true            # buffer: the tap happened
+
+    func _process(_delta):
+        var steps: int = predict.tick(Time.get_ticks_msec())
+        for i in steps:
+            input.data.moveX = read_axis()  # held state: sample live, no buffer
+            input.data.jump = jump_buffered
+            jump_buffered = false           # consume: fires on exactly one step
+            input.send()
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart
+    var jumpBuffered = false;
+    onKeyDown('Space', () => jumpBuffered = true);  // buffer: the tap happened
+
+    void onFrame() {
+      Colyseus.pump();
+      final steps = predict.tick(room.clock.now);
+      for (var i = 0; i < steps; i++) {
+        input.data['moveX'] = readAxis();   // held state: sample live, no buffer
+        input.data['jump'] = jumpBuffered;
+        jumpBuffered = false;               // consume: fires on exactly one step
+        input.send();
+      }
+    }
+    ```
+    </Tabs.Tab>
+
+</SDKTabs>
 
 Variants of the same shape:
 
@@ -55,9 +154,45 @@ Buffer outside the loop, consume inside it — draining an edge anywhere else ei
 
 On a datagram-capable transport, input frames don't need reliable delivery — each packet carries the last few inputs as redundancy, so a dropped datagram costs nothing and nothing head-of-line blocks:
 
-```ts
-const input = room.input({ type: MoveInput, mode: "unreliable", historySize: 4 });
-```
+<SDKTabs>
+
+    <Tabs.Tab>
+    ```ts
+    const input = room.input({ type: MoveInput, mode: "unreliable", historySize: 4 });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs
+    var input = room.Input(cmd, new InputOptions { Mode = "unreliable", HistorySize = 4 });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua
+    local input = room:input({ mode = "unreliable", history_size = 4 })
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe
+    var input = room.input({ type: MoveInput, mode: "unreliable", historySize: 4 });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript
+    # Not available — the Godot SDK sends input over the reliable channel only.
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart
+    final input = room.input(InputOptions(mode: InputMode.unreliable, historySize: 4));
+    ```
+    </Tabs.Tab>
+
+</SDKTabs>
 
 That's the whole migration. The framework runs its own sequence numbers and acks by seq **value**, so rollback reconciliation works unchanged — no user-side bookkeeping, no seq field on your schema. `historySize` is the redundancy depth (how many recent inputs ride along in each datagram; default 3). Over plain WebSocket stay `"reliable"` (the default): TCP already guarantees delivery, and the history would be dead weight.
 
@@ -65,22 +200,123 @@ That's the whole migration. The framework runs its own sequence numbers and acks
 
 A fired bullet needs zero-latency feedback, but the server assigns its identity ~RTT later. `predict.spawns` runs the whole lifecycle: render the predicted local instantly, correlate it to the authoritative entity when it arrives, and keep one **stable id** across the handoff so the sprite never flickers:
 
-```ts
-const rockets = predict.spawns("rockets", {
-  owned:     r => r.owner === room.sessionId,      // which server entities are mine
-  spawnTime: r => r.bornMs,                        // exact per-shot input lead
-  step:      stepRocket,                           // shared client/server sim
-  fields:    ["x", "z"],                           // reckon confirmed entities
-});
+<SDKTabs>
 
-// on the predicted fire (live input step):
-rockets.spawn({ x, z, heading });
+    <Tabs.Tab>
+    ```ts
+    const rockets = predict.spawns("rockets", {
+      owned:     r => r.owner === room.sessionId,      // which server entities are mine
+      spawnTime: r => r.bornMs,                        // exact per-shot input lead
+      step:      stepRocket,                           // shared client/server sim
+      fields:    ["x", "z"],                           // reckon confirmed entities
+    });
 
-// render — one path, handoff-invisible, keyed on the stable entry id:
-for (const e of rockets.entries()) {
-  draw(e.id, rockets.value(e, "x"), rockets.value(e, "z"));
-}
-```
+    // on the predicted fire (live input step):
+    rockets.spawn({ x, z, heading });
+
+    // render — one path, handoff-invisible, keyed on the stable entry id:
+    for (const e of rockets.entries()) {
+      draw(e.id, rockets.value(e, "x"), rockets.value(e, "z"));
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs
+    var rockets = predict.Spawns<Rocket, Shot>("rockets",
+        new PredictedSpawnsOptions<Rocket, Shot> {
+            Owned     = r => r.owner == room.SessionId,     // which server entities are mine
+            SpawnTime = r => r.bornMs,                      // exact per-shot input lead
+            Step      = (shot, dt) => StepRocket(shot, dt), // shared client/server sim
+            Fields    = new[] { "x", "z" },                 // reckon confirmed entities
+        });
+
+    // on the predicted fire (live input step):
+    rockets.Spawn(new Shot { x = x, z = z, heading = heading });
+
+    // render — one path, handoff-invisible, keyed on the stable entry id:
+    foreach (var e in rockets.Entries()) {
+        Draw(e.Id, rockets.Value(e, "x"), rockets.Value(e, "z"));
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua
+    local rockets = predict:spawns("rockets", {
+      owned      = function(r) return r.owner == room.session_id end,  -- mine?
+      spawn_time = function(r) return r.bornMs end,   -- exact per-shot input lead
+      step       = step_rocket,                       -- shared client/server sim
+      fields     = { "x", "z" },                      -- reckon confirmed entities
+    })
+
+    -- on the predicted fire (live input step):
+    rockets:spawn({ x = x, z = z, heading = heading })
+
+    -- render — one path, handoff-invisible, keyed on the stable entry id:
+    for _, e in ipairs(rockets:entries()) do
+      draw(e.id, rockets:value(e, "x"), rockets:value(e, "z"))
+    end
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe
+    var rockets = predict.spawns("rockets", {
+        owned:     (r) -> r.owner == room.sessionId,   // which server entities are mine
+        spawnTime: (r) -> r.bornMs,                    // exact per-shot input lead
+        step:      stepRocket,                         // shared client/server sim
+        fields:    ["x", "z"],                         // reckon confirmed entities
+    });
+
+    // on the predicted fire (live input step):
+    rockets.spawn({ x: x, z: z, heading: heading });
+
+    // render — one path, handoff-invisible, keyed on the stable entry id:
+    for (e in rockets.entries()) {
+        draw(e.id, rockets.value(e, "x"), rockets.value(e, "z"));
+    }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript
+    var rockets = predict.spawns("rockets", {
+        "owned":      func(r): return r.owner == room.get_session_id(),
+        "spawn_time": func(r): return r.bornMs,     # exact per-shot input lead
+        "step":       _step_rocket,                 # shared client/server sim
+        "fields":     ["x", "z"],                   # reckon confirmed entities
+    })
+
+    # on the predicted fire (live input step):
+    rockets.spawn({ "x": x, "z": z, "heading": heading })
+
+    # render — one path, handoff-invisible, keyed on the stable entry id:
+    for e in rockets.entries():
+        draw(e.id, rockets.value(e.id, "x"), rockets.value(e.id, "z"))
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart
+    final rockets = predict.spawns('rockets', SpawnsOptions(
+      owned:     (r) => r['owner'] == room.sessionId,       // which server entities are mine
+      spawnTime: (r) => (r['bornMs'] as num).toDouble(),    // exact per-shot input lead
+      step:      (local, dt) => stepRocket(local, dt),      // shared client/server sim
+      fields:    const ['x', 'z'],                          // reckon confirmed entities
+    ));
+
+    // on the predicted fire (live input step):
+    rockets.spawn(Shot(x, z, heading));
+
+    // render — one path, handoff-invisible, keyed on the stable entry id:
+    for (final e in rockets.entries) {
+      draw(e.id, rockets.value(e, 'x'), rockets.value(e, 'z'));
+    }
+    ```
+    </Tabs.Tab>
+
+</SDKTabs>
 
 With `spawnTime`, an **owned** projectile keeps flying the *shooter's* timeline through the handoff — no snap-back, and the rendered trajectory is the one a favor-the-shooter rewind actually judges. Foreign projectiles (other players') render at server-present, aged forward automatically. An unmatched prediction expires after a TTL (`max(2×rtt, 600ms)` by default) and `onReject` fires — the ghost reverts.
 
@@ -90,19 +326,109 @@ For fast projectiles, hit-test the swept **segment** between last and current po
 
 Impact feedback (hit marker, sound, decal) shouldn't wait for the server, but a mispredicted hit must clean up after itself. Key the channel by projectile so multiple in-flight shots settle independently:
 
-```ts
-const impacts = predict.defineEvent<{ projectileId: string; x: number; y: number }>({
-  uniqueBy:  (h) => h.projectileId,          // payload carries FX data; identity is the projectile
-  onPredict: (h) => spawnImpactFx(h.x, h.y),
-  onReject:  (h) => removeImpactFx(h.projectileId),
-});
+<SDKTabs>
 
-// inside the step, on a predicted impact:
-if (hit) ctx.predict(impacts, { projectileId: id, x: hit.x, y: hit.y });
+    <Tabs.Tab>
+    ```ts
+    const impacts = predict.defineEvent<{ projectileId: string; x: number; y: number }>({
+      uniqueBy:  (h) => h.projectileId,          // payload carries FX data; identity is the projectile
+      onPredict: (h) => spawnImpactFx(h.x, h.y),
+      onReject:  (h) => removeImpactFx(h.projectileId),
+    });
 
-// settlement:
-room.onMessage("impact", (m) => impacts.confirm(m.projectileId));
-```
+    // inside the step, on a predicted impact:
+    if (hit) ctx.predict(impacts, { projectileId: id, x: hit.x, y: hit.y });
+
+    // settlement:
+    room.onMessage("impact", (m) => impacts.confirm(m.projectileId));
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs
+    var impacts = predict.DefineEvent(new PredictedEventChannelOptions<Hit> {
+        UniqueBy  = h => h.projectileId,          // payload carries FX data; identity is the projectile
+        OnPredict = h => SpawnImpactFx(h.x, h.y),
+        OnReject  = h => RemoveImpactFx(h.projectileId),
+    });
+
+    // inside the step, on a predicted impact:
+    if (hit) ctx.Predict(impacts, new Hit { projectileId = id, x = hit.x, y = hit.y });
+
+    // settlement:
+    room.OnMessage<Dictionary<string, object>>("impact",
+        m => impacts.Confirm((string)m["projectileId"]));
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua
+    local impacts = predict:define_event({
+      unique_by  = function(h) return h.projectileId end,  -- identity is the projectile
+      on_predict = function(h) spawn_impact_fx(h.x, h.y) end,
+      on_reject  = function(h) remove_impact_fx(h.projectileId) end,
+    })
+
+    -- inside the step, on a predicted impact:
+    if hit then ctx:predict(impacts, { projectileId = id, x = hit.x, y = hit.y }) end
+
+    -- settlement:
+    room:on_message("impact", function(m) impacts:confirm(m.projectileId) end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe
+    var impacts = predict.defineEvent({
+        uniqueBy:  (h) -> h.projectileId,          // payload carries FX data; identity is the projectile
+        onPredict: (h) -> spawnImpactFx(h.x, h.y),
+        onReject:  (h) -> removeImpactFx(h.projectileId),
+    });
+
+    // inside the step, on a predicted impact:
+    if (hit) ctx.predict(impacts, { projectileId: id, x: hit.x, y: hit.y });
+
+    // settlement:
+    room.onMessage("impact", (m) -> impacts.confirm(m.projectileId));
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript
+    # string-keyed: the projectile id IS the entry identity (no uniqueBy, no payloads);
+    # FX coordinates come from your own app state.
+    var impacts = predict.define_event({
+        "on_predict": func(id): spawn_impact_fx_for(id),
+        "on_reject":  func(id): remove_impact_fx(id),
+    })
+
+    # inside the step, on a predicted impact:
+    if hit: ctx.predict(impacts, id)
+
+    # settlement:
+    room.message_received.connect(func(type, m):
+        if type == "impact": impacts.confirm(m.projectileId))
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart
+    // string-keyed: the projectile id IS the entry identity (no uniqueBy, no payloads);
+    // FX coordinates come from your own app state.
+    final impacts = predict.defineEvent(
+      onPredict: (id) => spawnImpactFxFor(id),
+      onReject:  (id) => removeImpactFx(id),
+    );
+
+    // inside the step, on a predicted impact:
+    if (hit) ctx.predict(impacts, id);
+
+    // settlement:
+    room.onMessage('impact').listen((m) => impacts.confirm(m['projectileId']));
+    ```
+    </Tabs.Tab>
+
+</SDKTabs>
 
 A sim-born prediction auto-rejects once the server processes past its birth step without confirming — see [Optimistic events](/netcode/client-prediction#optimistic-events-defineevent).
 
@@ -129,15 +455,60 @@ const hidden = !item.alive || pickups.has(id);
 
 A mispredict needs no cleanup code: the entry auto-rejects once the server processes past it silently, `has(id)` flips back, the derived view recovers. See [`confirmOn`](/netcode/client-prediction#confirming-from-state-confirmon) for the `add`/`remove` membership variants (predicted drops and consumables).
 
+<Callout type="info">
+    `confirmOn` is JavaScript-only. Ports get the same behavior with two lines: `ctx.predict(pickups, itemId)` in the step, and `confirm(itemId)` from a schema callback watching `alive`. The `has(id)` derive works everywhere except the GDScript binding.
+</Callout>
+
 ## Dead-reckoned AI (server-driven)
 
 For entities nobody controls directly but that move predictably (patrolling AI, ballistics), pair the client's `reckon` display with a `reckon` rewind timeline — both sides describe the same decision:
 
-```ts
-// client
-predict.attachAll("enemies", { mode: "reckon", fields: ["x", "y"], step: stepEnemy });
+<SDKTabs>
 
-// server — rewind on the matching timeline (no double compensation)
+    <Tabs.Tab>
+    ```ts
+    predict.attachAll("enemies", { mode: "reckon", fields: ["x", "y"], step: stepEnemy });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs
+    predict.AttachAll("enemies", new ReckonOptions<Enemy> {
+        Fields = new[] { "x", "y" },
+        Step = (e, dt, elapsedMs) => StepEnemy(e, dt),
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua
+    predict:attach_all("enemies", { mode = "reckon", fields = { "x", "y" }, step = step_enemy })
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe
+    predict.attachAll("enemies", { mode: "reckon", fields: ["x", "y"], step: stepEnemy });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript
+    predict.attach_all_reckon("enemies", ["x", "y"], _step_enemy)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart
+    predict.attachAllReckon('enemies', const ['x', 'y'], stepEnemy);
+    ```
+    </Tabs.Tab>
+
+</SDKTabs>
+
+The server rewinds on the matching timeline (no double compensation):
+
+```ts
 this.rewind.attachAll(this.state.enemies, { fields: ["x", "y"], mode: "reckon" });
 ```
 
@@ -154,14 +525,91 @@ this.rewind.attachAll(this.state.enemies, {
 
 Smoothing turns a respawn into a glide across the map. The `snap` option (on any attach or reconciler config) declares a value-space threshold past which a jump is a **teleport** — smoothing resets and the entity pops to the new value:
 
-```ts
-// Remotes: a passive attach pops past the threshold.
-predict.attachAll("players", { mode: "lerp", fields: ["x", "y"], snap: 300 });
+<SDKTabs>
 
-// Your own entity: a reconcile correction past it pops instead of gliding
-// (and doesn't count toward divergence telemetry).
-const me = predict.reconciler(self, { input, step, snap: 300 });
-```
+    <Tabs.Tab>
+    ```ts
+    // Remotes: a passive attach pops past the threshold.
+    predict.attachAll("players", { mode: "lerp", fields: ["x", "y"], snap: 300 });
+
+    // Your own entity: a reconcile correction past it pops instead of gliding
+    // (and doesn't count toward divergence telemetry).
+    const me = predict.reconciler(self, { input, step, snap: 300 });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs
+    // Remotes: a passive attach pops past the threshold.
+    predict.AttachAll("players", new AttachConfig {
+        ["x"] = new PredictFieldOptions { Mode = PredictMode.Lerp, Snap = 300 },
+        ["y"] = new PredictFieldOptions { Mode = PredictMode.Lerp, Snap = 300 },
+    });
+
+    // Your own entity: a reconcile correction past it pops instead of gliding.
+    var me = predict.Reconciler(self, new ReconcilerOptions<Player, MoveInput> {
+        Input = input,
+        Step = (ctx, s, cmd) => ApplyInput(s, cmd, ctx.Dt),
+        Snap = 300,
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua
+    -- Remotes: a passive attach pops past the threshold.
+    predict:attach_all("players", {
+      x = { mode = "lerp", snap = 300 },
+      y = { mode = "lerp", snap = 300 },
+    })
+
+    -- Your own entity: a reconcile correction past it pops instead of gliding.
+    local me = predict:reconciler(self_player, { input = input, step = step, snap = 300 })
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe
+    // Remotes: a passive attach pops past the threshold.
+    predict.attachAll("players", {
+        x: { mode: "lerp", snap: 300 },
+        y: { mode: "lerp", snap: 300 },
+    });
+
+    // Your own entity: a reconcile correction past it pops instead of gliding.
+    var me = predict.reconciler(self, { input: input, step: step, snap: 300 });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript
+    # Remotes: a passive attach pops past the threshold.
+    predict.attach_all("players", {
+        "x": { "mode": Colyseus.Predict.LERP, "snap": 300 },
+        "y": { "mode": Colyseus.Predict.LERP, "snap": 300 },
+    }, room.get_session_id())
+
+    # Your own entity: a reconcile correction past it pops instead of gliding.
+    var me = predict.reconciler(self_player, {
+        "input": input, "step": _step, "snap": 300,
+    })
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart
+    // Remotes: a passive attach pops past the threshold.
+    predict.attachAll('players', config: {
+      'x': FieldOptions(mode: PredictMode.lerp, snap: 300),
+      'y': FieldOptions(mode: PredictMode.lerp, snap: 300),
+    }, exceptKey: room.sessionId);
+
+    // Your own entity: a reconcile correction past it pops instead of gliding.
+    final me = predict.reconciler(self, input: input, step: step, snap: 300);
+    ```
+    </Tabs.Tab>
+
+</SDKTabs>
 
 Size it well above per-patch motion (`maxSpeed × patchInterval`) and below your smallest legitimate teleport. Respawns that land on the same position induce zero correction and never trip it.
 
@@ -199,6 +647,10 @@ const me = predict.sim({
   pose:  (w) => { const t = w.body.translation(); return { x: t.x, y: t.y }; },
 });
 ```
+
+<Callout type="info">
+    The opaque-engine face (`adopt` + `pose`) is JavaScript-only — see [the sim note](/netcode/client-prediction#composite--engine-state-predictsim). On the other SDKs, keep engine state in bound schema mirrors — see [Composite scalars](#composite-scalars-predictsim-no-engine) below.
+</Callout>
 
 <Callout type="warning">
     Reseed **every** scalar the sim depends on in `adopt` (position **and** velocity). Engine-internal non-scalar state isn't rolled back — see [the warning on `predict.sim`](/netcode/client-prediction#composite--engine-state-predictsim).
