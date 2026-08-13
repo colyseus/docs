@@ -34,7 +34,7 @@ Each input carries a timestamp telling the server *when* the client's view of th
 
     <Tabs.Tab>
     ```cs
-    var predict = Predict.For(room);
+    var predict = Predict.Get(room);
     predict.AttachAll("players", new AttachConfig {
         ["x"] = new PredictFieldOptions { Mode = PredictMode.Lerp, Delay = 100 },
         ["y"] = new PredictFieldOptions { Mode = PredictMode.Lerp, Delay = 100 },
@@ -45,7 +45,7 @@ Each input carries a timestamp telling the server *when* the client's view of th
 
     <Tabs.Tab>
     ```lua
-    local predict = Predict.for_room(room)
+    local predict = Predict.get(room)
     predict:attach_all("players", {
       x = { mode = "lerp", delay = 100 },
       y = { mode = "lerp", delay = 100 },
@@ -56,7 +56,7 @@ Each input carries a timestamp telling the server *when* the client's view of th
 
     <Tabs.Tab>
     ```haxe
-    var predict = Predict.forRoom(room);
+    var predict = Predict.get(room);
     predict.attachAll("players", {
         x: { mode: "lerp", delay: 100 },
         y: { mode: "lerp", delay: 100 },

@@ -98,6 +98,21 @@ In order to register callbacks to Schema instances, you must access the instance
             var callbacks = Colyseus.Callbacks.of(room))
         ```
         </Tabs.Tab>
+
+        <Tabs.Tab>
+        ```dart {10} filename="client.dart"
+        import 'package:colyseus/colyseus.dart';
+
+        // initialize SDK
+        final client = ColyseusClient('ws://localhost:2567');
+
+        // join room
+        final room = await client.joinOrCreate('my_room', stateType: MyRoomState.new);
+
+        // get state callbacks handler
+        final callbacks = Callbacks.get(room);
+        ```
+        </Tabs.Tab>
     </SDKTabs>
 
     ### Register the callbacks
@@ -223,11 +238,37 @@ In order to register callbacks to Schema instances, you must access the instance
             print("entity removed: ", entity)
         ```
         </Tabs.Tab>
+
+        <Tabs.Tab>
+        ```dart filename="client.dart"
+        final state = room.state!;
+
+        callbacks.listen(state, 'currentTurn', (value, previous) {
+            // ...
+        });
+
+        // when an entity was added (ArraySchema or MapSchema)
+        callbacks.onAdd(state.entities, (sessionId, entity) {
+            // ...
+            print('entity added: $entity');
+
+            callbacks.listen(entity, 'hp', (currentHp, previousHp) {
+                print('entity $sessionId changed hp to $currentHp');
+            });
+        });
+
+        // when an entity was removed (ArraySchema or MapSchema)
+        callbacks.onRemove(state.entities, (sessionId, entity) {
+            // ...
+            print('entity removed: $entity');
+        });
+        ```
+        </Tabs.Tab>
     </SDKTabs>
 </Steps>
 
 <Callout type="warning">
-    **C#, C++, Haxe** - When using statically typed languages, you need to generate the frontend schema files based on your TypeScript schema definitions. [See generating schema on the frontend](#frontend-schema-generation).
+    **C#, C++, Haxe, Dart** - When using statically typed languages, you need to generate the frontend schema files based on your TypeScript schema definitions. [See generating schema on the frontend](#frontend-schema-generation).
 </Callout>
 
 ## How to use
@@ -285,9 +326,18 @@ Listens for a single property change within a `Schema` instance.
         print("previous value was: ", previous_value)
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    callbacks.listen(state, 'currentTurn', (value, previous) {
+        print('currentTurn is now $value');
+        print('previous value was: $previous');
+    });
+    ```
+    </Tabs.Tab>
 </SDKTabs>
 
-**Removing the callback:** The `.listen()` method returns a function that, when called, removes the attached callback:
+**Removing the callback:** The `.listen()` method returns a function that, when called, removes the attached callback. In Dart, it returns a `StreamSubscription` — call `cancel()` on it instead:
 
 <SDKTabs>
     <Tabs.Tab>
@@ -340,6 +390,17 @@ Listens for a single property change within a `Schema` instance.
 
     # stop listening for "currentTurn" changes
     unbind_callback.call()
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    final subscription = callbacks.listen(state, 'currentTurn', (value, previous) {
+        // ...
+    });
+
+    // stop listening for `"currentTurn"` changes.
+    await subscription.cancel();
     ```
     </Tabs.Tab>
 </SDKTabs>
@@ -399,6 +460,15 @@ Bind properties directly to `targetObject`, whenever the client receives an upda
     # callbacks.bind_to() is not implemented in Godot SDK yet
     # contributions are very welcome!
     #
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    //
+    // callbacks.bindTo() is not implemented in Flutter SDK yet
+    // contributions are very welcome!
+    //
     ```
     </Tabs.Tab>
 
@@ -467,6 +537,17 @@ The On Change callback is invoked whenever a direct property of a `Schema` insta
         callbacks.on_change(entity, func():
             # some property changed inside entity
             pass)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart {3-5} filename="client.dart"
+    callbacks.onAdd(state.entities, (sessionId, entity) {
+        // ...
+        callbacks.onChange(entity, () {
+            // some property changed inside `entity`
+        });
+    });
     ```
     </Tabs.Tab>
 </SDKTabs>
@@ -561,6 +642,22 @@ By default, the callback is called immediately for existing items in the collect
             print(previous_value))
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart {1} filename="client.dart"
+    callbacks.onAdd(state.players, (sessionId, player) {
+        print('player has been added at $sessionId');
+
+        // add your player entity to the game world!
+
+        // detecting changes on object properties
+        callbacks.listen(player, 'field_name', (value, previousValue) {
+            print(value);
+            print(previousValue);
+        });
+    });
+    ```
+    </Tabs.Tab>
 </SDKTabs>
 
 ---
@@ -619,6 +716,16 @@ The `onRemove` callback is called with the removed item and its key on holder ob
         print("player has been removed at ", session_id)
 
         # remove your player entity from the game world!
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart {1} filename="client.dart"
+    callbacks.onRemove(state.players, (sessionId, player) {
+        print('player has been removed at $sessionId');
+
+        // remove your player entity from the game world!
+    });
     ```
     </Tabs.Tab>
 </SDKTabs>

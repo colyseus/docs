@@ -54,7 +54,7 @@ This is the **client half** of the netcode stack: send input, predict your own e
     ```cs
     using Colyseus.Predict;
 
-    var predict = Predict.For(room);
+    var predict = Predict.Get(room);
 
     // Remote players: interpolated between snapshots, 100ms in the past (the default delay).
     predict.AttachAll("players", new AttachConfig {
@@ -88,7 +88,7 @@ This is the **client half** of the netcode stack: send input, predict your own e
     ```lua
     local Predict = require 'colyseus.predict.predict'
 
-    local predict = Predict.for_room(room)
+    local predict = Predict.get(room)
 
     -- Remote players: interpolated between snapshots, 100ms in the past (the default delay).
     predict:attach_all("players", { x = "lerp", y = "lerp" })
@@ -120,7 +120,7 @@ This is the **client half** of the netcode stack: send input, predict your own e
     ```haxe
     import io.colyseus.predict.Predict;
 
-    var predict = Predict.forRoom(room);
+    var predict = Predict.get(room);
 
     // Remote players: interpolated between snapshots, 100ms in the past (the default delay).
     predict.attachAll("players", { x: "lerp", y: "lerp" });
@@ -352,7 +352,7 @@ const predict = Predict.get(room, { mode: "lerp", delay: 100 });
 ```
 
 <Callout type="info">
-    The construction options object is JavaScript-only. Ports take only the room and declare `mode`/`delay` per attach: `Predict.For(room)` (C#), `Predict.for_room(room)` (Lua), `Predict.forRoom(room)` (Haxe), `Colyseus.Predict.of(room)` (GDScript), `Predict.get(room)` (Dart).
+    The construction options object is JavaScript-only. Ports take only the room and declare `mode`/`delay` per attach: `Predict.Get(room)` in C#, `Predict.get(room)` in Lua, Haxe and Dart, `Colyseus.Predict.of(room)` in GDScript.
 </Callout>
 
 Call `predict.tick(now)` **once per render frame**, passing the rAF timestamp. It returns the number of fixed input steps due this frame, and drives everything it owns: reconcile on new acks, correction decay, remote smoothing, event settlement.
