@@ -331,7 +331,7 @@ final recon = predict.reconciler(me,
 void onFrame() {
   Colyseus.pump();                    // decode inbound, deliver events
 
-  final steps = predict.tick(room.clock.now);
+  final steps = predict.tick();       // reads room.clock.now for you
   for (var i = 0; i < steps; i++) {
     input.data['moveX'] = keyboard.x;
     input.send();                     // applied locally right away
@@ -344,7 +344,7 @@ void onFrame() {
 Points worth knowing before you build on it:
 
 - `room.input()` returns `null` when the server room declares no `defineInput()`, and throws if you call it before the join future resolves.
-- `predict.tick()` takes `room.clock.now`, never `DateTime.now()`. The room clock is the timebase the server shares.
+- `predict.tick()` reads `room.clock.now` when you pass nothing, which is the timebase the server shares. Pass your own only if it comes from that clock — never `DateTime.now()`.
 - `step` has to compute exactly what the server computes. When it does, `recon.drift.ema` stays at the floating-point noise floor; when it drifts, that number tells you.
 - Guard one-shot effects inside a step on `!ctx.isReplay`, or raise them through `ctx.predict()`, which is replay-safe.
 - Call `input.reset()` on `onReconnect`. Sequence numbers restart at zero, so replaying the old ones would corrupt the mirror.

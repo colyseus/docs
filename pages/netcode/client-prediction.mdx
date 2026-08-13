@@ -72,7 +72,7 @@ This is the **client half** of the netcode stack: send input, predict your own e
     });
 
     void Update() {                            // once per render frame
-        int steps = predict.Tick(RoomClock.GetNow());  // fixed input steps due this frame
+        int steps = predict.Tick();            // fixed input steps due this frame
         for (int i = 0; i < steps; i++) {
             cmd.moveX = MoveX();               // stage the wire input
             cmd.jump = Jump();
@@ -104,7 +104,7 @@ This is the **client half** of the netcode stack: send input, predict your own e
     })
 
     function update(self, dt)                   -- once per render frame
-      local steps = predict:tick(room.clock:now())
+      local steps = predict:tick()              -- fixed input steps due this frame
       for _ = 1, steps do
         input.data.moveX = move_x()             -- stage the wire input
         input.data.jump = jump()
@@ -136,8 +136,8 @@ This is the **client half** of the netcode stack: send input, predict your own e
         step: (ctx, s, inp) -> applyInput(s, inp, LEVEL, ctx.dt),
     });
 
-    function frame(now: Float) {                // once per render frame
-        var steps = predict.tick(now);          // fixed input steps due this frame
+    function frame() {                          // once per render frame
+        var steps = predict.tick();             // fixed input steps due this frame
         for (_ in 0...steps) {
             cmd.moveX = moveX();                // stage the wire input
             cmd.jump = jump();
@@ -169,7 +169,7 @@ This is the **client half** of the netcode stack: send input, predict your own e
     })
 
     func _process(_delta):                  # once per render frame
-        var steps: int = predict.tick(Time.get_ticks_msec())
+        var steps: int = predict.tick()     # fixed input steps due this frame
         for i in steps:
             input.data.moveX = move_x()     # stage the wire input
             input.data.jump = jump()
@@ -199,7 +199,7 @@ This is the **client half** of the netcode stack: send input, predict your own e
 
     void onFrame() {                          // once per render frame
       Colyseus.pump();                        // decode inbound, deliver events
-      final steps = predict.tick(room.clock.now);
+      final steps = predict.tick();           // fixed input steps due this frame
       for (var i = 0; i < steps; i++) {
         input.data['moveX'] = moveX();        // stage the wire input
         input.data['jump'] = jump();
@@ -356,6 +356,8 @@ const predict = Predict.get(room, { mode: "lerp", delay: 100 });
 </Callout>
 
 Call `predict.tick(now)` **once per render frame**, passing the rAF timestamp. It returns the number of fixed input steps due this frame, and drives everything it owns: reconcile on new acks, correction decay, remote smoothing, event settlement.
+
+`now` is optional in every SDK. Omit it and the room clock is read for you, which is what the examples above do — it saves picking a platform clock that may not share the SDK's epoch. Pass it in JavaScript anyway: the rAF timestamp is the exact frame time, on the same axis as the default.
 
 ### Remote entities
 

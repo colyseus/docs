@@ -54,7 +54,7 @@ Input is sampled once per **fixed step**, not per render frame — and frames an
     void OnJumpPressed() => jumpBuffered = true;    // buffer: the tap happened
 
     void Update() {
-        int steps = predict.Tick(RoomClock.GetNow());
+        int steps = predict.Tick();
         for (int i = 0; i < steps; i++) {
             cmd.moveX = ReadAxis();       // held state: sample live, no buffer
             cmd.jump = jumpBuffered;
@@ -76,7 +76,7 @@ Input is sampled once per **fixed step**, not per render frame — and frames an
     end
 
     function update(self, dt)
-      local steps = predict:tick(room.clock:now())
+      local steps = predict:tick()
       for _ = 1, steps do
         input.data.moveX = read_axis()    -- held state: sample live, no buffer
         input.data.jump = jump_buffered
@@ -92,8 +92,8 @@ Input is sampled once per **fixed step**, not per render frame — and frames an
     var jumpBuffered = false;
     onKeyDown(Space, () -> jumpBuffered = true);  // buffer: the tap happened
 
-    function frame(now: Float) {
-        var steps = predict.tick(now);
+    function frame() {
+        var steps = predict.tick();
         for (_ in 0...steps) {
             cmd.moveX = readAxis();       // held state: sample live, no buffer
             cmd.jump = jumpBuffered;
@@ -113,7 +113,7 @@ Input is sampled once per **fixed step**, not per render frame — and frames an
             jump_buffered = true            # buffer: the tap happened
 
     func _process(_delta):
-        var steps: int = predict.tick(Time.get_ticks_msec())
+        var steps: int = predict.tick()
         for i in steps:
             input.data.moveX = read_axis()  # held state: sample live, no buffer
             input.data.jump = jump_buffered
@@ -129,7 +129,7 @@ Input is sampled once per **fixed step**, not per render frame — and frames an
 
     void onFrame() {
       Colyseus.pump();
-      final steps = predict.tick(room.clock.now);
+      final steps = predict.tick();
       for (var i = 0; i < steps; i++) {
         input.data['moveX'] = readAxis();   // held state: sample live, no buffer
         input.data['jump'] = jumpBuffered;
