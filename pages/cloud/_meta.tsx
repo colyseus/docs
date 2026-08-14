@@ -6,7 +6,6 @@ export default {
     "environment-variables": "",
     "troubleshooting": "",
     "typescript-compilation-errors": "",
-    "postgresql": "",
     "pricing-billing": "",
 
 }

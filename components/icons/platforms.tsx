@@ -89,6 +89,12 @@ export const gamemaker = (props: IconProps = {}) => <Image
             width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
             alt="GameMaker" />
 
+export const flutter = (props: IconProps = {}) => <Image
+            className="platform-icon"
+            src={require('../../images/icons/flutter.png')}
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
+            alt="Flutter" />
+
 /**
  * BRANDS
  */

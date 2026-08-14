@@ -1,6 +1,6 @@
 ---
 title: "Decorators (@type)"
-description: "Define Colyseus schema state with TypeScript @type() decorators: tsconfig setup, collections, default values, inheritance, @view() and @deprecated(). Fully supported alternative to the schema() builder."
+description: "Define Colyseus schema state with TypeScript @type() decorators: tsconfig setup, collections, default values, inheritance, @view(), @deprecated() and delivery modifiers. Fully supported alternative to the schema() builder."
 ---
 import { Callout } from 'nextra/components'
 
@@ -146,6 +146,29 @@ class Player extends Schema {
 
 See [State View](/state/view) for how `StateView` works — everything there applies equally to both definition styles.
 
+## Delivery modifiers
+
+`@unreliable`, `@patchOnly`, and `@fullStateOnly` control when and how a field reaches clients. Apply them alongside `@type()`:
+
+```ts filename="MyState.ts"
+import { Schema, type, unreliable, patchOnly, fullStateOnly } from "@colyseus/schema";
+
+class Player extends Schema {
+    // tick patches ride the unreliable channel
+    @unreliable @type("number") aimYaw: number;
+
+    // never in a full state sync — invisible to late joiners
+    @patchOnly @type("number") flashIntensity: number;
+
+    // full state sync only, never a tick patch
+    @fullStateOnly @type("uint16") spawnIndex: number;
+}
+```
+
+`@patchOnly` and `@fullStateOnly` are mutually exclusive — combining them throws at decoration time. Streaming collections use the type descriptor instead: `@type({ stream: Entity })`, with an optional `priority` key.
+
+The semantics, use cases and cautions are documented in the [main reference → Delivery modifiers](/state/schema#delivery-modifiers).
+
 ## Deprecating fields
 
 Flag a retired field with `@deprecated()` while keeping its slot in the encoding order:
@@ -161,7 +184,7 @@ class MyState extends Schema {
 }
 ```
 
-See [Versioning](/state/schema#versioning-and-backwardsforwards-compability) for the full backwards/forwards compatibility workflow.
+See [Versioning](/state/schema#versioning-and-backwardsforwards-compatibility) for the full backwards/forwards compatibility workflow.
 
 ## Legacy: `defineTypes()`
 

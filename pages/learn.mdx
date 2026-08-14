@@ -1,57 +1,154 @@
 ---
 title: "Learn Multiplayer Game Development"
-description: "Learn multiplayer game development with Colyseus through demo projects, tutorials, and example games across Unity, Godot, Defold, Phaser, and the Web."
+description: "Learn multiplayer game development with Colyseus — step-by-step tutorials, ready-to-run examples, and demo projects across Unity, Godot, Defold, GameMaker, Phaser, Haxe, and the Web."
 ---
-import { Tabs, Callout } from "nextra/components";
+import { Cards } from "nextra/components";
+import { RocketIcon, FileCodeIcon, RepoIcon } from "@primer/octicons-react";
+import { ClientList, Client, DemoSource } from "../components/client-list";
+import { PremiumDemos, premiumDemos } from "../components/premium-demos";
 
 # Learn Multiplayer Game Development with Colyseus
 
-Explore working demo projects, watch conference talks, and see how a single authoritative Colyseus game server powers clients across Unity, Godot, Defold, GameMaker, Haxe, Construct 3, and the Web.
+Tutorials that build a multiplayer game step by step, plus ready-to-run examples for your engine. Further down, open-source demos where one authoritative server drives clients across more than a dozen engines.
 
-## Demo Projects
+<Cards>
+    <Cards.Card icon={<RocketIcon />} title="Getting Started" href="/getting-started" />
+    <Cards.Card icon={<FileCodeIcon />} title="Tutorials" href="/learn/tutorial" />
+    <Cards.Card icon={<RepoIcon />} title="Examples" href="/learn/examples" />
+</Cards>
 
-Each demo runs from a single authoritative server with multiple client implementations — one per game engine. Browse the source code to see exactly how each SDK connects, synchronizes state, and handles real-time gameplay with Colyseus.
+## Premium Demos
 
-<Tabs items={["Realtime Tanks Multiplayer", "Turn-based 'UNO' Card Game"]} storageKey="demo-project-tab">
+{premiumDemos.length} complete prototypes you can play right now in your browser, each running
+the whole stack at once — authoritative server, client prediction, smoothed
+remotes and lag compensation.
 
-    <Tabs.Tab>
+We're actively expanding the set, and adding engine ports to it: Air Hockey
+already ships Godot and Unity clients alongside its Three.js build.
 
-    | Client | Platforms | Links | Screenshot |
-    |---|---|---|---|
-    | PlayCanvas | Web | [Play](https://colyseus.io/realtime-tanks-demo/web-playcanvas/) · [Source-code](https://github.com/colyseus/realtime-tanks-demo/tree/master/web-playcanvas) | ![Tanks demo in PlayCanvas](/demos/tanks/web-playcanvas.webp) |
-    | GameMaker | Windows, macOS, Linux, HTML5 | [Play](https://colyseus.io/realtime-tanks-demo/gamemaker/) · [Source-code](https://github.com/colyseus/realtime-tanks-demo/tree/master/gamemaker) | ![Tanks demo in GameMaker](/demos/tanks/gamemaker.webp) |
-    | Godot | Windows, macOS, Linux, HTML5, iOS, Android | [Play](https://colyseus.io/realtime-tanks-demo/godot/) · [Source-code](https://github.com/colyseus/realtime-tanks-demo/tree/master/godot) | ![Tanks demo in Godot](/demos/tanks/godot.webp) |
-    | Defold | Windows, macOS, Linux, HTML5, iOS, Android | [Play](https://colyseus.io/realtime-tanks-demo/defold/) · [Source-code](https://github.com/colyseus/realtime-tanks-demo/tree/master/defold) | ![Tanks demo in Defold](/demos/tanks/defold.webp) |
-    | Haxe + Heaps | Web, Native (HL/C) | [Play](https://colyseus.io/realtime-tanks-demo/haxe/) · [Source-code](https://github.com/colyseus/realtime-tanks-demo/tree/master/haxe) | ![Tanks demo in Haxe](/demos/tanks/haxe.webp) |
-    | Unity | Windows, macOS, Linux, WebGL, iOS, Android | [Play](https://colyseus.io/realtime-tanks-demo/unity/) · [Source-code](https://github.com/colyseus/realtime-tanks-demo/tree/master/unity) | ![Tanks demo in Unity](/demos/tanks/unity.webp) |
-    | Three.js | Web | [Play](https://colyseus.io/realtime-tanks-demo/web-threejs/) · [Source-code](https://github.com/colyseus/realtime-tanks-demo/tree/master/web-threejs) | ![Tanks demo in Three.js](/demos/tanks/web-threejs.webp) |
-    | Construct 3 | Web | [Play](https://colyseus.io/realtime-tanks-demo/construct3/) · [Source-code](https://github.com/colyseus/realtime-tanks-demo/tree/master/construct3) | ![Tanks demo in Construct 3](/demos/tanks/construct3.webp) |
-    | MonoGame | Windows, macOS, Linux | [Source-code](https://github.com/colyseus/realtime-tanks-demo/tree/master/monogame) | ![Tanks demo in MonoGame](/demos/tanks/monogame.webp) |
+<PremiumDemos />
 
-    > Source code: [colyseus/realtime-tanks-demo](https://github.com/colyseus/realtime-tanks-demo)
+## Open-Source Demos
 
-    </Tabs.Tab>
+Every one of these is MIT-licensed and free to clone. Each runs from a single authoritative server with multiple client implementations — one per game engine. Read the source to see exactly how each SDK connects, synchronizes state, and handles real-time gameplay with Colyseus.
 
-    <Tabs.Tab>
+Unity, Godot, Defold, GameMaker and Haxe have a client in all three, so whichever
+you work in, there are three different games to read in it.
 
-    | Client | Platforms | Links | Screenshot |
-    |---|---|---|---|
-    | React + R3F | Web | [Source-code](https://github.com/colyseus/turnbased-cards-demo/tree/main/web-react) | ![UNO demo in React](/demos/uno/web-react.webp) |
-    | GameMaker | Windows, macOS, Linux, HTML5 | [Source-code](https://github.com/colyseus/turnbased-cards-demo/tree/main/gamemaker) | ![UNO demo in GameMaker](/demos/uno/gamemaker.webp) |
-    | Godot | Windows, macOS, Linux, HTML5, iOS, Android | [Source-code](https://github.com/colyseus/turnbased-cards-demo/tree/main/godot) | ![UNO demo in Godot](/demos/uno/godot.webp) |
-    | Defold | Windows, macOS, Linux, HTML5, iOS, Android | [Source-code](https://github.com/colyseus/turnbased-cards-demo/tree/main/defold) | ![UNO demo in Defold](/demos/uno/defold.webp) |
-    | Haxe + Heaps | Web, Native (HL/C) | [Source-code](https://github.com/colyseus/turnbased-cards-demo/tree/main/haxe) | ![UNO demo in Haxe](/demos/uno/haxe.webp) |
-    | Unity | Windows, macOS, Linux, WebGL, iOS, Android | [Source-code](https://github.com/colyseus/turnbased-cards-demo/tree/main/unity) | ![UNO demo in Unity](/demos/uno/unity.webp) |
+### Realtime Tanks Multiplayer
 
-    <Callout type="warning">
-        More client implementations (Construct 3) are coming soon!
-    </Callout>
+<DemoSource repo="colyseus/realtime-tanks-demo" />
 
-    > Source code: [colyseus/turnbased-cards-demo](https://github.com/colyseus/turnbased-cards-demo)
+A real-time arena shooter: drive, aim and fire against everyone else in the
+room, with health pickups and a live leaderboard. Nine clients, one server —
+every row below joins the *same* match.
 
-    </Tabs.Tab>
+![Realtime Tanks running in the browser on PlayCanvas](/demos/tanks/web-playcanvas.webp)
 
-</Tabs>
+<ClientList>
+    <Client engine="javascript" name="PlayCanvas" platforms="Web" platformsFull="Web"
+        play="https://colyseus.io/realtime-tanks-demo/web-playcanvas/"
+        source="https://github.com/colyseus/realtime-tanks-demo/tree/master/web-playcanvas" />
+    <Client engine="gamemaker" name="GameMaker" platforms="Desktop · Web" platformsFull="Windows, macOS, Linux, HTML5"
+        play="https://colyseus.io/realtime-tanks-demo/gamemaker/"
+        source="https://github.com/colyseus/realtime-tanks-demo/tree/master/gamemaker" />
+    <Client engine="godot" name="Godot" platforms="Desktop · Web · Mobile" platformsFull="Windows, macOS, Linux, HTML5, iOS, Android"
+        play="https://colyseus.io/realtime-tanks-demo/godot/"
+        source="https://github.com/colyseus/realtime-tanks-demo/tree/master/godot" />
+    <Client engine="defold" name="Defold" platforms="Desktop · Web · Mobile" platformsFull="Windows, macOS, Linux, HTML5, iOS, Android"
+        play="https://colyseus.io/realtime-tanks-demo/defold/"
+        source="https://github.com/colyseus/realtime-tanks-demo/tree/master/defold" />
+    <Client engine="haxe" name="Haxe + Heaps" platforms="Desktop · Web" platformsFull="Web, Native (HL/C)"
+        play="https://colyseus.io/realtime-tanks-demo/haxe/"
+        source="https://github.com/colyseus/realtime-tanks-demo/tree/master/haxe" />
+    <Client engine="unity" name="Unity" platforms="Desktop · Web · Mobile" platformsFull="Windows, macOS, Linux, WebGL, iOS, Android"
+        play="https://colyseus.io/realtime-tanks-demo/unity/"
+        source="https://github.com/colyseus/realtime-tanks-demo/tree/master/unity" />
+    <Client engine="javascript" name="Three.js" platforms="Web" platformsFull="Web"
+        play="https://colyseus.io/realtime-tanks-demo/web-threejs/"
+        source="https://github.com/colyseus/realtime-tanks-demo/tree/master/web-threejs" />
+    <Client engine="construct3" name="Construct 3" platforms="Web" platformsFull="Web"
+        play="https://colyseus.io/realtime-tanks-demo/construct3/"
+        source="https://github.com/colyseus/realtime-tanks-demo/tree/master/construct3" />
+    <Client engine="monogame" name="MonoGame" platforms="Desktop" platformsFull="Windows, macOS, Linux"
+        source="https://github.com/colyseus/realtime-tanks-demo/tree/master/monogame" />
+</ClientList>
+
+### Turn-based "UNO" Card Game
+
+<DemoSource repo="colyseus/turnbased-cards-demo" />
+
+A four-player game of UNO — turn order, draw and discard piles, and bots to
+fill the empty seats. Six clients, one server: every row below sits at the
+*same* table.
+
+![Turn-based UNO running in the browser on React + React Three Fiber](/demos/uno/web-react.webp)
+
+<ClientList>
+    <Client engine="react" name="React + R3F" platforms="Web" platformsFull="Web"
+        source="https://github.com/colyseus/turnbased-cards-demo/tree/main/web-react" />
+    <Client engine="gamemaker" name="GameMaker" platforms="Desktop · Web" platformsFull="Windows, macOS, Linux, HTML5"
+        source="https://github.com/colyseus/turnbased-cards-demo/tree/main/gamemaker" />
+    <Client engine="godot" name="Godot" platforms="Desktop · Web · Mobile" platformsFull="Windows, macOS, Linux, HTML5, iOS, Android"
+        source="https://github.com/colyseus/turnbased-cards-demo/tree/main/godot" />
+    <Client engine="defold" name="Defold" platforms="Desktop · Web · Mobile" platformsFull="Windows, macOS, Linux, HTML5, iOS, Android"
+        source="https://github.com/colyseus/turnbased-cards-demo/tree/main/defold" />
+    <Client engine="haxe" name="Haxe + Heaps" platforms="Desktop · Web" platformsFull="Web, Native (HL/C)"
+        source="https://github.com/colyseus/turnbased-cards-demo/tree/main/haxe" />
+    <Client engine="unity" name="Unity" platforms="Desktop · Web · Mobile" platformsFull="Windows, macOS, Linux, WebGL, iOS, Android"
+        source="https://github.com/colyseus/turnbased-cards-demo/tree/main/unity" />
+</ClientList>
+
+### Prediction Playground
+
+<DemoSource repo="colyseus/prediction-playground" />
+
+A tour rather than a game: twelve small labs, each isolating one
+[netcode](/netcode) technique — reconciliation, the interpolation modes, dead
+reckoning, lag compensation, optimistic events, predicted spawns. Every lab has
+a live latency slider and shows the exact SDK-facing code it runs.
+
+{/* raw <img>: these are animated WebP, and Nextra's staticImage would hand them
+    to next/image, which can't compute a blur placeholder for an animation */}
+<img className="lab-shot" src="/demos/prediction/hero.webp" loading="lazy"
+    alt="The opening split screen: the same entity in the same room at 200 ms of injected latency — raw server echo above, client prediction below" />
+
+All twelve labs run on one shared server, so each client below is the same lab
+logic ported to a different SDK.
+
+<ClientList>
+    <Client engine="typescript" name="Web (TypeScript)" platforms="Web" platformsFull="Web"
+        source="https://github.com/colyseus/prediction-playground/tree/main/src/client" />
+    <Client engine="unity" name="Unity" platforms="Desktop · Web · Mobile" platformsFull="Windows, macOS, Linux, WebGL, iOS, Android"
+        source="https://github.com/colyseus/prediction-playground/tree/main/clients/unity-app" />
+    <Client engine="godot" name="Godot (GDScript)" platforms="Desktop · Web" platformsFull="Windows, macOS, Linux, HTML5"
+        source="https://github.com/colyseus/prediction-playground/tree/main/clients/godot-gd-app" />
+    <Client engine="godot" name="Godot (C#)" platforms="Desktop" platformsFull="Windows, macOS, Linux"
+        source="https://github.com/colyseus/prediction-playground/tree/main/clients/godot-app" />
+    <Client engine="defold" name="Defold" platforms="Desktop · Web · Mobile" platformsFull="Windows, macOS, Linux, HTML5, iOS, Android"
+        source="https://github.com/colyseus/prediction-playground/tree/main/clients/defold-app" />
+    <Client engine="gamemaker" name="GameMaker" platforms="Desktop · Web" platformsFull="Windows, macOS, Linux, HTML5"
+        source="https://github.com/colyseus/prediction-playground/tree/main/clients/gamemaker-app" />
+    <Client engine="haxe" name="Haxe + Heaps" platforms="Desktop" platformsFull="Native (HL/C)"
+        source="https://github.com/colyseus/prediction-playground/tree/main/clients/haxe-app" />
+    <Client engine="c" name="C + raylib" platforms="Desktop · Web" platformsFull="Windows, macOS, Linux, Web (Emscripten)"
+        source="https://github.com/colyseus/prediction-playground/tree/main/clients/native-app" />
+    <Client engine="flutter" name="Flutter" platforms="macOS" platformsFull="macOS"
+        source="https://github.com/colyseus/prediction-playground/tree/main/clients/flutter-app" />
+</ClientList>
+
+<div className="lab-shots">
+    <figure>
+        <img className="lab-shot" src="/demos/prediction/lab-06-lagcomp.webp" loading="lazy"
+            alt="Lab 06 — lag compensation" />
+        <figcaption><strong>06 · Lag Compensation</strong> — the server rewinds to what you saw, so aiming at a moving target lands.</figcaption>
+    </figure>
+    <figure>
+        <img className="lab-shot" src="/demos/prediction/lab-10-hockey.webp" loading="lazy"
+            alt="Lab 10 — composite world" />
+        <figcaption><strong>10 · Composite World</strong> — paddle and puck both predicted; the dashed ghost is the server trailing by one round trip.</figcaption>
+    </figure>
+</div>
 
 ## Framework Overview Talk
 
@@ -59,6 +156,6 @@ Watch Endel Dreyer's talk at JS GameDev Summit 2022, organized by [GitNation](ht
 
 <iframe width="100%" height="400" src="https://www.youtube.com/embed/KnN6nRtfL44?start=260" title="Colyseus Framework Overview - JS GameDev Summit 2022" style={{ border: 0 }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
 
-## Going further
+## Going Further
 
-Built your first room? The [Netcode section](/netcode) covers the 0.18 prediction stack — authoritative input, client-side prediction, and lag compensation — the built-in version of the techniques the tutorials above build by hand.
+Built your first room? The [Netcode section](/netcode) covers the prediction stack — authoritative input, client-side prediction, and lag compensation — the built-in version of the techniques the [tutorials](/learn/tutorial) build by hand.
