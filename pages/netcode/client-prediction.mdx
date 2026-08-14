@@ -270,10 +270,10 @@ Returns the per-room [`InputHandle`](#inputhandle-reference): the single surface
 </SDKTabs>
 
 - **`type`** — the input schema constructor. Optional when the server called `defineInput()`: the schema then arrives via the join handshake and is used automatically. An explicit constructor always wins.
-- **`mode`** — `"reliable"` (default) or `"unreliable"`. Over plain WebSocket, stay reliable. On a datagram-capable transport (WebTransport), `{ mode: "unreliable", historySize: 4 }` is the recommended rollback setup: each packet carries the last N inputs as redundancy, so a drop costs nothing and nothing head-of-line blocks.
+- **`mode`** — `"reliable"` (default) or `"unreliable"`. Over plain WebSocket, stay reliable. On a datagram-capable transport, `{ mode: "unreliable", historySize: 4 }` is the recommended rollback setup: each packet carries the last N inputs as redundancy, so a drop costs nothing and nothing head-of-line blocks. That transport is [WebTransport](/server/transport/webtransport) alone — experimental, and supported by the JavaScript/TypeScript SDK only. Other SDKs reject `"unreliable"` at construction for now.
 - **`historySize`** — unreliable-mode redundancy depth (default 3). Ignored in reliable mode.
 - **`renderDelay`** — your remote interp buffer in ms, used for the lag-comp stamp. **Usually omit it**: wiring the handle through `predict.reconciler`/`predict.sim` binds it to the Predict's lerp `delay` automatically, so the buffer you render at and the server's rewind instant come from one number.
-- **`allowRewind`** — a predicate selecting which inputs carry the lag-comp timestamp. It's a bandwidth trim: stamp only the inputs the server actually rewinds for, e.g. `(d) => d.fire`. See [Lag Compensation](/netcode/lag-compensation).
+- **`allowRewind`** — a predicate selecting which inputs carry the lag-comp timestamp. It's a bandwidth trim: stamp only the inputs the server actually rewinds for, e.g. `(d) => d.fire`. Reliable mode only: an unreliable packet stamps its whole redundancy ring or none of it, so the predicate is ignored there. See [Lag Compensation](/netcode/lag-compensation).
 
 The GDScript handle accepts no options object: `render_delay` is a property, and `input.set_rewind_field("fire")` replaces `allowRewind`.
 

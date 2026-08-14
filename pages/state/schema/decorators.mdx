@@ -154,7 +154,7 @@ See [State View](/state/view) for how `StateView` works — everything there app
 import { Schema, type, unreliable, patchOnly, fullStateOnly } from "@colyseus/schema";
 
 class Player extends Schema {
-    // tick patches ride the unreliable channel
+    // tick patches ride the unreliable channel (WebTransport only)
     @unreliable @type("number") aimYaw: number;
 
     // never in a full state sync — invisible to late joiners
@@ -167,7 +167,7 @@ class Player extends Schema {
 
 `@patchOnly` and `@fullStateOnly` are mutually exclusive — combining them throws at decoration time. Streaming collections use the type descriptor instead: `@type({ stream: Entity })`, with an optional `priority` key.
 
-The semantics, use cases and cautions are documented in the [main reference → Delivery modifiers](/state/schema#delivery-modifiers).
+The semantics, use cases and cautions are documented in the [main reference → Delivery modifiers](/state/schema#delivery-modifiers). That includes the transport requirement for `@unreliable`, which is experimental and reaches clients only over [WebTransport](/server/transport/webtransport).
 
 ## Deprecating fields
 

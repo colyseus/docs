@@ -16,6 +16,15 @@ WebTransport is a new transport protocol that allows for low-latency, bidirectio
     The underlying library is [`@fails-components/webtransport`](https://github.com/fails-components/webtransport) - a backend implementation of HTTP3/WebTransport.
 </Callout>
 
+## Unreliable delivery
+
+WebTransport is the only Colyseus transport with a real **unreliable** channel — QUIC datagrams, delivered at most once and never retransmitted. Two features depend on it, and both are experimental alongside it:
+
+- [`.unreliable()` schema fields](/state/schema#delivery-modifiers) — a value replaced every tick ships on the datagram channel. A dropped packet then costs nothing, instead of stalling the ordered stream behind a retransmit.
+- [Unreliable input](/netcode/recipes#unreliable-input-over-webtransport) — `room.input({ mode: "unreliable" })`, where each packet carries the last few inputs as redundancy against drops.
+
+Every WebSocket transport lacks that channel. `.unreliable()` fields then stop updating after the full state sync, with a warning logged once. Unreliable input falls back to the reliable channel, its redundancy wasted. Client-side WebTransport support is currently limited to the JavaScript/TypeScript SDK.
+
 ```sh npm2yarn
 npm install --save @colyseus/h3-transport
 ```

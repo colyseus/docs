@@ -152,7 +152,13 @@ Buffer outside the loop, consume inside it — draining an edge anywhere else ei
 
 ## Unreliable input over WebTransport
 
-On a datagram-capable transport, input frames don't need reliable delivery — each packet carries the last few inputs as redundancy, so a dropped datagram costs nothing and nothing head-of-line blocks:
+On a datagram-capable transport, input frames don't need reliable delivery — each packet carries the last few inputs as redundancy, so a dropped datagram costs nothing and nothing head-of-line blocks.
+
+<Callout type="warning">
+    **Experimental, and WebTransport only.** Unreliable input needs a datagram channel, which only [WebTransport](/server/transport/webtransport) provides today — itself experimental. Right now only the JavaScript/TypeScript SDK supports WebTransport, and with it unreliable input.
+
+    Other SDKs **reject** `mode: "unreliable"` at construction for now — over their WebSocket-only transports the redundancy ring would cost bandwidth for no benefit. Use `mode: "reliable"` there.
+</Callout>
 
 <SDKTabs>
 
@@ -164,19 +170,22 @@ On a datagram-capable transport, input frames don't need reliable delivery — e
 
     <Tabs.Tab>
     ```cs
-    var input = room.Input(cmd, new InputOptions { Mode = "unreliable", HistorySize = 4 });
+    // Not available yet — Room.Input() rejects mode "unreliable"
+    // (WebSocket-only transport). Use "reliable".
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
     ```lua
-    local input = room:input({ mode = "unreliable", history_size = 4 })
+    -- Not available yet — room:input() rejects mode "unreliable"
+    -- (WebSocket-only transport). Use "reliable".
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
     ```haxe
-    var input = room.input({ type: MoveInput, mode: "unreliable", historySize: 4 });
+    // Not available yet — room.input() rejects mode "unreliable"
+    // (WebSocket-only transport). Use "reliable".
     ```
     </Tabs.Tab>
 
@@ -188,13 +197,14 @@ On a datagram-capable transport, input frames don't need reliable delivery — e
 
     <Tabs.Tab>
     ```dart
-    final input = room.input(InputOptions(mode: InputMode.unreliable, historySize: 4));
+    // Not available yet — room.input() throws on InputMode.unreliable
+    // (WebSocket-only transport). Use InputMode.reliable.
     ```
     </Tabs.Tab>
 
 </SDKTabs>
 
-That's the whole migration. The framework runs its own sequence numbers and acks by seq **value**, so rollback reconciliation works unchanged — no user-side bookkeeping, no seq field on your schema. `historySize` is the redundancy depth (how many recent inputs ride along in each datagram; default 3). Over plain WebSocket stay `"reliable"` (the default): TCP already guarantees delivery, and the history would be dead weight.
+That's the whole migration. The framework runs its own sequence numbers and acks by seq **value**, so rollback reconciliation works unchanged — no user-side bookkeeping, no seq field on your schema. `historySize` is the redundancy depth (how many recent inputs ride along in each datagram; default 3).
 
 ## Predicted projectiles: `predict.spawns`
 

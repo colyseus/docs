@@ -237,12 +237,18 @@ The modifiers above answer *what* a field is. These three answer **when and how 
 `.unreliable()` combines freely with either of the other two. `.patchOnly()` and `.fullStateOnly()` are **mutually exclusive** — they name the only two delivery channels, so a field marked both would never reach a client at all; that throws at `schema()` time.
 
 <Callout type="info">
-    All three are server-side encoder concerns. Nothing changes on the client: a decoder just receives the field, or doesn't. No client-side setup is required.
+    `.patchOnly()` and `.fullStateOnly()` are server-side encoder concerns — the client needs no setup, its decoder just receives the field or doesn't. `.unreliable()` additionally depends on the transport, covered below.
 </Callout>
 
 #### `.unreliable()`
 
 Tick patches carry the field on the **unreliable transport channel** — dropped rather than retransmitted when the network is congested. For a value that is fully replaced every tick anyway, a dropped packet costs nothing: the next tick supersedes it. Retransmitting it would only add latency.
+
+<Callout type="warning">
+    **Experimental, and WebTransport only.** Unreliable delivery needs a datagram channel, which only [WebTransport](/server/transport/webtransport) provides today — and that transport is itself experimental.
+
+    On every WebSocket transport the field reaches clients once, in the full state sync, and then freezes — tick patches skip it, and the room logs a warning. Keep the field reliable until the transport is in place.
+</Callout>
 
 <Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
     <Tabs.Tab>
@@ -273,10 +279,6 @@ Tick patches carry the field on the **unreliable transport channel** — dropped
 Use it for continuously-overwritten values (look angles, interpolated positions, a cosmetic animation blend). Do **not** use it for anything a client must not miss — inventory, score, health, or any value read as a delta rather than an absolute.
 
 The field is still written to the full state sync, so a late joiner gets the current value on arrival. Combine with `.patchOnly()` to leave it out of that too.
-
-<Callout type="warning">
-    Requires a datagram-capable transport (WebTransport). Over plain WebSocket every field is delivered reliably and the modifier has no effect — it is safe to leave in your schema either way.
-</Callout>
 
 #### `.patchOnly()`
 
