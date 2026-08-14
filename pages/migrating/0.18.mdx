@@ -1,6 +1,6 @@
 ---
 title: "Migrating to 0.18"
-description: "Migration guide from Colyseus 0.17 to 0.18. Covers the @colyseus/schema 5.x upgrade, request/response messaging, built-in client-side prediction & lag compensation, the new @colyseus/database / @colyseus/admin packages, the setSimulationInterval → setTimestep rename, the setMetadata / client.id / password-hashing breaking changes, and production hardening of the playground."
+description: "Migration guide from Colyseus 0.17 to 0.18. Covers the @colyseus/schema 5.x upgrade, request/response messaging, built-in client-side prediction & lag compensation, the new @colyseus/database / @colyseus/admin packages, the setSimulationInterval → setTimestep rename, the setMetadata / client.id / password-hashing breaking changes, the 63-field Schema limit, and production hardening of the playground."
 ---
 import { Callout } from 'nextra/components'
 
@@ -11,7 +11,7 @@ import { Callout } from 'nextra/components'
 </Callout>
 
 <Callout type="warning">
-    While 0.18 is in **preview**, its packages are published under the `next` npm tag — install with `npm install colyseus@next` (or pin `^0.18.1` explicitly, as below). Once 0.18 is stable, regular installs apply.
+    While 0.18 is in **preview**, its packages are published under the `next` npm tag. Install with `npm install colyseus@next` (or pin `^0.18.1` explicitly, as below). Once 0.18 is stable, regular installs apply.
 </Callout>
 
 ## Upgrading packages
@@ -37,7 +37,7 @@ Get all the latest 0.18.x versions for the package names you already have in you
 }
 ```
 
-The `@colyseus/schema` package is now at version **5.0.x** — 0.18 requires it (reconnect resync and input schema reflection build on it):
+The `@colyseus/schema` package is now at version **5.0.x**. 0.18 requires it (reconnect resync and input schema reflection build on it):
 
 ```diff filename="package.json"
 -   "@colyseus/schema": "^4.0.8",
@@ -53,10 +53,10 @@ On the frontend, bump `@colyseus/sdk` as well:
 
 ### New packages in 0.18
 
-Two new official packages ship alongside the framework. Both are optional — install them only if you want the features they provide:
+Two new official packages ship alongside the framework. Both are optional. Install them only if you want the features they provide:
 
-- [`@colyseus/database`](/database) — the recommended persistence layer (Drizzle ORM, SQLite/PostgreSQL, user store, cloud saves, leaderboards, configs, analytics, audit log).
-- [`@colyseus/admin`](/admin) — the production operations console (CRUD over your tables, live room inspector, dashboard, RBAC). Depends on `@colyseus/database` and `@colyseus/auth`.
+- [`@colyseus/database`](/database): the recommended persistence layer (Drizzle ORM, SQLite/PostgreSQL, user store, cloud saves, leaderboards, configs, analytics, audit log).
+- [`@colyseus/admin`](/admin): the production operations console (CRUD over your tables, live room inspector, dashboard, RBAC). Depends on `@colyseus/database` and `@colyseus/auth`.
 
 ```sh npm2yarn
 npm install --save @colyseus/database @colyseus/admin
@@ -64,16 +64,16 @@ npm install --save @colyseus/database @colyseus/admin
 
 ### Client-side prediction & lag compensation
 
-0.18 adds first-class primitives for **server-authoritative simulation with client-side prediction** — zero-latency local control, smooth remote entities, and "what you see is what you hit" lag-compensated hits, without hand-rolling a netcode stack:
+0.18 adds first-class primitives for **server-authoritative simulation with client-side prediction** (zero-latency local control, smooth remote entities, and "what you see is what you hit" lag-compensated hits, without hand-rolling a netcode stack):
 
 - **Server:** `defineInput()` (per-client input + buffering), `setFixedTimestep()` (fixed-rate authoritative loop), `allowRewindState()` (lag compensation).
-- **Client:** `room.input()` (reliable or unreliable input channel), `Predict` (`reconciler` / `sim` for rollback, `attachAll` for remote smoothing, `defineEvent` for optimistic events, `spawns` for predicted projectiles), and `room.clock` (synchronized server clock — `serverNow()`, `renderNow()`, `rtt()`, `jitter()`).
+- **Client:** `room.input()` (reliable or unreliable input channel), `Predict` (`reconciler` / `sim` for rollback, `attachAll` for remote smoothing, `defineEvent` for optimistic events, `spawns` for predicted projectiles), and `room.clock` (synchronized server clock: `serverNow()`, `renderNow()`, `rtt()`, `jitter()`).
 
-These are additive — existing rooms are unaffected. See [Netcode](/netcode) for the full guide.
+These are additive. Existing rooms are unaffected. See [Netcode](/netcode) for the full guide.
 
 ### Request/response messaging
 
-Clients can now `await` a reply from a message handler — no more hand-rolled ping/pong message pairs:
+Clients can now `await` a reply from a message handler. No more hand-rolled ping/pong message pairs:
 
 ```ts filename="client.ts"
 const profile = await room.request("get-profile", { userId: 42 });
@@ -94,7 +94,7 @@ messages = {
 }
 ```
 
-This is additive — existing two-argument handlers are unaffected. See [Room → Responding to a message](/room#responding-to-a-message-requestresponse) and [SDK → Request/Response](/sdk/messages#requestresponse).
+This is additive. Existing two-argument handlers are unaffected. See [Room → Responding to a message](/room#responding-to-a-message-requestresponse) and [SDK → Request/Response](/sdk/messages#requestresponse).
 
 ### `setSimulationInterval()` → `setTimestep()`
 
@@ -108,9 +108,9 @@ this.setSimulationInterval((deltaTime) => this.update(deltaTime));
 this.setTimestep((deltaTime) => this.update(deltaTime));
 ```
 
-For client-predicted games, use the new fixed-step loop `setFixedTimestep(step, tickRate)` instead — see [Server Input & Fixed Timestep](/netcode/server-input).
+For client-predicted games, use the new fixed-step loop `setFixedTimestep(step, tickRate)` instead. See [Server Input & Fixed Timestep](/netcode/server-input).
 
-`@colyseus/testing` follows the same rename in 0.18.2 — `room.waitForNextSimulationTick()` became [`room.waitForNextTimestep()`](/tools/unit-testing#wait-for-next-timestep), with the old name kept as a forwarding alias:
+`@colyseus/testing` follows the same rename in 0.18.2: `room.waitForNextSimulationTick()` became [`room.waitForNextTimestep()`](/tools/unit-testing#wait-for-next-timestep), with the old name kept as a forwarding alias:
 
 ```ts
 // ✅ still works (deprecated alias)
@@ -122,17 +122,30 @@ await room.waitForNextTimestep();
 
 ## Breaking Changes
 
+### A `Schema` now holds at most 63 fields
+
+0.17 allowed 64 fields, but the last slot was already unsafe. An operation on the field at index 63 could encode as the byte that starts a new structure. The client then misread the rest of the patch, and the state desynchronized.
+
+0.18 rejects the 64th field where the class is defined, so the problem surfaces at startup instead of in production:
+
+```
+Can't define field 'lastOne'.
+Schema instances may only have up to 63 fields.
+```
+
+Move the extra fields onto a nested child `Schema`. Inherited fields count toward the limit, so check the parent class too. See [State → Schema](/state/schema).
+
 ### `Room#setMetadata()` now replaces instead of merging
 
-In 0.17, `room.setMetadata({ ... })` (and `room.setMatchmaking({ metadata: { ... } })`) would shallow-merge the provided fields into the existing metadata. In 0.18 these calls **replace** metadata wholesale — matching the behaviour of the `this.metadata = ...` setter and the rest of `setMatchmaking()`.
+In 0.17, `room.setMetadata({ ... })` (and `room.setMatchmaking({ metadata: { ... } })`) would shallow-merge the provided fields into the existing metadata. In 0.18 these calls **replace** metadata wholesale, matching the behaviour of the `this.metadata = ...` setter and the rest of `setMatchmaking()`.
 
 To preserve the previous merging behaviour, spread `this.metadata` yourself at the call site:
 
 ```ts
-// ❌ 0.17 — partial update, other fields were preserved
+// ❌ 0.17: partial update, other fields were preserved
 await this.setMetadata({ status: "in_progress" });
 
-// ✅ 0.18 — spread existing fields explicitly to merge
+// ✅ 0.18: spread existing fields explicitly to merge
 await this.setMetadata({ ...this.metadata, status: "in_progress" });
 
 // Same applies to setMatchmaking()
@@ -145,7 +158,7 @@ The type of the `meta` parameter changed from `Partial<Metadata>` to the full `M
 
 ### `client.id` was removed
 
-The `Client#id` property — deprecated for several versions — is gone. Use `sessionId`:
+The `Client#id` property, deprecated for several versions, is gone. Use `sessionId`:
 
 ```diff
 -   console.log(client.id);
@@ -158,7 +171,7 @@ The legacy fossil-delta state serializer (deprecated since schema-based serializ
 
 ### Playground is locked down in production
 
-`@colyseus/playground`'s data endpoints (room listing/inspection, API schemas, CPU profiles) now return **404 on production mounts** (`NODE_ENV=production`, outside devMode) unless you pass a guard middleware through the `use` option — the guard is the opt-in. If you exposed the playground in production before, add one; see [Playground → Password protection](/tools/playground#password-protection).
+`@colyseus/playground`'s data endpoints (room listing/inspection, API schemas, CPU profiles) now return **404 on production mounts** (`NODE_ENV=production`, outside devMode) unless you pass a guard middleware through the `use` option. The guard is the opt-in. If you exposed the playground in production before, add one; see [Playground → Password protection](/tools/playground#password-protection).
 
 ### `@colyseus/auth`: password hashing changed
 
@@ -172,7 +185,7 @@ The legacy fossil-delta state serializer (deprecated since schema-based serializ
 
 2. **Notify your email/password users and force a password reset.** Two ways:
     - **Email everyone a reset link** through the standard [forgot-password flow](/auth/module#send-password-reset-email). When the user submits a new password, the 0.18 default hasher writes a fresh hash with its own salt.
-    - **Invalidate sessions to force the reset on next login** — call `db.auth.bumpTokenVersion(userId)` (or your own equivalent if you're not using `@colyseus/database`) so existing JWTs are rejected and the user is sent through the login → reset flow.
+    - **Invalidate sessions to force the reset on next login**: call `db.auth.bumpTokenVersion(userId)` (or your own equivalent if you're not using `@colyseus/database`) so existing JWTs are rejected and the user is sent through the login → reset flow.
 
 3. **After every user has reset their password, remove `AUTH_SALT`** from your environment. New deployments and post-reset users don't need it; the legacy hasher has no remaining hashes to verify.
 
