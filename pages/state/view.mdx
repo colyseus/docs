@@ -242,7 +242,7 @@ import { StateView } from "@colyseus/schema";
 
 `view.subscribe(collection)` makes it standing. The view receives **all future content changes** of that collection, with no further bookkeeping:
 
-```ts {8} filename="MyRoom.ts"
+```ts {7} filename="MyRoom.ts"
 import { StateView } from "@colyseus/schema";
 // ...
     onJoin(client, options) {
@@ -254,12 +254,21 @@ import { StateView } from "@colyseus/schema";
 // ...
 ```
 
-Subscribing brings in the collection's current contents as well as future ones, so it replaces the initial `view.add(collection)` rather than supplementing it. It is idempotent — subscribing to an already-subscribed collection is a no-op.
+Subscribing brings in the collection's current contents as well as future ones, so it replaces the initial `view.add(collection)` rather than supplementing it. The call is idempotent — subscribing to an already-subscribed collection is a no-op.
 
 How new elements are delivered depends on the collection kind:
 
 - **`ArraySchema` / `MapSchema` / `SetSchema` / `CollectionSchema`** — new children are shipped immediately, as they're added.
 - **[Streamed](/state/streaming) collections** (`t.stream(X)`, or any collection with `.stream()`) — new elements enter the view's pending queue and drain a bounded number per tick, in priority order.
+
+On a streamed collection, a second argument orders that client's backlog. The callback receives the candidate element, so it can close over whatever this client sorts by:
+
+```ts filename="MyRoom.ts"
+client.view.subscribe(this.state.enemies, (enemy) =>
+    -((enemy.x - player.x) ** 2 + (enemy.y - player.y) ** 2));   // nearest first
+```
+
+Subscribing again with a new callback replaces it; `null` drops it. See [Priority](/state/streaming#per-client) for the full picture.
 
 <Callout type="info">
     Subscribing is per-view. If several clients share one `StateView` instance, one `subscribe()` call covers all of them.
