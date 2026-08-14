@@ -1,6 +1,6 @@
 ---
 title: "State View"
-description: "StateView gives each Colyseus client a filtered view of the room state — per-player visibility without sending the full state to everyone."
+description: "StateView gives each Colyseus client a filtered view of the room state: per-player visibility without sending the full state to everyone."
 ---
 import { Callout, Tabs } from 'nextra/components'
 
@@ -238,7 +238,7 @@ import { StateView } from "@colyseus/schema";
 
 ## Subscribing to a collection
 
-`view.add(instance)` is a **one-shot**: it grants visibility of that instance, and nothing else. For a collection that keeps gaining elements, that means calling `.add()` again for every new one — and forgetting a call silently leaves that client behind.
+`view.add(instance)` is a **one-shot**: it grants visibility of that instance, and nothing else. For a collection that keeps gaining elements, that means calling `.add()` again for every new one. Forgetting a call silently leaves that client behind.
 
 `view.subscribe(collection)` makes it standing. The view receives **all future content changes** of that collection, with no further bookkeeping:
 
@@ -254,12 +254,12 @@ import { StateView } from "@colyseus/schema";
 // ...
 ```
 
-Subscribing brings in the collection's current contents as well as future ones, so it replaces the initial `view.add(collection)` rather than supplementing it. The call is idempotent — subscribing to an already-subscribed collection is a no-op.
+Subscribing brings in the collection's current contents as well as future ones, so it replaces the initial `view.add(collection)` rather than supplementing it. The call is idempotent. Subscribing to an already-subscribed collection is a no-op.
 
 How new elements are delivered depends on the collection kind:
 
-- **`ArraySchema` / `MapSchema` / `SetSchema` / `CollectionSchema`** — new children are shipped immediately, as they're added.
-- **[Streamed](/state/streaming) collections** (`t.stream(X)`, or any collection with `.stream()`) — new elements enter the view's pending queue and drain a bounded number per tick, in priority order.
+- **`ArraySchema` / `MapSchema` / `SetSchema` / `CollectionSchema`**: new children are shipped immediately, as they're added.
+- **[Streamed](/state/streaming) collections** (`t.stream(X)`, or any collection with `.stream()`): new elements enter the view's pending queue and drain a bounded number per tick, in priority order.
 
 On a streamed collection, a second argument orders that client's backlog. The callback receives the candidate element, so it can close over whatever this client sorts by:
 
