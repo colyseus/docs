@@ -18,11 +18,11 @@ import { MovedAnchors } from '../../components/moved-anchors'
 }} />
 
 - Schema structures are defined on the backend and describe data that is continuously synchronized between server and client.
-- A field is synchronized when it is **declared** — with a `t.*` builder, or with a [`@type()` decorator](/state/schema/decorators). Plain class properties are invisible to the serializer.
+- A field is synchronized when it is **declared**: with a `t.*` builder, or with a [`@type()` decorator](/state/schema/decorators). Plain class properties are invisible to the serializer.
 - A declared field can opt out with [`.noSync()`](#field-modifiers), and *how* it reaches clients is tunable with [delivery modifiers](#delivery-modifiers).
 
 <Callout type="warning">
-    `Schema` is for the two things that synchronize continuously: your room's **state**, and the **[input](/netcode/server-input)** clients send back. Don't reach for it elsewhere — [room messages](/room/messages) and other one-off payloads have their own serialization and don't need a schema.
+    `Schema` is for the two things that synchronize continuously: your room's **state**, and the **[input](/netcode/server-input)** clients send back. Don't reach for it elsewhere. [Room messages](/room/messages) and other one-off payloads have their own serialization and don't need a schema.
 </Callout>
 
 <Callout type="info">
@@ -42,9 +42,9 @@ import { MovedAnchors } from '../../components/moved-anchors'
     }, "MyState");
     ```
 
-    `schema()` returns a real class — `instanceof` works, and you instantiate it with `new`. It runs in plain JavaScript and TypeScript alike, with no compiler configuration.
+    `schema()` returns a real class: `instanceof` works, and you instantiate it with `new`. It runs in plain JavaScript and TypeScript alike, with no compiler configuration.
 
-    Each field takes a `t.*` builder — since schema 5 (Colyseus 0.18), raw strings like `"string"` as field values are no longer accepted and throw at definition time. (They remain valid as [collection](#array-arrayschema) child types, e.g. `t.array("string")`.)
+    Each field takes a `t.*` builder. Since schema 5 (Colyseus 0.18), raw strings like `"string"` as field values are no longer accepted and throw at definition time. (They remain valid as [collection](#array-arrayschema) child types, e.g. `t.array("string")`.)
     </Tabs.Tab>
 
     <Tabs.Tab>
@@ -57,20 +57,20 @@ import { MovedAnchors } from '../../components/moved-anchors'
     }
     ```
 
-    The decorator style requires two `tsconfig.json` flags — see [Decorators → TypeScript Config](/state/schema/decorators#typescript-config).
+    The decorator style requires two `tsconfig.json` flags. See [Decorators → TypeScript Config](/state/schema/decorators#typescript-config).
     </Tabs.Tab>
 </Tabs>
 
 Assign an instance to your room's `state` property to start synchronizing it. [State Synchronization](/state#overview) walks through the full loop, from definition to client callbacks.
 
-The sections below cover each aspect of a schema definition, in both styles — the tabs remember your choice across pages.
+The sections below cover each aspect of a schema definition, in both styles. The tabs remember your choice across pages.
 
 ### Deriving the TypeScript type
 
 <Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
     <Tabs.Tab>
 
-    `schema()` returns a value, not a type. To reference the instance type in TypeScript — `Room<MyState>`, function parameters, etc. — declare a type alias with the same name using `SchemaType`:
+    `schema()` returns a value, not a type. To reference the instance type in TypeScript (`Room<MyState>`, function parameters, etc.), declare a type alias with the same name using `SchemaType`:
 
     ```ts filename="MyState.ts"
     import { schema, t, type SchemaType } from "@colyseus/schema";
@@ -82,12 +82,12 @@ The sections below cover each aspect of a schema definition, in both styles — 
     export type Player = SchemaType<typeof Player>;
     ```
 
-    The `const` and the `type` merge under one name, so `Player` works as both — `new Player()` and `function move(player: Player)`. Plain JavaScript users omit the `type` line.
+    The `const` and the `type` merge under one name, so `Player` works as both: `new Player()` and `function move(player: Player)`. Plain JavaScript users omit the `type` line.
     </Tabs.Tab>
 
     <Tabs.Tab>
 
-    A decorator class is already its own type — no alias needed:
+    A decorator class is already its own type (no alias needed):
 
     ```ts filename="MyState.ts"
     import { Schema, type } from "@colyseus/schema";
@@ -109,7 +109,7 @@ The serializer identifies each structure by its runtime class name. An anonymous
 <Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
     <Tabs.Tab>
 
-    The second argument of `schema()` sets the runtime class name — pass it for every state structure:
+    The second argument of `schema()` sets the runtime class name. Pass it for every state structure:
 
     ```ts
     const Player = schema({ /* ... */ }, "Player");
@@ -131,7 +131,7 @@ The serializer identifies each structure by its runtime class name. An anonymous
 <Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
     <Tabs.Tab>
 
-    Chain `.default(value)` to set a field's initial value. Passing a **function** makes it a factory, invoked once per construction — use it for any mutable default that must not be shared across instances:
+    Chain `.default(value)` to set a field's initial value. Passing a **function** makes it a factory, invoked once per construction. Use it for any mutable default that must not be shared across instances:
 
     ```ts
     const Player = schema({
@@ -182,8 +182,8 @@ The serializer identifies each structure by its runtime class name. An anonymous
     ```
 
     - Without an `initialize()`, the constructor already accepts a partial props object: `new Player({ hp: 50 })`.
-    - With an `initialize()`, its parameter becomes the constructor signature — a required parameter makes `new Player()` a type error, and assigning the schema fields from `props` is `initialize()`'s job.
-    - `initialize()` runs only for the exact class being constructed — when extending, invoke the parent's explicitly with `Parent.prototype.initialize.call(this, props)`.
+    - With an `initialize()`, its parameter becomes the constructor signature: a required parameter makes `new Player()` a type error, and assigning the schema fields from `props` is `initialize()`'s job.
+    - `initialize()` runs only for the exact class being constructed. When extending, invoke the parent's explicitly with `Parent.prototype.initialize.call(this, props)`.
     </Tabs.Tab>
 
     <Tabs.Tab>
@@ -210,7 +210,7 @@ The serializer identifies each structure by its runtime class name. An anonymous
     ```
 
     - Without a custom constructor, the base `Schema` constructor already accepts a partial props object: `new Player({ hp: 50 })`.
-    - A custom constructor must call `super()` first — bare `super()` and assign fields yourself, or `super(props)` to keep the automatic property assignment.
+    - A custom constructor must call `super()` first: bare `super()` and assign fields yourself, or `super(props)` to keep the automatic property assignment.
     </Tabs.Tab>
 </Tabs>
 
@@ -222,32 +222,32 @@ Every `t.*` builder accepts chainable modifiers. Most have a decorator equivalen
 |----------|--------|---------------------|
 | `.default(value \| factory)` | Initial value; function form builds a fresh value per instance | property initializer |
 | `.view(tag?)` | Field visible only through a client's [StateView](/state/view) | `@view(tag?)` |
-| `.deprecated(throws?)` | Retire a field while keeping encoding order — see [Versioning](#versioning-and-backwardsforwards-compatibility) | `@deprecated()` |
+| `.deprecated(throws?)` | Retire a field while keeping encoding order (see [Versioning](#versioning-and-backwardsforwards-compatibility)) | `@deprecated()` |
 | `.optional()` | Type becomes `T \| undefined`; skips auto-instantiation | — |
 | `.noSync()` | Local-only field: typed and initialized, but never synchronized | — |
-| `.unreliable()` | Tick patches carry the field on the unreliable channel — see [Delivery modifiers](#delivery-modifiers) | `@unreliable` |
-| `.patchOnly()` | Sent on tick patches only, never in a full state sync — see [Delivery modifiers](#delivery-modifiers) | `@patchOnly` |
-| `.fullStateOnly()` | Sent in the full state sync only, never in a tick patch — see [Delivery modifiers](#delivery-modifiers) | `@fullStateOnly` |
-| `.stream()` | Drip-feed a collection's additions across ticks — see [Streaming](/state/streaming) | `@type({ stream: X })` |
+| `.unreliable()` | Tick patches carry the field on the unreliable channel (see [Delivery modifiers](#delivery-modifiers)) | `@unreliable` |
+| `.patchOnly()` | Sent on tick patches only, never in a full state sync (see [Delivery modifiers](#delivery-modifiers)) | `@patchOnly` |
+| `.fullStateOnly()` | Sent in the full state sync only, never in a tick patch (see [Delivery modifiers](#delivery-modifiers)) | `@fullStateOnly` |
+| `.stream()` | Drip-feed a collection's additions across ticks (see [Streaming](/state/streaming)) | `@type({ stream: X })` |
 
 ### Delivery modifiers
 
-The modifiers above answer *what* a field is. These three answer **when and how it reaches a client** — the value and its type are unaffected, only its delivery.
+The modifiers above answer *what* a field is. These three answer **when and how it reaches a client**. The value and its type are unaffected, only its delivery.
 
-`.unreliable()` combines freely with either of the other two. `.patchOnly()` and `.fullStateOnly()` are **mutually exclusive** — they name the only two delivery channels, so a field marked both would never reach a client at all; that throws at `schema()` time.
+`.unreliable()` combines freely with either of the other two. `.patchOnly()` and `.fullStateOnly()` are **mutually exclusive**. They name the only two delivery channels, so a field marked both would never reach a client at all; that throws at `schema()` time.
 
 <Callout type="info">
-    `.patchOnly()` and `.fullStateOnly()` are server-side encoder concerns — the client needs no setup, its decoder just receives the field or doesn't. `.unreliable()` additionally depends on the transport, covered below.
+    `.patchOnly()` and `.fullStateOnly()` are server-side encoder concerns: the client needs no setup, its decoder just receives the field or doesn't. `.unreliable()` additionally depends on the transport, covered below.
 </Callout>
 
 #### `.unreliable()`
 
-Tick patches carry the field on the **unreliable transport channel** — dropped rather than retransmitted when the network is congested. For a value that is fully replaced every tick anyway, a dropped packet costs nothing: the next tick supersedes it. Retransmitting it would only add latency.
+Tick patches carry the field on the **unreliable transport channel**, dropped rather than retransmitted when the network is congested. For a value that is fully replaced every tick anyway, a dropped packet costs nothing: the next tick supersedes it. Retransmitting it would only add latency.
 
 <Callout type="warning">
-    **Experimental, and WebTransport only.** Unreliable delivery needs a datagram channel, which only [WebTransport](/server/transport/webtransport) provides today — and that transport is itself experimental.
+    **Experimental, and WebTransport only.** Unreliable delivery needs a datagram channel, which only [WebTransport](/server/transport/webtransport) provides today, and that transport is itself experimental.
 
-    On every WebSocket transport the field reaches clients once, in the full state sync, and then freezes — tick patches skip it, and the room logs a warning. Keep the field reliable until the transport is in place.
+    On every WebSocket transport the field reaches clients once, in the full state sync, and then freezes. Tick patches skip it, and the room logs a warning. Keep the field reliable until the transport is in place.
 </Callout>
 
 <Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
@@ -255,7 +255,7 @@ Tick patches carry the field on the **unreliable transport channel** — dropped
 
     ```ts
     const Player = schema({
-        x:    t.number(),                  // reliable — every change must land
+        x:    t.number(),                  // reliable: every change must land
         y:    t.number(),
         aimYaw: t.angle().unreliable(),    // replaced every tick; a drop is free
     }, "Player");
@@ -266,23 +266,23 @@ Tick patches carry the field on the **unreliable transport channel** — dropped
 
     ```ts
     class Player extends Schema {
-        @type("number") x: number;                  // reliable — every change must land
+        @type("number") x: number;                  // reliable: every change must land
         @type("number") y: number;
         @unreliable @type("number") aimYaw: number; // replaced every tick; a drop is free
     }
     ```
 
-    (`t.angle()` quantization is builder-only — the decorator field stays a plain `number`.)
+    (`t.angle()` quantization is builder-only: the decorator field stays a plain `number`.)
     </Tabs.Tab>
 </Tabs>
 
-Use it for continuously-overwritten values (look angles, interpolated positions, a cosmetic animation blend). Do **not** use it for anything a client must not miss — inventory, score, health, or any value read as a delta rather than an absolute.
+Use it for continuously-overwritten values (look angles, interpolated positions, a cosmetic animation blend). Do **not** use it for anything a client must not miss: inventory, score, health, or any value read as a delta rather than an absolute.
 
 The field is still written to the full state sync, so a late joiner gets the current value on arrival. Combine with `.patchOnly()` to leave it out of that too.
 
 #### `.patchOnly()`
 
-The field travels on **tick patches only**. It is never written to a full state sync, so a client that joins mid-game does not receive it at all — the field appears only when it next changes:
+The field travels on **tick patches only**. It is never written to a full state sync, so a client that joins mid-game does not receive it at all. The field appears only when it next changes:
 
 <Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
     <Tabs.Tab>
@@ -308,7 +308,7 @@ The field travels on **tick patches only**. It is never written to a full state 
     </Tabs.Tab>
 </Tabs>
 
-Use it for values that are only meaningful *as they happen* — a hit flash, a one-frame impulse, a "last damage taken" readout. Sending them in a full state sync would show a late joiner an event that already finished.
+Use it for values that are only meaningful *as they happen*: a hit flash, a one-frame impulse, a "last damage taken" readout. Sending them in a full state sync would show a late joiner an event that already finished.
 
 Orthogonal to `.unreliable()`: `.patchOnly()` controls whether the field is included in a full state sync, `.unreliable()` controls which channel patches use. A field marked both is skipped in full syncs *and* sent unreliably in patches.
 
@@ -316,7 +316,7 @@ Orthogonal to `.unreliable()`: `.patchOnly()` controls whether the field is incl
 
 For **map and room-wide data** that every client needs once: the level layout, the tile grid, spawn points, the match configuration. Data that is decided when the room is created and then simply *is*.
 
-The field ships in the **full state sync only** — a client receives it on join, and never again.
+The field ships in the **full state sync only**: a client receives it on join, and never again.
 
 <Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
     <Tabs.Tab>
@@ -352,7 +352,7 @@ The field ships in the **full state sync only** — a client receives it on join
     </Tabs.Tab>
 </Tabs>
 
-Room-wide data like this tends to be **large and constant** — exactly the combination you don't want anywhere near a per-tick patch. The modifier is a guarantee rather than an optimization you have to keep verifying: the field cannot end up in a patch, however the surrounding code evolves.
+Room-wide data like this tends to be **large and constant**, exactly the combination you don't want anywhere near a per-tick patch. The modifier is a guarantee rather than an optimization you have to keep verifying: the field cannot end up in a patch, however the surrounding code evolves.
 
 That makes it the exact mirror of `.patchOnly()`:
 
@@ -363,10 +363,10 @@ That makes it the exact mirror of `.patchOnly()`:
 | `.fullStateOnly()` | ✅ | ❌ |
 
 <Callout type="warning">
-    Writes after a client has joined are **silently dropped** — no error, and that client keeps the value it joined with. Populate these fields during `onCreate()`, before anyone is connected. If clients need to see a field change while they're connected, it can't be `.fullStateOnly()`.
+    Writes after a client has joined are **silently dropped**: no error, and that client keeps the value it joined with. Populate these fields during `onCreate()`, before anyone is connected. If clients need to see a field change while they're connected, it can't be `.fullStateOnly()`.
 </Callout>
 
-The field itself is not frozen — it stays an ordinary, mutable property on the server. Only its propagation to clients stops. On a [streamed](/state/streaming) field the same rule applies per *element*: a client receives each element as it was when sent, and no later update to it.
+The field itself is not frozen. It stays an ordinary, mutable property on the server. Only its propagation to clients stops. On a [streamed](/state/streaming) field the same rule applies per *element*: a client receives each element as it was when sent, and no later update to it.
 
 ## Data Types
 
@@ -381,7 +381,7 @@ The field itself is not frozen — it stays an ordinary, mutable property on the
 
 ### Primitive types
 
-Each primitive type is declared through its `t.*` factory — or, in decorator style, by its quoted name:
+Each primitive type is declared through its `t.*` factory (or, in decorator style, by its quoted name):
 
 <Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
     <Tabs.Tab>
@@ -450,7 +450,7 @@ Specialized number types:
 
 #### Quantized floats (`t.quantized()` / `t.angle()`)
 
-A float that changes every tick within a **known range** — a look angle, a normalized scalar, a unit-vector component — doesn't need all 4 bytes of a `float32`. `t.quantized()` maps the range onto an 8-, 16- or 32-bit unsigned integer on the wire, at a precision you choose:
+A float that changes every tick within a **known range** (a look angle, a normalized scalar, a unit-vector component) doesn't need all 4 bytes of a `float32`. `t.quantized()` maps the range onto an 8-, 16- or 32-bit unsigned integer on the wire, at a precision you choose:
 
 ```ts
 const Input = schema({
@@ -463,33 +463,33 @@ const Input = schema({
 Your code reads and writes a plain `number`. The conversion is invisible.
 
 <Callout type="info">
-    `t.quantized()` and `t.angle()` are **builder-only** — there is no decorator equivalent.
+    `t.quantized()` and `t.angle()` are **builder-only**: there is no decorator equivalent.
 </Callout>
 
 | Option | Default | Meaning |
 |--------|---------|---------|
 | `min` | *(required)* | Inclusive lower bound of the value domain |
-| `max` | *(required)* | Upper bound — inclusive when clamping, exclusive when wrapping |
+| `max` | *(required)* | Upper bound: inclusive when clamping, exclusive when wrapping |
 | `bits` | `16` | Wire width: `8`, `16` or `32`. Schema fields are byte-aligned, so only these three change the size |
-| `mode` | `"clamp"` | `"clamp"` or `"wrap"` — see below |
+| `mode` | `"clamp"` | `"clamp"` or `"wrap"` (see below) |
 
 **Picking `mode`** is the only real decision, and the wire size is identical either way:
 
-- **`"clamp"`** — the value has **hard walls**. A pitch limit, a health bar, a 0–1 throttle. Both endpoints are exact and distinct; out-of-range input clamps to the nearest end. Looking past the pitch limit stops *at* the limit.
-- **`"wrap"`** — the value is **cyclic**: `min` and `max` are the same point. An angle, a compass bearing, a hue, a phase. Any input is reduced modulo the range first, so a large accumulated or negative angle folds back in — a yaw keeps spinning instead of jamming.
+- **`"clamp"`**: the value has **hard walls**. A pitch limit, a health bar, a 0–1 throttle. Both endpoints are exact and distinct; out-of-range input clamps to the nearest end. Looking past the pitch limit stops *at* the limit.
+- **`"wrap"`**: the value is **cyclic**: `min` and `max` are the same point. An angle, a compass bearing, a hue, a phase. Any input is reduced modulo the range first, so a large accumulated or negative angle folds back in. A yaw keeps spinning instead of jamming.
 
 > Ask: does one step past the top land you back at the bottom, as the same physical thing? → `"wrap"`. Is the top a wall you can't cross? → `"clamp"`.
 
-`t.angle(opts?)` is sugar for a full-circle wrapping angle in radians — `t.quantized({ min: 0, max: 2π, mode: "wrap", bits: opts?.bits ?? 16 })`. At the 16-bit default that's ~0.0055° per step, finer than any mouse can resolve, in 2 bytes.
+`t.angle(opts?)` is sugar for a full-circle wrapping angle in radians: `t.quantized({ min: 0, max: 2π, mode: "wrap", bits: opts?.bits ?? 16 })`. At the 16-bit default that's ~0.0055° per step, finer than any mouse can resolve, in 2 bytes.
 
 <Callout type="warning">
     **Choosing the wrong mode is a real bug.** A clamped heading jams at the `0`/`2π` seam. A wrapped pitch flips the camera the instant you look a hair too far up.
 </Callout>
 
 <Callout type="info">
-    **Quantization is lossy — but identically lossy on both peers.** The field only ever yields the dequantized value, so a client's prediction and the server's simulation read the *same* number and a predicted hitscan ray matches the server's. The loss is against the original float, never between the two peers.
+    **Quantization is lossy, but identically lossy on both peers.** The field only ever yields the dequantized value, so a client's prediction and the server's simulation read the *same* number and a predicted hitscan ray matches the server's. The loss is against the original float, never between the two peers.
 
-    For a cyclic field that you also *interpolate* on the client, `"wrap"` fixes the wire seam, not the rendering — lerp it shortest-arc as well, or it unwinds the long way around.
+    For a cyclic field that you also *interpolate* on the client, `"wrap"` fixes the wire seam, not the rendering. Lerp it shortest-arc as well, or it unwinds the long way around.
 </Callout>
 
 ### `Schema` type
@@ -513,7 +513,7 @@ A `Schema` type can define properties as primitives, other `Schema` types, or co
     }, "MyState");
     ```
 
-    The `world` field is auto-instantiated — `new MyState().world` is already a `World` instance. Use `t.ref(World)` instead of the bare class when you need to chain [field modifiers](#field-modifiers).
+    The `world` field is auto-instantiated: `new MyState().world` is already a `World` instance. Use `t.ref(World)` instead of the bare class when you need to chain [field modifiers](#field-modifiers).
     </Tabs.Tab>
 
     <Tabs.Tab>
@@ -535,7 +535,7 @@ A `Schema` type can define properties as primitives, other `Schema` types, or co
 </Tabs>
 
 <Callout type="info">
-    A `Schema` type may hold up to 64 synchronizable properties.
+    A `Schema` type may hold up to 63 synchronizable properties. Nest a child `Schema` to go beyond that.
 </Callout>
 
 ### Array (`ArraySchema`)
@@ -558,7 +558,7 @@ You can't mix types inside `ArraySchema`.
             }, "MyState");
             ```
 
-            At runtime the field is an `ArraySchema` instance — `state.animals.push("cat")` works right away.
+            At runtime the field is an `ArraySchema` instance: `state.animals.push("cat")` works right away.
             </Tabs.Tab>
 
             <Tabs.Tab>
@@ -1171,7 +1171,7 @@ Empties the Collection. (Frontend will trigger `onRemove` for each element.)
 
 ### Versioning and backwards/forwards compatibility
 
-Backwards/forwards compatibility is possible by declaring new fields at the end of existing structures. Earlier declarations must not be removed — mark them `.deprecated()` instead. See a versioning example below.
+Backwards/forwards compatibility is possible by declaring new fields at the end of existing structures. Earlier declarations must not be removed. Mark them `.deprecated()` instead. See a versioning example below.
 
 
 <Tabs items={["Live version 1", "Live version 2", "Live version 3"]}>
@@ -1220,7 +1220,7 @@ Backwards/forwards compatibility is possible by declaring new fields at the end 
     </Tabs.Tab>
 </Tabs>
 
-Accessing a `.deprecated()` field throws an error; use `.deprecated(false)` to keep reads allowed while the field is retired. (Decorator style: `@deprecated() @type(...)` — see [Deprecating fields](/state/schema/decorators#deprecating-fields).)
+Accessing a `.deprecated()` field throws an error; use `.deprecated(false)` to keep reads allowed while the field is retired. (Decorator style: `@deprecated() @type(...)`. See [Deprecating fields](/state/schema/decorators#deprecating-fields).)
 
 This is particularly useful for native-compiled targets, such as C#, C++, Haxe, etc - where the frontend can potentially not have the most up-to-date version of the schema definitions.
 
@@ -1252,7 +1252,7 @@ The following example is supported:
     inventory.items.set("right", new Shield());
     ```
 
-    `.extend()` builds a real prototype chain (`new Weapon() instanceof Item` holds), inheriting fields, methods and defaults. Extended classes are registered with the serializer automatically — no extra registration step.
+    `.extend()` builds a real prototype chain (`new Weapon() instanceof Item` holds), inheriting fields, methods and defaults. Extended classes are registered with the serializer automatically: no extra registration step.
     </Tabs.Tab>
 
     <Tabs.Tab>

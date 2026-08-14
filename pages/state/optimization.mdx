@@ -1,0 +1,181 @@
+---
+title: "Optimizing State"
+description: "What a Colyseus state patch costs in bytes, and the levers that make it smaller: field types, quantization, schema shape, collection operations, and change-tracking control."
+---
+import { Callout } from 'nextra/components'
+
+# Optimizing State
+
+State synchronization is already delta-encoded. Only the properties that changed since the last patch are sent, and a property re-assigned to the same value is not sent at all. Most rooms never need to think past that.
+
+This page is for the rooms that do: many entities, a high tick rate, or a bandwidth bill. It documents what a patch actually costs, so you can reason about your own state instead of guessing.
+
+<Callout type="info">
+    The wire format did not change in `@colyseus/schema` 5.0. The encoder became roughly 2.4× faster and allocates about half the heap, but the bytes are identical to 4.x. What 5.0 added is *control*: [delivery modifiers](/state/schema#delivery-modifiers), [quantized floats](/state/schema#quantized-floats-tquantized--tangle), and [streaming collections](/state/streaming).
+</Callout>
+
+## What a patch costs
+
+Every patch is built from these costs:
+
+| Unit | Cost | Notes |
+|------|------|-------|
+| Each instance that changed this tick | 1 byte, plus its `refId` | The `refId` is 1 byte below 128, then 2, then 3 |
+| Each changed `Schema` field | **1 byte**, plus the value | The operation and the field index share one byte |
+| Each changed collection entry | 1 byte, plus an index of 1 to 3 bytes, plus the value | No packing: the index is separate |
+| A `MapSchema` insertion | The above, plus the UTF-8 key | Only on insert. Later updates to that entry omit the key |
+
+A `Schema` field is the cheapest slot Colyseus has. One byte carries both "what happened" and "which field", for every field from the first to the sixty-fourth.
+
+### A worked example
+
+Sixty entities in a `t.map(Entity)`, each with an `x`, a `y` and a hit-point value. All of them move every tick, so only `x` and `y` change.
+
+Per entity, per tick: 1 byte to switch to the instance, then 1 byte for its `refId`. Each of `x` and `y` then costs one field header plus its value. Only the declared type differs between the rows:
+
+| Declaration | Value bytes each | Per entity | 60 entities, 20 ticks per second |
+|---|---|---|---|
+| `t.number()` | 5 | 14 B | 16.4 KB/s |
+| `t.float32()` | 4 | 12 B | 14.1 KB/s |
+| `t.quantized({ min: 0, max: 1024 })` | 2 | 8 B | 9.4 KB/s |
+
+The declaration is the only thing that changed. Your game code still reads and writes a plain `number` in all three rows.
+
+<Callout type="info">
+    **Instances that did not change cost nothing.** The encoder walks a list of instances with recorded changes and skips the rest. A parent whose own fields were untouched contributes zero bytes, even when its children changed.
+
+    Re-assigning a field to the value it already holds also costs nothing. The setter compares first and returns early.
+</Callout>
+
+## Choosing field types
+
+Fixed-width types write exactly their width, with no type tag: `t.uint8()` is 1 byte, `t.int16()` is 2, `t.float32()` is 4, `t.float64()` is 8, `t.boolean()` is 1.
+
+`t.number()` is different. This type is self-describing, so it carries a tag byte and sizes itself to the value:
+
+| `t.number()` value | Bytes |
+|---|---|
+| Integer `0` to `127`, or `-32` to `-1` | 1 |
+| Integer up to ±255 | 2 |
+| Integer up to ±32767 | 3 |
+| Integer up to ±2147483647 | 5 |
+| **Any non-integer** | **5**, or 9 when `float32` precision is not enough |
+
+That last row is the trap. A position of `12.5` costs 5 bytes as `t.number()` and 4 as `t.float32()`.
+
+> Small integers keep `t.number()`: it costs 1 byte below 128 and adapts if the value grows. Per-tick floats take `t.float32()`. Bounded floats take `t.quantized()`.
+
+[Quantized floats](/state/schema#quantized-floats-tquantized--tangle) win twice. A 16-bit quantized field is 2 bytes instead of 4, and its setter snaps the value to the nearest representable step before comparing. A rotation that drifts by less than one step is therefore not a change, and emits nothing. The same drift on a `float32` emits a full delta every tick.
+
+Strings carry a length prefix: 1 byte under 32 UTF-8 bytes, 2 under 256, then 3 and 5. Keep `MapSchema` keys short, because the key is written on every insertion.
+
+## Shaping your schemas
+
+**Prefer a declared field to a collection entry** for a fixed set of things. Three declared fields cost 3 bytes of framing. Three map entries cost at least 6, plus their keys on insert.
+
+**Splitting fields onto a nested `Schema` is usually free, but not always.** When only the child changes, the parent emits nothing and the cost is identical to a flat layout. The extra header is paid only when parent and child change in the same tick. What a nested instance always costs is another `refId` and another change-tracking structure on the server.
+
+**Keep `refId` values low if you can.** They are allocated monotonically and never recycled. Once a room has created 128 instances over its lifetime, every instance header in every patch grows by one byte. A long-lived room that churns thousands of entities pays that permanently, which is one of the arguments for [instance pooling](/state/advanced-usage#instance-pooling).
+
+**Declare filtered and delivery-modified fields early.** Lookups for `.view()`, `.patchOnly()`, `.fullStateOnly()` and `.stream()` resolve through a bitmask for the first 32 fields. Fields at index 32 and above fall back to a slower metadata lookup on every mutation. This affects server CPU, not bandwidth.
+
+**Field count barely matters on the wire.** A field at index 62 costs the same single byte as a field at index 0. A `Schema` with 8 fields or fewer does track its changes more cheaply, without a per-instance array allocation. The bytes it produces are identical, so this is a memory saving rather than a bandwidth one.
+
+<Callout type="warning">
+    A `Schema` holds at most **63 fields**. Colyseus rejects the 64th field where the class is defined. A field index shares one byte with the operation code, and the last combination collides with the marker that starts a new structure. Nest a child `Schema` before you reach the cap.
+</Callout>
+
+## Collection operations
+
+Most `ArraySchema` operations cost far less than people assume:
+
+| Operation | Cost |
+|---|---|
+| `push()` | One insertion per item |
+| `shift()` | A single deletion. Survivors are not re-indexed |
+| `splice(i, n)` | One deletion per **removed** element. The tail is not re-sent |
+| `unshift()` | One shift marker, then one insertion per item |
+| `reverse()` | 1 byte |
+| `clear()` | 1 byte, and it discards any operations already pending |
+| **`sort()`** | **The entire array** |
+
+<Callout type="warning">
+    **`sort()` re-sends every element.** The call marks every index as changed. A sorted array of 200 entities therefore produces a full 200-element patch, every time. Sort a plain copy on the client instead, or sort a separate array of indexes.
+</Callout>
+
+Avoid detaching and re-attaching the same instance. Moving an instance between collections, or calling `map.delete(key)` and then `map.set(key, sameInstance)`, re-stages every field on it as a fresh insertion. The client receives the whole object again.
+
+## Sending less, and less often
+
+Everything above shrinks a patch. These four shrink how much of it each client receives, or how often:
+
+- [**Delivery modifiers**](/state/schema#delivery-modifiers). `.fullStateOnly()` for room configuration set once in `onCreate()`, so it never touches a tick patch. `.patchOnly()` for data a late joiner does not need. `.noSync()` for fields that should never leave the server.
+- [**`patchRate`**](/room#configuration-properties). The simplest lever, and the first one to try. Only the latest value of each property is sent, so patching half as often roughly halves the traffic from fields that change every tick.
+- [**State View**](/state/view). Send each client only the slice it can see.
+- [**Streaming collections**](/state/streaming#maxpertick). Cap how many new entries a client receives per tick, so a hundred-entity spawn burst does not arrive as one packet.
+
+Three things about `StateView` that are easy to learn the expensive way:
+
+- **A single `.view()` field anywhere in the state tree changes the cost model for the whole room.** Without one, the server encodes the patch once and sends the same buffer to everyone. With one, it encodes per client. Use views deliberately, not decoratively.
+- **Clients that see the same slice should share one `StateView` instance.** The serializer caches the encoded buffer per view object, so ten clients on one view cost one encode, not ten.
+- **Re-adding an instance to a view re-sends all of its fields.** Area-of-interest logic that adds and removes entities as they cross a radius pays a full re-send on every crossing. Give the radius some hysteresis so entities near the boundary do not oscillate.
+
+## Server-side cost
+
+Not every cost is bandwidth. Two levers reduce work on the server instead.
+
+[**Instance pooling**](/state/advanced-usage#instance-pooling) recycles `Schema` instances in rooms that spawn and despawn constantly. Pooled instances encode byte-identically to fresh ones.
+
+### Change-tracking control
+
+Every mutation of a synchronized field is recorded as a change. These methods opt out. They exist on `Schema` and on `ArraySchema`, `MapSchema`, `SetSchema` and `CollectionSchema`:
+
+| Method | Effect |
+|---|---|
+| `instance.untracked(fn)` | Runs `fn` with recording paused, then restores the previous state. Safe to nest |
+| `instance.pauseTracking()` | Stops recording mutations on this instance |
+| `instance.resumeTracking()` | Resumes recording |
+| `instance.isTrackingPaused` | `true` while recording is paused |
+| `instance.setDirty(property, operation?)` | Forces a field into the next patch |
+
+```ts filename="src/rooms/MyRoom.ts"
+onCreate() {
+    this.state = new MyState();
+
+    // Restoring saved values before any client can join. The full state
+    // sync carries them anyway, so recording them is wasted work.
+    this.state.untracked(() => {
+        this.state.mapName = saved.mapName;
+        this.state.roundNumber = saved.roundNumber;
+        this.state.seed = saved.seed;
+    });
+}
+```
+
+Two properties of this API are worth stating plainly, because neither is guessable:
+
+- **Pausing is per instance, not global.** `player.pauseTracking()` silences that player, and only that player. Every other instance keeps recording, nested children included. To silence a collection, call the method on the collection itself.
+- **Untracked values still reach a late joiner.** A full state sync is derived by walking the structure, not by replaying recorded changes. A client that joins later sees the current value of every field, tracked or not.
+
+<Callout type="info">
+    Use this for an instance's own fields. Pausing a parent does not pause the child instances hanging off it. A structural change, such as inserting into a collection, is still recorded on the structure that owns it.
+</Callout>
+
+<Callout type="warning">
+    **A mutation made while tracking is paused never reaches clients that are already connected.** It is not queued, and resuming does not flush it. The value stays invisible until something marks the field dirty: a later ordinary mutation, an explicit `setDirty()`, or a full state sync on join.
+</Callout>
+
+## Reducing the join payload
+
+Two costs apply once per client, at join time, rather than every tick.
+
+**Fields left `undefined`, and fields set to `null`, are skipped entirely in the full state sync.** An `.optional()` field that is never assigned costs nothing. So does a [`.deprecated()`](/state/schema#versioning-and-backwardsforwards-compatibility) field, which has no setter and can never hold a value.
+
+**Passing your state class when joining skips the handshake.** By default the server first sends every type definition that composes the room state, then the state itself. A client that already has the concrete classes can skip the first half. See [Getting Started with TypeScript](/getting-started/typescript).
+
+## Next Steps
+
+- [Schema Definition](/state/schema) - Field types, modifiers, and delivery modifiers
+- [State View](/state/view) - Per-client filtering
+- [Streaming Collections](/state/streaming) - Per-tick budgets for large collections
+- [Advanced Usage](/state/advanced-usage) - Instance pooling and custom primitive types
