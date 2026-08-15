@@ -6,8 +6,11 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/generate-ai-nav.js && next build && node scripts/emit-markdown.js",
     "start": "next start",
+    "generate:ai-nav": "node scripts/generate-ai-nav.js",
+    "emit-markdown": "node scripts/emit-markdown.js",
+    "check:ai-nav": "node scripts/generate-ai-nav.js --check",
     "check-links": "node scripts/check-links.js",
     "lint:prose": "node scripts/lint-prose.js"
   },

@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # sitemap lastmod comes from each page's last commit
 
       # reads the pinned pnpm version from package.json's "packageManager"
       - uses: pnpm/action-setup@v6
@@ -23,6 +25,9 @@ jobs:
 
       # validates every internal link and anchor, plus the 404.mdx redirect map
       - run: pnpm run check-links
+
+      # llms.txt / sitemap.xml are derived from the sidebar — fail if they weren't regenerated
+      - run: pnpm run check:ai-nav
 
       # terminology (STYLE.md) fails the build; style warnings are reported only
       - uses: errata-ai/vale-action@v2.1.1

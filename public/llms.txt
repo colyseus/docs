@@ -1,40 +1,169 @@
 # Colyseus
 
-> Colyseus is an open-source Node.js framework for building authoritative multiplayer game servers with real-time state synchronization, matchmaking, and integration into any game engine.
+> Colyseus is an open-source multiplayer framework for Node.js. Build authoritative game servers with real-time state synchronization, matchmaking, built-in client prediction, and SDKs for every major game engine.
 
-## Getting Started
+Documentation for Colyseus 0.18.
 
-- [Introduction](https://docs.colyseus.io/): Overview of Colyseus and quick start guide
-- [Getting Started](https://docs.colyseus.io/getting-started): Platform-specific setup guides for TypeScript, JavaScript, React, Unity, and more
+Every page is also available as raw markdown: append `.md` to any URL, e.g. https://docs.colyseus.io/room.md.
+The full corpus is at https://docs.colyseus.io/llms-full.txt.
 
-## API Reference
+## Overview
 
-- [Client SDK](https://docs.colyseus.io/sdk): Client-side SDK for connecting to Colyseus servers
-- [Server](https://docs.colyseus.io/server): Server configuration, presence, drivers, and debugging
-- [HTTP Routes](https://docs.colyseus.io/server/http-routes): Defining custom API routes on the server
-- [Rooms](https://docs.colyseus.io/room): Room API, lifecycle, sending and receiving messages, etc.
-- [Room Messages](https://docs.colyseus.io/room/messages): Message composability and communication between clients and server
-- [Room Reconnection](https://docs.colyseus.io/room/reconnection): Handling client reconnection to rooms
-- [State Synchronization](https://docs.colyseus.io/state): Schema-based automatic state sync between server and clients
-- [State Callbacks](https://docs.colyseus.io/sdk/state-sync-callbacks): Listening to state changes on the client
-- [Matchmaker API](https://docs.colyseus.io/matchmaker): API for joining, creating, and querying rooms
-- [Authentication](https://docs.colyseus.io/auth): Built-in authentication system
+- [Introduction](https://docs.colyseus.io/)
+- [Getting Started](https://docs.colyseus.io/getting-started): Get started with Colyseus multiplayer framework. Choose your client SDK for TypeScript, JavaScript, React, Unity, Defold, Construct 3, Cocos Creator, Haxe, Flutter, and more.
+- [TypeScript](https://docs.colyseus.io/getting-started/typescript): Install and set up the Colyseus JavaScript/TypeScript SDK for building real-time multiplayer games. Includes room connections, state synchronization, and full type safety.
+- [React](https://docs.colyseus.io/getting-started/react): Use Colyseus with React using the @colyseus/react hooks package. Manage room connections and real-time state synchronization with idiomatic React patterns.
+- [Unity](https://docs.colyseus.io/getting-started/unity): Install the Colyseus Unity SDK via Unity Package Manager. Build real-time multiplayer games in Unity with room management and state synchronization.
+- [MonoGame](https://docs.colyseus.io/getting-started/monogame): Install the Colyseus MonoGame SDK via NuGet. Build real-time multiplayer games in MonoGame with room management and state synchronization.
+- [Godot](https://docs.colyseus.io/getting-started/godot): Get started with Colyseus multiplayer in Godot Engine. Install the SDK, connect to a server, and sync real-time game state.
+- [Defold](https://docs.colyseus.io/getting-started/defold): Integrate Colyseus with Defold Engine for cross-platform multiplayer games. Supports HTML5, iOS, Android, Mac, and Windows.
+- [Construct 3](https://docs.colyseus.io/getting-started/construct3): Add real-time multiplayer to Construct 3 games with the Colyseus SDK plugin. Install, configure, and connect to Colyseus rooms from Construct 3.
+- [GameMaker](https://docs.colyseus.io/getting-started/gamemaker): Get started with Colyseus multiplayer in GameMaker. Install the SDK, connect to a server, and sync real-time game state.
+- [Cocos Creator](https://docs.colyseus.io/getting-started/cocos): Set up Colyseus multiplayer in Cocos Creator 3. Install the SDK extension, import it in TypeScript components, and connect to Colyseus rooms.
+- [Haxe](https://docs.colyseus.io/getting-started/haxe): Use Colyseus with Haxe game engines like OpenFL, HaxeFlixel, Heaps, and more. Install the SDK, connect to rooms, and synchronize state across platforms.
+- [Flutter](https://docs.colyseus.io/getting-started/flutter): Get started with Colyseus multiplayer in Flutter. Install the Dart SDK, connect to a room, sync real-time game state, and predict player movement.
+- [Native SDK (C)](https://docs.colyseus.io/getting-started/native-sdk): Get started with the Colyseus Native SDK for C. Build multiplayer games with raw C integration, supporting desktop, mobile, and web platforms.
+- [Discord Activity](https://docs.colyseus.io/getting-started/discord-activity): Build multiplayer Discord Activities with Colyseus. Use the project template to create real-time HTML5 multiplayer experiences embedded in Discord.
+- [WeChat](https://docs.colyseus.io/getting-started/wechat): Integrate Colyseus with WeChat mini-games for real-time multiplayer. Set up the JavaScript SDK in the WeChat development environment.
+- [Learn](https://docs.colyseus.io/learn): Learn multiplayer game development with Colyseus: step-by-step tutorials, ready-to-run examples, and demo projects across Unity, Godot, Defold, GameMaker, Phaser, Haxe, and the Web.
+- [Tutorials](https://docs.colyseus.io/learn/tutorial): Step-by-step Colyseus tutorials for building real-time multiplayer games with Phaser, Unity, PlayCanvas, Babylon.js, and Cocos Creator.
+- [Phaser Tutorial](https://docs.colyseus.io/learn/tutorial/phaser): Build a real-time multiplayer game with Phaser and Colyseus: basic player movement, linear interpolation, client-predicted input, and a fixed tickrate.
+- [Part 1: Basic Player Movement](https://docs.colyseus.io/learn/tutorial/phaser/basic-player-movement): Part 1 of the Phaser + Colyseus tutorial: set up the server and synchronize basic player movement.
+- [Part 2: Linear Interpolation](https://docs.colyseus.io/learn/tutorial/phaser/linear-interpolation): Part 2 of the Phaser + Colyseus tutorial: smooth remote player movement with linear interpolation.
+- [Part 3: Client Predicted Input](https://docs.colyseus.io/learn/tutorial/phaser/client-predicted-input): Part 3 of the Phaser + Colyseus tutorial: apply input locally before the server confirms it (client prediction).
+- [Part 4: Fixed Tickrate](https://docs.colyseus.io/learn/tutorial/phaser/fixed-tickrate): Part 4 of the Phaser + Colyseus tutorial: run the simulation at a fixed tickrate on both client and server.
+- [MMO Demo](https://docs.colyseus.io/learn/tutorial/unity/mmo): Build a multiplayer MMO demo with Unity and Colyseus: rooms, chat, and persistent player state.
+- [Shooting Gallery Demo](https://docs.colyseus.io/learn/tutorial/unity/shooting-gallery): Build a turn-based multiplayer shooting gallery with Unity and Colyseus.
+- [Starboss Demo](https://docs.colyseus.io/learn/tutorial/unity/starboss): Build a co-op boss battle with Unity and Colyseus in the Starboss tutorial.
+- [Turn Based Tanks Demo](https://docs.colyseus.io/learn/tutorial/unity/turn-based-tanks): Build a turn-based multiplayer tanks game with Unity and Colyseus.
+- [PlayCanvas](https://docs.colyseus.io/learn/tutorial/playcanvas): Build a real-time multiplayer game with PlayCanvas and Colyseus.
+- [Basics](https://docs.colyseus.io/learn/tutorial/babylonjs/intro): Introduction to building multiplayer games with Babylon.js and Colyseus: server setup, room connection, and state synchronization.
+- [Hide and Seek Tech Demo](https://docs.colyseus.io/learn/tutorial/babylonjs/hide-and-seek): Build a multiplayer hide-and-seek game with the Babylon.js Editor and Colyseus.
+- [MMO Demo](https://docs.colyseus.io/learn/tutorial/cocos/mmo): Build a multiplayer MMO demo with Cocos Creator and Colyseus.
+- [Examples](https://docs.colyseus.io/learn/examples): Ready-to-use Colyseus example projects organized by game engine: Phaser, PixiJS, Babylon.js, Three.js, Defold, Discord Activities, and more. Most are MIT licensed.
+- [Phaser Examples](https://docs.colyseus.io/learn/examples/phaser): Open-source Phaser + Colyseus example games to use as starting points for your own multiplayer project.
+- [PixiJS](https://docs.colyseus.io/learn/examples/pixijs): Open-source PixiJS + Colyseus example games to use as starting points for your own multiplayer project.
+- [Babylon.js](https://docs.colyseus.io/learn/examples/babylonjs): Open-source Babylon.js + Colyseus example games to use as starting points for your own multiplayer project.
+- [KAPLAY](https://docs.colyseus.io/learn/examples/kaplay): Open-source KAPLAY + Colyseus example games to use as starting points for your own multiplayer project.
+- [Three.js](https://docs.colyseus.io/learn/examples/threejs): Open-source Three.js + Colyseus example games to use as starting points for your own multiplayer project.
+- [Defold Engine](https://docs.colyseus.io/learn/examples/defold): Open-source Defold Engine + Colyseus example games to use as starting points for your own multiplayer project.
+- [Discord Activity](https://docs.colyseus.io/learn/examples/discord): Example Discord Activities built with Colyseus: embedded multiplayer games running inside Discord.
+- [Decentraland](https://docs.colyseus.io/learn/examples/decentraland): Examples of using Colyseus to power multiplayer experiences in Decentraland scenes.
+
+## Building Your Game
+
+- [Server](https://docs.colyseus.io/server): Configure the Colyseus Server instance: transport, presence, matchmaking driver, room definitions, process selection, devMode, and graceful shutdown.
+- [Transport](https://docs.colyseus.io/server/transport): The transport layer handles network communication between the Colyseus server and clients: WebSocket (default), uWebSockets.js, Bun WebSockets, and WebTransport.
+- [WebSocket (Default)](https://docs.colyseus.io/server/transport/ws): The default Colyseus WebSocket transport (ws): options, ping/pong heartbeats, and customization.
+- [uWebSockets.js](https://docs.colyseus.io/server/transport/uwebsockets): Use the uWebSockets.js transport for higher-performance WebSocket handling in Colyseus.
+- [WebTransport](https://docs.colyseus.io/server/transport/webtransport): Use the experimental WebTransport (HTTP/3) transport with Colyseus.
+- [Bun WebSockets](https://docs.colyseus.io/server/transport/bun-websockets): Run Colyseus on Bun with the Bun WebSockets transport.
+- [Driver](https://docs.colyseus.io/server/driver): The matchmaking driver stores and queries room data in Colyseus. Use the in-memory default for a single process, or an external driver for multi-process deployments.
+- [Presence](https://docs.colyseus.io/server/presence): The Presence API enables communication between rooms and Node.js processes in Colyseus: LocalPresence for development, RedisPresence for scaling, and pub/sub methods.
+- [HTTP Routes](https://docs.colyseus.io/server/http-routes): Define custom HTTP routes on a Colyseus server, protect them with middleware, and configure CORS headers.
+- [Development Mode](https://docs.colyseus.io/server/devmode): Colyseus development mode (devMode) restores rooms and state across server restarts while you iterate on room code locally.
+- [Vite Plugin](https://docs.colyseus.io/server/vite): Run your Colyseus server inside Vite's dev server for full hot module replacement (HMR) of client and room code, then build a standalone production server, all from a single Vite project.
+- [Debugging](https://docs.colyseus.io/server/debugging): Debug a Colyseus server: enable debug messages per category and attach the Node.js inspector to a local or production process.
+- [Logging](https://docs.colyseus.io/server/logging): Use the built-in Colyseus logger (trace, debug, info, warn, error) and customize or replace it with your own logger implementation.
+- [Graceful Shutdown](https://docs.colyseus.io/server/graceful-shutdown): How Colyseus shuts down gracefully on SIGTERM/SIGINT: draining rooms via onBeforeShutdown, and customizing or disabling the shutdown routine.
+- [Rooms](https://docs.colyseus.io/room): The Room class is the core of a Colyseus server: define rooms, handle messages, manage synchronized state, and communicate with connected clients.
+- [Lifecycle Events](https://docs.colyseus.io/room/lifecycle): Reference for every Colyseus room lifecycle hook: onCreate, onAuth, onJoin, onDrop, onReconnect, onLeave, onDispose, and the devMode and shutdown hooks.
+- [Message Composability](https://docs.colyseus.io/room/messages): Define reusable, type-safe message handlers for Colyseus rooms using the Messages type.
+- [Timing Events](https://docs.colyseus.io/room/timing-events): Use delayed actions, intervals, and the built-in clock in Colyseus rooms for game loops and scheduled events.
+- [Reconnection Handling](https://docs.colyseus.io/room/reconnection): Handle client reconnection in Colyseus: automatic SDK retries for temporary drops, and manual rejoining via client.reconnect() with a stored reconnection token.
+- [Exception Handling](https://docs.colyseus.io/room/exception-handling): Handle uncaught exceptions in Colyseus rooms to prevent crashes and implement custom error recovery.
+- [Room Plugins](https://docs.colyseus.io/room/plugins): Compose Colyseus rooms with reusable plugins that contribute message handlers, lifecycle hooks, and public methods.
+- [Kick Idle](https://docs.colyseus.io/room/plugins/idle-kick): Auto-disconnect Colyseus clients that haven't sent a message within a configurable timeout. Lightweight and zero per-message overhead.
+- [GeoIP](https://docs.colyseus.io/room/plugins/geoip): Resolve a client's country from their IP at auth time and attach it to client.geoip before onJoin runs. Three pluggable database delivery modes: bring-your-own MMDB file, auto-download from MaxMind, or use the bundled DB-IP Lite snapshot.
+- [WebRTC](https://docs.colyseus.io/room/plugins/webrtc): Add WebRTC peer-to-peer signaling (audio/video) to a Colyseus room with a single plugin. It handles peer list, SDP offer/answer, ICE candidates, and peer-left events.
+- [Unique Session](https://docs.colyseus.io/room/plugins/unique-session): Enforce one (or N) concurrent room sessions per user, preventing two-tab abuse and stale matchmaking re-queues.
+- [Track User Sessions](https://docs.colyseus.io/room/plugins/track-user-sessions): Publish per-user join/leave events into a Presence reverse index. Powers admin tooling like the by-user inspector, duplicate-session enforcement, and session-revocation kicks.
+- [Relay Room](https://docs.colyseus.io/room/relay): The built-in RelayRoom broadcasts client messages to everyone else with minimal backend state, for simple multiplayer without server authority.
+- [State Sync](https://docs.colyseus.io/state): How state synchronization works in Colyseus: the server holds authoritative state, mutations are tracked at the property level, and clients receive binary patches.
+- [Schema Definition](https://docs.colyseus.io/state/schema): Define synchronizable state with Colyseus Schema: typed fields, ArraySchema, MapSchema, nested structures, and change tracking.
+- [Decorators (@type)](https://docs.colyseus.io/state/schema/decorators): Define Colyseus schema state with TypeScript @type() decorators: tsconfig setup, collections, default values, inheritance, @view(), @deprecated() and delivery modifiers. Fully supported alternative to the schema() builder.
+- [State Sync Callbacks](https://docs.colyseus.io/state/callbacks): React to state changes on the client: register callbacks on Schema instances for property changes, additions, and removals during decoding.
+- [React](https://docs.colyseus.io/state/callbacks/react): Use Colyseus state sync callbacks with React: bind synchronized room state to components.
+- [Advanced: Implement Your Own Callback System](https://docs.colyseus.io/state/callbacks/custom): Bring your own callback system to @colyseus/schema decoding: integrate state sync with any reactive library.
+- [State View](https://docs.colyseus.io/state/view): StateView gives each Colyseus client a filtered view of the room state: per-player visibility without sending the full state to everyone.
+- [Streaming Collections](https://docs.colyseus.io/state/streaming): Drip-feed large collections to clients across ticks with t.stream(), a per-tick budget, and per-client priority.
+- [Optimizing State](https://docs.colyseus.io/state/optimization): What a Colyseus state patch costs in bytes, and the levers that make it smaller: field types, quantization, schema shape, collection operations, and change-tracking control.
+- [Advanced Schema Usage](https://docs.colyseus.io/state/advanced-usage): Advanced @colyseus/schema techniques including custom encoders, decoders, and low-level state tracking APIs.
+- [Client SDK](https://docs.colyseus.io/sdk): Complete API reference for the Colyseus Client SDK. Connect to rooms, synchronize state, send messages, handle reconnection, and measure latency across TypeScript, Unity, Godot, Defold, Haxe, and Flutter.
+- [Sending & Receiving Messages](https://docs.colyseus.io/sdk/messages): Send and receive messages between client and server with the Colyseus SDK: room.send, room.onMessage, raw byte payloads, and request/response.
+- [Connection Lifecycle](https://docs.colyseus.io/sdk/connection): Handle the Colyseus room connection lifecycle on the client: leaving a room, automatic and manual reconnection, onDrop and onReconnect, error handling, and removing listeners.
+- [Matchmaking](https://docs.colyseus.io/matchmaker): How matchmaking works in Colyseus: room visibility flags, filterBy and sortBy matchmaking filters, lobby and queue rooms, and the server-side matchMaker API.
+- [Visibility & Access](https://docs.colyseus.io/matchmaker/visibility): How the locked, private, and unlisted room flags differ in Colyseus, how each behaves on join(), joinById(), and lobby listings, and how to lock, unlock, and password-protect a room.
+- [Lobby Room](https://docs.colyseus.io/matchmaker/lobby): The built-in LobbyRoom provides a live listing of available rooms: the backend for a room browser UI, with automatic updates and filtering.
+- [Queue Room](https://docs.colyseus.io/matchmaker/queue): The built-in QueueRoom is a matchmaking queue that groups players by rank and team over time, then spawns a match room when a group is ready.
+- [Standalone Matchmaker](https://docs.colyseus.io/matchmaker/standalone): Run a dedicated Colyseus matchmaking process separate from game server processes for advanced scaling.
+- [Authentication](https://docs.colyseus.io/auth): Authenticate Colyseus clients on room joins with the onAuth hook and on HTTP routes with middleware, powered by @colyseus/auth with JWT sessions and revocation.
+- [Room Authentication](https://docs.colyseus.io/auth/room): Authenticate room joins in Colyseus with the onAuth hook: validate tokens before onJoin and reject unauthorized clients.
+- [HTTP Middleware](https://docs.colyseus.io/auth/http): Authenticate HTTP requests to a Colyseus server with the Authorization header and JWT-protected routes.
+- [Auth Module](https://docs.colyseus.io/auth/module): The @colyseus/auth module: email/password and anonymous auth, OAuth providers, JWT tokens, email verification, and password reset for Colyseus.
+- [Database](https://docs.colyseus.io/database): Persist players, cloud saves, leaderboards, and live configs in Colyseus with the official @colyseus/database package, or bring your own ORM, query builder, or Firebase.
+- [Authentication](https://docs.colyseus.io/database/authentication): How @colyseus/database becomes the user store for @colyseus/auth: auto-mounted routes, ban gating, JWT revocation, admin helpers, and callback customization.
+- [Services](https://docs.colyseus.io/database/services): The @colyseus/database service surface (cloud saves, leaderboards, live configs, analytics, moderation, notes) plus the room plugins that wire them into the room lifecycle.
+- [Customizing schemas](https://docs.colyseus.io/database/schemas): Extend @colyseus/database's built-in drizzle tables with your own columns: table factory, manual column-spread pattern, and the full reference of built-in tables.
+- [Bring your own database](https://docs.colyseus.io/database/bring-your-own): Use any ORM, query builder, or Firebase with Colyseus: query patterns for onAuth and onLeave when not using @colyseus/database.
+
+## Advanced
+
+- [Netcode](https://docs.colyseus.io/netcode): Server-authoritative simulation with client-side prediction, server reconciliation, and lag compensation in Colyseus 0.18: zero-latency local control, smooth remote entities, and what-you-see-is-what-you-hit hits.
+- [Server Input & Timestep](https://docs.colyseus.io/netcode/server-input): Declare per-client input with defineInput(), sanitize untrusted values, drive an authoritative fixed-timestep simulation with setFixedTimestep(), and sub-step physics: the server half of Colyseus client-side prediction.
+- [Client Prediction](https://docs.colyseus.io/netcode/client-prediction): Predict your local entity with zero latency, reconcile to the authoritative server state via rollback and replay, and smooth remote entities: the client half of Colyseus 0.18 netcode using room.input() and Predict.
+- [Lag Compensation](https://docs.colyseus.io/netcode/lag-compensation): Server-side lag compensation in Colyseus 0.18: rewind entities to the shooter's render time with allowRewindState() and rewind.lastSeenBy() so hits on moving targets register. Favor-the-shooter hit registration.
+- [Determinism & The Contract](https://docs.colyseus.io/netcode/determinism): The load-bearing rules of Colyseus client-side prediction: one shared step function, one input per fixed step, identical fixed dt, flat-primitive inputs, replay-safe one-shots, and a troubleshooting table for rubber-banding, jitter, and missed hits.
+- [Recipes](https://docs.colyseus.io/netcode/recipes): Task-oriented Colyseus netcode patterns: predicted projectiles with predict.spawns, optimistic hit FX and pickups, dead-reckoned AI, cooldown clocks, teleports, and physics-engine prediction with predict.sim.
 
 ## Tools & Integrations
 
-- [Built-in Tools](https://docs.colyseus.io/tools): Playground, monitoring, load testing, and unit testing
-- [Database](https://docs.colyseus.io/database): Database integration guide
-- [Payments](https://docs.colyseus.io/payments): Payment integration
+- [Built-in Tools](https://docs.colyseus.io/tools): Built-in Colyseus tools: Playground, Monitoring panel, load testing, and unit testing, all included in the template projects.
+- [Playground](https://docs.colyseus.io/tools/playground): Use the Colyseus Playground to create room connections, inspect messages, and debug state synchronization in the browser.
+- [Monitoring Panel](https://docs.colyseus.io/tools/monitoring): Use the Colyseus Monitoring Panel to view active rooms, inspect state, manage clients, and debug your multiplayer server in real time.
+- [Load Testing](https://docs.colyseus.io/tools/loadtest): Stress test your Colyseus multiplayer server by simulating concurrent client connections with the @colyseus/loadtest tool.
+- [Unit Testing](https://docs.colyseus.io/tools/unit-testing): Write unit tests for your Colyseus server rooms using the built-in testing utilities and Vitest.
+- [Admin Panel](https://docs.colyseus.io/admin): Production operations console for Colyseus: install, mount, and bootstrap @colyseus/admin for user management, database CRUD, live room inspection, customizable dashboards, and an append-only audit trail.
+- [Authentication & RBAC](https://docs.colyseus.io/admin/authentication): How admin sessions, roles, and the admin.guard() middleware work: JWT cookies, three-role hierarchy, scoped mod assignments, password reset, and gating sibling tools.
+- [Resources & CRUD](https://docs.colyseus.io/admin/resources): Expose drizzle tables in the admin panel: defineAdminResource(), visible columns, form fields, custom actions, per-action RBAC, FK auto-linking, and the built-in audit log.
+- [Dashboard & widgets](https://docs.colyseus.io/admin/dashboard): Configure the admin panel homepage: built-in preset widgets (totals, recent users, live rooms, system health, player segments) plus custom widgets in KPI, table, list, or JSON render modes.
+- [Live rooms](https://docs.colyseus.io/admin/rooms): Inspect and operate on running Colyseus rooms from the admin panel: browse active rooms, view and mutate state, kick clients, lock/unlock for matchmaking, and force-dispose.
+- [Payments](https://docs.colyseus.io/payments): Integrate payment providers with Colyseus for game monetization, starting with Xsolla.
+- [Xsolla](https://docs.colyseus.io/payments/xsolla): Integrate Xsolla payments with Colyseus. Handle in-game purchases, subscriptions, and virtual currency with webhook support.
+- [3rd Party Packages](https://docs.colyseus.io/3rd-party-packages): Community packages that pair well with Colyseus: ECS libraries, physics, tooling, and integrations contributed by the community.
 
-## Infrastructure
+## Deploy & Scale
 
-- [Deployment](https://docs.colyseus.io/deployment): Deployment guides for various platforms
-- [Scalability](https://docs.colyseus.io/scalability): Horizontal and vertical scaling strategies
-- [Colyseus Cloud](https://docs.colyseus.io/cloud): Managed cloud service
+- [Deployment](https://docs.colyseus.io/deployment): Deploy your Colyseus server to production. Production checklist, PM2, Nginx, Apache, Docker, and self-hosting on Vultr, or managed hosting on Colyseus Cloud.
+- [Scalability](https://docs.colyseus.io/scalability): Scale Colyseus across multiple processes and machines with Redis presence, a shared matchmaking driver, and a load balancer, or let Colyseus Cloud handle it.
+- [Traefik Load Balancer](https://docs.colyseus.io/scalability/traefik): Scale Colyseus across multiple processes using Traefik as a reverse proxy and load balancer.
+- [Colyseus Cloud](https://docs.colyseus.io/cloud): Colyseus Cloud is managed infrastructure for Colyseus applications by the framework's own team. Deploy, scale, and monitor without managing servers.
+- [Compute Plans](https://docs.colyseus.io/cloud/compute-plans): Compute plans available on Colyseus Cloud and how to pick the right performance tier for your game.
+- [Private NPM Registry](https://docs.colyseus.io/cloud/private-npm-registry): Configure authentication for private NPM packages so Colyseus Cloud can install them during deployment.
+- [Continuous Deployment](https://docs.colyseus.io/cloud/continuous-deployment): Set up continuous deployment to Colyseus Cloud with GitHub Actions or the CLI.
+- [DDoS Protection](https://docs.colyseus.io/cloud/ddos-protection): DDoS protection on Colyseus Cloud: an extra layer that keeps your game servers online during attacks.
+- [Environment Variables and Secrets](https://docs.colyseus.io/cloud/environment-variables): Store secrets and environment variables for your Colyseus Cloud deployment via the Application Settings page.
+- [>](https://docs.colyseus.io/cloud/troubleshooting): Common Colyseus Cloud deployment failures and how to fix them.
+- [TypeScript/Compilation errors](https://docs.colyseus.io/cloud/typescript-compilation-errors): Fix TypeScript compilation errors when deploying to Colyseus Cloud with the recommended tsconfig.json settings.
+- [Pricing & Billing](https://docs.colyseus.io/cloud/pricing-billing): How Colyseus Cloud pricing and billing work, with a pricing simulator for estimating costs.
 
-## Additional Resources
+## Resources
 
-- [Best Practices](https://docs.colyseus.io/best-practices): Recommended patterns and practices
-- [Recipes](https://docs.colyseus.io/recipes): Common recipes and implementation guides
-- [FAQ](https://docs.colyseus.io/faq): Frequently asked questions
-- [Migrating to 0.17](https://docs.colyseus.io/migrating/0.17): Migration guide for the latest version
+- [Recipes & Guides](https://docs.colyseus.io/recipes): Practical recipes, guides, and best practices for Colyseus: command pattern, custom room IDs, password-protected rooms, denying joins, and keeping your room code healthy.
+- [The Command Pattern](https://docs.colyseus.io/recipes/command-pattern): Use the @colyseus/command package to implement the Command Pattern for organized room logic in Colyseus.
+- [Custom Room ID](https://docs.colyseus.io/recipes/custom-room-id): How to set a custom room ID in Colyseus instead of using the default auto-generated ID.
+- [Deny a Player Joining a Room](https://docs.colyseus.io/recipes/deny-player-join-a-room): How to deny a player from joining a Colyseus room based on custom conditions using onAuth or onJoin.
+- [Password Protect Room](https://docs.colyseus.io/recipes/password-protect-room): How to add password protection to a Colyseus room using filterBy(), unlisted room listings, and an onAuth() check.
+- [Setup Server from Scratch with TypeScript](https://docs.colyseus.io/recipes/setup-server-from-scratch-typescript): Set up a Colyseus server from scratch using TypeScript without the project template.
+- [FAQ](https://docs.colyseus.io/faq): Frequently asked questions about Colyseus: performance, scaling, CCU limits, and common gotchas.
+- [Migrating Versions](https://docs.colyseus.io/migrating): Step-by-step upgrade guides between Colyseus versions: breaking changes, renamed APIs, and the new features worth adopting on each release.
+- [Migrating to 0.18](https://docs.colyseus.io/migrating/0.18): Migration guide from Colyseus 0.17 to 0.18. Covers the @colyseus/schema 5.x upgrade, request/response messaging, built-in client-side prediction & lag compensation, the new @colyseus/database / @colyseus/admin packages, the setSimulationInterval → setTimestep rename, the setMetadata / client.id / password-hashing breaking changes, the 63-field Schema limit, and production hardening of the playground.
+- [Migrating to 0.17](https://docs.colyseus.io/migrating/0.17): Migration guide from Colyseus 0.16 to 0.17. Covers breaking changes, new APIs, and updated patterns.
+- [Migrating to 0.16](https://docs.colyseus.io/migrating/0.16): Migration guide from Colyseus 0.15 to 0.16. Covers breaking changes, new features, and updated APIs.
+- [Migrating to 0.15](https://docs.colyseus.io/migrating/0.15): Migration guide from Colyseus 0.14 to 0.15. Covers breaking changes, renamed packages, and updated APIs.
+- [Community](https://docs.colyseus.io/community): Community projects, content, and tools built around Colyseus.
+
+## Project
+
+- [Roadmap](https://docs.colyseus.io/roadmap): Colyseus v1.0 roadmap. Upcoming features, planned improvements, and the path to a stable release.
+- [Sponsors](https://docs.colyseus.io/sponsors): Companies and people sponsoring the development of Colyseus, the open-source multiplayer game server framework.
