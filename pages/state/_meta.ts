@@ -5,5 +5,6 @@ export default {
     "callbacks": "",
     "view": "",
     "streaming": "",
+    "optimization": "",
     "advanced-usage": "",
 }

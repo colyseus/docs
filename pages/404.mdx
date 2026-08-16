@@ -32,7 +32,7 @@ import { NotFoundPage } from 'nextra-theme-docs'
             { from: "/demo/babylonjs-editor/hide-and-seek", to: "/learn/tutorial/babylonjs/hide-and-seek" },
             { from: "/community/custom-room-id", to: "/recipes/custom-room-id" },
             { from: "/state/schema-callbacks", to: "/state/callbacks" },
-            { from: "/state/best-practices", to: "/state#limitations-and-best-practices" },
+            { from: "/state/best-practices", to: "/state/optimization" },
             { from: "/server/custom-http-routes", to: "/server/http-routes" },
             { from: "/upgrading/0.15", to: "/migrating/0.15" },
             { from: "/upgrading/0.16", to: "/migrating/0.16" },
@@ -52,7 +52,7 @@ import { NotFoundPage } from 'nextra-theme-docs'
             { from: "/room/built-in/lobby", to: "/matchmaker/lobby", replace: true },
             { from: "/room/built-in/queue", to: "/matchmaker/queue", replace: true },
             // Built-in Rooms section dissolved: Relay promoted to /room/relay,
-            // the index became a section on /room. Bare entry last — first-hit.
+            // the index became a section on /room. Bare entry last: first-hit.
             { from: "/room/built-in/relay", to: "/room/relay", replace: true },
             { from: "/room/built-in", to: "/room#built-in-rooms" },
 
@@ -71,7 +71,7 @@ import { NotFoundPage } from 'nextra-theme-docs'
                 replace: true, // replace all /client with /sdk
             },
 
-            // specific before general — matching is includes() + first-hit
+            // specific before general: matching is includes() + first-hit
             { from: "/examples/babylonjs-editor/hide-and-seek", to: "/learn/tutorial/babylonjs/hide-and-seek" },
             { from: "/examples/babylonjs", to: "/learn/examples/babylonjs" },
             { from: "/examples", to: "/learn/examples" },
@@ -86,7 +86,7 @@ import { NotFoundPage } from 'nextra-theme-docs'
             { from: "/recommendations/command-pattern", to: "/recipes/command-pattern" },
 
             // Best Practices merged into Recipes & Guides. Keep the
-            // command-pattern entry above the bare /best-practices one —
+            // command-pattern entry above the bare /best-practices one:
             // matching is includes() + first-hit.
             { from: "/best-practices/command-pattern", to: "/recipes/command-pattern" },
             { from: "/best-practices", to: "/recipes" },

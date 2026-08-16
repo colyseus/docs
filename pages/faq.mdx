@@ -26,9 +26,11 @@ As a baseline, a small cloud server (1 vCPU, 1GB RAM) can typically handle 1,000
 - **Use State View**: Limit what each client sees using [State View](/state/view) to reduce bandwidth per client.
 - **Profile your room code**: Avoid heavy computations.
 
+[Optimizing State](/state/optimization) covers what a patch costs in bytes, and which field types, schema shapes and collection operations make it smaller.
+
 ### Does Colyseus help me with client-prediction?
 
-Yes. Colyseus 0.18 ships first-class **client-side prediction and lag compensation** — `room.input()` / `Predict` on the client, `defineInput()` / `setFixedTimestep()` / `allowRewindState()` on the server. See [Netcode](/netcode) for the full stack. To learn the underlying concepts from scratch, the [Phaser tutorial](/learn/tutorial/phaser/client-predicted-input) builds them by hand.
+Yes. Colyseus 0.18 ships first-class **client-side prediction and lag compensation**: `room.input()` / `Predict` on the client, `defineInput()` / `setFixedTimestep()` / `allowRewindState()` on the server. See [Netcode](/netcode) for the full stack. To learn the underlying concepts from scratch, the [Phaser tutorial](/learn/tutorial/phaser/client-predicted-input) builds them by hand.
 
 ---
 
