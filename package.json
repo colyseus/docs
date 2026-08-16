@@ -5,6 +5,7 @@
   "description": "Colyseus Documentation",
   "type": "module",
   "scripts": {
+    "prepare": "git config core.hooksPath .githooks || true",
     "dev": "next dev",
     "build": "node scripts/generate-ai-nav.js && next build && node scripts/emit-markdown.js",
     "start": "next start",

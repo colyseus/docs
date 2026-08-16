@@ -11,10 +11,14 @@
  *
  * Usage: `npm run lint:prose`. Exits non-zero on errors (terminology), not on
  * warnings (sentence length, ambiguous `This`, idioms).
+ *
+ * Arguments are forwarded to Vale, which is how the pre-commit hook narrows the
+ * run to the staged files at error level. With none, it lints all of `pages/`.
  */
 import { spawnSync } from 'node:child_process'
 
-const result = spawnSync('vale', ['pages/'], { stdio: 'inherit' })
+const args = process.argv.slice(2)
+const result = spawnSync('vale', args.length > 0 ? args : ['pages/'], { stdio: 'inherit' })
 
 if (result.error?.code === 'ENOENT') {
     console.warn(
