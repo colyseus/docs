@@ -570,12 +570,12 @@ Listen for errors that occur in the room.
 
 ## Removing Listeners
 
-Remove all event listeners from the room — `onJoin`, `onStateChange`, `onError`, `onLeave`, `onReconnect`, `onDrop`, registered message handlers, and schema callbacks:
+Remove all event listeners from the room (`onJoin`, `onStateChange`, `onError`, `onLeave`, `onReconnect`, `onDrop`, registered message handlers, and schema callbacks):
 
 ```ts filename="client.ts"
 room.removeAllListeners();
 ```
 
 <Callout type="info">
-    The SDK calls `removeAllListeners()` automatically when the room is left, so you only need it to detach early — e.g. when tearing down a UI screen while staying connected.
+    The SDK calls `removeAllListeners()` automatically when the room is left, so you only need it to detach early, e.g. when tearing down a UI screen while staying connected.
 </Callout>

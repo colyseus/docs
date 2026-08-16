@@ -168,7 +168,7 @@ messages = {
 
 #### Registering handlers at runtime
 
-The declarative `messages` map covers most cases. You may also register a handler imperatively with `this.onMessage()` — it returns a function that removes the handler when called.
+The declarative `messages` map covers most cases. You may also register a handler imperatively with `this.onMessage()`. It returns a function that removes the handler when called.
 
 ```ts filename="MyRoom.ts"
 onCreate() {
@@ -186,14 +186,14 @@ Use `this.onMessageBytes()` to receive raw `Uint8Array` messages sent via [`room
 ```ts filename="MyRoom.ts"
 onCreate() {
     this.onMessageBytes("raw-input", (client, bytes) => {
-        // bytes is a Uint8Array — decode it yourself
+        // bytes is a Uint8Array: decode it yourself
     });
 }
 ```
 
 #### Message input validation
 
-You may provide a validation schema using the `validate()` helper with a Zod schema. If validation fails, the client is disconnected with close code `4002` (`WITH_ERROR`) — or, for a request, the request settles as an error.
+You may provide a validation schema using the `validate()` helper with a Zod schema. If validation fails, the client is disconnected with close code `4002` (`WITH_ERROR`). For a request, the request settles as an error instead.
 
 The validated and typed data will be passed as `payload` on the message handler.
 
@@ -218,11 +218,11 @@ messages = {
 
 #### Responding to a message (request/response)
 
-A message handler can **return a value** to answer a client that's waiting for a reply via [`room.request()` or `room.send(type, payload, callback)`](/sdk/messages#requestresponse). The same handlers serve both plain (fire-and-forget) sends and requests — the return value is sent back only when the client awaited a reply, and ignored otherwise.
+A message handler can **return a value** to answer a client that's waiting for a reply via [`room.request()` or `room.send(type, payload, callback)`](/sdk/messages#requestresponse). The same handlers serve both plain (fire-and-forget) sends and requests. The return value is sent back only when the client awaited a reply, and ignored otherwise.
 
 ```ts filename="MyRoom.ts"
 messages = {
-    // Return a value (sync or async) — it becomes the client's response.
+    // Return a value (sync or async): it becomes the client's response.
     "get-profile": async (client, { userId }) => {
         return await db.profiles.findById(userId);
     },
@@ -247,16 +247,16 @@ messages = {
 
 - The handler's return value is **awaited** before being sent, so returning a `Promise` works.
 - If the handler throws or its `Promise` rejects, the client's request rejects with that error instead of timing out.
-- Every handler also receives a third `ctx` argument. Call `ctx.reject(reason)` to settle the request as **rejected** — a deliberate business-logic "no", distinct from an error. On the client, the rejection arrives as an `Error` with `name: "rejected"` and the raw `reason` on its `.reason` property — see [Request/Response on the SDK](/sdk/messages#requestresponse).
-- `ctx.resolve(value)` answers the request explicitly. Use it when the handler must keep working after replying — a plain `return` is equivalent otherwise.
+- Every handler also receives a third `ctx` argument. Call `ctx.reject(reason)` to settle the request as **rejected**: a deliberate business-logic "no", distinct from an error. On the client, the rejection arrives as an `Error` with `name: "rejected"` and the raw `reason` on its `.reason` property. See [Request/Response on the SDK](/sdk/messages#requestresponse).
+- `ctx.resolve(value)` answers the request explicitly. Use it when the handler must keep working after replying. A plain `return` is equivalent otherwise.
 - Only the handler registered for the message's specific type can answer a request. The [`"*"` fallback](#fallback-for-all-messages) is **not** eligible, and a request for a type with no handler rejects with a `no_handler` error.
 
 ---
 
 ## Lifecycle Events
 
-Rooms expose a hook for every stage a client passes through — `onCreate`,
-`onAuth`, `onJoin`, `onDrop`, `onReconnect`, `onLeave`, and `onDispose` — plus
+Rooms expose a hook for every stage a client passes through: `onCreate`,
+`onAuth`, `onJoin`, `onDrop`, `onReconnect`, `onLeave`, and `onDispose`, plus
 the `devMode` and graceful-shutdown hooks. See
 **[Room Lifecycle Events](/room/lifecycle)** for the full reference.
 
@@ -268,7 +268,7 @@ the `devMode` and graceful-shutdown hooks. See
 
 _Optional:_ Set a game loop that can change the state of the game. Default interval: 16.6ms (60fps).
 
-Use **`setTimestep(callback, delay?)`** for a variable-step loop — the callback receives the measured wall-clock `deltaTime`:
+Use **`setTimestep(callback, delay?)`** for a variable-step loop. The callback receives the measured wall-clock `deltaTime`:
 
 ```ts filename="MyRoom.ts"
 onCreate () {
@@ -282,14 +282,14 @@ update (deltaTime) {
 ```
 
 <Callout type="info">
-    `setSimulationInterval()` is the previous name for `setTimestep()` and still works (it forwards). For **client-predicted** games, use the fixed-step loop **`setFixedTimestep(step, tickRate)`** instead — it advances by a constant `dt` and advertises the rate to predicting clients, which a variable step can't do deterministically. See [Server Input & Fixed Timestep](/netcode/server-input).
+    `setSimulationInterval()` is the previous name for `setTimestep()` and still works (it forwards). For **client-predicted** games, use the fixed-step loop **`setFixedTimestep(step, tickRate)`** instead. It advances by a constant `dt` and advertises the rate to predicting clients, which a variable step can't do deterministically. See [Server Input & Fixed Timestep](/netcode/server-input).
 </Callout>
 
 ---
 
 ### Visibility & Access
 
-Three flags — `locked`, `private`, and `unlisted` — control who can find and
+Three flags (`locked`, `private`, and `unlisted`) control who can find and
 join a room, alongside `lock()`, `unlock()`, and `setMatchmaking()`. See
 **[Room Visibility & Access](/matchmaker/visibility)** for the full reference.
 
@@ -396,7 +396,7 @@ onCreate(options) {
 
 ### Has Reserved Seat
 
-Returns whether a seat reservation exists for the given `sessionId` — reserved but not yet consumed, or held for a [reconnection](/room/reconnection). Pass the client's `reconnectionToken` as the second argument to check a reconnection reservation specifically.
+Returns whether a seat reservation exists for the given `sessionId`: reserved but not yet consumed, or held for a [reconnection](/room/reconnection). Pass the client's `reconnectionToken` as the second argument to check a reconnection reservation specifically.
 
 ```ts filename="MyRoom.ts"
 if (this.hasReservedSeat(sessionId)) {
@@ -410,7 +410,7 @@ if (this.hasReservedSeat(sessionId)) {
 
 Disconnect all clients, then dispose of the room. Returns a `Promise` that resolves when every client has been disconnected.
 
-The optional `closeCode` is delivered to each client's [`onLeave` listener](/sdk/connection#leaving-a-room). The default is `CONSENTED` (`4000`); custom application codes use `4011`–`4999` — see the [close-code table](#table-of-websocket-close-codes).
+The optional `closeCode` is delivered to each client's [`onLeave` listener](/sdk/connection#leaving-a-room). The default is `CONSENTED` (`4000`); custom application codes use `4011`–`4999`. See the [close-code table](#table-of-websocket-close-codes).
 
 ```ts filename="MyRoom.ts"
 // disconnect all clients, then dispose of the room
@@ -725,7 +725,7 @@ client.sendBytes(1, new Uint8Array([ 172, 72, 101, 108, 108, 111, 32, 119, 111, 
 
 #### Leave Room
 
-Force disconnection of the `client` with the room. You may send a custom `code` when closing the connection, with values between `4011` and `4999` — codes `4000`–`4010` are reserved by the framework. See the [table of WebSocket close codes](#table-of-websocket-close-codes) below.
+Force disconnection of the `client` with the room. You may send a custom `code` when closing the connection, with values between `4011` and `4999`. Codes `4000`–`4010` are reserved by the framework. See the [table of WebSocket close codes](#table-of-websocket-close-codes) below.
 
 ```ts filename="MyRoom.ts"
 // disconnect this client with the default code (4000, CONSENTED)
@@ -774,18 +774,18 @@ client.leave(4020);
 
 ## Built-in Rooms
 
-Colyseus ships pre-built room types you can use directly or extend — Lobby and
+Colyseus ships pre-built room types you can use directly or extend. Lobby and
 Queue are documented under Matchmaking, since that's the job they do:
 
 <ScenarioGrid>
     <ScenarioCard icon={<RowsIcon size={18}/>} title="Lobby Room" href="/matchmaker/lobby">
-        A live listing of available rooms — the backend for a room browser UI.
+        A live listing of available rooms, the backend for a room browser UI.
     </ScenarioCard>
     <ScenarioCard icon={<ListOrderedIcon size={18}/>} title="Queue Room" href="/matchmaker/queue">
         A matchmaking queue that groups players over time and spawns a match room when a group is ready.
     </ScenarioCard>
     <ScenarioCard icon={<BroadcastIcon size={18}/>} title="Relay Room" href="/room/relay">
-        A lightweight relay that broadcasts client messages to everyone else — no authoritative state.
+        A lightweight relay that broadcasts client messages to everyone else, with no authoritative state.
     </ScenarioCard>
 </ScenarioGrid>
 

@@ -1,7 +1,7 @@
 # Colyseus docs style guide
 
 House style for docs.colyseus.io. Most of it is borrowed from
-[ASD-STE100 Simplified Technical English][ste] — the rules that make technical
+[ASD-STE100 Simplified Technical English][ste]: the rules that make technical
 prose easier for non-native readers and for language models to parse correctly.
 
 We deliberately adopt a **subset**. These docs are **not** ASD-STE100 compliant
@@ -19,7 +19,7 @@ Enforcement is [Vale](#enforcement) in CI, plus this file.
 - **One idea per sentence.** If a sentence needs a semicolon to hold two claims,
   it is two sentences.
 - **≤ 25 words** in explanatory prose. **≤ 20 words** inside a `<Steps>`
-  instruction. The corpus median is 12 — these are ceilings, not targets.
+  instruction. The corpus median is 12. These are ceilings, not targets.
 - **One instruction per step.** A numbered step that does two things is two steps.
 - **≤ 6 sentences per paragraph**, one topic each.
 - **No noun stacks longer than three words.** `room state synchronization
@@ -31,7 +31,7 @@ Enforcement is [Vale](#enforcement) in CI, plus this file.
   irrelevant or unknown: "Rooms are disposed when empty" is fine; "the option is
   passed by you" is not.
 - **Every sentence-initial `This` or `It` takes a noun.** "This callback",
-  "This option", "This method" — never a bare `This` pointing at the previous
+  "This option", "This method". Never a bare `This` pointing at the previous
   paragraph or a code block.
 - **Prefer a plain verb to a phrasal verb or idiom.** These are the single
   biggest barrier for readers whose first language is not English:
@@ -45,8 +45,25 @@ Enforcement is [Vale](#enforcement) in CI, plus this file.
   | run into | encounter |
   | clobber / swallow | overwrite / discard |
 
-  Deliberate metaphor in a section opener is allowed — see
-  [rules we reject](#rules-we-deliberately-reject).
+  Deliberate metaphor in a section opener is allowed (see
+  [rules we reject](#rules-we-deliberately-reject)).
+
+## Punctuation
+
+- **No em-dashes.** Rewrite instead, in order of preference:
+  1. Split into two sentences. An em-dash afterthought is usually a second
+     idea, and the sentence rules above already want it separate.
+  2. A comma, for a light appositive.
+  3. A colon, when the right side explains or enumerates the left.
+  4. Parentheses, for a true aside.
+- **One permitted use:** the empty-table-cell placeholder `| — |`.
+- **No lookalike dashes.** Spaced en-dashes (`word – word`) and spaced double
+  hyphens (`word -- word`) are flagged by the same rule. Unspaced numeric
+  ranges (`4011–4999`) stay legal.
+
+`Colyseus.NoEmDash` enforces this section as a CI-gating error. Its carve-out
+for `| — |` relies on the placeholder being a lone em-dash in its cell: give
+the cell any other content and the dash must go.
 
 ## Terminology
 
@@ -71,11 +88,11 @@ main reason a docs search or a coding agent returns the wrong API.
 | The server's per-step advance | **timestep** | simulation interval |
 | The rate the server ticks at | **tick rate** | — |
 
-Defined terms that look like synonyms but are not — keep them distinct:
+Defined terms that look like synonyms but are not. Keep them distinct:
 
-- **queue room** vs **match room** — the room a player waits in, versus the room
+- **queue room** vs **match room**: the room a player waits in, versus the room
   `QueueRoom` spawns them into. Both are rooms; the qualifier carries the meaning.
-- **timestep** vs **tick rate** — the step size versus the frequency.
+- **timestep** vs **tick rate**: the step size versus the frequency.
   `setFixedTimestep(step, tickRate)` takes both.
 
 Domain terms specific to the netcode stack are approved vocabulary and need no
@@ -88,17 +105,19 @@ Recorded so they aren't reintroduced as "improvements".
 
 - **Gerund headings stay.** `## Defining a Room`, `## Joining Rooms`. STE bans
   `-ing` outside technical names. We keep them because they match how people
-  search, and because 214 of them are load-bearing heading slugs — renaming
+  search, and because 214 of them are load-bearing heading slugs: renaming
   cascades into `check-links`, the `<MovedAnchors>` maps, and external inbound
   links. Two page routes (`/getting-started`, `/migrating`) are gerunds too.
 - **Contractions stay.** `don't`, `it's`, `you'll`. They read as normal
   developer prose and cost nothing in comprehension.
 - **Second person stays.** "You can define a room…". STE prefers the impersonal
   imperative; for a framework's docs, addressing the reader is clearer.
-- **Causal connectives and em-dash appositives stay.** `but`, `instead of`,
-  `because`, `would`. `CLAUDE.md` asks writers to keep the why alongside the
-  what — that is exactly what these carry, and stripping them is what makes STE
-  prose feel like a parts list.
+- **Causal connectives stay.** `but`, `instead of`, `because`, `would`.
+  `CLAUDE.md` asks writers to keep the why alongside the what, and these words
+  are what carry it. Stripping them is what makes STE prose feel like a parts
+  list. Em-dash appositives once shared this bullet and no longer do: the
+  [punctuation ban](#punctuation) wins, and the why moves into a comma clause
+  or its own sentence.
 - **Deliberate metaphor in section openers stays.** "controls feel underwater"
   earns its place in `netcode.mdx`. Metaphor in the middle of a procedure does not.
 - **The ~900-word STE dictionary is not adopted.** `handle`, `provide`, `allow`,
@@ -109,18 +128,19 @@ Recorded so they aren't reintroduced as "improvements".
 
 `npm run lint:prose` runs Vale over `pages/`. CI runs it alongside
 `check-links`. Vale is a single Go binary and deliberately not an npm
-dependency — `brew install vale`, or see <https://vale.sh/docs/install>.
+dependency: `brew install vale`, or see <https://vale.sh/docs/install>.
 
-- **`Colyseus.Terms` is an error.** It gates CI. Fix the term.
+- **`Colyseus.Terms` and `Colyseus.NoEmDash` are errors.** They gate CI. Fix
+  the term, or rewrite the dash.
 - **Everything else is a warning.** `SentenceLength`, `AmbiguousThis` and
   `Idioms` are advisory, and judgement beats the rule.
 
 **Known limitation:** `SentenceLength` over-counts on nested lists and on
-paragraphs whose sentences end in `)` or a backtick — Vale's segmenter merges
-them into one unit. A reported 47-word "sentence" is often two correct ones.
+paragraphs whose sentences end in `)` or a backtick, because Vale's segmenter
+merges them into one unit. A reported 47-word "sentence" is often two correct ones.
 Check the source before rewriting.
 
-Vocabulary lives in `styles/config/vocabularies/Colyseus/accept.txt` — add
+Vocabulary lives in `styles/config/vocabularies/Colyseus/accept.txt`. Add
 project nouns there rather than rewording around a false positive.
 
 Two config details are load-bearing and easy to break:

@@ -12,7 +12,7 @@ Auto-disconnects clients that haven't sent a message in `timeoutMs`. Useful for 
 
 ## Installation
 
-The plugin ships with the `colyseus` package — no extra dependency to install.
+The plugin ships with the `colyseus` package: no extra dependency to install.
 
 ```ts filename="MyRoom.ts"
 import { Room, definePlugins } from "colyseus";
@@ -78,12 +78,12 @@ plugins = definePlugins([
 ```
 
 <Callout type="info">
-  The arrow function above works because class-field initializers bind `this` lexically — inside the arrow, `this` is the **room**. A plain `function () {}` callback would instead get the plugin instance as `this`, and `this.broadcast` would fail. Stick to arrows here.
+  The arrow function above works because class-field initializers bind `this` lexically: inside the arrow, `this` is the **room**. A plain `function () {}` callback would instead get the plugin instance as `this`, and `this.broadcast` would fail. Stick to arrows here.
 </Callout>
 
 ### Custom close code
 
-If you'd rather signal a domain-specific reason (e.g., to differentiate from a generic 1000 disconnect), use a custom code in the range `4011`–`4999`. Colyseus reserves `4000`–`4010` — `4010` in particular triggers the SDK's auto-reconnect, the opposite of a kick:
+If you'd rather signal a domain-specific reason (e.g., to differentiate from a generic 1000 disconnect), use a custom code in the range `4011`–`4999`. Colyseus reserves `4000`–`4010`. `4010` in particular triggers the SDK's auto-reconnect, the opposite of a kick:
 
 ```ts filename="MyRoom.ts"
 plugins = definePlugins([
@@ -97,10 +97,10 @@ plugins = definePlugins([
 
 ## Caveats
 
-- **Any inbound frame refreshes activity** — including SDK keepalive PINGs. This is by design: an idle client whose socket is still healthy is preferable to a zombie connection that gets force-closed. If you need stricter "user-payload-only" semantics, manage your own timestamps from your message handlers.
+- **Any inbound frame refreshes activity**: including SDK keepalive PINGs. This is by design: an idle client whose socket is still healthy is preferable to a zombie connection that gets force-closed. If you need stricter "user-payload-only" semantics, manage your own timestamps from your message handlers.
 - **`_lastMessageTime` is updated at most once per second** by the rate-limiter, so timing precision is ±1 second. For an idle timeout measured in seconds-to-minutes, this is far below the noise floor.
 
 ## See Also
 
-- [Room Plugins](/room/plugins) — overview of the plugin system
-- [Reconnection Handling](/room/reconnection) — `onDrop` / `allowReconnection` flow for unintentional disconnects
+- [Room Plugins](/room/plugins): overview of the plugin system
+- [Reconnection Handling](/room/reconnection): `onDrop` / `allowReconnection` flow for unintentional disconnects

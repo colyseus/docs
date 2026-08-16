@@ -6,7 +6,7 @@ import { Callout } from "nextra/components";
 
 # Monitoring Panel
 
-The Colyseus Monitoring Panel is a browser-based administration tool for inspecting and managing your multiplayer server in real time. It gives you visibility into active rooms, connected clients, and room state — and lets you take actions like disposing rooms, disconnecting clients, or broadcasting messages.
+The Colyseus Monitoring Panel is a browser-based administration tool for inspecting and managing your multiplayer server in real time. It gives you visibility into active rooms, connected clients, and room state. It also lets you take actions like disposing rooms, disconnecting clients, or broadcasting messages.
 
 <img src="https://github.com/colyseus/colyseus-monitor/blob/master/media/demo.gif?raw=1" />
 
@@ -20,7 +20,7 @@ The Colyseus Monitoring Panel is a browser-based administration tool for inspect
     - Force disconnect a client
 
 <Callout type="warning">
-    The monitoring panel exposes full control over your rooms and clients. Do not expose it in production without password protection — see [Password protection](#password-protection) below.
+    The monitoring panel exposes full control over your rooms and clients. Do not expose it in production without password protection. See [Password protection](#password-protection) below.
 </Callout>
 
 ## Installation
@@ -37,7 +37,7 @@ The monitor can be mounted in two ways.
 
 ### Standard router (recommended)
 
-Spread `monitor()` into `createRouter`. It is served at `/monitor` by default — customize the mount path with the `prefix` option:
+Spread `monitor()` into `createRouter`. It is served at `/monitor` by default. Customize the mount path with the `prefix` option:
 
 ```ts {2,6} filename="app.config.ts"
 import { defineServer, createRouter } from "colyseus";
@@ -66,7 +66,7 @@ const server = defineServer({
 });
 ```
 
-In express-middleware mode the Express mount path must match the monitor's `prefix` (default `/monitor`) — the monitor dispatches on the full original URL, so a mismatched mount path silently 404s. Pass a matching `prefix` when mounting elsewhere.
+In express-middleware mode the Express mount path must match the monitor's `prefix` (default `/monitor`). The monitor dispatches on the full original URL, so a mismatched mount path silently 404s. Pass a matching `prefix` when mounting elsewhere.
 
 ## Usage
 
@@ -78,7 +78,7 @@ All active rooms spawned by your server are automatically listed, along with the
 
 ## Password protection
 
-The monitoring panel exposes full control over your rooms and clients. **Do not expose it in production without password protection.** Pass a guard middleware through the monitor's `use` option — Colyseus ships with a built-in [`basicAuth`](/server/http-routes#basic-authentication):
+The monitoring panel exposes full control over your rooms and clients. **Do not expose it in production without password protection.** Pass a guard middleware through the monitor's `use` option. Colyseus ships with a built-in [`basicAuth`](/server/http-routes#basic-authentication):
 
 ```ts {1,4,8} filename="app.config.ts"
 import { defineServer, createRouter, basicAuth } from "colyseus";

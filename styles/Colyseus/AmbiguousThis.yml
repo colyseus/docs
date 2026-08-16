@@ -3,7 +3,7 @@
 # block, which is exactly where non-native readers and language models lose the
 # thread. Give it a noun: "This callback", "This option".
 extends: existence
-message: "Give '%s' a noun — 'This callback', 'This option'."
+message: "Give '%s' a noun: 'This callback', 'This option'."
 level: warning
 scope: sentence
 nonword: true

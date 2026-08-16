@@ -248,7 +248,7 @@ List of renamed protected members:
 
 #### `onMessage()` now supports multiple handlers per message type
 
-Previously, registering a new handler for the same message type would replace the existing one. Starting from 0.17, `onMessage()` supports multiple handlers for the same message type — all registered handlers will be invoked when a matching message is received.
+Previously, registering a new handler for the same message type would replace the existing one. Starting from 0.17, `onMessage()` supports multiple handlers for the same message type. All registered handlers will be invoked when a matching message is received.
 
 ```typescript
 this.onMessage("move", (client, message) => { /* handler 1 */ });

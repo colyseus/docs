@@ -41,7 +41,7 @@ You must call `colyseus_process()` once per frame in the **Step** event to poll 
 This example shows how to connect to a room, listen for state changes, send messages, and leave the room.
 
 ```js filename="Create_0.gml"
-/// Create Event — initialize client and join room
+/// Create Event: initialize client and join room
 
 client = colyseus_client_create("http://localhost:2567");
 net_room = colyseus_client_join_or_create(client, "my_room", "{}");
@@ -107,7 +107,7 @@ colyseus_on_message(net_room, function(_room, _type, _data) {
 ```
 
 ```js filename="Step_0.gml"
-/// Step Event — poll events and send messages
+/// Step Event: poll events and send messages
 
 colyseus_process();
 
@@ -123,7 +123,7 @@ if (colyseus_room_is_connected(net_room)) {
 ```
 
 ```js filename="CleanUp_0.gml"
-/// Clean Up Event — free resources
+/// Clean Up Event: free resources
 
 if (net_room != 0) {
     colyseus_room_leave(net_room);
@@ -167,7 +167,7 @@ Register callbacks for room lifecycle events. These are dispatched by `colyseus_
 | --- | --- |
 | `colyseus_on_join(room, handler)` | `handler(room)` |
 | `colyseus_on_state_change(room, handler)` | `handler(room)` |
-| `colyseus_on_message(room, handler)` | `handler(room, type, data)` — `data` is auto-decoded |
+| `colyseus_on_message(room, handler)` | `handler(room, type, data)` (`data` is auto-decoded) |
 | `colyseus_on_error(room, handler)` | `handler(code, message)` |
 | `colyseus_on_leave(room, handler)` | `handler(code, reason)` |
 
@@ -209,9 +209,9 @@ Create a callbacks manager to listen for state mutations. Use `0` as the instanc
 | Function | Callback signature |
 | --- | --- |
 | `colyseus_callbacks_create(room)` | Create a callbacks manager. Returns a callbacks handle. |
-| `colyseus_listen(callbacks, [instance], property, handler)` | `handler(value, previous_value)` — omit `instance` for root state |
-| `colyseus_on_add(callbacks, [instance], property, handler)` | `handler(instance, key)` — omit `instance` for root state |
-| `colyseus_on_remove(callbacks, [instance], property, handler)` | `handler(instance, key)` — omit `instance` for root state |
+| `colyseus_listen(callbacks, [instance], property, handler)` | `handler(value, previous_value)` (omit `instance` for root state) |
+| `colyseus_on_add(callbacks, [instance], property, handler)` | `handler(instance, key)` (omit `instance` for root state) |
+| `colyseus_on_remove(callbacks, [instance], property, handler)` | `handler(instance, key)` (omit `instance` for root state) |
 | `colyseus_callbacks_remove_handle(callbacks, handle)` | Stop listening for a specific callback. |
 | `colyseus_callbacks_free(callbacks)` | Free callbacks (auto-freed when room is freed). |
 

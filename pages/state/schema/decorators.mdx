@@ -6,13 +6,13 @@ import { Callout } from 'nextra/components'
 
 # Schema Definition with Decorators
 
-The `@type()` decorator style is the classic way of defining schema structures, and remains **fully supported**. The [schema builder](/state/schema) (`schema()` + `t.*`) is the recommended style for new code, but both produce the identical wire format and interoperate freely — `t.array(DecoratorClass)` and `@type(BuilderClass)` both work.
+The `@type()` decorator style is the classic way of defining schema structures, and remains **fully supported**. The [schema builder](/state/schema) (`schema()` + `t.*`) is the recommended style for new code, but both produce the identical wire format and interoperate freely: `t.array(DecoratorClass)` and `@type(BuilderClass)` both work.
 
 Schema examples across the docs offer a **Decorators** tab, and your tab selection is remembered across pages. This page collects the decorator-specific setup and details in one place.
 
 ## TypeScript Config
 
-The decorator style requires two settings in your `tsconfig.json` — enable `experimentalDecorators` and disable `useDefineForClassFields`:
+The decorator style requires two settings in your `tsconfig.json`. Enable `experimentalDecorators` and disable `useDefineForClassFields`:
 
 ```json filename="tsconfig.json"
 {
@@ -23,7 +23,7 @@ The decorator style requires two settings in your `tsconfig.json` — enable `ex
 }
 ```
 
-These flags are needed **only** for decorators — the [`schema()` builder](/state/schema) works without any compiler configuration. (See [#510](https://github.com/colyseus/colyseus/issues/510) for the discussion behind `useDefineForClassFields`.)
+These flags are needed **only** for decorators. The [`schema()` builder](/state/schema) works without any compiler configuration. (See [#510](https://github.com/colyseus/colyseus/issues/510) for the discussion behind `useDefineForClassFields`.)
 
 ## What is `@type()`?
 
@@ -63,7 +63,7 @@ class MyState extends Schema {
 
 ## Collections
 
-Collection fields take the child type wrapped in the collection shape — `[...]` for arrays, `{ map: ... }`, `{ set: ... }`, or `{ collection: ... }`. Initialize each field with its collection instance:
+Collection fields take the child type wrapped in the collection shape: `[...]` for arrays, `{ map: ... }`, `{ set: ... }`, or `{ collection: ... }`. Initialize each field with its collection instance:
 
 ```ts filename="MyState.ts"
 import { Schema, ArraySchema, MapSchema, SetSchema, CollectionSchema, type } from "@colyseus/schema";
@@ -82,7 +82,7 @@ class Player extends Schema {
 }
 ```
 
-The collection instances themselves work exactly as documented in the [main reference](/state/schema#data-types) — only the field declaration differs between the two styles.
+The collection instances themselves work exactly as documented in the [main reference](/state/schema#data-types). Only the field declaration differs between the two styles.
 
 ## Default values
 
@@ -111,7 +111,7 @@ class Weapon extends Item {
 }
 
 // A subclass that adds NO new @type() fields must be registered
-// explicitly with @entity — field decorators are what register a
+// explicitly with @entity: field decorators are what register a
 // class with the serializer, and this class has none of its own.
 @entity
 class Shield extends Item {}
@@ -144,7 +144,7 @@ class Player extends Schema {
 }
 ```
 
-See [State View](/state/view) for how `StateView` works — everything there applies equally to both definition styles.
+See [State View](/state/view) for how `StateView` works. Everything there applies equally to both definition styles.
 
 ## Delivery modifiers
 
@@ -157,7 +157,7 @@ class Player extends Schema {
     // tick patches ride the unreliable channel (WebTransport only)
     @unreliable @type("number") aimYaw: number;
 
-    // never in a full state sync — invisible to late joiners
+    // never in a full state sync: invisible to late joiners
     @patchOnly @type("number") flashIntensity: number;
 
     // full state sync only, never a tick patch
@@ -165,7 +165,7 @@ class Player extends Schema {
 }
 ```
 
-`@patchOnly` and `@fullStateOnly` are mutually exclusive — combining them throws at decoration time. Streaming collections use the type descriptor instead: `@type({ stream: Entity })`, with an optional `priority` key.
+`@patchOnly` and `@fullStateOnly` are mutually exclusive: combining them throws at decoration time. Streaming collections use the type descriptor instead: `@type({ stream: Entity })`, with an optional `priority` key.
 
 The semantics, use cases and cautions are documented in the [main reference → Delivery modifiers](/state/schema#delivery-modifiers). That includes the transport requirement for `@unreliable`, which is experimental and reaches clients only over [WebTransport](/server/transport/webtransport).
 
@@ -189,7 +189,7 @@ See [Versioning](/state/schema#versioning-and-backwardsforwards-compatibility) f
 ## Legacy: `defineTypes()`
 
 <Callout type="warning">
-    `defineTypes()` is **deprecated** — it still works, but logs a deprecation warning at runtime and in `schema-codegen`. Migrate to [`schema()` with `t.*` builders](/state/schema). (It was briefly removed in early schema 5 releases, 5.0.0–5.0.8 — update `@colyseus/schema` if you hit a missing-export error.)
+    `defineTypes()` is **deprecated**: it still works, but logs a deprecation warning at runtime and in `schema-codegen`. Migrate to [`schema()` with `t.*` builders](/state/schema). (It was briefly removed in early schema 5 releases, 5.0.0–5.0.8. Update `@colyseus/schema` if you hit a missing-export error.)
 </Callout>
 
 ```js filename="MyState.js"

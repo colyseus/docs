@@ -139,12 +139,12 @@ const server = defineServer({
 ```
 
 <Callout type="info">
-    Prefer [`routes`](#routes-routes) for new code — endpoints defined there are type-checked end to end, including on the client SDK.
+    Prefer [`routes`](#routes-routes) for new code: endpoints defined there are type-checked end to end, including on the client SDK.
 </Callout>
 
 #### Before Listen (`beforeListen`)
 
-An optional callback executed before the server starts listening. Use it to connect to a database or other services first. `async` is supported — the server waits for it.
+An optional callback executed before the server starts listening. Use it to connect to a database or other services first. `async` is supported: the server waits for it.
 
 ```ts {5-7} filename="app.config.ts"
 import { defineServer } from "colyseus";
@@ -159,7 +159,7 @@ const server = defineServer({
 
 #### Database (`database`)
 
-Boots a database module — usually `@colyseus/database`'s `db` instance — before the matchmaker accepts connections. The database may also contribute default routes, such as the auth endpoints.
+Boots a database module (usually `@colyseus/database`'s `db` instance) before the matchmaker accepts connections. The database may also contribute default routes, such as the auth endpoints.
 
 ```ts {2,6} filename="app.config.ts"
 import { defineServer } from "colyseus";
@@ -177,7 +177,7 @@ const server = defineServer({
 
 #### Auth (`auth`)
 
-Controls mounting of the [`@colyseus/auth`](/auth/module) routes. Pass an options object to mount them explicitly — useful when `database` is not in use — or `false` to disable auto-mounting even when a `database` would provide defaults.
+Controls mounting of the [`@colyseus/auth`](/auth/module) routes. Pass an options object to mount them explicitly (useful when `database` is not in use), or `false` to disable auto-mounting even when a `database` would provide defaults.
 
 ```ts filename="app.config.ts"
 const server = defineServer({
@@ -199,7 +199,7 @@ The public address advertised for this process (e.g. `"server-1.example.com"`). 
 
 #### Logger (`logger`)
 
-Replace the built-in logger — an alias to `console` by default — with your own implementation, such as `pino` or `winston`.
+Replace the built-in logger (an alias to `console` by default) with your own implementation, such as `pino` or `winston`.
 
 <Callout type="info">
     See [Logging](/server/logging) for ready-made configurations.
@@ -345,8 +345,8 @@ const server = defineServer({
 
 #### Definition Options
 
-The matchmaking-related options — `filterBy()`, `sortBy()`, and
-`enableRealtimeListing()` — are documented in
+The matchmaking-related options (`filterBy()`, `sortBy()`, and
+`enableRealtimeListing()`) are documented in
 **[Matchmaking → Matchmaking Options](/matchmaker#matchmaking-options)**.
 
 ##### Lifecycle Events
@@ -384,7 +384,7 @@ const server = defineServer({
 
 ### Remove Room Type
 
-Revert a room definition — makes a `roomName` unavailable for matchmaking. This
+Revert a room definition, making a `roomName` unavailable for matchmaking. This
 method is usually not recommended but it may be useful in some scenarios.
 
 ```ts

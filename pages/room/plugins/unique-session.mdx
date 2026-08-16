@@ -1,6 +1,6 @@
 ---
 title: "UniqueSessionPlugin"
-description: "Enforce one (or N) concurrent room sessions per user — prevent two-tab abuse and stale matchmaking re-queues."
+description: "Enforce one (or N) concurrent room sessions per user, preventing two-tab abuse and stale matchmaking re-queues."
 ---
 import { Callout } from "nextra/components";
 
@@ -30,7 +30,7 @@ export class GameRoom extends Room {
 ```
 
 <Callout type="info">
-  **Auto-includes `TrackUserSessionsPlugin`.** The plugin reads the per-user reverse index that `TrackUserSessionsPlugin` maintains in Presence. You don't have to register the tracker yourself — `static dependencies` pulls it in.
+  **Auto-includes `TrackUserSessionsPlugin`.** The plugin reads the per-user reverse index that `TrackUserSessionsPlugin` maintains in Presence. You don't have to register the tracker yourself: `static dependencies` pulls it in.
 </Callout>
 
 ## How it works
@@ -42,23 +42,23 @@ When a client joins, the plugin:
 3. Reconciles entries against live rooms (drops stragglers from crashed processes; cross-checks same-room entries against `this.room.clients` so a fast-disconnect ghost doesn't block reconnects).
 4. If the active count would exceed `max`, either rejects the join or kicks the oldest existing session.
 
-Anonymous clients (no resolvable userId) are **never** rejected — there's no stable identity to enforce against.
+Anonymous clients (no resolvable userId) are **never** rejected, because there's no stable identity to enforce against.
 
 ## Performance
 
 Per-join cost is bounded at **two backend round trips, independent of cluster size**:
 
 1. `HGETALL` the user's reverse-index hash (always).
-2. One batch room lookup (`matchMaker.findRoomsByIds`) for any cross-room candidates — skipped entirely when the user has none. Entries pointing at *this* room are resolved against the room's local client list, with no backend call.
+2. One batch room lookup (`matchMaker.findRoomsByIds`) for any cross-room candidates, skipped entirely when the user has none. Entries pointing at *this* room are resolved against the room's local client list, with no backend call.
 
-So a typical first-join (no prior entries) is **one** wire op; a duplicate check against an existing same-room session is also **one** (the verification is local); cross-room reconciliation adds **one** more batch call. The plugin's cost scales with the user's own session count (`K`), not the cluster's total room count (`N`) — safe to enable on large multi-process deployments.
+So a typical first-join (no prior entries) is **one** wire op; a duplicate check against an existing same-room session is also **one** (the verification is local); cross-room reconciliation adds **one** more batch call. The plugin's cost scales with the user's own session count (`K`), not the cluster's total room count (`N`). It is safe to enable on large multi-process deployments.
 
 ## Options
 
 | Option           | Type                                            | Default              | Description                                                                                                                                                                       |
 |------------------|-------------------------------------------------|----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `max`            | `number`                                        | `1`                  | Max concurrent sessions of this room type per user.                                                                                                                               |
-| `onDuplicate`    | `'reject' \| 'replace'`                         | `'reject'`           | Behavior when the limit is exceeded. `'replace'` kicks the **oldest** existing session(s) so the new join proceeds — useful for refresh-style UX.                                  |
+| `onDuplicate`    | `'reject' \| 'replace'`                         | `'reject'`           | Behavior when the limit is exceeded. `'replace'` kicks the **oldest** existing session(s) so the new join proceeds, useful for refresh-style UX.                                  |
 | `rejectCode`     | `number`                                        | `4400`               | `ServerError` code sent to the client when `onDuplicate: 'reject'`. The SDK surfaces it as `MatchMakeError.code`.                                                                  |
 | `rejectMessage`  | `string`                                        | `'already_in_room'`  | `ServerError` message sent to the client. The SDK exposes it as `e.message`.                                                                                                       |
 | `conflictsWith`  | `(existing, currentRoom) => boolean`            | —                    | Per-existing-session filter that runs after the plugin's same-`roomName` matching + stale-entry reconcile. Return `true` to count the existing session as a conflict, `false` to skip it. See [`conflictsWith` in detail](#scope-by-conflictswith) below. |
@@ -111,11 +111,11 @@ The `conflictsWith` callback is your hook to override "what counts as a duplicat
 
 The predicate receives:
 
-- `existing` — the candidate session being evaluated:
-  - `sessionId: string` — the existing session's id.
-  - `joinedAt: number` — Unix ms timestamp from when the existing session was recorded.
-  - `room?: IRoomCache` — matchmaker's cached record for the existing session's room (`metadata`, `clients`, `maxClients`, `locked`, `processId`, etc.). **Undefined** when the existing session is in the *same `Room` instance* as the joining client — use `currentRoom` for that case. No extra round trip is made: this is the same lookup the plugin already runs for cross-room candidates.
-- `currentRoom` — the live `Room` instance the join is targeting (same as `this.room` inside the plugin). Optional to declare; ignore it if you don't need it.
+- `existing`: the candidate session being evaluated:
+  - `sessionId: string`: the existing session's id.
+  - `joinedAt: number`: Unix ms timestamp from when the existing session was recorded.
+  - `room?: IRoomCache`: matchmaker's cached record for the existing session's room (`metadata`, `clients`, `maxClients`, `locked`, `processId`, etc.). **Undefined** when the existing session is in the *same `Room` instance* as the joining client. Use `currentRoom` for that case. No extra round trip is made: this is the same lookup the plugin already runs for cross-room candidates.
+- `currentRoom`: the live `Room` instance the join is targeting (same as `this.room` inside the plugin). Optional to declare; ignore it if you don't need it.
 
 #### Scope by game mode metadata
 
@@ -141,10 +141,10 @@ import { matchMaker } from "@colyseus/core";
 plugins = definePlugins([
   new UniqueSessionPlugin({
     max: 1,
-    // Allow one session per Node process — useful if you run the
+    // Allow one session per Node process, useful if you run the
     // game in multiple regions and want a user to be able to play
     // in EU and US at the same time.
-    // same-room conflicts have no `existing.room` — always same-process
+    // same-room conflicts have no `existing.room`: always same-process
     conflictsWith: (existing) =>
       !existing.room || existing.room.processId === matchMaker.processId,
   }),
@@ -158,7 +158,7 @@ plugins = definePlugins([
   new UniqueSessionPlugin({
     max: 1,
     // If the other room is full, the user can't actually still be
-    // playing meaningfully — let them re-queue elsewhere.
+    // playing meaningfully, so let them re-queue elsewhere.
     conflictsWith: (existing) =>
       !existing.room || existing.room.clients < existing.room.maxClients,
   }),
@@ -177,6 +177,6 @@ plugins = definePlugins([
 
 ## Caveats
 
-- **Race window.** Two near-simultaneous joins from the same user can both pass the check before either has written to the Presence index — both succeed. Acceptable for the "no two tabs" UX; if your game needs strict serialization (e.g. competitive matchmaking that can't double-book), layer your own atomic reservation on top.
+- **Race window.** Two near-simultaneous joins from the same user can both pass the check before either has written to the Presence index, so both succeed. Acceptable for the "no two tabs" UX; if your game needs strict serialization (e.g. competitive matchmaking that can't double-book), layer your own atomic reservation on top.
 - **`TrackUserSessionsPlugin` is required.** Auto-included via `static dependencies`. If your app's `Room` somehow opts out of plugin tracking, the index stays empty and this plugin no-ops.
 - **Stale entries are best-effort cleaned up.** Reconciliation drops entries pointing at rooms the matchmaker no longer knows. Same-room entries are cross-checked against `this.room.clients` so reconnects after a missed `onLeave` aren't false-rejected.

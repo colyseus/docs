@@ -1,6 +1,6 @@
 ---
 title: "Authentication & RBAC"
-description: "How admin sessions, roles, and the admin.guard() middleware work — JWT cookies, three-role hierarchy, scoped mod assignments, password reset, and gating sibling tools."
+description: "How admin sessions, roles, and the admin.guard() middleware work: JWT cookies, three-role hierarchy, scoped mod assignments, password reset, and gating sibling tools."
 ---
 import { Callout } from "nextra/components"
 
@@ -14,14 +14,14 @@ When an admin signs in (`POST /admin-api/auth/login`), the panel sets an HttpOnl
 
 | Property | Default | Notes |
 |---|---|---|
-| Cookie name | `colyseus_admin_session` | Fixed — not configurable |
-| `HttpOnly` | `true` | Always — not configurable |
+| Cookie name | `colyseus_admin_session` | Fixed, not configurable |
+| `HttpOnly` | `true` | Always, not configurable |
 | `SameSite` | `Strict` | Configurable via `session.cookieSameSite` (`'Strict' \| 'Lax' \| 'None'`) |
 | `Secure` | `true` in production | Auto-set based on `NODE_ENV`; override via `session.cookieSecure` |
 | TTL | 7 days | Configurable via `session.ttlSeconds` |
 | Domain | host-only | Set via `session.cookieDomain` when serving from a subdomain |
 
-Sessions are stateless — the cookie is the only source of truth. Two consequences:
+Sessions are stateless: the cookie is the only source of truth. Two consequences:
 
 - **Logout** clears the cookie client-side. The JWT itself remains technically valid until it expires unless its `tokenVersion` is bumped (see below).
 - **Revocation** happens by incrementing the user's `tokenVersion` column. `db.auth.bumpTokenVersion(userId)` invalidates every session issued before the call on its next verification. The admin "Revoke sessions" action does exactly this; `db.auth.ban()` does it atomically with the ban itself.
@@ -34,11 +34,11 @@ Each admin-panel user has a row in the `roles` table (set via `db.moderation.set
 
 | Role | Default access |
 |---|---|
-| `admin` | Full access — all resources, all actions, all rooms. |
-| `mod` | List, read, and update — only on resources assigned via `db.moderation.assignMod()`. No create or delete, no access outside assigned scopes, and the roles table is always blocked. |
-| `user` | Cannot open the panel UI (403 — an operator role is required), but direct API calls to list/read endpoints are permitted. |
+| `admin` | Full access: all resources, all actions, all rooms. |
+| `mod` | List, read, and update, only on resources assigned via `db.moderation.assignMod()`. No create or delete, no access outside assigned scopes, and the roles table is always blocked. |
+| `user` | Cannot open the panel UI (403: an operator role is required), but direct API calls to list/read endpoints are permitted. |
 
-Roles are read from the live DB on every request — a demotion takes effect immediately without re-issuing the cookie.
+Roles are read from the live DB on every request. A demotion takes effect immediately without re-issuing the cookie.
 
 ### Promoting a user to admin
 
@@ -64,7 +64,7 @@ This pattern lets you give a community manager full control over guilds without 
 
 ## `admin.guard()`
 
-The `admin.guard()` middleware checks the same session cookie used by the panel itself, so you can gate other HTTP routes — the Monitor, the Playground, or any custom endpoint — behind a single admin login.
+The `admin.guard()` middleware checks the same session cookie used by the panel itself, so you can gate other HTTP routes (the Monitor, the Playground, or any custom endpoint) behind a single admin login.
 
 ```ts {1,5-6} filename="src/app.config.ts"
 import { admin } from "@colyseus/admin";
@@ -105,13 +105,13 @@ The panel's forgot-password flow mirrors the player-side flow in `@colyseus/auth
 1. User clicks "Forgot password?" on the login screen.
 2. `POST /admin-api/auth/request-reset` is called with the email.
 3. The panel calls your `onResetRequest({ email, userId, token, url })` callback (configured on the [`admin()` options](/admin#options-reference)).
-4. The callback delivers the URL — typically via a transactional email service. The `token` is a short-lived signed JWT bound to that user.
+4. The callback delivers the URL, typically via a transactional email service. The `token` is a short-lived signed JWT bound to that user.
 5. The user opens the URL, which loads the panel's `/reset?token=<token>` page.
 6. They submit a new password; the panel calls `POST /admin-api/auth/reset` to verify the token and update the hash via `db.auth.setPasswordHash()`.
 7. The reset endpoint also bumps `tokenVersion` to terminate any active sessions.
 
 <Callout type="info">
-    The default `onResetRequest` forwards through `auth.settings.onForgotPassword` when configured, falling back to logging the URL via the admin logger — fine for local development, but you must override it before going to production. The request endpoint always returns `200` regardless of whether the email exists, so it cannot be used to enumerate users.
+    The default `onResetRequest` forwards through `auth.settings.onForgotPassword` when configured, falling back to logging the URL via the admin logger. The fallback is fine for local development, but you must override it before going to production. The request endpoint always returns `200` regardless of whether the email exists, so it cannot be used to enumerate users.
 </Callout>
 
 ```ts filename="src/app.config.ts"
@@ -129,7 +129,7 @@ admin({
 
 ## Rate limits
 
-The auth endpoints are rate-limited to slow down brute-force attacks. Defaults are in-memory token buckets per limiter — sufficient for single-process deployments. Replace with a Redis-backed `RateLimiter` for multi-node setups so the buckets are shared across instances.
+The auth endpoints are rate-limited to slow down brute-force attacks. Defaults are in-memory token buckets per limiter, sufficient for single-process deployments. Replace with a Redis-backed `RateLimiter` for multi-node setups so the buckets are shared across instances.
 
 | Endpoint | Default limit | Option |
 |---|---|---|
@@ -153,5 +153,5 @@ admin({
 
 ## Next steps
 
-- [Resources & CRUD](/admin/resources) — per-resource policies (the third layer of access control, on top of role + scope).
-- [Hardening for production](/admin#hardening-for-production) — cookie domain, secrets rotation, and email delivery.
+- [Resources & CRUD](/admin/resources): per-resource policies (the third layer of access control, on top of role + scope).
+- [Hardening for production](/admin#hardening-for-production): cookie domain, secrets rotation, and email delivery.

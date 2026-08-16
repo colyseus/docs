@@ -104,7 +104,7 @@ const client = new Client<typeof server>("http://localhost:2567");
 ```
 
 <Callout type="info">
-`import type` only imports type information at compile time—no server code is included in your client bundle.
+`import type` only imports type information at compile time, so no server code is included in your client bundle.
 </Callout>
 
 ### Providing Room State Types
@@ -151,8 +151,8 @@ room.onMessage("...", () => {}); // ✓ Type-safe
 
 If you import the actual schema class (not just its type) and pass it as the **third argument** to `joinOrCreate()`, you get two benefits:
 
-1. **Custom methods available** — Any custom methods you've defined on your schema classes become accessible on the client.
-2. **Reduced bandwidth** — The server skips sending the state structure definition when the client joins, since the client already knows the schema shape.
+1. **Custom methods available**: Any custom methods you've defined on your schema classes become accessible on the client.
+2. **Reduced bandwidth**: The server skips sending the state structure definition when the client joins, since the client already knows the schema shape.
 
 ```ts {2,5}
 import { Client } from "@colyseus/sdk";
@@ -195,7 +195,7 @@ If you define your state with the [`@type()` decorator style](/state/schema/deco
 }
 ```
 
-These flags are required only for `@type()` decorators — the recommended [`schema()` builder](/state/schema) works without them.
+These flags are required only for `@type()` decorators. The recommended [`schema()` builder](/state/schema) works without them.
 
 ## Next Steps
 

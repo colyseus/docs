@@ -88,7 +88,7 @@ If you are using the `@colyseus/auth` module, `auth.middleware()` works in both 
 </Tabs>
 
 <Callout type="warning">
-    `tokenVersion`-based revocation (`db.auth.ban()`, `db.auth.bumpTokenVersion()`) is enforced on **room joins** — `auth.middleware()` only verifies the JWT's signature and expiry. A revoked-but-unexpired token still passes HTTP routes; if a route must observe revocation immediately, check `db.auth.isBanned()` / the `tokenVersion` claim yourself inside the handler. See [Database → Authentication](/database/authentication).
+    `tokenVersion`-based revocation (`db.auth.ban()`, `db.auth.bumpTokenVersion()`) is enforced on **room joins**. `auth.middleware()` only verifies the JWT's signature and expiry. A revoked-but-unexpired token still passes HTTP routes; if a route must observe revocation immediately, check `db.auth.isBanned()` / the `tokenVersion` claim yourself inside the handler. See [Database → Authentication](/database/authentication).
 </Callout>
 
 </Steps>

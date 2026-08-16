@@ -127,7 +127,7 @@ public class NetworkManager : MonoBehaviour
 
 A resolved join does **not** mean the state has been synchronized yet: `room.State` is instantiated when you join, but its collections (`players`, nested refs, …) are only populated by the first full state sync, which arrives a moment later. Code that reads `room.State` right after joining can find `null` maps.
 
-`WaitForFirstState()` covers the gap — it is the C# analogue of the JavaScript SDK's `room.onStateChange.once(...)`:
+`WaitForFirstState()` covers the gap. It is the C# analogue of the JavaScript SDK's `room.onStateChange.once(...)`:
 
 ```csharp
 room = await client.JoinOrCreate<MyRoomState>("my_room");
@@ -138,14 +138,14 @@ await room.WaitForFirstState();
 Debug.Log($"{room.State.players.Count} players already in the room");
 ```
 
-It resolves immediately when the state has already synchronized, so it is always safe to await — including after reconnections.
+It resolves immediately when the state has already synchronized, so it is always safe to await, including after reconnections.
 
 <Callout type="warning">
-    Never poll for state with `Task.Delay` on **WebGL** builds — WebGL has no thread-pool timers, so `Task.Delay` never resumes and the wait hangs forever. `WaitForFirstState()` is timer-free: it completes on the message pump and works on every platform, including WebGL.
+    Never poll for state with `Task.Delay` on **WebGL** builds. WebGL has no thread-pool timers, so `Task.Delay` never resumes and the wait hangs forever. `WaitForFirstState()` is timer-free: it completes on the message pump and works on every platform, including WebGL.
 </Callout>
 
 <Callout type="info">
-    Registering `Callbacks` (as in the Quick Example above) is safe *before* the first sync — callbacks are driven by the decoder and fire as the initial state decodes. `WaitForFirstState()` is for code that reads `room.State` directly.
+    Registering `Callbacks` (as in the Quick Example above) is safe *before* the first sync: callbacks are driven by the decoder and fire as the initial state decodes. `WaitForFirstState()` is for code that reads `room.State` directly.
 </Callout>
 
 ## SDK API

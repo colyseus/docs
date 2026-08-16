@@ -12,7 +12,7 @@ import { MovedAnchors } from "../components/moved-anchors";
 {/*
   Messages and connection lifecycle moved to child pages; keep old deep links
   working. `#send-and-receive-messages` and `#connection-lifecycle` are absent
-  on purpose — those headings survive here as pointers, and redirecting them
+  on purpose: those headings survive here as pointers, and redirecting them
   would make this page's own table of contents bounce readers away.
 */}
 <MovedAnchors map={{
@@ -195,7 +195,7 @@ The most common way to connect. Joins an existing room if available, or creates 
 
 ### Other Join Methods
 
-These methods use the same pattern as `joinOrCreate` — replace the method name accordingly.
+These methods use the same pattern as `joinOrCreate`. Replace the method name accordingly.
 
 | Method | Signature | Description |
 |--------|-----------|-------------|
@@ -223,7 +223,7 @@ const room = await client.joinById(params.get("roomId"));
 
 ## Send and Receive Messages
 
-Once connected to a room, you can send and receive messages in real-time —
+Once connected to a room, you can send and receive messages in real-time,
 including raw byte payloads and request/response. See
 **[Sending & Receiving Messages](/sdk/messages)** for the full reference.
 
@@ -231,7 +231,7 @@ including raw byte payloads and request/response. See
 
 ## Sending Input (Netcode)
 
-For prediction-ready rooms — rooms that call [`defineInput()`](/netcode/server-input) on the server — `room.input()` returns a typed input channel: stage fields on `input.data`, then `input.send()` once per fixed step.
+For prediction-ready rooms (rooms that call [`defineInput()`](/netcode/server-input) on the server), `room.input()` returns a typed input channel: stage fields on `input.data`, then `input.send()` once per fixed step.
 
 ```ts filename="client.ts"
 const input = room.input();   // input schema arrives from the server's defineInput()
@@ -241,10 +241,10 @@ input.data.jump = true;
 input.send();
 ```
 
-Inputs are buffered and acknowledged, and power [client-side prediction](/netcode/client-prediction) and [lag compensation](/netcode/lag-compensation). See **[`room.input(options)`](/netcode/client-prediction#roominputoptions)** for the full reference — reliability modes, redundancy, and the `InputHandle` surface.
+Inputs are buffered and acknowledged, and power [client-side prediction](/netcode/client-prediction) and [lag compensation](/netcode/lag-compensation). See **[`room.input(options)`](/netcode/client-prediction#roominputoptions)** for the full reference: reliability modes, redundancy, and the `InputHandle` surface.
 
 <Callout type="info">
-    The netcode APIs (`room.input()`, `room.clock`, `Predict`) are available in Colyseus 0.18+ **across the official SDKs** — see [Client Prediction](/netcode/client-prediction).
+    The netcode APIs (`room.input()`, `room.clock`, `Predict`) are available in Colyseus 0.18+ **across the official SDKs**. See [Client Prediction](/netcode/client-prediction).
 </Callout>
 
 ---
@@ -707,7 +707,7 @@ Quick reference for room properties.
 | `name` | `string` | Name of the room type (e.g., `"battle"`) |
 | `reconnectionToken` | `string` | Token for manual reconnection |
 | `reconnection` | `ReconnectionOptions` | Automatic reconnection configuration |
-| `clock` | `RoomClock` | Server time & latency estimates (`serverNow()`, `rtt()`) — see [`room.clock`](/netcode/client-prediction#roomclock) |
+| `clock` | `RoomClock` | Server time & latency estimates (`serverNow()`, `rtt()`). See [`room.clock`](/netcode/client-prediction#roomclock) |
 
 ---
 

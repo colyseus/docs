@@ -21,7 +21,7 @@ customize:
 You can define custom types to encode and decode your data structures.
 
 <Callout type="info">
-    Custom type identifiers currently require the decorator style — see [Decorators](/state/schema/decorators#typescript-config) for the required tsconfig flags.
+    Custom type identifiers currently require the decorator style. See [Decorators](/state/schema/decorators#typescript-config) for the required tsconfig flags.
 </Callout>
 
 ```typescript
@@ -75,7 +75,7 @@ See [CustomPrimitiveTypes.test.ts](https://github.com/colyseus/schema/blob/maste
 
 The `$track` method is called whenever a synchronized attribute gets mutated. It
 is used to track which properties must be encoded. The `$track`/`$encoder`/`$decoder`
-hooks below attach to any `Schema` class — hand-written or returned by `schema()`.
+hooks below attach to any `Schema` class, hand-written or returned by `schema()`.
 
 ```ts filename="Vec3.ts"
 import { $track, Schema, OPERATION } from "@colyseus/schema";
@@ -217,7 +217,7 @@ Schema.initialize(vec3);
 
 ## Instance pooling
 
-Constructing a `Schema` is not free — each instance gets its own change-tracking state, a property descriptor, and a values array, multiplied by every node in its entity tree. A room that spawns and despawns entities continuously (projectiles, ECS entities, bots) pays that cost over and over.
+Constructing a `Schema` is not free: each instance gets its own change-tracking state, a property descriptor, and a values array, multiplied by every node in its entity tree. A room that spawns and despawns entities continuously (projectiles, ECS entities, bots) pays that cost over and over.
 
 `createPool()` recycles instances instead:
 
@@ -232,7 +232,7 @@ entity.x = 10;
 entity.y = 20;
 state.entities.set(id, entity);
 
-// despawn — detach from the state tree FIRST, then release
+// despawn: detach from the state tree FIRST, then release
 state.entities.delete(id);
 pool.release(entity);
 ```
@@ -253,12 +253,12 @@ Options:
 
 ### Reuse is invisible on the wire
 
-`release()` resets the instance to its construction defaults and drops its internal ref id, so re-adding it acquires a fresh one. A pooled instance therefore encodes **byte-identically** to a freshly constructed one — clients cannot tell the difference, and a late joiner receiving a full state sync sees a consistent state regardless of how much churn preceded it.
+`release()` resets the instance to its construction defaults and drops its internal ref id, so re-adding it acquires a fresh one. A pooled instance therefore encodes **byte-identically** to a freshly constructed one. Clients cannot tell the difference, and a late joiner receiving a full state sync sees a consistent state regardless of how much churn preceded it.
 
 ### Order matters: detach, then release
 
 <Callout type="warning">
-    Remove the instance from its parent collection **before** calling `release()`. Releasing an instance that is still attached throws — it would otherwise be reset while the encoder still considered it part of the state tree.
+    Remove the instance from its parent collection **before** calling `release()`. Releasing an instance that is still attached throws: it would otherwise be reset while the encoder still considered it part of the state tree.
 </Callout>
 
 ```ts
@@ -279,6 +279,6 @@ Treat `acquire()` as `new` and assign every field you would have set on a fresh 
 `release()` throws when the instance is:
 
 - **still attached** to the state tree (see above);
-- **shared across multiple parents** — another owner may still hold it, so recycling it is unsafe;
-- **decoder-side** — client mirror instances aren't change-tracked and can't be pooled. Pooling is a server-side optimization only;
-- **holding a [streamed](/state/streaming) collection field** — a `.stream()` map, set, collection or array cannot be reset, since per-client delivery state outlives the instance.
+- **shared across multiple parents**: another owner may still hold it, so recycling it is unsafe;
+- **decoder-side**: client mirror instances aren't change-tracked and can't be pooled. Pooling is a server-side optimization only;
+- **holding a [streamed](/state/streaming) collection field**: a `.stream()` map, set, collection or array cannot be reset, since per-client delivery state outlives the instance.

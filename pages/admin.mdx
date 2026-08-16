@@ -1,17 +1,17 @@
 ---
 title: "Admin Panel"
-description: "Production operations console for Colyseus — install, mount, and bootstrap @colyseus/admin for user management, database CRUD, live room inspection, customizable dashboards, and an append-only audit trail."
+description: "Production operations console for Colyseus: install, mount, and bootstrap @colyseus/admin for user management, database CRUD, live room inspection, customizable dashboards, and an append-only audit trail."
 ---
 import { Callout, Tabs } from "nextra/components"
 
 # Admin Panel
 
-`@colyseus/admin` is a browser-based operations console for projects using [`@colyseus/database`](/database). It provides user management (browse, ban, revoke sessions), CRUD over your drizzle tables, a live room inspector, and a customizable dashboard — all gated by session-based login with role-based access control and an append-only audit log.
+`@colyseus/admin` is a browser-based operations console for projects using [`@colyseus/database`](/database). It provides user management (browse, ban, revoke sessions), CRUD over your drizzle tables, a live room inspector, and a customizable dashboard, all gated by session-based login with role-based access control and an append-only audit log.
 
-For a lightweight, no-auth dashboard intended for room and process inspection, see the [Monitoring Panel](/tools/monitoring) instead — the admin panel is the heavier counterpart, built for production operations.
+For a lightweight, no-auth dashboard intended for room and process inspection, see the [Monitoring Panel](/tools/monitoring) instead. The admin panel is the heavier counterpart, built for production operations.
 
 <Callout type="warning">
-    `@colyseus/admin` is in **beta** — APIs may change between releases as we incorporate community feedback. Share yours on the [public roadmap](/roadmap).
+    `@colyseus/admin` is in **beta**: APIs may change between releases as we incorporate community feedback. Share yours on the [public roadmap](/roadmap).
 </Callout>
 
 ## Installation
@@ -67,7 +67,7 @@ The admin panel mounts in two ways:
 </Tabs>
 
 <Callout type="info">
-    The `database` option defaults to `GameDatabase.current` — set automatically when you construct `new GameDatabase(...)`. Multi-database deployments should pass `database` explicitly (e.g. `admin({ database: db })`) to disambiguate which instance the panel drives.
+    The `database` option defaults to `GameDatabase.current`, set automatically when you construct `new GameDatabase(...)`. Multi-database deployments should pass `database` explicitly (e.g. `admin({ database: db })`) to disambiguate which instance the panel drives.
 </Callout>
 
 ## Usage
@@ -94,11 +94,11 @@ After bootstrap:
 
 The defaults are tuned for local development. Before exposing the panel to the public internet:
 
-- **Set a strong `JWT_SECRET` and `SESSION_SECRET`** — see [Auth Module → Required Environment Secrets](/auth/module#required-environment-secrets). Rotating `JWT_SECRET` invalidates all admin sessions (`SESSION_SECRET` only signs OAuth state cookies).
-- **Wire [`auth.settings.onForgotPassword`](/auth/module#on-forgot-password)** to deliver password reset emails through your transactional email provider — the same hook that powers your player-side reset flow.
-- **Tighten the session cookie** via the `session` option — set an explicit `domain`, an appropriate `maxAge`, and confirm the `Secure`/`SameSite` flags match your deployment.
+- **Set a strong `JWT_SECRET` and `SESSION_SECRET`**: see [Auth Module → Required Environment Secrets](/auth/module#required-environment-secrets). Rotating `JWT_SECRET` invalidates all admin sessions (`SESSION_SECRET` only signs OAuth state cookies).
+- **Wire [`auth.settings.onForgotPassword`](/auth/module#on-forgot-password)** to deliver password reset emails through your transactional email provider, the same hook that powers your player-side reset flow.
+- **Tighten the session cookie** via the `session` option: set an explicit `domain`, an appropriate `maxAge`, and confirm the `Secure`/`SameSite` flags match your deployment.
 - **Disable `allowDevHeader`** if you don't need it. It auto-disables when `NODE_ENV === "production"`, but setting it to `false` explicitly avoids surprises in mixed environments.
-- **Swap the in-memory rate limiters for a Redis-backed implementation** on multi-process deployments — the default token buckets don't share state across instances.
+- **Swap the in-memory rate limiters for a Redis-backed implementation** on multi-process deployments. The default token buckets don't share state across instances.
 - **Gate the Monitor and Playground** behind `admin.guard()` so you don't have multiple unauthenticated panels exposed:
 
     ```ts filename="src/app.config.ts"
@@ -117,7 +117,7 @@ The defaults are tuned for local development. Before exposing the panel to the p
 |---|---|---|---|
 | `database` | `GameDatabase` | `GameDatabase.current` | The database powering the user store, audit log, and table introspection. Pass explicitly for multi-database setups. |
 | `tables` | `Record<string, Table>` | `database.tables` | Map of drizzle tables exposed in the panel. Spread `database.tables` and append custom tables: `{ ...database.tables, guilds }`. |
-| `resources` | `Record<string, ResourceDefinition>` | `{}` | Per-table UI/UX overrides — labels, visible columns, form fields, actions, policies. See [Resources & CRUD](/admin/resources). |
+| `resources` | `Record<string, ResourceDefinition>` | `{}` | Per-table UI/UX overrides: labels, visible columns, form fields, actions, policies. See [Resources & CRUD](/admin/resources). |
 | `uiPath` | `string` | `"/admin"` | Mount path for the admin SPA. |
 | `apiPath` | `string` | `"/admin-api"` | Mount path for the admin REST API. |
 | `uiDistDir` | `string` | _built-in_ | Absolute path to the built UI assets. Defaults to the bundled `build/` directory inside the package. |
@@ -125,7 +125,7 @@ The defaults are tuned for local development. Before exposing the panel to the p
 | `resolveUserId` | `(ctx) => Promise<string \| undefined>` | session cookie, falling back to the `X-User-Id` header in dev | Override the identity resolver to integrate with another auth scheme. |
 | `enforceRbac` | `boolean` | `true` | Set to `false` to skip RBAC entirely (development only). |
 | `allowDevHeader` | `boolean` | `true` in dev, `false` in prod | Permit `X-User-Id: <id>` as a fallback identity for curl/puppeteer testing. |
-| `minPasswordLength` | `number` | `8` | Minimum password length accepted by the bootstrap and reset endpoints. Plain length check — no complexity rules. |
+| `minPasswordLength` | `number` | `8` | Minimum password length accepted by the bootstrap and reset endpoints. Plain length check, no complexity rules. |
 | `onResetRequest` | `(ctx) => void \| Promise<void>` | logs to stdout | Panel-specific override for the password-reset email. Most projects should configure [`auth.settings.onForgotPassword`](/auth/module#on-forgot-password) instead and reuse their player-side delivery. Receives `{ email, userId, token, url }`. |
 | `rateLimit` | `{ login, bootstrap, requestReset }` | in-memory token buckets | Per-endpoint rate limiters. Pass `false` per slot to disable, or a custom `RateLimiter` to swap in a Redis-backed implementation. |
 | `dashboard` | `{ presets, widgets }` | all presets enabled | Configure the dashboard homepage. See [Dashboard & widgets](/admin/dashboard). |
@@ -144,11 +144,11 @@ session: {
 }
 ```
 
-The cookie is always `HttpOnly` and signed with `JWT_SECRET`. Revoking a session is done via `db.auth.bumpTokenVersion(userId)` — see [Database → Authentication](/database/authentication).
+The cookie is always `HttpOnly` and signed with `JWT_SECRET`. Revoking a session is done via `db.auth.bumpTokenVersion(userId)`. See [Database → Authentication](/database/authentication).
 
 ## Next steps
 
-- [Authentication & RBAC](/admin/authentication) — sessions, roles, password reset, and `admin.guard()`.
-- [Resources & CRUD](/admin/resources) — exposing custom tables, customizing columns and forms, custom actions, the audit log.
-- [Dashboard & widgets](/admin/dashboard) — configuring presets and appending custom widgets to the homepage.
-- [Live rooms](/admin/rooms) — the built-in room inspector.
+- [Authentication & RBAC](/admin/authentication): sessions, roles, password reset, and `admin.guard()`.
+- [Resources & CRUD](/admin/resources): exposing custom tables, customizing columns and forms, custom actions, the audit log.
+- [Dashboard & widgets](/admin/dashboard): configuring presets and appending custom widgets to the homepage.
+- [Live rooms](/admin/rooms): the built-in room inspector.

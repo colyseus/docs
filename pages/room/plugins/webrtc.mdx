@@ -1,6 +1,6 @@
 ---
 title: "WebRTCPlugin"
-description: "Add WebRTC peer-to-peer signaling (audio/video) to a Colyseus room with a single plugin — handles peer list, SDP offer/answer, ICE candidates, and peer-left events."
+description: "Add WebRTC peer-to-peer signaling (audio/video) to a Colyseus room with a single plugin. It handles peer list, SDP offer/answer, ICE candidates, and peer-left events."
 ---
 import { Callout, Tabs } from "nextra/components";
 
@@ -8,11 +8,11 @@ import { Callout, Tabs } from "nextra/components";
 
 Adds WebRTC peer-to-peer signaling to a room. Wires the four standard signaling messages (peer list + SDP offer/answer + ICE candidate relay) and broadcasts `peer-left` when a connected peer disconnects.
 
-**This is signaling only.** It handles the SDP/ICE exchange needed to establish WebRTC connections. The actual audio/video/data streams flow directly between peers — Colyseus state synchronization continues to work through the server as usual.
+**This is signaling only.** It handles the SDP/ICE exchange needed to establish WebRTC connections. The actual audio/video/data streams flow directly between peers. Colyseus state synchronization continues to work through the server as usual.
 
 ## Installation
 
-The server-side plugin ships with the `colyseus` package — no extra install needed.
+The server-side plugin ships with the `colyseus` package: no extra install needed.
 
 ```ts filename="VideoRoom.ts"
 import { Room, definePlugins } from "colyseus";
@@ -65,7 +65,7 @@ The plugin tracks which clients have explicitly opted into the mesh, so spectato
 Use `WebRTCClient` from `@colyseus/webrtc/client` to consume the signaling and manage `RTCPeerConnection` instances.
 
 <Callout type="info">
-  The source is a single ~170-line file you can read or fork — see the [reference implementation on GitHub](https://github.com/colyseus/webrtc/blob/main/src/client.ts).
+  The source is a single ~170-line file you can read or fork. See the [reference implementation on GitHub](https://github.com/colyseus/webrtc/blob/main/src/client.ts).
 </Callout>
 
 ```ts filename="client.ts"
@@ -106,8 +106,8 @@ room.leave();
 new WebRTCClient(room, options?)
 ```
 
-- **`room`** — A Colyseus `Room` instance (or any object exposing `send(type, message)` and `onMessage(type, callback)`).
-- **`options.iceServers`** — Custom ICE servers. Defaults to Google's public STUN servers.
+- **`room`**: A Colyseus `Room` instance (or any object exposing `send(type, message)` and `onMessage(type, callback)`).
+- **`options.iceServers`**: Custom ICE servers. Defaults to Google's public STUN servers.
 
 #### Methods
 
@@ -171,9 +171,9 @@ Client A                     Server                      Client B
                           (direct, P2P)
 ```
 
-Once signaling completes, audio/video/data flows directly between the browsers via `RTCPeerConnection` — it doesn't go through your Colyseus server.
+Once signaling completes, audio/video/data flows directly between the browsers via `RTCPeerConnection`. It doesn't go through your Colyseus server.
 
 ## See Also
 
-- [Room Plugins](/room/plugins) — overview of the plugin system
-- [`@colyseus/webrtc` on GitHub](https://github.com/colyseus/webrtc) — original standalone package and example app
+- [Room Plugins](/room/plugins): overview of the plugin system
+- [`@colyseus/webrtc` on GitHub](https://github.com/colyseus/webrtc): original standalone package and example app

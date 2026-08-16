@@ -1,6 +1,6 @@
 ---
 title: "Relay Room"
-description: "The built-in RelayRoom broadcasts client messages to everyone else with minimal backend state — for simple multiplayer without server authority."
+description: "The built-in RelayRoom broadcasts client messages to everyone else with minimal backend state, for simple multiplayer without server authority."
 ---
 import { Callout, Cards, Tabs } from "nextra/components";
 
@@ -29,7 +29,7 @@ const server = defineServer({
   rooms: {
     your_relayed_room: defineRoom(RelayRoom, {
       maxClients: 4,
-      allowReconnectionTime: 40 // seconds — values above 40 are clamped to 40
+      allowReconnectionTime: 40 // seconds (values above 40 are clamped to 40)
     })
   }
 })

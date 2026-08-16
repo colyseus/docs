@@ -1,13 +1,13 @@
 ---
 title: "Deployment"
-description: "Deploy your Colyseus server to production. Production checklist, PM2, Nginx, Apache, Docker, and self-hosting on Vultr — or managed hosting on Colyseus Cloud."
+description: "Deploy your Colyseus server to production. Production checklist, PM2, Nginx, Apache, Docker, and self-hosting on Vultr, or managed hosting on Colyseus Cloud."
 ---
 import { Tabs, Steps, Cards, Callout } from "nextra/components"
 import { CloudIcon, StackIcon } from "@primer/octicons-react"
 
 # Deploying your Colyseus server
 
-Deploying Colyseus is no different than deploying a regular Node.js application — [see DigitalOcean's guide for the general setup](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-22-04). Scaling to multiple processes or machines requires extra steps — see [Scalability](/scalability).
+Deploying Colyseus is no different than deploying a regular Node.js application. [See DigitalOcean's guide for the general setup](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-22-04). Scaling to multiple processes or machines requires extra steps. See [Scalability](/scalability).
 
 <Callout type="warning">
     Consider using [Colyseus Cloud](https://cloud.colyseus.io/) to deploy and scale your Colyseus servers. Every item on the checklist below is handled for you.
@@ -20,9 +20,9 @@ Deploying Colyseus is no different than deploying a regular Node.js application 
 
 ## Production checklist
 
-- **Compile your TypeScript** — run `tsc` at deploy time and start the compiled entrypoint with plain `node`. The official template compiles to `build/index.js`. Do not run `tsx`/`ts-node` in production ([why](/cloud/typescript-compilation-errors#running-tsx-directly-in-production-not-recommended)).
-- **Set `NODE_ENV=production`** — dependencies and error verbosity behave accordingly, and `server.simulateLatency()` must never run in production.
-- **Run under a process manager** — [PM2](https://pm2.keymetrics.io/) restarts crashed processes and plays well with Colyseus:
+- **Compile your TypeScript**: run `tsc` at deploy time and start the compiled entrypoint with plain `node`. The official template compiles to `build/index.js`. Do not run `tsx`/`ts-node` in production ([why](/cloud/typescript-compilation-errors#running-tsx-directly-in-production-not-recommended)).
+- **Set `NODE_ENV=production`**: dependencies and error verbosity behave accordingly, and `server.simulateLatency()` must never run in production.
+- **Run under a process manager**: [PM2](https://pm2.keymetrics.io/) restarts crashed processes and plays well with Colyseus:
 
 ```js filename="ecosystem.config.js"
 const os = require('os');
@@ -40,10 +40,10 @@ module.exports = {
 };
 ```
 
-- **Serve over HTTPS** — put a reverse proxy in front (Nginx or Apache below) with a certificate from [Let's Encrypt](https://letsencrypt.org). The SDK connects via `https://` and upgrades to secure WebSockets (`wss://`) automatically.
-- **Let deploys drain gracefully** — Colyseus registers a [graceful shutdown](/server/graceful-shutdown) routine on `SIGTERM`/`SIGINT`: rooms are notified, clients receive `SERVER_SHUTDOWN` (`4001`), and the process exits when empty.
-- **Expose a health check** — a plain [HTTP route](/server/http-routes) returning `200` lets your load balancer or uptime monitor probe each process.
-- **More than one process or machine?** — you need a shared `presence` and `driver`, and a public address per process. Follow [Scalability](/scalability).
+- **Serve over HTTPS**: put a reverse proxy in front (Nginx or Apache below) with a certificate from [Let's Encrypt](https://letsencrypt.org). The SDK connects via `https://` and upgrades to secure WebSockets (`wss://`) automatically.
+- **Let deploys drain gracefully**: Colyseus registers a [graceful shutdown](/server/graceful-shutdown) routine on `SIGTERM`/`SIGINT`: rooms are notified, clients receive `SERVER_SHUTDOWN` (`4001`), and the process exits when empty.
+- **Expose a health check**: a plain [HTTP route](/server/http-routes) returning `200` lets your load balancer or uptime monitor probe each process.
+- **More than one process or machine?**: you need a shared `presence` and `driver`, and a public address per process. Follow [Scalability](/scalability).
 
 ---
 

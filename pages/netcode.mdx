@@ -1,6 +1,6 @@
 ---
 title: "Netcode"
-description: "Server-authoritative simulation with client-side prediction, server reconciliation, and lag compensation in Colyseus 0.18 — zero-latency local control, smooth remote entities, and what-you-see-is-what-you-hit hits."
+description: "Server-authoritative simulation with client-side prediction, server reconciliation, and lag compensation in Colyseus 0.18: zero-latency local control, smooth remote entities, and what-you-see-is-what-you-hit hits."
 ---
 import { Callout, Cards } from 'nextra/components'
 import { ServerIcon, DevicesIcon, GoalIcon, ChecklistIcon, BeakerIcon } from '@primer/octicons-react'
@@ -8,9 +8,9 @@ import { PremiumDemos, premiumDemos } from '../components/premium-demos'
 
 # Netcode
 
-Fast-paced games can't wait for the network. If your character only moves after a round-trip to the server, controls feel underwater — but if the client simply moves itself, the server is no longer in charge and cheating becomes trivial.
+Fast-paced games can't wait for the network. If your character only moves after a round-trip to the server, controls feel underwater. But if the client simply moves itself, the server is no longer in charge and cheating becomes trivial.
 
-Colyseus 0.18 gives you both: the server stays authoritative, and the client **predicts**. Your own movement responds instantly, remote players move smoothly, and a well-aimed shot at a moving target actually lands — no hand-rolled netcode stack required.
+Colyseus 0.18 gives you both: the server stays authoritative, and the client **predicts**. Your own movement responds instantly, remote players move smoothly, and a well-aimed shot at a moving target actually lands, no hand-rolled netcode stack required.
 
 <Callout type="info">
     **Available in Colyseus 0.18+.** These APIs (`room.input()`, `Predict`, `defineInput()`, `setFixedTimestep()`, `allowRewindState()`) are new in 0.18 and have no equivalent in earlier versions.
@@ -29,13 +29,13 @@ The stack is one loop split across the server and the client. Each half is confi
 
 ```mermaid
 flowchart TB
-    subgraph S["SERVER — authoritative"]
+    subgraph S["SERVER: authoritative"]
         buffer["<b>defineInput()</b><br/>input buffer"]
         step["<b>setFixedTimestep()</b><br/>step(ctx) at tickRate"]
         rewind["<b>allowRewindState()</b><br/>record() / rewind.lastSeenBy()"]
     end
 
-    subgraph C["CLIENT — predicts"]
+    subgraph C["CLIENT: predicts"]
         input["sample input"]
         predict["predict own entity<br/>(<b>reconciler</b> / <b>sim</b>)"]
         reconcile["reconcile: roll back, replay<br/>inputs newer than the ack"]
@@ -68,7 +68,7 @@ Every interaction in your game maps onto a small set of primitives. Find the row
 
 ## Read in order
 
-New to prediction? Read top to bottom — each page builds on the one before it:
+New to prediction? Read top to bottom. Each page builds on the one before it:
 
 <Cards>
   <Cards.Card icon={<ServerIcon />} title="Server Input & Timestep" href="/netcode/server-input" />
@@ -80,13 +80,13 @@ New to prediction? Read top to bottom — each page builds on the one before it:
 
 ## Runnable reference
 
-Prefer to learn by poking at something live? The [**Prediction Playground**](https://github.com/colyseus/prediction-playground) is an interactive tour of this whole section: twelve small labs, each isolating one concept — rollback and reconciliation, the interpolation modes, dead reckoning, lag compensation, optimistic events, predicted spawns, composite worlds. Every lab has a live latency slider, visualizations of what the SDK is doing (server ghosts, pending-input chips, rewind markers), and shows the exact SDK-facing code it runs.
+Prefer to learn by poking at something live? The [**Prediction Playground**](https://github.com/colyseus/prediction-playground) is an interactive tour of this whole section: twelve small labs, each isolating one concept: rollback and reconciliation, the interpolation modes, dead reckoning, lag compensation, optimistic events, predicted spawns, composite worlds. Every lab has a live latency slider, visualizations of what the SDK is doing (server ghosts, pending-input chips, rewind markers), and shows the exact SDK-facing code it runs.
 
 ### Premium demos
 
-The playground isolates each concept; these {premiumDemos.length} prototypes put them all together — authoritative server, client prediction, smoothed remotes and lag compensation running as one stack. All of them are free to play in your browser.
+The playground isolates each concept; these {premiumDemos.length} prototypes put them all together: authoritative server, client prediction, smoothed remotes and lag compensation running as one stack. All of them are free to play in your browser.
 
-The set is actively expanding, with new prototypes and with more engine ports of the existing ones — Air Hockey already ships Godot and Unity clients alongside its Three.js build.
+The set is actively expanding, with new prototypes and with more engine ports of the existing ones: Air Hockey already ships Godot and Unity clients alongside its Three.js build.
 
 <PremiumDemos />
 

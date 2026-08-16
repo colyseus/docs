@@ -7,7 +7,7 @@ import { Callout } from "nextra/components";
 
 # Playground
 
-The Colyseus Playground is a browser-based development tool for real-time debugging of your multiplayer server. It lets you create and manage WebSocket room connections, inspect synchronized state, send and receive messages, and test HTTP endpoints — all without writing any client-side code.
+The Colyseus Playground is a browser-based development tool for real-time debugging of your multiplayer server. It lets you create and manage WebSocket room connections, inspect synchronized state, send and receive messages, and test HTTP endpoints, all without writing any client-side code.
 
 ![](/playground/rooms.webp)
 
@@ -22,7 +22,7 @@ The Colyseus Playground is a browser-based development tool for real-time debugg
 - Built-in viewer and tester for server [HTTP endpoints](/server/http-routes) (similar to Postman)
 
 <Callout type="warning">
-    The playground exposes full access to your rooms and server endpoints. Do not expose it in production without password protection — see [Password protection](#password-protection) below.
+    The playground exposes full access to your rooms and server endpoints. Do not expose it in production without password protection. See [Password protection](#password-protection) below.
 </Callout>
 
 ## Installation
@@ -72,7 +72,7 @@ const server = defineServer({
 });
 ```
 
-In express-middleware mode the `prefix` option is ignored — Express strips its own mount path before dispatching.
+In express-middleware mode the `prefix` option is ignored. Express strips its own mount path before dispatching.
 
 ## Usage
 
@@ -82,7 +82,7 @@ If you mounted the playground at a different path, adjust the URL accordingly.
 
 ## Password protection
 
-The playground exposes full access to your rooms and server endpoints. **Do not expose it in production without password protection.** Pass a guard middleware through the playground's `use` option — Colyseus ships with a built-in [`basicAuth`](/server/http-routes#basic-authentication):
+The playground exposes full access to your rooms and server endpoints. **Do not expose it in production without password protection.** Pass a guard middleware through the playground's `use` option. Colyseus ships with a built-in [`basicAuth`](/server/http-routes#basic-authentication):
 
 ```ts {1,4,8} filename="app.config.ts"
 import { defineServer, createRouter, basicAuth } from "colyseus";

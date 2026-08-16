@@ -138,9 +138,9 @@ npx schema-codegen src/rooms/schema/* --haxe --output ../src/schema/
 
 ### Reactive Schema Tools
 
-The SDK ships with Haxe macros that turn generated schema classes into reactive [`tink.state`](https://github.com/haxetink/tink_state) observables — no manual listeners required.
+The SDK ships with Haxe macros that turn generated schema classes into reactive [`tink.state`](https://github.com/haxetink/tink_state) observables, no manual listeners required.
 
-**Dependencies** – add to your `.hxml`:
+**Dependencies**: add to your `.hxml`:
 
 ```
 -lib tink_state
@@ -148,7 +148,7 @@ The SDK ships with Haxe macros that turn generated schema classes into reactive 
 -lib tink_json   # optional, for serialised string fields
 ```
 
-**`ObservableSchemaMacro`** — generates a typed `State<T>` field for every property of a schema class:
+**`ObservableSchemaMacro`** generates a typed `State<T>` field for every property of a schema class:
 
 ```haxe
 @:build(io.colyseus.tools.ObservableSchemaMacro.build(MyRoomState))
@@ -160,9 +160,9 @@ class MyRoomObservable {
 }
 ```
 
-**`SchemaListenMacro`** — wires schema `listen` / `onAdd` / `onRemove` callbacks to the observable fields generated above. It handles primitives, nested schemas, `ArraySchema`, and `MapSchema` recursively.
+**`SchemaListenMacro`** wires schema `listen` / `onAdd` / `onRemove` callbacks to the observable fields generated above. It handles primitives, nested schemas, `ArraySchema`, and `MapSchema` recursively.
 
-**Using observables** — after calling `observables.listen(room)`:
+**Using observables** after calling `observables.listen(room)`:
 
 ```haxe
 // React to any change across all players

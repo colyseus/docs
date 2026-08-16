@@ -12,7 +12,7 @@ import { DevicesIcon, GearIcon, LinkIcon, MailIcon, GlobeIcon } from '@primer/oc
 </Callout>
 
 <Callout type="info">
-    **Using [`@colyseus/database`](/database)?** It wires up the user store, registration/login routes, ban gating, and session revocation for you — you can skip the user-store [Backend API](#backend-api) callbacks below. Email delivery (`onForgotPassword`, `onSendEmailConfirmation`, `onEmailConfirmed`) is still yours to wire. See [Database → Authentication](/database/authentication) for the integration overview.
+    **Using [`@colyseus/database`](/database)?** It wires up the user store, registration/login routes, ban gating, and session revocation for you, so you can skip the user-store [Backend API](#backend-api) callbacks below. Email delivery (`onForgotPassword`, `onSendEmailConfirmation`, `onEmailConfirmed`) is still yours to wire. See [Database → Authentication](/database/authentication) for the integration overview.
 </Callout>
 
 The `@colyseus/auth` module is highly configurable and allows you to implement your own authentication backend.
@@ -74,7 +74,7 @@ It is required to provide the following environment variables to your applicatio
 </Callout>
 
 <Callout type="warning">
-    **`AUTH_SALT` is legacy.** Required only when upgrading an existing deployment from a version prior to 0.18 — the legacy `scrypt`-based hasher reads it to verify passwords created before the upgrade. New 0.18 projects don't need it; the default hasher derives its own per-password salt.
+    **`AUTH_SALT` is legacy.** Required only when upgrading an existing deployment from a version prior to 0.18. The legacy `scrypt`-based hasher reads it to verify passwords created before the upgrade. New 0.18 projects don't need it; the default hasher derives its own per-password salt.
 </Callout>
 
 <Callout type="error" emoji="🚨">
@@ -405,7 +405,7 @@ client.auth.token = "xxxx";
 
 ## Backend API
 
-Implement these callbacks when you're bringing your own database. With [`@colyseus/database`](/database), they're wired automatically — see [Database & Persistence → Authentication](/database/authentication).
+Implement these callbacks when you're bringing your own database. With [`@colyseus/database`](/database), they're wired automatically. See [Database & Persistence → Authentication](/database/authentication).
 
 ### Backend URL
 
@@ -720,7 +720,7 @@ auth.settings.onGenerateToken = async function (userdata) {
 
 #### On Hash Password
 
-Password hashing is customized through the `Hash` class — the default algorithm is `scrypt`, with `sha1` available as the only other built-in:
+Password hashing is customized through the `Hash` class. The default algorithm is `scrypt`, with `sha1` available as the only other built-in:
 
 ```ts filename="src/config/auth.ts"
 import { Hash } from "@colyseus/auth";
@@ -729,7 +729,7 @@ Hash.algorithm = "sha1"; // default: "scrypt"
 ```
 
 <Callout type="warning">
-    The `auth.settings.onHashPassword` callback exists on the settings object but is **not invoked by any endpoint in 0.18** — overriding it has no effect. Use `Hash.algorithm` / `Hash.algorithms` instead.
+    The `auth.settings.onHashPassword` callback exists on the settings object but is **not invoked by any endpoint in 0.18**, so overriding it has no effect. Use `Hash.algorithm` / `Hash.algorithms` instead.
 </Callout>
 
 ---

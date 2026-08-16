@@ -46,7 +46,7 @@ export const premiumDemos: PremiumDemo[] = [
     {
         title: "Air Hockey",
         image: "/demos/netcode/air-hockey.webp",
-        description: "3D air hockey where everything is predicted — your mallet, the puck, hits and even goals resolve locally and are settled by the server. First to 7 wins.",
+        description: "3D air hockey where everything is predicted: your mallet, the puck, hits and even goals resolve locally and are settled by the server. First to 7 wins.",
         engines: ["Three.js", "Godot", "Unity"],
         play: "https://air-hockey-colyseus.vercel.app/",
         source: "https://github.com/colyseus/air-hockey-demo",
@@ -62,7 +62,7 @@ export const premiumDemos: PremiumDemo[] = [
     {
         title: "MOBA",
         image: "/demos/netcode/moba.webp",
-        description: "A 3-lane MOBA on a deterministic shared simulation — fixed timestep and client prediction driving heroes, creeps, towers and 5v5 bot matches.",
+        description: "A 3-lane MOBA on a deterministic shared simulation: fixed timestep and client prediction driving heroes, creeps, towers and 5v5 bot matches.",
         engines: ["Three.js"],
         play: "https://moba-colyseus.vercel.app/",
         source: "https://github.com/endel/moba-colyseus",
@@ -70,7 +70,7 @@ export const premiumDemos: PremiumDemo[] = [
     {
         title: "Platformer",
         image: "/demos/netcode/platformer.webp",
-        description: "2.5D platformer built as a prediction harness — reconciled movement, rideable moving platforms, and stomps and dashes that hold up under lag.",
+        description: "2.5D platformer built as a prediction harness: reconciled movement, rideable moving platforms, and stomps and dashes that hold up under lag.",
         engines: ["Three.js"],
         play: "https://platformer-colyseus.vercel.app/",
         source: "https://github.com/colyseus/platformer-demo",
@@ -78,7 +78,7 @@ export const premiumDemos: PremiumDemo[] = [
     {
         title: "Colyseus Karts",
         image: "/demos/netcode/racing.webp",
-        description: "Kart racing with hold-to-drift mini-turbos, item boxes and rockets — rollback prediction, dead-reckoned projectiles, and rewind-based hit checks.",
+        description: "Kart racing with hold-to-drift mini-turbos, item boxes and rockets: rollback prediction, dead-reckoned projectiles, and rewind-based hit checks.",
         engines: ["Three.js"],
         play: "https://racing-colyseus.vercel.app/",
         source: "https://github.com/colyseus/racing-demo",

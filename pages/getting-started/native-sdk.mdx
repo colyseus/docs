@@ -136,7 +136,7 @@ static void on_join(void* userdata) {
 
 ### Reading dynamic values
 
-Each `colyseus_dynamic_value_t` is a tagged union — check `value->type` and read the matching field from `value->data`:
+Each `colyseus_dynamic_value_t` is a tagged union. Check `value->type` and read the matching field from `value->data`:
 
 ```c
 switch (value->type) {
@@ -182,7 +182,7 @@ static void on_player_entry(const char* key, void* value, void* userdata) {
 
 ### Callbacks with auto schemas
 
-The standard callbacks API works with dynamic schemas — pass the dynamic schema instance the same way you would a generated struct:
+The standard callbacks API works with dynamic schemas. Pass the dynamic schema instance the same way you would a generated struct:
 
 ```c
 colyseus_callbacks_t* callbacks = colyseus_callbacks_create(room->serializer->decoder);

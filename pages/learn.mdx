@@ -1,6 +1,6 @@
 ---
 title: "Learn Multiplayer Game Development"
-description: "Learn multiplayer game development with Colyseus — step-by-step tutorials, ready-to-run examples, and demo projects across Unity, Godot, Defold, GameMaker, Phaser, Haxe, and the Web."
+description: "Learn multiplayer game development with Colyseus: step-by-step tutorials, ready-to-run examples, and demo projects across Unity, Godot, Defold, GameMaker, Phaser, Haxe, and the Web."
 ---
 import { Cards } from "nextra/components";
 import { RocketIcon, FileCodeIcon, RepoIcon } from "@primer/octicons-react";
@@ -20,7 +20,7 @@ Tutorials that build a multiplayer game step by step, plus ready-to-run examples
 ## Premium Demos
 
 {premiumDemos.length} complete prototypes you can play right now in your browser, each running
-the whole stack at once — authoritative server, client prediction, smoothed
+the whole stack at once: authoritative server, client prediction, smoothed
 remotes and lag compensation.
 
 We're actively expanding the set, and adding engine ports to it: Air Hockey
@@ -30,7 +30,7 @@ already ships Godot and Unity clients alongside its Three.js build.
 
 ## Open-Source Demos
 
-Every one of these is MIT-licensed and free to clone. Each runs from a single authoritative server with multiple client implementations — one per game engine. Read the source to see exactly how each SDK connects, synchronizes state, and handles real-time gameplay with Colyseus.
+Every one of these is MIT-licensed and free to clone. Each runs from a single authoritative server with multiple client implementations, one per game engine. Read the source to see exactly how each SDK connects, synchronizes state, and handles real-time gameplay with Colyseus.
 
 Unity, Godot, Defold, GameMaker and Haxe have a client in all three, so whichever
 you work in, there are three different games to read in it.
@@ -40,7 +40,7 @@ you work in, there are three different games to read in it.
 <DemoSource repo="colyseus/realtime-tanks-demo" />
 
 A real-time arena shooter: drive, aim and fire against everyone else in the
-room, with health pickups and a live leaderboard. Nine clients, one server —
+room, with health pickups and a live leaderboard. Nine clients, one server:
 every row below joins the *same* match.
 
 ![Realtime Tanks running in the browser on PlayCanvas](/demos/tanks/web-playcanvas.webp)
@@ -78,7 +78,7 @@ every row below joins the *same* match.
 
 <DemoSource repo="colyseus/turnbased-cards-demo" />
 
-A four-player game of UNO — turn order, draw and discard piles, and bots to
+A four-player game of UNO: turn order, draw and discard piles, and bots to
 fill the empty seats. Six clients, one server: every row below sits at the
 *same* table.
 
@@ -104,14 +104,14 @@ fill the empty seats. Six clients, one server: every row below sits at the
 <DemoSource repo="colyseus/prediction-playground" />
 
 A tour rather than a game: twelve small labs, each isolating one
-[netcode](/netcode) technique — reconciliation, the interpolation modes, dead
+[netcode](/netcode) technique: reconciliation, the interpolation modes, dead
 reckoning, lag compensation, optimistic events, predicted spawns. Every lab has
 a live latency slider and shows the exact SDK-facing code it runs.
 
 {/* raw <img>: these are animated WebP, and Nextra's staticImage would hand them
     to next/image, which can't compute a blur placeholder for an animation */}
 <img className="lab-shot" src="/demos/prediction/hero.webp" loading="lazy"
-    alt="The opening split screen: the same entity in the same room at 200 ms of injected latency — raw server echo above, client prediction below" />
+    alt="The opening split screen: the same entity in the same room at 200 ms of injected latency, raw server echo above, client prediction below" />
 
 All twelve labs run on one shared server, so each client below is the same lab
 logic ported to a different SDK.
@@ -140,13 +140,13 @@ logic ported to a different SDK.
 <div className="lab-shots">
     <figure>
         <img className="lab-shot" src="/demos/prediction/lab-06-lagcomp.webp" loading="lazy"
-            alt="Lab 06 — lag compensation" />
-        <figcaption><strong>06 · Lag Compensation</strong> — the server rewinds to what you saw, so aiming at a moving target lands.</figcaption>
+            alt="Lab 06: lag compensation" />
+        <figcaption><strong>06 · Lag Compensation</strong>: the server rewinds to what you saw, so aiming at a moving target lands.</figcaption>
     </figure>
     <figure>
         <img className="lab-shot" src="/demos/prediction/lab-10-hockey.webp" loading="lazy"
-            alt="Lab 10 — composite world" />
-        <figcaption><strong>10 · Composite World</strong> — paddle and puck both predicted; the dashed ghost is the server trailing by one round trip.</figcaption>
+            alt="Lab 10: composite world" />
+        <figcaption><strong>10 · Composite World</strong>: paddle and puck both predicted; the dashed ghost is the server trailing by one round trip.</figcaption>
     </figure>
 </div>
 
@@ -158,4 +158,4 @@ Watch Endel Dreyer's talk at JS GameDev Summit 2022, organized by [GitNation](ht
 
 ## Going Further
 
-Built your first room? The [Netcode section](/netcode) covers the prediction stack — authoritative input, client-side prediction, and lag compensation — the built-in version of the techniques the [tutorials](/learn/tutorial) build by hand.
+Built your first room? The [Netcode section](/netcode) covers the prediction stack (authoritative input, client-side prediction, and lag compensation), the built-in version of the techniques the [tutorials](/learn/tutorial) build by hand.

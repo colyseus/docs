@@ -1,12 +1,12 @@
 ---
 title: "Resources & CRUD"
-description: "Expose drizzle tables in the admin panel — defineAdminResource(), visible columns, form fields, custom actions, per-action RBAC, FK auto-linking, and the built-in audit log."
+description: "Expose drizzle tables in the admin panel: defineAdminResource(), visible columns, form fields, custom actions, per-action RBAC, FK auto-linking, and the built-in audit log."
 ---
 import { Callout } from "nextra/components"
 
 # Resources & CRUD
 
-Every drizzle table you pass to the admin panel becomes a browse-able **resource** with a full CRUD UI: paginated list with search/filter/sort, detail view with related rows, create and edit forms, and per-row custom actions. The built-in tables from [`@colyseus/database`](/database) (users, configs, leaderboards, cloud saves, analytics events, roles, user notes, audit log) are registered automatically — you customize them and add your own via `defineAdminResource()`.
+Every drizzle table you pass to the admin panel becomes a browse-able **resource** with a full CRUD UI: paginated list with search/filter/sort, detail view with related rows, create and edit forms, and per-row custom actions. The built-in tables from [`@colyseus/database`](/database) (users, configs, leaderboards, cloud saves, analytics events, roles, user notes, audit log) are registered automatically. You customize them and add your own via `defineAdminResource()`.
 
 ## Built-in resources
 
@@ -20,19 +20,19 @@ The following tables come pre-registered with sensible defaults:
 | Leaderboards | `colyseus_leaderboards` | — |
 | Leaderboard entries | `colyseus_leaderboard_entries` | — |
 | Analytics events | `colyseus_analytics_events` | Append-only on the write path. |
-| Roles | `colyseus_roles` | Blocked for mods by the core role rule itself (not a policy) — modifying it would bypass the role system. |
+| Roles | `colyseus_roles` | Blocked for mods by the core role rule itself (not a policy). Modifying it would bypass the role system. |
 | User notes | `colyseus_user_notes` | `authorId` auto-filled from session on create. |
-| Audit log | `colyseus_admin_audit` | **Read-only** via policies — all writes denied (append-only contract). |
+| Audit log | `colyseus_admin_audit` | **Read-only** via policies: all writes denied (append-only contract). |
 
 Unless a table declares its own [policies](#policies), access follows the standard role rule everywhere. Only the audit log declares its own by default.
 
-- **admin** — full CRUD.
-- **mod** — list, read, and update, only on resources they're [scoped to](/admin/authentication#scoping-a-moderator-to-specific-resources).
-- **user** — cannot open the panel UI (403). Direct API calls to list/read endpoints are still permitted.
+- **admin**: full CRUD.
+- **mod**: list, read, and update, only on resources they're [scoped to](/admin/authentication#scoping-a-moderator-to-specific-resources).
+- **user**: cannot open the panel UI (403). Direct API calls to list/read endpoints are still permitted.
 
 ## `defineAdminResource()`
 
-Override any of the defaults — or add a new resource — by passing `defineAdminResource(table, config)` into `admin({ resources: { … } })`:
+Override any of the defaults (or add a new resource) by passing `defineAdminResource(table, config)` into `admin({ resources: { … } })`:
 
 ```ts {2-3,7-21,26-28} filename="src/app.config.ts"
 import { admin, defineAdminResource } from "@colyseus/admin";
@@ -101,7 +101,7 @@ defineAdminResource(table, {
 |        | `defaultSort` | `{ field, order: 'asc' \| 'desc' }` applied when no `_sort` is requested. Useful for append-only tables. |
 | `form` | `fields` | Columns shown in create + edit forms. Omit to show all non-defaulted columns. |
 | `show` | `fields` | Columns shown on the read-only detail page. |
-| `create` | `defaults` | `(ctx) => Record<string, any>` — server-side defaults merged into the body before INSERT. Receives `{ operatorId, resource }`. The user's request body wins on conflict. |
+| `create` | `defaults` | `(ctx) => Record<string, any>`: server-side defaults merged into the body before INSERT. Receives `{ operatorId, resource }`. The user's request body wins on conflict. |
 | `columns` | `<col>.label` | Override the auto-humanized column label. |
 |           | `<col>.linkTo` | Decorate the cell as a link to another resource's show page. Static: `{ resource: "users" }`; for the dynamic form, see [FK auto-linking](#fk-auto-linking). |
 | `relations` | `<rel>.label` | Override the auto-humanized relation tab label. |
@@ -118,11 +118,11 @@ create: {
 }
 ```
 
-Keys can be either SQL column names (`author_id`) or drizzle JS keys (`authorId`) — both forms are normalized. The user's request body wins on conflict, matching how SQL `DEFAULT`s behave per-column.
+Keys can be either SQL column names (`author_id`) or drizzle JS keys (`authorId`). Both forms are normalized. The user's request body wins on conflict, matching how SQL `DEFAULT`s behave per-column.
 
 ## Custom actions
 
-Custom actions are operations beyond create/update/delete — things like "reset a player's level", "refund a transaction", "rename a guild". They appear as buttons in the panel UI and resolve to a POST request:
+Custom actions are operations beyond create/update/delete: things like "reset a player's level", "refund a transaction", "rename a guild". They appear as buttons in the panel UI and resolve to a POST request:
 
 ```
 POST /admin-api/:resource/_action/:name
@@ -169,7 +169,7 @@ confirm: {
 
 ### Audit logging
 
-Custom action invocations are recorded to the audit log automatically — operator, action name, target row id, and result. See [Audit log](#audit-log) below.
+Custom action invocations are recorded to the audit log automatically: operator, action name, target row id, and result. See [Audit log](#audit-log) below.
 
 ## Policies
 
@@ -179,7 +179,7 @@ Per-resource RBAC overrides the role + scope defaults. `policies` is keyed by ac
 |---|---|
 | `['admin']` | Only admins (full role) can perform this action. |
 | `['admin', 'mod']` | Admins or any mod, regardless of resource scope assignment. |
-| `'everyone'` | No auth required. Use sparingly — combine with route-level guarding if needed. |
+| `'everyone'` | No auth required. Use sparingly. Combine with route-level guarding if needed. |
 | `'deny'` | Blocked entirely, even for admins. Useful for read-only resources like the audit log. |
 
 ```ts
@@ -190,7 +190,7 @@ policies: {
 }
 ```
 
-A policy set for an action **replaces** the standard RBAC rule for that action on that resource — it is not layered on top. Only actions with no policy fall back to the standard `db.moderation.can(userId, action, resource)` rule.
+A policy set for an action **replaces** the standard RBAC rule for that action on that resource. It is not layered on top. Only actions with no policy fall back to the standard `db.moderation.can(userId, action, resource)` rule.
 
 ### Custom action policies
 
@@ -205,12 +205,12 @@ actions: [{
 ```
 
 <Callout type="warning">
-    A non-empty `roles` list is checked literally — **it does not implicitly include admins**, so always list `"admin"` explicitly. And an empty `roles: []` skips the role check entirely, allowing *any* authenticated identity to invoke the action — to remove an action, omit it from the resource definition instead.
+    A non-empty `roles` list is checked literally: **it does not implicitly include admins**, so always list `"admin"` explicitly. And an empty `roles: []` skips the role check entirely, allowing *any* authenticated identity to invoke the action. To remove an action, omit it from the resource definition instead.
 </Callout>
 
 ## FK auto-linking
 
-The panel reads `database.relations` (set on the `GameDatabase` constructor) to auto-decorate foreign-key columns as links. A `userId` column on `cloudSaves` becomes a clickable link to the user's show page automatically — no per-column override needed.
+The panel reads `database.relations` (set on the `GameDatabase` constructor) to auto-decorate foreign-key columns as links. A `userId` column on `cloudSaves` becomes a clickable link to the user's show page automatically (no per-column override needed).
 
 For columns the panel can't auto-detect (e.g. a generic `targetId` column on the audit log that references different tables depending on `resource`), use a dynamic `linkTo`:
 
@@ -226,20 +226,20 @@ columns: {
 
 ## Icons
 
-The `icon` field accepts the names of icons from the panel's built-in icon set — types are surfaced as the `AdminIconName` union. Common picks: `user`, `team`, `safety`, `trophy`, `file-text`, `setting`, `line-chart`, `database`, `thunderbolt`. See `ADMIN_ICON_NAMES` in `@colyseus/admin` for the full list.
+The `icon` field accepts the names of icons from the panel's built-in icon set. Types are surfaced as the `AdminIconName` union. Common picks: `user`, `team`, `safety`, `trophy`, `file-text`, `setting`, `line-chart`, `database`, `thunderbolt`. See `ADMIN_ICON_NAMES` in `@colyseus/admin` for the full list.
 
 ## Audit log
 
 Every CRUD mutation (`create`, `update`, `delete`), every ban/unban/session-revoke, every custom-action invocation, and every live-room mutation (kick, lock, state edit, dispose) is recorded to the append-only `colyseus_admin_audit` table with:
 
-- `created_at` — when it happened
-- `operator_id` — which admin did it
-- `action` — `create` / `update` / `delete` / `user.ban` / `room.kick` / etc. (full `AuditAction` enum in `@colyseus/database`)
-- `resource` — the table name
-- `target_id` — the affected row id
-- `payload` — JSON: `before` + `after` diff on updates, reason/until on bans, custom-action result, etc.
+- `created_at`: when it happened
+- `operator_id`: which admin did it
+- `action`: `create` / `update` / `delete` / `user.ban` / `room.kick` / etc. (full `AuditAction` enum in `@colyseus/database`)
+- `resource`: the table name
+- `target_id`: the affected row id
+- `payload`: JSON with the `before` + `after` diff on updates, reason/until on bans, custom-action result, etc.
 
-Browse the log inside the panel under the **Audit log** resource (admin-read-only — writes from the panel are denied via `policies: { create: 'deny', update: 'deny', delete: 'deny' }`).
+Browse the log inside the panel under the **Audit log** resource (admin-read-only: writes from the panel are denied via `policies: { create: 'deny', update: 'deny', delete: 'deny' }`).
 
 ### Recording from your own code
 
@@ -255,7 +255,7 @@ await db.audit.record({
 });
 ```
 
-For updates where you want a structured diff, use `recordUpdate()` — it stores a column-level diff of the changed fields (not both full rows):
+For updates where you want a structured diff, use `recordUpdate()`. It stores a column-level diff of the changed fields (not both full rows):
 
 ```ts
 await db.audit.recordUpdate({
@@ -271,6 +271,6 @@ The panel's own endpoints log audit-write failures without propagating them, so 
 
 ## Next steps
 
-- [Dashboard & widgets](/admin/dashboard) — extend the panel homepage with custom KPI/table/list widgets.
-- [Live rooms](/admin/rooms) — the built-in room inspector.
-- [Authentication & RBAC](/admin/authentication) — the role + scope layer that policies refine.
+- [Dashboard & widgets](/admin/dashboard): extend the panel homepage with custom KPI/table/list widgets.
+- [Live rooms](/admin/rooms): the built-in room inspector.
+- [Authentication & RBAC](/admin/authentication): the role + scope layer that policies refine.

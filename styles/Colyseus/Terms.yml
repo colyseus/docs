@@ -4,7 +4,7 @@
 # These are errors, not warnings: an inconsistent term is what makes docs search
 # and coding agents surface the wrong API.
 extends: substitution
-message: "Use '%s' instead of '%s' — see STYLE.md#terminology."
+message: "Use '%s' instead of '%s'. See STYLE.md#terminology."
 level: error
 ignorecase: true
 swap:

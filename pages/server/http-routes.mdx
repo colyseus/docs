@@ -8,8 +8,8 @@ import { Callout, Cards } from "nextra/components";
 
 Colyseus provides two ways to add HTTP endpoints to your server:
 
-- **API Routes** (recommended) — Type-safe, with validation, middleware, frontend SDK integration, and visual testing via the [Playground](/tools/playground#api-endpoints).
-- **Express** — Use if you rely on existing Express middleware or libraries.
+- **API Routes** (recommended): Type-safe, with validation, middleware, frontend SDK integration, and visual testing via the [Playground](/tools/playground#api-endpoints).
+- **Express**: Use if you rely on existing Express middleware or libraries.
 
 ## API Routes
 
@@ -70,7 +70,7 @@ export const secureEndpoint = createEndpoint("/secure", {
 
 ### JWT Authentication
 
-For JWT-based auth, [`@colyseus/auth`](/auth/module) exports `auth.middleware()` — a middleware that verifies the `Authorization: Bearer <token>` header and exposes the decoded payload on `ctx.context.auth`. It's the canonical way to gate an endpoint behind a logged-in user.
+For JWT-based auth, [`@colyseus/auth`](/auth/module) exports `auth.middleware()`, a middleware that verifies the `Authorization: Bearer <token>` header and exposes the decoded payload on `ctx.context.auth`. It's the canonical way to gate an endpoint behind a logged-in user.
 
 ```ts
 import { createEndpoint } from "colyseus";
@@ -85,7 +85,7 @@ export const profile = createEndpoint("/profile", {
 ```
 
 <Callout type="info">
-    When [`@colyseus/database`](/database) is in use, `auth.middleware()` is **revocation-aware** automatically: `db.auth.ban(userId)` and `db.auth.bumpTokenVersion(userId)` both invalidate live JWTs at the token layer — no per-route check needed. See [Database → Authentication](/database/authentication).
+    When [`@colyseus/database`](/database) is in use, `auth.middleware()` is **revocation-aware** automatically: `db.auth.ban(userId)` and `db.auth.bumpTokenVersion(userId)` both invalidate live JWTs at the token layer (no per-route check needed). See [Database → Authentication](/database/authentication).
 </Callout>
 
 See [Authentication → HTTP Middleware](/auth/http) for the dual Express/`createEndpoint` modes, and [Auth Module](/auth/module) for backend setup.
@@ -108,7 +108,7 @@ export const adminStats = createEndpoint("/admin-stats", {
 ```
 
 A common use is protecting the [Playground](/tools/playground) and
-[Monitor](/tools/monitoring) in production — both accept a `use:` array:
+[Monitor](/tools/monitoring) in production. Both accept a `use:` array:
 
 ```ts filename="app.config.ts"
 import { defineServer, createRouter, basicAuth } from "colyseus";
@@ -130,7 +130,7 @@ const server = defineServer({
 | Option | Description |
 |--------|-------------|
 | `users` | `Record<string, string>` mapping username → password. The common static case. |
-| `validate` | `(username, password) => boolean \| Promise<boolean>` — custom/DB-backed check. Takes precedence over `users`. |
+| `validate` | `(username, password) => boolean \| Promise<boolean>`: custom/DB-backed check. Takes precedence over `users`. |
 | `realm` | Label shown in the browser prompt. Default `"Restricted"`. |
 
 <Callout type="info">

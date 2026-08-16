@@ -60,7 +60,7 @@ const gameServer = defineServer({
 
 ## Matchmaker Process
 
-To run a standalone matchmaker, use `defineServer()` with the `isStandaloneMatchMaker` option set to `true`. This tells Colyseus that this process will only handle matchmaking — it will not spawn rooms locally, subscribe to IPC room creation requests, or register itself as an available game server process.
+To run a standalone matchmaker, use `defineServer()` with the `isStandaloneMatchMaker` option set to `true`. This tells Colyseus that this process will only handle matchmaking: it will not spawn rooms locally, subscribe to IPC room creation requests, or register itself as an available game server process.
 
 ```ts {7} filename="app.config.ts"
 import { defineServer, defineRoom } from "colyseus";
@@ -80,9 +80,9 @@ const server = defineServer({
 
 When `isStandaloneMatchMaker` is enabled, the process:
 
-- **Skips IPC subscription** — it will not receive or handle remote room creation requests
-- **Skips health checks** — it does not register itself in the process stats, so game servers will never try to create rooms on it while at least one healthy game server is registered. Two fallbacks can still land a room on the matchmaker process: when **no** game-server stats exist yet, and when a remote room-creation request times out over IPC.
-- **Delegates room creation** — when a matchmaking request requires a new room, the default `selectProcessIdToCreateRoom` will select one of the available game server processes
+- **Skips IPC subscription**: it will not receive or handle remote room creation requests
+- **Skips health checks**: it does not register itself in the process stats, so game servers will never try to create rooms on it while at least one healthy game server is registered. Two fallbacks can still land a room on the matchmaker process: when **no** game-server stats exist yet, and when a remote room-creation request times out over IPC.
+- **Delegates room creation**: when a matchmaking request requires a new room, the default `selectProcessIdToCreateRoom` will select one of the available game server processes
 
 <Callout type="warning">
     The matchmaker process must register the same room types as the game servers. Room classes are needed for `filterBy()` options and `onAuth()` validation during matchmaking, even though rooms are not instantiated on this process.
@@ -114,10 +114,10 @@ const server = defineServer({
 ## How it works
 
 1. A client sends a matchmaking request (e.g. `joinOrCreate`) to the matchmaker process
-2. The matchmaker finds or creates a room — room creation is delegated to a game server process via IPC
+2. The matchmaker finds or creates a room (room creation is delegated to a game server process via IPC)
 3. The matchmaker returns a **seat reservation** containing the `sessionId`, `roomId`, and the game server's `publicAddress`
 4. The client SDK uses the `publicAddress` to establish a WebSocket connection directly to the game server hosting the room
 
 <Callout type="info">
-    Clients receive a seat reservation with the `publicAddress` of the game server that created the room. The client SDK uses this address to connect directly to the game server — traffic does not flow through the matchmaker process after matchmaking.
+    Clients receive a seat reservation with the `publicAddress` of the game server that created the room. The client SDK uses this address to connect directly to the game server. Traffic does not flow through the matchmaker process after matchmaking.
 </Callout>

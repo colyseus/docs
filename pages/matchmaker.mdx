@@ -17,8 +17,8 @@ import { ScenarioGrid, ScenarioCard } from '../components/scenario-card'
 }} />
 
 Every join call from the SDK goes through the matchmaker. It picks the room a
-client lands in — `joinOrCreate()` finds a compatible room or spawns one,
-`join()` requires one to exist, `joinById()` targets a specific room — and
+client lands in (`joinOrCreate()` finds a compatible room or spawns one,
+`join()` requires one to exist, `joinById()` targets a specific room) and
 answers with a **seat reservation** the SDK consumes to establish the room
 connection. See [Joining Rooms](/sdk#joining-rooms) for the frontend.
 
@@ -29,7 +29,7 @@ Which rooms are eligible, and in what order, is up to you:
         How the <code>locked</code>, <code>private</code>, and <code>unlisted</code> flags control who can find and join a room.
     </ScenarioCard>
     <ScenarioCard icon={<RowsIcon size={18}/>} title="Lobby Room" href="/matchmaker/lobby">
-        A live listing of available rooms — the backend for a room browser UI.
+        A live listing of available rooms, the backend for a room browser UI.
     </ScenarioCard>
     <ScenarioCard icon={<ListOrderedIcon size={18}/>} title="Queue Room" href="/matchmaker/queue">
         A matchmaking queue that groups players over time and spawns a match room when a group is ready.
@@ -41,7 +41,7 @@ Which rooms are eligible, and in what order, is up to you:
 
 ## Matchmaking Options
 
-Room types accept matchmaking options at definition time — which client
+Room types accept matchmaking options at definition time: which client
 `options` distinguish rooms from each other, and which candidate fills first.
 
 ### Filter By (`.filterBy()`)
@@ -94,12 +94,12 @@ Whenever a room is created by the `create()` or `joinOrCreate()` methods, only t
     <Tabs.Tab>
     Filter matchmaking by the room's `maxClients` capacity.
 
-    `maxClients` is stored top-level in the matchmaking cache from the **room instance's actual value** — not from the client's option — so the room must apply the option for the filter to work:
+    `maxClients` is stored top-level in the matchmaking cache from the **room instance's actual value**, not from the client's option, so the room must apply the option for the filter to work:
 
     ```ts filename="BattleRoom.ts"
     class BattleRoom extends Room {
         onCreate(options) {
-            // apply the requested capacity — the filter compares against
+            // apply the requested capacity: the filter compares against
             // the room's real maxClients, not the stored client option
             this.maxClients = options.maxClients;
         }
@@ -114,7 +114,7 @@ Whenever a room is created by the `create()` or `joinOrCreate()` methods, only t
     })
     ```
 
-    The client can then ask to join a room with a specific capacity — each value fills its own set of rooms:
+    The client can then ask to join a room with a specific capacity. Each value fills its own set of rooms:
 
     ```js filename="client.js"
     client.joinOrCreate("battle", { maxClients: 10 }).then(room => {/* ... */});
@@ -183,7 +183,7 @@ const server = defineServer({
 
 The Matchmaker API gives you server-side control over room management and player matchmaking in Colyseus.
 
-From your server code, you can create rooms, join players to existing rooms, query available rooms, and reserve seats. You can also monitor statistics across processes — connected users (CCU) and room counts — and call methods on rooms running in a different process. None of it depends on a client request.
+From your server code, you can create rooms, join players to existing rooms, query available rooms, and reserve seats. You can also monitor statistics across processes: connected users (CCU) and room counts. You can call methods on rooms running in a different process, too. None of it depends on a client request.
 
 ``` typescript
 import { matchMaker } from "colyseus";
@@ -492,7 +492,7 @@ room.clients[0].send("hello", "world");
 
 #### Batch Lookup by Room Id
 
-Resolve a set of known roomIds in a single backend round trip. Use this when you already have a list of roomIds (for example, from a reverse-index lookup) and want their current matchmaker records — it's bounded at one wire op for any `K`, where `query()` would scan the whole room cache.
+Resolve a set of known roomIds in a single backend round trip. Use this when you already have a list of roomIds (for example, from a reverse-index lookup) and want their current matchmaker records. It's bounded at one wire op for any `K`, where `query()` would scan the whole room cache.
 
 **Parameters:**
 
@@ -509,7 +509,7 @@ console.log(rooms);
 */
 ```
 
-Missing roomIds are absent from the returned `Map`. Prefer this over `matchMaker.query({})` whenever you know the exact roomIds — the cost stays the same as your cluster grows.
+Missing roomIds are absent from the returned `Map`. Prefer this over `matchMaker.query({})` whenever you know the exact roomIds. The cost stays the same as your cluster grows.
 
 #### Remote Room Call
 

@@ -1,15 +1,15 @@
 ---
 title: "Services"
-description: "The @colyseus/database service surface — cloud saves, leaderboards, live configs, analytics, moderation, notes — plus the room plugins that wire them into the room lifecycle."
+description: "The @colyseus/database service surface (cloud saves, leaderboards, live configs, analytics, moderation, notes) plus the room plugins that wire them into the room lifecycle."
 ---
 
 # Services
 
-Each `GameDatabase` instance exposes a set of services — read-and-write APIs over the built-in tables. All examples below assume the exported `db` instance from the [Quick start](/database#quick-start).
+Each `GameDatabase` instance exposes a set of services, read-and-write APIs over the built-in tables. All examples below assume the exported `db` instance from the [Quick start](/database#quick-start).
 
 ## Cloud saves
 
-Per-user save data with monotonic versioning. The `slot` is optional and defaults to `0` — pass a different slot for multiple save files per player. Pass an `expectedVersion` for optimistic locking; a stale write throws `VersionConflictError`.
+Per-user save data with monotonic versioning. The `slot` is optional and defaults to `0`. Pass a different slot for multiple save files per player. Pass an `expectedVersion` for optimistic locking; a stale write throws `VersionConflictError`.
 
 ```ts
 import { VersionConflictError } from "@colyseus/database";
@@ -24,7 +24,7 @@ try {
     await db.saves.save(userId, newData, 0, save.version);
 } catch (e) {
     if (e instanceof VersionConflictError) {
-        // client had a stale copy — reload and merge
+        // client had a stale copy: reload and merge
     }
 }
 
@@ -47,7 +47,7 @@ const nearby = await db.leaderboards.aroundMe("global", userId, 5);
 
 ## Live configs
 
-Declare typed configuration keys with [Standard Schema](https://standardschema.dev/) validators (Zod, Valibot, etc.) via `defineConfigs`. Values are validated on write, cached in memory, and — when a `presence` is provided — invalidated across all server instances when changed (e.g. from an admin panel).
+Declare typed configuration keys with [Standard Schema](https://standardschema.dev/) validators (Zod, Valibot, etc.) via `defineConfigs`. Values are validated on write, cached in memory, and, when a `presence` is provided, invalidated across all server instances when changed (e.g. from an admin panel).
 
 ```ts filename="src/app.config.ts"
 import { defineServer, RedisPresence } from "colyseus";
@@ -90,11 +90,11 @@ await db.notes.deleteAllForUser(userId); // GDPR cleanup
 
 ## Room plugins
 
-For common patterns, `@colyseus/database` ships [Room Plugins](/room/plugins) that wire the services above into the room lifecycle automatically — no manual `onJoin`/`onLeave` glue:
+For common patterns, `@colyseus/database` ships [Room Plugins](/room/plugins) that wire the services above into the room lifecycle automatically (no manual `onJoin`/`onLeave` glue):
 
-- **`CloudSavesPlugin`** — load a player's save on join, persist it on leave
-- **`LeaderboardsPlugin`** — submit scores on dispose
-- **`AnalyticsPlugin`** — track room `create`/`join`/`leave`/`dispose` events
+- **`CloudSavesPlugin`**: load a player's save on join, persist it on leave
+- **`LeaderboardsPlugin`**: submit scores on dispose
+- **`AnalyticsPlugin`**: track room `create`/`join`/`leave`/`dispose` events
 
 ```ts filename="src/rooms/MyRoom.ts"
 import { Room, definePlugins } from "colyseus";

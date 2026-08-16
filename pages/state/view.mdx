@@ -248,7 +248,7 @@ import { StateView } from "@colyseus/schema";
     onJoin(client, options) {
         client.view = new StateView();
 
-        // every enemy — present and future — reaches this client
+        // every enemy, present and future, reaches this client
         client.view.subscribe(this.state.enemies);
     }
 // ...

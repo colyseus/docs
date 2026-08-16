@@ -36,7 +36,7 @@ export function DemoCard({
     source?: string;
     children: React.ReactNode;
 }) {
-    const media = <img src={image} alt={`${title} — gameplay screenshot`} loading="lazy" />;
+    const media = <img src={image} alt={`${title}, gameplay screenshot`} loading="lazy" />;
     return (
         <div className="demo-card">
             {play

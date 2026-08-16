@@ -18,10 +18,10 @@ WebTransport is a new transport protocol that allows for low-latency, bidirectio
 
 ## Unreliable delivery
 
-WebTransport is the only Colyseus transport with a real **unreliable** channel — QUIC datagrams, delivered at most once and never retransmitted. Two features depend on it, and both are experimental alongside it:
+WebTransport is the only Colyseus transport with a real **unreliable** channel: QUIC datagrams, delivered at most once and never retransmitted. Two features depend on it, and both are experimental alongside it:
 
-- [`.unreliable()` schema fields](/state/schema#delivery-modifiers) — a value replaced every tick ships on the datagram channel. A dropped packet then costs nothing, instead of stalling the ordered stream behind a retransmit.
-- [Unreliable input](/netcode/recipes#unreliable-input-over-webtransport) — `room.input({ mode: "unreliable" })`, where each packet carries the last few inputs as redundancy against drops.
+- [`.unreliable()` schema fields](/state/schema#delivery-modifiers): a value replaced every tick ships on the datagram channel. A dropped packet then costs nothing, instead of stalling the ordered stream behind a retransmit.
+- [Unreliable input](/netcode/recipes#unreliable-input-over-webtransport): `room.input({ mode: "unreliable" })`, where each packet carries the last few inputs as redundancy against drops.
 
 Every WebSocket transport lacks that channel. `.unreliable()` fields then stop updating after the full state sync, with a warning logged once. Unreliable input falls back to the reliable channel, its redundancy wasted. Client-side WebTransport support is currently limited to the JavaScript/TypeScript SDK.
 
@@ -44,7 +44,7 @@ app.get("/hello", (req, res) => {
 const server = defineServer({
   // ...
   transport: new H3Transport({
-    app, // required — H3Transport serves HTTP through this Express app
+    app, // required: H3Transport serves HTTP through this Express app
     /* other H3Transport options */
   }),
   // ...
@@ -52,7 +52,7 @@ const server = defineServer({
 ```
 
 <Callout type="warning">
-    Pass your Express app via the transport's `app` option. The `defineServer({ express })` callback is **not** supported by `H3Transport` — it is silently ignored.
+    Pass your Express app via the transport's `app` option. The `defineServer({ express })` callback is **not** supported by `H3Transport`: it is silently ignored.
 </Callout>
 
 ## Available options

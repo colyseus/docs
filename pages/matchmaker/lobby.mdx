@@ -1,6 +1,6 @@
 ---
 title: "Lobby Room"
-description: "The built-in LobbyRoom provides a live listing of available rooms — the backend for a room browser UI, with automatic updates and filtering."
+description: "The built-in LobbyRoom provides a live listing of available rooms: the backend for a room browser UI, with automatic updates and filtering."
 ---
 import { Callout, Steps, Cards, Tabs } from "nextra/components";
 
@@ -241,7 +241,7 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
 
 ### Filtering rooms
 
-Filter the listing by providing the `filter` option when joining the lobby. A filter **must include `name`** — the name check runs unconditionally, so a metadata-only filter matches nothing. Use `metadata` to narrow within a room name:
+Filter the listing by providing the `filter` option when joining the lobby. A filter **must include `name`**. The name check runs unconditionally, so a metadata-only filter matches nothing. Use `metadata` to narrow within a room name:
 
 ```ts {2-7} filename="client.ts"
 const lobby = await client.joinOrCreate("lobby", {

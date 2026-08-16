@@ -337,7 +337,7 @@ Listens for a single property change within a `Schema` instance.
     </Tabs.Tab>
 </SDKTabs>
 
-**Removing the callback:** The `.listen()` method returns a function that, when called, removes the attached callback. In Dart, it returns a `StreamSubscription` — call `cancel()` on it instead:
+**Removing the callback:** The `.listen()` method returns a function that, when called, removes the attached callback. In Dart, it returns a `StreamSubscription`. Call `cancel()` on it instead:
 
 <SDKTabs>
     <Tabs.Tab>

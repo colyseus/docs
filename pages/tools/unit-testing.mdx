@@ -106,7 +106,7 @@ npx jest                                           # Jest
 ## Best Practices
 
 - Assert on both server and client state after simulating message exchange.
-- Create a fresh room in each test — rooms are disposed between tests via `colyseus.cleanup()`, so do not reuse room instances.
+- Create a fresh room in each test. Rooms are disposed between tests via `colyseus.cleanup()`, so do not reuse room instances.
 - Always declare test cases with `async`.
 - [Await for the server or client to process pending actions](#server-side-utilities) before running assertions.
 
@@ -175,7 +175,7 @@ it("client state must match server's after patch is received", async() => {
 
 ### Wait For Next Timestep
 
-Wait for the next timestep to complete. Works with either loop — `setTimestep()` and `setFixedTimestep()` both drive the same interval.
+Wait for the next timestep to complete. Works with either loop: `setTimestep()` and `setFixedTimestep()` both drive the same interval.
 
 ```ts {5} filename="App.test.ts"
 it("should assert something after room's timestep", async() => {

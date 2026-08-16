@@ -18,7 +18,7 @@ The uWebSockets.js generally performs better than the default WebSockets impleme
 npm install --save @colyseus/uwebsockets-transport@^0.18.0
 ```
 
-To use the `express:` option with this transport, also install the optional [`uwebsockets-express`](https://github.com/colyseus/uWebSockets-express) compatibility layer — `^2.0.1` for Express v5, `^1.4.1` for Express v4:
+To use the `express:` option with this transport, also install the optional [`uwebsockets-express`](https://github.com/colyseus/uWebSockets-express) compatibility layer (`^2.0.1` for Express v5, `^1.4.1` for Express v4):
 
 ```sh npm2yarn
 npm install --save uwebsockets-express
@@ -100,7 +100,7 @@ Password for the SSL file. (for SSL termination through the Node.js application.
 
 ## Overriding the uWebSockets.js version
 
-The `@colyseus/uwebsockets-transport` package ships with a specific version of `uWebSockets.js` as a dependency. If you need to use a different version — for example, to pick up a bug fix or to match a specific platform requirement — you can override it directly from your project's `package.json`.
+The `@colyseus/uwebsockets-transport` package ships with a specific version of `uWebSockets.js` as a dependency. If you need to use a different version (for example, to pick up a bug fix or to match a specific platform requirement), you can override it directly from your project's `package.json`.
 
 <Tabs items={["npm", "yarn", "pnpm"]}>
     <Tabs.Tab>

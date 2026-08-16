@@ -25,14 +25,14 @@ Issue-level tracking lives in the [1.0 milestone](https://github.com/colyseus/co
     - Close the SDK gap. The native C core and Flutter are complete. The Godot bindings read fields by struct offset, and GameMaker has no documented input API.
 - **State Sync:**
     - **`@colyseus/schema` - Bidirectional schema instances:**
-        - Allow to send schema instance updates from client to server. 0.18 covers flat primitive fields through [`defineInput()`](/netcode/server-input) — nested schemas and collections are not supported yet.
+        - Allow to send schema instance updates from client to server. 0.18 covers flat primitive fields through [`defineInput()`](/netcode/server-input). Nested schemas and collections are not supported yet.
         - Wild idea: support RPC calls via schema instances (?)
     - **Decouple `@colyseus/schema` from the core:**
         - Allow to use other serialization methods for the state. The serializer seam exists, but the core still depends on `@colyseus/schema` for message framing, [state views](/state/view), rewind and dev mode.
 - **WebTransport:**
     - Improve and stabilize [WebTransport](/server/transport/webtransport) support. The transport carries no authentication headers on the socket connection, and latency simulation is not implemented.
 - **Matchmaking:**
-    - Improve filtering and sorting options. Every driver compares [filters](/matchmaker#filter-by-filterby) by strict equality — there are no range or set operators.
+    - Improve filtering and sorting options. Every driver compares [filters](/matchmaker#filter-by-filterby) by strict equality. There are no range or set operators.
 - **General improvements:**
     - Introduce the concept of "low priority" and "high priority" messages. Drop "low priority" messages if clients are under backpressure.
     - Introduce "version check" to allow native SDKs to communicate with newer versions of the server
@@ -42,21 +42,21 @@ Issue-level tracking lives in the [1.0 milestone](https://github.com/colyseus/co
 
 - **Database-first features:**
     - ~Since Colyseus doesn't currently have an official database recommendation tool, we can't provide database-first features out of the box. Features that depend on a database tool are: player identity, leaderboards, configs, etc.~
-        - Added the official [`@colyseus/database`](/database) package — player identity, cloud saves, leaderboards, and live configs.
+        - Added the official [`@colyseus/database`](/database) package: player identity, cloud saves, leaderboards, and live configs.
         - Added [`@colyseus/admin`](/admin), the operations console built on top of it.
 - **Native SDK:**
     - ~Shared native cross-platform SDK aimed to be used on Godot, Game Maker, Unreal, etc.~
         - Released the [Native SDK](/getting-started/native-sdk), with dedicated [Godot](/getting-started/godot), [GameMaker](/getting-started/gamemaker) and [Flutter](/getting-started/flutter) integrations.
 - **State Sync:**
     - ~**Client-side prediction:** Allow to specify client-side prediction techniques on the frontend~
-        - Added first-class client-side prediction and lag compensation via `defineInput()` / `setFixedTimestep()` / `allowRewindState()` (server) and `room.input()` / `Predict` / `room.clock` (client) — see [Netcode](/netcode).
+        - Added first-class client-side prediction and lag compensation via `defineInput()` / `setFixedTimestep()` / `allowRewindState()` (server) and `room.input()` / `Predict` / `room.clock` (client). See [Netcode](/netcode).
     - ~Yjs (CRDT) [connection provider](https://docs.yjs.dev/ecosystem/connection-provider) via Colyseus Rooms.~
-        - Added `@colyseus/yjs` — a room plugin, a ready-made room, and a client provider that mirrors `y-websocket`.
-    - Released [`@colyseus/schema` 5.0](/state/schema), the foundation of this release — a faster encoder, the decorator-free `schema()` builder API, [delivery modifiers](/state/schema#delivery-modifiers), [quantized floats](/state/schema#quantized-floats-tquantized--tangle), and [streaming collections](/state/streaming).
+        - Added `@colyseus/yjs`: a room plugin, a ready-made room, and a client provider that mirrors `y-websocket`.
+    - Released [`@colyseus/schema` 5.0](/state/schema), the foundation of this release: a faster encoder, the decorator-free `schema()` builder API, [delivery modifiers](/state/schema#delivery-modifiers), [quantized floats](/state/schema#quantized-floats-tquantized--tangle), and [streaming collections](/state/streaming).
 - **General improvements:**
     - ~Add request/response model to rooms ([#331](https://github.com/colyseus/colyseus/issues/331))~
         - Added a request/response model to room [messages](/room#responding-to-a-message-requestresponse): the client awaits a reply with `room.request(type, payload)` or `room.send(type, payload, callback)`, and the server answers by returning a value from its matching `onMessage(type, ...)` handler.
-    - Added a framework-owned [fixed timestep](/netcode/determinism) — `setFixedTimestep()` runs the simulation at a constant step, and `setSimulationInterval()` was renamed to `setTimestep()`.
+    - Added a framework-owned [fixed timestep](/netcode/determinism): `setFixedTimestep()` runs the simulation at a constant step, and `setSimulationInterval()` was renamed to `setTimestep()`.
 
 ## Shipped in v0.17 (January 2026)
 

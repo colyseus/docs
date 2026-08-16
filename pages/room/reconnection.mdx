@@ -1,6 +1,6 @@
 ---
 title: "Reconnection"
-description: "Handle client reconnection in Colyseus — automatic SDK retries for temporary drops, and manual rejoining via client.reconnect() with a stored reconnection token."
+description: "Handle client reconnection in Colyseus: automatic SDK retries for temporary drops, and manual rejoining via client.reconnect() with a stored reconnection token."
 ---
 import { Callout, Tabs } from 'nextra/components'
 import { MovedAnchors } from '../../components/moved-anchors'
@@ -20,8 +20,8 @@ import { MovedAnchors } from '../../components/moved-anchors'
 
 Colyseus supports two complementary reconnection flows. Both require the server to hold the client's seat via [`allowReconnection()`](#allowreconnectionclient-seconds):
 
-- **[Automatic reconnection](#automatic-reconnection)** — the SDK detects the drop and retries with exponential backoff. The same `room` instance survives, so your listeners stay attached. Introduced in version 0.17.
-- **[Manual reconnection](#manual-reconnection)** — the client rejoins later by calling `client.reconnect()` with a stored `reconnectionToken`. Use it when the app itself restarts — a page reload, an app switch on mobile — or after automatic retries give up. Available in all versions.
+- **[Automatic reconnection](#automatic-reconnection)**: the SDK detects the drop and retries with exponential backoff. The same `room` instance survives, so your listeners stay attached. Introduced in version 0.17.
+- **[Manual reconnection](#manual-reconnection)**: the client rejoins later by calling `client.reconnect()` with a stored `reconnectionToken`. Use it when the app itself restarts (a page reload, an app switch on mobile) or after automatic retries give up. Available in all versions.
 
 ## Overview
 
@@ -53,7 +53,7 @@ flowchart TD
     class gone bad
 ```
 
-The automatic flow only covers drops the running client can recover from. A page reload or app restart destroys the client-side `room` object, so the SDK cannot retry by itself. In that case the client calls [`client.reconnect()`](#manual-reconnection) with a stored token instead — the server-side flow is identical.
+The automatic flow only covers drops the running client can recover from. A page reload or app restart destroys the client-side `room` object, so the SDK cannot retry by itself. In that case the client calls [`client.reconnect()`](#manual-reconnection) with a stored token instead. The server-side flow is identical.
 
 ---
 
@@ -66,7 +66,7 @@ The backend handles both flows identically.
 Called when a client disconnects **without consent** (abnormal closure, network issues, etc.). This is where you should call `allowReconnection()` to allow the client to reconnect.
 
 <Callout type="info">
-    `onDrop()` is **optional**, but recommended for code clarity. You may implement the same functionality directly inside `onLeave()` by checking if the close code is `CloseCode.CONSENTED` — see [the alternative pattern](#alternative-handling-reconnection-in-onleave).
+    `onDrop()` is **optional**, but recommended for code clarity. You may implement the same functionality directly inside `onLeave()` by checking if the close code is `CloseCode.CONSENTED`. See [the alternative pattern](#alternative-handling-reconnection-in-onleave).
 </Callout>
 
 ```typescript
@@ -86,10 +86,10 @@ class MyRoom extends Room {
 }
 ```
 
-**When `onDrop()` is called:** every non-consented disconnection — abnormal closures (1006), browser/tab closed (1001), no close status (1005), dev-mode restarts (4010), server errors (4002), and custom close codes alike.
+**When `onDrop()` is called:** every non-consented disconnection. Abnormal closures (1006), browser/tab closed (1001), no close status (1005), dev-mode restarts (4010), server errors (4002), and custom close codes all qualify.
 
 **When `onDrop()` is NOT called (goes directly to `onLeave()`):**
-- `CloseCode.CONSENTED` (4000) — Client called `room.leave()` with consent
+- `CloseCode.CONSENTED` (4000): Client called `room.leave()` with consent
 - A reconnection already in progress was denied or failed
 
 ### `allowReconnection(client, seconds)`
@@ -107,9 +107,9 @@ const reconnection = this.allowReconnection(client, "manual");
 reconnection.reject();
 ```
 
-**Returns:** A `Deferred<Client>` promise that resolves when the client reconnects or rejects if the timeout expires. Calling it without `await` is safe — the framework handles the timeout internally and routes the outcome to `onReconnect()` or `onLeave()`. Only `await` it inside a `try`/`catch`, as in [the `onLeave()` pattern below](#alternative-handling-reconnection-in-onleave).
+**Returns:** A `Deferred<Client>` promise that resolves when the client reconnects or rejects if the timeout expires. Calling it without `await` is safe. The framework handles the timeout internally and routes the outcome to `onReconnect()` or `onLeave()`. Only `await` it inside a `try`/`catch`, as in [the `onLeave()` pattern below](#alternative-handling-reconnection-in-onleave).
 
-**Choosing the window:** with a number of `seconds`, the seat expires by itself. With `"manual"`, the seat is held until your code calls `.reject()`. Manual mode suits players returning after a page reload or a long app switch — pair it with your own give-up logic:
+**Choosing the window:** with a number of `seconds`, the seat expires by itself. With `"manual"`, the seat is held until your code calls `.reject()`. Manual mode suits players returning after a page reload or a long app switch. Pair it with your own give-up logic:
 
 ```typescript
 onDrop(client: Client, code: number) {
@@ -136,7 +136,7 @@ onReconnect(client: Client) {
 
 ### `onReconnect(client)`
 
-Called when a client successfully reconnects after `allowReconnection()` held its seat — whether the SDK retried automatically or the client called `client.reconnect()`.
+Called when a client successfully reconnects after `allowReconnection()` held its seat, whether the SDK retried automatically or the client called `client.reconnect()`.
 
 ```typescript
 class MyRoom extends Room {
@@ -153,9 +153,9 @@ class MyRoom extends Room {
 ```
 
 **Important:** The `client` object in `onReconnect()` has the same `sessionId` and preserves:
-- `client.auth` — Authentication data
-- `client.userData` — Custom user data
-- `client.view` — View state (for filtered state)
+- `client.auth`: Authentication data
+- `client.userData`: Custom user data
+- `client.view`: View state (for filtered state)
 
 The `client.reconnectionToken` will be different (new token generated for each connection).
 
@@ -258,7 +258,7 @@ Using separate `onDrop()` and `onReconnect()` methods is recommended for cleaner
 
 ### Automatic Reconnection
 
-The SDK detects the drop, retries with exponential backoff, and fires three events — this is the whole client-side integration:
+The SDK detects the drop, retries with exponential backoff, and fires three events. This is the whole client-side integration:
 
 ```typescript
 import { Client, CloseCode } from "@colyseus/sdk";
@@ -267,7 +267,7 @@ const client = new Client("http://localhost:2567");
 const room = await client.joinOrCreate("game_room");
 
 room.onDrop((code, reason) => {
-  // connection lost — the SDK is already retrying
+  // connection lost: the SDK is already retrying
   showReconnectingUI();
 });
 
@@ -283,15 +283,15 @@ room.onLeave((code, reason) => {
 });
 ```
 
-Everything tunable here — retry and backoff options, disabling auto-reconnection, message buffering while offline — is documented in **[Connection Lifecycle & Reconnection](/sdk/connection#automatic-reconnection)**.
+Everything tunable here (retry and backoff options, disabling auto-reconnection, message buffering while offline) is documented in **[Connection Lifecycle & Reconnection](/sdk/connection#automatic-reconnection)**.
 
 ### Manual Reconnection
 
 Automatic retries only help while the `room` object is still alive in memory. When the page reloads or the app restarts, resume the session with `client.reconnect(reconnectionToken)` instead:
 
-- **Persist `room.reconnectionToken`** while connected — it is refreshed on every successful connection, so store it after joining *and* after each `onReconnect()`.
-- **`client.reconnect()` returns a new `Room` instance** — reattach all listeners to it; the old references are gone.
-- **The seat must still be held** — the call succeeds only within the server's `allowReconnection()` window (or indefinitely in `"manual"` mode).
+- **Persist `room.reconnectionToken`** while connected. It is refreshed on every successful connection, so store it after joining *and* after each `onReconnect()`.
+- **`client.reconnect()` returns a new `Room` instance**: reattach all listeners to it; the old references are gone.
+- **The seat must still be held**: the call succeeds only within the server's `allowReconnection()` window (or indefinitely in `"manual"` mode).
 
 ```typescript
 import { Client, Room } from "@colyseus/sdk";
@@ -306,7 +306,7 @@ async function joinOrRejoin(): Promise<Room> {
       // Try to resume the previous session first
       return onRoomJoined(await client.reconnect(token));
     } catch (e) {
-      // Seat expired or reconnection was rejected — start fresh
+      // Seat expired or reconnection was rejected: start fresh
       sessionStorage.removeItem("reconnectionToken");
     }
   }
@@ -338,16 +338,16 @@ Manual reconnection is also the fallback after automatic retries give up: on `FA
 
 ## State After Reconnection
 
-On a successful reconnection the server sends a **full state snapshot**, and the SDK **reconciles** it into the state tree you already hold — it does not rebuild the tree from scratch:
+On a successful reconnection the server sends a **full state snapshot**, and the SDK **reconciles** it into the state tree you already hold (it does not rebuild the tree from scratch):
 
-- Entities that changed while you were offline are **updated in place**. Your references into the tree and any state callbacks you attached stay valid — there is nothing to re-subscribe.
-- Entities **added** while you were offline arrive as ordinary additions — `onAdd` fires.
-- Entities **deleted** (or hidden from your view) while you were offline are **pruned** — `onRemove` fires for each, exactly as if the removal had arrived live.
+- Entities that changed while you were offline are **updated in place**. Your references into the tree and any state callbacks you attached stay valid. There is nothing to re-subscribe.
+- Entities **added** while you were offline arrive as ordinary additions: `onAdd` fires.
+- Entities **deleted** (or hidden from your view) while you were offline are **pruned**: `onRemove` fires for each, exactly as if the removal had arrived live.
 
-In other words, after `onReconnect()` the state is guaranteed to match the server again, and your existing callbacks and UI bindings observe the offline gap as a normal sequence of changes. Prediction controllers follow automatically too — the SDK resets the input handle on reconnect and observing reconcilers pick it up; see [Client Prediction](/netcode/client-prediction).
+In other words, after `onReconnect()` the state is guaranteed to match the server again, and your existing callbacks and UI bindings observe the offline gap as a normal sequence of changes. Prediction controllers follow automatically too. The SDK resets the input handle on reconnect and observing reconcilers pick it up; see [Client Prediction](/netcode/client-prediction).
 
 <Callout type="info">
-    After a **manual** `client.reconnect()`, there is no previous tree to reconcile into — the new `Room` instance receives the snapshot as its initial state, and your freshly attached callbacks fire from scratch.
+    After a **manual** `client.reconnect()`, there is no previous tree to reconcile into. The new `Room` instance receives the snapshot as its initial state, and your freshly attached callbacks fire from scratch.
 </Callout>
 
 ---
@@ -373,9 +373,9 @@ See the [full table of WebSocket close codes](/room#table-of-websocket-close-cod
 ## Best Practices
 
 1. **Always call `allowReconnection()` in `onDrop()`** if you want to support reconnection
-2. **Don't remove player data in `onDrop()`** — wait for `onLeave()` to clean up
+2. **Don't remove player data in `onDrop()`**: wait for `onLeave()` to clean up
 3. **Mark players as "disconnected" in state** so other clients can show appropriate UI
 4. **Set reasonable reconnection timeouts** based on your game type (e.g., 30s for fast-paced games, 5min for turn-based)
 5. **Persist `room.reconnectionToken`** (e.g., in `sessionStorage`) after joining and after each reconnection, so a page reload can resume via `client.reconnect()`
-6. **Handle `FAILED_TO_RECONNECT` on the client** to show appropriate error messages — and offer a manual "Rejoin"
-7. **Buffer important actions** — messages sent during disconnection are [queued automatically](/sdk/connection#automatic-reconnection)
+6. **Handle `FAILED_TO_RECONNECT` on the client** to show appropriate error messages, and offer a manual "Rejoin"
+7. **Buffer important actions**: messages sent during disconnection are [queued automatically](/sdk/connection#automatic-reconnection)

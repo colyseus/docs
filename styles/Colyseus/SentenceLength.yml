@@ -3,7 +3,7 @@
 # only fires on genuine run-ons — usually a claim, an em-dash, and a mechanism
 # that wants to be its own sentence. See STYLE.md#sentences-and-structure.
 extends: occurrence
-message: "Sentence runs long (%d words). Split it — one idea per sentence."
+message: "Sentence runs long (%d words). Split it: one idea per sentence."
 level: warning
 scope: sentence
 max: 25

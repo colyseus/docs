@@ -118,7 +118,7 @@ room.sendBytes("some-bytes", new Uint8Array([ 172, 72, 101, 108, 108, 111, 32, 1
 ```
 
 <Callout type="warning">
-    The payload must be a `Uint8Array` — a plain `number[]` array silently sends an **empty** message, since the SDK reads `.byteLength` from the payload.
+    The payload must be a `Uint8Array`. A plain `number[]` array silently sends an **empty** message, since the SDK reads `.byteLength` from the payload.
 </Callout>
 
 ## Receiving Messages
@@ -219,7 +219,7 @@ room.send("get-profile", { userId: 42 }, (profile, error) => {
 
 The promise rejects (or the callback receives an `error`) when the handler throws, no handler is registered for that type, the connection closes first, or no reply arrives within the timeout. The default timeout is `Room.defaultRequestTimeout` (10000 ms), overridable per request via the `timeout` option.
 
-The server may also **deliberately reject** a request via [`ctx.reject(reason)`](/room#responding-to-a-message-requestresponse) — a business-logic "no", distinct from an error. The rejection arrives as an `Error` with `name: "rejected"`, and the server's raw `reason` on its `.reason` property:
+The server may also **deliberately reject** a request via [`ctx.reject(reason)`](/room#responding-to-a-message-requestresponse): a business-logic "no", distinct from an error. The rejection arrives as an `Error` with `name: "rejected"`, and the server's raw `reason` on its `.reason` property:
 
 ```ts filename="client.ts"
 try {

@@ -8,7 +8,7 @@ import { DownloadIcon, LinkIcon } from '@primer/octicons-react'
 # Phaser #4: Fixed Tickrate
 
 <Callout type="info">
-    This tutorial enqueues and dequeues inputs at a fixed tick **by hand** to teach the concept. For the built-in 0.18 API — `defineInput()` + `setFixedTimestep()` — see [Server Input & Fixed Timestep](/netcode/server-input).
+    This tutorial enqueues and dequeues inputs at a fixed tick **by hand** to teach the concept. For the built-in 0.18 API (`defineInput()` + `setFixedTimestep()`), see [Server Input & Fixed Timestep](/netcode/server-input).
 </Callout>
 
 This guide will show you how you can build a multiplayer experience with Colyseus Multiplayer Framework and Phaser.
@@ -45,7 +45,7 @@ The server and client must process the input and apply the same update loop logi
 
 A common technique we can apply is to enqueue player inputs, and process them all at the next server tick.
 
-Let's update the server's `Player` definition to hold a queue of inputs — a local-only field that is never synchronized to clients:
+Let's update the server's `Player` definition to hold a queue of inputs, a local-only field that is never synchronized to clients:
 
 <Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
     <Tabs.Tab>

@@ -1,13 +1,13 @@
 ---
 title: "Bring your own database"
-description: "Use any ORM, query builder, or Firebase with Colyseus — query patterns for onAuth and onLeave when not using @colyseus/database."
+description: "Use any ORM, query builder, or Firebase with Colyseus: query patterns for onAuth and onLeave when not using @colyseus/database."
 ---
 import { Cards } from 'nextra/components'
 import { LinkExternalIcon } from '@primer/octicons-react'
 
 # Bring your own database
 
-`@colyseus/database` is the recommended path, but Colyseus does not require it. Any database or Node.js module works — query it directly from your room's lifecycle methods.
+`@colyseus/database` is the recommended path, but Colyseus does not require it. Any database or Node.js module works. Query it directly from your room's lifecycle methods.
 
 If you go this route, we still recommend [Drizzle ORM](https://orm.drizzle.team/) (what `@colyseus/database` is built on). Other commonly used tools:
 

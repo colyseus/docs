@@ -10,7 +10,7 @@ You can deny a player connection by throwing a `ServerError` during the `onAuth(
 
 When to deny a player connection will depend on your use-case.
 
-Below you can see an example validating the client's auth token, and retrieving a `Hero` record linked with the user id. The check lives in the **static** `onAuth` — for token-bearing clients, the instance `onAuth` is skipped entirely (see [Room Authentication](/auth/room)).
+Below you can see an example validating the client's auth token, and retrieving a `Hero` record linked with the user id. The check lives in the **static** `onAuth`. For token-bearing clients, the instance `onAuth` is skipped entirely (see [Room Authentication](/auth/room)).
 
 ```ts filename="BattleRoom.ts"
 import { Room, ServerError } from "colyseus";
@@ -52,5 +52,5 @@ client.joinOrCreate("battle", {}).then(room => {
 ```
 
 <Callout type="info">
-    A room-specific gate that needs the room instance — the current phase, connected clients — belongs in `onJoin()` instead: throwing a `ServerError` there rejects the join as well. See [Room Authentication](/auth/room) for the full `onAuth` semantics.
+    A room-specific gate that needs the room instance (the current phase, connected clients) belongs in `onJoin()` instead: throwing a `ServerError` there rejects the join as well. See [Room Authentication](/auth/room) for the full `onAuth` semantics.
 </Callout>

@@ -150,7 +150,7 @@ import { OnLeaveException } from "colyseus";
 When the exception is thrown inside `onDrop` (properties: `client`, `code`) or `onReconnect` (property: `client`).
 
 <Callout type="warning">
-    In 0.18.1 these two classes are raised internally but not yet exported from the `colyseus` package, so an `instanceof` check isn't possible — inspect the `methodName` argument (`"onDrop"` / `"onReconnect"`) instead.
+    In 0.18.1 these two classes are raised internally but not yet exported from the `colyseus` package, so an `instanceof` check isn't possible. Inspect the `methodName` argument (`"onDrop"` / `"onReconnect"`) instead.
 </Callout>
 
 ### OnMessageException

@@ -6,7 +6,7 @@ import { Callout } from "nextra/components";
 
 # TrackUserSessionsPlugin
 
-Maintains a **per-user reverse index** in Presence — a hash keyed by user id whose entries are the user's currently-active `{ roomId, roomName, joinedAt }` sessions. This index powers any tooling that needs to answer "what rooms is user X in right now?":
+Maintains a **per-user reverse index** in Presence, a hash keyed by user id whose entries are the user's currently-active `{ roomId, roomName, joinedAt }` sessions. This index powers any tooling that needs to answer "what rooms is user X in right now?":
 
 - The admin panel's **by-user inspector** (live sessions tab).
 - The admin's **Ban** / **Revoke sessions** workflow (close all of a user's open WS connections).
@@ -32,7 +32,7 @@ You'll want to install this plugin directly when:
 - You're running [`@colyseus/admin`](/admin) and want the **Users → Active rooms** tab + the **Ban** / **Revoke sessions** workflows to surface what room a user is currently in. Without this plugin, those tabs stay empty.
 - You're building tooling that asks "which rooms is user X in right now?" via the Presence reverse index.
 
-The plugin is also **auto-included** by every plugin that reads the index (currently [`UniqueSessionPlugin`](/room/plugins/unique-session)) via `static dependencies` — if your room already uses one of those, the tracker is wired in for free and you don't need to register it again.
+The plugin is also **auto-included** by every plugin that reads the index (currently [`UniqueSessionPlugin`](/room/plugins/unique-session)) via `static dependencies`. If your room already uses one of those, the tracker is wired in for free and you don't need to register it again.
 
 ## How it works
 
@@ -40,7 +40,7 @@ The plugin is also **auto-included** by every plugin that reads the index (curre
 - **`onLeave`**: removes the entry.
 - **`onDispose`**: sweeps any straggler entries that point at this room.
 
-Identity is resolved via `client.userId ?? client.auth?.id` — the standard `@colyseus/auth` JWT shape supplies both for authenticated sessions and for anonymously-registered ones.
+Identity is resolved via `client.userId ?? client.auth?.id`. The standard `@colyseus/auth` JWT shape supplies both for authenticated sessions and for anonymously-registered ones.
 
 ## Options
 
@@ -68,7 +68,7 @@ Returned entries have the `UserSessionInfo` shape:
 | `roomId`     | `string`    | The id of the room the user is in.                                                             |
 | `roomName`   | `string`    | The room definition name (matchmaking name).                                                   |
 | `joinedAt`   | `number`    | Unix timestamp (ms) when the join was recorded.                                                |
-| `processId`  | `string?`   | Process hosting the room — populated only with `reconcile: true` (see below).                  |
+| `processId`  | `string?`   | Process hosting the room, populated only with `reconcile: true` (see below).                  |
 
 ### Options
 
@@ -78,17 +78,17 @@ Returned entries have the `UserSessionInfo` shape:
 | `removeStale`  | `boolean` | `false`  | Fire-and-forget `hdel` the dropped entries (corrupt JSON + entries dropped by `reconcile`) so the index self-heals on read. No-op when `reconcile` is `false`.                            |
 
 ```ts
-// Display surface — drop dead-room entries, sweep them from Presence, get processId.
+// Display surface: drop dead-room entries, sweep them from Presence, get processId.
 const live = await TrackUserSessionsPlugin.listUserSessions(userId, {
   reconcile: true,
   removeStale: true,
 });
 
-// Imperative path (kick everything) — raw read; dead roomIds just fail the kick harmlessly.
+// Imperative path (kick everything): raw read; dead roomIds just fail the kick harmlessly.
 const all = await TrackUserSessionsPlugin.listUserSessions(userId);
 ```
 
-The raw read (default) is one wire op (`HGETALL` on the user's hash). With `reconcile: true`, the cost is bounded at **two** wire ops regardless of cluster size or the user's session count — the matchmaker lookup uses a single batch call (`matchMaker.findRoomsByIds`), not a cluster scan.
+The raw read (default) is one wire op (`HGETALL` on the user's hash). With `reconcile: true`, the cost is bounded at **two** wire ops regardless of cluster size or the user's session count. The matchmaker lookup uses a single batch call (`matchMaker.findRoomsByIds`), not a cluster scan.
 
 ## Caveats
 

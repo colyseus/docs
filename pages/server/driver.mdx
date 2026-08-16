@@ -204,7 +204,7 @@ import { defineServer } from "colyseus";
 import { MongooseDriver } from "@colyseus/mongoose-driver";
 
 const server = defineServer({
-    driver: new MongooseDriver(/* connection URI — falls back to MONGO_URI env, then mongodb://127.0.0.1:27017/colyseus */),
+    driver: new MongooseDriver(/* connection URI (falls back to MONGO_URI env, then mongodb://127.0.0.1:27017/colyseus) */),
     // ...
 });
 ```

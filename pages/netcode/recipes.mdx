@@ -7,7 +7,7 @@ import { SDKTabs } from "../../components/SDKTabs"
 
 # Netcode Recipes
 
-Task-oriented patterns that build on the [Client Prediction](/netcode/client-prediction), [Server Input](/netcode/server-input), and [Lag Compensation](/netcode/lag-compensation) APIs. Each recipe stands alone — jump to the one that matches what you're building.
+Task-oriented patterns that build on the [Client Prediction](/netcode/client-prediction), [Server Input](/netcode/server-input), and [Lag Compensation](/netcode/lag-compensation) APIs. Each recipe stands alone. Jump to the one that matches what you're building.
 
 <Callout type="info">
     **Available in Colyseus 0.18+.**
@@ -17,15 +17,15 @@ Task-oriented patterns that build on the [Client Prediction](/netcode/client-pre
 
 `Predict.attachAll` smooths entities you don't control. Pick the mode by what the entity *is*:
 
-- **`lerp`** — remote **players**. Faithful (renders exactly where the server put them, a little in the past). The default for anything you also want lag-compensated, because rewind can match the interpolated instant.
-- **`reckon`** — **AI / NPCs** you can forward-simulate from a known step function. Renders at ≈ `serverNow`, hiding latency; attach the server group with `mode: "reckon"` so hits line up.
-- **`damped`** — **cosmetic** entities where "never jittery" beats "exact" (floating pickups, ambient critters). No fixed delay, so it can't be exactly lag-compensated.
+- **`lerp`**: remote **players**. Faithful (renders exactly where the server put them, a little in the past). The default for anything you also want lag-compensated, because rewind can match the interpolated instant.
+- **`reckon`**: **AI / NPCs** you can forward-simulate from a known step function. Renders at ≈ `serverNow`, hiding latency; attach the server group with `mode: "reckon"` so hits line up.
+- **`damped`**: **cosmetic** entities where "never jittery" beats "exact" (floating pickups, ambient critters). No fixed delay, so it can't be exactly lag-compensated.
 
 Full behavior reference: [the modes table](/netcode/client-prediction#remote-entities).
 
 ## Taps between steps: buffer, then consume
 
-Input is sampled once per **fixed step**, not per render frame — and frames and steps don't line up. A 120 Hz display on a 30 Hz tick runs a step every ~4th frame, and a hitchy frame can run several steps at once. Two traps follow: a tap on a **0-step frame** must not be lost (it belongs to the next step), and a tap spanning a **multi-step frame** must not fire twice. "Is the key down right now?" sampling gets both wrong.
+Input is sampled once per **fixed step**, not per render frame. Frames and steps don't line up. A 120 Hz display on a 30 Hz tick runs a step every ~4th frame, and a hitchy frame can run several steps at once. Two traps follow: a tap on a **0-step frame** must not be lost (it belongs to the next step), and a tap spanning a **multi-step frame** must not fire twice. "Is the key down right now?" sampling gets both wrong.
 
 **Buffer the press when it happens; consume it inside the step loop on exactly one step:**
 
@@ -144,20 +144,20 @@ Input is sampled once per **fixed step**, not per render frame — and frames an
 
 Variants of the same shape:
 
-- **Held buttons** (movement, auto-fire) sample the live state directly — no buffer.
+- **Held buttons** (movement, auto-fire) sample the live state directly: no buffer.
 - **Buffer windows** (a jump buffer with a grace period): buffer a timestamp instead of a flag; the consuming step decides whether it's still fresh.
-- **Analog deltas** (pointer aim, mouselook): accumulate into a pending total and let each step consume its budget (`pending -= taken`) — fast motion carries over to later steps instead of clipping.
+- **Analog deltas** (pointer aim, mouselook): accumulate into a pending total and let each step consume its budget (`pending -= taken`). Fast motion carries over to later steps instead of clipping.
 
-Buffer outside the loop, consume inside it — draining an edge anywhere else either drops taps (0-step frames) or double-fires them (multi-step frames).
+Buffer outside the loop, consume inside it: draining an edge anywhere else either drops taps (0-step frames) or double-fires them (multi-step frames).
 
 ## Unreliable input over WebTransport
 
-On a datagram-capable transport, input frames don't need reliable delivery — each packet carries the last few inputs as redundancy, so a dropped datagram costs nothing and nothing head-of-line blocks.
+On a datagram-capable transport, input frames don't need reliable delivery: each packet carries the last few inputs as redundancy, so a dropped datagram costs nothing and nothing head-of-line blocks.
 
 <Callout type="warning">
-    **Experimental, and WebTransport only.** Unreliable input needs a datagram channel, which only [WebTransport](/server/transport/webtransport) provides today — itself experimental. Right now only the JavaScript/TypeScript SDK supports WebTransport, and with it unreliable input.
+    **Experimental, and WebTransport only.** Unreliable input needs a datagram channel, which only [WebTransport](/server/transport/webtransport) provides today (itself experimental). Right now only the JavaScript/TypeScript SDK supports WebTransport, and with it unreliable input.
 
-    Other SDKs **reject** `mode: "unreliable"` at construction for now — over their WebSocket-only transports the redundancy ring would cost bandwidth for no benefit. Use `mode: "reliable"` there.
+    Other SDKs **reject** `mode: "unreliable"` at construction for now: over their WebSocket-only transports the redundancy ring would cost bandwidth for no benefit. Use `mode: "reliable"` there.
 </Callout>
 
 <SDKTabs>
@@ -170,41 +170,41 @@ On a datagram-capable transport, input frames don't need reliable delivery — e
 
     <Tabs.Tab>
     ```cs
-    // Not available yet — Room.Input() rejects mode "unreliable"
+    // Not available yet: Room.Input() rejects mode "unreliable"
     // (WebSocket-only transport). Use "reliable".
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
     ```lua
-    -- Not available yet — room:input() rejects mode "unreliable"
+    -- Not available yet: room:input() rejects mode "unreliable"
     -- (WebSocket-only transport). Use "reliable".
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
     ```haxe
-    // Not available yet — room.input() rejects mode "unreliable"
+    // Not available yet: room.input() rejects mode "unreliable"
     // (WebSocket-only transport). Use "reliable".
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
     ```gdscript
-    # Not available — the Godot SDK sends input over the reliable channel only.
+    # Not available: the Godot SDK sends input over the reliable channel only.
     ```
     </Tabs.Tab>
 
     <Tabs.Tab>
     ```dart
-    // Not available yet — room.input() throws on InputMode.unreliable
+    // Not available yet: room.input() throws on InputMode.unreliable
     // (WebSocket-only transport). Use InputMode.reliable.
     ```
     </Tabs.Tab>
 
 </SDKTabs>
 
-That's the whole migration. The framework runs its own sequence numbers and acks by seq **value**, so rollback reconciliation works unchanged — no user-side bookkeeping, no seq field on your schema. `historySize` is the redundancy depth (how many recent inputs ride along in each datagram; default 3).
+That's the whole migration. The framework runs its own sequence numbers and acks by seq **value**, so rollback reconciliation works unchanged: no user-side bookkeeping, no seq field on your schema. `historySize` is the redundancy depth (how many recent inputs ride along in each datagram; default 3).
 
 ## Predicted projectiles: `predict.spawns`
 
@@ -224,7 +224,7 @@ A fired bullet needs zero-latency feedback, but the server assigns its identity 
     // on the predicted fire (live input step):
     rockets.spawn({ x, z, heading });
 
-    // render — one path, handoff-invisible, keyed on the stable entry id:
+    // render: one path, handoff-invisible, keyed on the stable entry id:
     for (const e of rockets.entries()) {
       draw(e.id, rockets.value(e, "x"), rockets.value(e, "z"));
     }
@@ -244,7 +244,7 @@ A fired bullet needs zero-latency feedback, but the server assigns its identity 
     // on the predicted fire (live input step):
     rockets.Spawn(new Shot { x = x, z = z, heading = heading });
 
-    // render — one path, handoff-invisible, keyed on the stable entry id:
+    // render: one path, handoff-invisible, keyed on the stable entry id:
     foreach (var e in rockets.Entries()) {
         Draw(e.Id, rockets.Value(e, "x"), rockets.Value(e, "z"));
     }
@@ -263,7 +263,7 @@ A fired bullet needs zero-latency feedback, but the server assigns its identity 
     -- on the predicted fire (live input step):
     rockets:spawn({ x = x, z = z, heading = heading })
 
-    -- render — one path, handoff-invisible, keyed on the stable entry id:
+    -- render: one path, handoff-invisible, keyed on the stable entry id:
     for _, e in ipairs(rockets:entries()) do
       draw(e.id, rockets:value(e, "x"), rockets:value(e, "z"))
     end
@@ -282,7 +282,7 @@ A fired bullet needs zero-latency feedback, but the server assigns its identity 
     // on the predicted fire (live input step):
     rockets.spawn({ x: x, z: z, heading: heading });
 
-    // render — one path, handoff-invisible, keyed on the stable entry id:
+    // render: one path, handoff-invisible, keyed on the stable entry id:
     for (e in rockets.entries()) {
         draw(e.id, rockets.value(e, "x"), rockets.value(e, "z"));
     }
@@ -301,7 +301,7 @@ A fired bullet needs zero-latency feedback, but the server assigns its identity 
     # on the predicted fire (live input step):
     rockets.spawn({ "x": x, "z": z, "heading": heading })
 
-    # render — one path, handoff-invisible, keyed on the stable entry id:
+    # render: one path, handoff-invisible, keyed on the stable entry id:
     for e in rockets.entries():
         draw(e.id, rockets.value(e.id, "x"), rockets.value(e.id, "z"))
     ```
@@ -319,7 +319,7 @@ A fired bullet needs zero-latency feedback, but the server assigns its identity 
     // on the predicted fire (live input step):
     rockets.spawn(Shot(x, z, heading));
 
-    // render — one path, handoff-invisible, keyed on the stable entry id:
+    // render: one path, handoff-invisible, keyed on the stable entry id:
     for (final e in rockets.entries) {
       draw(e.id, rockets.value(e, 'x'), rockets.value(e, 'z'));
     }
@@ -328,7 +328,7 @@ A fired bullet needs zero-latency feedback, but the server assigns its identity 
 
 </SDKTabs>
 
-With `spawnTime`, an **owned** projectile keeps flying the *shooter's* timeline through the handoff — no snap-back, and the rendered trajectory is the one a favor-the-shooter rewind actually judges. Foreign projectiles (other players') render at server-present, aged forward automatically. An unmatched prediction expires after a TTL (`max(2×rtt, 600ms)` by default) and `onReject` fires — the ghost reverts.
+With `spawnTime`, an **owned** projectile keeps flying the *shooter's* timeline through the handoff: no snap-back, and the rendered trajectory is the one a favor-the-shooter rewind actually judges. Foreign projectiles (other players') render at server-present, aged forward automatically. An unmatched prediction expires after a TTL (`max(2×rtt, 600ms)` by default) and `onReject` fires: the ghost reverts.
 
 For fast projectiles, hit-test the swept **segment** between last and current position, not a point, so a frame-step doesn't tunnel through a thin target.
 
@@ -440,7 +440,7 @@ Impact feedback (hit marker, sound, decal) shouldn't wait for the server, but a 
 
 </SDKTabs>
 
-A sim-born prediction auto-rejects once the server processes past its birth step without confirming — see [Optimistic events](/netcode/client-prediction#optimistic-events-defineevent).
+A sim-born prediction auto-rejects once the server processes past its birth step without confirming. See [Optimistic events](/netcode/client-prediction#optimistic-events-defineevent).
 
 ## Optimistic pickups & breakables: `confirmOn`
 
@@ -449,7 +449,7 @@ Kills, pickups, and breakables share one shape: predict a flag keyed by entity i
 ```ts
 const pickups = predict.defineEvent<string>({
   confirmOn: { collection: "items", field: "alive", equals: false },
-  // a remote player's pickup (nothing pending) — play the FX we skipped
+  // a remote player's pickup (nothing pending): play the FX we skipped
   onUnpredicted: (id) => {
     const item = state.items.get(String(id));
     if (item) burstAt(item.x, item.y);
@@ -459,7 +459,7 @@ const pickups = predict.defineEvent<string>({
 // inside the step, on predicted contact:
 if (touching) ctx.predict(pickups, itemId);
 
-// render — hidden the instant WE predict it, or when the server says so:
+// render: hidden the instant WE predict it, or when the server says so:
 const hidden = !item.alive || pickups.has(id);
 ```
 
@@ -471,7 +471,7 @@ A mispredict needs no cleanup code: the entry auto-rejects once the server proce
 
 ## Dead-reckoned AI (server-driven)
 
-For entities nobody controls directly but that move predictably (patrolling AI, ballistics), pair the client's `reckon` display with a `reckon` rewind timeline — both sides describe the same decision:
+For entities nobody controls directly but that move predictably (patrolling AI, ballistics), pair the client's `reckon` display with a `reckon` rewind timeline (both sides describe the same decision):
 
 <SDKTabs>
 
@@ -533,7 +533,7 @@ this.rewind.attachAll(this.state.enemies, {
 
 ## Teleports & respawns: `snap`
 
-Smoothing turns a respawn into a glide across the map. The `snap` option (on any attach or reconciler config) declares a value-space threshold past which a jump is a **teleport** — smoothing resets and the entity pops to the new value:
+Smoothing turns a respawn into a glide across the map. The `snap` option (on any attach or reconciler config) declares a value-space threshold past which a jump is a **teleport**. Smoothing resets and the entity pops to the new value:
 
 <SDKTabs>
 
@@ -627,13 +627,13 @@ Size it well above per-patch motion (`maxSpeed × patchInterval`) and below your
 
 Three kinds of "wait", three homes:
 
-- **Self-imposed rate limits** (fire rate, ability spam guard the client enforces on itself) — `room.clock.now()`, local monotonic: `now() - lastFired >= COOLDOWN_MS`. No clock sync involved, so no jitter.
-- **Server-stamped windows** (invulnerable-until, respawn-at, round-end) — compare against `room.clock.serverNow()`; the server wrote the absolute deadline.
-- **Cooldowns that gate the simulation itself** (a dash the step must refuse during cooldown) — make the cooldown a **reconciled field ticked inside `step`** (`dashCooldown--` per tick, in `fields`). It predicts, replays, and self-corrects like any other simulated state; a wall-clock gate inside `step` would break replay.
+- **Self-imposed rate limits** (fire rate, ability spam guard the client enforces on itself): `room.clock.now()`, local monotonic: `now() - lastFired >= COOLDOWN_MS`. No clock sync involved, so no jitter.
+- **Server-stamped windows** (invulnerable-until, respawn-at, round-end): compare against `room.clock.serverNow()`; the server wrote the absolute deadline.
+- **Cooldowns that gate the simulation itself** (a dash the step must refuse during cooldown): make the cooldown a **reconciled field ticked inside `step`** (`dashCooldown--` per tick, in `fields`). It predicts, replays, and self-corrects like any other simulated state; a wall-clock gate inside `step` would break replay.
 
 ## Physics-engine prediction (`predict.sim` + Rapier)
 
-When the local simulation is an opaque engine, bridge it into `predict.sim`'s `step` — the engine handle is your `world`. On the server, consume one input per tick with `next()` and step the world once:
+When the local simulation is an opaque engine, bridge it into `predict.sim`'s `step`: the engine handle is your `world`. On the server, consume one input per tick with `next()` and step the world once:
 
 ```ts
 // server
@@ -647,7 +647,7 @@ step(ctx) {
 ```
 
 ```ts
-// client — same applyInput, same dt
+// client: same applyInput, same dt
 const me = predict.sim({
   input,
   world: { world, body },
@@ -659,22 +659,22 @@ const me = predict.sim({
 ```
 
 <Callout type="info">
-    The opaque-engine face (`adopt` + `pose`) is JavaScript-only — see [the sim note](/netcode/client-prediction#composite--engine-state-predictsim). On the other SDKs, keep engine state in bound schema mirrors — see [Composite scalars](#composite-scalars-predictsim-no-engine) below.
+    The opaque-engine face (`adopt` + `pose`) is JavaScript-only. See [the sim note](/netcode/client-prediction#composite--engine-state-predictsim). On the other SDKs, keep engine state in bound schema mirrors. See [Composite scalars](#composite-scalars-predictsim-no-engine) below.
 </Callout>
 
 <Callout type="warning">
-    Reseed **every** scalar the sim depends on in `adopt` (position **and** velocity). Engine-internal non-scalar state isn't rolled back — see [the warning on `predict.sim`](/netcode/client-prediction#composite--engine-state-predictsim).
+    Reseed **every** scalar the sim depends on in `adopt` (position **and** velocity). Engine-internal non-scalar state isn't rolled back. See [the warning on `predict.sim`](/netcode/client-prediction#composite--engine-state-predictsim).
 </Callout>
 
 ## Composite scalars (`predict.sim`, no engine)
 
-When an input pushes more than your own entity — a paddle that strikes a puck — put the decoded schema instances in the `world` and they **auto-bind**: no `adopt` or `pose` callbacks, and the bound entities render through the ordinary `predict.value(instance, field)` read. See [Composite & engine state](/netcode/client-prediction#composite--engine-state-predictsim).
+When an input pushes more than your own entity (a paddle that strikes a puck), put the decoded schema instances in the `world` and they **auto-bind**: no `adopt` or `pose` callbacks, and the bound entities render through the ordinary `predict.value(instance, field)` read. See [Composite & engine state](/netcode/client-prediction#composite--engine-state-predictsim).
 
 ## Hand-rolled simulation (no physics engine)
 
-You don't need an engine. The simplest way to satisfy [the determinism contract](/netcode/determinism) is plain math: `applyInput` integrates velocity and gravity by hand, shared verbatim between client and server — no engine build to keep in sync.
+You don't need an engine. The simplest way to satisfy [the determinism contract](/netcode/determinism) is plain math: `applyInput` integrates velocity and gravity by hand, shared verbatim between client and server (no engine build to keep in sync).
 
 ## Next
 
-→ [Determinism & The Contract](/netcode/determinism) — the rules these patterns rely on, and the troubleshooting table.<br/>
-→ [Client Prediction](/netcode/client-prediction) — the full API reference behind every recipe here.
+→ [Determinism & The Contract](/netcode/determinism): the rules these patterns rely on, and the troubleshooting table.<br/>
+→ [Client Prediction](/netcode/client-prediction): the full API reference behind every recipe here.

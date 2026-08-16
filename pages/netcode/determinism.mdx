@@ -7,7 +7,7 @@ import { SDKTabs } from "../../components/SDKTabs"
 
 # Determinism & The Contract
 
-Client prediction only matches the server if **both run the same simulation**. None of the rules below is hard to follow, but each is easy to break by accident — and the resulting bugs look mysterious: rubber-banding, re-firing sounds, hits that don't land. This page collects the rules and the symptom each break produces. Read it alongside [Client Prediction](/netcode/client-prediction) and [Server Input](/netcode/server-input).
+Client prediction only matches the server if **both run the same simulation**. None of the rules below is hard to follow, but each is easy to break by accident. The resulting bugs look mysterious: rubber-banding, re-firing sounds, hits that don't land. This page collects the rules and the symptom each break produces. Read it alongside [Client Prediction](/netcode/client-prediction) and [Server Input](/netcode/server-input).
 
 <Callout type="info">
     **Available in Colyseus 0.18+.**
@@ -15,43 +15,43 @@ Client prediction only matches the server if **both run the same simulation**. N
 
 ## The contract
 
-These are load-bearing — break one and prediction drifts or hits stop registering:
+These are load-bearing. Break one and prediction drifts or hits stop registering:
 
 1. **One `input.send()` per fixed step.** `predict.tick()` returns how many fixed steps are due this frame; stage and send exactly that many inputs. Every `send()` transmits one input (a body-less frame when nothing changed), so the predicted set equals the server-applied set. Don't send per render frame, and don't skip sends while predicting movement.
 
-2. **Everything the step reads must live on the input schema.** `step` receives the buffered *wire* input (`input.at(seq)`) — the exact value the server decodes — on the live step and on every replay. State you read from outside the input (a captured variable, a DOM read) won't replay and diverges silently.
+2. **Everything the step reads must live on the input schema.** `step` receives the buffered *wire* input (`input.at(seq)`), the exact value the server decodes, on the live step and on every replay. State you read from outside the input (a captured variable, a DOM read) won't replay and diverges silently.
 
 3. **Send before you read.** Within a frame: `predict.tick()` → the send loop → render reads. A `predict.value()` read between `tick()` and the sends renders one step stale (the SDK warns once).
 
-4. **One-shot effects never go raw inside `step`.** A step replays 0..N times during rollback. Use `ctx.predict` for events (a sound, a celebration — fires on the live step only) and `ctx.memo` for values replay can't re-derive (an RNG roll, a lag-comp'd collision). For fire-and-forget presentation (particles, camera shake), a plain `if (!ctx.isReplay)` branch is itself the idiom.
+4. **One-shot effects never go raw inside `step`.** A step replays 0..N times during rollback. Use `ctx.predict` for events (a sound, a celebration), which fire on the live step only, and `ctx.memo` for values replay can't re-derive (an RNG roll, a lag-comp'd collision). For fire-and-forget presentation (particles, camera shake), a plain `if (!ctx.isReplay)` branch is itself the idiom.
 
-5. **Inputs must be flat primitives** — no nested schemas or collections in an input.
+5. **Inputs must be flat primitives**: no nested schemas or collections in an input.
 
-6. **Input rate = fixed-step rate = server tick.** Change one, change all. Lowering `tickRate` to save bandwidth therefore also lowers the simulation rate — unless you [sub-step](/netcode/server-input#sub-stepping-high-rate-physics-on-a-low-network-rate): physics can run at `tickRate × subSteps` while the wire stays at `tickRate`.
+6. **Input rate = fixed-step rate = server tick.** Change one, change all. Lowering `tickRate` to save bandwidth therefore also lowers the simulation rate, unless you [sub-step](/netcode/server-input#sub-stepping-high-rate-physics-on-a-low-network-rate): physics can run at `tickRate × subSteps` while the wire stays at `tickRate`.
 
 7. **Lag comp rewinds to the *acting client's* render time, not the server's now.** [`rewind.lastSeenBy(shooterId)`](/netcode/lag-compensation#rewindlastseenbysessionid) gets the direction right for you.
 
-Two more facts ride the same ack channel, but they're bookkeeping the framework does — not rules you can break. **`lastProcessed`** is the server's consumed count, echoed via the acks: reconcile triggers when it advances, and there is no seq field to manage (in `"unreliable"` mode the framework's own sequence plus the redundant input history make drops harmless). And **`room.clock`** syncs through those same acks — which is why it requires `defineInput()`: without it the clock is a stub (`serverNow()` falls back to a local monotonic clock; `rtt` / `lastServerTime` are 0).
+Two more facts ride the same ack channel, but they're bookkeeping the framework does, not rules you can break. **`lastProcessed`** is the server's consumed count, echoed via the acks: reconcile triggers when it advances, and there is no seq field to manage (in `"unreliable"` mode the framework's own sequence plus the redundant input history make drops harmless). And **`room.clock`** syncs through those same acks, which is why it requires `defineInput()`: without it the clock is a stub (`serverNow()` falls back to a local monotonic clock; `rtt` / `lastServerTime` are 0).
 
 ## Determinism
 
 Prediction matches the server only if both run the **same** simulation:
 
-- **One shared `step` / `applyInput` function** — a single source of truth, imported by both client and server. Don't maintain two copies.
-- **Identical fixed `dt` on both sides** — `setFixedTimestep` advertises it; the client `reconciler` / `sim` read it back through `ctx.dt` / `input.stepSeconds`. Never hand-write `1/60` on the client.
-- **Matching engine versions** for physics — e.g. the same Rapier build on client and server. Different builds produce different floating-point results and diverge.
+- **One shared `step` / `applyInput` function**: a single source of truth, imported by both client and server. Don't maintain two copies.
+- **Identical fixed `dt` on both sides**: `setFixedTimestep` advertises it; the client `reconciler` / `sim` read it back through `ctx.dt` / `input.stepSeconds`. Never hand-write `1/60` on the client.
+- **Matching engine versions** for physics, e.g. the same Rapier build on client and server. Different builds produce different floating-point results and diverge.
 
-Divergence shows up as **constant small corrections** (rubber-banding) even on a LAN. **Jitter** shows up as *occasional* corrections that scale with packet loss — that's the network, not your simulation.
+Divergence shows up as **constant small corrections** (rubber-banding) even on a LAN. **Jitter** shows up as *occasional* corrections that scale with packet loss: that's the network, not your simulation.
 
 ### Diagnosing divergence vs jitter
 
 You don't have to guess from feel. Every `reconciler`/`sim` controller keeps rolling drift telemetry (fed once per reconcile, not per frame) that separates the two:
 
-- **`me.drift.ema`** — EMA of the correction magnitude: the **persistent** component. Steadily above ~0 means the two simulations genuinely disagree — divergence.
-- **`me.drift.peak`** — a decaying max: **recent spikes**. A high `peak` over a near-zero `ema` is network jitter (loss / reorder), not a bug; smoothing absorbs it.
-- **`me.lastCorrectionMag`** / **`me.lastCorrection`** — the latest reconcile's max |correction| and its per-field breakdown.
+- **`me.drift.ema`**: EMA of the correction magnitude: the **persistent** component. Steadily above ~0 means the two simulations genuinely disagree: divergence.
+- **`me.drift.peak`**: a decaying max: **recent spikes**. A high `peak` over a near-zero `ema` is network jitter (loss / reorder), not a bug; smoothing absorbs it.
+- **`me.lastCorrectionMag`** / **`me.lastCorrection`**: the latest reconcile's max |correction| and its per-field breakdown.
 
-Set **`warnOnDivergence`** (a tolerance in world units) on the controller to get a console warning when the persistent component crosses it — telemetry runs while watched (this option set, or the dev panel active):
+Set **`warnOnDivergence`** (a tolerance in world units) on the controller to get a console warning when the persistent component crosses it. Telemetry runs while watched (this option set, or the dev panel active):
 
 <SDKTabs>
 
@@ -87,7 +87,7 @@ Set **`warnOnDivergence`** (a tolerance in world units) on the controller to get
 
     <Tabs.Tab>
     ```gdscript
-    # No warnOnDivergence option — read the drift telemetry yourself:
+    # No warnOnDivergence option. Read the drift telemetry yourself:
     if me.drift_ema > 0.05:
         push_warning("prediction diverging from the server")
     ```
@@ -95,14 +95,14 @@ Set **`warnOnDivergence`** (a tolerance in world units) on the controller to get
 
     <Tabs.Tab>
     ```dart
-    // No warnOnDivergence option — read the drift telemetry yourself:
+    // No warnOnDivergence option. Read the drift telemetry yourself:
     if (me.drift.ema > 0.05) log('prediction diverging from the server');
     ```
     </Tabs.Tab>
 
 </SDKTabs>
 
-The dev panel (`import "@colyseus/sdk/debug"`) classifies through the **same rule** and shows a per-controller verdict — **✓ matched** (both ~0), **~ jitter** (spikes that decay out), **✗ diverging** (persistent `ema`) — so the panel and the warning can never disagree about what the numbers mean. `me.reset()` zeroes the telemetry, and a `snap`-absorbed correction is excluded from it — so a deliberate pose jump doesn't read as divergence.
+The dev panel (`import "@colyseus/sdk/debug"`) classifies through the **same rule** and shows a per-controller verdict: **✓ matched** (both ~0), **~ jitter** (spikes that decay out), **✗ diverging** (persistent `ema`). The panel and the warning can therefore never disagree about what the numbers mean. `me.reset()` zeroes the telemetry, and a `snap`-absorbed correction is excluded from it, so a deliberate pose jump doesn't read as divergence.
 
 ### A determinism check
 
@@ -117,23 +117,23 @@ function isDeterministic(start, inputs, dt) {
 }
 ```
 
-If this fails, the culprit is inside `step` — `Math.random()`, `Date.now()`, iteration order over an unordered map, or reading mutable shared state. (When the non-derivable value is *intentional* — an RNG roll, a timestamp — freeze it with [`ctx.memo`](/netcode/client-prediction#ctxmemo--freeze-a-value-replay-cant-re-derive) so replay reuses it.)
+If this fails, the culprit is inside `step`: `Math.random()`, `Date.now()`, iteration order over an unordered map, or reading mutable shared state. (When the non-derivable value is *intentional*, such as an RNG roll or a timestamp, freeze it with [`ctx.memo`](/netcode/client-prediction#ctxmemo-freeze-a-value-replay-cant-re-derive) so replay reuses it.)
 
 ## Troubleshooting
 
 | Symptom | Likely cause |
 |---|---|
 | Local player rubber-bands constantly | Non-determinism: different `dt`, divergent `step`, or engine-version mismatch. Confirm with [drift telemetry](#diagnosing-divergence-vs-jitter): persistent `me.drift.ema` ⇒ diverging. |
-| Local player renders one step behind, warns once | Render values read before the frame's send loop — reorder to tick → send → read. |
-| Sounds/FX re-fire on corrections | Raw side effects inside `step` — declare them with `ctx.predict` (events) or `ctx.memo` (values). |
+| Local player renders one step behind, warns once | Render values read before the frame's send loop. Reorder to tick → send → read. |
+| Sounds/FX re-fire on corrections | Raw side effects inside `step`. Declare them with `ctx.predict` (events) or `ctx.memo` (values). |
 | Remotes stutter / teleport | Interp `delay` too small (buffer underruns); raise it past 1–2 patch intervals, or check the patch rate. |
 | "I hit them but no damage" on moving targets | Not rewinding (or rewinding to server-now). Use [`rewind.lastSeenBy(shooterId)`](/netcode/lag-compensation). |
-| Hits register *behind* a dead-reckoned target | The target renders forward-reckoned but rewinds on the snapshot timeline (double compensation). Attach it with `mode: "reckon"` — see [snapshot vs reckon](/netcode/lag-compensation#snapshot-vs-reckon). |
-| Hits land slightly *ahead* of the crosshair | `maxRewindMs` too small — it truncates the real rewind (`renderDelay + RTT + a tick`); raise it. |
+| Hits register *behind* a dead-reckoned target | The target renders forward-reckoned but rewinds on the snapshot timeline (double compensation). Attach it with `mode: "reckon"`. See [snapshot vs reckon](/netcode/lag-compensation#snapshot-vs-reckon). |
+| Hits land slightly *ahead* of the crosshair | `maxRewindMs` too small: it truncates the real rewind (`renderDelay + RTT + a tick`); raise it. |
 | `rewind.lastSeenBy` throws | The room never called `defineInput()` (the stamps ride the input channel); or use `rewind.at(time)` with your own time. |
 | `room.clock` returns local time | The room never called `defineInput()` (the clock rides input acks). |
-| Bullet overshoots / tunnels past a target | Point hit test on a fast projectile — use a swept (segment) test. See [Recipes](/netcode/recipes). |
+| Bullet overshoots / tunnels past a target | Point hit test on a fast projectile. Use a swept (segment) test. See [Recipes](/netcode/recipes). |
 
 ## Next
 
-→ [Recipes](/netcode/recipes) — task-oriented patterns built on these APIs.
+→ [Recipes](/netcode/recipes): task-oriented patterns built on these APIs.

@@ -1,6 +1,6 @@
 ---
 title: "Dashboard & widgets"
-description: "Configure the admin panel homepage — built-in preset widgets (totals, recent users, live rooms, system health, player segments) plus custom widgets in KPI, table, list, or JSON render modes."
+description: "Configure the admin panel homepage: built-in preset widgets (totals, recent users, live rooms, system health, player segments) plus custom widgets in KPI, table, list, or JSON render modes."
 ---
 import { MovedAnchors } from '../../components/moved-anchors'
 
@@ -11,7 +11,7 @@ import { MovedAnchors } from '../../components/moved-anchors'
     "layout": "/admin/dashboard#widget-shape",
 }} />
 
-The admin panel homepage hosts a grid of **widgets** — small cards that surface live data from your database or runtime. Five **preset widgets** are enabled by default, and you can append **custom widgets** for anything else you want at a glance.
+The admin panel homepage hosts a grid of **widgets**, small cards that surface live data from your database or runtime. Five **preset widgets** are enabled by default, and you can append **custom widgets** for anything else you want at a glance.
 
 ```ts {4-15} filename="src/app.config.ts"
 routes: createRouter({
@@ -38,10 +38,10 @@ routes: createRouter({
 
 | Preset | Default render | Surfaces |
 |---|---|---|
-| `totals` | KPI | Row counts per registered table — useful "DB is healthy" snapshot. |
+| `totals` | KPI | Row counts per registered table, a useful "DB is healthy" snapshot. |
 | `recentUsers` | Table | Newest user registrations with deep-link to each user's show page. |
 | `liveRooms` | Table | Currently-active rooms from the matchmaker driver with deep-link to the room inspector. |
-| `health` | KPI | Database connectivity check — reports status and query latency. |
+| `health` | KPI | Database connectivity check. Reports status and query latency. |
 | `segments` | KPI | Player segment definitions and their current sizes. |
 
 All presets are enabled by default. Configure each via `dashboard.presets.<name>`:
@@ -49,7 +49,7 @@ All presets are enabled by default. Configure each via `dashboard.presets.<name>
 | Value | Effect |
 |---|---|
 | _omitted_ or `true` | Enabled with defaults. |
-| `false` | Disabled — preset is not rendered. |
+| `false` | Disabled: the preset is not rendered. |
 | Options object | Enabled with customization. |
 
 ### Preset options
@@ -129,7 +129,7 @@ interface DashboardWidget {
     id?: string;             // defaults to slugify(title)
     title: string;
     icon?: AdminIconName;
-    render?: WidgetRender;   // 'kpi' | 'table' | 'list' | 'json' — default 'json'
+    render?: WidgetRender;   // 'kpi' | 'table' | 'list' | 'json' (default 'json')
     span?: number;           // 24-column grid; default per render type
     refreshIntervalMs?: number;
     data: (ctx: { database: GameDatabase; userId: string }) => Promise<unknown>;
@@ -140,7 +140,7 @@ interface DashboardWidget {
 |---|---|
 | `id` | Stable identifier for `data-testid` selectors. Defaults to `slugify(title)` (e.g. `"Live events"` → `"live-events"`). Must not collide with a preset id. |
 | `data` | Server-side resolver. Receives the resolved `GameDatabase` and the requesting admin's `userId`. Errors are caught and surfaced to the panel as `{ error }`. |
-| `refreshIntervalMs` | When set, the client polls `GET /admin-api/_dashboard/<id>` at this cadence and refreshes the card in place — no full dashboard reload. |
+| `refreshIntervalMs` | When set, the client polls `GET /admin-api/_dashboard/<id>` at this cadence and refreshes the card in place (no full dashboard reload). |
 | `span` | 24-column grid span (antd convention). Defaults: `kpi`/`table`/`json` full width (24), `list` half (12). The grid collapses to a single column on mobile widths regardless of span. |
 
 ### Render modes
@@ -180,7 +180,7 @@ interface TableWidgetData {
 }
 ```
 
-When `linkTo` is set, the panel makes each row clickable and navigates to that resource's show page — useful for "recent X" widgets that should deep-link back to the records.
+When `linkTo` is set, the panel makes each row clickable and navigates to that resource's show page, which is useful for "recent X" widgets that should deep-link back to the records.
 
 ```ts
 {
@@ -196,22 +196,22 @@ When `linkTo` is set, the panel makes each row clickable and navigates to that r
 
 #### `list`
 
-`data` returns `Array<{ title: string; description?: string }>`. The panel renders a simple labeled list — good for status feeds or named items without tabular structure.
+`data` returns `Array<{ title: string; description?: string }>`. The panel renders a simple labeled list, good for status feeds or named items without tabular structure.
 
 ```ts
 {
     title: "Recent events",
     render: "list",
     data: async () => [
-        { title: "Server deployed", description: "v1.4.2 — 12 minutes ago" },
-        { title: "Hotfix applied", description: "v1.4.1 — 2 hours ago" },
+        { title: "Server deployed", description: "v1.4.2, 12 minutes ago" },
+        { title: "Hotfix applied", description: "v1.4.1, 2 hours ago" },
     ],
 }
 ```
 
 #### `json`
 
-`data` returns anything. The panel renders it as a collapsible JSON viewer. Default render mode when `render` is omitted — useful for ad-hoc diagnostics.
+`data` returns anything. The panel renders it as a collapsible JSON viewer. Default render mode when `render` is omitted (useful for ad-hoc diagnostics).
 
 ```ts
 {
@@ -223,7 +223,7 @@ When `linkTo` is set, the panel makes each row clickable and navigates to that r
 
 ## Refresh and polling
 
-By default, widgets resolve once when the dashboard loads. For live data, set `refreshIntervalMs` to enable client-side polling of `GET /admin-api/_dashboard/<id>`. Only the affected card re-renders — useful for a live rooms count or active sessions card without paying for a full dashboard refresh.
+By default, widgets resolve once when the dashboard loads. For live data, set `refreshIntervalMs` to enable client-side polling of `GET /admin-api/_dashboard/<id>`. Only the affected card re-renders, which is useful for a live rooms count or active sessions card without paying for a full dashboard refresh.
 
 ```ts
 {
@@ -238,5 +238,5 @@ By default, widgets resolve once when the dashboard loads. For live data, set `r
 
 ## Next steps
 
-- [Resources & CRUD](/admin/resources) — for the underlying tables that widgets pull from.
-- [Live rooms](/admin/rooms) — the room inspector that `liveRooms` and your custom widgets can deep-link into.
+- [Resources & CRUD](/admin/resources): for the underlying tables that widgets pull from.
+- [Live rooms](/admin/rooms): the room inspector that `liveRooms` and your custom widgets can deep-link into.
