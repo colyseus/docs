@@ -110,7 +110,7 @@
   </url>
   <url>
     <loc>https://docs.colyseus.io/faq</loc>
-    <lastmod>2026-08-10</lastmod>
+    <lastmod>2026-08-15</lastmod>
   </url>
   <url>
     <loc>https://docs.colyseus.io/getting-started</loc>
@@ -342,7 +342,7 @@
   </url>
   <url>
     <loc>https://docs.colyseus.io/recipes</loc>
-    <lastmod>2026-07-21</lastmod>
+    <lastmod>2026-08-15</lastmod>
   </url>
   <url>
     <loc>https://docs.colyseus.io/recipes/command-pattern</loc>
@@ -502,7 +502,7 @@
   </url>
   <url>
     <loc>https://docs.colyseus.io/state</loc>
-    <lastmod>2026-08-07</lastmod>
+    <lastmod>2026-08-15</lastmod>
   </url>
   <url>
     <loc>https://docs.colyseus.io/state/advanced-usage</loc>
@@ -522,11 +522,11 @@
   </url>
   <url>
     <loc>https://docs.colyseus.io/state/optimization</loc>
-    <lastmod>2026-08-14</lastmod>
+    <lastmod>2026-08-15</lastmod>
   </url>
   <url>
     <loc>https://docs.colyseus.io/state/schema</loc>
-    <lastmod>2026-08-14</lastmod>
+    <lastmod>2026-08-15</lastmod>
   </url>
   <url>
     <loc>https://docs.colyseus.io/state/schema/decorators</loc>

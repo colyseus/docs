@@ -20,12 +20,12 @@ Every patch is built from these costs:
 
 | Unit | Cost | Notes |
 |------|------|-------|
-| Each instance that changed this tick | 1 byte, plus its `refId` | The `refId` is 1 byte below 128, then 2, then 3 |
+| Each instance that changed this tick | 1 byte, plus its `refId` | A `refId` is 1 byte below 128, 2 below 256, 3 below 65,536, then 5 |
 | Each changed `Schema` field | **1 byte**, plus the value | The operation and the field index share one byte |
-| Each changed collection entry | 1 byte, plus an index of 1 to 3 bytes, plus the value | No packing: the index is separate |
+| Each changed collection entry | 1 byte, plus its index, plus the value | No packing: the index is a separate number, sized as above |
 | A `MapSchema` insertion | The above, plus the UTF-8 key | Only on insert. Later updates to that entry omit the key |
 
-A `Schema` field is the cheapest slot Colyseus has. One byte carries both "what happened" and "which field", for every field from the first to the sixty-fourth.
+A `Schema` field is the cheapest slot Colyseus has. One byte carries both "what happened" and "which field", for every field from the first to the sixty-third.
 
 ### A worked example
 
@@ -77,7 +77,7 @@ Strings carry a length prefix: 1 byte under 32 UTF-8 bytes, 2 under 256, then 3 
 
 **Keep `refId` values low if you can.** They are allocated monotonically and never recycled. Once a room has created 128 instances over its lifetime, every instance header in every patch grows by one byte. A long-lived room that churns thousands of entities pays that permanently, which is one of the arguments for [instance pooling](/state/advanced-usage#instance-pooling).
 
-**Declare filtered and delivery-modified fields early.** Lookups for `.view()`, `.patchOnly()`, `.fullStateOnly()` and `.stream()` resolve through a bitmask for the first 32 fields. Fields at index 32 and above fall back to a slower metadata lookup on every mutation. This affects server CPU, not bandwidth.
+**Declare `.fullStateOnly()` and `.stream()` fields early.** Both resolve through a bitmask for the first 32 fields. At index 32 and above they fall back to a linear scan over the tagged-field list, on every mutation. This costs server CPU rather than bandwidth, and only applies to a schema wide enough to reach index 32.
 
 **Field count barely matters on the wire.** A field at index 62 costs the same single byte as a field at index 0. A `Schema` with 8 fields or fewer does track its changes more cheaply, without a per-instance array allocation. The bytes it produces are identical, so this is a memory saving rather than a bandwidth one.
 
@@ -107,9 +107,10 @@ Avoid detaching and re-attaching the same instance. Moving an instance between c
 
 ## Sending less, and less often
 
-Everything above shrinks a patch. These four shrink how much of it each client receives, or how often:
+Everything above shrinks a patch. These shrink how much of it each client receives, or how often:
 
-- [**Delivery modifiers**](/state/schema#delivery-modifiers). `.fullStateOnly()` for room configuration set once in `onCreate()`, so it never touches a tick patch. `.patchOnly()` for data a late joiner does not need. `.noSync()` for fields that should never leave the server.
+- [**Delivery modifiers**](/state/schema#delivery-modifiers). `.fullStateOnly()` for room configuration set once in `onCreate()`, so it never touches a tick patch. `.patchOnly()` for data a late joiner does not need.
+- [**`.noSync()`**](/state/schema#field-modifiers) for fields that should never leave the server at all.
 - [**`patchRate`**](/room#configuration-properties). The simplest lever, and the first one to try. Only the latest value of each property is sent, so patching half as often roughly halves the traffic from fields that change every tick.
 - [**State View**](/state/view). Send each client only the slice it can see.
 - [**Streaming collections**](/state/streaming#maxpertick). Cap how many new entries a client receives per tick, so a hundred-entity spawn burst does not arrive as one packet.
@@ -169,7 +170,11 @@ Two properties of this API are worth stating plainly, because neither is guessab
 
 Two costs apply once per client, at join time, rather than every tick.
 
-**Fields left `undefined`, and fields set to `null`, are skipped entirely in the full state sync.** An `.optional()` field that is never assigned costs nothing. So does a [`.deprecated()`](/state/schema#versioning-and-backwardsforwards-compatibility) field, which has no setter and can never hold a value.
+**Fields left `undefined`, and fields set to `null`, are skipped entirely in the full state sync.** An `.optional()` field that is never assigned costs nothing. So does a [`.deprecated()`](/state/schema#versioning-and-backwardsforwards-compatibility) field: its setter is a no-op, so it never holds a value to send.
+
+<Callout type="warning">
+    `.deprecated(false)` is the exception. Silencing the access error keeps the real accessors, so the field can still hold a value. That value then ships in every full state sync. A retired field also keeps its slot against the 63-field cap.
+</Callout>
 
 **Passing your state class when joining skips the handshake.** By default the server first sends every type definition that composes the room state, then the state itself. A client that already has the concrete classes can skip the first half. See [Getting Started with TypeScript](/getting-started/typescript).
 

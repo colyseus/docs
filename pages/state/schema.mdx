@@ -536,6 +536,8 @@ A `Schema` type can define properties as primitives, other `Schema` types, or co
 
 <Callout type="info">
     A `Schema` type may hold up to 63 synchronizable properties. Nest a child `Schema` to go beyond that.
+
+    Inherited fields count toward the limit, so check the parent class too. So do [`.deprecated()`](#versioning-and-backwardsforwards-compatibility) fields, which keep their slot on purpose.
 </Callout>
 
 ### Array (`ArraySchema`)
