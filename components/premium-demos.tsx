@@ -24,12 +24,13 @@ export interface PremiumDemo {
     /** Engines this prototype is implemented on, web client first. */
     engines: string[];
     /**
-     * Public playable build — rendered on the card. Anyone can play; only the
+     * Public playable build, rendered on the card. Anyone can play; only the
      * source is sponsor-gated.
      *
-     * ⚠️ PLACEHOLDER URLs. These hosts are not live yet. Replace every `play`
-     * below with the real deployment before this page ships, or the cards will
-     * link readers to nothing.
+     * Every one of these is a static Vercel build talking to the shared game
+     * server at demos.colyseus.cloud, one path prefix per demo. Note that
+     * `check-links` does not validate external URLs, so a host that goes down
+     * will not fail CI.
      */
     play: string;
     /**

@@ -10,7 +10,7 @@ import { LinkExternalIcon, MarkGithubIcon } from "@primer/octicons-react";
  *
  *   <DemoGrid>
  *     <DemoCard title="Air Hockey" image="/demos/netcode/air-hockey.webp"
- *         play="https://air-hockey.colyseus.dev" source="https://github.com/colyseus/air-hockey-demo">
+ *         play="https://air-hockey-colyseus.vercel.app/" source="https://github.com/colyseus/air-hockey-demo">
  *       One-line description.
  *     </DemoCard>
  *   </DemoGrid>
