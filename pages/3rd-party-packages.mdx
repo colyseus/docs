@@ -29,7 +29,10 @@ An Entity-Component System is a design pattern used mostly in game development. 
 
 Spatial partitioning is a technique used in game development to optimize collision detection and other spatial queries.
 
+Use a quadtree for 2D queries. For triangle meshes, a bounding volume hierarchy (BVH) accelerates raycasts and shape queries against level geometry. `three-mesh-bvh` requires no DOM or WebGL, so the same collision code runs on the backend and in the browser.
+
 - [<PackageIcon/> @timohausmann/quadtree-ts ↗](https://www.npmjs.com/package/@timohausmann/quadtree-ts)
+- [<PackageIcon/> three-mesh-bvh ↗](https://www.npmjs.com/package/three-mesh-bvh)
 
 ## Physics
 
@@ -50,6 +53,14 @@ It is generally **not recommended** to run an entire physics engine on the backe
 ### Navigation Mesh
 
 - [<PackageIcon/> navcat ↗](https://www.npmjs.com/package/navcat)
+
+## Loading 3D Models in Node
+
+An authoritative server often needs the same geometry the client renders, for collision or raycasts. The `GLTFLoader` from three.js expects browser APIs, so it does not run under Node.
+
+- [<PackageIcon/> node-three-gltf ↗](https://www.npmjs.com/package/node-three-gltf)
+
+Convert the model at build time instead of at server boot. Read the `.glb` once, write the triangles you need into a compact binary, then load that file from both the backend and the frontend.
 
 ## Profanity Filter
 
