@@ -33,7 +33,59 @@ already ships Godot and Unity clients alongside its Three.js build.
 Every one of these is MIT-licensed and free to clone. Each runs from a single authoritative server with multiple client implementations, one per game engine. Read the source to see exactly how each SDK connects, synchronizes state, and handles real-time gameplay with Colyseus.
 
 Unity, Godot, Defold, GameMaker and Haxe have a client in all three, so whichever
-you work in, there are three different games to read in it.
+you work in, there are three different projects to read in it.
+
+### Prediction Playground
+
+<DemoSource repo="colyseus/prediction-playground" />
+
+A tour rather than a game: twelve small labs, each isolating one
+[netcode](/netcode) technique: reconciliation, the interpolation modes, dead
+reckoning, lag compensation, optimistic events, predicted spawns. Every lab has
+a live latency slider and shows the exact SDK-facing code it runs.
+
+{/* raw <img>: these are animated WebP, and Nextra's staticImage would hand them
+    to next/image, which can't compute a blur placeholder for an animation */}
+<img className="lab-shot" src="/demos/prediction/hero.webp" loading="lazy"
+    alt="The opening split screen: the same entity in the same room at 200 ms of injected latency, raw server echo above, client prediction below" />
+
+All twelve labs run on one shared server, so each client below is the same lab
+logic ported to a different SDK.
+
+<ClientList>
+    <Client engine="typescript" name="Web (TypeScript)" platforms="Web" platformsFull="Web"
+        play="https://prediction-colyseus.vercel.app/"
+        source="https://github.com/colyseus/prediction-playground/tree/main/src/client" />
+    <Client engine="unity" name="Unity" platforms="Desktop · Web · Mobile" platformsFull="Windows, macOS, Linux, WebGL, iOS, Android"
+        source="https://github.com/colyseus/prediction-playground/tree/main/clients/unity-app" />
+    <Client engine="godot" name="Godot (GDScript)" platforms="Desktop · Web" platformsFull="Windows, macOS, Linux, HTML5"
+        source="https://github.com/colyseus/prediction-playground/tree/main/clients/godot-gd-app" />
+    <Client engine="godot" name="Godot (C#)" platforms="Desktop" platformsFull="Windows, macOS, Linux"
+        source="https://github.com/colyseus/prediction-playground/tree/main/clients/godot-app" />
+    <Client engine="defold" name="Defold" platforms="Desktop · Web · Mobile" platformsFull="Windows, macOS, Linux, HTML5, iOS, Android"
+        source="https://github.com/colyseus/prediction-playground/tree/main/clients/defold-app" />
+    <Client engine="gamemaker" name="GameMaker" platforms="Desktop · Web" platformsFull="Windows, macOS, Linux, HTML5"
+        source="https://github.com/colyseus/prediction-playground/tree/main/clients/gamemaker-app" />
+    <Client engine="haxe" name="Haxe + Heaps" platforms="Desktop" platformsFull="Native (HL/C)"
+        source="https://github.com/colyseus/prediction-playground/tree/main/clients/haxe-app" />
+    <Client engine="c" name="C + raylib" platforms="Desktop · Web" platformsFull="Windows, macOS, Linux, Web (Emscripten)"
+        source="https://github.com/colyseus/prediction-playground/tree/main/clients/native-app" />
+    <Client engine="flutter" name="Flutter" platforms="macOS" platformsFull="macOS"
+        source="https://github.com/colyseus/prediction-playground/tree/main/clients/flutter-app" />
+</ClientList>
+
+<div className="lab-shots">
+    <figure>
+        <img className="lab-shot" src="/demos/prediction/lab-06-lagcomp.webp" loading="lazy"
+            alt="Lab 06: lag compensation" />
+        <figcaption><strong>06 · Lag Compensation</strong>: the server rewinds to what you saw, so aiming at a moving target lands.</figcaption>
+    </figure>
+    <figure>
+        <img className="lab-shot" src="/demos/prediction/lab-10-hockey.webp" loading="lazy"
+            alt="Lab 10: composite world" />
+        <figcaption><strong>10 · Composite World</strong>: paddle and puck both predicted; the dashed ghost is the server trailing by one round trip.</figcaption>
+    </figure>
+</div>
 
 ### Realtime Tanks Multiplayer
 
@@ -98,58 +150,6 @@ fill the empty seats. Six clients, one server: every row below sits at the
     <Client engine="unity" name="Unity" platforms="Desktop · Web · Mobile" platformsFull="Windows, macOS, Linux, WebGL, iOS, Android"
         source="https://github.com/colyseus/turnbased-cards-demo/tree/main/unity" />
 </ClientList>
-
-### Prediction Playground
-
-<DemoSource repo="colyseus/prediction-playground" />
-
-A tour rather than a game: twelve small labs, each isolating one
-[netcode](/netcode) technique: reconciliation, the interpolation modes, dead
-reckoning, lag compensation, optimistic events, predicted spawns. Every lab has
-a live latency slider and shows the exact SDK-facing code it runs.
-
-{/* raw <img>: these are animated WebP, and Nextra's staticImage would hand them
-    to next/image, which can't compute a blur placeholder for an animation */}
-<img className="lab-shot" src="/demos/prediction/hero.webp" loading="lazy"
-    alt="The opening split screen: the same entity in the same room at 200 ms of injected latency, raw server echo above, client prediction below" />
-
-All twelve labs run on one shared server, so each client below is the same lab
-logic ported to a different SDK.
-
-<ClientList>
-    <Client engine="typescript" name="Web (TypeScript)" platforms="Web" platformsFull="Web"
-        play="https://prediction-colyseus.vercel.app/"
-        source="https://github.com/colyseus/prediction-playground/tree/main/src/client" />
-    <Client engine="unity" name="Unity" platforms="Desktop · Web · Mobile" platformsFull="Windows, macOS, Linux, WebGL, iOS, Android"
-        source="https://github.com/colyseus/prediction-playground/tree/main/clients/unity-app" />
-    <Client engine="godot" name="Godot (GDScript)" platforms="Desktop · Web" platformsFull="Windows, macOS, Linux, HTML5"
-        source="https://github.com/colyseus/prediction-playground/tree/main/clients/godot-gd-app" />
-    <Client engine="godot" name="Godot (C#)" platforms="Desktop" platformsFull="Windows, macOS, Linux"
-        source="https://github.com/colyseus/prediction-playground/tree/main/clients/godot-app" />
-    <Client engine="defold" name="Defold" platforms="Desktop · Web · Mobile" platformsFull="Windows, macOS, Linux, HTML5, iOS, Android"
-        source="https://github.com/colyseus/prediction-playground/tree/main/clients/defold-app" />
-    <Client engine="gamemaker" name="GameMaker" platforms="Desktop · Web" platformsFull="Windows, macOS, Linux, HTML5"
-        source="https://github.com/colyseus/prediction-playground/tree/main/clients/gamemaker-app" />
-    <Client engine="haxe" name="Haxe + Heaps" platforms="Desktop" platformsFull="Native (HL/C)"
-        source="https://github.com/colyseus/prediction-playground/tree/main/clients/haxe-app" />
-    <Client engine="c" name="C + raylib" platforms="Desktop · Web" platformsFull="Windows, macOS, Linux, Web (Emscripten)"
-        source="https://github.com/colyseus/prediction-playground/tree/main/clients/native-app" />
-    <Client engine="flutter" name="Flutter" platforms="macOS" platformsFull="macOS"
-        source="https://github.com/colyseus/prediction-playground/tree/main/clients/flutter-app" />
-</ClientList>
-
-<div className="lab-shots">
-    <figure>
-        <img className="lab-shot" src="/demos/prediction/lab-06-lagcomp.webp" loading="lazy"
-            alt="Lab 06: lag compensation" />
-        <figcaption><strong>06 · Lag Compensation</strong>: the server rewinds to what you saw, so aiming at a moving target lands.</figcaption>
-    </figure>
-    <figure>
-        <img className="lab-shot" src="/demos/prediction/lab-10-hockey.webp" loading="lazy"
-            alt="Lab 10: composite world" />
-        <figcaption><strong>10 · Composite World</strong>: paddle and puck both predicted; the dashed ghost is the server trailing by one round trip.</figcaption>
-    </figure>
-</div>
 
 ## Framework Overview Talk
 
