@@ -10,10 +10,6 @@ State synchronization is already delta-encoded. Only the properties that changed
 
 This page is for the rooms that do: many entities, a high tick rate, or a bandwidth bill. It documents what a patch actually costs, so you can reason about your own state instead of guessing.
 
-<Callout type="info">
-    The wire format did not change in `@colyseus/schema` 5.0. The encoder became roughly 2.4× faster and allocates about half the heap, but the bytes are identical to 4.x. What 5.0 added is *control*: [delivery modifiers](/state/schema#delivery-modifiers), [quantized floats](/state/schema#quantized-floats-tquantized--tangle), and [streaming collections](/state/streaming).
-</Callout>
-
 ## What a patch costs
 
 Every patch is built from these costs:
