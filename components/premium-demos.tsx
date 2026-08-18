@@ -53,12 +53,12 @@ export const premiumDemos: PremiumDemo[] = [
         source: "https://github.com/colyseus/air-hockey-demo",
     },
     {
-        title: "ColyBlast (FPS)",
+        title: "ColyStrike (FPS)",
         image: "/demos/netcode/fps.webp",
-        description: "First-person shooter: predicted movement with reconciliation, server-validated hitscan with lag compensation, and objective game modes.",
+        description: "First-person shooter: predicted movement with reconciliation, server-validated hitscan with lag compensation, and a C4 plant and defuse loop.",
         engines: ["Three.js"],
-        play: "https://colyblast-colyseus.vercel.app/",
-        source: "https://github.com/colyseus/fps-demo",
+        play: "https://colystrike.vercel.app/",
+        source: "https://github.com/colyseus/fps-colystrike-demo",
     },
     {
         title: "MOBA",
@@ -66,7 +66,7 @@ export const premiumDemos: PremiumDemo[] = [
         description: "A 3-lane MOBA on a deterministic shared simulation: fixed timestep and client prediction driving heroes, creeps, towers and 5v5 bot matches.",
         engines: ["Three.js"],
         play: "https://moba-colyseus.vercel.app/",
-        source: "https://github.com/endel/moba-colyseus",
+        source: "https://github.com/colyseus/moba-demo",
     },
     {
         title: "Platformer",
@@ -82,7 +82,7 @@ export const premiumDemos: PremiumDemo[] = [
         description: "Kart racing with hold-to-drift mini-turbos, item boxes and rockets: rollback prediction, dead-reckoned projectiles, and rewind-based hit checks.",
         engines: ["Three.js"],
         play: "https://racing-colyseus.vercel.app/",
-        source: "https://github.com/colyseus/racing-demo",
+        source: "https://github.com/colyseus/racing-karts-demo",
     },
 ];
 
