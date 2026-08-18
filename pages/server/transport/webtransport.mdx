@@ -63,3 +63,9 @@ const server = defineServer({
 - `secret`: (?)
 - `server`: The `http.Server` instance to be used.
 - `localProxy`: (optional) Fallback every URL through the this local proxy.
+
+<Callout type="info">
+    `beforeUpgrade`, available on the WebSocket transports, is not supported here.
+    WebTransport sessions arrive already established, so there is no upgrade
+    handshake to intercept. `H3Transport` warns and ignores the option.
+</Callout>

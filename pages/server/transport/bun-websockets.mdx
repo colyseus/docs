@@ -40,3 +40,32 @@ const server = defineServer({
   // ...
 });
 ```
+
+## Transport options
+
+This transport accepts Bun's own
+[`WebSocketHandler`](https://bun.sh/docs/api/websockets) options, plus the
+option below.
+
+### `options.beforeUpgrade`
+
+Runs before the WebSocket handshake, while the connection is still a plain HTTP
+request.
+
+```ts
+beforeUpgrade?: (request: Request, context: AuthContext) => Response | void | Promise<Response | void>;
+```
+
+The callback receives the upgrade request as a standard
+[`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request), and the
+same `context` object [onAuth](/auth/room#onauth-context) receives: `token`,
+`headers`, and `ip`. The context is read-only here, and changes to it do not
+carry over to `onAuth`.
+
+Return a
+[`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response) to answer
+the request without upgrading, or nothing to accept the handshake. The callback
+may be `async`, and the handshake waits for it to resolve.
+
+A callback that throws answers `500 Internal Server Error`, and the connection is
+not upgraded.

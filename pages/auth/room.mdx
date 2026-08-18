@@ -141,6 +141,7 @@ The `context` object has the following properties:
 - `context.token` - the authentication token sent by the client.
 - `context.headers` - the headers sent by the client.
 - `context.ip` - the IP address of the client.
+- `context.req` - the matchmaking HTTP request, on `static onAuth` only.
 
 ### Accessing the Auth Token
 
@@ -168,7 +169,10 @@ async onAuth(client, options, context) {
 
 ### Accessing the client IP address
 
-The client IP address is available in the `context.ip` property.
+The client IP address is available in the `context.ip` property, as a single
+address. Colyseus reads it from `x-real-ip`, then the first entry of
+`x-forwarded-for`, then `x-client-ip`, and falls back to the address of the
+connection itself. The property is `undefined` when no source provides one.
 
 ```ts {3} filename="src/rooms/MyRoom.ts"
 // ...
