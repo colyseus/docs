@@ -187,9 +187,9 @@ async onJoin(client) {
 ### Manual lookup from room code
 
 The plugin exposes its reader as `this.plugins.geoip.lookup(ip)`,
-useful when you need a geo result outside the auth path (e.g.
-re-resolving on reconnect, annotating analytics events, or running an
-anti-fraud check against an unrelated IP):
+useful when you need a geo result outside the auth path. Typical cases
+include re-resolving on reconnect, annotating analytics events, and
+anti-fraud checks against an unrelated IP:
 
 ```ts filename="GameRoom.ts"
 async onReconnect(client) {
@@ -242,7 +242,7 @@ it to your players.
 ## Privacy
 
 The plugin derives country from the client's IP. The IP is already
-visible to your server; the resolved country is the same class of
+visible to your server. The resolved country is the same class of
 personal data and should be treated as such under GDPR/CCPA/etc. If you
 persist `client.geoip` beyond the session, disclose it in your privacy
 policy.

@@ -8,7 +8,7 @@ import { Callout, Tabs } from "nextra/components";
 
 Adds WebRTC peer-to-peer signaling to a room. Wires the four standard signaling messages (peer list + SDP offer/answer + ICE candidate relay) and broadcasts `peer-left` when a connected peer disconnects.
 
-**This is signaling only.** It handles the SDP/ICE exchange needed to establish WebRTC connections. The actual audio/video/data streams flow directly between peers. Colyseus state synchronization continues to work through the server as usual.
+**This plugin is signaling only:** it handles the SDP/ICE exchange needed to establish WebRTC connections. The actual audio/video/data streams flow directly between peers. Colyseus state synchronization continues to work through the server as usual.
 
 ## Installation
 
@@ -58,7 +58,7 @@ The plugin contributes the following messages to your room. You can listen to th
 | `webrtc:peer-joined`  | server &rarr; client       | A new peer has joined the mesh.                                                              |
 | `webrtc:peer-left`    | server &rarr; client       | A peer has left the mesh. Only emitted for clients that opted in via `webrtc:join`.          |
 
-The plugin tracks which clients have explicitly opted into the mesh, so spectators and other non-WebRTC clients in the same room don't show up in peer events.
+The plugin tracks which clients have explicitly opted into the mesh. Spectators and other non-WebRTC clients in the same room therefore don't appear in peer events.
 
 ## Client-side usage
 

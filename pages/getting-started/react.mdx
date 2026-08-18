@@ -8,10 +8,10 @@ import { Callout } from 'nextra/components'
 
 # React (JavaScript/TypeScript SDK)
 
-You can use the `@colyseus/sdk` directly in your React applications, but we also provide a separate package, `@colyseus/react`, that offers custom hooks for managing room connections and state subscriptions in a way that works seamlessly with React's rendering model.
+You can use the `@colyseus/sdk` directly in your React applications. We also provide a separate package, `@colyseus/react`, with custom hooks for room connections and state subscriptions, designed for React's rendering model.
 
 <Callout type="info">
-  See a example project using `@colyseus/react` and React Three Fiber: [r3f-lobby-car-prototype](https://github.com/endel/r3f-lobby-car-prototype)
+  See an example project using `@colyseus/react` and React Three Fiber: [r3f-lobby-car-prototype](https://github.com/endel/r3f-lobby-car-prototype)
 </Callout>
 
 ## Installation
@@ -139,10 +139,10 @@ function Lobby() {
 #### `useQueueRoom(connect, consume, deps?)`
 
 <Callout type="info">
-  This hook is designed to manage the full lifecycle of a [Queue Room](/matchmaker/queue): connecting to the queue room, tracking group size, receiving a seat reservation, confirming, and consuming the seat to join the match room. If you're connecting to a regular game room, use `useRoom()` instead.
+  This hook is designed to manage the full lifecycle of a [Queue Room](/matchmaker/queue). If you're connecting to a regular game room, use `useRoom()` instead.
 </Callout>
 
-Manages the full lifecycle of a [Queue Room](/matchmaker/queue): connecting to the queue room, tracking group size, receiving a seat reservation, confirming, and consuming the seat to join the match room. Cleans up both rooms on unmount.
+Manages the full lifecycle of a [Queue Room](/matchmaker/queue): connecting to the queue room, tracking group size, and receiving a seat reservation. The hook then confirms and consumes the seat to join the match room. Cleans up both rooms on unmount.
 
 ```tsx
 import { Client } from "@colyseus/sdk";
@@ -181,7 +181,7 @@ The first argument connects to the queue room. The second argument is called wit
 React bindings for the `@colyseus/sdk` Predict tools: client prediction, reconciliation and remote smoothing. See [Client Prediction & Reconciliation](/netcode/client-prediction) for the underlying concepts.
 
 <Callout type="warning">
-  **The one rule:** structure renders through snapshots, motion renders through predict reads. `useRoomState` re-renders at patch rate with **raw synced values**, so rendering positions from it gives you jittery patch-rate motion. Predicted/smoothed values change every frame and must stay out of the React render cycle: read them with `predict.value(instance, field)` inside your frame loop (R3F `useFrame`, or the `usePredictLoop` callback) and write into refs.
+  **The one rule:** structure renders through snapshots, motion renders through predict reads. `useRoomState` re-renders at patch rate with **raw synced values**, so rendering positions from it gives you jittery patch-rate motion. Predicted/smoothed values change every frame and must stay out of the React render cycle. Read them with `predict.value(instance, field)` inside your frame loop (R3F `useFrame`, or the `usePredictLoop` callback) and write into refs.
 </Callout>
 
 Every hook below exists in two forms: standalone, taking the `room` as its first argument (as documented here), and bound (returned by [`createRoomContext()`](#createroomcontext), no room argument needed). Pass Predict options once via the context:
@@ -237,7 +237,7 @@ useFrame(() => drive(), -1);
 
 #### `useReconciler(room, select, options)`
 
-Active prediction for the entity you control. This hook is `predict.reconciler()` with the lifecycle handled: waits for the entity to spawn (`select: (state, room) => instance`), recreates the controller if the server replaces the instance, and disposes on unmount. `options.input` defaults to the room's input handle.
+Active prediction for the entity you control. This hook is `predict.reconciler()` with the lifecycle handled. The hook waits for the entity to spawn (`select: (state, room) => instance`) and recreates the controller if the server replaces the instance. On unmount, it disposes the controller. `options.input` defaults to the room's input handle.
 
 ```tsx
 const me = useReconciler(
@@ -258,7 +258,7 @@ useAttachAll(room, "players", { mode: "lerp", fields: ["heading"], angle: true }
 
 #### `useEventChannel(room, options)`
 
-Optimistic event channel. This hook is `predict.defineEvent()` with teardown on unmount, **plus reactivity**: the calling component re-renders whenever the channel settles (predict / confirm / reject / unpredicted), so flag-shaped derives work in plain render code:
+Optimistic event channel. This hook is `predict.defineEvent()` with teardown on unmount, **plus reactivity**: whenever the channel settles (predict / confirm / reject / unpredicted), the calling component re-renders. Flag-shaped derives then work in plain render code:
 
 ```tsx
 const pickups = useEventChannel(room, {
@@ -358,7 +358,7 @@ On Colyseus 0.18+, the context also returns room-bound versions of every [netcod
 
 #### `createLobbyContext()`
 
-Creates a `LobbyProvider` and `useLobby` hook for sharing lobby room data globally across your app, useful when you need room metadata available persistently alongside an active game room, not just on a lobby screen. Like `createRoomContext`, it uses a closure-scoped external store so the hook works across reconciler boundaries.
+Creates a `LobbyProvider` and `useLobby` hook for sharing lobby room data globally across your app. Useful when you need room metadata available persistently alongside an active game room, not just on a lobby screen. Like `createRoomContext`, it uses a closure-scoped external store so the hook works across reconciler boundaries.
 
 ```tsx
 import { Client } from "@colyseus/sdk";

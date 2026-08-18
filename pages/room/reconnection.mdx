@@ -63,7 +63,7 @@ The backend handles both flows identically.
 
 ### `onDrop(client, code)`
 
-Called when a client disconnects **without consent** (abnormal closure, network issues, etc.). This is where you should call `allowReconnection()` to allow the client to reconnect.
+Called when a client disconnects **without consent** (abnormal closure, network issues, etc.). This hook is where you should call `allowReconnection()` to allow the client to reconnect.
 
 <Callout type="info">
     `onDrop()` is **optional**, but recommended for code clarity. You may implement the same functionality directly inside `onLeave()` by checking if the close code is `CloseCode.CONSENTED`. See [the alternative pattern](#alternative-handling-reconnection-in-onleave).
@@ -161,7 +161,7 @@ The `client.reconnectionToken` will be different (new token generated for each c
 
 ### `onLeave(client, code)`
 
-Called when a client **permanently** leaves the room. This happens when:
+Called when a client **permanently** leaves the room. A permanent leave happens when:
 - Client calls `room.leave()` with consent
 - Reconnection times out or fails
 - Server explicitly disconnects the client
@@ -258,7 +258,7 @@ Using separate `onDrop()` and `onReconnect()` methods is recommended for cleaner
 
 ### Automatic Reconnection
 
-The SDK detects the drop, retries with exponential backoff, and fires three events. This is the whole client-side integration:
+The SDK detects the drop, retries with exponential backoff, and fires three events. This snippet is the whole client-side integration:
 
 ```typescript
 import { Client, CloseCode } from "@colyseus/sdk";
@@ -289,7 +289,7 @@ Everything tunable here (retry and backoff options, disabling auto-reconnection,
 
 Automatic retries only help while the `room` object is still alive in memory. When the page reloads or the app restarts, resume the session with `client.reconnect(reconnectionToken)` instead:
 
-- **Persist `room.reconnectionToken`** while connected. It is refreshed on every successful connection, so store it after joining *and* after each `onReconnect()`.
+- **Persist `room.reconnectionToken`** while connected. The token is refreshed on every successful connection, so store it after joining *and* after each `onReconnect()`.
 - **`client.reconnect()` returns a new `Room` instance**: reattach all listeners to it; the old references are gone.
 - **The seat must still be held**: the call succeeds only within the server's `allowReconnection()` window (or indefinitely in `"manual"` mode).
 
@@ -338,13 +338,13 @@ Manual reconnection is also the fallback after automatic retries give up: on `FA
 
 ## State After Reconnection
 
-On a successful reconnection the server sends a **full state snapshot**, and the SDK **reconciles** it into the state tree you already hold (it does not rebuild the tree from scratch):
+On a successful reconnection the server sends a **full state snapshot**. The SDK **reconciles** it into the state tree you already hold (it does not rebuild the tree from scratch):
 
 - Entities that changed while you were offline are **updated in place**. Your references into the tree and any state callbacks you attached stay valid. There is nothing to re-subscribe.
 - Entities **added** while you were offline arrive as ordinary additions: `onAdd` fires.
 - Entities **deleted** (or hidden from your view) while you were offline are **pruned**: `onRemove` fires for each, exactly as if the removal had arrived live.
 
-In other words, after `onReconnect()` the state is guaranteed to match the server again, and your existing callbacks and UI bindings observe the offline gap as a normal sequence of changes. Prediction controllers follow automatically too. The SDK resets the input handle on reconnect and observing reconcilers pick it up; see [Client Prediction](/netcode/client-prediction).
+In other words, after `onReconnect()` the state is guaranteed to match the server again. Your existing callbacks and UI bindings observe the offline gap as a normal sequence of changes. Prediction controllers follow automatically too. The SDK resets the input handle on reconnect and observing reconcilers pick it up; see [Client Prediction](/netcode/client-prediction).
 
 <Callout type="info">
     After a **manual** `client.reconnect()`, there is no previous tree to reconcile into. The new `Room` instance receives the snapshot as its initial state, and your freshly attached callbacks fire from scratch.

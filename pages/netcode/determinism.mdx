@@ -23,7 +23,7 @@ These are load-bearing. Break one and prediction drifts or hits stop registering
 
 3. **Send before you read.** Within a frame: `predict.tick()` → the send loop → render reads. A `predict.value()` read between `tick()` and the sends renders one step stale (the SDK warns once).
 
-4. **One-shot effects never go raw inside `step`.** A step replays 0..N times during rollback. Use `ctx.predict` for events (a sound, a celebration), which fire on the live step only, and `ctx.memo` for values replay can't re-derive (an RNG roll, a lag-comp'd collision). For fire-and-forget presentation (particles, camera shake), a plain `if (!ctx.isReplay)` branch is itself the idiom.
+4. **One-shot effects never go raw inside `step`.** A step replays 0..N times during rollback. Use `ctx.predict` for events (a sound, a celebration): they fire on the live step only. Use `ctx.memo` for values replay can't re-derive (an RNG roll, a lag-comp'd collision). For fire-and-forget presentation (particles, camera shake), a plain `if (!ctx.isReplay)` branch is itself the idiom.
 
 5. **Inputs must be flat primitives**: no nested schemas or collections in an input.
 
@@ -31,7 +31,7 @@ These are load-bearing. Break one and prediction drifts or hits stop registering
 
 7. **Lag comp rewinds to the *acting client's* render time, not the server's now.** [`rewind.lastSeenBy(shooterId)`](/netcode/lag-compensation#rewindlastseenbysessionid) gets the direction right for you.
 
-Two more facts ride the same ack channel, but they're bookkeeping the framework does, not rules you can break. **`lastProcessed`** is the server's consumed count, echoed via the acks: reconcile triggers when it advances, and there is no seq field to manage (in `"unreliable"` mode the framework's own sequence plus the redundant input history make drops harmless). And **`room.clock`** syncs through those same acks, which is why it requires `defineInput()`: without it the clock is a stub (`serverNow()` falls back to a local monotonic clock; `rtt` / `lastServerTime` are 0).
+Two more facts ride the same ack channel, but they're bookkeeping the framework does, not rules you can break. **`lastProcessed`** is the server's consumed count, echoed via the acks: reconcile triggers when it advances. There is no seq field to manage: in `"unreliable"` mode, the framework's own sequence plus the redundant input history make drops harmless. And **`room.clock`** syncs through those same acks, which is why it requires `defineInput()`. Without it the clock is a stub: `serverNow()` falls back to a local monotonic clock, and `rtt` / `lastServerTime` are 0.
 
 ## Determinism
 

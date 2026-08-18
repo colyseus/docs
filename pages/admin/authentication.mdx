@@ -64,7 +64,7 @@ This pattern lets you give a community manager full control over guilds without 
 
 ## `admin.guard()`
 
-The `admin.guard()` middleware checks the same session cookie used by the panel itself, so you can gate other HTTP routes (the Monitor, the Playground, or any custom endpoint) behind a single admin login.
+The `admin.guard()` middleware checks the same session cookie used by the panel itself. You can therefore gate other HTTP routes (the Monitor, the Playground, or any custom endpoint) behind a single admin login.
 
 ```ts {1,5-6} filename="src/app.config.ts"
 import { admin } from "@colyseus/admin";
@@ -87,7 +87,7 @@ The guard sniffs the `Accept` header to decide how to reject:
 | Browser navigation (`Accept: text/html`) | `302` → `<loginUrl>?next=<originalUrl>` | `302` → login, **session cookie cleared** to break redirect loops |
 | XHR / fetch / curl | `401` JSON body | `403` JSON body |
 
-The "cookie cleared" behavior on insufficient role is intentional: a lower-role user trying to visit `/monitor` (gated to `mod` or higher) would otherwise see the login page treat them as already authenticated and redirect right back through the guard, creating a loop. Clearing the cookie forces a real re-authentication.
+The "cookie cleared" behavior on insufficient role is intentional. A lower-role user visiting `/monitor` (gated to `mod` or higher) still holds a valid session cookie. The login page would otherwise treat them as already authenticated and redirect them right back through the guard, creating a loop. Clearing the cookie forces a real re-authentication.
 
 ### Options
 

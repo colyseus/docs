@@ -481,7 +481,7 @@ Bind properties directly to `targetObject`, whenever the client receives an upda
 The On Change callback is invoked whenever a direct property of a `Schema` instance is modified.
 
 - **Triggers only for direct property changes:** It does not cascade or propagate changes from nested properties within the Schema.
-- The callback fires after the changes have been applied to the Schema instance. This means you're dealing with the updated instance when the callback executes.
+- The callback fires after the changes have been applied to the Schema instance, so you're dealing with the updated instance when it executes.
 
 <SDKTabs>
     <Tabs.Tab>
@@ -735,7 +735,7 @@ The `onRemove` callback is called with the removed item and its key on holder ob
 ## Frontend Schema Generation
 
 <Callout type="warning">
-    **Not required when using [JavaScript SDK](/getting-started/typescript) or [Defold SDK](/getting-started/defold)** - The following section is only required when using statically typed languages in your frontend, such as C#, Haxe, etc.
+    **Not required when using [JavaScript SDK](/getting-started/typescript) or [Defold SDK](/getting-started/defold).** The following section is only required when using statically typed languages in your frontend, such as C#, Haxe, etc.
 </Callout>
 
 The `schema-codegen` is a command-line tool designed to convert your backend schema definitions into compatible frontend schemas.

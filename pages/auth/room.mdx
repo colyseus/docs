@@ -16,7 +16,7 @@ You can authenticate your users using the `onAuth` method in your room. This met
 With the `colyseus` bundle (which includes `@colyseus/auth`), the default **static** `onAuth` verifies the client's JWT. A malformed or expired token is rejected with `AUTH_FAILED`. A client that sends no token passes through with no auth data.
 
 <Callout type="warning">
-    **Static `onAuth` runs first, and short-circuits the instance `onAuth`.** The static hook runs at matchmake time; whatever it returns becomes `client.auth`, and when it produced a payload (any token-bearing client), the **instance** `onAuth` is skipped entirely. Override the *static* `onAuth` when you need custom token validation; use the instance form only for rooms whose clients join without tokens.
+    **Static `onAuth` runs first, and short-circuits the instance `onAuth`.** The static hook runs at matchmake time, and whatever it returns becomes `client.auth`. When it produced a payload (any token-bearing client), the **instance** `onAuth` is skipped entirely. Override the *static* `onAuth` when you need custom token validation; use the instance form only for rooms whose clients join without tokens.
 </Callout>
 
 <Callout type="info">

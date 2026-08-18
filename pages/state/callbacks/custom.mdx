@@ -9,7 +9,7 @@ The `@colyseus/schema` version `3.0` introduced a way to bring your own callback
 
 The standard way of attaching callbacks uses the same "flavor" as Colyseus is used to from previous versions. However, you can bring your own callback system by overriding the `Decoder`'s `triggerChanges` method.
 
-This is an example of how you can bring your own callback system:
+The following example shows how to bring your own callback system:
 
 ```ts filename="client.ts"
 import { getRawChangesCallback } from "@colyseus/schema";

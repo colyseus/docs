@@ -51,7 +51,7 @@ Per-join cost is bounded at **two backend round trips, independent of cluster si
 1. `HGETALL` the user's reverse-index hash (always).
 2. One batch room lookup (`matchMaker.findRoomsByIds`) for any cross-room candidates, skipped entirely when the user has none. Entries pointing at *this* room are resolved against the room's local client list, with no backend call.
 
-So a typical first-join (no prior entries) is **one** wire op; a duplicate check against an existing same-room session is also **one** (the verification is local); cross-room reconciliation adds **one** more batch call. The plugin's cost scales with the user's own session count (`K`), not the cluster's total room count (`N`). It is safe to enable on large multi-process deployments.
+So a typical first-join (no prior entries) is **one** wire op. A duplicate check against an existing same-room session is also **one** (the verification is local). Cross-room reconciliation adds **one** more batch call. The plugin's cost scales with the user's own session count (`K`), not the cluster's total room count (`N`). The plugin is safe to enable on large multi-process deployments.
 
 ## Options
 
@@ -107,7 +107,7 @@ The oldest existing session is kicked with WS code `1000` and reason `'replaced'
 
 ### Scope by `conflictsWith`
 
-The `conflictsWith` callback is your hook to override "what counts as a duplicate." The plugin has already filtered out entries with a different `roomName` and reconciled stale entries; whatever reaches the predicate is a real, live session of the same room type. Return `true` to count it against `max`, `false` to ignore.
+The `conflictsWith` callback is your hook to override "what counts as a duplicate." The plugin has already filtered out entries with a different `roomName` and reconciled stale entries. Whatever reaches the predicate is a real, live session of the same room type. Return `true` to count it against `max`, `false` to ignore.
 
 The predicate receives:
 
@@ -177,6 +177,6 @@ plugins = definePlugins([
 
 ## Caveats
 
-- **Race window.** Two near-simultaneous joins from the same user can both pass the check before either has written to the Presence index, so both succeed. Acceptable for the "no two tabs" UX; if your game needs strict serialization (e.g. competitive matchmaking that can't double-book), layer your own atomic reservation on top.
+- **Race window.** Two near-simultaneous joins from the same user can both pass the check before either has written to the Presence index, so both succeed. Acceptable for the "no two tabs" UX. If your game needs strict serialization (e.g. competitive matchmaking that can't double-book), layer your own atomic reservation on top.
 - **`TrackUserSessionsPlugin` is required.** Auto-included via `static dependencies`. If your app's `Room` somehow opts out of plugin tracking, the index stays empty and this plugin no-ops.
 - **Stale entries are best-effort cleaned up.** Reconciliation drops entries pointing at rooms the matchmaker no longer knows. Same-room entries are cross-checked against `this.room.clients` so reconnects after a missed `onLeave` aren't false-rejected.

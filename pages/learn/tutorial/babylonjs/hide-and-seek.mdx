@@ -18,7 +18,7 @@ import { Callout } from "nextra/components"
 
 ## Introduction
 The purpose of this technical demo is to show how to use Colyseus with the Babylon.js Editor. The following documentation covers installing and using the Colyseus SDK, as well as locally running a Colyseus server. The demo is designed to work with Colyseus version 0.14.20 and [Babylon.js Editor version 4.4.0](http://editor.babylonjs.com/).
-This demo is called "Hide and Seek" and is a simple game where players are assigned roles at random to either be Hiders (ghosts) or the lone Seeker (pumpkin head). In order for the Hiders to win they need to evade the Seeker until time runs out.
+This demo, "Hide and Seek", is a simple game where players are randomly assigned the role of Hider (ghost) or the lone Seeker (pumpkin head). In order for the Hiders to win they need to evade the Seeker until time runs out.
 
 **[Download Demo](https://github.com/colyseus/babylonjs-hide-and-seek/archive/master.zip)** ([View source code](https://github.com/colyseus/babylonjs-hide-and-seek/))
 
@@ -37,12 +37,12 @@ npm start
 ```
 
 <Callout type="info">
-    - The server needs to be installed first before attempting to run or open the project in the editor otherwise errors will result during the compilation process. This is due to client code referencing class types from the server code for development convenience.
+    - Install the server before you attempt to run or open the project in the editor, or compilation errors will result. The errors happen because client code references class types from the server code, for development convenience.
     - When opening the demo in the Babylon.js Editor some `.js` files will be generated in the **Server** folder alongside their original `.ts` source files. When launching the server locally (via `npm start`) those `.js` files are removed to prevent runtime issues.
 </Callout>
 
 #### Colyseus Client SDK
-For this demo you do not need to worry about manually installing the Colyseus client SDK as the Babylon.js Editor will do so automatically as it is included as a dependency in the `package.json` of the project workspace. If needed, manual instructions on how to install the Colyseus client SDK in the Babylon.js Editor can be found [here](/getting-started/typescript).
+You do not need to install the Colyseus client SDK manually for this demo. The Babylon.js Editor installs it automatically, because it is listed as a dependency in the `package.json` of the project workspace. If needed, manual instructions on how to install the Colyseus client SDK in the Babylon.js Editor can be found [here](/getting-started/typescript).
 
 #### Colyseus Server Settings
 All server settings are defined in `.env` files located in the Babylon.js Editor workspace here:
@@ -56,10 +56,10 @@ By default the editor will load server settings from the `local.env` file.
 ![Editor](/examples/babylonjs/hide-and-seek/editor.png)
 
 There is only one scene and the editor should load it automatically when opening the workspace. You can click the `Run` button at the top left of the editor (highlighted in green) and that will open a player window. To create or join an existing room you can simply click the `Quick Play` button. An overlay displaying `Joining...` should appear and if successful it will disappear revealing the lobby UI.
-By default a minimum of three players is required to start a match, but you can adjust that if desired as noted in the section below. If necessary you can open multiple client instances to satisfy the player requirement.
+By default a minimum of three players is required to start a match, but you can adjust that, as noted in the section below. If necessary you can open multiple client instances to satisfy the player requirement.
 
 <Callout type="info">
-    - For better performance you may try running the client in your browser rather than the integrated browser of the editor (accessed by right clicking the "Run" button)
+    - For better performance, try running the client in your browser rather than the editor's integrated browser (right click the "Run" button)
 
     ![Run](/examples/babylonjs/hide-and-seek/run.png)
 
@@ -78,7 +78,7 @@ Player movement: W, A, S, & D keys.
 #### Seeker:
 - The Seeker wins if they find all the Hiders within the countdown
 - The Seeker cannot directly see the Hiders until they are captured
-- There are various traps, that betray a Hider’s position to the Seeker, spread out over the arena
+- There are various traps spread out over the arena that betray a Hider’s position to the Seeker
     - Mud puddles will cause you to leave a trail of muddy footprints for a short period of time
     - Spirits may be disturbed from their abodes
     - Bats may be startled from their resting places
@@ -86,7 +86,7 @@ Player movement: W, A, S, & D keys.
 #### Hider:
 - Hiders have 3 seconds to scatter before the Seeker is able to seek
 - Hiders win if one or more stay hidden at the end of the round
-- A Hider is captured when they are within the FOV of the Seeker or are too close to the Seeker in any direction within a unit or so
+- A Hider is captured when they enter the Seeker's FOV, or when they get within about a unit of the Seeker in any direction
     - Current FOV is 60 degrees out for 7 units
 - When captured a Hider cannot move
     - Denoted by a green glow with chains at the foot of the Hider
@@ -108,7 +108,7 @@ There are two values that affect player movement speed. The base player speed is
 The Seeker's ability to capture Hiders is based on it's vision defined by it's field of view(FOV) and viewing distance. Both values are defined in the config as `seekerFOV` and `seekerCheckDistance` respectively.
 
 ### Rescuing Captured Hiders
-There are two values involved with rescuing Hiders. That is the `rescueDistance` which controls the max distance another Hider can be in order to rescue their friend and `rescueTime` which is the time, in milliseconds, it takes to rescue a Hider.
+There are two values involved with rescuing Hiders. `rescueDistance` controls the max distance another Hider can be in order to rescue their friend. `rescueTime` is the time, in milliseconds, it takes to rescue a Hider.
 
 ### Various Countdowns
 There are various countdowns that can be adjusted; all are denoted with a `Countdown` suffix and affect the time between game states. All values are assumed to be in milliseconds:
@@ -116,7 +116,7 @@ There are various countdowns that can be adjusted; all are denoted with a `Count
 ![Countdowns](/examples/babylonjs/hide-and-seek/countdowns.png)
 
 - `preRoundCountdown`: time spent in lobby before the room locks and a game begins; begins when the minimum number of players have joined.
-- `initializedCountdown`: a brief pause after the server has initialized the room for a round of play to allow clients to receive updated schemas and to handle spawning before moving to the prologue state.
+- `initializedCountdown`: a brief pause after the server initializes the room for a round of play. This pause gives clients time to receive updated schemas and handle spawning before the prologue state.
 - `prologueCountdown`: the prologue countdown is the total time before the Seeker is allow to pursue Hiders. The prologue countdown is partnered with the scatter countdown. The time Hiders have to read their role is `prologueCountdown - scatterCountdown`
 - `scatterCountdown`: the time that Hiders have to scatter before the Seeker is allowed to pursue.
 - `huntCountdown`: the length of a round of play; the time the Seeker has to hunt for the Hiders.

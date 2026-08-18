@@ -52,5 +52,5 @@ client.joinOrCreate("battle", {}).then(room => {
 ```
 
 <Callout type="info">
-    A room-specific gate that needs the room instance (the current phase, connected clients) belongs in `onJoin()` instead: throwing a `ServerError` there rejects the join as well. See [Room Authentication](/auth/room) for the full `onAuth` semantics.
+    A room-specific gate that needs the room instance (the current phase, connected clients) belongs in `onJoin()` instead. Throwing a `ServerError` there rejects the join as well. See [Room Authentication](/auth/room) for the full `onAuth` semantics.
 </Callout>

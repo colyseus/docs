@@ -17,7 +17,7 @@ import { DevicesIcon, GearIcon, LinkIcon, MailIcon, GlobeIcon } from '@primer/oc
 
 The `@colyseus/auth` module is highly configurable and allows you to implement your own authentication backend.
 
-It does not provide a database or email sending capabilities, but it provides a set of callbacks that you can implement to query your database, send emails, and handle OAuth providers.
+The module does not provide a database or email sending capabilities. Instead, it provides callbacks that you can implement to query your database, send emails, and handle OAuth providers.
 
 <Cards>
     <Cards.Card icon={<DevicesIcon/>} title="Frontend API" href="#frontend-api" arrow />
@@ -502,7 +502,7 @@ auth.settings.onRegisterAnonymously = async function (options) {
 
 You may enable email verification by providing both `onSendEmailConfirmation` and `onEmailConfirmed` callbacks.
 
-It is your responsibility to limit the user access to your application until their email is verified.
+You are responsible for limiting user access to your application until their email is verified.
 
 <Callout type="info">
     **Email verification is not mandatory** - Users are allowed to login without verifying their email address. If you require email verification, you must validate if the user's email is verified on your application.

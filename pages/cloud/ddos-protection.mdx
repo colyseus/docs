@@ -7,9 +7,9 @@ description: "DDoS protection on Colyseus Cloud: an extra layer that keeps your 
 
 Adds an extra layer of protection to keep your hosting infrastructure online and operating even when they are the target of attacks.
 
-When enabled, our DDoS Protection system monitors network traffic and routes malicious activity to our attack mitigation farm after a DDoS event is detected, generally within 60 seconds.
+When enabled, our DDoS Protection system monitors network traffic and routes malicious activity to our attack mitigation farm. Routing starts after a DDoS event is detected, generally within 60 seconds.
 
-The DDoS mitigation system protects your cloud server at both Layer 3 and Layer 4, ensuring no increased latency or routing of your traffic to a third party. It adds 10 Gbps of mitigation capacity per instance and safeguards all attached IPv4 addresses
+The DDoS mitigation system protects your cloud server at both Layer 3 and Layer 4. Mitigation adds no latency and never sends your traffic to a third party. The system adds 10 Gbps of mitigation capacity per instance and safeguards all attached IPv4 addresses.
 
 ---
 
@@ -21,7 +21,7 @@ Colyseus Cloud DDoS system works by dynamically routing traffic from your server
 
 **How is traffic filtered during a DDoS attack?**
 
-When a DDoS attack is detected, incoming traffic is re-routed to our cloud provider's Attack Mitigation Farm (AMF), which filters traffic based on specific attributes of the current attack. Clean traffic is tunneled directly to your server in the same data center, ensuring that no packets ever leave our premium low-latency network as one might typically encounter with a 3rd party DDoS Mitigation service provider.
+When a DDoS attack is detected, incoming traffic is re-routed to our cloud provider's Attack Mitigation Farm (AMF). The AMF filters traffic based on specific attributes of the current attack. Clean traffic is tunneled directly to your server in the same data center, so no packets ever leave our premium low-latency network. A third-party mitigation service would typically route your packets outside it.
 
 **What IP protocol layers are supported by DDoS protection?**
 

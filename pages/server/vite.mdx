@@ -6,7 +6,7 @@ import { Callout } from "nextra/components";
 
 # Vite Plugin
 
-The Colyseus Vite plugin runs your game server **inside** Vite's dev server using Vite's [Environment API](https://vite.dev/guide/api-environment). A single `vite` process serves your frontend and hosts the Colyseus server, with [Hot Module Replacement](https://vite.dev/guide/features#hot-module-replacement) (HMR) for both client components **and** server-side room definitions, with no process restart between edits.
+The Colyseus Vite plugin runs your game server **inside** Vite's dev server using Vite's [Environment API](https://vite.dev/guide/api-environment). A single `vite` process serves your frontend and hosts the Colyseus server. [Hot Module Replacement](https://vite.dev/guide/features#hot-module-replacement) (HMR) covers both client components **and** server-side room definitions, with no process restart between edits.
 
 It also drives the production build: `vite build` emits your static client and a standalone server bundle.
 
@@ -128,7 +128,7 @@ With `serveClient`, the production server mounts `dist/client/` via `express.ful
 
 ## Middleware mode
 
-In standalone dev mode the plugin attaches the WebSocket transport to Vite's own HTTP server. When you run Vite in [middleware mode](https://vite.dev/guide/ssr) (embedding it inside your own Express/HTTP server), that server owns the socket, so you must pass it explicitly:
+In standalone dev mode the plugin attaches the WebSocket transport to Vite's own HTTP server. When you run Vite in [middleware mode](https://vite.dev/guide/ssr) (embedding it inside your own Express/HTTP server), that server owns the socket. You must pass it explicitly:
 
 ```ts
 colyseus({

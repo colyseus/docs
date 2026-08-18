@@ -238,12 +238,12 @@ For what a patch costs in bytes and how to make it smaller, see [Optimizing Stat
 
 ## How does it work, internally?
 
-- **Handshake**: When a client joins a room, the server sends all the types that compose the room's state to the client, followed by the full state.
+- **Handshake**: When a client joins a room, the server sends all the types that compose the room's state, followed by the full state.
     - Handshake is skipped on automatic reconnections, OR when the client has provided the concrete state classes when joining the room.
 - **Enqueueing changes**: When the server mutates the state, it tracks which properties have changed since the last state synchronization, per `Schema` instance. Each `Schema` instance holds a `ChangeTree` object that tracks its changes.
 - **Sending changes**: The server encodes only the changed properties and sends them to the client during the [patchRate](/room#configuration-properties) interval.
-- **`refId`**: Each `Schema` instance has a unique `refId` that is used to identify the instance across the network. This is how Colyseus knows which instance has been added, removed, or updated.
-- **Decoding changes**: When the client receives the state changes, it decodes them and applies them to each `Schema` instance, based on the `refId`, triggering the `onChange`, `listen`, and `onAdd`/`onRemove` callbacks on the frontend.
+- **`refId`**: Each `Schema` instance has a unique `refId` that is used to identify the instance across the network. The `refId` is how Colyseus knows which instance has been added, removed, or updated.
+- **Decoding changes**: When the client receives the state changes, it decodes them and applies them to each `Schema` instance based on the `refId`. Decoding triggers the `onChange`, `listen`, and `onAdd`/`onRemove` callbacks on the frontend.
 
 ---
 

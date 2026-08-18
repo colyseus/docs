@@ -28,7 +28,7 @@ The GameMaker SDK is built on top of the shared [Colyseus Native SDK](https://gi
 2. In GameMaker, go to **Tools → Import Local Package**
 3. Select the `.yymps` file, select all resources, and click **Import**
 
-This adds the `Colyseus_SDK` extension and the `Colyseus` script to your project.
+The import adds the `Colyseus_SDK` extension and the `Colyseus` script to your project.
 
 ## Project Setup
 
@@ -242,7 +242,7 @@ You should be able to see the server running at `http://localhost:2567`, and the
 
 ### Breakpoints
 
-If you set a breakpoint in your application while the WebSocket connection is open, the connection will be closed automatically after 3 seconds due to inactivity. To prevent the WebSocket connection from dropping, use `pingInterval: 0` during development:
+If you set a breakpoint while the WebSocket connection is open, the connection closes automatically after 3 seconds due to inactivity. To prevent the WebSocket connection from dropping, use `pingInterval: 0` during development:
 
 ```ts filename="app.config.ts"
 import { defineServer } from "colyseus";

@@ -94,7 +94,7 @@ Use `https://` (or `wss://`) for secure connections in production.
 
 ### Full Type Safety: Room State and Messages
 
-Provide the `typeof server` type as a generic to the client. This allows the client to infer both the state type and the message types for the room.
+Provide the `typeof server` type as a generic to the client. This generic allows the client to infer both the state type and the message types for the room.
 
 ```ts
 import { Client } from "@colyseus/sdk";
@@ -113,7 +113,7 @@ There are two ways to get type safety for your room's state:
 
 #### Option 1: Importing the Room **State** Type Only
 
-Use `import type` to import the state type and pass it as a generic to `joinOrCreate<T>()`. This gives you **type inference** for `room.state` and state callbacks.
+Use `import type` to import the state type and pass it as a generic to `joinOrCreate<T>()`. This generic gives you **type inference** for `room.state` and state callbacks.
 
 This way, you don't get type inference for the message name or the payload type.
 
@@ -132,7 +132,7 @@ room.onMessage("...", (client, payload) => {}); // ?? Missing type here!
 
 #### Option 2: Importing the **Room** Type Only
 
-Use `import type` and pass the type as a generic to `joinOrCreate<T>()`. This gives you **type inference** for `room.state` and state callbacks.
+Use `import type` and pass the type as a generic to `joinOrCreate<T>()`. This generic gives you **type inference** for `room.state` and state callbacks.
 
 ```ts {2,5}
 import { Client } from "@colyseus/sdk";

@@ -5,7 +5,7 @@ description: "Set up continuous deployment to Colyseus Cloud with GitHub Actions
 import { Callout, Cards, Tabs } from "nextra/components";
 
 <Callout type="warning">
-    This section is deprecated. You can connect your GitHub repository to Colyseus Cloud from your application's Settings -> Build & Deployment section to automatically deploy your server when you push to the `main` branch.
+    This section is deprecated. You can connect your GitHub repository to Colyseus Cloud from your application's Settings -> Build & Deployment section. Your server then deploys automatically when you push to the `main` branch.
 </Callout>
 
 # Continuous Deployment
@@ -14,7 +14,7 @@ import { Callout, Cards, Tabs } from "nextra/components";
 
 When you make your first deployment from your development environment to the Colyseus Cloud, you will receive a `.colyseus-cloud.json` file. This file contains the `applicationId` and `token` that you will use to deploy your server from your CI/CD pipeline.
 
-It is **not recommended** to push `.colyseus-cloud.json` to your repository, as it contains sensitive information. Instead, you can use GitHub Secrets to store this information and use it in your GitHub Actions workflow:
+Do **not** push `.colyseus-cloud.json` to your repository, as it contains sensitive information. Instead, you can use GitHub Secrets to store this information and use it in your GitHub Actions workflow:
 
 - `APPLICATION_ID`: The `applicationId` from your `.colyseus-cloud.json` file.
 - `TOKEN`: The `token` from your `.colyseus-cloud.json` file.

@@ -31,7 +31,7 @@ This guide will show you how you can build a multiplayer experience with Colyseu
 
 ## Why does Part 1 have choppy movement?
 
-On [Part 1](basic-player-movement) of this tutorial, we updated the player's visual representation at the same instant as state updates are received from the server, using `callbacks.onChange()`:
+On [Part 1](basic-player-movement) of this tutorial, we used `callbacks.onChange()` to update the player's visual representation the instant state updates arrive from the server:
 
 ```typescript
 // listening for server updates
@@ -70,7 +70,7 @@ callbacks.onChange(player, () => {
 
 ### Interpolate positions at every frame
 
-Now, we are going to iterate over every player entity during our update loop, and use `Phaser.Math.Linear()` to make the entity slowly move from its current position towards the last position cached previously:
+Now, we are going to iterate over every player entity during our update loop. We use `Phaser.Math.Linear()` to move each entity slowly from its current position towards the last cached position:
 
 ```typescript
 update(time: number, delta: number): void {

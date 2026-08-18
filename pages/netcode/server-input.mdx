@@ -6,7 +6,7 @@ import { Callout } from 'nextra/components'
 
 # Server Input & Fixed Timestep
 
-This is the **server half** of the netcode stack: declare what input each client sends, consume it, and advance the authoritative simulation at a fixed tick rate. The matching client half lives in [Client Prediction](/netcode/client-prediction).
+This page covers the **server half** of the netcode stack. Declare what input each client sends, consume it, and advance the authoritative simulation at a fixed tick rate. The matching client half lives in [Client Prediction](/netcode/client-prediction).
 
 <Callout type="info">
     **Available in Colyseus 0.18+.**
@@ -75,7 +75,7 @@ export type MoveInput = SchemaType<typeof MoveInput>;
 ```
 
 <Callout type="info">
-    Calling `defineInput()` does more than buffer input: it powers the client's [`room.clock`](/netcode/client-prediction#roomclock) (clock-sync and RTT ride the input acks), and lets `room.input()` resolve the schema without a client-side constructor. A room that never calls it leaves the client clock as a stub.
+    Calling `defineInput()` does more than buffer input: it powers the client's [`room.clock`](/netcode/client-prediction#roomclock) (clock-sync and RTT ride the input acks). The call also lets `room.input()` resolve the schema without a client-side constructor. A room that never calls it leaves the client clock as a stub.
 </Callout>
 
 ### Consuming input
@@ -187,7 +187,7 @@ The `ctx` (a `StepContext`) carries the timing your simulation needs:
 
 ### Sub-stepping: high-rate physics on a low network rate
 
-By default the input/network rate **is** the physics rate (see [the contract](/netcode/determinism#the-contract)): asking for "30 inputs/sec" forces 30 Hz simulation, which can be too coarse for stable physics. **Sub-stepping** is the escape hatch. Declare it once on the server:
+By default the input/network rate **is** the physics rate (see [the contract](/netcode/determinism#the-contract)). Asking for "30 inputs/sec" forces 30 Hz simulation, which can be too coarse for stable physics. **Sub-stepping** is the escape hatch. Declare it once on the server:
 
 ```ts
 this.setFixedTimestep((ctx) => {
@@ -198,7 +198,7 @@ this.setFixedTimestep((ctx) => {
 
 One input still drives exactly one fixed step, so the replay invariant is untouched; *inside* that step, the engine integrates `subSteps` sub-steps of `subDt`. The handshake cascades `subSteps` alongside `tickRate`, so the client reconciler's `ctx` carries the **same** values. Your shared `step` function runs the identical loop on both sides.
 
-Two rules keep it correct: apply the input **once per step**, not once per sub-step (an impulse-like input applied per sub-step would double-fire), and never hand-derive the sub-step count or dt on either side: read `ctx.subSteps` / `ctx.subDt`.
+Two rules keep it correct. Apply the input **once per step**, not once per sub-step (an impulse-like input applied per sub-step would double-fire). Never hand-derive the sub-step count or dt on either side: read `ctx.subSteps` / `ctx.subDt`.
 
 ## `setTimestep` (variable step)
 

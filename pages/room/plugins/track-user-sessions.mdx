@@ -94,4 +94,4 @@ The raw read (default) is one wire op (`HGETALL` on the user's hash). With `reco
 
 - **Anonymous clients are skipped.** No stable identity, nothing to index.
 - **Process crashes can leave stragglers.** The index may briefly contain entries for rooms that no longer exist. Reads that pass `reconcile: true` drop them from the response; `removeStale: true` additionally `hdel`s them from Presence so the index self-heals.
-- **Storage cost is one Presence write per join + one per leave per tracked user.** Negligible for most games; if you have a high-volume relay room where every microsecond counts, just don't include this plugin (and the features that depend on it stay disabled for that room type).
+- **Storage cost is one Presence write per join + one per leave per tracked user.** Negligible for most games. If you have a high-volume relay room where every microsecond counts, just don't include this plugin. The features that depend on it stay disabled for that room type.

@@ -583,7 +583,7 @@ onCreate() {
 
 ## Client Instance
 
-The `client` instance from the backend is responsible for the **transport** layer between the server and the client. It should not be confused with the [`Client` from the frontend SDK](/sdk/), as they have completely different purposes.
+The `client` instance from the backend is responsible for the **transport** layer between the server and the client. Do not confuse it with the [`Client` from the frontend SDK](/sdk/), as they have completely different purposes.
 
 You operate on `client` instances from [`this.clients`](#clients), [`Room#onJoin()`](/room/lifecycle#on-join), [`Room#onLeave()`](/room/lifecycle#on-leave) and [`Room#onMessage()`](#on-messages).
 
@@ -707,7 +707,7 @@ Send a raw byte array message to the client.
 
 The `type` can be either a `string` or a `number`.
 
-This is useful if you'd like to manually encode a message, rather than the default encoding (MsgPack).
+This method is useful if you'd like to manually encode a message, rather than the default encoding (MsgPack).
 
 ```ts filename="MyRoom.ts"
 //
@@ -736,7 +736,7 @@ client.leave(4020);
 ```
 
 <Callout type="info">
-    This will trigger [`room.onLeave`](/sdk/connection#leaving-a-room) event on the frontend.
+    This call will trigger the [`room.onLeave`](/sdk/connection#leaving-a-room) event on the frontend.
 </Callout>
 
 #### Table of WebSocket close codes

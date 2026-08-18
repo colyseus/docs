@@ -15,7 +15,7 @@ The maximum number of concurrent users (CCU) a Colyseus server can handle depend
 - **CPU**: How intensive your game loop and message handlers are. Complex physics or AI calculations will limit CCU.
 - **RAM**: Each connection and room state consumes memory. A typical connection uses ~2-5KB, but this grows with your state size. Monitor memory usage to avoid OOM crashes.
 - **Bandwidth**: The frequency and size of state patches sent to clients. Use [State View](/state/view) to reduce per-client traffic.
-- **File descriptors**: Linux servers default to ~1024 open connections. This can be increased via `ulimit -n` (e.g., `ulimit -n 65535`), but ensure your hardware can handle the load.
+- **File descriptors**: Linux servers default to ~1024 open connections. This limit can be increased via `ulimit -n` (e.g., `ulimit -n 65535`), but ensure your hardware can handle the load.
 
 As a baseline, a small cloud server (1 vCPU, 1GB RAM) can typically handle 1,000-2,000 concurrent connections for simple games. For complex games with large state, expect fewer. Always load test your specific use case. 
 
@@ -43,10 +43,10 @@ This error means that the client was not able to effectively connect with the se
 **This error may appear in a few scenarios:**
 
 - Server is under heavy load and by the time it can respond to a WebSocket connection request, the "seat reservation" code has already expired. [You may increase the seat reservation time limit](/matchmaker#reserve-a-seat-for) to remedy this.
-- You have mixed Colyseus package versions in your `package.json`. (between `0.14.x` and `0.15.x`, for example)
-  Make sure to only use packages under `0.15.x` (if you are using version 0.15),
-  OR `0.14.x` (if you are using version 0.14) - the exact patch version does not
-  matter, but major and minor matters.
+- You have mixed Colyseus package versions in your `package.json` (between `0.14.x` and `0.15.x`, for example).
+  Make sure to only use packages under `0.15.x` (if you are using version 0.15)
+  or `0.14.x` (if you are using version 0.14). The exact patch version does not
+  matter, but major and minor do.
 - When using multiple Node.js processes, your [scalability configuration](/scalability) may not be correct. Make sure to follow scalability instructions.
 
 ### How do I handle reconnection?
@@ -75,7 +75,7 @@ async onLeave(client, code) {
 
 ### Why is my room state not synchronizing with the client?
 
-If you define your state with [`@type()` decorators](/state/schema/decorators) and use TypeScript to target ES2022/ESNext, you need to provide `"useDefineForClassFields": false` on your tsconfig to make sure the decorators are defining property accessors properly. (The [`schema()` builder](/state/schema) does not need any tsconfig flags.)
+If you define your state with [`@type()` decorators](/state/schema/decorators) and target ES2022/ESNext in TypeScript, set `"useDefineForClassFields": false` in your tsconfig. This flag makes sure the decorators define property accessors properly. (The [`schema()` builder](/state/schema) does not need any tsconfig flags.)
 
 ```json filename="tsconfig.json"
 {
@@ -139,7 +139,7 @@ Ensure these settings in your `tsconfig.json` (see [Decorators](/state/schema/de
 
 ### Unity WebSocket connection drops during debugging
 
-If you set a breakpoint in your application while the WebSocket connection is open, the connection will be closed automatically after 3 seconds due to inactivity. To prevent this, use `pingInterval: 0` during development:
+If you set a breakpoint while the WebSocket connection is open, the connection closes automatically after 3 seconds due to inactivity. To prevent this, use `pingInterval: 0` during development:
 
 ```ts filename="app.config.ts"
 import { defineServer } from "colyseus";

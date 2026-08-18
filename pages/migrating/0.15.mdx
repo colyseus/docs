@@ -239,7 +239,7 @@ Reconnection tokens are unique and private for each client.
 
 Previously, by omitting the second argument of `allowReconnection()`, you were in control over when to cancel the possibility for reconnection.
 
-To make this intent more explicit, it is now mandatory to provide the second argument either as `"manual"`, or the number of seconds to wait for reconnection:
+To make this intent more explicit, the second argument is now mandatory, either `"manual"` or the number of seconds to wait for reconnection:
 
 === "Manual"
 
@@ -309,7 +309,7 @@ To make this intent more explicit, it is now mandatory to provide the second arg
 
 ## `@colyseus/loadtest` has been reworked!
 
-The loadtest tool has been reworked to allow for more complex scripting, so your loadtest scripts will need to be slightly rewritten, as the new format looks like this:
+The loadtest tool has been reworked to allow for more complex scripting, so your loadtest scripts will need to be slightly rewritten. The new format looks like this:
 
 ```ts
 import { Client, Room } from "colyseus.js";

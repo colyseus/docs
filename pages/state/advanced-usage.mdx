@@ -73,8 +73,8 @@ See [CustomPrimitiveTypes.test.ts](https://github.com/colyseus/schema/blob/maste
 
 ## Change Tracking
 
-The `$track` method is called whenever a synchronized attribute gets mutated. It
-is used to track which properties must be encoded. The `$track`/`$encoder`/`$decoder`
+The `$track` method is called whenever a synchronized attribute gets mutated, and
+marks which properties must be encoded. The `$track`/`$encoder`/`$decoder`
 hooks below attach to any `Schema` class, hand-written or returned by `schema()`.
 
 ```ts filename="Vec3.ts"
@@ -217,7 +217,7 @@ Schema.initialize(vec3);
 
 ## Instance pooling
 
-Constructing a `Schema` is not free: each instance gets its own change-tracking state, a property descriptor, and a values array, multiplied by every node in its entity tree. A room that spawns and despawns entities continuously (projectiles, ECS entities, bots) pays that cost over and over.
+Constructing a `Schema` is not free: each instance gets its own change-tracking state, a property descriptor, and a values array. Every node in an entity tree multiplies that cost. A room that spawns and despawns entities continuously (projectiles, ECS entities, bots) pays it over and over.
 
 `createPool()` recycles instances instead:
 
@@ -269,7 +269,7 @@ pool.release(entity);        // then release
 ### Re-assign every field after `acquire()`
 
 <Callout type="warning">
-    **Pooling does not clear primitive values.** An acquired instance still carries the numbers, strings and booleans from its previous life, and those retained values *are* re-encoded when it re-enters the state tree. A field you forget to re-assign will silently ship the previous entity's value to clients.
+    **Pooling does not clear primitive values.** An acquired instance still carries the numbers, strings and booleans from its previous life. Those retained values *are* re-encoded when it re-enters the state tree. A field you forget to re-assign will silently ship the previous entity's value to clients.
 </Callout>
 
 Treat `acquire()` as `new` and assign every field you would have set on a fresh instance. Ref-type children (nested schemas, collections) *are* reset recursively, so a pooled entity's collections come back empty.

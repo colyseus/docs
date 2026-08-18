@@ -11,12 +11,12 @@ import { Callout } from "nextra/components";
 The `devMode` option has been introduced to speed up **local development** while updating your room implementation.
 
 <Callout type="warning">
-    **Do not use `devMode` in a production environment** - This feature is not optimized for a large amount of rooms. It should be used for local development only.
+    **Do not use `devMode` in a production environment** - This feature is not optimized for a large amount of rooms. Use it for local development only.
 </Callout>
 
-Whenever you update your server code, before the server restarts, all active rooms are cached locally, including their state and sessionId's of previously connected clients (seat reservations). After the restart, all rooms are recreated and the cached state is restored.
+Whenever you update your server code, all active rooms are cached locally before the server restarts. The cache includes their state and the sessionId's of previously connected clients (seat reservations). After the restart, all rooms are recreated and the cached state is restored.
 
-The clients are going to try to reconnect as soon as the server goes down, and keep trying a few times until they are successful, or the attempt limit is reached.
+Clients try to reconnect as soon as the server goes down. They keep trying a few times until they succeed, or the attempt limit is reached.
 
 ![devMode flow](/server/devmode_flow.png)
 

@@ -14,7 +14,7 @@ import { MovedAnchors } from "../../components/moved-anchors"
     "server--rewind-targets-to-where-the-shooter-saw-them": "/netcode/lag-compensation#server-rewind-targets-to-where-the-shooter-saw-them",
 }} />
 
-When you aim at another player, you're aiming at the past. The target on your screen is delayed by the network (≈ `rtt/2`) and rendered further behind on purpose (the `delay` of your interp buffer). If the server judged shots against where targets are *now*, every player would have to lead moving targets by their own latency. Lag compensation removes that burden: the server **rewinds** each target to the moment the shooter saw it, then runs the hit test: "what you see is what you hit."
+When you aim at another player, you're aiming at the past. The target on your screen is delayed by the network (≈ `rtt/2`) and rendered further behind on purpose (the `delay` of your interp buffer). If the server judged shots against where targets are *now*, every player would have to lead moving targets by their own latency. Lag compensation removes that burden. The server **rewinds** each target to the moment the shooter saw it, then runs the hit test: "what you see is what you hit."
 
 It's the server-side dual of [client prediction](/netcode/client-prediction): where the client forward-predicts entities it *receives*, the server rewinds entities it *owns*.
 
@@ -128,7 +128,7 @@ class GameRoom extends Room {
 
 ## `allowRewindState({ maxRewindMs })`
 
-Enables lag compensation and returns a `Rewind`. The framework auto-records attached entities on **each broadcast**, snapshotting exactly what clients receive, so the rewind reproduces the client's interpolation even when the broadcast rate differs from the sim rate (`patchRate ≠ timestep`). Call `rewind.record()` yourself during a tick to take over that cadence (you then own correctness against your own broadcast rate). `maxRewindMs` (default 500) sizes the per-entity history ring and bounds how far back a hit can rewind.
+Enables lag compensation and returns a `Rewind`. The framework auto-records attached entities on **each broadcast**, snapshotting exactly what clients receive. The rewind therefore reproduces the client's interpolation even when the broadcast rate differs from the sim rate (`patchRate ≠ timestep`). Call `rewind.record()` yourself during a tick to take over that cadence (you then own correctness against your own broadcast rate). `maxRewindMs` (default 500) sizes the per-entity history ring and bounds how far back a hit can rewind.
 
 ### `rewind.attachAll(collection, options)` / `rewind.attach(instance, options)`
 
@@ -153,7 +153,7 @@ Options:
 
 ## `rewind.lastSeenBy(sessionId)`
 
-Returns a [`RewindView`](#rewindview) of the world as that client last saw it. It resolves the client's stamped render time, **clamps** it to `[now − maxRewindMs, now]` (anti-spoof / clock-skew bound), and **falls back to the live position** when the client hasn't synced yet.
+Returns a [`RewindView`](#rewindview) of the world as that client last saw it. The method resolves the client's stamped render time and **clamps** it to `[now − maxRewindMs, now]` (anti-spoof / clock-skew bound). When the client hasn't synced yet, it **falls back to the live position**.
 
 A client that merely hasn't stamped yet (clock still syncing, or an unknown `sessionId`) is **not** an error: the view just reads live. `lastSeenBy` does require the framework input API (`defineInput`); if you stamp render times yourself, use `rewind.at(time)` and supply the time.
 
@@ -194,7 +194,7 @@ this.rewind.attachAll(this.state.enemies, { fields: ["x", "y"], mode: "reckon" }
 Keep the pairing in one shared constant if you like: the server's `mode` and the client's `predict.attachAll` mode describe the same decision. You can attach the same collection twice with disjoint `fields` to mix timelines on one entity. The room ships exactly the stamp(s) its attached groups need. Nothing extra crosses the wire.
 
 <Callout type="warning">
-    **Don't break the delay pairing.** When the input handle is wired through `predict.reconciler`/`predict.sim`, the lerp `delay` and the rewind stamp share one source: nothing to keep in sync. If you pass `renderDelay` explicitly, it must equal the delay your remotes actually render at; and reverting remotes to `damped` (no fixed delay) silently degrades the rewind to an approximation.
+    **Don't break the delay pairing.** When the input handle is wired through `predict.reconciler`/`predict.sim`, the lerp `delay` and the rewind stamp share one source: nothing to keep in sync. If you pass `renderDelay` explicitly, it must equal the delay your remotes actually render at. Reverting remotes to `damped` (no fixed delay) silently degrades the rewind to an approximation.
 </Callout>
 
 ## Tuning `maxRewindMs`
@@ -203,9 +203,9 @@ The real rewind distance is roughly `renderDelay + RTT + one tick`. If `maxRewin
 
 ## Predicting the verdict client-side
 
-The shooter's *own* step can pre-judge the hit with the same timeline the server will use. `ctx.reckonTime` is the same value the server reads for that input, and `predict.valueAt(target, field, ctx.reckonTime)` samples the target where the rewind will place it, so your client-side verdict matches the server's by construction. Batch the pose with `predict.readAt(target, fields, ctx.reckonTime)` to run one reckon integration per target instead of one per field. Pair it with an [optimistic event](/netcode/client-prediction#optimistic-events-defineevent) for instant feedback that auto-rejects if the server disagrees.
+The shooter's *own* step can pre-judge the hit with the same timeline the server will use. `ctx.reckonTime` is the same value the server reads for that input. `predict.valueAt(target, field, ctx.reckonTime)` samples the target where the rewind will place it, so your client-side verdict matches the server's by construction. Batch the pose with `predict.readAt(target, fields, ctx.reckonTime)` to run one reckon integration per target instead of one per field. Pair it with an [optimistic event](/netcode/client-prediction#optimistic-events-defineevent) for instant feedback that auto-rejects if the server disagrees.
 
-`ctx.reckonTime` is **always a usable instant**: a seq that wasn't stamped (the room doesn't rewind, the clock is still syncing) resolves to the live `serverNow()` automatically, mirroring the backend, where `channel.reckonTime` resolves unstamped reads to the room clock. There is no fallback to hand-write on either end. The rare consumer that needs the distinction ("was this seq actually stamped for lag comp?") reads `ctx.lagCompActive`.
+`ctx.reckonTime` is **always a usable instant**. A seq that wasn't stamped (the room doesn't rewind, the clock is still syncing) resolves to the live `serverNow()` automatically. The backend mirrors this: `channel.reckonTime` resolves unstamped reads to the room clock. There is no fallback to hand-write on either end. The rare consumer that needs the distinction ("was this seq actually stamped for lag comp?") reads `ctx.lagCompActive`.
 
 ## Next
 

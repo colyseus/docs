@@ -47,7 +47,7 @@ const nearby = await db.leaderboards.aroundMe("global", userId, 5);
 
 ## Live configs
 
-Declare typed configuration keys with [Standard Schema](https://standardschema.dev/) validators (Zod, Valibot, etc.) via `defineConfigs`. Values are validated on write, cached in memory, and, when a `presence` is provided, invalidated across all server instances when changed (e.g. from an admin panel).
+Declare typed configuration keys with [Standard Schema](https://standardschema.dev/) validators (Zod, Valibot, etc.) via `defineConfigs`. Values are validated on write and cached in memory. When a `presence` is provided, the cache is invalidated across all server instances when a value changes (e.g. from an admin panel).
 
 ```ts filename="src/app.config.ts"
 import { defineServer, RedisPresence } from "colyseus";

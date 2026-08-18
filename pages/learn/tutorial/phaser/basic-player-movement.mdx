@@ -156,7 +156,7 @@ const config: Phaser.Types.Core.GameConfig = {
 const game = new Phaser.Game(config);
 ```
 
-In order to access the frontend project from your web browser, let's start `parcel` through another terminal tab, which is going to build and serve the frontend files:
+To access the frontend project from your web browser, let's start `parcel` in another terminal tab. Parcel builds and serves the frontend files:
 
 ```sh filename="Terminal"
 npx parcel serve index.html
@@ -224,7 +224,7 @@ export class GameScene extends Phaser.Scene {
     Note that we're using the local `http://localhost:2567` endpoint here. You need to [deploy your server](/deployment) to the public internet in order to play with others online.
 </Callout>
 
-When you refresh your browser now, your client is going to establish a connection with the server, and the server is going to create the room `my_room` on demand for you.
+When you refresh your browser now, your client is going to establish a connection with the server. The server then creates the room `my_room` on demand for you.
 
 Notice that `my_room` is the default room identifier set by the barebones Colyseus server. You can and should change this identifier in the `arena.config.ts` file.
 
@@ -324,7 +324,7 @@ Also, when the client disconnects, let's remove the player from the map of playe
 // (...)
 ```
 
-The state mutations we've done on the backend **can be observed** on the frontend, and that's what we're going to do in the next sections.
+The state mutations we've done on the backend **can be observed** on the frontend. That's what we're going to do in the next sections.
 
 ## Preloading Assets in the Demo Scene
 
@@ -345,7 +345,7 @@ For this demo, we only need one sprite to represent the player, which we are goi
 
 ## Listening for State Changes
 
-After a connection with the room has been established, the frontend can start listening for state changes, and create a visual representation of the data in the server.
+After a connection with the room has been established, the frontend can start listening for state changes. The frontend then creates a visual representation of the data in the server.
 
 In order to attach callbacks to the state, we need to import the `Callbacks` class from `@colyseus/sdk`:
 
@@ -374,7 +374,7 @@ callbacks.onAdd("players", (player, sessionId) => {
 
 When playing the Scene, you should see a message in the console of the browser whenever a new client joins the room.
 
-For the visual representation, we need to add a Phaser GameObject for each joining player, and keep a local reference to the GameObject based on their `sessionId`, so we can operate on them later:
+For the visual representation, we need to add a Phaser GameObject for each joining player. We also keep a local reference to each GameObject, keyed by `sessionId`, so we can operate on them later:
 
 ```ts
 import { Callbacks } from "@colyseus/sdk";
@@ -428,7 +428,7 @@ callbacks.onRemove("players", (player, sessionId) => {
 
 ### Sending input messages
 
-For this particular example, we are going to send the player's input at every tick. This is a requirement for the client-side prediction technique applied by the end of this tutorial.
+For this particular example, we are going to send the player's input at every tick. This approach is a requirement for the client-side prediction technique applied by the end of this tutorial.
 
 At every `update()` tick, we are going to update the local `inputPayload`, and send it as a message to the server.
 

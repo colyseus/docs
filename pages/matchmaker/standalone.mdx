@@ -30,7 +30,7 @@ This architecture is useful when you want to:
 
 ## Requirements
 
-Both the matchmaker process and the game server processes must share the same **Presence** (e.g. [Redis](/server/presence)) and **Driver** (e.g. [Redis or Postgres](/server/driver)) so they can communicate via IPC and share room cache state.
+The matchmaker process and the game server processes must share the same **Presence** (e.g. [Redis](/server/presence)) and **Driver** (e.g. [Redis or Postgres](/server/driver)) instances. Sharing them lets the processes communicate via IPC and share room cache state.
 
 ## Game Server Processes
 
@@ -60,7 +60,7 @@ const gameServer = defineServer({
 
 ## Matchmaker Process
 
-To run a standalone matchmaker, use `defineServer()` with the `isStandaloneMatchMaker` option set to `true`. This tells Colyseus that this process will only handle matchmaking: it will not spawn rooms locally, subscribe to IPC room creation requests, or register itself as an available game server process.
+To run a standalone matchmaker, use `defineServer()` with the `isStandaloneMatchMaker` option set to `true`. This option tells Colyseus that the process only handles matchmaking. A standalone matchmaker will not spawn rooms locally, subscribe to IPC room creation requests, or register itself as an available game server process.
 
 ```ts {7} filename="app.config.ts"
 import { defineServer, defineRoom } from "colyseus";
@@ -81,7 +81,7 @@ const server = defineServer({
 When `isStandaloneMatchMaker` is enabled, the process:
 
 - **Skips IPC subscription**: it will not receive or handle remote room creation requests
-- **Skips health checks**: it does not register itself in the process stats, so game servers will never try to create rooms on it while at least one healthy game server is registered. Two fallbacks can still land a room on the matchmaker process: when **no** game-server stats exist yet, and when a remote room-creation request times out over IPC.
+- **Skips health checks**: it does not register itself in the process stats, so room creation never targets it while a healthy game server is registered. Two fallbacks still land a room here: when **no** game-server stats exist yet, and when a remote room-creation request times out over IPC.
 - **Delegates room creation**: when a matchmaking request requires a new room, the default `selectProcessIdToCreateRoom` will select one of the available game server processes
 
 <Callout type="warning">

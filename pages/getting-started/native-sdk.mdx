@@ -10,7 +10,7 @@ import { Callout } from "nextra/components";
     The Native SDK is in **beta**, and may not be stable. Please [report any issues you find](https://github.com/colyseus/native-sdk/issues).
 </Callout>
 
-The [Colyseus Native SDK](https://github.com/colyseus/native-sdk) provides a pure C API for integrating Colyseus into any engine or framework. It is the shared foundation behind the Godot, GameMaker, Defold, and [Flutter](/getting-started/flutter) SDKs, and can be used directly for custom engines or platforms such as Raylib, SDL, or embedded systems.
+The [Colyseus Native SDK](https://github.com/colyseus/native-sdk) provides a pure C API for integrating Colyseus into any engine or framework. This SDK is the shared foundation behind the Godot, GameMaker, Defold, and [Flutter](/getting-started/flutter) SDKs. You can also use it directly for custom engines or platforms such as Raylib, SDL, or embedded systems.
 
 See the [Raylib example project](https://github.com/colyseus/native-sdk/tree/main/platforms/raylib) for a complete working sample.
 
@@ -98,7 +98,7 @@ The root state vtable is passed to `colyseus_room_set_state_type()` to enable au
 <details>
 <summary>Show how to use schemas without running the codegen step</summary>
 
-If you do **not** call `colyseus_room_set_state_type()`, the SDK automatically builds schema definitions at runtime from the server's reflection data sent during the handshake. This is useful for:
+If you do **not** call `colyseus_room_set_state_type()`, the SDK automatically builds schema definitions at runtime from the server's reflection data sent during the handshake. This mode is useful for:
 
 - Prototyping without a build step
 - Supporting multiple server versions with different schemas

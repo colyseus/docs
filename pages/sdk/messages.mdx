@@ -190,7 +190,7 @@ Listen for messages sent from the server.
 </SDKTabs>
 
 <Callout type="info">
-    **Backend:** To send a message from the server to a client you'll need to use either [client.send()](/room#send-message) or [room.broadcast()](/room/#broadcast-message)
+    **Backend:** To send a message from the server to a client, use [client.send()](/room#send-message) or [room.broadcast()](/room/#broadcast-message).
 </Callout>
 
 ## Request/Response
@@ -217,7 +217,7 @@ room.send("get-profile", { userId: 42 }, (profile, error) => {
 });
 ```
 
-The promise rejects (or the callback receives an `error`) when the handler throws, no handler is registered for that type, the connection closes first, or no reply arrives within the timeout. The default timeout is `Room.defaultRequestTimeout` (10000 ms), overridable per request via the `timeout` option.
+The promise rejects (or the callback receives an `error`) when the handler throws or no handler is registered for that type. Rejection also happens when the connection closes first, or when no reply arrives within the timeout. The default timeout is `Room.defaultRequestTimeout` (10000 ms), overridable per request via the `timeout` option.
 
 The server may also **deliberately reject** a request via [`ctx.reject(reason)`](/room#responding-to-a-message-requestresponse): a business-logic "no", distinct from an error. The rejection arrives as an `Error` with `name: "rejected"`, and the server's raw `reason` on its `.reason` property:
 

@@ -75,7 +75,7 @@ In the new **"URL"** field, let's include the Colyseus JavaScript SDK, from a CD
 https://unpkg.com/@colyseus/sdk@^0.17.0/dist/colyseus.js
 ```
 
-This is going to make the `Colyseus` [JavaScript / TypeScript SDK](/getting-started/typescript) available for our PlayCanvas scripts.
+This external script makes the `Colyseus` [JavaScript / TypeScript SDK](/getting-started/typescript) available for our PlayCanvas scripts.
 
 ## Establishing a Client-Server Connection
 
@@ -105,7 +105,7 @@ NetworkManager.prototype.initialize = function () {
     Note that we're using the local `http://localhost:2567` endpoint here. You need to [deploy your server](/deployment) to the public internet in order to play with others online. You can also use [Glitch](https://glitch.com/edit/#!/tutorial-playcanvas-server) to host your server publicly.
 </Callout>
 
-When you **"Launch"** your PlayCanvas project now, your client is going to establish a connection with the server, and the server is going to create the room `my_room` on demand for you.
+When you **"Launch"** your PlayCanvas project now, your client establishes a connection with the server. The server then creates the room `my_room` on demand.
 
 Notice that `my_room` is the default room identifier set by the barebones Colyseus server. You can and should change this identifier in the `arena.config.ts` file.
 
@@ -208,7 +208,7 @@ Also, when the client disconnects, let's remove the player from the map of playe
 // ...
 ```
 
-The state mutations we've done in the backend **can be observed** in the frontend, and that's what we're going to do in the next section.
+The state mutations we've done in the backend **can be observed** in the frontend. We'll do that in the next section.
 
 ## Setting up the Scene for Synchronization
 
@@ -233,7 +233,7 @@ Make sure to uncheck the `"Enabled"` property. We will not have any Player insta
 
 ## Listening for State Changes
 
-After a connection with the room has been established, the frontend can start listening for state changes, and create a visual representation of the data in the server.
+Once connected to the room, the frontend can start listening for state changes and build a visual representation of the server's data.
 
 ### Adding new players
 
@@ -259,7 +259,7 @@ callbacks.onAdd("players", (player, sessionId) => {
 
 When playing the Scene, you should see a message in the browser's console whenever a new client joins the room.
 
-For the visual representation, we need to clone the "Player" object, and keep a local reference to the cloned object based on their `sessionId`, so we can operate on them later:
+For the visual representation, we need to clone the "Player" object. Keep a local reference to each clone, keyed by `sessionId`, so we can operate on them later:
 
 ```typescript
 // ...
@@ -324,7 +324,7 @@ callbacks.onRemove("players", (player, sessionId) => {
 
 ### Sending the new position to the server
 
-We are going to allow the "mouse down" event; use [ray cast](https://developer.playcanvas.com/en/user-manual/physics/ray-casting/) to determine the exact `Vec3` position the player should move towards, and then send it as a message to the server.
+We are going to listen for the "mouse down" event. Using [ray cast](https://developer.playcanvas.com/en/user-manual/physics/ray-casting/), we determine the exact `Vec3` position the player should move towards. We then send that position as a message to the server.
 
 ```typescript
 // ...

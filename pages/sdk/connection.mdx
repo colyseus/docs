@@ -142,7 +142,7 @@ Disconnect from the room. Use `consented: true` (default) for intentional leaves
 The SDK automatically attempts to reconnect when the connection is unexpectedly dropped.
 
 <Callout type="warning">
-    Automatic reconnection only triggers if the room has been connected for at least `minUptime` milliseconds. This prevents reconnection loops for rooms that fail immediately after joining.
+    Automatic reconnection only triggers if the room has been connected for at least `minUptime` milliseconds. This threshold prevents reconnection loops for rooms that fail immediately after joining.
 </Callout>
 
 ### On Drop Event
@@ -577,5 +577,5 @@ room.removeAllListeners();
 ```
 
 <Callout type="info">
-    The SDK calls `removeAllListeners()` automatically when the room is left, so you only need it to detach early, e.g. when tearing down a UI screen while staying connected.
+    The SDK calls `removeAllListeners()` automatically when the room is left. You only need it to detach early, e.g. when tearing down a UI screen while staying connected.
 </Callout>

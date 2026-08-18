@@ -9,7 +9,7 @@ import { HeartIcon } from "@primer/octicons-react";
 
 The driver is responsible for storing and querying room data used by the matchmaker.
 
-When a room is created, deleted, or has its metadata updated, the driver persists this information so the matchmaker can find available rooms for players to join.
+When a room is created, deleted, or has its metadata updated, the driver persists this information. The matchmaker then uses it to find available rooms for players to join.
 
 For single-process deployments, the default in-memory driver is sufficient. For multi-process or distributed deployments, you need an external driver (like Redis or PostgreSQL) so all server instances share the same room data.
 

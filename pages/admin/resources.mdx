@@ -6,7 +6,7 @@ import { Callout } from "nextra/components"
 
 # Resources & CRUD
 
-Every drizzle table you pass to the admin panel becomes a browse-able **resource** with a full CRUD UI: paginated list with search/filter/sort, detail view with related rows, create and edit forms, and per-row custom actions. The built-in tables from [`@colyseus/database`](/database) (users, configs, leaderboards, cloud saves, analytics events, roles, user notes, audit log) are registered automatically. You customize them and add your own via `defineAdminResource()`.
+Every drizzle table you pass to the admin panel becomes a browse-able **resource** with a full CRUD UI. The UI includes a paginated list with search/filter/sort, a detail view with related rows, create and edit forms, and per-row custom actions. The built-in tables from [`@colyseus/database`](/database) (users, configs, leaderboards, cloud saves, analytics events, roles, user notes, audit log) are registered automatically. You customize them and add your own via `defineAdminResource()`.
 
 ## Built-in resources
 
@@ -190,7 +190,7 @@ policies: {
 }
 ```
 
-A policy set for an action **replaces** the standard RBAC rule for that action on that resource. It is not layered on top. Only actions with no policy fall back to the standard `db.moderation.can(userId, action, resource)` rule.
+A policy set for an action **replaces** the standard RBAC rule for that action on that resource. The policy is not layered on top. Only actions with no policy fall back to the standard `db.moderation.can(userId, action, resource)` rule.
 
 ### Custom action policies
 
@@ -212,7 +212,7 @@ actions: [{
 
 The panel reads `database.relations` (set on the `GameDatabase` constructor) to auto-decorate foreign-key columns as links. A `userId` column on `cloudSaves` becomes a clickable link to the user's show page automatically (no per-column override needed).
 
-For columns the panel can't auto-detect (e.g. a generic `targetId` column on the audit log that references different tables depending on `resource`), use a dynamic `linkTo`:
+For columns the panel can't auto-detect, use a dynamic `linkTo`. A generic `targetId` column on the audit log, for example, references different tables depending on `resource`:
 
 ```ts
 columns: {
@@ -230,7 +230,7 @@ The `icon` field accepts the names of icons from the panel's built-in icon set. 
 
 ## Audit log
 
-Every CRUD mutation (`create`, `update`, `delete`), every ban/unban/session-revoke, every custom-action invocation, and every live-room mutation (kick, lock, state edit, dispose) is recorded to the append-only `colyseus_admin_audit` table with:
+Every mutation from the panel is recorded to the append-only `colyseus_admin_audit` table. The log covers CRUD (`create`, `update`, `delete`), ban/unban/session-revoke, custom-action invocations, and live-room mutations (kick, lock, state edit, dispose). Each entry stores:
 
 - `created_at`: when it happened
 - `operator_id`: which admin did it
@@ -243,7 +243,7 @@ Browse the log inside the panel under the **Audit log** resource (admin-read-onl
 
 ### Recording from your own code
 
-If you build admin tooling outside the panel (e.g. a custom HTTP endpoint that mutates the DB), record audit entries the same way the panel does:
+If your own tooling mutates the DB outside the panel (e.g. a custom HTTP endpoint), record audit entries the same way the panel does:
 
 ```ts
 await db.audit.record({

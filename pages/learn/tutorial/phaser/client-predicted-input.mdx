@@ -33,7 +33,7 @@ This guide will show you how you can build a multiplayer experience with Colyseu
 
 Networked multiplayer games are always going to have _some_ delay between the server and the client.
 
-Client-side prediction is a technique used to reduce the _perceived_ delay of the local player, by giving immediate feedback while its inputs and/or messages haven't reached the server yet.
+Client-side prediction is a technique that reduces the _perceived_ delay of the local player. The client gives immediate feedback while its inputs and/or messages haven't reached the server yet.
 
 This tutorial is going to cover one possible solution for player movement using keyboard input. Depending on the type of game you are making, and the outcome you are aiming for, a different technique could work best. There is no "final and correct" answer in this space.
 
@@ -92,7 +92,7 @@ The `remoteRef` here is a simple rectangle used to have visual feedback of where
 
 We need to implement in the frontend the same logic we already have on the backend for player movement.
 
-Instead of waiting for the acknowledgement of the server, we apply the position change locally at exactly the same instant as sending the input to the server:
+Instead of waiting for the server's acknowledgement, we apply the position change locally at the same instant we send the input to the server:
 
 ```typescript
 // (...)

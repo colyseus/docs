@@ -6,7 +6,7 @@ import { Callout } from 'nextra/components'
 
 # Message Composability
 
-The `Messages<R>` type allows you to define reusable, type-safe message handlers that can be composed and spread into your Room's `messages` property. This is useful for:
+The `Messages<R>` type allows you to define reusable, type-safe message handlers that can be composed and spread into your Room's `messages` property. This pattern is useful for:
 
 - **Code reuse**: Share common message handlers across multiple rooms
 - **Modularity**: Organize handlers into separate files or modules
@@ -46,7 +46,7 @@ export const thirdPartyMessages: Messages<MyRoom> = {
 ```
 
 <Callout type="warning">
-  When using `validate()` with the `Messages<R>` type, use a regular `function` expression instead of an arrow function if you need to access `this` (the Room instance).
+  When using `validate()` with the `Messages<R>` type, an arrow function won't give you access to `this` (the Room instance). Use a regular `function` expression instead.
 </Callout>
 
 ## Composing Messages in Your Room

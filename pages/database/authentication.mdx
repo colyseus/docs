@@ -13,7 +13,7 @@ When [`@colyseus/auth`](/auth/module) is installed alongside `@colyseus/database
 - **HTTP routes**: every endpoint from `@colyseus/auth` (register, login, forgot/reset password, OAuth callback) is spread into your router under the configured prefix.
 - **User store**: `db.auth.settings` supplies the user-store [Backend API](/auth/module#backend-api) callbacks (`onFindUserByEmail`, `onRegisterWithEmailAndPassword`, `onRegisterAnonymously`, `onResetPassword`, `onOAuthProviderCallback`, `onCheckBanned`). **Email delivery is not included**: wire `onForgotPassword` (and `onSendEmailConfirmation` / `onEmailConfirmed` if you use email verification) yourself, or those flows silently no-op.
 - **Ban gating at login**: `onCheckBanned` rejects banned users and surfaces `{ reason, until }` from the row.
-- **JWT session revocation**: JWTs carry a `tokenVersion` claim. `db.auth.ban()` atomically bumps the version alongside the ban fields, so any previously-issued JWT for that user is rejected **on its next room join** (HTTP routes verify only signature and expiry. See [HTTP API Auth](/auth/http)). `db.auth.bumpTokenVersion(userId)` is also available standalone for password changes, "sign out everywhere", and forced rotation.
+- **JWT session revocation**: JWTs carry a `tokenVersion` claim. `db.auth.ban()` atomically bumps the version alongside the ban fields, so any previously-issued JWT for that user is rejected **on its next room join**. HTTP routes verify only signature and expiry (see [HTTP API Auth](/auth/http)). `db.auth.bumpTokenVersion(userId)` is also available standalone for password changes, "sign out everywhere", and forced rotation.
 - **Password-hash handoff**: `@colyseus/auth` hashes passwords before they reach the database; the DB never sees plaintext.
 
 The same env secrets (`JWT_SECRET`, `SESSION_SECRET`) still apply. See [Auth Module → Required Environment Secrets](/auth/module#required-environment-secrets).
@@ -48,7 +48,7 @@ await db.auth.bumpTokenVersion(userId);
 
 ## Customizing callbacks
 
-To wrap or replace individual callbacks (for example, to add an invite-code check during registration, or to customize the anonymous user payload), override keys on the `auth.settings` singleton **after** the server boots. The database wiring copies `db.auth.settings` into `auth.settings` at listen time, so any override applied earlier is overwritten:
+To wrap or replace individual callbacks, override keys on the `auth.settings` singleton **after** the server boots. For example, add an invite-code check during registration, or customize the anonymous user payload. The database wiring copies `db.auth.settings` into `auth.settings` at listen time, so any override applied earlier is overwritten:
 
 ```ts filename="src/index.ts"
 import { auth } from "@colyseus/auth";

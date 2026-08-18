@@ -25,7 +25,7 @@ Full behavior reference: [the modes table](/netcode/client-prediction#remote-ent
 
 ## Taps between steps: buffer, then consume
 
-Input is sampled once per **fixed step**, not per render frame. Frames and steps don't line up. A 120 Hz display on a 30 Hz tick runs a step every ~4th frame, and a hitchy frame can run several steps at once. Two traps follow: a tap on a **0-step frame** must not be lost (it belongs to the next step), and a tap spanning a **multi-step frame** must not fire twice. "Is the key down right now?" sampling gets both wrong.
+Input is sampled once per **fixed step**, not per render frame. Frames and steps don't line up. A 120 Hz display on a 30 Hz tick runs a step every ~4th frame, and a hitchy frame can run several steps at once. Two traps follow. A tap on a **0-step frame** must not be lost (it belongs to the next step). A tap spanning a **multi-step frame** must not fire twice. "Is the key down right now?" sampling gets both wrong.
 
 **Buffer the press when it happens; consume it inside the step loop on exactly one step:**
 
@@ -152,7 +152,7 @@ Buffer outside the loop, consume inside it: draining an edge anywhere else eithe
 
 ## Unreliable input over WebTransport
 
-On a datagram-capable transport, input frames don't need reliable delivery: each packet carries the last few inputs as redundancy, so a dropped datagram costs nothing and nothing head-of-line blocks.
+On a datagram-capable transport, input frames don't need reliable delivery. Each packet carries the last few inputs as redundancy, so a dropped datagram costs nothing and nothing head-of-line blocks.
 
 <Callout type="warning">
     **Experimental, and WebTransport only.** Unreliable input needs a datagram channel, which only [WebTransport](/server/transport/webtransport) provides today (itself experimental). Right now only the JavaScript/TypeScript SDK supports WebTransport, and with it unreliable input.
@@ -204,11 +204,11 @@ On a datagram-capable transport, input frames don't need reliable delivery: each
 
 </SDKTabs>
 
-That's the whole migration. The framework runs its own sequence numbers and acks by seq **value**, so rollback reconciliation works unchanged: no user-side bookkeeping, no seq field on your schema. `historySize` is the redundancy depth (how many recent inputs ride along in each datagram; default 3).
+That's the whole migration. The framework runs its own sequence numbers and acks by seq **value**, so rollback reconciliation works unchanged. No user-side bookkeeping, no seq field on your schema. `historySize` is the redundancy depth (how many recent inputs ride along in each datagram; default 3).
 
 ## Predicted projectiles: `predict.spawns`
 
-A fired bullet needs zero-latency feedback, but the server assigns its identity ~RTT later. `predict.spawns` runs the whole lifecycle: render the predicted local instantly, correlate it to the authoritative entity when it arrives, and keep one **stable id** across the handoff so the sprite never flickers:
+A fired bullet needs zero-latency feedback, but the server assigns its identity ~RTT later. `predict.spawns` runs the whole lifecycle: render the predicted local instantly, then correlate it to the authoritative entity when it arrives. One **stable id** persists across the handoff, so the sprite never flickers:
 
 <SDKTabs>
 
@@ -328,9 +328,9 @@ A fired bullet needs zero-latency feedback, but the server assigns its identity 
 
 </SDKTabs>
 
-With `spawnTime`, an **owned** projectile keeps flying the *shooter's* timeline through the handoff: no snap-back, and the rendered trajectory is the one a favor-the-shooter rewind actually judges. Foreign projectiles (other players') render at server-present, aged forward automatically. An unmatched prediction expires after a TTL (`max(2×rtt, 600ms)` by default) and `onReject` fires: the ghost reverts.
+With `spawnTime`, an **owned** projectile keeps flying the *shooter's* timeline through the handoff. No snap-back, and the rendered trajectory is the one a favor-the-shooter rewind actually judges. Foreign projectiles (other players') render at server-present, aged forward automatically. An unmatched prediction expires after a TTL (`max(2×rtt, 600ms)` by default) and `onReject` fires: the ghost reverts.
 
-For fast projectiles, hit-test the swept **segment** between last and current position, not a point, so a frame-step doesn't tunnel through a thin target.
+For fast projectiles, hit-test the swept **segment** between last and current position, not a point. Otherwise a frame-step can tunnel through a thin target.
 
 ## Optimistic hit FX: `defineEvent`
 
@@ -444,7 +444,7 @@ A sim-born prediction auto-rejects once the server processes past its birth step
 
 ## Optimistic pickups & breakables: `confirmOn`
 
-Kills, pickups, and breakables share one shape: predict a flag keyed by entity id, derive the visual from `has(id)` OR'd with authoritative state, and confirm when the entity's field flips. You declare the settlement; the channel does the wiring:
+Kills, pickups, and breakables share one shape. Predict a flag keyed by entity id, derive the visual from `has(id)` OR'd with authoritative state, and confirm when the entity's field flips. You declare the settlement; the channel does the wiring:
 
 ```ts
 const pickups = predict.defineEvent<string>({
@@ -471,7 +471,7 @@ A mispredict needs no cleanup code: the entry auto-rejects once the server proce
 
 ## Dead-reckoned AI (server-driven)
 
-For entities nobody controls directly but that move predictably (patrolling AI, ballistics), pair the client's `reckon` display with a `reckon` rewind timeline (both sides describe the same decision):
+Some entities move predictably but nobody controls them directly (patrolling AI, ballistics). For these, pair the client's `reckon` display with a `reckon` rewind timeline (both sides describe the same decision):
 
 <SDKTabs>
 
@@ -668,11 +668,11 @@ const me = predict.sim({
 
 ## Composite scalars (`predict.sim`, no engine)
 
-When an input pushes more than your own entity (a paddle that strikes a puck), put the decoded schema instances in the `world` and they **auto-bind**: no `adopt` or `pose` callbacks, and the bound entities render through the ordinary `predict.value(instance, field)` read. See [Composite & engine state](/netcode/client-prediction#composite--engine-state-predictsim).
+When an input pushes more than your own entity (a paddle striking a puck), put the decoded schema instances in the `world`. They **auto-bind**: no `adopt` or `pose` callbacks, and the bound entities render through the ordinary `predict.value(instance, field)` read. See [Composite & engine state](/netcode/client-prediction#composite--engine-state-predictsim).
 
 ## Hand-rolled simulation (no physics engine)
 
-You don't need an engine. The simplest way to satisfy [the determinism contract](/netcode/determinism) is plain math: `applyInput` integrates velocity and gravity by hand, shared verbatim between client and server (no engine build to keep in sync).
+You don't need an engine. The simplest way to satisfy [the determinism contract](/netcode/determinism) is plain math. `applyInput` integrates velocity and gravity by hand, shared verbatim between client and server (no engine build to keep in sync).
 
 ## Next
 

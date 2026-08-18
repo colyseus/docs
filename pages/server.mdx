@@ -267,7 +267,7 @@ const server = defineServer({
 
 #### Development Mode
 
-When `devMode` is enabled, it is capable of restoring previous Rooms and Room State when the server restarts due to a code change, when iteratively updating your room code in a local environment.
+When `devMode` is enabled, the server restores previous rooms and room state after a restart caused by a code change. This option is meant for iterating on room code in a local environment.
 
 Default is `false`.
 
@@ -377,7 +377,7 @@ const server = defineServer({
 ```
 
 <Callout type="warning">
-    Use these events for logging and monitoring purposes only. It is not encouraged to manipulate a room's state through these events. Use the [Room's Lifecycle Events](/room/lifecycle) in your room class instead.
+    Use these events for logging and monitoring purposes only. Do not manipulate a room's state through them. Use the [Room's Lifecycle Events](/room/lifecycle) in your room class instead.
 </Callout>
 
 ---
@@ -395,7 +395,7 @@ server.removeRoomType("battle");
 
 ### Simulate Latency
 
-Colyseus allows you to simulate latency between the server and the client. This is a convenience method for simulating clients with high latency during development.
+Colyseus allows you to simulate latency between the server and the client. `simulateLatency()` is a convenience method for simulating clients with high latency during development.
 
 ```ts filename="server.ts"
 // Make sure to never call the `simulateLatency()` method in production.

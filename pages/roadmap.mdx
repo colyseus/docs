@@ -41,7 +41,7 @@ Issue-level tracking lives in the [1.0 milestone](https://github.com/colyseus/co
 ## Shipped in v0.18 (May 2026)
 
 - **Database-first features:**
-    - ~Since Colyseus doesn't currently have an official database recommendation tool, we can't provide database-first features out of the box. Features that depend on a database tool are: player identity, leaderboards, configs, etc.~
+    - ~Since Colyseus doesn't currently have an official database recommendation tool, we can't provide built-in database-first features. Features that depend on a database tool are: player identity, leaderboards, configs, etc.~
         - Added the official [`@colyseus/database`](/database) package: player identity, cloud saves, leaderboards, and live configs.
         - Added [`@colyseus/admin`](/admin), the operations console built on top of it.
 - **Native SDK:**
@@ -55,7 +55,7 @@ Issue-level tracking lives in the [1.0 milestone](https://github.com/colyseus/co
     - Released [`@colyseus/schema` 5.0](/state/schema), the foundation of this release: a faster encoder, the decorator-free `schema()` builder API, [delivery modifiers](/state/schema#delivery-modifiers), [quantized floats](/state/schema#quantized-floats-tquantized--tangle), and [streaming collections](/state/streaming).
 - **General improvements:**
     - ~Add request/response model to rooms ([#331](https://github.com/colyseus/colyseus/issues/331))~
-        - Added a request/response model to room [messages](/room#responding-to-a-message-requestresponse): the client awaits a reply with `room.request(type, payload)` or `room.send(type, payload, callback)`, and the server answers by returning a value from its matching `onMessage(type, ...)` handler.
+        - Added a request/response model to room [messages](/room#responding-to-a-message-requestresponse): the client awaits a reply with `room.request(type, payload)` or `room.send(type, payload, callback)`. The server answers by returning a value from its matching `onMessage(type, ...)` handler.
     - Added a framework-owned [fixed timestep](/netcode/determinism): `setFixedTimestep()` runs the simulation at a constant step, and `setSimulationInterval()` was renamed to `setTimestep()`.
 
 ## Shipped in v0.17 (January 2026)

@@ -7,7 +7,7 @@ import { Callout, Tabs } from 'nextra/components'
 # Per-client State Visibility with `StateView`
 
 <Callout type="info" emoji="🆕">
-    This feature was introduced in version `0.16`. It replaces the previously experimental `@filter()` and `@filterChildren()` decorators.
+    This feature was introduced in version `0.16` and replaces the previously experimental `@filter()` and `@filterChildren()` decorators.
 </Callout>
 
 By default, the entire state is visible to all clients. However, you may want to control which parts of the state are visible to each client.
@@ -22,7 +22,7 @@ By default, the entire state is visible to all clients. However, you may want to
 A `StateView` instance must be assigned to the `client.view`.
 
 <Callout type="warning">
-    It is not recommended to rely on `StateView` for large datasets, as it is not optimized for that yet. However, it is a great way to filter data per client, such as "private fields" per schema instance, "level of detail", area-based, team-owned data, etc.
+    Avoid relying on `StateView` for large datasets: it is not optimized for that yet. However, it is a great way to filter data per client. Examples: "private fields" per schema instance, "level of detail", area-based or team-owned data.
 </Callout>
 
 ## Initializing a `StateView`
@@ -156,7 +156,7 @@ Sometimes you may want to have multiple views with different fields.
     </Tabs.Tab>
 </Tabs>
 
-By assigning a numeric tag to the `.view()` modifier, that field will only be visible to clients that contain this `Schema` instance on their `StateView` with the same tag:
+You can assign a numeric tag to the `.view()` modifier. That field is then only visible to clients whose `StateView` contains this `Schema` instance with the same tag:
 
 ```ts {6,7} filename="MyRoom.ts"
 // ...
@@ -171,7 +171,7 @@ By assigning a numeric tag to the `.view()` modifier, that field will only be vi
 ```
 
 
-In the example above, the `position` field is only visible to clients that contain this `Player` instance in their `StateView` with tag `1`, whereas the `health` field is visible to all clients that contain this `Player` instance in their `StateView`.
+In the example above, only clients that added this `Player` instance with tag `1` can see the `position` field. The `health` field is visible to all clients that contain this `Player` instance in their `StateView`.
 
 ---
 
