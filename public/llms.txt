@@ -166,4 +166,4 @@ The full corpus is at https://docs.colyseus.io/llms-full.txt.
 ## Project
 
 - [Roadmap](https://docs.colyseus.io/roadmap): Colyseus v1.0 roadmap. Upcoming features, planned improvements, and the path to a stable release.
-- [Sponsors](https://docs.colyseus.io/sponsors): Companies and people sponsoring the development of Colyseus, the open-source multiplayer game server framework.
+- [Sponsors](https://docs.colyseus.io/sponsors): Sponsor Colyseus on GitHub or buy from the Colyseus Shop. Both fund the open-source multiplayer game server framework.

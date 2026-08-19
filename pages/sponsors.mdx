@@ -1,11 +1,20 @@
 ---
 title: "Sponsors"
-description: "Companies and people sponsoring the development of Colyseus, the open-source multiplayer game server framework."
+description: "Sponsor Colyseus on GitHub or buy from the Colyseus Shop. Both fund the open-source multiplayer game server framework."
 ---
 import Image from 'next/image'
-import { HeartFillIcon } from "@primer/octicons-react";
+import { Cards } from 'nextra/components'
+import { HeartFillIcon, GiftIcon } from "@primer/octicons-react";
 
 # Sponsors
+
+Colyseus is an independent project: no venture capital, no corporate parent. One
+developer maintains all of it full-time, from the server and the schema
+serializer to the SDKs, the documentation, and the demos.
+
+The framework is MIT licensed and free to self-host, and it stays that way. No
+paid plan, no gated feature. Your support is simply what buys the time to keep
+all of it moving.
 
 Colyseus is proudly sponsored by these amazing companies and people <HeartFillIcon/>
 
@@ -17,6 +26,24 @@ Colyseus is proudly sponsored by these amazing companies and people <HeartFillIc
 
 ---
 
-<center>
-    **[<HeartFillIcon/> Become a sponsor](https://github.com/sponsors/endel)**
-</center>
+## Ways to support Colyseus
+
+There are two ways to help, and both mean a lot <HeartFillIcon/>
+
+### GitHub Sponsors
+
+The most direct one: sponsor monthly or once, at
+[github.com/sponsors/endel](https://github.com/sponsors/endel). Monthly sponsors
+get the source code of the [premium demos](/learn#premium-demos) from $5 up.
+Higher tiers add priority on bug fixes, email support, and a logo listing.
+
+### Colyseus Merch
+
+Want something in return? The [Colyseus Shop](https://shop.colyseus.io/) has
+t-shirts, hoodies, hats, mugs, and stickers, and it ships worldwide. Every order
+funds the work, and you get to look cool doing it. 😎
+
+<Cards>
+    <Cards.Card icon={<HeartFillIcon/>} title="Become a sponsor" href="https://github.com/sponsors/endel" target="_blank" arrow />
+    <Cards.Card icon={<GiftIcon/>} title="Visit the shop" href="https://shop.colyseus.io/" target="_blank" arrow />
+</Cards>
