@@ -9,10 +9,13 @@ import { Callout, Steps, Tabs, Cards } from 'nextra/components'
 import { CodeIcon, PeopleIcon, SyncIcon, ServerIcon, CloudIcon, DownloadIcon, RepoIcon, FileCodeIcon, ZapIcon, DevicesIcon } from '@primer/octicons-react'
 import { ScenarioGrid, ScenarioCard } from '../components/scenario-card'
 
-{/* <Image src={require('../images/hero-christmas.webp')} width={0} height={0} style={{ width: '100%', height: 'auto' }} alt="Colyseus Hero Image" /> */}
-<Image src={require('../images/hero.webp')} width={0} height={0} style={{ width: '100%', height: 'auto' }} alt="Colyseus Hero Image" />
-
-# Colyseus Multiplayer Framework
+{/* The hero carries the wordmark and tagline, so it stands in as the h1: its alt is what
+    search engines read as the heading. */}
+<h1 style={{ margin: 0 }}>
+    {/* priority: the hero is the LCP element, so it must not be lazy-loaded. */}
+    {/* <Image src={require('../images/hero-christmas.webp')} priority width={0} height={0} style={{ width: '100%', height: 'auto' }} alt="Colyseus Multiplayer Framework" /> */}
+    <Image src={require('../images/hero.webp')} priority width={0} height={0} style={{ width: '100%', height: 'auto' }} alt="Colyseus Multiplayer Framework" />
+</h1>
 
 Colyseus is an open-source Node.js framework for building authoritative game servers, with real-time state synchronization, matchmaking, and simple integration into any game engine or frontend. Authentication, database services, an admin panel, and dev tooling are all included.
 

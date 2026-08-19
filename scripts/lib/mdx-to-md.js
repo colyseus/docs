@@ -349,6 +349,15 @@ function renderNode(node, ctx) {
         case 'FileTree': return '```\n' + renderFileTree(node) + '\n```'
         case 'FileTree.Folder': case 'FileTree.File': return ''
 
+        case 'h1': case 'h2': case 'h3': case 'h4': case 'h5': case 'h6': {
+            // A heading holding nothing but an image (the homepage hero) carries its text
+            // in the alt, which is how a crawler reads it too.
+            const img = node.children.find((c) => c.tag === 'img' || c.tag === 'Image')
+            const text = img && !node.children.some((c) => c.text?.trim())
+                ? inline(attr(img.attrs, 'alt') || '')
+                : inline(body(node, ctx))
+            return text ? `${'#'.repeat(Number(tag[1]))} ${text}` : ''
+        }
         case 'summary': return `**${inline(body(node, ctx))}**`
         case 'figcaption': return `*${inline(body(node, ctx))}*`
         case 'code': return `\`${inline(body(node, ctx))}\``
