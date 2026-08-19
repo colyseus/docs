@@ -118,8 +118,9 @@ Recorded so they aren't reintroduced as "improvements".
   list. Em-dash appositives once shared this bullet and no longer do: the
   [punctuation ban](#punctuation) wins, and the why moves into a comma clause
   or its own sentence.
-- **Deliberate metaphor in section openers stays.** "controls feel underwater"
-  earns its place in `netcode.mdx`. Metaphor in the middle of a procedure does not.
+- **Deliberate metaphor in section openers stays.** "you're aiming at the past"
+  earns its place in `lag-compensation.mdx`. Metaphor in the middle of a
+  procedure does not.
 - **The ~900-word STE dictionary is not adopted.** `handle`, `provide`, `allow`,
   `via`, `may` and friends are ordinary technical English here, and `handler` is
   a real API concept.

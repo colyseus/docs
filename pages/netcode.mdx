@@ -8,7 +8,7 @@ import { PremiumDemos, premiumDemos } from '../components/premium-demos'
 
 # Netcode
 
-Fast-paced games can't wait for the network. If your character only moves after a round-trip to the server, controls feel underwater. But if the client simply moves itself, the server is no longer in charge and cheating becomes trivial.
+Fast-paced games can't wait for the network. If your character only moves after a round-trip to the server, controls feel sluggish. But if the client simply moves itself, the server is no longer in charge and cheating becomes trivial.
 
 Colyseus 0.18 gives you both: the server stays authoritative, and the client **predicts**. Your own movement responds instantly, remote players move smoothly, and hits register against what you saw on screen. The framework runs the prediction, reconciliation, and rewind loops. You supply the deterministic step function.
 
