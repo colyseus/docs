@@ -449,8 +449,9 @@ Read the smoothed value with `predict.value(entity, field)`. Smoothing modes:
 | `reckon` | Dead-reckon forward via a step fn | Server-driven AI / ballistics |
 | `raw` | Unsmoothed (the live synced value) | Debugging |
 
-Two per-attach options are worth knowing:
+Three per-attach options are worth knowing:
 
+- **`smoothMs`**: an output-smoothing time constant in milliseconds. On `damped` and `extrapolate` it is the chase rate (default 50). On `lerp` it arms a display-only output spring (default 0, exact interpolation): see [Rough snapshot streams](/netcode/recipes#rough-snapshot-streams-smoothms).
 - **`snap`**: a value-space threshold past which a jump is treated as a teleport: smoothing resets and the entity pops instead of gliding. Use it for respawns, blinks, warps.
 - **`angle`**: treat the field as radians, interpolating over the shortest arc. Attach angular fields in a separate call from linear ones.
 

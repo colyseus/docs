@@ -23,6 +23,80 @@ Task-oriented patterns that build on the [Client Prediction](/netcode/client-pre
 
 Full behavior reference: [the modes table](/netcode/client-prediction#remote-entities).
 
+## Rough snapshot streams: `smoothMs`
+
+`lerp` renders exactly what the server sent. When the snapshot stream itself is rough (server stamp jitter, uneven per-patch motion), that faithfulness shows as velocity judder: playback speeds up and slows down at each snapshot boundary. The eye punishes velocity jumps far harder than a small, steady offset.
+
+`smoothMs` on a lerp attach arms a display-only **output spring** over the interpolated result, keeping rendered velocity continuous. The default is `0`: exact interpolation, no spring.
+
+<SDKTabs>
+
+    <Tabs.Tab>
+    ```ts
+    // Display-only output spring over the lerp result (default 0 = exact).
+    predict.attachAll("players", { mode: "lerp", fields: ["x", "y"], smoothMs: 25 });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs
+    // Display-only output spring over the lerp result (default 0 = exact).
+    predict.AttachAll("players", new AttachConfig {
+        ["x"] = new PredictFieldOptions { Mode = PredictMode.Lerp, SmoothMs = 25 },
+        ["y"] = new PredictFieldOptions { Mode = PredictMode.Lerp, SmoothMs = 25 },
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua
+    -- Display-only output spring over the lerp result (default 0 = exact).
+    predict:attach_all("players", {
+      x = { mode = "lerp", smooth_ms = 25 },
+      y = { mode = "lerp", smooth_ms = 25 },
+    })
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe
+    // Display-only output spring over the lerp result (default 0 = exact).
+    predict.attachAll("players", {
+        x: { mode: "lerp", smoothMs: 25 },
+        y: { mode: "lerp", smoothMs: 25 },
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript
+    # Display-only output spring over the lerp result (default 0 = exact).
+    predict.attach_all("players", {
+        "x": { "mode": Colyseus.Predict.LERP, "smooth_ms": 25 },
+        "y": { "mode": Colyseus.Predict.LERP, "smooth_ms": 25 },
+    }, room.get_session_id())
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart
+    // Display-only output spring over the lerp result (default 0 = exact).
+    predict.attachAll('players', config: {
+      'x': FieldOptions(mode: PredictMode.lerp, smoothMs: 25),
+      'y': FieldOptions(mode: PredictMode.lerp, smoothMs: 25),
+    }, exceptKey: room.sessionId);
+    ```
+    </Tabs.Tab>
+
+</SDKTabs>
+
+Sizing: during steady motion the spring trails the exact interpolant by `speed × smoothMs`, at any frame rate. Start near `25`: it removes the velocity discontinuities at minimal added lag. `65` smooths rougher streams, at that much more display lag. On `damped` and `extrapolate` the same option is the chase rate and defaults to `50`.
+
+Two boundaries:
+
+- The spring is display-only. Server-side rewind reconstructs the unsmoothed interpolation, so the drawn position trails the hit position by the same `speed × smoothMs` bound. Leave it at `0` where draw and hit must agree exactly (lag-compensated shooters).
+- Judder from network **arrival** jitter is a different problem: size `delay` (or use `tickInterval`) for that first. The spring is for streams that are uneven at the source.
+
 ## Taps between steps: buffer, then consume
 
 Input is sampled once per **fixed step**, not per render frame. Frames and steps don't line up. A 120 Hz display on a 30 Hz tick runs a step every ~4th frame, and a hitchy frame can run several steps at once. Two traps follow. A tap on a **0-step frame** must not be lost (it belongs to the next step). A tap spanning a **multi-step frame** must not fire twice. "Is the key down right now?" sampling gets both wrong.
