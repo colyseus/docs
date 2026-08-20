@@ -243,7 +243,7 @@ Active prediction for the entity you control. This hook is `predict.reconciler()
 const me = useReconciler(
   room,
   (state, room) => state.players.get(room.sessionId),
-  { step: (ctx, p, cmd) => applyInput(p, cmd, ctx.dt), smoothing: 15, snap: 5 },
+  { step: (ctx, p, cmd) => applyInput(p, cmd, ctx.dt), smoothMs: 65, snap: 5 },
 );
 ```
 
