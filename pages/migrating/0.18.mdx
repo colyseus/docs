@@ -71,12 +71,6 @@ npm install --save @colyseus/database @colyseus/admin
 
 These are additive. Existing rooms are unaffected. See [Netcode](/netcode) for the full guide.
 
-#### `smoothing` / `damping` → `smoothMs` (sdk 0.18.2)
-
-Early 0.18 previews (sdk ≤ 0.18.1) had two smoothing-rate options, both per-second rates: `damping` (lerp / extrapolate / damped) and `smoothing` (reckon, reconciler, sim, spawns). From sdk 0.18.2 they are one option, `smoothMs`: the smoothing time constant in milliseconds. Convert with `smoothMs = 1000 / oldValue` (so `smoothing: 20` becomes `smoothMs: 50`, and `smoothing: 15` becomes `smoothMs: 65`). `0` still disables smoothing.
-
-The practical reading of the new unit: a steady mover trails its target by about `speed × smoothMs`, and corrections fade ~63% per `smoothMs` (~95% by 3×). Non-JavaScript SDKs spell it in their own casing (`SmoothMs`, `smooth_ms`).
-
 ### Request/response messaging
 
 Clients can now `await` a reply from a message handler. No more hand-rolled ping/pong message pairs:
