@@ -85,17 +85,40 @@ The accessor `this.inputs.get(sessionId)` exposes the per-client buffered stream
 - **Iterate**: the per-entity loop. Consumes one frame at a time, so the lag-comp `renderTime` stamp tracks each individual input:
 
   ```ts
-  for (const cmd of this.inputs.get(sid)) applyInput(p, cmd, ctx.dt);
+  step(ctx) {
+    for (const [sid, p] of this.state.players) {
+      // frame by frame: the ack and renderTime advance once per input
+      for (const cmd of this.inputs.get(sid)) {
+        applyInput(p, cmd, ctx.dt);
+      }
+    }
+  }
   ```
 
 - **`next()`**: take **exactly one**. Right when a single shared solver step moves every body together: consume one input per entity, then step the world once:
 
   ```ts
-  const cmd = this.inputs.get(sid).next();
-  if (cmd) applyInput(p, cmd, ctx.dt);
+  step(ctx) {
+    for (const [sid, p] of this.state.players) {
+      const cmd = this.inputs.get(sid).next();   // oldest pending frame, or undefined
+      if (cmd) applyInput(p, cmd, ctx.dt);
+    }
+    this.world.step(ctx.dt);                     // one solver step moves every body
+  }
   ```
 
-- **`drain()`**: take **all** buffered frames as an array. The ack (`lastProcessed`) lands on the newest frame.
+- **`drain()`**: take **all** buffered frames as an array. The ack (`lastProcessed`) lands on the newest frame. Use it when you need the array itself: its length, a replay recording, or a physics call that accepts a list.
+
+  ```ts
+  step(ctx) {
+    for (const [sid, p] of this.state.players) {
+      const cmds = this.inputs.get(sid).drain();  // whole burst, oldest first
+      for (const cmd of cmds) {
+        applyInput(p, cmd, ctx.dt);
+      }
+    }
+  }
+  ```
 
 <Callout type="warning">
     Draining all frames but simulating only the latest jumps the ack past inputs you never ran. The client then reconciles against state it can't reproduce. Match the consumption style to how you step.
