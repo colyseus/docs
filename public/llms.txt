@@ -10,7 +10,7 @@ The full corpus is at https://docs.colyseus.io/llms-full.txt.
 ## Overview
 
 - [Introduction](https://docs.colyseus.io/)
-- [Getting Started](https://docs.colyseus.io/getting-started): Get started with Colyseus multiplayer framework. Choose your client SDK for TypeScript, JavaScript, React, Unity, Defold, Construct 3, Cocos Creator, Haxe, Flutter, and more.
+- [Getting Started](https://docs.colyseus.io/getting-started): Get started with Colyseus multiplayer framework. Scaffold a server with npm create colyseus-app, then choose your client SDK for TypeScript, JavaScript, React, Unity, Defold, Construct 3, Cocos Creator, Haxe, Flutter, and more.
 - [TypeScript](https://docs.colyseus.io/getting-started/typescript): Install and set up the Colyseus JavaScript/TypeScript SDK for building real-time multiplayer games. Includes room connections, state synchronization, and full type safety.
 - [React](https://docs.colyseus.io/getting-started/react): Use Colyseus with React using the @colyseus/react hooks package. Manage room connections and real-time state synchronization with idiomatic React patterns.
 - [Unity](https://docs.colyseus.io/getting-started/unity): Install the Colyseus Unity SDK via Unity Package Manager. Build real-time multiplayer games in Unity with room management and state synchronization.
