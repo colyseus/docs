@@ -34,9 +34,9 @@ export interface PremiumDemo {
      */
     play: string;
     /**
-     * Sponsor-only, deliberately NOT rendered: these repositories are private,
-     * so linking them publicly would hand every non-sponsor a 404. Sponsorship
-     * is the way in — see SPONSOR_URL. Kept here for whoever wires up access.
+     * Repository behind the prototype, rendered as the card's Source link.
+     * These repositories are private: sponsors get access, everyone else gets
+     * a 404, which is what the sponsor note under the grid explains.
      */
     source: string;
 }
@@ -91,7 +91,7 @@ export function PremiumDemos() {
         <>
             <DemoGrid>
                 {premiumDemos.map((demo) => (
-                    <DemoCard key={demo.title} title={demo.title} image={demo.image} play={demo.play}>
+                    <DemoCard key={demo.title} title={demo.title} image={demo.image} play={demo.play} source={demo.source}>
                         {demo.description}
                         <span className="demo-card__engines">{demo.engines.join(" · ")}</span>
                     </DemoCard>
@@ -100,8 +100,8 @@ export function PremiumDemos() {
             {/* the offer comes AFTER the grid on purpose — the reader meets the
                 playable games first, the sponsor ask once they've seen them */}
             <p className="premium-note">
-                The source code is the sponsor-only part: these repositories are private,
-                available to <a href={SPONSOR_URL} target="_blank" rel="noopener">Colyseus sponsors</a>.
+                The source code is the sponsor-only part: every <em>Source</em> link above points
+                to a private repository, open to <a href={SPONSOR_URL} target="_blank" rel="noopener">Colyseus sponsors</a>.
             </p>
             <p className="premium-cta">
                 <a href={SPONSOR_URL} target="_blank" rel="noopener">
