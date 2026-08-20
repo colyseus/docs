@@ -241,7 +241,9 @@ By default the input/network rate **is** the physics rate (see [the contract](/n
 ```ts
 this.setFixedTimestep((ctx) => {
   this.applyInputs(ctx);                                    // ONE input per client per step
-  for (let i = 0; i < ctx.subSteps; i++) this.world.step(ctx.subDt);
+  for (let i = 0; i < ctx.subSteps; i++) {
+    this.world.step(ctx.subDt);
+  }
 }, 30, { subSteps: 2 });                                    // 30 inputs/sec, 60 Hz physics
 ```
 

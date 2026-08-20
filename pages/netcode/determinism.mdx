@@ -111,8 +111,12 @@ Suspect your `step` itself? Test it in isolation: run the same input sequence th
 ```ts
 function isDeterministic(start, inputs, dt) {
   const a = clone(start), b = clone(start);
-  for (const cmd of inputs) applyInput(a, cmd, dt);
-  for (const cmd of inputs) applyInput(b, cmd, dt);
+  for (const cmd of inputs) {
+    applyInput(a, cmd, dt);
+  }
+  for (const cmd of inputs) {
+    applyInput(b, cmd, dt);
+  }
   return JSON.stringify(a) === JSON.stringify(b);   // must be true
 }
 ```
