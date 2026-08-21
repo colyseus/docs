@@ -127,10 +127,10 @@ This page is the **client half** of the netcode stack. Send input, predict your 
     ```haxe
     import io.colyseus.predict.Predict;
 
-    var predict = Predict.get(room);
+    var predict = Predict.get(room, { mode: "lerp", delay: 100 });
 
-    // Remote players: interpolated between snapshots, 100ms in the past (the default delay).
-    predict.attachAll("players", { x: "lerp", y: "lerp" });
+    // Remote players: render 100ms in the past, interpolated between snapshots.
+    predict.attachAll("players", { mode: "lerp", fields: ["x", "y"] });
 
     // Local player: the input handle is the ONLY thing that stages + sends.
     var input = room.input({ type: MoveInput });
@@ -359,7 +359,7 @@ const predict = Predict.get(room, { mode: "lerp", delay: 100 });
 ```
 
 <Callout type="info">
-    The construction options object is JavaScript-only. Ports take only the room and declare `mode`/`delay` per attach. Use `Predict.Get(room)` in C#, `Predict.get(room)` in Lua, Haxe and Dart, and `Colyseus.Predict.of(room)` in GDScript.
+    The construction options object is available in JavaScript, Haxe and Lua. The remaining ports take only the room and declare `mode`/`delay` per attach: `Predict.Get(room)` in C#, `Predict.get(room)` in Dart, and `Colyseus.Predict.of(room)` in GDScript.
 </Callout>
 
 Call `predict.tick(now)` **once per render frame**, passing the rAF timestamp. It returns the number of fixed input steps due this frame. It also drives everything it owns: reconcile on new acks, correction decay, remote smoothing, event settlement.
@@ -393,6 +393,10 @@ For entities you **don't** control, attach smoothing. `attachAll` covers every e
 
     <Tabs.Tab>
     ```lua
+    -- one config spread over a list of fields:
+    predict:attach_all("players", { mode = "lerp", fields = { "x", "y" } })
+
+    -- or a per-field map, each field picking its own mode:
     predict:attach_all("players", { x = "lerp", y = "lerp" })
 
     -- per-field options instead of a bare mode:
@@ -402,6 +406,10 @@ For entities you **don't** control, attach smoothing. `attachAll` covers every e
 
     <Tabs.Tab>
     ```haxe
+    // one config spread over a list of fields:
+    predict.attachAll("players", { mode: "lerp", fields: ["x", "y"] });
+
+    // or a per-field map, each field picking its own mode:
     predict.attachAll("players", { x: "lerp", y: "lerp" });
 
     // per-field options instead of a bare mode:
