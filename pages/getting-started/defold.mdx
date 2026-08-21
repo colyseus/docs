@@ -78,7 +78,7 @@ function init(self)
         end
 
         room = _room
-        print("Joined room: " .. room.id)
+        print("Joined room: " .. room.room_id)
 
         -- Get state callbacks handler
         callbacks = ColyseusSDK.callbacks(room)
@@ -117,6 +117,56 @@ function init(self)
 end
 ```
 
+## Client-side prediction
+
+Colyseus 0.18 ships the full netcode stack for Defold. You get input on a fixed
+timestep, rollback-and-replay reconciliation of your own entity, and
+interpolation of the entities you don't control. [Client Prediction &
+Reconciliation](/netcode/client-prediction) covers it in depth. Every example
+there has a **Lua** tab. The Defold-shaped loop:
+
+```lua filename="network.script"
+local Predict = require("colyseus.predict.predict")
+
+local predict = Predict.get(room)
+local input = room:input()
+
+-- Entities you DON'T control: interpolated, rendered 100ms in the past.
+predict:attach_all("players", { mode = "lerp", fields = { "x", "y" } })
+
+-- Your own entity: predicted immediately, rolled back and replayed on each ack.
+local me = predict:sim({
+    input = input,
+    world = { paddle = room.state.players[room.session_id], puck = room.state.puck },
+    step = function(ctx, world, cmd)   -- the SAME function the server runs
+        apply_input(world, cmd, ctx.dt)
+    end,
+    smooth_ms = 65,
+})
+
+function update(self, dt)
+    -- tick() FIRST: it advances the render clock every value() read below uses,
+    -- and returns how many fixed input steps are due this frame.
+    local steps = predict:tick()
+    for _ = 1, steps do
+        input.data.dx, input.data.dy = move_axis()
+        input:send()
+    end
+    draw(predict:value(room.state.puck, "x"), predict:value(room.state.puck, "y"))
+end
+```
+
+`Predict.get(room, options)` takes the same options as an attach and uses them
+as defaults, so `Predict.get(room, { mode = "lerp", delay = 100 })` lets every
+attach name only its fields.
+
+<Callout type="info">
+    **Translating the JavaScript examples.** The Lua surface is the same API in
+    Defold spelling. Methods and option keys are `snake_case` (`attach_all`,
+    `smooth_ms`, `render_delay`, `on_predict`, `unique_by`). Method calls use
+    `:`, so a callback context reads `ctx:predict(channel, payload)`.
+</Callout>
+
 ## SDK API
 
 Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select the **Lua (Defold)** tab.
@@ -143,6 +193,29 @@ Alternatively, you can bind the Colyseus server to port 80.
 When running the colyseus server inside WSL2, you won't be able to use `localhost` as the hostname.
 You'll need to get the WSL2 machine's IP by using `wsl hostname -I` and use that IP.
 
+### "How do I point a build at a different server?"
+
+`os.getenv()` returns `nil` on HTML5, so the endpoint cannot come from the
+environment there. Put it in `game.project` and read it with
+`sys.get_config_string`, which works on every platform:
+
+```txt filename="game.project"
+[colyseus]
+endpoint = ws://localhost:2567
+```
+
+```lua
+local endpoint = sys.get_config_string("colyseus.endpoint", "ws://localhost:2567")
+client = ColyseusSDK.Client(endpoint)
+```
+
+Bundling overrides it without touching the file:
+
+```sh filename="Terminal"
+java -jar bob.jar --config=colyseus.endpoint=wss://your-server.example.com \
+    resolve build bundle
+```
+
 ### "`reconnect()` is not working on iOS!"
 
 If you lock your phone, all WebSocket connections will be closed. You can call `reconnect()` to reestablish the session, which needs a workaround for iOS:
@@ -161,5 +234,7 @@ window.set_listener(window_callback)
 ## Next Steps
 
 - [Client SDK API Reference](/sdk) - Full API documentation (select the **Lua (Defold)** tab)
+- [Client Prediction & Reconciliation](/netcode/client-prediction) - Input, rollback and interpolation
+- [Server Input & Timestep](/netcode/server-input) - The server half of the netcode stack
 - [State Synchronization](/state) - Understanding Schema definitions
 - [Room API](/room) - Server-side room implementation
