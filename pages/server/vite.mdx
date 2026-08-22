@@ -75,7 +75,7 @@ Editing `MyRoom.ts` reloads the server in place; editing your frontend reloads t
 | --- | --- | --- | --- |
 | `serverEntry` | `string` | *(required)* | Path to the module exporting `server` (or `rooms`). |
 | `port` | `number` | `2567` | Port the **production** server listens on. Dev mode reuses Vite's port. |
-| `serveClient` | `boolean` | `false` | In the production build, serve the built client via `express.fullStateOnly()` with an SPA fallback to `index.html`. No effect in dev. |
+| `serveClient` | `boolean` | `false` | In the production build, serve the built client via `express.static()` with an SPA fallback to `index.html`. No effect in dev. |
 | `quiet` | `boolean` | `false` | Suppress the plugin's reload/room logs. |
 | `httpServer` | `http.Server` | — | Required only when running Vite in [middleware mode](#middleware-mode). |
 | `loadWsTransport` | `() => Promise<…>` | — | Provide a custom WebSocket transport loader. Defaults to `@colyseus/ws-transport`. |
@@ -124,7 +124,7 @@ colyseus({
 })
 ```
 
-With `serveClient`, the production server mounts `dist/client/` via `express.fullStateOnly()` and adds an SPA fallback that returns `index.html` for unmatched `GET` requests.
+With `serveClient`, the production server mounts `dist/client/` via `express.static()` and adds an SPA fallback that returns `index.html` for unmatched `GET` requests.
 
 ## Middleware mode
 
