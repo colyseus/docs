@@ -24,10 +24,10 @@ const config: DocsThemeConfig = {
     },
 
     banner: {
-        key: "rolling-out-0.18",
+        key: "released-0.18",
         content: (
             <a href="/migrating/0.18">
-                <strong>We're rolling out 0.18! 🚀</strong> - Read the migration guide and try the preview.
+                <strong>Colyseus 0.18 is out! 🚀</strong> - Read the migration guide.
             </a>
         )
     },
