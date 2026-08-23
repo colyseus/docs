@@ -181,7 +181,7 @@ onCreate() {
 }
 ```
 
-Use `this.onMessageBytes()` to receive raw `Uint8Array` messages sent via [`room.sendBytes()`](/sdk/messages) from the client SDK, skipping the default MsgPack decoding.
+Use `this.onMessageBytes()` to receive raw `Uint8Array` messages sent via [`room.sendBytes()`](/sdk) from the client SDK, skipping the default MsgPack decoding.
 
 ```ts filename="MyRoom.ts"
 onCreate() {
@@ -218,7 +218,7 @@ messages = {
 
 #### Responding to a message (request/response)
 
-A message handler can **return a value** to answer a client that's waiting for a reply via [`room.request()` or `room.send(type, payload, callback)`](/sdk/messages#requestresponse). The same handlers serve both plain (fire-and-forget) sends and requests. The return value is sent back only when the client awaited a reply, and ignored otherwise.
+A message handler can **return a value** to answer a client that's waiting for a reply via [`room.request()` or `room.send(type, payload, callback)`](/sdk#requestresponse). The same handlers serve both plain (fire-and-forget) sends and requests. The return value is sent back only when the client awaited a reply, and ignored otherwise.
 
 ```ts filename="MyRoom.ts"
 messages = {
@@ -247,7 +247,7 @@ messages = {
 
 - The handler's return value is **awaited** before being sent, so returning a `Promise` works.
 - If the handler throws or its `Promise` rejects, the client's request rejects with that error instead of timing out.
-- Every handler also receives a third `ctx` argument. Call `ctx.reject(reason)` to settle the request as **rejected**: a deliberate business-logic "no", distinct from an error. On the client, the rejection arrives as an `Error` with `name: "rejected"` and the raw `reason` on its `.reason` property. See [Request/Response on the SDK](/sdk/messages#requestresponse).
+- Every handler also receives a third `ctx` argument. Call `ctx.reject(reason)` to settle the request as **rejected**: a deliberate business-logic "no", distinct from an error. On the client, the rejection arrives as an `Error` with `name: "rejected"` and the raw `reason` on its `.reason` property. See [Request/Response on the SDK](/sdk#requestresponse).
 - `ctx.resolve(value)` answers the request explicitly. Use it when the handler must keep working after replying. A plain `return` is equivalent otherwise.
 - Only the handler registered for the message's specific type can answer a request. The [`"*"` fallback](#fallback-for-all-messages) is **not** eligible, and a request for a type with no handler rejects with a `no_handler` error.
 
@@ -365,7 +365,7 @@ Available options are:
 </Tabs>
 
 <Callout type="info">
-    The client will receive the message in the [`onMessage()`](/sdk/messages#receiving-messages) callback.
+    The client will receive the message in the [`onMessage()`](/sdk#receiving-messages) callback.
 </Callout>
 
 ---
@@ -696,7 +696,7 @@ client.send(1, { kind: "ammo"});
 ```
 
 <Callout type="info">
-    [See how to handle `onMessage` from the frontend SDK](/sdk/messages#receiving-messages)
+    [See how to handle `onMessage` from the frontend SDK](/sdk#receiving-messages)
 </Callout>
 
 ---

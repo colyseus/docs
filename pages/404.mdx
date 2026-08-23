@@ -45,6 +45,8 @@ import { NotFoundPage } from 'nextra-theme-docs'
             // /state/callbacks before its detour through /sdk). replace: true
             // maps the /react and /custom children and carries anchors over.
             { from: "/sdk/state-sync-callbacks", to: "/state/callbacks", replace: true },
+            // messages folded back into /sdk; heading slugs preserved
+            { from: "/sdk/messages", to: "/sdk", replace: true },
 
             // Unified Matchmaking section absorbed these pages. replace: true
             // carries anchors over (heading slugs were preserved).
