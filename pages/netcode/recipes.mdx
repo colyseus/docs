@@ -540,7 +540,7 @@ const hidden = !item.alive || pickups.has(id);
 A mispredict needs no cleanup code: the entry auto-rejects once the server processes past it silently, `has(id)` flips back, the derived view recovers. See [`confirmOn`](/netcode/client-prediction#confirming-from-state-confirmon) for the `add`/`remove` membership variants (predicted drops and consumables).
 
 <Callout type="info">
-    `confirmOn` is JavaScript-only. Ports get the same behavior with two lines: `ctx.predict(pickups, itemId)` in the step, and `confirm(itemId)` from a schema callback watching `alive`. The `has(id)` derive works everywhere except the GDScript binding.
+    `confirmOn` is available in JavaScript and C# (`ConfirmOn = new ConfirmOn { Collection = "items", Field = "alive", Equals = false }`). The other ports get the same behavior with two lines: `ctx.predict(pickups, itemId)` in the step, and `confirm(itemId)` from a schema callback watching `alive`. The `has(id)` derive works everywhere except the GDScript binding.
 </Callout>
 
 ## Dead-reckoned AI (server-driven)
@@ -733,7 +733,7 @@ const me = predict.sim({
 ```
 
 <Callout type="info">
-    The opaque-engine face (`adopt` + `pose`) is JavaScript-only. See [the sim note](/netcode/client-prediction#composite--engine-state-predictsim). On the other SDKs, keep engine state in bound schema mirrors. See [Composite scalars](#composite-scalars-predictsim-no-engine) below.
+    The opaque-engine face (`adopt` + `pose`) is JavaScript-only. See [the sim note](/netcode/client-prediction#composite--engine-state-predictsim). On the other SDKs, keep engine state in bound schema mirrors (C# and Flutter still take `adopt` for opaque extras). See [Composite scalars](#composite-scalars-predictsim-no-engine) below.
 </Callout>
 
 <Callout type="warning">
