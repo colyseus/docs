@@ -395,6 +395,8 @@ The entry point for all client-side smoothing and prediction. Create one per roo
 
 </SDKTabs>
 
+The options seed the room-wide defaults every attach inherits when it omits an option (`mode`, `delay`, `smoothMs`, `snap`, and a reckon `step`/`substep`). `predict.setDefaults(opts)` changes them later, and `predict.mode` reads the current default mode (`SetDefaults` / `Mode` in C#). A change only reaches attaches made *after* the call, since each attach snapshots what it resolved.
+
 <Callout type="info">
     The construction options object is available in JavaScript, C#, Haxe and Lua. The GDScript and Dart bindings take only the room and declare `mode`/`delay` per attach.
 </Callout>
@@ -821,8 +823,9 @@ A predicted timeline produces discrete **events** (a goal, a kill, a pickup) tha
 
 Settlement is automatic where it can be. A sim-born prediction auto-rejects once the server has processed `graceTicks` (default 10) past its birth step without a `confirm()`. The server ran the very timeline that predicted the event, and stayed silent. UI-born predictions (`goals.predict(payload)` called outside the sim) can't count ticks, so they fall back to a wall-clock TTL (`ttlMs`, default `max(2×rtt, 600ms)`).
 
-Three more options:
+Four more options:
 
+- **`label`**: a diagnostic name. Nothing resolves by it; it names the channel in warnings, which starts to matter once a room has several.
 - **`uniqueBy`**: gives entries identity: dedupe while pending, and address one among several on confirm/reject. Available in C#, Lua, and Haxe; the GDScript and Flutter channels use explicit string keys instead.
 - **`cooldownMs`**: rate-limits feedback channel-wide.
 - **`onConfirm`**: available but usually empty; the optimistic feedback already played.
