@@ -133,7 +133,7 @@ Move the extra fields onto a nested child `Schema`. Inherited fields count towar
 
 ### `Room#setMetadata()` now replaces instead of merging
 
-In 0.17, `room.setMetadata({ ... })` (and `room.setMatchmaking({ metadata: { ... } })`) would shallow-merge the provided fields into the existing metadata. In 0.18 these calls **replace** metadata wholesale, matching the behaviour of the `this.metadata = ...` setter and the rest of `setMatchmaking()`.
+In 0.17, `room.setMetadata({ ... })` (and `room.setMatchmaking({ metadata: { ... } })`) would shallow-merge the provided fields into the existing metadata. In 0.18 these calls **replace** the entire metadata object, matching the behaviour of the `this.metadata = ...` setter and the rest of `setMatchmaking()`.
 
 To preserve the previous merging behaviour, spread `this.metadata` yourself at the call site:
 

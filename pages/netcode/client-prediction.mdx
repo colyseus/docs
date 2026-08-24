@@ -484,7 +484,7 @@ For entities you **don't** control, attach smoothing. `attachAll` covers every e
 
 </SDKTabs>
 
-In C#, Lua, and Haxe the collection attaches wholesale. The reconciler's overlay wins for your own entity. The GDScript and Dart bindings take an except-key to leave it out explicitly.
+In C#, Lua, and Haxe the collection attaches in full, your own entity included. The reconciler's overlay wins for your own entity. The GDScript and Dart bindings take an except-key to leave it out explicitly.
 
 Read the smoothed value with `predict.value(entity, field)`. Smoothing modes:
 

@@ -48,6 +48,11 @@ Enforcement is [Vale](#enforcement) in CI, plus this file.
   Deliberate metaphor in a section opener is allowed (see
   [rules we reject](#rules-we-deliberately-reject)).
 
+- **No `wholesale`.** A commercial metaphor doing adverb duty, and vaguer than
+  the thing it stands in for. It has no single substitute, so rewrite: name
+  what is replaced ("replaces the entire metadata object"), or use "in full"
+  or "entirely". `Colyseus.PlainWords` enforces this as a CI-gating error.
+
 ## Punctuation
 
 - **No em-dashes.** Rewrite instead, in order of preference:
@@ -131,8 +136,8 @@ Recorded so they aren't reintroduced as "improvements".
 `check-links`. Vale is a single Go binary and deliberately not an npm
 dependency: `brew install vale`, or see <https://vale.sh/docs/install>.
 
-- **`Colyseus.Terms` and `Colyseus.NoEmDash` are errors.** They gate CI. Fix
-  the term, or rewrite the dash.
+- **`Colyseus.Terms`, `Colyseus.NoEmDash` and `Colyseus.PlainWords` are
+  errors.** They gate CI. Fix the term, or rewrite the dash or the word.
 - **Everything else is a warning.** `SentenceLength`, `AmbiguousThis` and
   `Idioms` are advisory, and judgement beats the rule.
 

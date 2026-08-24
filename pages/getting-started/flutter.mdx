@@ -212,7 +212,7 @@ final me = state.players[room.sessionId]!;
 print(me.hp);
 ```
 
-Reading `room.state` every frame is the intended pattern. The room keeps the wrapper while the underlying instance lives and rebuilds it on reconnect, when the decoder replaces the state wholesale. `room.stateAs(OtherClass.new)` still exists for narrowing the root to a class other than the room's own `stateType:`.
+Reading `room.state` every frame is the intended pattern. The room keeps the wrapper while the underlying instance lives and rebuilds it on reconnect, when the decoder replaces the whole state. `room.stateAs(OtherClass.new)` still exists for narrowing the root to a class other than the room's own `stateType:`.
 
 ### Without codegen
 
