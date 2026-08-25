@@ -112,6 +112,19 @@ Go to `src/rooms/MyRoom.ts` and start building your game logic! See more:
 
 </Steps>
 
+## 🤖 Using an AI coding agent
+
+Most models learned Colyseus from material older than 0.18. Without guidance, they write `colyseus.js` imports, `Room<MyState>` generics and `client.id`. The [Colyseus skill](https://github.com/colyseus/skill) keeps the agent on the current APIs and has it check your installed version before writing any Room or Schema code. Install it for Claude Code, Codex, Cursor, Gemini CLI, Copilot or any other agent that supports skills:
+
+``` bash filename="Terminal"
+npx skills add colyseus/skill            # this project
+npx skills add colyseus/skill --global   # every project
+```
+
+The skill activates on its own when a task involves Colyseus. Bundled docs cover the areas agents get wrong most (state, rooms, the client SDK, netcode), with links to the rest.
+
+Without the skill, point the agent at [llms.txt](https://docs.colyseus.io/llms.txt). Every page is also served as raw markdown: append `.md` to its URL, e.g. [`/room.md`](https://docs.colyseus.io/room.md).
+
 ## Scaffolding options
 
 `create-colyseus-app` asks a few questions and creates the project from your answers. Each option adds working, wired-in code, and the room comes with a headless test.
@@ -158,16 +171,3 @@ Pass `.` as the directory to scaffold into the current folder. Omit the director
 The `realtime-action` preset, the `vite` and `monorepo` layouts, `fixed` netcode, `oauth` and the database require TypeScript. Haxe projects take none of these options: the generator copies the Haxe template as is.
 
 Other flags: `--name <pkg-name>`, `--git` (initialize a repository with a first commit), `--no-install`, `--overwrite`. Run `npx create-colyseus-app@latest --help` for the full reference.
-
-## Using an AI coding agent
-
-Most models learned Colyseus from material older than 0.18, so left to memory they write `colyseus.js` imports, `Room<MyState>` generics and `client.id`. The [Colyseus agent skill](https://github.com/colyseus/skill) pins them to the current APIs and has them check your installed version before writing any Room or Schema code. It follows the [Agent Skills](https://agentskills.io) open standard, so it works in Claude Code, Codex, Cursor, Gemini CLI, Copilot, opencode and every other client that implements it.
-
-``` bash filename="Terminal"
-npx skills add colyseus/skill            # this project
-npx skills add colyseus/skill --global   # every project
-```
-
-The skill activates on its own when a task involves Colyseus. It bundles the documentation for the areas agents get wrong most (state, rooms, the client SDK, netcode) and links the rest.
-
-Without a skill, point the agent at [llms.txt](https://docs.colyseus.io/llms.txt). Every page of this documentation is also served as raw markdown: append `.md` to its URL, e.g. [`/room.md`](https://docs.colyseus.io/room.md).
