@@ -31,8 +31,10 @@ jobs:
       # which no pre-commit hook can know. `build` regenerates it.
       - run: pnpm run check:ai-nav
 
-      # terminology (STYLE.md) fails the build; style warnings are reported only
-      - uses: errata-ai/vale-action@v2.1.1
+      # terminology (STYLE.md) fails the build; style warnings are reported only.
+      # v3 ships reviewdog 0.21, which recomputes the diff with the git CLI when
+      # a PR is too large for GitHub's diff API (20k lines) to serve it.
+      - uses: errata-ai/vale-action@v3.0.0
         with:
           version: 3.17.1
           files: pages
