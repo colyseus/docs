@@ -1,4 +1,10 @@
+---
+title: "Debugging"
+description: "Debug a Colyseus server: enable debug messages per category and attach the Node.js inspector to a local or production process."
+---
 import { Callout, Steps } from "nextra/components";
+
+# Debugging
 
 - [Debug messages](#debug-messages)
 - [Inspector (`--inspect` flag)](#inspector)
@@ -18,6 +24,9 @@ DEBUG=colyseus:* npm start
 | `colyseus:message` | Incoming and outgoing room messages |
 | `colyseus:patch` | The number of bytes and interval between patches broadcasted to all clients. |
 | `colyseus:connection` | Incoming and outgoing connections |
+| `colyseus:driver` | Matchmaking driver queries and room-cache operations |
+| `colyseus:presence` | Presence operations (pub/sub and data) |
+| `colyseus:devmode` | Development-mode room caching and restore |
 
 ## Inspector
 

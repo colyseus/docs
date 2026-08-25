@@ -1,5 +1,6 @@
 ---
 title: Turn Based Tanks Demo
+description: "Build a turn-based multiplayer tanks game with Unity and Colyseus."
 ---
 import { Callout } from 'nextra/components';
 
@@ -20,7 +21,7 @@ This demo is designed to work with Colyseus version 0.14.7 and [Unity version 20
 
 ### Launching a local server
 
-You need to install and launch the server from the **provided Server directory** for this demo to function properly. Simply follow the instructions found underneath [\"Running the demo server\" in the Unity section of these docs](/getting-started/unity#running-the-server-locally).
+You need to install and launch the server from the **provided Server directory** for this demo to function properly. Simply follow the instructions found underneath [\"Running the demo server\" in the Unity section of these docs](/getting-started/unity#running-the-test-server-locally).
 
 ### ColyseusSettings ScriptableObject
 
@@ -28,13 +29,13 @@ All server settings can be changed via the ColyseusSetting ScriptableObject loca
 
 ![ScriptableObject](/tutorial/unity/scriptable-object.png)
 
-If you are running a local server, the default settings should be sufficient, however if you wish to host a server you will need to change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly.
+If you are running a local server, the default settings should be sufficient. If you wish to host a server, change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly.
 
 ## Demo Overview
 
 ### Room Metadata
 
-This demo makes use of the room&#39;s metadata to track the players in the game with their username. When a player joins or creates a room their username will be stored in a property called either `team0` or `team1` where `team0` represents the player that created the room and `team1` represents the player that has joined an available room to challenge the creator.
+This demo makes use of the room&#39;s metadata to track the players in the game with their username. When a player joins or creates a room, their username is stored in a property called either `team0` or `team1`. `team0` represents the player that created the room. `team1` represents the player that joined an available room to challenge the creator.
 ``` javascript
 this.metadata.team0
 this.metadata.team1
@@ -43,7 +44,7 @@ this.setMetadata({"team0": options["creatorId"]});
 
 ```
 
-The usernames set in the metadata are then used to filter the available rooms displayed in the lobby. Within the lobby users are able to see any rooms they have created or are available based on whether the room is waiting for a challenger to join the game. Rooms that you have not created and have two players will not be shown in the lobby.
+The usernames set in the metadata are then used to filter the available rooms displayed in the lobby. Within the lobby, users see the rooms they have created, plus any room that is still waiting for a challenger to join. Rooms that you have not created and have two players will not be shown in the lobby.
 
 ``` csharp
 private TanksRoomsAvailable[] TrimRooms(TanksRoomsAvailable[] originalRooms)
@@ -68,7 +69,7 @@ private TanksRoomsAvailable[] TrimRooms(TanksRoomsAvailable[] originalRooms)
 
 ### Keeping the Room Alive
 
-In order to make this demo an asynchronous turn based game we need to keep the room alive even after both players have left the room. The room is kept alive by setting the `autoDispose` flag to false. (You can see this in the TanksRoom server code within the onCreate handler).
+To make this demo an asynchronous turn based game, we need to keep the room alive even after both players have left. The room is kept alive by setting the `autoDispose` flag to false (see the `onCreate` hook in the TanksRoom server code).
 
 ``` javascript
 this.autoDispose = false;
@@ -96,7 +97,7 @@ if(disconnectRoom) {
 ### Pausing the Room
 
 Since this is an example of an asynchronous game, our room could have no users connected to it for any amount of time. When there are no users connected to the room the server doesn't need to update the simulation loop.
-When users disconnect from the room a check is performed to look if there are no more users connected to the room. When no more users are connected to the room the simulation interval effectively gets paused by setting the delay to a high value. In this case the value is a little more than 24 days.
+When users disconnect from the room a check is performed to look if there are no more users connected to the room. When no more users are connected to the room the timestep effectively gets paused by setting the delay to a high value. In this case the value is a little more than 24 days.
 ``` javascript
 
 // Within the room's `onLeave` handler
@@ -118,18 +119,18 @@ if(anyConnected == false) {
 private setServerPause(pause: boolean) {
 
     if(pause) {
-        this.setSimulationInterval(dt => this.gameLoop(dt), this.pauseDelay);
+        this.setTimestep(dt => this.gameLoop(dt), this.pauseDelay);
     }
     else {
-        // Set the Simulation Interval callback
-        this.setSimulationInterval(dt => this.gameLoop(dt));
+        // Set the timestep callback
+        this.setTimestep(dt => this.gameLoop(dt));
     }
 
     this.serverPaused = pause;
 }
 ```
 
-When users rejoin a room that has been paused, the simulation interval is restored.
+When users rejoin a room that has been paused, the timestep is restored.
 ``` javascript
 
 // Within the room's `onJoin` handler
@@ -146,7 +147,7 @@ Start the player in the scene &quot;TanksLobby&quot; located at `Assets\TurnBase
 
 - This demo is an asynchronous turn based game.
 
-- You can leave a room at any point and later return to a game in progress and it will pick up where it last left off.
+- You can leave a room at any point and later return to a game in progress. The game resumes where it left off.
 
 - Only two players can play in a game.
 
@@ -158,7 +159,7 @@ Start the player in the scene &quot;TanksLobby&quot; located at `Assets\TurnBase
 
 - All controls are displayed in the **ESC** menu.
 
-- You have the ability to leave the room at any time using the Exit option in the ESC menu, or you can Surrender the game to your opponent.
+- You can leave the room at any time using the Exit option in the ESC menu, or Surrender the game to your opponent.
 
 - You have 3 Action Points for your turn. Moving left/right consumes **one** AP and firing consumes **two** AP.
 
@@ -170,7 +171,7 @@ Start the player in the scene &quot;TanksLobby&quot; located at `Assets\TurnBase
 
 - Between each movement or firing action there is a 2 second delay before another action can be taken.
 
-- When a game ends due to a player&#39;s tank getting destroyed, or someone surrendering, a game over menu, showing a win/loss message, will be displayed with the options to either request a rematch or to quit the game. If the other player requests a rematch before you leave, a message will be displayed on the game over menu.
+- A game ends when a player&#39;s tank is destroyed or someone surrenders. A game over menu then shows a win/loss message, with options to request a rematch or quit the game. If the other player requests a rematch before you leave, a message will be displayed on the game over menu.
 
 - There is an &quot;online indicator&quot; next to your opponents name to signal whether they are in the room at the same time with you.
 	- **Red** = offline

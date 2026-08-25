@@ -5,9 +5,15 @@
   "description": "Colyseus Documentation",
   "type": "module",
   "scripts": {
+    "prepare": "git config core.hooksPath .githooks || true",
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
+    "build": "node scripts/generate-ai-nav.js && next build && node scripts/emit-markdown.js",
+    "start": "next start",
+    "generate:ai-nav": "node scripts/generate-ai-nav.js",
+    "emit-markdown": "node scripts/emit-markdown.js",
+    "check:ai-nav": "node scripts/generate-ai-nav.js --check",
+    "check-links": "node scripts/check-links.js",
+    "lint:prose": "node scripts/lint-prose.js"
   },
   "repository": {
     "type": "git",
@@ -32,6 +38,7 @@
   "devDependencies": {
     "@types/node": "^22.10.0",
     "@types/react": "19.0.1",
+    "github-slugger": "^2.0.0",
     "typescript": "^5.7.2"
   },
   "packageManager": "pnpm@10.10.0"

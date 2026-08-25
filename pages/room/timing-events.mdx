@@ -15,12 +15,12 @@ from your `Room` instance.
 </Callout>
 
 <Callout type="warning">
-    The built-in [`setTimeout`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout) and [`setInterval`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setInterval) methods rely on CPU load, which may delay an unexpected amount of time to execute.
+    The built-in [`setTimeout`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setTimeout) and [`setInterval`](https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/setInterval) methods are affected by CPU load. Under load they can fire much later than requested.
 </Callout>
 
 ## Clock
 
-The clock is provided as a useful mechanism to time events outside of a stateful simulation. An example use case could be: when a player collects an item you might `clock.setTimeout(...)` to create a new collectible. One advantage to using `this.clock` is that you do not have to be concerned with room updates and deltas and can instead focus on timing your events independently of the room state.
+The clock is provided as a useful mechanism to time events outside of a stateful simulation. An example use case could be: when a player collects an item you might `clock.setTimeout(...)` to create a new collectible. One advantage of `this.clock` is that you do not have to track room updates and deltas. You can instead time your events independently of the room state.
 
 ### Clock Methods
 
@@ -41,7 +41,7 @@ instance which identifies the interval, so you can manipulate it later.
 
 **Example**
 
-The example below shows a Room with: `setInterval()`, `setTimeout` and clearing a previously stored instance of type `Delayed`; along with showing the currentTime from the Room's clock instance.
+The example below shows a Room with `setInterval()`, `setTimeout`, and clearing a previously stored instance of type `Delayed`. The example also reads `currentTime` from the Room's clock instance.
 
 After 1 second 'Time now ' + `this.clock.currentTime` is `console.log`'d, and then after 10 seconds we clear the interval via `this.delayedInterval.clear()`
 
@@ -87,11 +87,11 @@ Stop counting time.
 
 #### `clock.tick()`
 
-This method is called automatically at every simulation interval step. All
+This method is called automatically at every timestep. All
 `Delayed` instances are checked during `tick`.
 
 <Callout type="info">
-    See [Room#setSimiulationInterval()](/room#set-simulation-interval) for more details.
+    See [Room#setTimestep()](/room#game-loop) for more details.
 </Callout>
 
 ### Clock Properties

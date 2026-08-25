@@ -1,5 +1,6 @@
 ---
 title: 3rd Party Packages
+description: "Community packages that pair well with Colyseus: ECS libraries, physics, tooling, and integrations contributed by the community."
 ---
 import { Cards, Callout } from 'nextra/components'
 import { PackageIcon } from '@primer/octicons-react'
@@ -14,13 +15,13 @@ This page contains a curated list of third-party npm modules that can help you w
 
 ## Random Number Generator
 
-When building procedurally generated content, it is a good idea to use a predictable random number generator. This way, you can reproduce the same content across clients without having to synchronize the generated output.
+When building procedurally generated content, use a predictable random number generator. This way, you can reproduce the same content across clients without having to synchronize the generated output.
 
 - [<PackageIcon/> seedrandom ↗](https://www.npmjs.com/package/seedrandom)
 
 ## Entity-Component System (ECS)
 
-An Entity-Component System is a design pattern used mostly in game development. It can help you build complex systems in a more modular way.
+An Entity-Component System is a design pattern used mostly in game development. This pattern can help you build complex systems in a more modular way.
 
 - [<PackageIcon/> miniplex ↗](https://www.npmjs.com/package/miniplex)
 
@@ -28,11 +29,14 @@ An Entity-Component System is a design pattern used mostly in game development. 
 
 Spatial partitioning is a technique used in game development to optimize collision detection and other spatial queries.
 
+Use a quadtree for 2D queries. For triangle meshes, a bounding volume hierarchy (BVH) accelerates raycasts and shape queries against level geometry. `three-mesh-bvh` requires no DOM or WebGL, so the same collision code runs on the backend and in the browser.
+
 - [<PackageIcon/> @timohausmann/quadtree-ts ↗](https://www.npmjs.com/package/@timohausmann/quadtree-ts)
+- [<PackageIcon/> three-mesh-bvh ↗](https://www.npmjs.com/package/three-mesh-bvh)
 
 ## Physics
 
-It is generally **not recommended** to run an entire physics engine on the backend. You can use a physics engine to calculate collisions and other physics-related computations.
+Avoid running an entire physics engine on the backend. You can use a physics engine to calculate collisions and other physics-related computations.
 
 ### 3D Physics
 
@@ -49,6 +53,14 @@ It is generally **not recommended** to run an entire physics engine on the backe
 ### Navigation Mesh
 
 - [<PackageIcon/> navcat ↗](https://www.npmjs.com/package/navcat)
+
+## Loading 3D Models in Node
+
+An authoritative server often needs the same geometry the client renders, for collision or raycasts. The `GLTFLoader` from three.js expects browser APIs, so it does not run under Node.
+
+- [<PackageIcon/> node-three-gltf ↗](https://www.npmjs.com/package/node-three-gltf)
+
+Convert the model at build time instead of at server boot. Read the `.glb` once, write the triangles you need into a compact binary, then load that file from both the backend and the frontend.
 
 ## Profanity Filter
 

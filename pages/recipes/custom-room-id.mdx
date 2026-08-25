@@ -4,7 +4,7 @@ description: "How to set a custom room ID in Colyseus instead of using the defau
 ---
 import { Callout } from 'nextra/components';
 
-## Custom Room ID
+# Custom Room ID
 
 You can override how you set the room ID for a new room.
 
@@ -14,7 +14,7 @@ To ensure we don't accidentally use the same room ID twice, we use the presence 
 2. Generate room IDs until you generate one that is not already used.
 3. Register the new room ID with the Presence API.
 
-Step 2 here will most likely take only a single iteration, even with millions of rooms, with a 4 letter room ID. Using the Presence API in this way also has the advantage of getting you part of the way to running your server on multiple machines (by switching to the [RedisPresence](https://docs.colyseus.io/server/presence/#redispresence-clientopts)).
+Step 2 here will most likely take only a single iteration, even with millions of rooms, with a 4 letter room ID. Using the Presence API this way also moves you closer to running your server on multiple machines: just switch to the [RedisPresence](/server/presence#redis-presence).
 
 See the code below:
 
@@ -55,13 +55,13 @@ export class MyRoom extends Room {
     }
 
     // Free up the roomId that this room used.
-    async onDispose(options: any) {
+    async onDispose() {
         this.presence.srem(this.LOBBY_CHANNEL, this.roomId);
     }
 }
 ```
 
 <Callout type="warning">
-    There is a small race in this code where two onCreate calls could randomly generate the same code before either of them register it. This will result in two rooms having the same ID. This race is extremely unlikely however (with 1 million active rooms and true randomness, it'd still be 1 in 15 trillion).
+    There is a small race in this code where two onCreate calls could randomly generate the same code before either of them register it. This collision would give two rooms the same ID. This race is extremely unlikely however (with 1 million active rooms and true randomness, it'd still be 1 in 15 trillion).
 </Callout>
 

@@ -1,10 +1,15 @@
 ---
 title: "Part 4: Fixed Tickrate"
+description: "Part 4 of the Phaser + Colyseus tutorial: run the simulation at a fixed tickrate on both client and server."
 ---
 import { Callout, Cards, Tabs } from "nextra/components";
 import { DownloadIcon, LinkIcon } from '@primer/octicons-react'
 
 # Phaser #4: Fixed Tickrate
+
+<Callout type="info">
+    This tutorial enqueues and dequeues inputs at a fixed tick **by hand** to teach the concept. For the built-in 0.18 API (`defineInput()` + `setFixedTimestep()`), see [Server Input & Fixed Timestep](/netcode/server-input).
+</Callout>
 
 This guide will show you how you can build a multiplayer experience with Colyseus Multiplayer Framework and Phaser.
 
@@ -40,14 +45,30 @@ The server and client must process the input and apply the same update loop logi
 
 A common technique we can apply is to enqueue player inputs, and process them all at the next server tick.
 
-Let's update the server's `Player` definition to hold a queue of inputs:
+Let's update the server's `Player` definition to hold a queue of inputs, a local-only field that is never synchronized to clients:
 
-```typescript
-export class Player extends Schema {
-  // (...)
-  inputQueue: any[] = [];
-}
-```
+<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
+    <Tabs.Tab>
+    The `.noSync()` modifier keeps the field on the instance without registering it for synchronization:
+
+    ```typescript
+    export const Player = schema({
+      // (...)
+      inputQueue: t.ref(Array).noSync().default(() => []),
+    }, "Player");
+    ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+    A class field without `@type()` is never synchronized:
+
+    ```typescript
+    export class Player extends Schema {
+      // (...)
+      inputQueue: any[] = [];
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
 
 Now, when receiving the player input messages, instead of processing them immediately, we are going to enqueue them to be processed later:
 
@@ -68,13 +89,13 @@ messages = {
 
 We need to have an update loop in the backend with the same implementation we do for the frontend.
 
-For this, we use `this.setSimulationInterval()` to register the update loop:
+For this, we use `this.setTimestep()` to register the update loop:
 
 ```ts filename="MyRoom.ts"
 // (...)
 onCreate() {
     // (...)
-    this.setSimulationInterval((deltaTime) => {
+    this.setTimestep((deltaTime) => {
         this.update(deltaTime);
     });
 }
@@ -111,9 +132,9 @@ update(deltaTime: number) {
 
 ## Fixed tick-rate
 
-It is more practical and simple to understand “ticks per second” than “milliseconds per frame” when dealing with determinism.
+“Ticks per second” is more practical and simpler to understand than “milliseconds per frame” when dealing with determinism.
 
-We can manually force more ticks during a single render frame to make sure the simulation behaves the same, even when the rendering frame-rate drops.
+We can force extra ticks during a single render frame so the simulation behaves the same even when the rendering frame-rate drops.
 
 ### Fixed tick-rate on Phaser
 
@@ -161,7 +182,7 @@ Let's do the same for the backend now:
 // (...)
 onCreate() {
     let elapsedTime = 0;
-    this.setSimulationInterval((deltaTime) => {
+    this.setTimestep((deltaTime) => {
         elapsedTime += deltaTime;
 
         while (elapsedTime >= this.fixedTimeStep) {

@@ -1,12 +1,13 @@
 ---
 title: "State View"
+description: "StateView gives each Colyseus client a filtered view of the room state: per-player visibility without sending the full state to everyone."
 ---
-import { Callout } from 'nextra/components'
+import { Callout, Tabs } from 'nextra/components'
 
 # Per-client State Visibility with `StateView`
 
 <Callout type="info" emoji="🆕">
-    This feature was introduced in version `0.16`. It replaces the previously experimental `@filter()` and `@filterChildren()` decorators.
+    This feature was introduced in version `0.16` and replaces the previously experimental `@filter()` and `@filterChildren()` decorators.
 </Callout>
 
 By default, the entire state is visible to all clients. However, you may want to control which parts of the state are visible to each client.
@@ -14,14 +15,14 @@ By default, the entire state is visible to all clients. However, you may want to
 **You can do so by:**
 
 1. Assigning a `StateView` instance to the client
-2. Tag state fields with the `@view()` decorator
+2. Tag state fields with the `.view()` field modifier
 3. Manually `.add()` schema instances to the `StateView`
 4. Manually `.remove()` schema instances from the `StateView`
 
 A `StateView` instance must be assigned to the `client.view`.
 
 <Callout type="warning">
-    It is not recommended to rely on `StateView` for large datasets, as it is not optimized for that yet. However, it is a great way to filter data per client, such as "private fields" per schema instance, "level of detail", area-based, team-owned data, etc.
+    Avoid relying on `StateView` for large datasets: it is not optimized for that yet. However, it is a great way to filter data per client. Examples: "private fields" per schema instance, "level of detail", area-based or team-owned data.
 </Callout>
 
 ## Initializing a `StateView`
@@ -41,23 +42,41 @@ import { StateView } from "@colyseus/schema";
 
     - Each `StateView` instance is going to add a new encoding step for state serialization.
     - You may re-use the same `StateView` instance for multiple clients, or create a new one for each client.
-    - Internally, all "shared" properties (properties not tagged with `@view()`) are serialized first, and then each `StateView` is serialized with its own set of properties.
+    - Internally, all "shared" properties (properties not tagged with `.view()`) are serialized first, and then each `StateView` is serialized with its own set of properties.
 </Callout>
 
 
-## Tagging fields with `@view()`
+## Tagging fields with `.view()`
 
-The `@view()` decorator is used to tag a field as only visible to `StateView` instances that contain that `Schema` instance.
+The `.view()` field modifier (or `@view()` decorator) is used to tag a field as only visible to `StateView` instances that contain that `Schema` instance.
 
-```ts {6} filename="MyState.ts"
-class Player extends Schema {
-    // visible to all
-    @type("string") name: string;
+<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
+    <Tabs.Tab>
 
-    // only visible to clients containing this schema instance on their `StateView`
-    @view() @type("number") position: number;
-}
-```
+    ```ts {6} filename="MyState.ts"
+    const Player = schema({
+        // visible to all
+        name: t.string(),
+
+        // only visible to clients containing this schema instance on their `StateView`
+        position: t.number().view(),
+    }, "Player");
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+
+    ```ts {6} filename="MyState.ts"
+    class Player extends Schema {
+        // visible to all
+        @type("string") name: string;
+
+        // only visible to clients containing this schema instance on their `StateView`
+        @view() @type("number") position: number;
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
 
 In the example above, the `position` field is only visible to clients that contain this `Player` instance in their `StateView`.
 
@@ -99,26 +118,45 @@ if (client.view.has(player)) {
 }
 ```
 
-The frontend will receive either an "On Remove" or "Listen" callback, depending on which structure the schema instance is part of.
-
-## Specialized tags with `@view(tag: number)`
+## Specialized tags with `.view(tag: number)`
 
 Sometimes you may want to have multiple views with different fields.
 
-```ts {9} filename="MyState.ts"
-class Player extends Schema {
-    // visible to all
-    @type("string") name: string;
+<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
+    <Tabs.Tab>
 
-    // any `.add(player)` will see this field
-    @view() @type("number") health: number;
+    ```ts {9} filename="MyState.ts"
+    const Player = schema({
+        // visible to all
+        name: t.string(),
 
-    // only `.add(player, 1)` will see this field
-    @view(1) @type("number") position: number;
-}
-```
+        // any `.add(player)` will see this field
+        health: t.number().view(),
 
-By assigning a numeric tag to the `@view()` decorator, that field will only be visible to clients that contain this `Schema` instance on their `StateView` with the same tag:
+        // only `.add(player, 1)` will see this field
+        position: t.number().view(1),
+    }, "Player");
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+
+    ```ts {9} filename="MyState.ts"
+    class Player extends Schema {
+        // visible to all
+        @type("string") name: string;
+
+        // any `.add(player)` will see this field
+        @view() @type("number") health: number;
+
+        // only `.add(player, 1)` will see this field
+        @view(1) @type("number") position: number;
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+You can assign a numeric tag to the `.view()` modifier. That field is then only visible to clients whose `StateView` contains this `Schema` instance with the same tag:
 
 ```ts {6,7} filename="MyRoom.ts"
 // ...
@@ -133,32 +171,55 @@ By assigning a numeric tag to the `@view()` decorator, that field will only be v
 ```
 
 
-In the example above, the `position` field is only visible to clients that contain this `Player` instance in their `StateView` with tag `1`, whereas the `health` field is visible to all clients that contain this `Player` instance in their `StateView`.
+In the example above, only clients that added this `Player` instance with tag `1` can see the `position` field. The `health` field is visible to all clients that contain this `Player` instance in their `StateView`.
 
 ---
 
 The following table shows the relation between type annotations and the visibility of each field on the frontend:
 
-| Annotations              | Without `view.add()` | `view.add(instance)` | `view.add(instance, 1)` |
-|-----------------------------------|----------------------|-------------------------|-----------------|
-| `@type(...)`                      | ✅                   | ✅                       | ✅              |
-| `@view() @type(...)`              | ❌                   | ✅                       | ✅              |
-| `@view(1) @type(...)`             | ❌                   | ❌                       | ✅              |
+| Field declaration                        | Without `view.add()` | `view.add(instance)` | `view.add(instance, 1)` |
+|------------------------------------------|----------------------|-------------------------|-----------------|
+| `t.*(...)` / `@type(...)`                | ✅                   | ✅                       | ✅              |
+| `t.*(...).view()` / `@view() @type(...)` | ❌                   | ✅                       | ✅              |
+| `t.*(...).view(1)` / `@view(1) @type(...)` | ❌                 | ❌                       | ✅              |
 
 ## Items of `ArraySchema` and `MapSchema`
 
-When you tag an array or map with `@view()`, each element of the array or map must be added to the client's `StateView` individually.
+When you tag an array or map with `.view()`, elements added to the collection **later** must be added to the client's `StateView` individually. (Calling `view.add(collection)` also brings in the elements it holds at that moment.)
 
-```ts {7} filename="MyState.ts"
-class Player extends Schema {
-    @type("string") name: string;
-    @type("number") position: number;
-}
+<Callout type="info">
+    To grant a client every future element automatically, [subscribe to the collection](#subscribing-to-a-collection) instead of adding each element by hand.
+</Callout>
 
-class MyState extends Schema {
-    @view() @type({ map: Player }) players = new MapSchema<Player>();
-}
-```
+<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
+    <Tabs.Tab>
+
+    ```ts {7} filename="MyState.ts"
+    const Player = schema({
+        name: t.string(),
+        position: t.number(),
+    }, "Player");
+
+    const MyState = schema({
+        players: t.map(Player).view(),
+    }, "MyState");
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+
+    ```ts {7} filename="MyState.ts"
+    class Player extends Schema {
+        @type("string") name: string;
+        @type("number") position: number;
+    }
+
+    class MyState extends Schema {
+        @view() @type({ map: Player }) players = new MapSchema<Player>();
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
 
 The instance must be assigned to the state and added to the `StateView`:
 
@@ -174,3 +235,41 @@ import { StateView } from "@colyseus/schema";
     }
 // ...
 ```
+
+## Subscribing to a collection
+
+`view.add(instance)` is a **one-shot**: it grants visibility of that instance, and nothing else. For a collection that keeps gaining elements, that means calling `.add()` again for every new one. Forgetting a call silently leaves that client behind.
+
+`view.subscribe(collection)` makes it standing. The view receives **all future content changes** of that collection, with no further bookkeeping:
+
+```ts {7} filename="MyRoom.ts"
+import { StateView } from "@colyseus/schema";
+// ...
+    onJoin(client, options) {
+        client.view = new StateView();
+
+        // every enemy, present and future, reaches this client
+        client.view.subscribe(this.state.enemies);
+    }
+// ...
+```
+
+Subscribing brings in the collection's current contents as well as future ones, so it replaces the initial `view.add(collection)` rather than supplementing it. The call is idempotent. Subscribing to an already-subscribed collection is a no-op.
+
+How new elements are delivered depends on the collection kind:
+
+- **`ArraySchema` / `MapSchema` / `SetSchema` / `CollectionSchema`**: new children are shipped immediately, as they're added.
+- **[Streamed](/state/streaming) collections** (`t.stream(X)`, or any collection with `.stream()`): new elements enter the view's pending queue and drain a bounded number per tick, in priority order.
+
+On a streamed collection, a second argument orders that client's backlog. The callback receives the candidate element, so it can close over whatever this client sorts by:
+
+```ts filename="MyRoom.ts"
+client.view.subscribe(this.state.enemies, (enemy) =>
+    -((enemy.x - player.x) ** 2 + (enemy.y - player.y) ** 2));   // nearest first
+```
+
+Subscribing again with a new callback replaces it; `null` drops it. See [Priority](/state/streaming#per-client) for the full picture.
+
+<Callout type="info">
+    Subscribing is per-view. If several clients share one `StateView` instance, one `subscribe()` call covers all of them.
+</Callout>

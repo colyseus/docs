@@ -1,0 +1,16 @@
+---
+# Em-dashes are banned in prose. Rewrite with a sentence split, comma,
+# colon, or parentheses. The em-dash token requires a non-space neighbor,
+# so the empty-table-cell placeholder "| — |" (a lone em-dash once Vale
+# strips the pipes) never matches: that placeholder is the one permitted
+# use. Spaced en-dashes and " -- " are flagged too, so the ban cannot be
+# dodged with a lookalike; unspaced numeric ranges (4011–4999) stay
+# legal. See STYLE.md#punctuation.
+extends: existence
+message: "Replace the dash with a comma, colon, parentheses, or a new sentence. See STYLE.md#punctuation."
+level: error
+nonword: true
+tokens:
+  - '\S *—|— *\S'
+  - ' – '
+  - ' -- '

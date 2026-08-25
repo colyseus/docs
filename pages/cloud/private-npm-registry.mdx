@@ -1,10 +1,11 @@
 ---
 title: "Private NPM Registry"
+description: "Configure authentication for private NPM packages so Colyseus Cloud can install them during deployment."
 ---
 
 # Private NPM Registry
 
-If you rely on private NPM packages from your organization, you need to configure authentication to access them during deployment. This is done by creating a local `~/.npmrc` file in your project root.
+If you rely on private NPM packages from your organization, you need to configure authentication to access them during deployment. To do so, create a local `~/.npmrc` file in your project root.
 
 ## Example: Private NPM Registry from GitHub
 
@@ -21,4 +22,4 @@ For packages published under your GitHub organization (e.g., `@your-company/pack
 2. Replace `YOUR_GITHUB_TOKEN` with your GitHub personal access token that has `read:packages` permission
 3. Place this `.npmrc` file in your project root directory
 
-This configuration tells npm to use GitHub's package registry for all packages under your organization's scope, while using the default npm registry for all other packages.
+This configuration tells npm to use GitHub's package registry for all packages under your organization's scope. All other packages still come from the default npm registry.

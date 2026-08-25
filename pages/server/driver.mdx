@@ -1,3 +1,7 @@
+---
+title: "Driver"
+description: "The matchmaking driver stores and queries room data in Colyseus. Use the in-memory default for a single process, or an external driver for multi-process deployments."
+---
 import { Callout, Cards } from "nextra/components";
 import { HeartIcon } from "@primer/octicons-react";
 
@@ -5,7 +9,7 @@ import { HeartIcon } from "@primer/octicons-react";
 
 The driver is responsible for storing and querying room data used by the matchmaker.
 
-When a room is created, deleted, or has its metadata updated, the driver persists this information so the matchmaker can find available rooms for players to join.
+When a room is created, deleted, or has its metadata updated, the driver persists this information. The matchmaker then uses it to find available rooms for players to join.
 
 For single-process deployments, the default in-memory driver is sufficient. For multi-process or distributed deployments, you need an external driver (like Redis or PostgreSQL) so all server instances share the same room data.
 
@@ -179,7 +183,7 @@ The driver creates a `roomcaches_v1` table with the following structure:
 |--------|------|-------------|
 | `roomId` | `varchar(9)` | Primary key, unique room identifier |
 | `processId` | `varchar(9)` | ID of the process hosting the room |
-| `name` | `varchar(64)` | Room handler name |
+| `name` | `varchar(64)` | Room type name |
 | `clients` | `integer` | Current number of connected clients |
 | `maxClients` | `integer` | Maximum allowed clients |
 | `locked` | `boolean` | Whether the room is locked |
@@ -187,20 +191,20 @@ The driver creates a `roomcaches_v1` table with the following structure:
 | `metadata` | `jsonb` | Custom room metadata |
 | `publicAddress` | `varchar(255)` | Public address for the room |
 | `createdAt` | `timestamp` | Room creation timestamp |
-| `unlisted` | `boolean` | Whether the room is unlisted from queries |
+| `unlisted` | `boolean` | Whether the room is hidden from lobby/listing queries (still matched by `join()`/`joinOrCreate()`) |
 
 ---
 
 ### MongoDB Driver
 
-The `MongoDriver` stores room data in a MongoDB database. This driver is not actively maintained and is not recommended for production environments.
+The `MongooseDriver` stores room data in a MongoDB database. This driver is not actively maintained and is not recommended for production environments.
 
 ```ts {2,5} filename="app.config.ts"
 import { defineServer } from "colyseus";
 import { MongooseDriver } from "@colyseus/mongoose-driver";
 
 const server = defineServer({
-    driver: new MongooseDriver(/* connection options */),
+    driver: new MongooseDriver(/* connection URI (falls back to MONGO_URI env, then mongodb://127.0.0.1:27017/colyseus) */),
     // ...
 });
 ```

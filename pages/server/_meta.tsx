@@ -1,11 +1,17 @@
 
 export default {
-    "http-routes": "",
-    "presence": "",
-    "driver": "",
+    '-- Setup': { type: 'separator', title: 'Setup' },
     "transport": "",
+    "driver": "",
+    "presence": "",
+    "http-routes": "",
+
+    '-- Development': { type: 'separator', title: 'Development' },
     "devmode": "",
+    "vite": "",
     "debugging": "",
-    "graceful-shutdown": "",
     "logging": "",
+
+    '-- Production': { type: 'separator', title: 'Production' },
+    "graceful-shutdown": "",
 }

@@ -1,8 +1,12 @@
+---
+title: "Presence"
+description: "The Presence API enables communication between rooms and Node.js processes in Colyseus: LocalPresence for development, RedisPresence for scaling, and pub/sub methods."
+---
 import { Callout, Cards, Tabs } from "nextra/components";
 
 # Presence
 
-The Presence API is responsible for inter-process communication (IPC) when scaling Colyseus across multiple processes or machines. It provides pub/sub messaging and shared key-value storage that all server instances can access.
+The Presence API is responsible for inter-process communication (IPC) when scaling Colyseus across multiple processes or machines. This API provides pub/sub messaging and shared key-value storage that all server instances can access.
 
 For single-process deployments, the default in-memory presence is sufficient. For multi-process or distributed deployments, you need an external presence (like Redis) so all server instances can communicate with each other.
 
@@ -15,13 +19,13 @@ For single-process deployments, the default in-memory presence is sufficient. Fo
 
 ### Local Presence
 
-The default presence used by Colyseus is `LocalPresence`, which stores all data in memory and only works within a single process. This is suitable for development and small-scale single-process applications.
+The default presence used by Colyseus is `LocalPresence`, which stores all data in memory and only works within a single process. This presence is suitable for development and small-scale single-process applications.
 
 ---
 
 ### Redis Presence
 
-The `RedisPresence` uses Redis for pub/sub messaging and shared storage using [ioredis](https://github.com/redis/ioredis). This is required for multi-process or distributed deployments.
+The `RedisPresence` uses Redis for pub/sub messaging and shared storage using [ioredis](https://github.com/redis/ioredis). This presence is required for multi-process or distributed deployments.
 
 ```sh npm2yarn
 npm install --save @colyseus/redis-presence
@@ -101,7 +105,7 @@ export class MyRoom extends Room {
 }
 ```
 
-Alternatively, you can access `matchMaker.presence` from anywhere by importing the [Match-maker API](/matchmaker/):
+Alternatively, you can access `matchMaker.presence` from anywhere by importing the [Matchmaker API](/matchmaker/):
 
 ```ts filename="server.ts"
 import { matchMaker } from "colyseus";
@@ -450,23 +454,6 @@ Increment the integer value of a hash field.
 await this.presence.hset("player:123", "score", "100");
 const newScore = await this.presence.hincrby("player:123", "score", 10);
 console.log(newScore); // => 110
-```
-
----
-
-### hincrbyex
-
-Increment a hash field and set an expiration on the hash key.
-
-
-This is useful for rate limiting or temporary counters.
-
-```ts filename="MyRoom.ts"
-// Increment and expire in 60 seconds
-const count = await this.presence.hincrbyex("rate:user:123", "requests", 1, 60);
-if (count > 100) {
-    console.log("Rate limit exceeded");
-}
 ```
 
 ---

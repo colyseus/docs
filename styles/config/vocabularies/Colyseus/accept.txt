@@ -1,0 +1,53 @@
+# Approved project vocabulary — the practical equivalent of STE "Technical Names".
+# Add project nouns here rather than rewording around a false positive.
+# Entries are case-sensitive regex; see STYLE.md#terminology.
+
+Colyseus
+[Mm]atchmaker
+[Mm]atchmaking
+[Ff]rontend
+[Bb]ackend
+[Rr]oom
+[Ss]chema
+[Ss]chemas
+[Ss]essionId
+[Rr]oomId
+[Ll]obby
+[Pp]resence
+[Dd]evmode
+
+# Netcode lexicon
+[Rr]econcile[ds]?
+[Rr]econciler
+[Rr]econciliation
+[Rr]ollback
+[Rr]eplay
+[Rr]ewind
+[Dd]ead-reckon(ed|ing)?
+[Ll]erp(ed|ing)?
+[Ii]nterpolation
+[Ee]xtrapolation
+[Pp]rediction
+[Tt]imestep
+[Ss]ub-step(ping)?
+[Dd]eterminism
+[Dd]eterministic
+[Jj]itter
+[Mm]emoize[ds]?
+
+# Ecosystem
+Nextra
+[Ww]ebSocket[s]?
+MsgPack
+Phaser
+BabylonJS
+PlayCanvas
+Defold
+Haxe
+Godot
+Cocos
+MonoGame
+GameMaker
+Drizzle
+Traefik
+Xsolla

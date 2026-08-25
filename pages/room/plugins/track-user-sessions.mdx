@@ -1,0 +1,97 @@
+---
+title: "TrackUserSessionsPlugin"
+description: "Publish per-user join/leave events into a Presence reverse index. Powers admin tooling like the by-user inspector, duplicate-session enforcement, and session-revocation kicks."
+---
+import { Callout } from "nextra/components";
+
+# TrackUserSessionsPlugin
+
+Maintains a **per-user reverse index** in Presence, a hash keyed by user id whose entries are the user's currently-active `{ roomId, roomName, joinedAt }` sessions. This index powers any tooling that needs to answer "what rooms is user X in right now?":
+
+- The admin panel's **by-user inspector** (live sessions tab).
+- The admin's **Ban** / **Revoke sessions** workflow (close all of a user's open WS connections).
+- The [`UniqueSessionPlugin`](/room/plugins/unique-session)'s duplicate-session check.
+
+## Installation
+
+The plugin ships with the `colyseus` package:
+
+```ts filename="GameRoom.ts"
+import { Room, definePlugins } from "colyseus";
+import { TrackUserSessionsPlugin } from "colyseus/plugins/track-user-sessions";
+
+export class GameRoom extends Room {
+  plugins = definePlugins([
+    new TrackUserSessionsPlugin(),
+  ]);
+}
+```
+
+You'll want to install this plugin directly when:
+
+- You're running [`@colyseus/admin`](/admin) and want the **Users → Active rooms** tab + the **Ban** / **Revoke sessions** workflows to surface what room a user is currently in. Without this plugin, those tabs stay empty.
+- You're building tooling that asks "which rooms is user X in right now?" via the Presence reverse index.
+
+The plugin is also **auto-included** by every plugin that reads the index (currently [`UniqueSessionPlugin`](/room/plugins/unique-session)) via `static dependencies`. If your room already uses one of those, the tracker is wired in for free and you don't need to register it again.
+
+## How it works
+
+- **`onJoin`** (after the room's own `onJoin`): writes `{ roomId, roomName, joinedAt }` to the user's hash at `userRoomsKey(userId)`. Skips anonymous clients (no resolvable user id).
+- **`onLeave`**: removes the entry.
+- **`onDispose`**: sweeps any straggler entries that point at this room.
+
+Identity is resolved via `client.userId ?? client.auth?.id`. The standard `@colyseus/auth` JWT shape supplies both for authenticated sessions and for anonymously-registered ones.
+
+## Options
+
+The plugin is **zero-config**.
+
+## Reading the index
+
+For your own tooling, the plugin exposes a static `listUserSessions(userId, options?)` that reads the cluster-wide reverse index:
+
+```ts
+import { TrackUserSessionsPlugin } from "colyseus/plugins/track-user-sessions";
+
+const sessions = await TrackUserSessionsPlugin.listUserSessions("user-123");
+// [
+//   { sessionId: "s-abc", roomId: "r-aaa", roomName: "battle", joinedAt: 1716300000000 },
+//   { sessionId: "s-def", roomId: "r-bbb", roomName: "lobby",  joinedAt: 1716300010000 },
+// ]
+```
+
+Returned entries have the `UserSessionInfo` shape:
+
+| Field        | Type        | Notes                                                                                          |
+|--------------|-------------|------------------------------------------------------------------------------------------------|
+| `sessionId`  | `string`    | The client session id from when the user joined that room.                                     |
+| `roomId`     | `string`    | The id of the room the user is in.                                                             |
+| `roomName`   | `string`    | The room definition name (matchmaking name).                                                   |
+| `joinedAt`   | `number`    | Unix timestamp (ms) when the join was recorded.                                                |
+| `processId`  | `string?`   | Process hosting the room, populated only with `reconcile: true` (see below).                  |
+
+### Options
+
+| Option         | Type      | Default  | Description                                                                                                                                                                              |
+|----------------|-----------|----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `reconcile`    | `boolean` | `false`  | Cross-check each entry against the matchmaker and drop entries whose room is no longer live. When `true`, surviving entries also carry `processId` from the live room record.            |
+| `removeStale`  | `boolean` | `false`  | Fire-and-forget `hdel` the dropped entries (corrupt JSON + entries dropped by `reconcile`) so the index self-heals on read. No-op when `reconcile` is `false`.                            |
+
+```ts
+// Display surface: drop dead-room entries, sweep them from Presence, get processId.
+const live = await TrackUserSessionsPlugin.listUserSessions(userId, {
+  reconcile: true,
+  removeStale: true,
+});
+
+// Imperative path (kick everything): raw read; dead roomIds just fail the kick harmlessly.
+const all = await TrackUserSessionsPlugin.listUserSessions(userId);
+```
+
+The raw read (default) is one wire op (`HGETALL` on the user's hash). With `reconcile: true`, the cost is bounded at **two** wire ops regardless of cluster size or the user's session count. The matchmaker lookup uses a single batch call (`matchMaker.findRoomsByIds`), not a cluster scan.
+
+## Caveats
+
+- **Anonymous clients are skipped.** No stable identity, nothing to index.
+- **Process crashes can leave stragglers.** The index may briefly contain entries for rooms that no longer exist. Reads that pass `reconcile: true` drop them from the response; `removeStale: true` additionally `hdel`s them from Presence so the index self-heals.
+- **Storage cost is one Presence write per join + one per leave per tracked user.** Negligible for most games. If you have a high-volume relay room where every microsecond counts, just don't include this plugin. The features that depend on it stay disabled for that room type.

@@ -104,7 +104,7 @@ npx schema-codegen src/rooms/schema/* --csharp --output ../MyGame/States/
 ```
 
 <Callout type="info">
-    See the full [State Schema Codegen documentation](/sdk/state-sync-callbacks#frontend-schema-generation) for more options and details.
+    See the full [State Schema Codegen documentation](/state/callbacks#frontend-schema-generation) for more options and details.
 </Callout>
 
 ### DynamicSchema (Skip Code Generation)
@@ -166,7 +166,7 @@ public class Game1 : Game
 
 ### Message Types Codegen
 
-The same `schema-codegen` command also generates C# classes for any TypeScript interface containing `"Message"` in its name. This allows you to use strongly-typed message objects on the client side.
+The same `schema-codegen` command also generates C# classes for any TypeScript interface containing `"Message"` in its name. These classes let you use strongly-typed message objects on the frontend.
 
 For example, given the following server-side code:
 
@@ -228,7 +228,7 @@ room.OnMessage<EventMessage>("event", (message) => {
 
 ### Breakpoints
 
-If you set a breakpoint in your application while the WebSocket connection is open, the connection will be closed automatically after 3 seconds due to inactivity. To prevent the WebSocket connection from dropping, use `pingInterval: 0` during development:
+If you set a breakpoint in your application while the WebSocket connection is open, it closes after 3 seconds of inactivity. To prevent the WebSocket connection from dropping, use `pingInterval: 0` during development:
 
 ```ts filename="app.config.ts"
 import { defineServer } from "colyseus";

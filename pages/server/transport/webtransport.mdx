@@ -1,11 +1,12 @@
 ---
 title: "WebTransport"
+description: "Use the experimental WebTransport (HTTP/3) transport with Colyseus."
 ---
 import { Callout, Cards } from "nextra/components";
 
-## WebTransport
+# WebTransport
 
-WebTransport is a new transport protocol that allows for low-latency, bidirectional, and multiplexed communication between a client and a server. It is built on top of HTTP/3 and QUIC - which is built on top of UDP instead of TCP.
+WebTransport is a new transport protocol that allows for low-latency, bidirectional, and multiplexed communication between a client and a server. The protocol is built on top of HTTP/3 and QUIC, which in turn is built on UDP instead of TCP.
 
 <Callout type="warning">
     **Experimental** - This WebTransport implementation hasn't been battle tested. Please report any issues you may find - WebTransport is still an emerging technology and [not widely available yet](https://caniuse.com/webtransport).
@@ -15,41 +16,56 @@ WebTransport is a new transport protocol that allows for low-latency, bidirectio
     The underlying library is [`@fails-components/webtransport`](https://github.com/fails-components/webtransport) - a backend implementation of HTTP3/WebTransport.
 </Callout>
 
+## Unreliable delivery
+
+WebTransport is the only Colyseus transport with a real **unreliable** channel: QUIC datagrams, delivered at most once and never retransmitted. Two features depend on it, and both are experimental alongside it:
+
+- [`.unreliable()` schema fields](/state/schema#delivery-modifiers): a value replaced every tick ships on the datagram channel. A dropped packet then costs nothing, instead of stalling the ordered stream behind a retransmit.
+- [Unreliable input](/netcode/recipes#unreliable-input-over-webtransport): `room.input({ mode: "unreliable" })`, where each packet carries the last few inputs as redundancy against drops.
+
+Every WebSocket transport lacks that channel. `.unreliable()` fields then stop updating after the full state sync, with a warning logged once. Unreliable input falls back to the reliable channel, its redundancy wasted. Client-side WebTransport support is currently limited to the JavaScript/TypeScript SDK.
+
 ```sh npm2yarn
 npm install --save @colyseus/h3-transport
 ```
 
 **Usage**
 
-```ts {2,6-8} filename="app.config.ts"
+```ts {2-3,9-13} filename="app.config.ts"
+import express from "express";
 import { defineServer } from "colyseus";
 import { H3Transport } from "@colyseus/h3-transport"
+
+const app = express();
+app.get("/hello", (req, res) => {
+  res.json({ hello: "world!" });
+});
 
 const server = defineServer({
   // ...
   transport: new H3Transport({
-    /* H3Transport options */
+    app, // required: H3Transport serves HTTP through this Express app
+    /* other H3Transport options */
   }),
-
-  //
-  // bind express routes
-  //
-  express: (app) => {
-
-    app.get("/hello", (req, res) => {
-      res.json({ hello: "world!" });
-    });
-
-  },
   // ...
 });
 ```
 
-### Available options
+<Callout type="warning">
+    Pass your Express app via the transport's `app` option. The `defineServer({ express })` callback is **not** supported by `H3Transport`: it is silently ignored.
+</Callout>
 
-- `app`: The Express app.
+## Available options
+
+- `app`: **(required)** The Express app served over HTTP/3.
 - `cert`: Certificate contents (cert.pem)
 - `key`: Private key contents (key.pem)
 - `secret`: (?)
 - `server`: The `http.Server` instance to be used.
 - `localProxy`: (optional) Fallback every URL through the this local proxy.
+
+<Callout type="info">
+    `beforeUpgrade`, available on the WebSocket transports, is not supported here.
+    WebTransport sessions arrive already established, so there is no upgrade
+    handshake to intercept. `H3Transport` warns and ignores the option.
+</Callout>

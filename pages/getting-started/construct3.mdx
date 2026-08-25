@@ -16,10 +16,17 @@ import { DownloadIcon, CodeIcon } from '@primer/octicons-react'
 
 - [<DownloadIcon/> Download Construct 3 SDK](https://www.construct.net/en/make-games/addons/111/colyseus-multiplayer-sdk) ([<CodeIcon/> View source-code](https://github.com/colyseus/colyseus-construct3))
 
+The plugin version must match your server's major version. Plugin `0.18.0.x` speaks the Colyseus 0.18 protocol and cannot connect to 0.17 servers.
+
+| Plugin version | Colyseus server version |
+|----------------|-------------------------|
+| `0.18.0.x`     | `0.18.x`                |
+| `0.17.0.x`     | `0.17.x`                |
+
 <Callout type="warning">
     **You need a server to use Colyseus!**
 
-    Construct has well-known existing features to "host" a multiplayer session from the frontend. This is not possible when using Colyseus. Colyseus is an authoritative **server**, written in Node.js. You can't let your frontend host the game sessions directly.
+    Construct has well-known existing features to "host" a multiplayer session from the frontend. This is not possible when using Colyseus. Colyseus is an authoritative **server**, written in Node.js. You can't let your frontend host the rooms directly.
 </Callout>
 
 ## Example project
@@ -46,12 +53,69 @@ Use "On State Change" to react whenever the server updates the room state. Acces
 
 ### Listening for add/remove events on Maps and Arrays within the State
 
-Track when items are added to or removed from collections (Maps and Arrays) in the state. This is essential for handling dynamic lists like players joining/leaving or inventory changes.
+Track when items are added to or removed from collections (Maps and Arrays) in the state. These events are essential for handling dynamic lists like players joining/leaving or inventory changes.
 
 ![](/construct3/state-items-add-or-remove.png)
+
+## Request/Response
+
+<Callout type="info">
+    Requires plugin `0.18.0.0` or later and a Colyseus 0.18 server.
+</Callout>
+
+"Send request" works like "Send message", but waits for the server's reply. The server answers by [returning a value from its message handler](/room#responding-to-a-message-requestresponse), or turns the request down with `ctx.reject(reason)`.
+
+Every request carries a **Tag** of your choice, so the reply can be matched back to the request that produced it, the same way the HTTP actions work.
+
+| ACE | Type | Description |
+|-----|------|-------------|
+| Send request | Action | Sends `Type` with `Message` and waits for the reply. |
+| Send JSON request | Action | Same, with the payload written as a JSON string, e.g. `Colyseus.JSON("{ userId: 42 }")`. |
+| On Room Response | Trigger | The server replied. Read the reply with `ResponseValue` / `ResponseValueAt`. |
+| On Room Request Error | Trigger | The server rejected the request, the handler threw, no handler exists, the connection dropped, or no reply arrived within 10 seconds. |
+| Request was rejected | Condition | True inside "On Room Request Error" when the server called `ctx.reject(reason)`. The reason is available through `ResponseValue`. |
+| `ResponseTag` | Expression | Tag of the last reply or error. |
+| `ResponseValue` | Expression | The reply. Objects are returned as JSON strings. |
+| `ResponseValueAt("path")` | Expression | A nested value of the reply, e.g. `ResponseValueAt("profile.name")`. |
+| `ResponseValueType` | Expression | `"number"`, `"string"`, `"boolean"`, `"object"` or `"undefined"`. |
+
+A deliberate rejection is part of your game's flow, not a failure: it triggers "On Room Request Error" but **not** "On Error (any)". Handler errors, missing handlers, disconnects and timeouts trigger both, and `ErrorMessage` describes what went wrong.
+
+On the server, the same `messages` handlers serve both plain messages and requests:
+
+```ts filename="MyRoom.ts"
+messages = {
+    "get-profile": async (client, { userId }) => {
+        return await db.profiles.findById(userId); // → "On Room Response"
+    },
+    "buy-item": (client, { itemId }, ctx) => {
+        const item = shop.get(itemId);
+        if (!item) return ctx.reject({ reason: "unknown-item" }); // → "On Room Request Error" + "Request was rejected"
+        return { balance: item.buy(client) };
+    },
+}
+```
+
+## Room Clock
+
+<Callout type="info">
+    Requires plugin `0.18.0.0` or later and a Colyseus 0.18 server.
+</Callout>
+
+The room keeps a clock synchronized with the server, which you can read from expressions:
+
+| Expression | Description |
+|------------|-------------|
+| `ServerNow` | Estimated current server time, in milliseconds. |
+| `RenderNow` | Smoothed server time, suitable for interpolating remote entities. |
+| `RoundTripTime` | Measured round-trip time to the room, in milliseconds. |
+| `Jitter` | Variation of the round-trip time, in milliseconds. |
+
+The clock only synchronizes on rooms that call [`defineInput()`](/netcode/server-input) on the server. On any other room, `ServerNow` and `RenderNow` return the local time, and `RoundTripTime` and `Jitter` return `0`. All four return `-1` while not connected to a room. For a one-off measurement on any room, use the "Get Room Ping" action and the `CurrentPing` expression instead.
 
 ## Next Steps
 
 - [Client SDK API Reference](/sdk) - Full API documentation for all methods, events, and room operations
+- [Request/Response](/sdk#requestresponse) - How requests and replies work in the SDK
 - [State Synchronization](/state) - Understanding Schema definitions
 - [Room API](/room) - Server-side room implementation

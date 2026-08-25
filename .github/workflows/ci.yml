@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # `build` stamps sitemap lastmod from each page's last commit
+
+      # reads the pinned pnpm version from package.json's "packageManager"
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # validates every internal link and anchor, plus the 404.mdx redirect map
+      - run: pnpm run check-links
+
+      # llms.txt / robots.txt are derived from the sidebar — fail if they weren't
+      # regenerated. sitemap.xml is untracked: its lastmod comes from git history,
+      # which no pre-commit hook can know. `build` regenerates it.
+      - run: pnpm run check:ai-nav
+
+      # terminology (STYLE.md) fails the build; style warnings are reported only.
+      # v3 ships reviewdog 0.21, which recomputes the diff with the git CLI when
+      # a PR is too large for GitHub's diff API (20k lines) to serve it.
+      - uses: errata-ai/vale-action@v3.0.0
+        with:
+          version: 3.17.1
+          files: pages
+          fail_on_error: true
+          reporter: github-pr-check
+
+      # `next build` occasionally fails page-data collection on a random page
+      # and passes on retry — retry once before calling it a real failure
+      - run: pnpm run build || pnpm run build

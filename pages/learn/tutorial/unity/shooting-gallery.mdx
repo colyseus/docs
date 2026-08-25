@@ -1,5 +1,6 @@
 ---
 title: Shooting Gallery Demo
+description: "Build a turn-based multiplayer shooting gallery with Unity and Colyseus."
 ---
 import { Callout } from 'nextra/components';
 
@@ -19,7 +20,7 @@ The purpose of this technical demo is to show how to create rooms, utilize custo
 
 ### Launching a local server
 
-You need to install and launch the server from the **provided Server directory** for this demo to function properly. Simply follow the instructions found underneath ["Running the demo server" in the Unity section of these docs](/getting-started/unity#running-the-server-locally).
+You need to install and launch the server from the **provided Server directory** for this demo to function properly. Simply follow the instructions found underneath ["Running the demo server" in the Unity section of these docs](/getting-started/unity#running-the-test-server-locally).
 
 ### ColyseusSettings ScriptableObject
 
@@ -27,7 +28,7 @@ All server settings can be changed via the ColyseusSetting ScriptableObject loca
 
 ![ScriptableObject](/tutorial/unity/scriptable-object.png)
 
-If you are running a local server, the default settings should be sufficient, however if you wish to host a server you'll need to change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly.
+If you are running a local server, the default settings should be sufficient. If you wish to host a server, you'll need to change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly.
 
 ### Playing the Demo
 
@@ -40,7 +41,7 @@ As you play around with this demo, you may want to make some adjustments to bett
 
 ### Targets
 
-The values used for the Targets in-game can be found in the server code at `Server\src\rooms\customLogic\targets.ts`. Here, you can adjust the score values, rename targets and add/remove target options. If you add a new target, make sure to also give it a new "id" value otherwise the Unity client will not know what target model to display.
+The values used for the Targets in-game can be found in the server code at `Server\src\rooms\customLogic\targets.ts`. Here, you can adjust the score values, rename targets and add/remove target options. If you add a new target, make sure to also give it a new "id" value. Otherwise the Unity client will not know what target model to display.
 
 These target options on the client can be adjusted in the "TargetController" prefab, located at `Assets\GalleryShooter\Prefabs\Targets\Controls\TargetController.prefab`. If you wish to adjust the models or add new targets, here is where you prepare the client for them.
 
@@ -50,7 +51,7 @@ The targets, when provided from the server, will be handed off to the correspond
 
 ![numberOfTargetRows](/tutorial/unity/shooting-gallery/number-of-target-rows.png)
 
-This number will be fed to the server upon initialization of a room and that value will be used when randomly selecting a target's row.
+This number is sent to the server when a room initializes. The server uses it when randomly selecting a target's row.
 
 The treadmills individually control the frequency with which they'll send out targets:
 

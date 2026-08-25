@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+# Installed by the `prepare` script (core.hooksPath). Bypass with --no-verify.
+# `next build` stays out: it is slow, and CI runs it.
+set -e
+
+pnpm check-links
+pnpm check:ai-nav
+
+# Vale on the staged pages only, at error level. The full advisory run is
+# `pnpm lint:prose`; replaying 300+ pre-existing warnings on every commit is how
+# a hook gets ignored.
+staged=$(git diff --cached --name-only --diff-filter=ACM -- 'pages/**/*.mdx' 'pages/*.mdx')
+if [ -n "$staged" ]; then
+    echo "$staged" | xargs node scripts/lint-prose.js --minAlertLevel=error
+fi

@@ -1,10 +1,10 @@
 ---
 title: "Getting Started"
-description: "Get started with Colyseus multiplayer framework. Choose your client SDK for TypeScript, JavaScript, React, Unity, Defold, Construct 3, Cocos Creator, Haxe, and more."
+description: "Get started with Colyseus multiplayer framework. Scaffold a server with npm create colyseus-app, then choose your client SDK for TypeScript, JavaScript, React, Unity, Defold, Construct 3, Cocos Creator, Haxe, Flutter, and more."
 ---
-import { Cards, Tabs, Steps } from 'nextra/components'
-import { javascript, typescript, react, unity, defold, construct3, cocos, haxe, discord, wechat, godot, gamemaker, monogame, c } from '../components/icons/platforms'
-import { SyncIcon, RowsIcon, DownloadIcon } from '@primer/octicons-react'
+import { Cards, Tabs, Steps, Callout } from 'nextra/components'
+import { typescript, react, unity, defold, construct3, cocos, haxe, discord, wechat, godot, gamemaker, monogame, flutter, c } from '../components/icons/platforms'
+import { SyncIcon, RowsIcon, DownloadIcon, ZapIcon } from '@primer/octicons-react'
 
 # Getting Started
 
@@ -29,6 +29,7 @@ Colyseus is unopinionated on the game engine or framework you use in the fronten
     <Cards.Card icon={gamemaker()} title="GameMaker" href="/getting-started/gamemaker" />
     <Cards.Card icon={cocos()} title="Cocos Creator" href="/getting-started/cocos" />
     <Cards.Card icon={haxe()} title="Haxe" href="/getting-started/haxe" />
+    <Cards.Card icon={flutter()} title="Flutter" href="/getting-started/flutter" />
     <Cards.Card icon={c()} title="Native SDK (C)" href="/getting-started/native-sdk" />
     <Cards.Card icon={discord()} title="Discord Activity" href="/getting-started/discord-activity" />
     <Cards.Card icon={wechat()} title="WeChat" href="/getting-started/wechat" />
@@ -36,15 +37,15 @@ Colyseus is unopinionated on the game engine or framework you use in the fronten
 
 ## Backend
 
-Creating your local development server is as simple as running a single command.
+Run one command and follow the prompts to create your local development server.
 
 <Steps>
 ### Create your Colyseus server
 
-<Tabs items={['Node.js', 'Bun']}>
+<Tabs items={['npm', 'pnpm', 'yarn', 'Bun']}>
 
   <Tabs.Tab>
-``` bash filename="Terminal: Node.js"
+``` bash filename="Terminal: npm"
 # Create a new Colyseus project
 npm create colyseus-app@latest ./my-server
 
@@ -53,6 +54,32 @@ cd my-server
 
 # Run the server
 npm start
+```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+``` bash filename="Terminal: pnpm"
+# Create a new Colyseus project
+pnpm create colyseus-app@latest ./my-server
+
+# Enter the project directory
+cd my-server
+
+# Run the server
+pnpm start
+```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+``` bash filename="Terminal: yarn"
+# Create a new Colyseus project
+yarn create colyseus-app ./my-server
+
+# Enter the project directory
+cd my-server
+
+# Run the server
+yarn start
 ```
   </Tabs.Tab>
 
@@ -71,6 +98,8 @@ bun run src/index.ts
   </Tabs.Tab>
 </Tabs>
 
+The generator asks which language to use and what you're building. **Minimal server** is enough to follow along. See [Scaffolding options](#scaffolding-options) for every preset and flag.
+
 ### Edit your room code
 
 Go to `src/rooms/MyRoom.ts` and start building your game logic! See more:
@@ -78,6 +107,54 @@ Go to `src/rooms/MyRoom.ts` and start building your game logic! See more:
 <Cards>
     <Cards.Card icon={<RowsIcon/>} title="Room API" href="/room" />
     <Cards.Card icon={<SyncIcon/>} title="State Synchronization" href="/state" />
+    <Cards.Card icon={<ZapIcon/>} title="Netcode: Prediction & Lag Comp" href="/netcode" />
 </Cards>
 
 </Steps>
+
+## Scaffolding options
+
+`create-colyseus-app` asks a few questions and creates the project from your answers. Each option adds working, wired-in code, and the room comes with a headless test.
+
+### Presets
+
+The first question is what you're building. Pick a preset, or **Custom** to choose each feature individually.
+
+| Preset | `--preset` | What you get |
+| --- | --- | --- |
+| **Minimal server** | `minimal` | A single room, nothing else. |
+| **Realtime action** | `realtime-action` | Vite project (client, server and shared code) with an authoritative fixed tick, server-validated input and client-side prediction, plus lobby and reconnection. TypeScript only. |
+| **Turn-based** | `turn-based` | Server-owned turn order with a per-turn deadline, plus reconnection. |
+| **Custom** | `custom` | Asks every question: layout, netcode, matchmaking, authentication and database. |
+
+### Using command-line options
+
+Every question has a flag. Options you pass are not asked, and they override the preset. `--yes` fills the rest with defaults, so a single command works in a terminal, a script, or CI.
+
+``` bash filename="Terminal"
+npm create colyseus-app@latest my-server -- --preset realtime-action --yes
+
+npm create colyseus-app@latest my-server -- --ts --layout vite --netcode fixed \
+    --matchmaking lobby,reconnection --auth module --database colyseus --yes
+```
+
+<Callout type="info">
+`npm create` needs the `--` separator to forward options to the generator. `pnpm`, `yarn`, `bun create` and `npx create-colyseus-app@latest` don't.
+</Callout>
+
+Pass `.` as the directory to scaffold into the current folder. Omit the directory to be asked for a project name.
+
+| Option | Choices (first is the default) |
+| --- | --- |
+| `--language` | `typescript` · `esm` · `cjs` · `haxe`. Also as shorthand flags: `--ts`, `--esm`, `--cjs`, `--haxe` |
+| `--preset` | `minimal` · `realtime-action` · `turn-based` · `custom` |
+| `--layout` | `server` · `vite` (client + server + shared code in one Vite project) · `monorepo` (`apps/backend` + `apps/frontend`) |
+| `--netcode` | `none` · `fixed` (fixed tick + client prediction) · `tick` (simple server tick) · `turn-based` · `relay` (client-authoritative) |
+| `--matchmaking` | none by default. Comma-separated: `lobby` · `filterby` · `reconnection` · `idle-kick` |
+| `--auth` | `none` · `onauth` (validate a token in `onAuth()`, no dependencies) · `module` (`@colyseus/auth`: anonymous + email/password) · `oauth` (`@colyseus/auth` + OAuth provider) |
+| `--oauth-provider` | `discord` · `google` · `github` · `twitch` |
+| `--database` | `none` · `colyseus` (`@colyseus/database`: SQLite in development, Postgres in production) |
+
+The `realtime-action` preset, the `vite` and `monorepo` layouts, `fixed` netcode, `oauth` and the database require TypeScript. Haxe projects take none of these options: the generator copies the Haxe template as is.
+
+Other flags: `--name <pkg-name>`, `--git` (initialize a repository with a first commit), `--no-install`, `--overwrite`. Run `npx create-colyseus-app@latest --help` for the full reference.

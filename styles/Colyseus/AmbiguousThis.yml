@@ -1,0 +1,14 @@
+---
+# A sentence-initial bare "This"/"It" points at the previous paragraph or a code
+# block, which is exactly where non-native readers and language models lose the
+# thread. Give it a noun: "This callback", "This option".
+extends: existence
+message: "Give '%s' a noun: 'This callback', 'This option'."
+level: warning
+scope: sentence
+nonword: true
+tokens:
+  - '^(?:This|It)\s+(?:is|was|are|were|will|can|could|would|should|allows?|lets?|means?|prevents?|provides?|makes?|does|do|has|have|generates?|replaces?|requires?)\b'
+  # Bare "This" takes a noun with ANY verb; "It" stays limited to the list
+  # above, because "It returns…" right after naming the subject is fine.
+  - '^This\s+(?:ensures?|gives?|keeps?|avoids?|happens?|works?|returns?|creates?|uses?|enables?|causes?|adds?|tells?|takes?|helps?|starts?|stops?|sends?|runs?|opens?|saves?|reduces?|triggers?|applies|includes?|removes?|forces?|guarantees?|improves?|simplifies|skips?|supports?|tracks?|wraps?|stores?|contains?|covers?|assumes?|expects?|protects?|persists?|results?|turns?|acts?|serves?|holds?|points?|defaults?|depends?)\b'

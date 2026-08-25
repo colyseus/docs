@@ -1,0 +1,213 @@
+---
+title: "Lag Compensation: What You See Is What You Hit"
+description: "Server-side lag compensation in Colyseus 0.18: rewind entities to the shooter's render time with allowRewindState() and rewind.lastSeenBy() so hits on moving targets register. Favor-the-shooter hit registration."
+---
+import { Callout, Tabs } from 'nextra/components'
+import { SDKTabs } from "../../components/SDKTabs"
+import { MovedAnchors } from "../../components/moved-anchors"
+
+# Lag Compensation
+
+{/* Em-dash headings renamed (punctuation ban); keep old deep links working. */}
+<MovedAnchors map={{
+    "client--the-render-time-stamp": "/netcode/lag-compensation#client-the-render-time-stamp",
+    "server--rewind-targets-to-where-the-shooter-saw-them": "/netcode/lag-compensation#server-rewind-targets-to-where-the-shooter-saw-them",
+}} />
+
+When you aim at another player, you're aiming at the past. The target on your screen is delayed by the network (≈ `rtt/2`) and rendered further behind on purpose (the `delay` of your interp buffer). If the server judged shots against where targets are *now*, every player would have to lead moving targets by their own latency. Lag compensation removes that burden. The server **rewinds** each target to the moment the shooter saw it, then runs the hit test: "what you see is what you hit."
+
+It's the server-side dual of [client prediction](/netcode/client-prediction): where the client forward-predicts entities it *receives*, the server rewinds entities it *owns*.
+
+<Callout type="info">
+    **Available in Colyseus 0.18+.** `allowRewindState()` / `Rewind` / `RewindView` are from `@colyseus/core`.
+</Callout>
+
+## Two pieces
+
+Enabling it takes a stamp on the client's inputs and a rewind on the server. The first one is automatic.
+
+### Client: the render-time stamp
+
+Each input carries a timestamp telling the server *when* the client's view of the world was. Once the room enables rewind, the SDK stamps every input on its own. Wiring the handle through `predict.reconciler` / `predict.sim` then binds the stamp's interp-buffer term to the `Predict` lerp `delay`. The buffer you render at and the instant the server rewinds to come from **one number**, so they can't drift apart.
+
+<SDKTabs>
+
+    <Tabs.Tab>
+    ```ts
+    const predict = Predict.get(room, { mode: "lerp", delay: 100 });
+    const input = room.input({ type: MoveInput });   // stamp auto-derived from delay: 100
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs
+    var predict = Predict.Get(room);
+    predict.AttachAll("players", new AttachConfig {
+        ["x"] = new PredictFieldOptions { Mode = PredictMode.Lerp, Delay = 100 },
+        ["y"] = new PredictFieldOptions { Mode = PredictMode.Lerp, Delay = 100 },
+    });
+    var input = room.Input(cmd);   // stamp auto-derived from the lerp delay
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua
+    local predict = Predict.get(room)
+    predict:attach_all("players", {
+      x = { mode = "lerp", delay = 100 },
+      y = { mode = "lerp", delay = 100 },
+    })
+    local input = room:input()   -- stamp auto-derived from the lerp delay
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe
+    var predict = Predict.get(room);
+    predict.attachAll("players", {
+        x: { mode: "lerp", delay: 100 },
+        y: { mode: "lerp", delay: 100 },
+    });
+    var input = room.input({ type: MoveInput });   // stamp auto-derived from the lerp delay
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript
+    var predict = Colyseus.Predict.of(room)
+    predict.attach_all("players", {
+        "x": { "mode": Colyseus.Predict.LERP, "delay": 100 },
+        "y": { "mode": Colyseus.Predict.LERP, "delay": 100 },
+    }, room.get_session_id())
+    var input = room.input()   # stamp auto-derived from the lerp delay
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart
+    final predict = Predict.get(room);
+    predict.attachAll('players', config: {
+      'x': FieldOptions(mode: PredictMode.lerp, delay: 100),
+      'y': FieldOptions(mode: PredictMode.lerp, delay: 100),
+    }, exceptKey: room.sessionId);
+    final input = room.input()!;   // stamp auto-derived from the lerp delay
+    ```
+    </Tabs.Tab>
+
+</SDKTabs>
+
+Two knobs, both optional:
+
+- **`renderDelay`**: pass it to `room.input()` only when you smooth remotes *outside* `Predict`; it must equal your actual interp buffer. The SDK adds the latency term itself. Pass only the buffer.
+- **`allowRewind`**: a per-input predicate gating which inputs carry the stamp, as a bandwidth trim: `room.input({ allowRewind: (d) => d.fire })` stamps only the inputs the server actually rewinds for. Don't use it when your *own* step hit-tests at `ctx.reckonTime`, because then every input needs the stamp. In GDScript, call `input.set_rewind_field("fire")` instead; in Dart, pass `allowRewind:` a predicate over the input view.
+
+### Server: rewind targets to where the shooter saw them
+
+```ts
+import { Room } from "@colyseus/core";
+
+class GameRoom extends Room {
+  rewind = this.allowRewindState({ maxRewindMs: 500 });
+
+  onCreate() {
+    this.rewind.attachAll(this.state.players, { fields: ["x", "y"] });
+    this.setFixedTimestep((ctx) => this.step(ctx), 30);
+  }
+
+  // In your hit test, for a shot fired by `shooterId`:
+  fire(shooterId, bullet) {
+    const seen = this.rewind.lastSeenBy(shooterId);     // clamp + live-fallback baked in
+    for (const [, target] of this.state.players) {
+      if (overlaps(bullet, seen.value(target, "x"), seen.value(target, "y"), HIT_RADIUS)) {
+        this.hit(target);
+      }
+    }
+  }
+}
+```
+
+## `allowRewindState({ maxRewindMs })`
+
+Enables lag compensation and returns a `Rewind`. The framework auto-records attached entities on **each broadcast**, snapshotting exactly what clients receive. The rewind therefore reproduces the client's interpolation even when the broadcast rate differs from the sim rate (`patchRate ≠ timestep`). Call `rewind.record()` yourself during a tick to take over that cadence (you then own correctness against your own broadcast rate). `maxRewindMs` (default 500) sizes the per-entity history ring and bounds how far back a hit can rewind.
+
+### `rewind.attachAll(collection, options)` / `rewind.attach(instance, options)`
+
+Track the numeric `fields` of every entity in a collection (or a single instance, e.g. a boss). The element type is inferred from the live collection (no state-type generic):
+
+```ts
+this.rewind.attachAll(this.state.players, { fields: ["x", "y"] });
+
+// Per-entity interpolation: hold discrete-motion snaps sharp under rewind.
+this.rewind.attachAll(this.state.enemies, {
+  fields: ["x", "y"],
+  interpolate: (e) => (e.kind === "teleporter" ? "step" : "linear"),
+});
+```
+
+Options:
+
+- **`fields`**: the numeric fields to record (an array, or a per-entity function). Fields a type doesn't declare are skipped and read live.
+- **`interpolate`**: `"linear"` (default, continuous motion) or `"step"` (hold the last sample: discrete motion like teleports, where a lerp would smear across the jump). May be a per-entity function.
+- **`mode`**: the rewind **timeline** (see [snapshot vs reckon](#snapshot-vs-reckon)).
+- **`maxRewindMs`**: per-attach history-ring size for this group. The anti-spoof rewind clamp always uses the room-level `allowRewindState({ maxRewindMs })` default. A larger per-attach window does not extend how far a view rewinds.
+
+## `rewind.lastSeenBy(sessionId)`
+
+Returns a [`RewindView`](#rewindview) of the world as that client last saw it. The method resolves the client's stamped render time and **clamps** it to `[now − maxRewindMs, now]` (anti-spoof / clock-skew bound). When the client hasn't synced yet, it **falls back to the live position**.
+
+A client that merely hasn't stamped yet (clock still syncing, or an unknown `sessionId`) is **not** an error: the view just reads live. `lastSeenBy` does require the framework input API (`defineInput`); if you stamp render times yourself, use `rewind.at(time)` and supply the time.
+
+### `RewindView`
+
+The view assumes nothing about your schema. You name the fields at the call site (same shape as the client's `predict.value`, and the batch is mirrored too: `seen.read` ⇄ [`predict.read`](/netcode/client-prediction#reading-values)):
+
+```ts
+const seen = this.rewind.lastSeenBy(shooterId);
+
+seen.value(target, "x");                         // one tracked numeric field
+const pos = seen.read(target, ["x", "y"]);       // batch → { x, y }
+seen.read(enemy, ENEMY_POS, this.seenScratch);   // zero-alloc: fills + returns a reused scratch
+```
+
+<Callout type="info">
+    `at()` / `lastSeenBy()` re-aim and return the room's **internal default view**: the usual one-view-at-a-time flow is zero-alloc with nothing to declare. Need two views alive at once (compare two shooters)? Pass your own as `out`:
+    ```ts
+    const a = this.rewind.lastSeenBy(shooterA);                     // shared default view
+    const b = this.rewind.lastSeenBy(shooterB, new RewindView());   // independent second view
+    ```
+    Don't store a view across calls or ticks: the default is re-aimed by the next call, and any view's clamp goes stale at the next record.
+</Callout>
+
+## Snapshot vs reckon
+
+The rewind **timeline** must match how the **client displays** the target. That's the "what you see" half of "what you see is what you hit". Declare it per attach group with `mode`:
+
+- **`"snapshot"`** (default): rewind to the client's `renderTime`, for targets it shows **interpolated** (`Predict` `lerp`/`damped`), behind real time by its interp buffer + `rtt/2`.
+- **`"reckon"`**: rewind to the client's `reckonTime` (≈ its `serverNow`), for targets it **forward-extrapolates** (`Predict` `reckon`). Rewinding a forward-reckoned target to the raw snapshot stamp would double-compensate.
+
+```ts
+// Players are lerped by clients; AI is dead-reckoned (two groups, two timelines):
+this.rewind.attachAll(this.state.players, { fields: ["x", "y"] });                     // snapshot
+this.rewind.attachAll(this.state.enemies, { fields: ["x", "y"], mode: "reckon" });
+```
+
+Keep the pairing in one shared constant if you like: the server's `mode` and the client's `predict.attachAll` mode describe the same decision. You can attach the same collection twice with disjoint `fields` to mix timelines on one entity. The room ships exactly the stamp(s) its attached groups need. Nothing extra crosses the wire.
+
+<Callout type="warning">
+    **Don't break the delay pairing.** When the input handle is wired through `predict.reconciler`/`predict.sim`, the lerp `delay` and the rewind stamp share one source: nothing to keep in sync. If you pass `renderDelay` explicitly, it must equal the delay your remotes actually render at. Reverting remotes to `damped` (no fixed delay) silently degrades the rewind to an approximation.
+</Callout>
+
+## Tuning `maxRewindMs`
+
+The real rewind distance is roughly `renderDelay + RTT + one tick`. If `maxRewindMs` is **smaller** than that, the clamp truncates legitimate rewinds and hits land slightly **ahead** of the crosshair. Raise it. Too large only widens the anti-spoof window; 500ms is a sane default for most games.
+
+## Predicting the verdict client-side
+
+The shooter's *own* step can pre-judge the hit with the same timeline the server will use. `ctx.reckonTime` is the same value the server reads for that input. `predict.valueAt(target, field, ctx.reckonTime)` samples the target where the rewind will place it, so your client-side verdict matches the server's by construction. Batch the pose with `predict.readAt(target, fields, ctx.reckonTime)` to run one reckon integration per target instead of one per field. Pair it with an [optimistic event](/netcode/client-prediction#optimistic-events-defineevent) for instant feedback that auto-rejects if the server disagrees.
+
+`ctx.reckonTime` is **always a usable instant**. A seq that wasn't stamped (the room doesn't rewind, the clock is still syncing) resolves to the live `serverNow()` automatically. The backend mirrors this: `channel.reckonTime` resolves unstamped reads to the room clock. There is no fallback to hand-write on either end. The rare consumer that needs the distinction ("was this seq actually stamped for lag comp?") reads `ctx.lagCompActive`.
+
+## Next
+
+→ [Recipes](/netcode/recipes): projectiles, dead-reckoned AI, and physics-engine hit tests.<br/>
+→ [Determinism & The Contract](/netcode/determinism#troubleshooting): troubleshooting "I hit them but no damage".

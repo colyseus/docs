@@ -1,16 +1,34 @@
 ---
 title: "Colyseus Client SDK"
-description: "Complete API reference for the Colyseus Client SDK. Connect to rooms, synchronize state, send messages, handle reconnection, and measure latency across TypeScript, Unity, Godot, Defold, and Haxe."
+description: "Complete API reference for the Colyseus Client SDK. Connect to rooms, synchronize state, send messages, handle reconnection, and measure latency across TypeScript, Unity, Godot, Defold, Haxe, and Flutter."
 ---
 import { Callout, Cards, Tabs } from "nextra/components";
 import { ZapIcon, SyncIcon, ServerIcon, PasskeyFillIcon } from "@primer/octicons-react";
 import { SDKTabs } from "../components/SDKTabs"
+import { MovedAnchors } from "../components/moved-anchors";
 
 # Client SDK
 
+{/*
+  Connection lifecycle moved to a child page; keep old deep links working.
+  `#connection-lifecycle` is absent on purpose: that heading survives here as
+  a pointer, and redirecting it would make this page's own table of contents
+  bounce readers away.
+*/}
+<MovedAnchors map={{
+    "leaving-a-room": "/sdk/connection#leaving-a-room",
+    "automatic-reconnection": "/sdk/connection#automatic-reconnection",
+    "on-drop-event": "/sdk/connection#on-drop-event",
+    "on-reconnect-event": "/sdk/connection#on-reconnect-event",
+    "reconnection-options": "/sdk/connection#reconnection-options",
+    "manual-reconnection": "/sdk/connection#manual-reconnection",
+    "error-handling": "/sdk/connection#error-handling",
+    "removing-listeners": "/sdk/connection#removing-listeners",
+}} />
+
 <Cards>
     <Cards.Card icon={<ZapIcon/>} title="Getting Started" href="/getting-started" />
-    <Cards.Card icon={<SyncIcon />} title="State Sync Callbacks" href="/sdk/state-sync-callbacks" />
+    <Cards.Card icon={<SyncIcon />} title="State Sync Callbacks" href="/state/callbacks" />
 </Cards>
 
 The Client SDK provides everything you need to connect to a Colyseus server from your game or application.
@@ -62,6 +80,14 @@ The `Client` instance is your entry point to connect to the server.
     <Tabs.Tab>
     ```gdscript filename="client.gd"
     var client = Colyseus.Client.new("ws://localhost:2567")
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    import 'package:colyseus/colyseus.dart';
+
+    final client = ColyseusClient('ws://localhost:2567');
     ```
     </Tabs.Tab>
 
@@ -144,6 +170,19 @@ The most common way to connect. Joins an existing room if available, or creates 
     ```
     </Tabs.Tab>
 
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    try {
+      final room = await client.joinOrCreate('battle',
+          options: {/* options */}, stateType: MyRoomState.new);
+      print('joined successfully');
+
+    } catch (e) {
+      print('join error: $e');
+    }
+    ```
+    </Tabs.Tab>
+
 </SDKTabs>
 
 <Callout type="info">
@@ -152,14 +191,14 @@ The most common way to connect. Joins an existing room if available, or creates 
 
 ### Other Join Methods
 
-These methods use the same pattern as `joinOrCreate` — replace the method name accordingly.
+These methods use the same pattern as `joinOrCreate`. Replace the method name accordingly.
 
 | Method | Signature | Description |
 |--------|-----------|-------------|
 | `create` | `client.create(roomName, options)` | Always creates a new room, even if others exist. |
 | `join` | `client.join(roomName, options)` | Joins an existing room. Fails if none available. Locked/private rooms are ignored. |
 | `joinById` | `client.joinById(roomId, options)` | Joins a specific room by its unique ID. **Private rooms can be joined by ID.** Useful for invite links. |
-| `consumeSeatReservation` | `client.consumeSeatReservation(reservation)` | Joins using a pre-reserved seat from the server. See [Match-maker → Reserve Seat For](/matchmaker#reserve-a-seat-for). |
+| `consumeSeatReservation` | `client.consumeSeatReservation(reservation)` | Joins using a pre-reserved seat from the server. See [Matchmaker → Reserve Seat For](/matchmaker#reserve-a-seat-for). |
 
 <Callout type="info">
   You may disallow the client from creating rooms. See [Matchmaker → Restricting the frontend from creating rooms](/matchmaker#restricting-the-frontend-from-creating-rooms)
@@ -184,7 +223,7 @@ Once connected to a room, you can send and receive messages in real-time.
 
 ### Sending Messages
 
-Send messages to the room handler. Messages are encoded with MsgPack and can hold any JSON-serializable data.
+Send messages to the room. Messages are encoded with MsgPack and can hold any JSON-serializable data.
 
 
 <SDKTabs>
@@ -254,6 +293,20 @@ Send messages to the room handler. Messages are encoded with MsgPack and can hol
     room.send_message(0, {"direction": "left"})
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    //
+    // sending message with string type
+    //
+    room.send('move', {'direction': 'left'});
+
+    //
+    // sending message with number type
+    //
+    room.sendInt(0, {'direction': 'left'});
+    ```
+    </Tabs.Tab>
 </SDKTabs>
 
 <Callout type="info">
@@ -262,20 +315,23 @@ Send messages to the room handler. Messages are encoded with MsgPack and can hol
 
 ### Send Raw Bytes
 
-For custom encoding, send raw byte arrays (numbers from `0` to `255`).
-
+For custom encoding, send a `Uint8Array` of raw bytes.
 
 ```js filename="client.js"
 //
 // sending message with number type
 //
-room.sendBytes(0, [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
+room.sendBytes(0, new Uint8Array([ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]));
 
 //
 // sending message with string type
 //
-room.sendBytes("some-bytes", [ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]);
+room.sendBytes("some-bytes", new Uint8Array([ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]));
 ```
+
+<Callout type="warning">
+    The payload must be a `Uint8Array`. A plain `number[]` array silently sends an **empty** message, since the SDK reads `.byteLength` from the payload.
+</Callout>
 
 ### Receiving Messages
 
@@ -334,10 +390,83 @@ Listen for messages sent from the server.
     ```
     </Tabs.Tab>
 
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    room.onMessage('powerup').listen((message) {
+      print('message received from server');
+      print(message);
+    });
+    ```
+    </Tabs.Tab>
+
 </SDKTabs>
 
 <Callout type="info">
-    **Backend:** To send a message from the server to a client you'll need to use either [client.send()](/room#send-message) or [room.broadcast()](/room/#broadcast-message)
+    **Backend:** To send a message from the server to a client, use [client.send()](/room#send-message) or [room.broadcast()](/room/#broadcast-message).
+</Callout>
+
+### Request/Response
+
+Send a message and await the server's reply. The server answers by [returning a value from its matching message handler](/room#responding-to-a-message-requestresponse).
+
+```ts filename="client.ts"
+//
+// Promise form: room.request(type, payload)
+//
+const profile = await room.request("get-profile", { userId: 42 });
+
+//
+// Override the default timeout (10s) per request
+//
+const result = await room.request("slow-task", { id }, { timeout: 30_000 });
+
+//
+// Callback form: pass a 3rd argument to room.send()
+//
+room.send("get-profile", { userId: 42 }, (profile, error) => {
+    if (error) { return console.error(error); }
+    console.log(profile);
+});
+```
+
+The promise rejects (or the callback receives an `error`) when the handler throws or no handler is registered for that type. Rejection also happens when the connection closes first, or when no reply arrives within the timeout. The default timeout is `Room.defaultRequestTimeout` (10000 ms), overridable per request via the `timeout` option.
+
+The server may also **deliberately reject** a request via [`ctx.reject(reason)`](/room#responding-to-a-message-requestresponse): a business-logic "no", distinct from an error. The rejection arrives as an `Error` with `name: "rejected"`, and the server's raw `reason` on its `.reason` property:
+
+```ts filename="client.ts"
+try {
+    await room.request("join-team", { team: "red" });
+} catch (e: any) {
+    if (e.name === "rejected") {
+        console.log(e.reason); // => { code: "TEAM_FULL", team: "red" }
+    }
+}
+```
+
+Pass `mode: "unreliable"` in the options to send the request over the unreliable channel, when the transport has one. A genuine packet drop is then surfaced by the timeout.
+
+<Callout type="info">
+    Request/response is currently available in the **JavaScript/TypeScript** SDK.
+</Callout>
+
+---
+
+## Sending Input (Netcode)
+
+For prediction-ready rooms (rooms that call [`defineInput()`](/netcode/server-input) on the server), `room.input()` returns a typed input channel: stage fields on `input.data`, then `input.send()` once per fixed step.
+
+```ts filename="client.ts"
+const input = room.input();   // input schema arrives from the server's defineInput()
+
+input.data.moveX = 1;
+input.data.jump = true;
+input.send();
+```
+
+Inputs are buffered and acknowledged, and power [client-side prediction](/netcode/client-prediction) and [lag compensation](/netcode/lag-compensation). See **[`room.input(options)`](/netcode/client-prediction#roominputoptions)** for the full reference: reliability modes, redundancy, and the `InputHandle` surface.
+
+<Callout type="info">
+    The netcode APIs (`room.input()`, `room.clock`, `Predict`) are available in Colyseus 0.18+ **across the official SDKs**. See [Client Prediction](/netcode/client-prediction).
 </Callout>
 
 ---
@@ -462,10 +591,33 @@ Use `Callbacks` to listen for specific property changes with fine-grained contro
         print("Player left: ", key)
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    final callbacks = Callbacks.get(room);
+    final state = room.state!;   // joined with stateType: MyRoomState.new
+
+    callbacks.listen(state, 'currentTurn', (String value, String? previous) {
+      print('Turn changed: $previous -> $value');
+    });
+
+    callbacks.onAdd(state.players, (sessionId, player) {
+      print('Player joined: $sessionId');
+
+      callbacks.listen(player, 'hp', (double hp, double? previous) {
+        print('Player $sessionId hp: $hp');
+      });
+    });
+
+    callbacks.onRemove(state.players, (sessionId, player) {
+      print('Player left: $sessionId');
+    });
+    ```
+    </Tabs.Tab>
 </SDKTabs>
 
 <Callout type="info">
-    See the full [State Sync Callbacks](/sdk/state-sync-callbacks) documentation for all available methods including `listen`, `onAdd`, `onRemove`, and more.
+    See the full [State Sync Callbacks](/state/callbacks) documentation for all available methods including `listen`, `onAdd`, `onRemove`, and more.
 </Callout>
 
 ### On State Change
@@ -486,496 +638,9 @@ room.onStateChange((state) => {
 
 ## Connection Lifecycle
 
-Handle the various states of a room connection.
-
-### Leaving a Room
-
-Disconnect from the room. Use `consented: true` (default) for intentional leaves, or `false` to simulate an unexpected disconnect.
-
-
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    // consented leave
-    room.leave();
-
-    // force unconsented leave
-    room.leave(false);
-    ```
-    </Tabs.Tab>
-
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    // consented leave
-    room.Leave();
-
-    // unconsented leave
-    room.Leave(false);
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    -- consented leave
-    room:leave()
-
-    -- unconsented leave
-    room:leave(false)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    // consented leave
-    room.leave();
-
-    // unconsented leave
-    room.leave(false);
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
-    # consented leave
-    room.leave()
-    ```
-    </Tabs.Tab>
-</SDKTabs>
-
-<Callout type="info">
-    **Backend:** Use [Room → On Leave](/room#on-leave) to handle client disconnection.
-</Callout>
-
-**Listening for the leave event:**
-
-<SDKTabs>
-
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    room.onLeave((code) => {
-      console.log("client left the room");
-    });
-    ```
-    </Tabs.Tab>
-
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    room.OnLeave += (code) => {
-      Debug.Log ("client left the room");
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    room:on("leave", function()
-      print("client left the room")
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    room.onLeave += function () {
-      trace("client left the room");
-    };
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
-    room.left.connect(_on_room_left)
-
-    func _on_room_left(code: int, reason: String):
-        print("client left the room: ", reason)
-    ```
-    </Tabs.Tab>
-</SDKTabs>
-
-**Possible closing `code`s and their meaning:**
-
-- `1000` - Regular socket shutdown
-- Between `1001` and `1015` - Abnormal socket shutdown
-- Between `4000` and `4999` - Custom socket close code (See [more details](/room/#table-of-websocket-close-codes))
-
-### Automatic Reconnection
-
-The SDK automatically attempts to reconnect when the connection is unexpectedly dropped.
-
-<Callout type="warning">
-    Automatic reconnection only triggers if the room has been connected for at least `minUptime` milliseconds. This prevents reconnection loops for rooms that fail immediately after joining.
-</Callout>
-
-#### On Drop Event
-
-Triggered when the connection is unexpectedly dropped. The SDK will automatically attempt to reconnect.
-
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    room.onDrop((code, reason) => {
-      console.log("connection dropped, attempting to reconnect...");
-      console.log("code:", code, "reason:", reason);
-    });
-    ```
-    </Tabs.Tab>
-
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    room.OnDrop += (code, reason) => {
-      Debug.Log("connection dropped, attempting to reconnect...");
-      Debug.Log("code: " + code + " reason: " + reason);
-    };
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    room:on("drop", function(code, reason)
-      print("connection dropped, attempting to reconnect...")
-      print("code:", code, "reason:", reason)
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    room.onDrop += function(code, reason) {
-      trace("connection dropped, attempting to reconnect...");
-      trace("code: " + code + " reason: " + reason);
-    };
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
-    # The Godot SDK handles reconnection automatically
-    # Use the error signal to detect connection issues
-    room.error.connect(func(code: int, message: String):
-        print("connection error: ", message))
-    ```
-    </Tabs.Tab>
-</SDKTabs>
-
-<Callout type="info">
-    The `onDrop` event is different from `onLeave`. While `onLeave` is triggered when the client intentionally leaves or the connection is permanently closed, `onDrop` indicates a temporary disconnection where reconnection will be attempted.
-</Callout>
-
-<Callout type="info">
-    **Close codes that trigger `onDrop`:**
-    - `1005` - No status received
-    - `1006` - Abnormal closure
-    - `1001` - Going away
-    - `4010` - May try reconnect
-</Callout>
-
-#### On Reconnect Event
-
-Triggered when the client successfully reconnects after a connection drop. While disconnected, your `room.send()` calls will be queued and sent to the server when the client reconnects. The maximum number of queued messages is configurable using `room.reconnection.maxEnqueuedMessages`.
-
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    room.onReconnect(() => {
-      console.log("successfully reconnected to the room!");
-    });
-    ```
-    </Tabs.Tab>
-
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    room.OnReconnect += () => {
-      Debug.Log("successfully reconnected to the room!");
-    };
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    room:on("reconnect", function()
-      print("successfully reconnected to the room!")
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    room.onReconnect += function() {
-      trace("successfully reconnected to the room!");
-    };
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
-    # The Godot SDK handles reconnection automatically
-    # The joined signal will fire again after successful reconnection
-    room.joined.connect(func():
-        print("connected/reconnected to the room!"))
-    ```
-    </Tabs.Tab>
-</SDKTabs>
-
-#### Reconnection Options
-
-You may configure the reconnection behavior using `room.reconnection`.
-
-**Reconnection config options**
-
-| Option | Default | Description |
-|--------|---------|-------------|
-| `maxRetries` | `15` | Maximum reconnection attempts |
-| `minDelay` | `100` | Minimum delay between attempts (ms) |
-| `maxDelay` | `5000` | Maximum delay between attempts (ms) |
-| `minUptime` | `5000` | Minimum room uptime before reconnection is allowed (ms) |
-| `delay` | `100` | Initial delay between attempts (ms) |
-| `maxEnqueuedMessages` | `10` | Maximum buffered messages during reconnection |
-| `backoff` | exponential | Delay calculation function |
-
-**Status properties** _(read-only)_
-
-| Property | Type | Description |
-|----------|------|------------|
-| `isReconnecting` | boolean | Whether currently reconnecting |
-| `retryCount` | number | Current reconnection attempt count |
-| `enqueuedMessages` | number | Buffered messages |
-
-
-**Customizing reconnection behavior:**
-
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    const room = await client.joinOrCreate("battle");
-
-    // Customize reconnection options
-    room.reconnection.maxRetries = 10;
-    room.reconnection.maxDelay = 10000; // 10 seconds max delay
-    room.reconnection.minUptime = 3000; // Allow reconnection after 3 seconds
-    ```
-    </Tabs.Tab>
-
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    Colyseus.Room<YourStateClass> room = await client.JoinOrCreate<YourStateClass>("battle");
-
-    // Customize reconnection options
-    room.Reconnection.MaxRetries = 10;
-    room.Reconnection.MaxDelay = 10000; // 10 seconds max delay
-    room.Reconnection.MinUptime = 3000; // Allow reconnection after 3 seconds
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    client:join_or_create("battle", {}, function(err, room)
-      -- Customize reconnection options
-      room.reconnection.max_retries = 10
-      room.reconnection.max_delay = 10000 -- 10 seconds max delay
-      room.reconnection.min_uptime = 3000 -- Allow reconnection after 3 seconds
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    client.joinOrCreate("battle", [], YourStateClass, function(err, room) {
-      // Customize reconnection options
-      room.reconnection.maxRetries = 10;
-      room.reconnection.maxDelay = 10000; // 10 seconds max delay
-      room.reconnection.minUptime = 3000; // Allow reconnection after 3 seconds
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
-    # Reconnection is handled automatically by the Godot SDK
-    # Configuration options may vary - check the SDK documentation
-    ```
-    </Tabs.Tab>
-</SDKTabs>
-
-**Custom backoff function:**
-
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    room.reconnection.backoff = (attempt: number, delay: number) => {
-      return Math.floor(Math.pow(2, attempt) * delay);
-    };
-    ```
-    </Tabs.Tab>
-
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    room.Reconnection.Backoff = (attempt, delay) => {
-      return (int)Math.Floor(Math.Pow(2, attempt) * delay);
-    };
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    room.reconnection.backoff = function(attempt, delay)
-      return math.floor(math.pow(2, attempt) * delay)
-    end
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    room.reconnection.backoff = function(attempt:Int, delay:Int):Int {
-      return Math.floor(Math.pow(2, attempt) * delay);
-    };
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
-    # Custom backoff functions are not currently exposed in the Godot SDK
-    # The SDK uses a default exponential backoff strategy
-    ```
-    </Tabs.Tab>
-</SDKTabs>
-
-### Manual Reconnection
-
-For more control, you can manually reconnect using a cached reconnection token. Because this method returns a new room instance on the client, you must reattach all event listeners to the room after reconnecting.
-
-- You must store/cache the `room.reconnectionToken` from an active room connection.
-- The server needs to call [`.allowReconnection()`](/room#allow-reconnection) for that client.
-
-
-<SDKTabs>
-
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    try {
-      const room = await client.reconnect(cachedReconnectionToken);
-      console.log("joined successfully", room);
-
-    } catch (e) {
-      console.error("join error", e);
-    }
-    ```
-    </Tabs.Tab>
-
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    try {
-      Colyseus.Room<YourStateClass> room = await client.Reconnect<YourStateClass>(cachedReconnectionToken);
-      Debug.Log("joined successfully");
-
-    } catch (ex) {
-      Debug.Log("join error");
-      Debug.Log(ex.Message);
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    client:reconnect(cached_reconnection_token, function(err, room)
-      if (err ~= nil) then
-        print("join error: " .. err)
-        return
-      end
-
-      print("joined successfully")
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    client.reconnect(cachedReconnectionToken, YourStateClass, function(err, room) {
-      if (err != null) {
-        trace("join error: " + err);
-        return;
-      }
-
-      trace("joined successfully");
-    });
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
-    var room: Colyseus.Room = client.reconnect(cached_reconnection_token)
-
-    room.joined.connect(func():
-        print("reconnected successfully"))
-
-    room.error.connect(func(code: int, message: String):
-        printerr("reconnect error: ", message))
-    ```
-    </Tabs.Tab>
-</SDKTabs>
-
-### Error Handling
-
-Listen for errors that occur in the room.
-
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
-    room.onError((code, message) => {
-      console.log("oops, error occurred:");
-      console.log(message);
-    });
-    ```
-    </Tabs.Tab>
-
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
-    room.OnError += (code, message) => {
-      Debug.Log ("oops, error occurred:");
-      Debug.Log(message);
-    }
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```lua filename="client.lua"
-    room:on("error", function(code, message)
-      print("oops, error occurred:")
-      print(message)
-    end)
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
-    room.onError += function(code, message) {
-      trace("oops, error occurred:");
-      trace(message);
-    };
-    ```
-    </Tabs.Tab>
-
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
-    room.error.connect(_on_room_error)
-
-    func _on_room_error(code: int, message: String):
-        printerr("oops, error occurred: ", message)
-    ```
-    </Tabs.Tab>
-</SDKTabs>
-
-### Removing Listeners
-
-Remove all event listeners from the room.
-
+Leaving a room, automatic and manual reconnection, error handling, and
+removing listeners. See
+**[Connection Lifecycle & Reconnection](/sdk/connection)** for the full reference.
 
 ---
 
@@ -1050,6 +715,13 @@ Create a temporary connection to measure latency before joining a room.
     # Check the SDK documentation for available methods
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    // Not available in the Flutter SDK.
+    // Measure round-trip time on a live connection with room.ping() instead.
+    ```
+    </Tabs.Tab>
 </SDKTabs>
 
 #### During a Room Connection
@@ -1095,6 +767,13 @@ Measure round-trip time on an existing connection.
     ```gdscript filename="client.gd"
     # Ping API may vary in the Godot SDK
     # Check the SDK documentation for available methods
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    final latency = await room.ping();
+    print('Latency: $latency ms');
     ```
     </Tabs.Tab>
 </SDKTabs>
@@ -1198,6 +877,14 @@ Automatically connect to the server with the lowest latency from a list of endpo
     var client = Colyseus.Client.new(endpoints[0])  # Set your preferred endpoint
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    // Multi-region selection is not available in the Flutter SDK.
+    // Pick an endpoint yourself and create the client for it:
+    final client = ColyseusClient('wss://us-east.gameserver.com');
+    ```
+    </Tabs.Tab>
 </SDKTabs>
 
 <Callout type="info">
@@ -1239,15 +926,17 @@ Quick reference for room properties.
 | `state` | `any` | The synchronized room state from the server |
 | `sessionId` | `string` | Unique identifier for the current client connection |
 | `roomId` | `string` | Unique room ID (shareable for direct joins) |
-| `name` | `string` | Name of the room handler (e.g., `"battle"`) |
+| `name` | `string` | Name of the room type (e.g., `"battle"`) |
 | `reconnectionToken` | `string` | Token for manual reconnection |
 | `reconnection` | `ReconnectionOptions` | Automatic reconnection configuration |
+| `clock` | `RoomClock` | Server time & latency estimates (`serverNow()`, `rtt()`). See [`room.clock`](/netcode/client-prediction#roomclock) |
 
 ---
 
 ## Next Steps
 
-- [State Sync Callbacks](/sdk/state-sync-callbacks) - Listen for state changes on the client
+- [State Sync Callbacks](/state/callbacks) - Listen for state changes on the client
+- [Netcode](/netcode) - Predict local input and reconcile to server state
 - [Room API](/room) - Server-side room implementation
 - [Authentication](/auth) - Secure your room connections
 - [Tutorials](/learn/tutorial) - Step-by-step game implementations

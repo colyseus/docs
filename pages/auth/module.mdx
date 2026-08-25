@@ -1,5 +1,6 @@
 ---
 title: "Auth Module"
+description: "The @colyseus/auth module: email/password and anonymous auth, OAuth providers, JWT tokens, email verification, and password reset for Colyseus."
 ---
 import { Callout, Tabs, Steps, Cards, FileTree } from 'nextra/components'
 import { DevicesIcon, GearIcon, LinkIcon, MailIcon, GlobeIcon } from '@primer/octicons-react';
@@ -10,9 +11,13 @@ import { DevicesIcon, GearIcon, LinkIcon, MailIcon, GlobeIcon } from '@primer/oc
     This module is in beta - Feedback is welcome on [colyseus/colyseus#660](https://github.com/colyseus/colyseus/issues/660).
 </Callout>
 
+<Callout type="info">
+    **Using [`@colyseus/database`](/database)?** It wires up the user store, registration/login routes, ban gating, and session revocation for you, so you can skip the user-store [Backend API](#backend-api) callbacks below. Email delivery (`onForgotPassword`, `onSendEmailConfirmation`, `onEmailConfirmed`) is still yours to wire. See [Database → Authentication](/database/authentication) for the integration overview.
+</Callout>
+
 The `@colyseus/auth` module is highly configurable and allows you to implement your own authentication backend.
 
-It does not provide a database or email sending capabilities, but it provides a set of callbacks that you can implement to query your database, send emails, and handle OAuth providers.
+The module does not provide a database or email sending capabilities. Instead, it provides callbacks that you can implement to query your database, send emails, and handle OAuth providers.
 
 <Cards>
     <Cards.Card icon={<DevicesIcon/>} title="Frontend API" href="#frontend-api" arrow />
@@ -61,12 +66,15 @@ npm install --save @colyseus/auth
 
 It is required to provide the following environment variables to your application:
 
-- `AUTH_SALT` - Used to hash the user's password. ([`scrypt` algorithm is used by default](#on-hash-password))
 - `JWT_SECRET` - Used to sign the JWT token.
-- `SESSION_SECRET` - Used to sign the session cookie. (only used during OAuth flow)
+- `SESSION_SECRET` - Used to sign the OAuth state cookie. Recommended for OAuth; falls back to `JWT_SECRET` when unset.
 
 <Callout type="info">
     **How to generate a random string** - You may use the following command to generate a random string `openssl rand -base64 32`. Alternatively, you can use [an online strong password generator](https://1password.com/password-generator/).
+</Callout>
+
+<Callout type="warning">
+    **`AUTH_SALT` is legacy.** Required only when upgrading an existing deployment from a version prior to 0.18. The legacy `scrypt`-based hasher reads it to verify passwords created before the upgrade. New 0.18 projects don't need it; the default hasher derives its own per-password salt.
 </Callout>
 
 <Callout type="error" emoji="🚨">
@@ -76,9 +84,9 @@ It is required to provide the following environment variables to your applicatio
 
     If any of these secrets are compromised, you must rotate them immediately. The implications of rotating them are:
 
-    - Rotating `AUTH_SALT` will invalidate all user's passwords. Users will need to reset their password.
     - Rotating `JWT_SECRET` will invalidate all JWT tokens. Users will need to login again.
     - Rotating `SESSION_SECRET` will invalidate all session cookies. (only used during OAuth flow)
+    - Rotating `AUTH_SALT` (legacy upgrades only) will invalidate every pre-upgrade password hash. Users created before the upgrade will need to reset their password.
 </Callout>
 
 ### Backend Configuration
@@ -180,7 +188,7 @@ The `options` argument may contain user data you can use when creating the user'
     }
 
     auth.settings.onRegisterWithEmailAndPassword = async function (email, password, options) {
-        return await User.insert({ name, email, password, });
+        return await User.insert({ email, password });
     }
     ```
     </Tabs.Tab>
@@ -267,7 +275,7 @@ Sign in with OAuth provider and return userdata. This method modifies the `clien
     </Tabs.Tab>
 
     <Tabs.Tab>
-    Each provider requires a different configuration. See the [OAuth providers](#oauth-providers-discord-google-x-twitter-etc) section for more information.
+    Each provider requires a different configuration. See the [OAuth providers](#oauth-providers-discord-google-x-etc) section for more information.
 
     ```ts filename="src/config/auth.ts"
     import { auth } from "@colyseus/auth";
@@ -284,10 +292,10 @@ Sign in with OAuth provider and return userdata. This method modifies the `clien
 <Callout type="info">
     **The OAuth Authentication Flow**
 
-    - A popup window to is opened `/auth/provider/[PROVIDER-ID]`
+    - A popup window opens `/auth/provider/[PROVIDER-ID]`
     - The user is redirected to the OAuth provider's website
     - The user authenticates with the OAuth provider
-    - The user is redirected back to `/auth/provider/[PROVIDER-ID]/callback` (see [OAuth Provider Callback](#oauth-provider-callback-authoauthoncallback))
+    - The user is redirected back to `/auth/provider/[PROVIDER-ID]/callback` (see [OAuth Provider Callback](#oauth-callback))
     - The popup window is closed and userdata is returned
 </Callout>
 
@@ -397,6 +405,8 @@ client.auth.token = "xxxx";
 
 ## Backend API
 
+Implement these callbacks when you're bringing your own database. With [`@colyseus/database`](/database), they're wired automatically. See [Database & Persistence → Authentication](/database/authentication).
+
 ### Backend URL
 
 The public backend URL. Setting `auth.backend_url` is recommended for security. The value is auto-detected upon the first request if not set.
@@ -446,7 +456,7 @@ auth.settings.onFindUserByEmail = async function (email) {
 
 Use this callback to insert a new user into your database.
 
-The password provided is already hashed. You may use the [`onHashPassword`](#on-hash-password) callback to hash the password.
+The password provided is already hashed (with `Hash.make`). To change the hashing algorithm, set [`Hash.algorithm`](#on-hash-password).
 
 If an error is thrown, its message will be sent to the client.
 
@@ -454,7 +464,7 @@ If an error is thrown, its message will be sent to the client.
 import { auth } from "@colyseus/auth";
 
 auth.settings.onRegisterWithEmailAndPassword = async function (email, password, options) {
-    return await User.insert({ name, email, password, });
+    return await User.insert({ email, password });
 }
 ```
 
@@ -492,7 +502,7 @@ auth.settings.onRegisterAnonymously = async function (options) {
 
 You may enable email verification by providing both `onSendEmailConfirmation` and `onEmailConfirmed` callbacks.
 
-It is your responsibility to limit the user access to your application until their email is verified.
+You are responsible for limiting user access to your application until their email is verified.
 
 <Callout type="info">
     **Email verification is not mandatory** - Users are allowed to login without verifying their email address. If you require email verification, you must validate if the user's email is verified on your application.
@@ -681,7 +691,6 @@ You may customize the following settings:
 
 - `auth.settings.onParseToken`: to parse JWT token provided by the frontend
 - `auth.settings.onGenerateToken`: to generate the auth token
-- `auth.settings.onHashPassword`: to hash the user's password
 
 #### On Parse Token
 
@@ -711,24 +720,17 @@ auth.settings.onGenerateToken = async function (userdata) {
 
 #### On Hash Password
 
-Use this callback to customize how to hash the user's password. The default hashing algorithm is `scrypt`.
-
-
-```typescript
-import { auth } from "@colyseus/auth";
-
-auth.settings.onHashPassword = async function (password: string) {
-    return Hash.make(password);
-};
-```
-
-You may also use the `Hash` class provided by the `@colyseus/auth` set a different hashing algorithm. The other ones available are `scrypt` and `sha1`.
+Password hashing is customized through the `Hash` class. The default algorithm is `scrypt`, with `sha1` available as the only other built-in:
 
 ```ts filename="src/config/auth.ts"
 import { Hash } from "@colyseus/auth";
 
-Hash.algorithm = "scrypt";
+Hash.algorithm = "sha1"; // default: "scrypt"
 ```
+
+<Callout type="warning">
+    The `auth.settings.onHashPassword` callback exists on the settings object but is **not invoked by any endpoint in 0.18**, so overriding it has no effect. Use `Hash.algorithm` / `Hash.algorithms` instead.
+</Callout>
 
 ---
 

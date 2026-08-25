@@ -1,7 +1,9 @@
 export default {
+    "lifecycle": "Lifecycle Events",
     "messages": "Message Composability",
+    "timing-events": "Timing Events",
     "reconnection": "Reconnection Handling",
-    "timing-events": "",
-    "exception-handling": "",
-    "built-in": "",
+    "exception-handling": "Exception Handling",
+    "plugins": "Room Plugins",
+    "relay": "Relay Room",
 }

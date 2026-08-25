@@ -1,5 +1,6 @@
 ---
 title: Room Authentication
+description: "Authenticate room joins in Colyseus with the onAuth hook: validate tokens before onJoin and reject unauthorized clients."
 ---
 import { Steps, Tabs, Cards, Callout } from "nextra/components"
 import { SignInIcon, ShieldCheckIcon, PackageIcon } from "@primer/octicons-react"
@@ -12,7 +13,15 @@ You can authenticate your users using the `onAuth` method in your room. This met
 - If `onAuth()` returns a [falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy) value, the client is immediatelly rejected, causing the matchmaking function call from the frontend to fail.
 - You may also throw a `ServerError` to expose a custom error to be handled in the frontend.
 
-If left non-implemented, it always returns `true` - allowing any client to connect.
+With the `colyseus` bundle (which includes `@colyseus/auth`), the default **static** `onAuth` verifies the client's JWT. A malformed or expired token is rejected with `AUTH_FAILED`. A client that sends no token passes through with no auth data.
+
+<Callout type="warning">
+    **Static `onAuth` runs first, and short-circuits the instance `onAuth`.** The static hook runs at matchmake time, and whatever it returns becomes `client.auth`. When it produced a payload (any token-bearing client), the **instance** `onAuth` is skipped entirely. Override the *static* `onAuth` when you need custom token validation; use the instance form only for rooms whose clients join without tokens.
+</Callout>
+
+<Callout type="info">
+    **Using [`@colyseus/database`](/database)?** The default static `onAuth` also enforces `tokenVersion`-based revocation. `db.auth.ban()` and `db.auth.bumpTokenVersion()` both reject stale tokens on the next room join. See [Database → Authentication](/database/authentication).
+</Callout>
 
 <Steps>
 
@@ -23,7 +32,7 @@ If left non-implemented, it always returns `true` - allowing any client to conne
     The `static onAuth` is recommended because it does not require the room instance to be created before authenticating the client.
 
     <Callout type="info">
-        If you need to access the room instance during the authentication process, you can use the instance `onAuth` method instance.
+        If you need to access the room instance during the authentication process, use the instance `onAuth` method.
     </Callout>
 
     ```ts {5} filename="src/rooms/MyRoom.ts"
@@ -43,23 +52,18 @@ If left non-implemented, it always returns `true` - allowing any client to conne
     </Tabs.Tab>
 
     <Tabs.Tab>
-    The instance `onAuth` method is called after the room instance is created. This method is useful when you need to access the room instance properties, such as currently connected clients, or the room state.
-
-    <Callout type="info">
-        If you don't need to access the room instance properties, it's recommended to use the static `onAuth` method instead.
-    </Callout>
+    The instance `onAuth` method is called after the room instance is created, so it can read room properties: connected clients, room state. Remember it only runs when the static `onAuth` produced no payload (see the warning above), so use it for room-specific checks on token-less clients, not for token validation:
 
     ```ts {5} filename="src/rooms/MyRoom.ts"
-    import { Room } from "colyseus";
-    import { JWT } from "@colyseus/auth";
+    import { Room, ServerError } from "colyseus";
 
     class MyRoom extends Room {
         async onAuth (client, options, context) {
-            // validate the token
-            const userdata = await JWT.verify(context.token);
-
-            // return userdata
-            return userdata;
+            // room-specific gate, e.g. reject spectators once the match started
+            if (this.state.phase !== "lobby" && !options.spectator) {
+                throw new ServerError(400, "match already in progress");
+            }
+            return true;
         }
     }
     ```
@@ -97,7 +101,7 @@ client.auth.token = "YOUR AUTH TOKEN";
 
 ## Client SDK: Requesting to join a Room
 
-Match-making requests will contain the auth token.
+Matchmaking requests will contain the auth token.
 
 ```js filename="client.js"
 client.joinOrCreate("my_room").then((room) => {
@@ -106,6 +110,27 @@ client.joinOrCreate("my_room").then((room) => {
 ```
 
 </Steps>
+
+## With `@colyseus/database`
+
+When the [`@colyseus/database`](/database/authentication) integration is active, the default `onAuth` verifies the JWT and enforces `tokenVersion`-based revocation. Bans and explicit `bumpTokenVersion()` calls both reject stale tokens automatically. Override the **static** `onAuth` only for room-specific logic (for example, surfacing the ban reason in the close frame instead of a generic AUTH_FAILED). Note that overriding it replaces the default, so you re-do the token verification yourself:
+
+```ts {2-3,7-13} filename="src/rooms/MyRoom.ts"
+import { Room, ServerError } from "colyseus";
+import { JWT } from "@colyseus/auth";
+import { db } from "../app.config";
+
+class MyRoom extends Room {
+    static async onAuth(token, options, context) {
+        const payload = await JWT.verify(token); // throws on invalid/expired
+        const { banned, reason } = await db.auth.isBanned(payload.id);
+        if (banned) {
+            throw new ServerError(403, reason ?? "You are banned.");
+        }
+        return payload; // becomes client.auth
+    }
+}
+```
 
 ## `onAuth` Context
 
@@ -116,6 +141,7 @@ The `context` object has the following properties:
 - `context.token` - the authentication token sent by the client.
 - `context.headers` - the headers sent by the client.
 - `context.ip` - the IP address of the client.
+- `context.req` - the matchmaking HTTP request, on `static onAuth` only.
 
 ### Accessing the Auth Token
 
@@ -143,7 +169,10 @@ async onAuth(client, options, context) {
 
 ### Accessing the client IP address
 
-The client IP address is available in the `context.ip` property.
+The client IP address is available in the `context.ip` property, as a single
+address. Colyseus reads it from `x-real-ip`, then the first entry of
+`x-forwarded-for`, then `x-client-ip`, and falls back to the address of the
+connection itself. The property is `undefined` when no source provides one.
 
 ```ts {3} filename="src/rooms/MyRoom.ts"
 // ...

@@ -2,17 +2,18 @@
 title: Setup Server from Scratch with TypeScript
 description: "Set up a Colyseus server from scratch using TypeScript without the project template."
 ---
+import { Tabs } from 'nextra/components'
 import { DownloadIcon } from '@primer/octicons-react'
 
-## Setup Server from Scratch with TypeScript
+# Setup Server from Scratch with TypeScript
 
-This is a step by step guide for creating a colyseus server with typescript.
+A step-by-step guide for creating a Colyseus server with TypeScript, without the project template. Prefer `npm create colyseus-app@latest` unless you need full control over every file.
 
-### Requirements
+## Requirements
 
 - [<DownloadIcon/> Download and Install Node.js](https://nodejs.org/)
 
-#### Setup
+### Setup
 
 Create a new empty directory.
 
@@ -39,11 +40,9 @@ Change the `"main"` and `"scripts"` property of the `package.json`.
   "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
-    "start": "ts-node src/main.ts",
-    "start:dev": "ts-node-dev --watch \"src/**/*\" --respawn --transpile-only src/main.ts ",
-    "start:prod": "node dist/main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+    "start": "tsx watch src/main.ts",
+    "start:prod": "node dist/main.js"
+  }
 }
 ```
 
@@ -56,7 +55,7 @@ npm i colyseus
 Install Dev Dependencies
 
 ```sh npm2yarn
-npm i --save-dev typescript ts-node-dev
+npm i --save-dev typescript tsx
 ```
 
 Create a new file called `tsconfig.json` in the root of the project
@@ -65,18 +64,15 @@ Create a new file called `tsconfig.json` in the root of the project
 {
     "compilerOptions": {
         "outDir": "./dist",
-        "module": "commonjs",
-        "lib": ["es6"],
-        "target": "es2016",
-        "declaration": true,
-        "removeComments": true,
-        "noImplicitAny": false,
-        "experimentalDecorators": true,
-        "sourceMap": true,
-        "esModuleInterop": true,
+        "target": "ESNext",
+        "module": "CommonJS",
+        "moduleResolution": "node",
         "strict": true,
         "allowJs": true,
         "strictNullChecks": false,
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "useDefineForClassFields": false
     },
@@ -86,38 +82,96 @@ Create a new file called `tsconfig.json` in the root of the project
 }
 ```
 
-Create a new `src` directory
+Create a new `src/rooms` directory
 
 ```sh filename="Terminal"
-mkdir src
+mkdir -p src/rooms
 ```
 
-Create a new file called `main.ts` in the `src` directory
+### State and Room
+
+Define the synchronized state for your room.
+
+<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
+    <Tabs.Tab>
+    ```ts filename="src/rooms/MyState.ts"
+    import { schema, t } from "@colyseus/schema";
+
+    export const Player = schema({
+        x: t.number().default(0),
+        y: t.number().default(0),
+    }, "Player");
+
+    export const MyState = schema({
+        players: t.map(Player),
+    }, "MyState");
+    ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+    ```ts filename="src/rooms/MyState.ts"
+    import { Schema, MapSchema, type } from "@colyseus/schema";
+
+    export class Player extends Schema {
+        @type("number") x: number = 0;
+        @type("number") y: number = 0;
+    }
+
+    export class MyState extends Schema {
+        @type({ map: Player }) players = new MapSchema<Player>();
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+Create a room class that uses the state.
+
+```ts filename="src/rooms/MyRoom.ts"
+import { Room, Client } from "colyseus";
+import { MyState, Player } from "./MyState";
+
+export class MyRoom extends Room {
+    state = new MyState();
+
+    onJoin(client: Client) {
+        this.state.players.set(client.sessionId, new Player());
+    }
+
+    onLeave(client: Client) {
+        this.state.players.delete(client.sessionId);
+    }
+}
+```
+
+### Entrypoint
+
+Create a new file called `main.ts` in the `src` directory. It registers the room type and starts listening.
 
 ```ts filename="src/main.ts"
-import { defineServer } from "colyseus"
-const port = parseInt(process.env.PORT, 10) || 3000
+import { defineServer, defineRoom } from "colyseus";
+import { MyRoom } from "./rooms/MyRoom";
 
-const server = defineServer({/* ... */})
-server.listen(port)
-console.log(`[GameServer] Listening on Port: ${port}`)
+const port = parseInt(process.env.PORT, 10) || 2567;
+
+const server = defineServer({
+    rooms: {
+        my_room: defineRoom(MyRoom),
+    },
+});
+
+server.listen(port);
 ```
 
-Congrats you finished the setup for a colyseus server.
+Congrats, you finished the setup for a Colyseus server. Clients can now join it via `client.joinOrCreate("my_room")`. See [Joining Rooms](/sdk#joining-rooms).
 
-### Commands
+## Commands
 
-Now you can start the server with:
+Start the server in development with:
 
 ```sh npm2yarn
 npm start
 ```
 
-For development you can use the `start:dev` command. It automatically restarts the server when you change a file.
-
-```sh npm2yarn
-npm run start:dev
-```
+`tsx watch` automatically restarts the server when you change a file.
 
 For production you first create a build.
 

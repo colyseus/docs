@@ -28,7 +28,7 @@ The GameMaker SDK is built on top of the shared [Colyseus Native SDK](https://gi
 2. In GameMaker, go to **Tools → Import Local Package**
 3. Select the `.yymps` file, select all resources, and click **Import**
 
-This adds the `Colyseus_SDK` extension and the `Colyseus` script to your project.
+The import adds the `Colyseus_SDK` extension and two scripts, `Colyseus` and `ColyseusPredict`, to your project. Keep both: the first calls into the second, so a project with only one of them does not compile.
 
 ## Project Setup
 
@@ -36,78 +36,29 @@ The SDK uses an **event queue** pattern to integrate with GameMaker's frame loop
 
 You must call `colyseus_process()` once per frame in the **Step** event to poll and dispatch all queued events.
 
+Create the client from the **Step** event, on the first frame `colyseus_is_ready()` returns `true`. On HTML5 the WASM module finishes instantiating after the game has started, so a Create event runs too early; native is ready from the first frame, so the same code works everywhere.
+
 ## Quick Example
 
 This example shows how to connect to a room, listen for state changes, send messages, and leave the room.
 
 ```js filename="Create_0.gml"
-/// Create Event — initialize client and join room
+/// Create Event: nothing is connected yet
 
-client = colyseus_client_create("http://localhost:2567");
-net_room = colyseus_client_join_or_create(client, "my_room", "{}");
-
-// --- Room event handlers ---
-
-colyseus_on_join(net_room, function(_room) {
-    show_debug_message("Joined room: " + colyseus_room_get_id(_room));
-    show_debug_message("Session ID: " + colyseus_room_get_session_id(_room));
-
-    // Store as instance variables (no "var") so nested callbacks can access them
-    player_objs = {};
-    callbacks = colyseus_callbacks_create(_room);
-
-    // Listen to root state properties (instance can be omitted for root)
-    colyseus_listen(callbacks, "currentTurn", function(value, prev) {
-        show_debug_message("Turn changed: " + string(prev) + " -> " + string(value));
-    });
-
-    // Listen for players added to the "players" map
-    colyseus_on_add(callbacks, "players", function(instance, key) {
-        show_debug_message("Player joined: " + key);
-
-        var _px = colyseus_schema_get(instance, "x");
-        var _py = colyseus_schema_get(instance, "y");
-        var _player_obj = instance_create_depth(_px, _py, 0, obj_player);
-
-        player_objs[$ key] = _player_obj;
-
-        // GML anonymous functions can access instance variables (like "callbacks"),
-        // but NOT outer local variables (declared with "var").
-        // Use method() to pass local variables into nested callbacks:
-        colyseus_listen(callbacks, instance, "x", method({ obj: _player_obj }, function(v, p) {
-            obj.x = v;
-        }));
-        colyseus_listen(callbacks, instance, "y", method({ obj: _player_obj }, function(v, p) {
-            obj.y = v;
-        }));
-    });
-
-    // Listen for players removed from the map
-    colyseus_on_remove(callbacks, "players", method({ objs: player_objs }, function(instance, key) {
-        show_debug_message("Player left: " + key);
-        if (variable_struct_exists(objs, key)) {
-            instance_destroy(objs[$ key]);
-            delete objs[$ key];
-        }
-    }));
-});
-
-colyseus_on_error(net_room, function(code, msg) {
-    show_debug_message("Room error [" + string(code) + "]: " + msg);
-});
-
-colyseus_on_leave(net_room, function(code, reason) {
-    show_debug_message("Left room [" + string(code) + "]: " + reason);
-});
-
-colyseus_on_message(net_room, function(_room, _type, _data) {
-    // _data is auto-decoded: struct for maps, string/number for primitives
-    show_debug_message("Message [" + _type + "]: " + json_stringify(_data));
-});
+client = 0;
+net_room = 0;
 ```
 
 ```js filename="Step_0.gml"
-/// Step Event — poll events and send messages
+/// Step Event: connect once the extension is ready, then poll every frame
+
+if (client == 0) {
+    if (!colyseus_is_ready()) exit;
+
+    client = colyseus_client_create("http://localhost:2567");
+    net_room = colyseus_client_join_or_create(client, "my_room", "{}");
+    net_setup_handlers(net_room);   // see below
+}
 
 colyseus_process();
 
@@ -122,8 +73,75 @@ if (colyseus_room_is_connected(net_room)) {
 }
 ```
 
+```js filename="scr_net.gml"
+/// Room event handlers. Called from the object's Step event, so the
+/// function literals below are bound to that instance and can store
+/// instance variables (player_objs, callbacks).
+
+function net_setup_handlers(net_room) {
+
+    colyseus_on_join(net_room, function(_room) {
+        show_debug_message("Joined room: " + colyseus_room_get_id(_room));
+        show_debug_message("Session ID: " + colyseus_room_get_session_id(_room));
+
+        // Store as instance variables (no "var") so nested callbacks can access them
+        player_objs = {};
+        callbacks = colyseus_callbacks_create(_room);
+
+        // Listen to root state properties (instance can be omitted for root)
+        colyseus_listen(callbacks, "currentTurn", function(value, prev) {
+            show_debug_message("Turn changed: " + string(prev) + " -> " + string(value));
+        });
+
+        // Listen for players added to the "players" map
+        colyseus_on_add(callbacks, "players", function(instance, key) {
+            show_debug_message("Player joined: " + key);
+
+            var _px = colyseus_schema_get(instance, "x");
+            var _py = colyseus_schema_get(instance, "y");
+            var _player_obj = instance_create_depth(_px, _py, 0, obj_player);
+
+            player_objs[$ key] = _player_obj;
+
+            // GML anonymous functions can access instance variables (like "callbacks"),
+            // but NOT outer local variables (declared with "var").
+            // Use method() to pass local variables into nested callbacks:
+            colyseus_listen(callbacks, instance, "x", method({ obj: _player_obj }, function(v, p) {
+                obj.x = v;
+            }));
+            colyseus_listen(callbacks, instance, "y", method({ obj: _player_obj }, function(v, p) {
+                obj.y = v;
+            }));
+        });
+
+        // Listen for players removed from the map
+        colyseus_on_remove(callbacks, "players", method({ objs: player_objs }, function(instance, key) {
+            show_debug_message("Player left: " + key);
+            if (variable_struct_exists(objs, key)) {
+                instance_destroy(objs[$ key]);
+                delete objs[$ key];
+            }
+        }));
+    });
+
+    colyseus_on_error(net_room, function(code, msg) {
+        show_debug_message("Room error [" + string(code) + "]: " + msg);
+    });
+
+    colyseus_on_leave(net_room, function(code, reason) {
+        show_debug_message("Left room [" + string(code) + "]: " + reason);
+    });
+
+    colyseus_on_message(net_room, function(_room, _type, _data) {
+        // _data is auto-decoded: struct for maps, string/number/bool for primitives
+        show_debug_message("Message [" + _type + "]: " + json_stringify(_data));
+    });
+
+}
+```
+
 ```js filename="CleanUp_0.gml"
-/// Clean Up Event — free resources
+/// Clean Up Event: free resources
 
 if (net_room != 0) {
     colyseus_room_leave(net_room);
@@ -146,7 +164,7 @@ if (client != 0) {
 | `colyseus_client_join(client, room_name, options_json)` | Join an existing room. |
 | `colyseus_client_create_room(client, room_name, options_json)` | Create a new room. |
 | `colyseus_client_join_by_id(client, room_id, options_json)` | Join a room by its ID. |
-| `colyseus_client_reconnect(client, reconnection_token)` | Reconnect using a token from a previous session. |
+| `colyseus_client_reconnect(client, reconnection_token)` | Re-take a seat with a token saved from `colyseus_room_get_reconnection_token()`, for example after the process was killed. The server must `allowReconnection()`. |
 
 ### Room
 
@@ -158,6 +176,9 @@ if (client != 0) {
 | `colyseus_room_get_name(room)` | Get the room type name. |
 | `colyseus_room_leave(room)` | Leave the room gracefully. |
 | `colyseus_room_free(room)` | Free room resources (also frees callbacks). |
+| `colyseus_room_get_reconnection_token(room)` | The `"roomId:token"` string for `colyseus_client_reconnect()`; empty until joined. |
+| `colyseus_room_is_reconnecting(room)` | Returns `1` while an automatic reconnection is in progress. |
+| `colyseus_room_set_reconnection_options(room, enabled, max_retries, min_delay_ms, max_delay_ms, min_uptime_ms, delay_ms, max_enqueued_messages)` | Tune automatic reconnection; pass `-1` to keep a value. |
 
 ### Room Events (GML helpers)
 
@@ -167,15 +188,17 @@ Register callbacks for room lifecycle events. These are dispatched by `colyseus_
 | --- | --- |
 | `colyseus_on_join(room, handler)` | `handler(room)` |
 | `colyseus_on_state_change(room, handler)` | `handler(room)` |
-| `colyseus_on_message(room, handler)` | `handler(room, type, data)` — `data` is auto-decoded |
+| `colyseus_on_message(room, handler)` | `handler(room, type, data)` (`data` is auto-decoded) |
 | `colyseus_on_error(room, handler)` | `handler(code, message)` |
 | `colyseus_on_leave(room, handler)` | `handler(code, reason)` |
+| `colyseus_on_drop(room, handler)` | `handler(code, reason)`, once when the connection drops with a recoverable code and automatic reconnection starts |
+| `colyseus_on_reconnect(room, handler)` | `handler()`, when the reconnection succeeds; messages sent while dropped have been flushed by then |
 
 ### Sending Messages
 
 | Function | Description |
 | --- | --- |
-| `colyseus_send(room, type, struct)` | Send a struct as a message. Values must be strings or numbers. |
+| `colyseus_send(room, type, data)` | Send a message. `data` is a struct (sent as a map of strings, numbers and booleans), or a bare string, number or boolean. |
 | `colyseus_room_send(room, type, data)` | Send raw encoded bytes with a string type. |
 | `colyseus_room_send_bytes(room, type, data, length)` | Send raw bytes. |
 | `colyseus_room_send_int(room, type, data)` | Send raw encoded bytes with a numeric type. |
@@ -193,26 +216,28 @@ For advanced message construction:
 
 ### State & Schema
 
-Access fields from schema instances. Use `colyseus_room_get_state(room)` to get the root state handle.
+Schema instances arrive as GML structs: `colyseus_room_get_state(room)` returns the root state with every field (and nested ref) as a member, and the structs a callback receives are the same objects. The structs are refreshed after every patch, so dot access is current as of the last `colyseus_process()`. Any function below also accepts a struct where it says `instance`.
 
 | Function | Description |
 | --- | --- |
-| `colyseus_room_get_state(room)` | Get the root state instance handle (`0` if unavailable). |
-| `colyseus_schema_get(instance, field)` | Get a field value (auto-dispatches by type: string, number, ref, array, map). |
-| `colyseus_schema_get_field_type(instance, field)` | Get the field type as a number (see type constants below). |
-| `colyseus_map_get(instance, field, key)` | Get an item from a MapSchema by key. |
+| `colyseus_room_get_state(room)` | The root state as a struct (`undefined` until the first state arrives). |
+| `colyseus_schema_get(instance, field)` | Read one field: a string, a number (booleans read as `1`/`0`), a struct for refs, `undefined` if the field does not exist. |
+| `colyseus_schema_get_field_type(instance, field)` | The field type as a number (`COLYSEUS_TYPE_*`), `-1` if the field does not exist. |
+| `colyseus_map_get(instance, field, key)` | An entry of a MapSchema by key: a struct for schema entries, the value for primitive-valued maps, `undefined` when absent. |
 
 ### State Change Callbacks (GML helpers)
 
-Create a callbacks manager to listen for state mutations. Use `0` as the instance handle to refer to the root state.
+Create a callbacks manager to listen for state mutations. Omit the `instance` argument to listen on the root state.
 
 | Function | Callback signature |
 | --- | --- |
 | `colyseus_callbacks_create(room)` | Create a callbacks manager. Returns a callbacks handle. |
-| `colyseus_listen(callbacks, [instance], property, handler)` | `handler(value, previous_value)` — omit `instance` for root state |
-| `colyseus_on_add(callbacks, [instance], property, handler)` | `handler(instance, key)` — omit `instance` for root state |
-| `colyseus_on_remove(callbacks, [instance], property, handler)` | `handler(instance, key)` — omit `instance` for root state |
-| `colyseus_callbacks_remove_handle(callbacks, handle)` | Stop listening for a specific callback. |
+| `colyseus_listen(callbacks, [instance], property, handler)` | `handler(value, previous_value)` |
+| `colyseus_on_add(callbacks, [instance], property, handler)` | `handler(instance, key)` |
+| `colyseus_on_remove(callbacks, [instance], property, handler)` | `handler(instance, key)` |
+| `colyseus_on_change(callbacks, [instance], property, handler)` | `handler(key, value)` for any change inside a collection field |
+| `colyseus_on_change(callbacks, instance, handler)` | `handler()` after any field of that instance changes |
+| `colyseus_callbacks_remove_handle(callbacks, handle)` | Stop listening for a specific callback (each registration returns its handle). |
 | `colyseus_callbacks_free(callbacks)` | Free callbacks (auto-freed when room is freed). |
 
 ### Event Processing
@@ -242,7 +267,7 @@ You should be able to see the server running at `http://localhost:2567`, and the
 
 ### Breakpoints
 
-If you set a breakpoint in your application while the WebSocket connection is open, the connection will be closed automatically after 3 seconds due to inactivity. To prevent the WebSocket connection from dropping, use `pingInterval: 0` during development:
+If you set a breakpoint while the WebSocket connection is open, the connection closes automatically after 3 seconds due to inactivity. To prevent the WebSocket connection from dropping, use `pingInterval: 0` during development:
 
 ```ts filename="app.config.ts"
 import { defineServer } from "colyseus";

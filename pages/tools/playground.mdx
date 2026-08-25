@@ -7,7 +7,23 @@ import { Callout } from "nextra/components";
 
 # Playground
 
-The Colyseus Playground is a browser-based development tool for real-time debugging of your multiplayer server. It lets you create and manage WebSocket room connections, inspect synchronized state, send and receive messages, and test HTTP endpoints — all without writing any client-side code.
+The Colyseus Playground is a browser-based development tool for real-time debugging of your multiplayer server. The Playground lets you create and manage WebSocket room connections, inspect synchronized state, send and receive messages, and test HTTP endpoints. All of it works without writing any client-side code.
+
+![](/playground/rooms.webp)
+
+## Features
+
+- Create room connections via `joinOrCreate` / `create` / `join`
+- When `joinById` is selected, provides a list of active rooms by id
+- Authenticate using credentials auto-detected from [<PackageIcon /> Auth Module](/auth/module)
+- Simulate room connection drops to test reconnection logic
+- Visualize the client state in JSON format
+- Allow the client to send messages by type (auto-detected)
+- Built-in viewer and tester for server [HTTP endpoints](/server/http-routes) (similar to Postman)
+
+<Callout type="warning">
+    The playground exposes full access to your rooms and server endpoints. Do not expose it in production without password protection. See [Password protection](#password-protection) below.
+</Callout>
 
 ## Installation
 
@@ -17,7 +33,32 @@ This package is installed by default on new projects created via `npm create col
 npm install --save @colyseus/playground
 ```
 
-Then, import and mount it as an Express middleware:
+## Mounting
+
+The playground can be mounted in two ways.
+
+### Standard router (recommended)
+
+Spread `playground()` into `createRouter` and set the `prefix` to the path you want it served from:
+
+```ts {2,6} filename="app.config.ts"
+import { defineServer, createRouter } from "colyseus";
+import { playground } from "@colyseus/playground";
+
+const server = defineServer({
+    routes: createRouter({
+        ...playground({ prefix: "/playground" }),
+    })
+});
+```
+
+<Callout type="info">
+    `prefix` defaults to `''`, which serves the playground from the root. When spreading into `createRouter` you almost always want to pass an explicit `prefix` such as `"/playground"`.
+</Callout>
+
+### Express middleware
+
+Use this mode if you rely on existing Express middleware or libraries:
 
 ```ts {2,7} filename="app.config.ts"
 import { defineServer } from "colyseus";
@@ -31,50 +72,40 @@ const server = defineServer({
 });
 ```
 
+In express-middleware mode the `prefix` option is ignored. Express strips its own mount path before dispatching.
+
 ## Usage
 
 Once mounted, start your server and navigate to [http://localhost:2567/playground](http://localhost:2567/playground) in your browser.
 
-If you mounted the playground at a different path (e.g. `app.use("/my-path", playground())`), adjust the URL accordingly.
+If you mounted the playground at a different path, adjust the URL accordingly.
 
-<Callout type="warning">
-    The playground exposes full access to your rooms and server endpoints. Do not expose it in production without password protection. You can use `express-basic-auth` to restrict access:
+## Password protection
 
-    ```sh npm2yarn
-    npm install --save express-basic-auth
-    ```
+The playground exposes full access to your rooms and server endpoints. **Do not expose it in production without password protection.** Pass a guard middleware through the playground's `use` option. Colyseus ships with a built-in [`basicAuth`](/server/http-routes#basic-authentication):
 
-    ```ts
-    import basicAuth from "express-basic-auth";
+```ts {1,4,8} filename="app.config.ts"
+import { defineServer, createRouter, basicAuth } from "colyseus";
+import { playground } from "@colyseus/playground";
 
-    const basicAuthMiddleware = basicAuth({
-        users: { "admin": "admin" },
-        challenge: true
-    });
+const guard = basicAuth({ users: { admin: "s3cret" } });
 
-    app.use("/playground", basicAuthMiddleware, playground());
-    ```
-</Callout>
+const server = defineServer({
+    routes: createRouter({
+        ...playground({ prefix: "/playground", use: [guard] }),
+    })
+});
+```
 
-## Features
+The `use` option works in both mounting modes, so you can pass the same guard when mounting via Express:
 
-- Create room connections via `joinOrCreate` / `create` / `join`
-- When `joinById` is selected, provides a list of active rooms by id
-- Authenticate using credentials auto-detected from [<PackageIcon /> Auth Module](/auth/module)
-- Simulate room connection drops to test reconnection logic
-- Visualize the client state in JSON format
-- Allow the client to send messages by type (auto-detected)
-- Built-in viewer and tester for server [HTTP endpoints](/server/http-routes) (similar to Postman)
+```ts filename="app.config.ts"
+app.use("/playground", playground({ use: [guard] }));
+```
 
-## Screenshots
+See [HTTP Routes → Basic authentication](/server/http-routes#basic-authentication) for `basicAuth` options and behavior.
 
-### Rooms
-
-All rooms defined in your server configuration are automatically listed here, allowing you to create connections, inspect state, send messages, and simulate disconnections.
-
-![](/playground/rooms.webp)
-
-### API Endpoints
+## API endpoints
 
 All [HTTP routes](/server/http-routes) registered on your server are automatically detected and listed here, letting you test requests and inspect responses directly from the browser.
 

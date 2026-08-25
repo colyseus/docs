@@ -1,0 +1,239 @@
+---
+title: "Room Plugins"
+description: "Compose Colyseus rooms with reusable plugins that contribute message handlers, lifecycle hooks, and public methods."
+---
+import { Callout, Tabs } from "nextra/components";
+
+# Room Plugins
+
+Cross-cutting room behavior (AFK kicks, session limits, geo lookups) tends to get copy-pasted between room classes. A **Room Plugin** packages that behavior once, as a composable extension to a `Room`. Each plugin can contribute any subset of:
+
+- **Message handlers**: merged into the room's `messages` map.
+- **Lifecycle hooks**: `onCreate`, `onAuth`, `onJoin`, `onLeave`, `onDispose`, composed with the room's own hooks (with configurable before/after ordering).
+- **Public methods**: callable from the room as `this.plugins.<key>.someMethod()`.
+
+Each room gets its own plugin instances, and the framework wires `this.room` once the room is fully constructed. The merge itself is computed once per `Room` subclass and cached on the class, so there's no per-instance setup cost.
+
+## Available plugins
+
+| Plugin | What it does |
+|--------|--------------|
+| [IdleKickPlugin](/room/plugins/idle-kick) | Auto-disconnects clients that haven't sent a message within a configurable timeout. Zero per-message overhead. |
+| [GeoIPPlugin](/room/plugins/geoip) | Resolves a client's country from their IP at auth time and exposes it as `client.geoip` before `onJoin` runs. |
+| [WebRTCPlugin](/room/plugins/webrtc) | WebRTC peer-to-peer signaling (peer list, SDP offer/answer, ICE candidate relay) for audio/video/data channels. |
+| [UniqueSessionPlugin](/room/plugins/unique-session) | Enforces a max number of concurrent sessions of this room type per user (default: one). |
+| [TrackUserSessionsPlugin](/room/plugins/track-user-sessions) | Maintains a per-user reverse index in Presence. Powers admin by-user inspection and session-revocation. |
+
+All plugins above ship with the `colyseus` package, with no extra dependency to install. The exception is `GeoIPPlugin`, which lives in its own package ([`@colyseus/geoip`](/room/plugins/geoip)) because it pulls in the MMDB reader and database files.
+
+## Attaching plugins to a Room
+
+Use `definePlugins` inside your `Room` subclass. The **array form** is recommended. Each plugin declares its own canonical key via `readonly pluginName = '...' as const`, and the framework turns the array into a typed record:
+
+```ts filename="MyRoom.ts"
+import { Room, definePlugins } from "colyseus";
+import { IdleKickPlugin } from "colyseus/plugins/idle-kick";
+
+export class MyRoom extends Room {
+  plugins = definePlugins([
+    new IdleKickPlugin({ timeoutMs: 60_000 }),
+  ]);
+
+  onCreate() {
+    // your own setup, runs alongside the plugin hooks
+    this.plugins.idleKick;  // ← typed, autocompletes
+  }
+}
+```
+
+The key (`idleKick` here) comes from the plugin's `pluginName` field, with no per-room renaming.
+
+### Multiple instances of the same plugin
+
+`definePlugins` also accepts a keyed record. Use it when you want to pick the key yourself per-room, or when you need two instances of the same plugin class with different keys:
+
+```ts filename="MyRoom.ts"
+plugins = definePlugins({
+  adminChat:  new ChatPlugin({ channel: "admin" }),
+  playerChat: new ChatPlugin({ channel: "public" }),
+});
+```
+
+Both forms produce the same runtime shape (`Record<string, RoomPlugin>`). Prefer the array form; reach for the record form when you want to pick the keys yourself.
+
+A plugin can also accept its `pluginName` as a constructor argument, which lets the array form host two instances too. Unless the plugin threads that name's literal type through a generic, though, `this.plugins.<key>` loses its typing. The record form is the simpler road.
+
+## Writing your own plugin
+
+Subclass `RoomPlugin` and override any subset of lifecycle hooks. `this.room` is wired automatically after the host room is fully constructed. Don't access it from the plugin's constructor.
+
+```ts filename="ChatPlugin.ts"
+import { RoomPlugin, type Client } from "@colyseus/core";
+
+export class ChatPlugin extends RoomPlugin {
+  readonly pluginName = "chat" as const;
+
+  private history: string[] = [];
+  private historyLimit: number;
+
+  constructor(opts: { historyLimit: number }) {
+    super();
+    this.historyLimit = opts.historyLimit;
+  }
+
+  protected messages = {
+    chat: (client: Client, msg: { text: string }) => {
+      this.history.push(msg.text);
+      if (this.history.length > this.historyLimit) { this.history.shift(); }
+      this.room.broadcast("chat", { from: client.sessionId, text: msg.text });
+    },
+  };
+
+  // Public: callable as `this.plugins.chat.getHistory()` from the room
+  getHistory(): readonly string[] {
+    return this.history;
+  }
+}
+```
+
+<Callout type="warning">
+  **Always declare lifecycle hooks (`onCreate` / `onAuth` / `onJoin` / `onLeave` / `onDispose`), `messages`, and `order` as `protected`.** They're protected on the base `RoomPlugin` class. If you omit the modifier on a subclass override, TypeScript silently widens it to `public`, which leaks those framework slots into `this.plugins.<key>.<member>` autocomplete. The `pluginName` field stays `public` so type inference can read its literal.
+</Callout>
+
+Use it like any other plugin:
+
+```ts filename="MyRoom.ts"
+import { Room, definePlugins } from "colyseus";
+import { ChatPlugin } from "./ChatPlugin";
+
+export class MyRoom extends Room {
+  plugins = definePlugins([
+    new ChatPlugin({ historyLimit: 100 }),
+  ]);
+
+  onDispose() {
+    console.log("final chat history:", this.plugins.chat.getHistory());
+  }
+}
+```
+
+## Declaring plugin dependencies
+
+A plugin can declare other plugin classes it needs alongside it via a `static dependencies` field. The framework auto-instantiates any missing ones at room construction time. Your app code only mentions the plugin you actually care about:
+
+```ts filename="UniqueSessionPlugin.ts"
+import { RoomPlugin, type PluginDependencies } from "@colyseus/core";
+import { TrackUserSessionsPlugin } from "colyseus/plugins/track-user-sessions";
+
+export class UniqueSessionPlugin extends RoomPlugin {
+  readonly pluginName = "uniqueSession" as const;
+
+  // Pulls `TrackUserSessionsPlugin` in automatically: no need to
+  // list it in the user's `definePlugins([...])`.
+  static dependencies: PluginDependencies = [TrackUserSessionsPlugin];
+}
+```
+
+Rules:
+
+- **Zero-arg constructor.** Dependency classes must construct with no arguments. Plugins that need options can't be auto-included. Register them explicitly.
+- **Transitive resolution.** Dep chains are walked recursively. Cycles throw at class-init time with the cycle path named.
+- **Dedup by class.** If the user already registered the dependency themselves (`definePlugins([new TrackUserSessionsPlugin(), new UniqueSessionPlugin()])`), the auto-include is a no-op: their instance wins.
+- **Hidden from `this.plugins`.** Auto-deps don't appear under a user-visible key in `this.plugins`. They run their lifecycle hooks normally; if you need to interact with one, register it explicitly.
+
+## Lifecycle hook order
+
+By default, plugins run **before** the room's hook for setup-style events and **after** for teardown-style events. Each plugin can override this per-hook via the `order` field.
+
+| Hook        | Default order vs the room's own hook | Rationale                                  |
+|-------------|--------------------------------------|--------------------------------------------|
+| `onCreate`  | Plugins run **before**               | Plugins set up guards/state the room reads |
+| `onAuth`    | Plugins run **before**               | Plugins vet/decorate the client before the room's auth logic |
+| `onJoin`    | Plugins run **before**               | Plugins can validate/decorate the client   |
+| `onLeave`   | Plugins run **after**                | Capture the final state the room left      |
+| `onDispose` | Plugins run **after**                | Run cleanup after the room's teardown      |
+
+A plugin's `onAuth(client, options, context)` differs from the room's in one way: it returns nothing. It exists to vet or decorate the client: throw to reject the join, or attach data for downstream hooks. That's how [`GeoIPPlugin`](/room/plugins/geoip) makes `client.geoip` available before your own `onAuth` runs; producing `client.auth` data remains the room's job.
+
+To override the default for a specific hook:
+
+```ts filename="MyPlugin.ts"
+import { RoomPlugin } from "@colyseus/core";
+
+export class MyPlugin extends RoomPlugin {
+  readonly pluginName = "my" as const;
+
+  protected order = {
+    onJoin: "after",   // run AFTER the room's onJoin instead of before
+  } as const;
+
+  protected onJoin(client) {
+    // ...
+  }
+}
+```
+
+## Message handler rules
+
+- A plugin's `messages` are merged into the room's `messages`.
+- If the **room** defines the same message key as a plugin, the room wins: the plugin's handler is silently dropped. This behavior is the documented escape hatch for _"use the plugin but override one message"_.
+- If **two plugins** define the same key, the framework throws at class-init time naming both plugin keys. Resolve by giving one a different key or by overriding on the room's own `messages`.
+
+At runtime the plugin's message handlers are fully merged into the room. For **client-side typing**, though, a `protected messages` map (the visibility this page recommends) does not surface through the SDK's `room.send(...)` / `room.onMessage(...)` type extraction. That's because TypeScript's structural checks skip protected members. If typed client access to a plugin's messages matters more than autocomplete hygiene, declare that plugin's `messages` as `public`.
+
+## Typed access to room state
+
+Plugins that need typed access to the host room's state expose a generic parameter on their class:
+
+```ts filename="LeaderboardsPlugin.ts"
+import { RoomPlugin, type Client, type Room } from "@colyseus/core";
+
+export class LeaderboardsPlugin<R extends Room = Room> extends RoomPlugin<R> {
+  readonly pluginName = "leaderboards" as const;
+
+  protected onLeave(client: Client) {
+    // `this.room` is typed as `R`, the room shape the user passed.
+    this.room.state.players.delete(client.sessionId);
+  }
+}
+```
+
+The generic argument must come from **outside** the room class. Declare a type alias for the room shape next to it:
+
+```ts filename="MyRoom.ts"
+type MyRoomShape = Room<{ state: MyState }>;
+
+export class MyRoom extends Room<{ state: MyState }> {
+  plugins = definePlugins([
+    new LeaderboardsPlugin<MyRoomShape>(),
+  ]);
+}
+```
+
+<Callout type="warning">
+  **Prefer a type alias over `<this>` inside the `plugins =` initializer.** `new LeaderboardsPlugin<this>()` makes the field's type depend on the class being defined. That dependency has historically tripped TypeScript's cycle detection (`'plugins' implicitly has type 'any'`) on some compiler versions. The type-alias pattern above sidesteps the question entirely (the alias resolves before the class does) and is the canonical way to thread the room shape.
+</Callout>
+
+## Testing a plugin in isolation
+
+Use `attachToTestRoom` to inject a stub room and exercise the plugin's hooks without spinning up a full Colyseus server. Because lifecycle hooks and `messages` are `protected`, reach into them via bracket-notation (TS skips visibility checks on indexed access):
+
+```ts filename="MyPlugin.test.ts"
+import assert from "assert";
+import { attachToTestRoom } from "@colyseus/core";
+import { ChatPlugin } from "./ChatPlugin";
+
+const plugin = new ChatPlugin({ historyLimit: 5 });
+const broadcasts: any[] = [];
+attachToTestRoom(plugin, {
+  broadcast: (type, payload) => broadcasts.push([type, payload]),
+});
+
+// Bracket access: bypasses TS's `protected` visibility check.
+plugin["messages"]!["chat"]({ sessionId: "alice" } as any, { text: "hi" });
+
+assert.deepEqual(broadcasts, [["chat", { from: "alice", text: "hi" }]]);
+assert.deepEqual(plugin.getHistory(), ["hi"]);
+```
+
+The second argument to `attachToTestRoom` is shallow-merged onto the stub, so tests only declare the room properties they actually exercise.

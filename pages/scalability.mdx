@@ -1,3 +1,7 @@
+---
+title: "Scalability"
+description: "Scale Colyseus across multiple processes and machines with Redis presence, a shared matchmaking driver, and a load balancer, or let Colyseus Cloud handle it."
+---
 import { Callout, Steps } from 'nextra/components';
 import { FileMediaIcon } from '@primer/octicons-react';
 
@@ -90,19 +94,21 @@ module.exports = {
     apps: [{
         port        : 2567,
         name        : "colyseus",
-        script      : "lib/index.js",   // your entrypoint file
+        script      : "build/index.js", // your compiled entrypoint file
+        time        : true,
         watch       : false,
         instances   : os.cpus().length, // or manually set the amount of instances
         exec_mode   : 'fork',           // IMPORTANT: DO NOT use 'cluster' mode.
+        wait_ready  : true,
     }]
 }
 ```
 
-When you use `@colyseus/tools`'s `.listen()` method, the `NODE_APP_INSTANCE` from PM2 is automatically used to define the port number. If you specified `2567` as port number, the first instance will listen on port `2567`, the second instance on port `2568`, and so on.
+Colyseus automatically adds PM2's `NODE_APP_INSTANCE` to the port number. If you specified `2567` as port number, the first instance will listen on port `2567`, the second instance on port `2568`, and so on.
 
 ---
 
-Now you're ready to start multiple Colyseus proceses.
+Now you're ready to start multiple Colyseus processes.
 
 ```sh filename="Terminal"
 pm2 start ecosystem.config.js
@@ -115,6 +121,10 @@ pm2 start ecosystem.config.js
 ## Use NGINX as a reverse proxy
 
 Install [nginx](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/) and configure it to proxy requests to your Colyseus processes.
+
+<Callout type="info">
+    Prefer Traefik? The [Traefik Load Balancer](/scalability/traefik) guide covers the same role with automatic service discovery and Let's Encrypt certificates.
+</Callout>
 
 The following NGINX config file will:
 - Proxy requests to `backend.yourgame.com` to the Colyseus processes running on ports `2567`, `2568`, `2569`, `2570`, and so on.
@@ -181,3 +191,9 @@ server {
 It is recommended to use SSL certificates to secure the communication between the client and the server. Replace the `ssl_certificate` and `ssl_certificate_key` paths in the NGINX configuration file with your own SSL certificates.
 
 </Steps>
+
+## Next Steps
+
+- [Deployment](/deployment) - The production checklist: PM2, HTTPS, health checks
+- [Graceful Shutdown](/server/graceful-shutdown) - How deploys drain rooms and notify clients
+- [FAQ: How many CCU can a Colyseus server handle?](/faq#how-many-ccu-can-a-colyseus-server-handle) - Capacity planning per process

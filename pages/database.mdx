@@ -1,72 +1,132 @@
 ---
-title: "Database & Persistence"
+title: Database
+description: "Persist players, cloud saves, leaderboards, and live configs in Colyseus with the official @colyseus/database package, or bring your own ORM, query builder, or Firebase."
 ---
-import { Cards, Callout } from 'nextra/components'
-import { LinkExternalIcon } from '@primer/octicons-react'
+import { Callout } from 'nextra/components'
+import { PasskeyFillIcon } from '@primer/octicons-react'
 
-# Database & Persistence
+# Database
 
-Colyseus is agnostic to the database you use. You can use your preferred database and Node.js module for working with databases.
+The recommended way to persist game data in Colyseus is **`@colyseus/database`**, the official persistence layer, built on [Drizzle ORM](https://orm.drizzle.team/). A single typed connection backs player accounts, cloud saves, leaderboards, live configs, analytics, moderation, and matchmaking.
 
-<Callout type="warning">
-    Having database-first features such as **player identity**, **leaderboards**, **configurations**, etc. is in our [Roadmap](/roadmap). Currently, we don't have an official database recommendation. [Join the discussion](https://github.com/colyseus/colyseus/issues/594).
+A single `GameDatabase` instance exposes:
+
+- **`db.auth`**: user store for [<PasskeyFillIcon/> `@colyseus/auth`](/auth/module): bans, session revocation, password management
+- **`db.saves`**: versioned cloud saves with optimistic locking
+- **`db.leaderboards`**: keep-best scores, seasons, top-N and around-me queries
+- **`db.configs`**: typed, hot-reloadable live-ops configuration
+- **`db.analytics`** / **`db.moderation`** / **`db.notes`**: event tracking, roles, and player notes
+- **`db.segments`**: declarative player cohorts for targeting
+- **[`DatabaseDriver`](/server/driver)**: a matchmaking driver reusing the same connection
+
+Colyseus itself remains database-agnostic: if your project needs a different stack, [bring your own database](/database/bring-your-own) and query it directly from your rooms.
+
+<Callout type="info">
+    `@colyseus/database` was introduced in Colyseus 0.18. Feedback is welcome on the [public roadmap](/roadmap).
 </Callout>
 
----
+## Installation
 
-## Recommended database tools
+```sh npm2yarn
+npm install --save @colyseus/database
+```
 
-### ORMs (Object-Relational Mappers)
+For PostgreSQL, also install the `postgres` driver:
 
-ORMs are known for abstracting the database layer and providing a more object-oriented approach.
+```sh npm2yarn
+npm install --save postgres
+```
 
-<Cards>
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="DrizzleORM" href="https://orm.drizzle.team/" />
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="MikroORM" href="https://mikro-orm.io/" />
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="Prisma" href="http://www.prisma.io/" />
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="Sequelize" href="https://sequelize.org/" />
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="TypeORM" href="https://typeorm.io/" />
-</Cards>
+## Quick start
 
-### Query builders
+Construct a `GameDatabase` and pass it to `defineServer` via the `database` option. The server boots the database (running migrations) before it starts listening, and automatically mounts the [`@colyseus/auth`](/auth/module) routes when that package is installed.
 
-Query builders are known for their simplicity and flexibility.
+```ts {2,5} filename="src/app.config.ts"
+import { defineServer } from "colyseus";
+import { GameDatabase } from "@colyseus/database";
 
-<Cards>
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="Kysely" href="https://kysely.dev/" />
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="Knex" href="https://knexjs.org/" />
-</Cards>
+export const db = new GameDatabase({
+    connectionString: process.env.DATABASE_URL,
+});
 
+export default defineServer({
+    database: db,
+    // ...rooms, routes, etc.
+});
+```
 
----
-
-## Usage patterns with Colyseus
-
-### Query the database in `onAuth()`
-
-You may fetch user data based on the `options` passed to the client on connection, or based on the authentication token.
+Export the `db` instance so your rooms can import it. Inside any room lifecycle method, the services are ready to use:
 
 ```ts filename="src/rooms/MyRoom.ts"
-// ...
-async onAuth(client, options) {
-    const user = await db.query('SELECT * FROM users WHERE id = ?', [options.userId]);
-    return user;
-}
+import { Room } from "colyseus";
+import { db } from "../app.config";
 
-onJoin (client, options) {
-    // ...
-    await db.query('UPDATE users SET online = true WHERE id = ?', [client.auth.id]);
+export class MyRoom extends Room {
+    async onJoin(client, options) {
+        // client.auth was populated by the default static onAuth,
+        // which already rejects banned/revoked tokens automatically.
+        await db.saves.load(client.auth.id);
+    }
 }
 ```
 
-### Update the database in `onLeave()`
+## Dialects & connection strings
 
-You may update the database when the client leaves the room.
+The dialect is auto-detected from the connection string. When omitted, SQLite is used with the default file `colyseus.db`.
 
-```ts filename="src/rooms/MyRoom.ts"
-// ...
-async onLeave(client, consented) {
-    // ...
-    await db.query('UPDATE users SET online = false WHERE id = ?', [client.auth.id]);
-}
+| Connection string | Dialect | Notes |
+|---|---|---|
+| _(omitted)_ or `./game.db` | SQLite | File-based; great for development |
+| `:memory:` | SQLite | Ephemeral; useful for tests |
+| `postgres://…` / `postgresql://…` | PostgreSQL | Production; requires the `postgres` package |
+| `pglite://./data` / `pglite://:memory:` | PGlite | Embedded Postgres, no external server |
+
+```ts filename="src/app.config.ts"
+// SQLite (development): defaults to colyseus.db
+new GameDatabase();
+
+// PostgreSQL (production)
+new GameDatabase({ connectionString: process.env.DATABASE_URL });
+
+// Embedded PGlite, file-backed
+new GameDatabase({ dialect: "pglite", connectionString: "pglite://./data" });
 ```
+
+## Migrations
+
+The `migrations` option controls how the schema is applied at boot:
+
+- **`"auto"`** _(default)_: creates missing tables and adds new columns. Idempotent and convenient for development.
+- **`"skip"`**: does nothing; you manage the schema externally (e.g. a `drizzle-kit migrate` step in CI before the server starts).
+- **`{ files: "./drizzle" }`**: runs SQL migration files generated by `drizzle-kit`. Drizzle tracks applied migrations, so reruns are safe.
+
+```ts filename="src/app.config.ts"
+new GameDatabase({
+    connectionString: process.env.DATABASE_URL,
+    migrations: "skip", // schema applied by CI
+});
+```
+
+## Matchmaking driver
+
+Reuse the same connection as your [matchmaking driver](/server/driver) (one pool for everything, no separate Redis required):
+
+```ts {3,7} filename="src/app.config.ts"
+import { defineServer } from "colyseus";
+import { GameDatabase } from "@colyseus/database";
+import { DatabaseDriver } from "@colyseus/database/driver";
+
+export const db = new GameDatabase({ connectionString: process.env.DATABASE_URL });
+
+export default defineServer({
+    database: db,
+    driver: new DatabaseDriver(), // adopts the GameDatabase connection
+});
+```
+
+## Next steps
+
+- [Authentication](/database/authentication): the built-in `@colyseus/auth` integration (auto-mounted routes, ban gating, JWT revocation, admin helpers).
+- [Services](/database/services): cloud saves, leaderboards, live configs, analytics, moderation, notes, and the matching room plugins.
+- [Customizing built-in table schemas](/database/schemas): extend the package's drizzle tables with your own columns.
+- [Bring your own database](/database/bring-your-own): ORMs, query builders, Firebase, and the `onAuth`/`onLeave` integration patterns.

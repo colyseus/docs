@@ -1,0 +1,181 @@
+---
+title: "Streaming Collections"
+description: "Drip-feed large collections to clients across ticks with t.stream(), a per-tick budget, and per-client priority."
+---
+import { Callout } from 'nextra/components'
+
+# Streaming Collections
+
+A collection that gains hundreds of entries in one tick produces one enormous patch. Every client pays for it in the same frame, and most of those entries are irrelevant to most clients.
+
+**Streaming** spreads those additions across ticks. Each client drains a bounded number of new entries per tick, in an order you control. The nearest entities arrive first, and the rest trickle in behind them.
+
+<Callout type="warning">
+    **Experimental.** The API may still change: the shape of `t.stream()`, the priority callback, and how the per-tick budget applies. Pin your `@colyseus/schema` version if you depend on it.
+</Callout>
+
+## At a glance
+
+```ts
+import { schema, t } from "@colyseus/schema";
+
+const Player = schema({ x: t.number(), y: t.number() }, "Player");
+const Enemy = schema({ x: t.number(), y: t.number() }, "Enemy");
+
+const MyState = schema({
+    players: t.map(Player),
+    enemies: t.stream(Enemy),
+}, "MyState");
+```
+
+```ts
+import { StateView } from "@colyseus/schema";
+
+class MyRoom extends Room {
+    onCreate() {
+        this.state.enemies.maxPerTick = 8;   // per client, per tick (default 32)
+        this.state.enemies.add(new Enemy().assign({ x: 10, y: 20 }));
+    }
+
+    onJoin(client) {
+        const player = this.state.players.get(client.sessionId);
+
+        client.view = new StateView();
+        client.view.subscribe(this.state.enemies, (enemy) =>
+            -((enemy.x - player.x) ** 2 + (enemy.y - player.y) ** 2));   // nearest first
+    }
+}
+```
+
+Three pieces carry the feature. `t.stream(Enemy)` declares the collection, `maxPerTick` caps how fast it drains, and `subscribe()` connects one client to it. That last call also takes an optional callback, which orders that client's backlog.
+
+<Callout type="info">
+    Streaming is a delivery strategy for **additions**. Once an entry reaches a client, later changes to its fields synchronize normally and don't consume the budget.
+</Callout>
+
+## `t.stream(Entity)`
+
+Declares a **`StreamSchema`**, a collection keyed by a monotonic position counter rather than an index or a user key.
+
+That position is the point. Entries keep a stable identity even as others are removed, so a client's partially-delivered view stays coherent across ticks.
+
+<Callout type="warning">
+    The element type must be a `Schema` subclass. Priority batching relies on stable ref ids, which primitives don't carry, so `t.stream("number")` is a TypeScript error. No runtime check enforces it, so plain JavaScript gets no diagnostic.
+</Callout>
+
+### `StreamSchema` API
+
+| Member | Description |
+|--------|-------------|
+| `add(value)` | Appends an element; returns its wire position, or `-1` if already present |
+| `remove(value)` | Removes an element by identity; returns whether it was present |
+| `has(value)` | Whether the element is in the stream |
+| `clear()` | Empties the stream |
+| `size` / `length` | Number of elements |
+| `forEach(cb)` | Iterates `(value, position, stream)` |
+| `values()` / `entries()` / `toArray()` | Iteration helpers |
+| `maxPerTick` | Additions drained per client per encode pass (default `32`) |
+
+### Streaming an existing collection type
+
+`.stream()` opts a regular `MapSchema`, `SetSchema` or `CollectionSchema` into the same batching, keeping that collection's own semantics:
+
+```ts
+const MyState = schema({
+    pickups: t.map(Pickup).stream(),     // keyed by string, streamed
+}, "MyState");
+```
+
+<Callout type="warning">
+    **`.stream()` is not supported on `t.array(X)`** and throws at definition time.
+
+    Array positional operations (`splice`, `unshift`, `reverse`) shift every subsequent index. Holding some additions back for a later tick while indexes move underneath them would leave clients in a state that doesn't match the server. Use `t.stream(X)` (stable positions) or `t.map(X).stream()` (keys never shift) instead.
+</Callout>
+
+## `maxPerTick`
+
+The budget is **per client, per encode pass**. With `maxPerTick = 8`, a client holding 100 pending entries receives 8 this tick, 8 the next, and so on. A client with 3 pending gets all 3 immediately.
+
+```ts
+state.enemies.maxPerTick = 8;
+```
+
+Tune it against your tick rate and entry size. `maxPerTick × bytes-per-entry × tickRate` is the per-client bandwidth ceiling this stream can consume. The default of `32` suits small entities at a typical tick rate; lower it for large ones.
+
+## Getting entries to clients
+
+Streaming decides *how fast* entries reach a client. `view.subscribe()` decides *which* clients get them.
+
+```ts
+client.view = new StateView();
+client.view.subscribe(this.state.enemies);
+```
+
+<Callout type="warning">
+    **`subscribe()` is not optional.** As soon as one client holds a `StateView`, the stream stops seeding its broadcast backlog. Every entry added after that point reaches subscribed views only.
+
+    Entries added earlier (in `onCreate`, before anyone joined) are already in the broadcast backlog and still reach every client. A room that skips the subscription therefore looks like it works, then silently stops delivering once the first client joins.
+</Callout>
+
+Subscription order doesn't matter. A view subscribed to a collection that already holds entries receives those entries too.
+
+## Priority
+
+Without a priority callback, pending entries drain in insertion order. With one, the highest return value emits first.
+
+### Per client
+
+Pass the callback as the second argument to `subscribe()`. It receives the candidate element and closes over whatever that client sorts by:
+
+```ts
+onJoin(client) {
+    const player = this.state.players.get(client.sessionId);
+
+    client.view = new StateView();
+    client.view.subscribe(this.state.enemies, (enemy) =>
+        -((enemy.x - player.x) ** 2 + (enemy.y - player.y) ** 2));
+}
+```
+
+The anchor is the player entity itself, so it never goes stale. Move the player and the next batch reorders. TypeScript infers the element type from the collection, so neither the parameter nor the closure needs annotating.
+
+To retarget the ordering later, subscribe again with a new callback. Pass `null` to drop it and fall back to the field's own callback.
+
+```ts
+client.view.subscribe(this.state.enemies, (enemy) => -dist2(enemy, spectatorTarget));
+```
+
+### The same order for every client
+
+Declare the callback on the field when the ordering doesn't depend on who is watching:
+
+```ts
+const MyState = schema({
+    enemies: t.stream(Enemy).priority((view, enemy) => enemy.threatLevel),
+}, "MyState");
+```
+
+A per-client callback overrides this one for that client. Assigning `state.enemies.priority` at runtime replaces it for everyone.
+
+### Keeping the callback cheap
+
+The callback runs per client, per pending entry, on every tick with a backlog. Avoid allocation and hoist any lookup you can. Squared distance beats `Math.hypot`.
+
+<Callout type="warning">
+    Priority applies to per-view encoding only. In broadcast mode, with no `StateView` anywhere in the room, every client receives the same bytes and the backlog drains in insertion order.
+</Callout>
+
+## Choosing an approach
+
+| Situation | Use |
+|-----------|-----|
+| Many entities spawn per tick; each client needs the nearby ones first | `t.stream(Entity)` + [`view.subscribe(collection, fn)`](#per-client) |
+| Every client should see the same ordering | `t.stream(Entity).priority(fn)` |
+| A keyed collection that grows in bursts | `t.map(X).stream()` |
+| Ordered list with positional edits (`splice`, `unshift`) | Not streamable: use a plain `t.array(X)` |
+| Whole collection is small and relevant to everyone | Plain collection, no streaming |
+
+## Next
+
+- [StateView](/state/view): per-client visibility and `view.subscribe()`
+- [Delivery modifiers](/state/schema#delivery-modifiers): `.unreliable()`, `.patchOnly()` and `.fullStateOnly()`

@@ -1,5 +1,6 @@
 ---
 title: Basics
+description: "Introduction to building multiplayer games with Babylon.js and Colyseus: server setup, room connection, and state synchronization."
 ---
 import { Callout, Cards, Tabs } from "nextra/components";
 import { DownloadIcon, LinkIcon } from '@primer/octicons-react'
@@ -13,7 +14,7 @@ import { DownloadIcon, LinkIcon } from '@primer/octicons-react'
 - Set-up your first authoritative server with Colyseus
 - Synchronize shared state data between server and client
 - Exchange messages between client and server
-- Match-make clients into game sessions (rooms)
+- Matchmake clients into rooms
 
 ### Full source code
 
@@ -54,12 +55,12 @@ If successful, the output should look like this in your command-line:
 
 ## Including the Colyseus JavaScript SDK
 
-For simplicy sake, the examples on this guide are using the [Babylon.js Playground](https://doc.babylonjs.com/toolsAndResources/tools/playground). Although the full source-code available for download uses [NPM + Webpack](https://doc.babylonjs.com/divingDeeper/developWithBjs/npmSupport).
+For simplicity's sake, the examples on this guide are using the [Babylon.js Playground](https://doc.babylonjs.com/toolsAndResources/tools/playground). Although the full source-code available for download uses [NPM + Webpack](https://doc.babylonjs.com/divingDeeper/developWithBjs/npmSupport).
 
-In the Playground, we inject the Colyseus JavaScript SDK manually through a `<script>` tag created via code, as described in [_"Using External Assets In The Playground"_ → _"Javascript files"_](https://doc.babylonjs.com/toolsAndResources/tools/playground/externalPGAssets#javascript-files).
+In the Playground, we inject the Colyseus JavaScript SDK manually through a `<script>` tag created via code. This technique is described in [_"Using External Assets In The Playground"_ → _"Javascript files"_](https://doc.babylonjs.com/toolsAndResources/tools/playground/externalPGAssets#javascript-files).
 
 <Callout type="warning">
-    This is not recommended in a real-world scenario!
+    This approach is not recommended in a real-world scenario!
 </Callout>
 
 ```typescript
@@ -103,14 +104,14 @@ var createScene = function() {
 ```
 
 <Callout type="info">
-    Note that we're using the local `http://localhost:2567` endpoint here. You need to [deploy your server](https://docs.colyseus.io/arena/getting-started/create-application/) to the public internet in order to play with others online.
+    Note that we're using the local `http://localhost:2567` endpoint here. You need to [deploy your server](/deployment) to the public internet in order to play with others online.
 </Callout>
 
 <Callout type="warning">
     If you happen to see `net::ERR_BLOCKED_BY_CLIENT` error in the console, make sure to disable ad-block or shields due to untrusted origin.
 </Callout>
 
-When you run your BabylonJS project now, your client is going to establish a connection with the server, and the server is going to create the room `my_room` on demand for you.
+When you run your BabylonJS project now, your client establishes a connection with the server. The server then creates the room `my_room` on demand.
 
 Notice that `my_room` is the default room identifier set by the barebones Colyseus server. You can and should change this identifier in the `arena.config.ts` file.
 
@@ -141,19 +142,38 @@ Let's go back to editing the Server code, and define our Room State in the Serve
 
 We need to handle multiple `Player` instances, and each `Player` will have `x`, `y` and `z` coordinates:
 
-```ts filename="MyRoomState.ts"
-import { MapSchema, Schema, type } from "@colyseus/schema";
+<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
+    <Tabs.Tab>
+    ```ts filename="MyRoomState.ts"
+    import { schema, t } from "@colyseus/schema";
 
-export class Player extends Schema {
-    @type("number") x: number;
-    @type("number") y: number;
-    @type("number") z: number;
-}
+    export const Player = schema({
+        x: t.number(),
+        y: t.number(),
+        z: t.number(),
+    }, "Player");
 
-export class MyRoomState extends Schema {
-    @type({ map: Player }) players = new MapSchema<Player>();
-}
-```
+    export const MyRoomState = schema({
+        players: t.map(Player),
+    }, "MyRoomState");
+    ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+    ```ts filename="MyRoomState.ts"
+    import { MapSchema, Schema, type } from "@colyseus/schema";
+
+    export class Player extends Schema {
+        @type("number") x: number;
+        @type("number") y: number;
+        @type("number") z: number;
+    }
+
+    export class MyRoomState extends Schema {
+        @type({ map: Player }) players = new MapSchema<Player>();
+    }
+    ```
+    </Tabs.Tab>
+</Tabs>
 
 <Callout type="info">
     See [State Synchronization → Schema Definition](/state/schema/).
@@ -195,7 +215,7 @@ Also, when the client disconnects, let's remove the player from the map of playe
 // ...
 ```
 
-The state mutations we've done in the backend **can be observed** in the frontend, and that's what we're going to do in the next section.
+The state mutations we've done in the backend **can be observed** in the frontend. We'll do that in the next section.
 
 ## Setting up the Scene for Synchronization
 
@@ -217,7 +237,7 @@ ground.rotation.x = Math.PI / 2;
 
 ## Listening for State Changes
 
-After a connection with the room has been established, the frontend can start listening for state changes, and create a visual representation of the data in the server.
+Once connected to the room, the frontend can start listening for state changes and build a visual representation of the server's data.
 
 ## Adding new players
 
@@ -246,7 +266,7 @@ colyseusSDK.joinOrCreate("my_room").then(function(room) {
 
 When playing the scene, you should see a message in the browser's console whenever a new client joins the room.
 
-For the visual representation, we need to clone the "Player" object, and keep a local reference to the cloned object based on their `sessionId`, so we can operate on them later:
+For the visual representation, we need to clone the "Player" object. Keep a local reference to each clone, keyed by `sessionId`, so we can operate on them later:
 
 ```typescript
 // (...)
@@ -330,7 +350,7 @@ callbacks.onRemove("players", function (player, sessionId) {
 
 ### Sending the new position to the server
 
-We are going to allow the `Scene.onPointerDown` event; to determine the exact `Vector3` position the player should move towards, and then send it as a message to the server.
+We are going to use the `Scene.onPointerDown` event to determine the exact `Vector3` position the player should move towards. We then send that position as a message to the server.
 
 ```typescript
 scene.onPointerDown = function (event, pointer) {
@@ -402,7 +422,7 @@ callbacks.onAdd("players", function (player, sessionId) {
 ```
 
 <Callout type="info">
-    See [Client SDK → State Sync Callbacks](/sdk/state-sync-callbacks)
+    See [Client SDK → State Sync Callbacks](/state/callbacks)
 </Callout>
 
 > [Playground Link](https://playground.babylonjs.com/#JMA5FE#2)
@@ -412,7 +432,7 @@ callbacks.onAdd("players", function (player, sessionId) {
 
 To enable position interpolation, we're going to use the [Render Loop](https://doc.babylonjs.com/features/featuresDeepDive/animation/render_frame_animation) and the [`Scalar.Lerp()`](https://doc.babylonjs.com/typedoc/classes/BABYLON.Scalar#Lerp) method.
 
-Instead of updating the player position directly (as in [previous section](#updating-players-visual-representation)), we are going to cache the next position, and constantly interpolate each player position during the Render Loop:
+Instead of updating the player position directly (as in [previous section](#updating-players-visual-representation)), we are going to cache the next position. During the Render Loop, we constantly interpolate each player position towards it:
 
 ```typescript
 // (...)

@@ -31,7 +31,7 @@ import { PeopleIcon, DevicesIcon } from '@primer/octicons-react'
 
 ### Testing from Unity Editor
 
-Starting with Unity 6000.1.0b1, Unity integrates [Multiplayer Play Mode](https://docs-multiplayer.unity3d.com/mppm/current/about/), enabling you to test your Colyseus-based multiplayer game with multiple clients directly within the Unity Editor, without needing to build the application.
+Starting with Unity 6000.1.0b1, Unity integrates [Multiplayer Play Mode](https://docs-multiplayer.unity3d.com/mppm/current/about/). This mode lets you test your Colyseus-based game with multiple clients inside the Unity Editor, without building the application.
 
 - See how to install [Multiplayer Play Mode](https://docs-multiplayer.unity3d.com/mppm/current/install/)
 - Alternatively, you can use [ParrelSync](https://github.com/VeriorPies/ParrelSync) for older versions of Unity.
@@ -43,9 +43,9 @@ The example project [included in the SDK package](https://github.com/colyseus/co
 ![Import Example](/getting-started/unity-sdk-import-example.png)
 
 - Joining into a custom room with Messages and State Synchronization
-- Joining into a [<PeopleIcon/> LobbyRoom](/room/built-in/lobby) and listening to its messages
-- Joining into a [<PeopleIcon/> QueueRoom](/room/built-in/queue) and listening to its messages
-- [Consuming a seat reservation](/sdk#consume-seat-reservation) from QueueRoom and joining into the match room
+- Joining into a [<PeopleIcon/> LobbyRoom](/matchmaker/lobby) and listening to its messages
+- Joining into a [<PeopleIcon/> QueueRoom](/matchmaker/queue) and listening to its messages
+- [Consuming a seat reservation](/sdk#other-join-methods) from QueueRoom and joining into the match room
 
 ### Running the test server locally
 
@@ -123,6 +123,31 @@ public class NetworkManager : MonoBehaviour
 }
 ```
 
+### Waiting for the first state
+
+A resolved join does **not** mean the state has been synchronized yet. `room.State` is instantiated when you join, but its collections (`players`, nested refs, …) are only populated by the first full state sync. That sync arrives a moment later. Code that reads `room.State` right after joining can find `null` maps.
+
+`WaitForFirstState()` covers the gap. This method is the C# analogue of the JavaScript SDK's `room.onStateChange.once(...)`:
+
+```csharp
+room = await client.JoinOrCreate<MyRoomState>("my_room");
+
+// wait for the first full state sync before reading room.State
+await room.WaitForFirstState();
+
+Debug.Log($"{room.State.players.Count} players already in the room");
+```
+
+It resolves immediately when the state has already synchronized, so it is always safe to await, including after reconnections.
+
+<Callout type="warning">
+    Never poll for state with `Task.Delay` on **WebGL** builds. WebGL has no thread-pool timers, so `Task.Delay` never resumes and the wait hangs forever. `WaitForFirstState()` is timer-free: it completes on the message pump and works on every platform, including WebGL.
+</Callout>
+
+<Callout type="info">
+    Registering `Callbacks` (as in the Quick Example above) is safe *before* the first sync. Callbacks are driven by the decoder and fire as the initial state decodes. `WaitForFirstState()` is for code that reads `room.State` directly.
+</Callout>
+
 ## SDK API
 
 Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select the **C# (Unity)** tab.
@@ -136,7 +161,7 @@ npx schema-codegen src/rooms/schema/* --csharp --output ../Assets/Scripts/States
 ```
 
 <Callout type="info">
-    See the full [State Schema Codegen documentation](/sdk/state-sync-callbacks#frontend-schema-generation) for more options and details.
+    See the full [State Schema Codegen documentation](/state/callbacks#frontend-schema-generation) for more options and details.
 </Callout>
 
 ### DynamicSchema (Skip Code Generation)
@@ -159,6 +184,9 @@ public class NetworkManager : MonoBehaviour
 
         room = await client.JoinOrCreate<DynamicSchema>("my_room");
         Debug.Log("Joined room: " + room.Id);
+
+        // collections are null until the first full state sync
+        await room.WaitForFirstState();
 
         // Access state fields dynamically
         var players = room.State.Get<MapSchema<DynamicSchema>>("players");
@@ -197,7 +225,7 @@ public class NetworkManager : MonoBehaviour
 
 ### Message Types Codegen
 
-The same `schema-codegen` command also generates C# classes for any TypeScript interface containing `"Message"` in its name. This allows you to use strongly-typed message objects on the client side.
+The same `schema-codegen` command also generates C# classes for any TypeScript interface containing `"Message"` in its name. These classes let you use strongly-typed message objects on the frontend.
 
 For example, given the following server-side code:
 
@@ -259,7 +287,7 @@ room.OnMessage<EventMessage>("event", (message) => {
 
 ### Editor Debug Panel (experimental)
 
-The editor debug panel allows you to inspect the room state and messages in real-time during development, simulate high latency conditions, connection drops, and more.
+The editor debug panel lets you inspect the room state and messages in real-time during development. You can also simulate high latency, connection drops, and more.
 
 You can enable the Editor Debug Panel at **Window → Colyseus → Room Inspector**
 
@@ -267,7 +295,7 @@ You can enable the Editor Debug Panel at **Window → Colyseus → Room Inspecto
 
 ### Breakpoints
 
-If you set a breakpoint in your application while the WebSocket connection is open, the connection will be closed automatically after 3 seconds due to inactivity. To prevent the WebSocket connection from dropping, use `pingInterval: 0` during development:
+If you set a breakpoint while the WebSocket connection is open, the connection is closed automatically after 3 seconds of inactivity. To prevent the WebSocket connection from dropping, use `pingInterval: 0` during development:
 
 ```ts filename="app.config.ts"
 import { defineServer } from "colyseus";

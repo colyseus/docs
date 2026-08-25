@@ -1,17 +1,18 @@
 ---
 title: "Bun WebSockets"
+description: "Run Colyseus on Bun with the Bun WebSockets transport."
 ---
 import { Callout, Cards } from "nextra/components";
 
-## Bun WebSockets
+# Bun WebSockets
 
-Colyseus supports Bun's native WebSockets implementation through the `@colyseus/bun-websockets` package. This transport layer is designed to be used with Bun's built-in HTTP server, and it also provides an Express compatibility layer for easier integration with existing codebases.
+Colyseus supports Bun's native WebSockets implementation through the `@colyseus/bun-websockets` package. This transport layer is designed for Bun's built-in HTTP server. The package also provides an Express compatibility layer for easier integration with existing codebases.
 
 <Callout type="warning">
     Bun support on Colyseus is still experimental. Please report any issues you may find.
 </Callout>
 
-### Installation
+## Installation
 
 ```sh filename="Terminal"
 bun add @colyseus/bun-websockets
@@ -24,7 +25,7 @@ import { BunWebSockets } from "@colyseus/bun-websockets"
 const server = defineServer({
   // ...
   transport: new BunWebSockets({
-    /* Bun.serve options */
+    /* Bun WebSocketHandler options (e.g. maxPayloadLength, idleTimeout) */
   }),
 
   //
@@ -39,3 +40,32 @@ const server = defineServer({
   // ...
 });
 ```
+
+## Transport options
+
+This transport accepts Bun's own
+[`WebSocketHandler`](https://bun.sh/docs/api/websockets) options, plus the
+option below.
+
+### `options.beforeUpgrade`
+
+Runs before the WebSocket handshake, while the connection is still a plain HTTP
+request.
+
+```ts
+beforeUpgrade?: (request: Request, context: AuthContext) => Response | void | Promise<Response | void>;
+```
+
+The callback receives the upgrade request as a standard
+[`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request), and the
+same `context` object [onAuth](/auth/room#onauth-context) receives: `token`,
+`headers`, and `ip`. The context is read-only here, and changes to it do not
+carry over to `onAuth`.
+
+Return a
+[`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response) to answer
+the request without upgrading, or nothing to accept the handshake. The callback
+may be `async`, and the handshake waits for it to resolve.
+
+A callback that throws answers `500 Internal Server Error`, and the connection is
+not upgraded.

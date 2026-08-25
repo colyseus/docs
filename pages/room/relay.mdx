@@ -1,0 +1,126 @@
+---
+title: "Relay Room"
+description: "The built-in RelayRoom broadcasts client messages to everyone else with minimal backend state, for simple multiplayer without server authority."
+---
+import { Callout, Cards, Tabs } from "nextra/components";
+
+# Relay Room
+
+The built-in `RelayRoom` provides a lightweight relay for simple multiplayer use cases where you only need to track connected clients.
+
+**Features:**
+- Broadcasts client messages to everyone else.
+- Minimal backend state (no authoritative validation).
+- Ideal for quick prototypes or frontend-driven validation.
+
+<Callout type="info">
+  The source-code for `RelayRoom` is available [here](https://github.com/colyseus/colyseus/blob/master/packages/core/src/rooms/RelayRoom.ts). Consider implementing your own version with backend validations when needed.
+</Callout>
+
+## Server
+
+```ts filename="server.ts"
+import { defineServer, defineRoom, RelayRoom } from "colyseus";
+
+//
+// Expose your relayed room.
+//
+const server = defineServer({
+  rooms: {
+    your_relayed_room: defineRoom(RelayRoom, {
+      maxClients: 4,
+      allowReconnectionTime: 40 // seconds (values above 40 are clamped to 40)
+    })
+  }
+})
+```
+
+## Client
+
+See how to register callbacks for players joining, leaving, sending and receiving messages from the relayed room.
+
+### Connecting into the room
+
+```ts filename="client.ts"
+import { Client } from "@colyseus/sdk";
+
+const client = new Client("http://localhost:2567");
+
+//
+// Join the relayed room.
+//
+const relay = await client.joinOrCreate("your_relayed_room", {
+  name: "This is my name!"
+});
+```
+
+### Registering callbacks when players join and leave
+
+```ts filename="client.ts"
+import { Callbacks } from "@colyseus/sdk";
+
+const callbacks = Callbacks.get(relay);
+
+//
+// Detect when a player joined the room.
+//
+callbacks.onAdd("players", (player, sessionId) => {
+  if (relay.sessionId === sessionId) {
+    console.log("It's me!", player.name);
+
+  } else {
+    console.log("It's an opponent", player.name, sessionId);
+  }
+})
+
+//
+// Detect when a player left the room.
+//
+callbacks.onRemove("players", (player, sessionId) => {
+  console.log("Opponent left!", player, sessionId);
+})
+
+//
+// Detect when the connectivity of a player has changed.
+// (only relevant if you provided `allowReconnectionTime` in the backend)
+//
+callbacks.onAdd("players", (player, sessionId) => {
+  callbacks.listen(player, "connected", (connected) => {
+    if (connected) {
+      console.log("Opponent has reconnected!", player, sessionId);
+
+    } else {
+      console.log("Opponent has disconnected!", player, sessionId);
+    }
+  });
+})
+```
+
+### Sending and receiving messages
+
+```ts filename="client.ts"
+//
+// By sending a message, all other clients will receive it under the same name.
+// Messages are only sent to other connected clients, never the current one.
+//
+relay.send("fire", {
+  x: 100,
+  y: 200
+});
+
+//
+// Register a callback for messages you're interested in from other clients.
+//
+relay.onMessage("fire", ([sessionId, message]) => {
+
+  //
+  // The `sessionId` from who sent the message
+  //
+  console.log(sessionId, "sent a message!");
+
+  //
+  // The actual message sent by the other client
+  //
+  console.log("fire at", message);
+});
+```

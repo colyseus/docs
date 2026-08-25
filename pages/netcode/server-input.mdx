@@ -1,0 +1,268 @@
+---
+title: "Server Input & Fixed Timestep"
+description: "Declare per-client input with defineInput(), sanitize untrusted values, drive an authoritative fixed-timestep simulation with setFixedTimestep(), and sub-step physics: the server half of Colyseus client-side prediction."
+---
+import { Callout } from 'nextra/components'
+
+# Server Input & Fixed Timestep
+
+This page covers the **server half** of the netcode stack. Declare what input each client sends, consume it, and advance the authoritative simulation at a fixed tick rate. The matching client half lives in [Client Prediction](/netcode/client-prediction).
+
+<Callout type="info">
+    **Available in Colyseus 0.18+.**
+</Callout>
+
+## At a glance
+
+```ts filename="GameRoom.ts"
+import { Room } from "@colyseus/core";
+import { MoveInput } from "./shared/MoveInput";
+import { applyInput } from "./shared/applyInput";
+
+class GameRoom extends Room<{ input: MoveInput }> {
+  state = new GameState();
+
+  // Per-client input schema (flat primitives only), buffered per session.
+  inputs = this.defineInput(MoveInput, { bufferMaxSize: 64 });
+
+  // Records attached entities' positions (auto, on each broadcast).
+  rewind = this.allowRewindState({ maxRewindMs: 500 });
+
+  onCreate() {
+    this.rewind.attachAll(this.state.players, { fields: ["x", "y"] });
+    // Fixed-step loop @ 30 Hz: advertises the rate to predicting clients.
+    this.setFixedTimestep((ctx) => this.step(ctx), 30);
+  }
+
+  step(ctx) {
+    for (const [sid, p] of this.state.players) {
+      const cmd = this.inputs.get(sid).next();     // one input per tick
+      if (cmd) applyInput(p, cmd, ctx.dt);          // SAME fn the client predicts with
+    }
+    // ...advance world, then hit tests (see Lag Compensation).
+  }
+}
+```
+
+## `defineInput(type, options)`
+
+Declares the per-client input schema and buffers inbound frames. Assign it once (typically as a class field): it returns the input API you consume as `this.inputs.get(sessionId)`, the same per-session lookup verb as `room.clients.get()`.
+
+```ts
+inputs = this.defineInput(MoveInput, { bufferMaxSize: 64 });
+```
+
+Options and their defaults:
+
+- **`bufferMaxSize`**: per-client buffer depth (default 32). `0` disables buffering (only `.latest` remains readable).
+- **`seqField`**: most rooms leave this unset: on a reliable, in-order channel every frame is unique, and the framework tracks its own sequence. Name a monotonic numeric field of your input only when you need dedupe and `at(value)` lookup (lockstep, or a hand-rolled rollback).
+- **`sanitize`** / **`idle`**: see below.
+
+Inputs are **flat schemas: primitives only**. No nested schemas or collections in an input. Use `int8`/`uint8`/`float32` etc. and refine the legal set with generics (`t.int8<-1 | 0 | 1>()`):
+
+```ts filename="shared/MoveInput.ts"
+import { schema, t, type SchemaType } from "@colyseus/schema";
+
+export const MoveInput = schema({
+  moveX: t.int8<-1 | 0 | 1>(),
+  moveZ: t.int8<-1 | 0 | 1>(),
+  jump:  t.boolean(),
+  yaw:   t.float32(),
+});
+
+// schema() returns a value. Derive the TS type for Room<{ input: ... }>:
+export type MoveInput = SchemaType<typeof MoveInput>;
+```
+
+<Callout type="info">
+    Calling `defineInput()` does more than buffer input: it powers the client's [`room.clock`](/netcode/client-prediction#roomclock) (clock-sync and RTT ride the input acks). The call also lets `room.input()` resolve the schema without a client-side constructor. A room that never calls it leaves the client clock as a stub.
+</Callout>
+
+### Consuming input
+
+The accessor `this.inputs.get(sessionId)` exposes the per-client buffered stream. Pick **one** consumption style per room, matched to how your simulation steps:
+
+- **Iterate**: the per-entity loop. Consumes one frame at a time, so the lag-comp `renderTime` stamp tracks each individual input:
+
+  ```ts
+  step(ctx) {
+    for (const [sid, p] of this.state.players) {
+      // frame by frame: the ack and renderTime advance once per input
+      for (const cmd of this.inputs.get(sid)) {
+        applyInput(p, cmd, ctx.dt);
+      }
+    }
+  }
+  ```
+
+- **`next()`**: take **exactly one**. Right when a single shared solver step moves every body together: consume one input per entity, then step the world once:
+
+  ```ts
+  step(ctx) {
+    for (const [sid, p] of this.state.players) {
+      const cmd = this.inputs.get(sid).next();   // oldest pending frame, or undefined
+      if (cmd) applyInput(p, cmd, ctx.dt);
+    }
+    this.world.step(ctx.dt);                     // one solver step moves every body
+  }
+  ```
+
+- **`drain()`**: take **all** buffered frames as an array. The ack (`lastProcessed`) lands on the newest frame. Use it when you need the array itself: its length, a replay recording, or a physics call that accepts a list.
+
+  ```ts
+  step(ctx) {
+    for (const [sid, p] of this.state.players) {
+      const cmds = this.inputs.get(sid).drain();  // whole burst, oldest first
+      for (const cmd of cmds) {
+        applyInput(p, cmd, ctx.dt);
+      }
+    }
+  }
+  ```
+
+<Callout type="warning">
+    Draining all frames but simulating only the latest jumps the ack past inputs you never ran. The client then reconciles against state it can't reproduce. Match the consumption style to how you step.
+</Callout>
+
+Beyond consuming, the accessor offers non-consuming reads and bookkeeping:
+
+- **`latest`**: the most recent decoded frame, without consuming it. `peek()`, `take(n)` and `size` round out the buffer access.
+- **`consumedCount`**: how many inputs this room has consumed; this is the reconcile ack the client sees.
+- **`wasIdle`**: whether the last read was a synthesized idle frame.
+- **`renderTime`** / **`reckonTime`**: the lag-comp instants. `renderTime` is the raw stamp of the last consumed input (`0` until one is stamped). `reckonTime` is always usable: it resolves to the room clock's current time until a reckon-stamped input is consumed, so `channel.reckonTime` needs no fallback. For hit tests, prefer [`rewind.lastSeenBy()`](/netcode/lag-compensation) over reading these directly.
+
+### Never trust the wire: `sanitize`
+
+The wire carries whatever the client chooses to encode: an `int8` axis can arrive as `127` (a speed hack), a `float32` as `NaN`. Declare each field's legal domain **once** at `defineInput`, and every decoded frame is fixed up **in place** before anything reads it:
+
+```ts
+inputs = this.defineInput(MoveInput, {
+  bufferMaxSize: 64,
+  sanitize: {                                // map form: range clamps
+    moveX: [-1, 1],
+    moveZ: [-1, 1],
+    yaw:   [-Math.PI, Math.PI],
+  },
+  // or a callback for anything beyond ranges:
+  // sanitize: (f) => { f.yaw = wrapAngle(f.yaw); },
+});
+```
+
+- Sanitizers **modify, never reject**: a malformed value becomes a legal one. Honest clients are untouched (in-range values pass through as-is), so they never diverge from the server's sanitized result.
+- The map form is **NaN-safe**: `NaN` lands on the clamp floor, closing the classic `Math.min(NaN, …)` poisoning hole that hand-rolled clamps share.
+- Sanitizing handles **value domains**, not game rules. Semantic checks ("slot must name an owned weapon") stay in your simulation.
+
+### Empty ticks: the `idle` policy
+
+What should happen on a tick where a client sent nothing? Pick one of three policies, declared **once** at `defineInput({ idle })` and applied automatically when you consume:
+
+- **Skip** (default): don't declare `idle`. An empty tick yields nothing: `drain()` returns `[]`, `next()` returns `undefined`, and you keep the `if (cmd)` guard from the [loops above](#consuming-input). Right for strict fixed-timestep games where the client sends one input per step.
+
+- **Synthesize**: declare a policy, and an empty tick yields one frame: the schema's **defaults** overlaid with your overrides. The callback runs lazily (only on actually-empty ticks) and closes over the room. On the consuming side, `next()` always yields a frame, so the loop loses its `if (cmd)` branch:
+
+  ```ts
+  inputs = this.defineInput(MoveInput, {
+    bufferMaxSize: 64,
+    idle: ({ latest, sessionId }) => {
+      const p = this.state.players.get(sessionId);
+      if (!p) return true;                       // defaults frame for the empty seat
+      return { yaw: p.yaw, jump: false };        // defaults ⊕ overrides
+    },
+  });
+
+  step(ctx) {
+    for (const [sid, p] of this.state.players) {
+      const cmd = this.inputs.get(sid).next();   // idle declared: never undefined
+      applyInput(p, cmd, ctx.dt);                // gravity keeps integrating
+      if (cmd.jump) p.tryJump();                 // idle frame: jump=false, no-op
+    }
+    this.world.step(ctx.dt);
+  }
+  ```
+
+- **Hold everything**: return the whole last input as the idle frame, so a held key keeps moving the player through a packet gap. Two guards keep it honest. In the policy, hold only while the client is still connected. In the loop, check `wasIdle` before edge-triggered actions, because a held frame repeats `jump: true` for every tick of the gap:
+
+  ```ts
+  inputs = this.defineInput(MoveInput, {
+    bufferMaxSize: 64,
+    idle: ({ latest, sessionId }) => {
+      const client = this.clients.get(sessionId);
+      if (client?.state !== ClientState.JOINED) return true;  // dropped: defaults
+      return latest ?? true;                     // hold the last input through the gap
+    },
+  });
+
+  step(ctx) {
+    for (const [sid, p] of this.state.players) {
+      const inp = this.inputs.get(sid);
+      const cmd = inp.next();                    // gap: the held key stays down
+      applyInput(p, cmd, ctx.dt);
+      if (cmd.jump && !inp.wasIdle) p.tryJump(); // held jump must not re-fire
+    }
+    this.world.step(ctx.dt);
+  }
+  ```
+
+The policy also covers **absent sessions**. A player who dropped but is still inside their `allowReconnection` window lingers in `state`. The input accessor resolves through a registry that outlives the connection, so your loop keeps synthesizing idle frames for the empty seat. No `if (!cmd) continue` needed.
+
+<Callout type="warning">
+    Three things to know about synthesized idle frames. They are **not consumed inputs**: they advance neither the reconcile ack (`lastProcessed`) nor `renderTime`. They are **one reused instance** per client: read within the tick, don't store. And never build overrides by **spreading** a schema instance (`{ ...latest, yaw }`): schema fields are prototype accessors, so the spread copies none of them. Return `latest` itself, or name the fields you want.
+</Callout>
+
+Per-call `{ idle }` overrides the room policy for that call; `{ idle: false }` suppresses it.
+
+## `setFixedTimestep(step, tickRate, options?)`
+
+Hand the framework your step function and a rate; it runs the accumulator loop for you. Each `step` advances by the **same** fixed `dt = 1/tickRate`, and that rate is **advertised to clients** through the join handshake so they predict at the matching `dt`.
+
+```ts
+this.setFixedTimestep((ctx) => this.step(ctx), 30);    // 30 Hz
+```
+
+The `ctx` (a `StepContext`) carries the timing your simulation needs:
+
+| Field | Meaning |
+|---|---|
+| `ctx.dt` | Fixed step in **seconds** (`1/tickRate`) |
+| `ctx.dtMs` | Fixed step in **milliseconds** |
+| `ctx.tick` | Monotonic step index |
+| `ctx.subSteps` | Physics sub-steps per input tick (≥ 1) |
+| `ctx.subDt` | Sub-step in seconds (`dt / subSteps`) |
+| `ctx.subDtMs` | Sub-step in milliseconds |
+
+<Callout type="info">
+    Don't also pass a `tickRate` to `defineInput()`: `setFixedTimestep` is the single source of the simulation rate.
+</Callout>
+
+### Sub-stepping: high-rate physics on a low network rate
+
+By default the input/network rate **is** the physics rate (see [the contract](/netcode/determinism#the-contract)). Asking for "30 inputs/sec" forces 30 Hz simulation, which can be too coarse for stable physics. **Sub-stepping** is the escape hatch. Declare it once on the server:
+
+```ts
+this.setFixedTimestep((ctx) => {
+  this.applyInputs(ctx);                                    // ONE input per client per step
+  for (let i = 0; i < ctx.subSteps; i++) {
+    this.world.step(ctx.subDt);
+  }
+}, 30, { subSteps: 2 });                                    // 30 inputs/sec, 60 Hz physics
+```
+
+One input still drives exactly one fixed step, so the replay invariant is untouched; *inside* that step, the engine integrates `subSteps` sub-steps of `subDt`. The handshake cascades `subSteps` alongside `tickRate`, so the client reconciler's `ctx` carries the **same** values. Your shared `step` function runs the identical loop on both sides.
+
+Two rules keep it correct. Apply the input **once per step**, not once per sub-step (an impulse-like input applied per sub-step would double-fire). Never hand-derive the sub-step count or dt on either side: read `ctx.subSteps` / `ctx.subDt`.
+
+## `setTimestep` (variable step)
+
+For a non-deterministic game loop that just needs wall-clock delta (no prediction), `setTimestep(callback, delay?)` invokes your callback with the measured `deltaTime`:
+
+```ts
+this.setTimestep((deltaTime) => this.update(deltaTime));    // default ~16.6ms (60fps)
+```
+
+<Callout type="warning">
+    `setSimulationInterval()` is the deprecated name for `setTimestep()` and still works (it forwards). For client-predicted games you want `setFixedTimestep()` instead: a variable step can't be replayed deterministically.
+</Callout>
+
+## Next
+
+→ [Client Prediction](/netcode/client-prediction): predict this input on the client and reconcile to the server.

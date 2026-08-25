@@ -1,12 +1,16 @@
 ---
 title: "Deployment"
-description: "Deploy your Colyseus server to production. Guides for Colyseus Cloud, Vultr, Docker, and custom environments."
+description: "Deploy your Colyseus server to production. Production checklist, PM2, Nginx, Apache, Docker, and self-hosting on Vultr, or managed hosting on Colyseus Cloud."
 ---
 import { Tabs, Steps, Cards, Callout } from "nextra/components"
-import { CloudIcon, RocketIcon, StackIcon } from "@primer/octicons-react"
+import { CloudIcon, StackIcon } from "@primer/octicons-react"
+
+# Deploying your Colyseus server
+
+Deploying Colyseus is no different than deploying a regular Node.js application. [See DigitalOcean's guide for the general setup](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-22-04). Scaling to multiple processes or machines requires extra steps. See [Scalability](/scalability).
 
 <Callout type="warning">
-    Consider using [Colyseus Cloud](https://cloud.colyseus.io/) to easily deploy and scale your Colyseus servers.
+    Consider using [Colyseus Cloud](https://cloud.colyseus.io/) to deploy and scale your Colyseus servers. Every item on the checklist below is handled for you.
 </Callout>
 
 <Cards>
@@ -14,15 +18,34 @@ import { CloudIcon, RocketIcon, StackIcon } from "@primer/octicons-react"
     <Cards.Card icon={<CloudIcon/>} title="Colyseus Cloud" href="/cloud" />
 </Cards>
 
-Deploying Colyseus is no different than deploying a regular Node.js application - [see a good article here](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-20-04). However, scaling Colyseus to use multiple processes requires extra steps - see [Scalability](/scalability).
+## Production checklist
 
-# Deploying your Colyseus server
+- **Compile your TypeScript**: run `tsc` at deploy time and start the compiled entrypoint with plain `node`. The official template compiles to `build/index.js`. Do not run `tsx`/`ts-node` in production ([why](/cloud/typescript-compilation-errors#running-tsx-directly-in-production-not-recommended)).
+- **Set `NODE_ENV=production`**: dependencies and error verbosity behave accordingly, and `server.simulateLatency()` must never run in production.
+- **Run under a process manager**: [PM2](https://pm2.keymetrics.io/) restarts crashed processes and plays well with Colyseus:
 
-- [Self-hosting on Vultr](#self-hosting-on-vultr)
-- [Nginx configuration](#nginx-configuration)
-- [Apache configuration](#apache-configuration)
-- [Docker](#docker)
-- [Heroku](#heroku)
+```js filename="ecosystem.config.js"
+const os = require('os');
+
+module.exports = {
+    apps: [{
+        name: "colyseus-app",
+        script: 'build/index.js',
+        time: true,
+        watch: false,
+        instances: os.cpus().length,
+        exec_mode: 'fork',        // IMPORTANT: DO NOT use 'cluster' mode.
+        wait_ready: true,
+    }],
+};
+```
+
+- **Serve over HTTPS**: put a reverse proxy in front (Nginx or Apache below) with a certificate from [Let's Encrypt](https://letsencrypt.org). The SDK connects via `https://` and upgrades to secure WebSockets (`wss://`) automatically.
+- **Let deploys drain gracefully**: Colyseus registers a [graceful shutdown](/server/graceful-shutdown) routine on `SIGTERM`/`SIGINT`: rooms are notified, clients receive `SERVER_SHUTDOWN` (`4001`), and the process exits when empty.
+- **Expose a health check**: a plain [HTTP route](/server/http-routes) returning `200` lets your load balancer or uptime monitor probe each process.
+- **More than one process or machine?**: you need a shared `presence` and `driver`, and a public address per process. Follow [Scalability](/scalability).
+
+---
 
 ## Self-hosting on [Vultr](https://www.vultr.com/?ref=9632185-9J)
 
@@ -40,7 +63,7 @@ This server is configured with:
 - Nginx
 - FREE `colyseus.dev` subdomain with SSL (Let's Encrypt)
 
-Follow the instructions at Vultr Marketplace to get your server up and running.
+Follow the instructions at Vultr Marketplace to start your server.
 
 ---
 
@@ -95,6 +118,10 @@ server {
     }
 }
 ```
+
+<Callout type="info">
+    Sticky sessions are **not** required: the seat reservation already binds each client to the process that created its room. For proxying multiple processes, see [Scalability → NGINX](/scalability#use-nginx-as-a-reverse-proxy) or the [Traefik Load Balancer](/scalability/traefik).
+</Callout>
 
 ---
 
@@ -214,8 +241,8 @@ Output:
 
 ```txt
 # Example
-REPOSITORY                      TAG        ID              CREATED
-node                            14         1934b0b038d1    About a minute ago
+REPOSITORY                         TAG        ID              CREATED
+node                               22         1934b0b038d1    About a minute ago
 <your username>/colyseus-server    latest     d64d3505b0d2    About a minute ago
 ```
 
@@ -239,16 +266,3 @@ Done, now you can connect to the server with `localhost:2567`
 
 - [Official Node.js Docker Image](https://hub.docker.com/_/node/)
 - [Node.js Docker Best Practices Guide](https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md)
-
----
-
-## Heroku
-
-Heroku can be used for prototyping. You can deploy the [colyseus-examples](https://github.com/colyseus/colyseus-examples) project on it by hitting this button:
-
-Keep in mind that scaling to multiple processes and/or nodes on Heroku is not supported out of the box, therefore we don't recommend using it in a production environment.
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/colyseus/colyseus-examples)
-
-**Important:** Make sure to set the environment variable `NPM_CONFIG_PRODUCTION=false` in order to use dev-dependencies in your deployment.
-

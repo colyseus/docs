@@ -1,30 +1,28 @@
 ---
 title: "uWebSockets.js"
+description: "Use the uWebSockets.js transport for higher-performance WebSocket handling in Colyseus."
 ---
 import { Callout, Cards, Tabs } from "nextra/components";
 
-## uWebSockets.js
+# uWebSockets.js
 
-The uWebSockets.js generally performs better than the default WebSockets implementation, and is capable of handling more connections while using less resources. It is the recommended transport for production environments.
+The uWebSockets.js generally performs better than the default WebSockets implementation, and is capable of handling more connections while using less resources. This transport is recommended for production environments.
 
 <Callout type="info">
-    The underlying library [`uNetworking/uWebSockets.js`](https://github.com/uNetworking/uWebSockets.js) is a C++ implementation of WebSockets that performs at least [10x that of Socket.IO](https://unetworkingab.medium.com/100k-secure-websockets-with-raspberry-pi-4-1ba5d2127a23), [8.5x that of Fastify](https://unetworkingab.medium.com/serving-100k-requests-second-from-a-fanless-raspberry-pi-4-over-ethernet-fdd2c2e05a1e). It makes up the [core components of Bun](https://x.com/uNetworkingAB/status/1810380862556397887) and is the fastest standards compliant web server in the TechEmpower ([not endorsed](https://x.com/uNetworkingAB/status/1811425564764610926)) benchmarks.
+    The underlying library [`uNetworking/uWebSockets.js`](https://github.com/uNetworking/uWebSockets.js) is a C++ implementation of WebSockets. It benchmarks at least [10x Socket.IO](https://unetworkingab.medium.com/100k-secure-websockets-with-raspberry-pi-4-1ba5d2127a23) and [8.5x Fastify](https://unetworkingab.medium.com/serving-100k-requests-second-from-a-fanless-raspberry-pi-4-over-ethernet-fdd2c2e05a1e). It also forms the [core of Bun](https://x.com/uNetworkingAB/status/1810380862556397887), and is the fastest standards-compliant web server in the TechEmpower ([not endorsed](https://x.com/uNetworkingAB/status/1811425564764610926)) benchmarks.
 </Callout>
 
-### Installation
+## Installation
 
-<Tabs items={["Express v5", "Express v4"]}>
-    <Tabs.Tab>
-    ```sh npm2yarn
-    npm install --save @colyseus/uwebsockets-transport@^2.0.1
-    ```
-    </Tabs.Tab>
-    <Tabs.Tab>
-    ```sh npm2yarn
-    npm install --save @colyseus/uwebsockets-transport@^1.4.1
-    ```
-    </Tabs.Tab>
-</Tabs>
+```sh npm2yarn
+npm install --save @colyseus/uwebsockets-transport@^0.18.0
+```
+
+To use the `express:` option with this transport, also install the optional [`uwebsockets-express`](https://github.com/colyseus/uWebSockets-express) compatibility layer (`^2.0.1` for Express v5, `^1.4.1` for Express v4):
+
+```sh npm2yarn
+npm install --save uwebsockets-express
+```
 
 **Usage**
 
@@ -54,55 +52,78 @@ const server = defineServer({
 });
 ```
 
-### Transport options
+## Transport options
 
-#### `options.maxPayloadLength`
+### `options.maxPayloadLength`
 Maximum length of received message. If a client tries to send you a message larger than this, the connection is immediately closed.
 
 Default: `4096`
 
-#### `options.idleTimeout`
+### `options.idleTimeout`
 Maximum amount of seconds that may pass without sending or getting a message. Connection is closed if this timeout passes. Resolution (granularity) for timeouts are typically 4 seconds, rounded to closest. Disable by using `0`.
 
 Default: `120`
 
-#### `options.sendPingsAutomatically`
+### `options.sendPingsAutomatically`
 
 Whether or not we should automatically send pings to uphold a stable connection given `idleTimeout`.
 
 Default: `true`
 
-#### `options.compression`
+### `options.compression`
 
 What permessage-deflate compression to use. `uWS.DISABLED`, `uWS.SHARED_COMPRESSOR` or any of the `uWS.DEDICATED_COMPRESSOR_xxxKB`.
 
 Default: `uWS.DISABLED`
 
-#### `options.maxBackpressure`
+### `options.maxBackpressure`
 
 Maximum length of allowed backpressure per socket when publishing or sending messages. Slow receivers with too high backpressure will be skipped until they catch up or timeout.
 
 Default: `1024 * 1024`
 
-### SSL options
+### `options.beforeUpgrade`
 
-#### `options.key_file_name`
+Runs before the WebSocket handshake, while the connection is still a plain HTTP
+request.
+
+```ts
+beforeUpgrade?: (request: Request, context: AuthContext) => Response | void | Promise<Response | void>;
+```
+
+The callback receives the upgrade request as a standard
+[`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request), and the
+same `context` object [onAuth](/auth/room#onauth-context) receives: `token`,
+`headers`, and `ip`. The context is read-only here, and changes to it do not
+carry over to `onAuth`.
+
+Return a
+[`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response) to answer
+the request without upgrading, or nothing to accept the handshake. The callback
+may be `async`, and the handshake waits for it to resolve.
+
+A callback that throws answers `500 Internal Server Error`, and the connection is
+not upgraded.
+
+## SSL options
+
+### `options.key_file_name`
 
 Path to the SSL key file. (for SSL termination through the Node.js application.)
 
-#### `options.cert_file_name`
+### `options.cert_file_name`
 
 Path to the SSL certificate file. (for SSL termination through the Node.js application.)
 
-#### `options.passphrase`
+### `options.passphrase`
 
 Password for the SSL file. (for SSL termination through the Node.js application.)
 
 ---
 
-### Overriding the uWebSockets.js version
+## Overriding the uWebSockets.js version
 
-The `@colyseus/uwebsockets-transport` package ships with a specific version of `uWebSockets.js` as a dependency. If you need to use a different version — for example, to pick up a bug fix or to match a specific platform requirement — you can override it directly from your project's `package.json`.
+The `@colyseus/uwebsockets-transport` package ships with a specific version of `uWebSockets.js` as a dependency. You may need a different version, for example to pick up a bug fix or to match a specific platform requirement. In that case, override it directly from your project's `package.json`.
 
 <Tabs items={["npm", "yarn", "pnpm"]}>
     <Tabs.Tab>
@@ -147,9 +168,9 @@ After updating `package.json`, remove your `node_modules` directory and reinstal
 
 ---
 
-### Troubleshooting
+## Troubleshooting
 
-#### 431 Request Header Fields Too Large
+### 431 Request Header Fields Too Large
 
 The maximum header size is 4 KiB by default. If you need to increase the maximum header size, you can use the `UWS_HTTP_MAX_HEADERS_SIZE` environment variable:
 

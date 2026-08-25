@@ -1,35 +1,64 @@
 ---
 title: "State Synchronization"
+description: "How state synchronization works in Colyseus: the server holds authoritative state, mutations are tracked at the property level, and clients receive binary patches."
 ---
 import { Cards, Steps, Tabs } from 'nextra/components'
-import { CodeSquareIcon, FileBinaryIcon, EyeIcon, StarIcon } from '@primer/octicons-react'
+import { CodeSquareIcon, FileBinaryIcon, EyeIcon, MeterIcon } from '@primer/octicons-react'
+import { MovedAnchors } from '../components/moved-anchors'
 
 # State Synchronization
+
+{/* The decorator tsconfig section moved to the decorators page; keep old deep links working.
+    The best-practices half of the old combined heading became /state/optimization. */}
+<MovedAnchors map={{
+    "typescript-config": "/state/schema/decorators#typescript-config",
+    "limitations-and-best-practices": "/state#limitations",
+}} />
 
 <Cards>
     <Cards.Card icon={<FileBinaryIcon/>} title="Schema Definition" href="/state/schema" />
     <Cards.Card icon={<EyeIcon/>} title="State View" href="/state/view" />
-    <Cards.Card icon={<CodeSquareIcon/>} title="State Sync Callbacks" href="/sdk/state-sync-callbacks" />
+    <Cards.Card icon={<CodeSquareIcon/>} title="State Sync Callbacks" href="/state/callbacks" />
+    <Cards.Card icon={<MeterIcon/>} title="Optimizing State" href="/state/optimization" />
 </Cards>
 
 ## Overview
 
 Colyseus uses a schema-based approach to define the state of a room. The server is responsible for mutating the state, and the client listens for state changes to keep the user interface in sync.
 
-- The room's state is defined using the `Schema` class from `@colyseus/schema`. Only the server can directly mutate the state.
+- The room's state is defined using `schema()` from `@colyseus/schema`. Only the server can directly mutate the state.
 - Clients send messages to the server to request state changes. Your room code processes these requests and updates the state.
-- Colyseus optimizes performance and bandwidth by tracking property-level changes. Only the latest mutation of each property is queued and sent to clients during the [patchRate](/room#patchrate) interval.
-- On the client side, you listen for state changes to keep the user interface in sync.
+- Colyseus optimizes performance and bandwidth by tracking property-level changes. Only the latest mutation of each property is queued and sent to clients during the [patchRate](/room#configuration-properties) interval.
+- On the frontend, you listen for state changes to keep the user interface in sync.
 
 <Steps>
 	### Backend: Define your state structures
 
-    Define your state structures by extending the `Schema` class from `@colyseus/schema`:
+    Define your state structures using `schema()` and `t.*` field builders from `@colyseus/schema`, or the classic [`@type()` decorator style](/state/schema/decorators):
 
-    <Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
+    <Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
         <Tabs.Tab>
         ```ts filename="src/rooms/MyState.ts"
-        import { Schema, type } from "@colyseus/schema";
+        import { schema, t, type SchemaType } from "@colyseus/schema";
+
+        export const Player = schema({
+            name: t.string(),
+            x: t.number(),
+            y: t.number(),
+        }, "Player");
+        export type Player = SchemaType<typeof Player>;
+
+        export const MyState = schema({
+            players: t.map(Player),
+        }, "MyState");
+        export type MyState = SchemaType<typeof MyState>;
+        ```
+
+        The `type` aliases are TypeScript-only sugar: `schema()` returns a value, and `SchemaType` derives the instance type under the same name. Plain JavaScript users omit those lines.
+        </Tabs.Tab>
+        <Tabs.Tab>
+        ```ts filename="src/rooms/MyState.ts"
+        import { Schema, MapSchema, type } from "@colyseus/schema";
 
         export class Player extends Schema {
             @type("string") name: string;
@@ -41,21 +70,8 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
             @type({ map: Player }) players = new MapSchema<Player>();
         }
         ```
-        </Tabs.Tab>
-        <Tabs.Tab>
-        ```js filename="src/rooms/MyState.js"
-        import { schema } from "@colyseus/schema";
 
-        export const Player = schema({
-            name: "string",
-            x: "number",
-            y: "number",
-        })
-
-        export const MyState = schema({
-            players: { map: Player, default: new Map() }
-        })
-        ```
+        The decorator style requires two `tsconfig.json` flags. See [Decorators → TypeScript Config](/state/schema/decorators#typescript-config).
         </Tabs.Tab>
     </Tabs>
 
@@ -205,49 +221,42 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 
 ---
 
-## Limitations and Best Practices
+## Limitations
 
-- Each `Schema` structure can hold up to `64` serialized fields. If you need more fields, use nested `Schema` structures.
-- `NaN` and `Infinity` are encoded as `0` (integer encoding only).
-- `null` strings are encoded as `""` (both "string" and "cstring" encoding).
+- Each `Schema` structure can hold up to `63` serialized fields. If you need more fields, use nested `Schema` structures.
+    - Inherited fields count toward the limit, so check the parent class too. Defining the 64th field throws where the class is defined.
+- `NaN` is encoded as `0`. `Infinity` is encoded as the largest safe integer, which costs 9 bytes.
+- `null` strings are encoded as `""`.
 - Multi-dimensional arrays are not supported. [See how to use 1D arrays as multi-dimensional](https://softwareengineering.stackexchange.com/questions/212808/treating-a-1d-data-structure-as-2d-grid/212813#212813)
-- `@colyseus/schema` encoding order is based on field definition order.
+- `@colyseus/schema` encoding order is based on field definition order: the order fields appear in the `schema()` object literal (or, for decorators, declaration order).
     - Both encoder (server) and decoder (client) must have the same schema definition.
     - The order of the fields must be the same.
+
+For what a patch costs in bytes and how to make it smaller, see [Optimizing State](/state/optimization).
 
 ---
 
 ## How does it work, internally?
 
-- **Handshake**: When a client joins a room, the server sends all the types that compose the room's state to the client, followed by the full state.
+- **Handshake**: When a client joins a room, the server sends all the types that compose the room's state, followed by the full state.
     - Handshake is skipped on automatic reconnections, OR when the client has provided the concrete state classes when joining the room.
 - **Enqueueing changes**: When the server mutates the state, it tracks which properties have changed since the last state synchronization, per `Schema` instance. Each `Schema` instance holds a `ChangeTree` object that tracks its changes.
-- **Sending changes**: The server encodes only the changed properties and sends them to the client during the [patchRate](/room#patchrate) interval.
-- **`refId`**: Each `Schema` instance has a unique `refId` that is used to identify the instance across the network. This is how Colyseus knows which instance has been added, removed, or updated.
-- **Decoding changes**: When the client receives the state changes, it decodes them and applies them to each `Schema` instance, based on the `refId`—triggering the `onChange`, `listen`, and `onAdd`/`onRemove` callbacks on the frontend.
+- **Sending changes**: The server encodes only the changed properties and sends them to the client during the [patchRate](/room#configuration-properties) interval.
+- **`refId`**: Each `Schema` instance has a unique `refId` that is used to identify the instance across the network. The `refId` is how Colyseus knows which instance has been added, removed, or updated.
+- **Decoding changes**: When the client receives the state changes, it decodes them and applies them to each `Schema` instance based on the `refId`. Decoding triggers the `onChange`, `listen`, and `onAdd`/`onRemove` callbacks on the frontend.
 
 ---
 
 ## Troubleshooting
 
-### TypeScript Config
-
-If you are using TypeScript, make sure to enable the `experimentalDecorators` and disable `useDefineForClassFields` in your `tsconfig.json` file.
-
-```json filename="tsconfig.json"
-{
-    "compilerOptions": {
-        "experimentalDecorators": true,
-        "useDefineForClassFields": false
-    }
-}
-```
+The `schema()` builder needs no compiler configuration. If you use the [`@type()` decorator style](/state/schema/decorators), two `tsconfig.json` flags are required. See [Decorators → TypeScript Config](/state/schema/decorators#typescript-config).
 
 ---
 
 ## Next Steps
 
 - [Schema Definition](/state/schema) - Complete reference for defining state structures
-- [State Sync Callbacks](/sdk/state-sync-callbacks) - All methods for listening to state changes
+- [Decorators (@type)](/state/schema/decorators) - The classic decorator-based definition style
+- [State Sync Callbacks](/state/callbacks) - All methods for listening to state changes
 - [State View](/state/view) - Control which parts of state each client can see
-- [Best Practices](/state#limitations-and-best-practices) - Tips for efficient state design
+- [Optimizing State](/state/optimization) - What a patch costs, and how to make it smaller

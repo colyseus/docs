@@ -10,7 +10,7 @@ import { Callout } from "nextra/components";
     The Native SDK is in **beta**, and may not be stable. Please [report any issues you find](https://github.com/colyseus/native-sdk/issues).
 </Callout>
 
-The [Colyseus Native SDK](https://github.com/colyseus/native-sdk) provides a pure C API for integrating Colyseus into any engine or framework. It is the shared foundation behind the Godot, GameMaker, and Defold SDKs, and can be used directly for custom engines or platforms such as Raylib, SDL, or embedded systems.
+The [Colyseus Native SDK](https://github.com/colyseus/native-sdk) provides a pure C API for integrating Colyseus into any engine or framework. This SDK is the shared foundation behind the Godot, GameMaker, Defold, and [Flutter](/getting-started/flutter) SDKs. You can also use it directly for custom engines or platforms such as Raylib, SDL, or embedded systems.
 
 See the [Raylib example project](https://github.com/colyseus/native-sdk/tree/main/platforms/raylib) for a complete working sample.
 
@@ -90,7 +90,7 @@ static const colyseus_schema_vtable_t player_vtable = {
 The root state vtable is passed to `colyseus_room_set_state_type()` to enable automatic deserialization.
 
 <Callout type="info">
-    See the full [State Schema Codegen documentation](/sdk/state-sync-callbacks#frontend-schema-generation) for more options and details.
+    See the full [State Schema Codegen documentation](/state/callbacks#frontend-schema-generation) for more options and details.
 </Callout>
 
 ## Auto Schemas (Without Codegen)
@@ -98,7 +98,7 @@ The root state vtable is passed to `colyseus_room_set_state_type()` to enable au
 <details>
 <summary>Show how to use schemas without running the codegen step</summary>
 
-If you do **not** call `colyseus_room_set_state_type()`, the SDK automatically builds schema definitions at runtime from the server's reflection data sent during the handshake. This is useful for:
+If you do **not** call `colyseus_room_set_state_type()`, the SDK automatically builds schema definitions at runtime from the server's reflection data sent during the handshake. This mode is useful for:
 
 - Prototyping without a build step
 - Supporting multiple server versions with different schemas
@@ -136,7 +136,7 @@ static void on_join(void* userdata) {
 
 ### Reading dynamic values
 
-Each `colyseus_dynamic_value_t` is a tagged union — check `value->type` and read the matching field from `value->data`:
+Each `colyseus_dynamic_value_t` is a tagged union. Check `value->type` and read the matching field from `value->data`:
 
 ```c
 switch (value->type) {
@@ -182,7 +182,7 @@ static void on_player_entry(const char* key, void* value, void* userdata) {
 
 ### Callbacks with auto schemas
 
-The standard callbacks API works with dynamic schemas — pass the dynamic schema instance the same way you would a generated struct:
+The standard callbacks API works with dynamic schemas. Pass the dynamic schema instance the same way you would a generated struct:
 
 ```c
 colyseus_callbacks_t* callbacks = colyseus_callbacks_create(room->serializer->decoder);

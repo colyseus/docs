@@ -1,0 +1,36 @@
+---
+title: "Advanced: Implement Your Own Callback System"
+description: "Bring your own callback system to @colyseus/schema decoding: integrate state sync with any reactive library."
+---
+
+# Advanced: Implement Your Own Callback System
+
+The `@colyseus/schema` version `3.0` introduced a way to bring your own callback system during decoding.
+
+The standard way of attaching callbacks uses the same "flavor" as Colyseus is used to from previous versions. However, you can bring your own callback system by overriding the `Decoder`'s `triggerChanges` method.
+
+The following example shows how to bring your own callback system:
+
+```ts filename="client.ts"
+import { getRawChangesCallback } from "@colyseus/schema";
+
+// Also available on the decoder root:
+// - decoder.root.refs        => map of all Schema instances by refId
+// - decoder.root.refCount    => map of reference counts by refId
+// - instance[$refId]         => a ref's id, stored on the instance itself
+//                               ($refId is exported from @colyseus/schema)
+
+const room = await client.joinOrCreate("my_room");
+getRawChangesCallback(room['serializer']['decoder'], (changes) => {
+    console.log("raw list of changes", changes);
+});
+```
+
+On the above example, the raw list of changes is being printed to the console.
+
+Each SDK has its own way of handling the callback system.
+
+- [JavaScript SDK](https://github.com/colyseus/schema/blob/3.0/src/decoder/strategy/StateCallbacks.ts)
+- [Unity SDK](https://github.com/colyseus/colyseus-unity-sdk/blob/0.16/Assets/Colyseus/Runtime/Colyseus/Serializer/Schema/Callbacks/Callbacks.cs)
+- [Defold SDK](https://github.com/colyseus/colyseus-defold/blob/0.16/colyseus/serializer/schema/callbacks.lua)
+- [Haxe SDK](https://github.com/colyseus/colyseus-haxe/blob/0.16/src/io/colyseus/serializer/schema/Callbacks.hx)

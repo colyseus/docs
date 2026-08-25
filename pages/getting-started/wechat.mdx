@@ -13,7 +13,7 @@ WeChat is a popular messaging and social media platform in China, and it provide
 As the WeChat JavaScript runtime is not fully compatible with the browser, you will need to use the following polyfills to ensure compatibility.
 
 <Callout type="warning">
-  Feedback? Join the discussion on GitHub — https://github.com/colyseus/colyseus.js/pull/158
+  Feedback? Join the discussion on GitHub: https://github.com/colyseus/colyseus.js/pull/158
 </Callout>
 
 <Callout type="info">
@@ -46,7 +46,7 @@ WeChat does not provide the [`URL` standard](https://url.spec.whatwg.org/), so y
 
 ### WebSocket monkey-patch
 
-It has been reported that the WeChat JavaScript runtime does not support sending `Uint8Array` or `Array` data types directly through WebSocket. To work around this, you can monkey-patch the `WebSocket.send` method to convert these data types to a format that WeChat can handle.
+Users have reported that the WeChat JavaScript runtime does not support sending `Uint8Array` or `Array` data types directly through WebSocket. To work around this, you can monkey-patch the `WebSocket.send` method to convert these data types to a format that WeChat can handle.
 
 ```typescript
 const WebSocket_send = WebSocket.prototype.send;

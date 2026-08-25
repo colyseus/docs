@@ -1,17 +1,18 @@
 ---
 title: "WebSocket (Default)"
+description: "The default Colyseus WebSocket transport (ws): options, ping/pong heartbeats, and customization."
 ---
 import { Callout, Steps, Tabs } from 'nextra/components'
 
-## WebSocket Transport (via `ws`)
+# WebSocket Transport (via `ws`)
 
 The `WebSocketTransport` with its default options is going to be used automatically if no `transport` is provided. You may customize its options by providing a custom `WebSocketTransport` instance.
 
 <Callout type="info">
-    The underlying library is [`websockets/ws`](https://github.com/websockets/ws) - a simple to use, blazing fast and thoroughly tested WebSocket client and server for Node.js
+    The underlying library is [`websockets/ws`](https://github.com/websockets/ws). The `ws` package is a fast and thoroughly tested WebSocket client and server for Node.js.
 </Callout>
 
-### Example
+## Example
 
 ```ts {2,7-11} filename="app.config.ts"
 import { defineServer } from "colyseus";
@@ -32,9 +33,9 @@ const server = defineServer({
 
 ---
 
-### Available options
+## Available options
 
-#### `options.server`
+### `options.server`
 
 A Node.js http server instance to re-use for the WebSocket server. Useful when you'd like to use Express along with Colyseus.
 
@@ -78,7 +79,7 @@ By not providing this option, an http server is going to be created automaticall
 
 ---
 
-#### `options.pingInterval`
+### `options.pingInterval`
 
 Number of milliseconds for the server to "ping" the clients.
 
@@ -88,7 +89,7 @@ Default: `3000`
 
 ---
 
-#### `options.pingMaxRetries`
+### `options.pingMaxRetries`
 
 Maximum allowed number of pings without a response.
 
@@ -96,7 +97,7 @@ Default: `2`
 
 ---
 
-#### `options.maxPayload`
+### `options.maxPayload`
 
 Maximum payload clients can send per message to the server.
 
@@ -104,7 +105,7 @@ Default: `4096` (4kb)
 
 ---
 
-#### `options.perMessageDeflate`
+### `options.perMessageDeflate`
 
 Enable/disable per-message deflate compression. Disabling this can reduce CPU usage and latency at the cost of increased bandwidth.
 
@@ -112,7 +113,36 @@ Default: `false`
 
 ---
 
-#### `options.verifyClient`
+### `options.beforeUpgrade`
+
+Runs before the WebSocket handshake, while the connection is still a plain HTTP
+request.
+
+```ts
+beforeUpgrade?: (request: Request, context: AuthContext) => Response | void | Promise<Response | void>;
+```
+
+The callback receives the upgrade request as a standard
+[`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request), and the
+same `context` object [onAuth](/auth/room#onauth-context) receives: `token`,
+`headers`, and `ip`. The context is read-only here, and changes to it do not
+carry over to `onAuth`.
+
+Return a
+[`Response`](https://developer.mozilla.org/en-US/docs/Web/API/Response) to answer
+the request without upgrading, or nothing to accept the handshake. The callback
+may be `async`, and the handshake waits for it to resolve.
+
+A callback that throws answers `500 Internal Server Error`, and the connection is
+not upgraded.
+
+[verifyClient](#optionsverifyclient) covers the accept-or-reject case on this
+transport. `beforeUpgrade` answers with a full `Response`, and behaves the same
+way on every WebSocket transport.
+
+---
+
+### `options.verifyClient`
 
 This method happens before WebSocket handshake. If `verifyClient` is not set
 then the handshake is automatically accepted.
@@ -130,9 +160,9 @@ then the handshake is automatically accepted.
 
 ---
 
-### Troubleshooting
+## Troubleshooting
 
-#### 431 Request Header Fields Too Large
+### 431 Request Header Fields Too Large
 
 The maximum header size is 16 KiB by default. If you need to increase the maximum header size, you can use the `NODE_OPTIONS` environment variable:
 

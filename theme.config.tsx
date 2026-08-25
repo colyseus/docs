@@ -8,7 +8,7 @@ const logo = <Image src={require('./images/logo.svg')} width={0} height={0} styl
 const config: DocsThemeConfig = {
     logo: <>
         {logo}
-        <span style={{ fontSize: "0.8em", marginLeft: "0.6em", paddingTop: "0.7em", color: "GrayText" }}>v0.17</span>
+        <span style={{ fontSize: "0.8em", marginLeft: "0.6em", paddingTop: "0.7em", color: "GrayText" }}>v0.18</span>
     </>,
     project: {
         link: 'https://github.com/colyseus/colyseus',
@@ -24,10 +24,10 @@ const config: DocsThemeConfig = {
     },
 
     banner: {
-        key: "new-version",
+        key: "released-0.18",
         content: (
-            <a href="/migrating/0.17">
-                <strong>Version 0.17 is out! 🎉</strong> - Read the migration guide and upgrade your projects.
+            <a href="/migrating/0.18">
+                <strong>Colyseus 0.18 is out! 🚀</strong> - Read the migration guide.
             </a>
         )
     },

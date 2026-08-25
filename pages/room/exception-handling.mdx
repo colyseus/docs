@@ -10,7 +10,7 @@ import { Callout } from 'nextra/components'
     This feature is available since `@colyseus/core` version `0.15.55`.
 </Callout>
 
-By default, if an uncaught exception occurs inside a room, the server is shut down ungracefully. This means all clients will be disconnected and the server will restart, or stop running (depending on how it's configured).
+By default, if an uncaught exception occurs inside a room, the server is shut down ungracefully. This shutdown disconnects all clients, and the server will restart or stop running (depending on how it's configured).
 
 You can now handle uncaught exceptions by implementing the `onUncaughtException()` method in your room class. With this method, all user-facing callbacks will be wrapped in try/catch blocks, and any exceptions will be forwarded to `onUncaughtException()`.
 
@@ -33,10 +33,12 @@ Methods that can throw exceptions are:
 - `onCreate()`
 - `onAuth()`
 - `onJoin()`
+- `onDrop()`
+- `onReconnect()`
 - `onLeave()`
 - `onDispose()`
 - `onMessage()`
-- `setSimulationInterval()`
+- `setTimestep()` / `setFixedTimestep()` (and the deprecated `setSimulationInterval()` alias)
 - `clock.setTimeout()`
 - `clock.setInterval()`
 
@@ -126,7 +128,7 @@ When the exception is thrown inside the `onLeave` method.
 **Properties:**
 
 - `client` - the client that is leaving the room.
-- `code` - the code associated with the client leaving the room.
+- `consented` - the close code associated with the client leaving the room.
 
 ```ts filename="MyRoom.ts"
 import { OnLeaveException } from "colyseus";
@@ -134,12 +136,22 @@ import { OnLeaveException } from "colyseus";
     onUncaughtException (err: Error, methodName: string) {
         if (err instanceof OnLeaveException) {
             err.client; // the client that is leaving the room.
-            err.code; // the code associated with the client leaving the room.
+            err.consented; // the close code associated with the client leaving the room.
             err.cause; // original unhandled error
             err.message; // original error message
         }
     }
 ```
+
+---
+
+### OnDropException / OnReconnectException
+
+When the exception is thrown inside `onDrop` (properties: `client`, `code`) or `onReconnect` (property: `client`).
+
+<Callout type="warning">
+    In 0.18.1 these two classes are raised internally but not yet exported from the `colyseus` package, so an `instanceof` check isn't possible. Inspect the `methodName` argument (`"onDrop"` / `"onReconnect"`) instead.
+</Callout>
 
 ### OnMessageException
 
@@ -180,15 +192,15 @@ import { OnDisposeException } from "colyseus";
     }
 ```
 
-### SimulationIntervalException
+### TimestepException
 
-When the exception is thrown inside the `setSimulationInterval` method.
+When the exception is thrown inside the `setTimestep` or `setFixedTimestep` callback (`methodName` is `"setTimestep"` / `"setFixedTimestep"`). `SimulationIntervalException` remains as a deprecated alias.
 
 ```ts filename="MyRoom.ts"
-import { SimulationIntervalException } from "colyseus";
+import { TimestepException } from "colyseus";
 // ...
     onUncaughtException (err: Error, methodName: string) {
-        if (err instanceof SimulationIntervalException) {
+        if (err instanceof TimestepException) {
             err.cause; // original unhandled error
             err.message; // original error message
         }

@@ -1,11 +1,15 @@
+---
+title: "HTTP Routes"
+description: "Define custom HTTP routes on a Colyseus server, protect them with middleware, and configure CORS headers."
+---
 import { Callout, Cards } from "nextra/components";
 
 # HTTP Routes
 
 Colyseus provides two ways to add HTTP endpoints to your server:
 
-- **API Routes** (recommended) — Type-safe, with validation, middleware, frontend SDK integration, and visual testing via the [Playground](/tools/playground#api-endpoints).
-- **Express** — Use if you rely on existing Express middleware or libraries.
+- **API Routes** (recommended): Type-safe, with validation, middleware, frontend SDK integration, and visual testing via the [Playground](/tools/playground#api-endpoints).
+- **Express**: Use if you rely on existing Express middleware or libraries.
 
 ## API Routes
 
@@ -64,6 +68,78 @@ export const secureEndpoint = createEndpoint("/secure", {
 });
 ```
 
+### JWT Authentication
+
+For JWT-based auth, [`@colyseus/auth`](/auth/module) exports `auth.middleware()`, a middleware that verifies the `Authorization: Bearer <token>` header and exposes the decoded payload on `ctx.context.auth`. It's the canonical way to gate an endpoint behind a logged-in user.
+
+```ts
+import { createEndpoint } from "colyseus";
+import { auth } from "@colyseus/auth";
+
+export const profile = createEndpoint("/profile", {
+    method: "GET",
+    use: [auth.middleware()],
+}, async (ctx) => {
+    return { user: ctx.context.auth };
+});
+```
+
+<Callout type="info">
+    When [`@colyseus/database`](/database) is in use, `auth.middleware()` is **revocation-aware** automatically. `db.auth.ban(userId)` and `db.auth.bumpTokenVersion(userId)` both invalidate live JWTs at the token layer (no per-route check needed). See [Database → Authentication](/database/authentication).
+</Callout>
+
+See [Authentication → HTTP Middleware](/auth/http) for the dual Express/`createEndpoint` modes, and [Auth Module](/auth/module) for backend setup.
+
+### Basic Authentication
+
+`basicAuth` is a built-in middleware for HTTP Basic Auth. Drop it into any
+endpoint's `use:` array to gate it behind the browser's native credentials
+prompt.
+
+```ts
+import { createEndpoint, basicAuth } from "colyseus";
+
+export const adminStats = createEndpoint("/admin-stats", {
+    method: "GET",
+    use: [ basicAuth({ users: { admin: "s3cret" } }) ],
+}, async (ctx) => {
+    return { onlineUsers: 123 };
+});
+```
+
+A common use is protecting the [Playground](/tools/playground) and
+[Monitor](/tools/monitoring) in production. Both accept a `use:` array:
+
+```ts filename="app.config.ts"
+import { defineServer, createRouter, basicAuth } from "colyseus";
+import { playground } from "@colyseus/playground";
+import { monitor } from "@colyseus/monitor";
+
+const guard = basicAuth({ users: { admin: "s3cret" } });
+
+const server = defineServer({
+    routes: createRouter({
+        ...playground({ use: [guard] }),
+        ...monitor({    use: [guard] }),
+    })
+});
+```
+
+**Options**
+
+| Option | Description |
+|--------|-------------|
+| `users` | `Record<string, string>` mapping username → password. The common static case. |
+| `validate` | `(username, password) => boolean \| Promise<boolean>`: custom/DB-backed check. Takes precedence over `users`. |
+| `realm` | Label shown in the browser prompt. Default `"Restricted"`. |
+
+<Callout type="info">
+    On a missing or invalid credential the middleware responds `401` with a
+    `WWW-Authenticate: Basic` header, so browsers show the native login dialog.
+    Passwords are compared in constant time. You must provide at least one of
+    `users` or `validate`.
+</Callout>
+
 ### Endpoint Options
 
 `createEndpoint(path, options, handler)` accepts the following options:
@@ -76,7 +152,7 @@ export const secureEndpoint = createEndpoint("/secure", {
 | `use` | Array of middlewares created with `createMiddleware`. |
 | `requireHeaders` | When `true`, requires `headers` when calling the endpoint as a function. |
 | `requireRequest` | When `true`, requires a `request` object when calling the endpoint as a function. |
-| `metadata.scope` | `"rpc"` (default): available to RPC client. `"server"`: callable directly only. `"http"`: routed only. |
+| `metadata.scope` | `"rpc"` (default): available to RPC client. `"server"`: routed and callable directly, hidden from the typed RPC client. `"http"`: routed only. |
 | `metadata.allowedMediaTypes` | Restricts accepted `Content-Type` values for this endpoint. |
 
 ### Handler Context
@@ -106,8 +182,8 @@ The handler signature is `async (ctx) => response`.
 | `ctx.setHeader(name, value)` | Set a response header. |
 | `ctx.setCookie(name, value, options?)` | Set a response cookie. |
 | `ctx.getCookie(name)` | Read a request cookie. |
-| `ctx.setSignedCookie(name, value, options?)` | Set a signed cookie. |
-| `ctx.getSignedCookie(name)` | Read a signed cookie. |
+| `ctx.setSignedCookie(name, value, secret, options?)` | Set a signed cookie. |
+| `ctx.getSignedCookie(name, secret)` | Read a signed cookie. |
 
 ---
 

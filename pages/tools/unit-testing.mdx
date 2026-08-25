@@ -4,8 +4,14 @@ description: "Write unit tests for your Colyseus server rooms using the built-in
 ---
 import { Callout, Steps, Tabs } from 'nextra/components'
 import { ServerIcon, DevicesIcon } from "@primer/octicons-react";
+import { MovedAnchors } from '../../components/moved-anchors'
 
 # Unit Testing Your Server
+
+{/* waitForNextSimulationTick was renamed to waitForNextTimestep in @colyseus/testing 0.18.2. */}
+<MovedAnchors map={{
+    "wait-for-next-simulation-tick": "/tools/unit-testing#wait-for-next-timestep",
+}} />
 
 The `@colyseus/testing` package provides utility methods for testing your Colyseus application. It simulates client connections and message exchange using the JavaScript SDK, so you can validate both server and client behavior in a single test.
 
@@ -29,6 +35,7 @@ Boot the test server with your `app.config.ts`, then create rooms and connect si
     <Tabs.Tab>
 
     ```ts filename="App.test.ts"
+    import assert from "assert";
     import { ColyseusTestServer, boot } from "@colyseus/testing";
 
     // import your "app.config.ts" file here.
@@ -89,16 +96,17 @@ Boot the test server with your `app.config.ts`, then create rooms and connect si
 
 </Tabs>
 
-Then run your tests:
+Then run your tests with the framework of the tab you followed:
 
 ```sh filename="Terminal"
-npx vitest
+npx mocha --require ts-node/register App.test.ts   # Mocha
+npx jest                                           # Jest
 ```
 
 ## Best Practices
 
 - Assert on both server and client state after simulating message exchange.
-- Create a fresh room in each test — rooms are disposed between tests via `colyseus.cleanup()`, so do not reuse room instances.
+- Create a fresh room in each test. Rooms are disposed between tests via `colyseus.cleanup()`, so do not reuse room instances.
 - Always declare test cases with `async`.
 - [Await for the server or client to process pending actions](#server-side-utilities) before running assertions.
 
@@ -165,30 +173,34 @@ it("client state must match server's after patch is received", async() => {
 });
 ```
 
-### Wait For Next Simulation Tick
+### Wait For Next Timestep
 
-Wait for the next simulation tick to complete.
+Wait for the next timestep to complete. Works with either loop: `setTimestep()` and `setFixedTimestep()` both drive the same interval.
 
 ```ts {5} filename="App.test.ts"
-it("should assert something after room's simulation tick", async() => {
+it("should assert something after room's timestep", async() => {
     const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
 
-    await room.waitForNextSimulationTick();
+    await room.waitForNextTimestep();
 
-    // assuming the room's state has a "tick" property that updates during setSimulationInterval()
+    // assuming the room's state has a "tick" property that updates during setTimestep()
     assert.strictEqual(room.state.tick, 1);
 });
 ```
+
+<Callout type="info">
+    `waitForNextSimulationTick()` is the previous name and still works (it forwards). Requires `@colyseus/testing` 0.18.2 or newer for `waitForNextTimestep()`.
+</Callout>
 
 ## Client-side Utilities
 
 You can call any frontend SDK methods through `colyseus.sdk` to simulate client behavior:
 
-- [`colyseus.sdk.joinOrCreate()`](/sdk/#joinorcreate-roomname-string-options-any)
-- [`colyseus.sdk.create()`](/sdk/#create-roomname-string-options-any)
-- [`colyseus.sdk.join()`](/sdk/#join-roomname-string-options-any)
-- [`colyseus.sdk.joinById()`](/sdk/#joinbyid-roomid-string-options-any)
+- [`colyseus.sdk.joinOrCreate()`](/sdk#join-or-create-recommended)
+- [`colyseus.sdk.create()`](/sdk#other-join-methods)
+- [`colyseus.sdk.join()`](/sdk#other-join-methods)
+- [`colyseus.sdk.joinById()`](/sdk#other-join-methods)
 
 ```ts filename="App.test.ts"
 it("should connect into battle_room with options x, y, z", async () => {

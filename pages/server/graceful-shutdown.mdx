@@ -1,8 +1,12 @@
+---
+title: "Graceful Shutdown"
+description: "How Colyseus shuts down gracefully on SIGTERM/SIGINT: draining rooms via onBeforeShutdown, and customizing or disabling the shutdown routine."
+---
 import { Callout, Steps, Tabs } from "nextra/components";
 
-## Graceful Shutdown Process
+# Graceful Shutdown Process
 
-Colyseus listens for `SIGTERM` and `SIGINT` signals to gracefully shut down the process.
+Colyseus listens for `SIGTERM`, `SIGINT`, and `SIGUSR2` signals (and `uncaughtException`) to gracefully shut down the process.
 
 These actions will be performed, in order, before the process is killed:
 
@@ -21,7 +25,7 @@ These actions will be performed, in order, before the process is killed:
         See [Server API → On Before Shutdown](/server/#on-before-shutdown)
     </Callout>
 
-    ### Process is excluded from match-making.
+    ### Process is excluded from matchmaking.
 
     The process is not going to be selected for new room creations anymore.
 
@@ -34,7 +38,7 @@ These actions will be performed, in order, before the process is killed:
     The rooms handled by this process are locked via `room.lock()`.
 
     <Callout type="info">
-        See [Room API → Lock Room](/room/#lock-room)
+        See [Room API → Lock Room](/matchmaker/visibility#lock-room)
     </Callout>
 
     ### Room: On Before Shutdown
@@ -58,7 +62,7 @@ These actions will be performed, in order, before the process is killed:
     ```
 
     <Callout type="info">
-        See [Room API → On Before Shutdown](/room#on-before-shutdown)
+        See [Room API → On Before Shutdown](/room/lifecycle#on-before-shutdown)
     </Callout>
 
     ### (...) wait until all rooms are disposed

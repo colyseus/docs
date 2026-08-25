@@ -1,3 +1,0 @@
-export default {
-    "command-pattern": "",
-};

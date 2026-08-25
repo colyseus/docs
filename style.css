@@ -141,3 +141,250 @@ html.dark .sponsor-scorewarrior { color: #ffffff; }
     opacity: 1;
     color: #f5a015;
 }
+
+/* Scenario cards — reusable grid for landing-page intent indexes
+   (see pages/auth.mdx, pages/admin.mdx). */
+.scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+.scenario-card {
+    display: block;
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(127, 127, 127, 0.22);
+    border-radius: 0.6rem;
+    background-color: transparent;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 150ms ease, background-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+}
+.scenario-card:hover {
+    border-color: rgba(127, 127, 127, 0.55);
+    background-color: rgba(127, 127, 127, 0.06);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+.scenario-card:active {
+    transform: translateY(0);
+}
+.scenario-card__title {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-weight: 600;
+    font-size: 0.98rem;
+    margin-bottom: 0.35rem;
+}
+.scenario-card__desc {
+    font-size: 0.875rem;
+    opacity: 0.72;
+    line-height: 1.5;
+}
+
+/* Demo showcase cards — gameplay screenshot + Play/Source links
+   (see components/demo-card.tsx, pages/netcode.mdx). */
+.demo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+.demo-card {
+    border: 1px solid rgba(127, 127, 127, 0.22);
+    border-radius: 0.6rem;
+    overflow: hidden;
+    transition: border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+}
+.demo-card:hover {
+    border-color: rgba(127, 127, 127, 0.55);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+.demo-card__media {
+    display: block;
+    aspect-ratio: 16 / 9;
+    background: #10131c;
+}
+.demo-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    margin: 0;
+}
+.demo-card__body {
+    padding: 0.85rem 1rem 0.95rem;
+}
+.demo-card__title {
+    font-weight: 600;
+    font-size: 0.98rem;
+    margin-bottom: 0.3rem;
+}
+.demo-card__desc {
+    font-size: 0.85rem;
+    opacity: 0.72;
+    line-height: 1.5;
+}
+.demo-card__links {
+    display: flex;
+    gap: 1.1rem;
+    margin-top: 0.65rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.demo-card__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+/* Repository subtitle under a demo heading (see components/client-list.tsx). */
+.demo-source {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    opacity: 0.72;
+    transition: opacity 150ms ease;
+}
+.demo-source:hover {
+    opacity: 1;
+}
+
+.client-list {
+    margin-top: 1.5rem;
+    border: 1px solid rgba(127, 127, 127, 0.22);
+    border-radius: 0.6rem;
+    overflow: hidden;
+}
+.client-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.6rem 1rem;
+    border-top: 1px solid rgba(127, 127, 127, 0.16);
+}
+.client-row:first-child {
+    border-top: 0;
+}
+.client-row:hover {
+    background: rgba(127, 127, 127, 0.06);
+}
+.client-row__name {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 600;
+    font-size: 0.92rem;
+}
+/* fixed box so nameless-logo rows still align with the rest */
+.client-row__icon {
+    display: inline-flex;
+    justify-content: center;
+    width: 22px;
+    flex: none;
+}
+.client-row__icon img {
+    margin: 0;
+}
+.client-row__platforms {
+    font-size: 0.82rem;
+    opacity: 0.62;
+}
+.client-row__links {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1.1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.client-row__links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+    .client-row {
+        grid-template-columns: 1fr auto;
+        gap: 0.35rem 1rem;
+    }
+    .client-row__platforms {
+        grid-column: 1 / -1;
+        order: 3;
+    }
+}
+
+/* Animated lab captures — plain <img>, since next/image can't blur-placeholder
+   an animation (see pages/learn.mdx). */
+.lab-shot {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: 1.5rem;
+    border: 1px solid rgba(127, 127, 127, 0.22);
+    border-radius: 0.6rem;
+}
+.lab-shots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 0 1.25rem;
+}
+.lab-shots figure {
+    margin: 0;
+}
+.lab-shots figcaption {
+    margin-top: 0.6rem;
+    font-size: 0.82rem;
+    opacity: 0.72;
+    line-height: 1.55;
+}
+
+/* Engines a premium prototype is implemented on
+   (see components/premium-demos.tsx). */
+.demo-card__engines {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    opacity: 0.85;
+}
+
+/* Sponsor note + call-to-action under the premium demo grid
+   (see components/premium-demos.tsx). */
+.premium-note {
+    margin-top: 1.25rem;
+    text-align: center;
+    font-size: 0.88rem;
+    opacity: 0.72;
+}
+.premium-cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.75rem;
+}
+.premium-cta a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 1.1rem;
+    border: 1px solid rgba(127, 127, 127, 0.35);
+    border-radius: 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 150ms ease, background-color 150ms ease, color 150ms ease;
+}
+.premium-cta a:hover {
+    border-color: #f5a015;
+    background-color: rgba(245, 160, 21, 0.08);
+    color: #f5a015;
+}

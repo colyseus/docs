@@ -1,0 +1,18 @@
+---
+# One word, one meaning. See STYLE.md#terminology.
+#
+# These are errors, not warnings: an inconsistent term is what makes docs search
+# and coding agents surface the wrong API.
+extends: substitution
+message: "Use '%s' instead of '%s'. See STYLE.md#terminology."
+level: error
+ignorecase: true
+swap:
+  'front-end': frontend
+  'back-end': backend
+  'client side': "frontend (noun) or client-side (adjective)"
+  'server side': "backend (noun) or server-side (adjective)"
+  'room handler': "room type (the registered definition) or room class (the subclass)"
+  'game session': room
+  'simulation interval': timestep
+  'match-making': matchmaking
