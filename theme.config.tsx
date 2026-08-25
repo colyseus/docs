@@ -24,12 +24,12 @@ const config: DocsThemeConfig = {
     },
 
     banner: {
-        key: "new-version",
+        key: "legacy-version",
         content: (
-            <a href="/migrating/0.17">
-                <strong>Version 0.17 is out! 🎉</strong> - Read the migration guide and upgrade your projects.
+            <a href="https://docs.colyseus.io/" onClick={(e) => { e.preventDefault(); window.location.href = `https://docs.colyseus.io${window.location.pathname}`; }}>
+                You are viewing the docs for a legacy version of Colyseus. <b>See the latest version here</b>.
             </a>
-        )
+        ),
     },
 
     // banner: {
