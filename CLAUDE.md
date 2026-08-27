@@ -10,8 +10,11 @@
   Its "Rules we deliberately reject" section is binding, those rules stay.
 - No em-dashes in prose (`Colyseus.NoEmDash` gates CI as an error): split the
   sentence, or use a comma, colon, or parentheses.
-- No `wholesale` (`Colyseus.PlainWords` gates CI as an error): name what is
-  being replaced, or use "in full" or "entirely".
+- No `wholesale` or `load-bearing` (`Colyseus.PlainWords` gates CI as an
+  error). Neither has a fixed substitute; say what the word stands in for.
+  `wholesale`: name what is replaced, or use "in full" or "entirely".
+  `load-bearing`: name what depends on it or what breaks ("must stay",
+  "the order matters").
 - Plain, technical prose. Skip marketing copy and hedging adverbs; keep the why
   alongside the what.
 - Keep content organized and self-contained within its category.

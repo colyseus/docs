@@ -42,7 +42,7 @@ A page that moves **and** loses headings needs both.
      and the hash. Use it for a subtree whose heading slugs survived the move.
      Without it, every URL under `from` lands on the single `to` page.
    - A bare parent entry is a prefix match on everything below it. Place it last
-     within its group, and comment why when the ordering is load-bearing.
+     within its group, and comment why when the ordering matters.
 
 4. **Add `<MovedAnchors>`** to every page that kept its route but lost a heading,
    directly below the H1:

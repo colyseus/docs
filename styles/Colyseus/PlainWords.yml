@@ -5,8 +5,9 @@
 #
 # An error, not a warning: unlike Idioms there is no judgement call to make.
 extends: existence
-message: "Rewrite without '%s'. Name what is replaced, or use 'in full' / 'entirely'. See STYLE.md#voice."
+message: "Rewrite without '%s': say what it stands in for here. See STYLE.md#voice."
 level: error
 ignorecase: true
 tokens:
   - 'wholesale'
+  - 'load[- ]?bearing'

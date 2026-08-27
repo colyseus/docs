@@ -53,6 +53,12 @@ Enforcement is [Vale](#enforcement) in CI, plus this file.
   what is replaced ("replaces the entire metadata object"), or use "in full"
   or "entirely". `Colyseus.PlainWords` enforces this as a CI-gating error.
 
+- **No `load-bearing`.** A structural metaphor that only says "important"
+  without saying why. Replace it with the dependency it hides: what relies on
+  the thing, or what breaks when it changes ("heading slugs with inbound
+  links", "must stay", "the order matters"). Also a `Colyseus.PlainWords`
+  error.
+
 ## Punctuation
 
 - **No em-dashes.** Rewrite instead, in order of preference:
@@ -110,8 +116,8 @@ Recorded so they aren't reintroduced as "improvements".
 
 - **Gerund headings stay.** `## Defining a Room`, `## Joining Rooms`. STE bans
   `-ing` outside technical names. We keep them because they match how people
-  search, and because 214 of them are load-bearing heading slugs: renaming
-  cascades into `check-links`, the `<MovedAnchors>` maps, and external inbound
+  search, and because 214 of them are heading slugs with inbound links:
+  renaming cascades into `check-links`, the `<MovedAnchors>` maps, and external inbound
   links. Two page routes (`/getting-started`, `/migrating`) are gerunds too.
 - **Contractions stay.** `don't`, `it's`, `you'll`. They read as normal
   developer prose and cost nothing in comprehension.
@@ -149,7 +155,7 @@ Check the source before rewriting.
 Vocabulary lives in `styles/config/vocabularies/Colyseus/accept.txt`. Add
 project nouns there rather than rewording around a false positive.
 
-Two config details are load-bearing and easy to break:
+Two config details look removable but must stay:
 
 - `filename` must stay out of `TokenIgnores`. It appears in code-fence info
   strings (` ```ts filename="MyRoom.ts" `), and blanking it there stops Vale

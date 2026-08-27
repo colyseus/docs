@@ -1,6 +1,6 @@
 ---
 title: "Determinism & The Contract"
-description: "The load-bearing rules of Colyseus client-side prediction: one shared step function, one input per fixed step, identical fixed dt, flat-primitive inputs, replay-safe one-shots, and a troubleshooting table for rubber-banding, jitter, and missed hits."
+description: "The rules Colyseus client-side prediction depends on: one shared step function, one input per fixed step, identical fixed dt, flat-primitive inputs, replay-safe one-shots, and a troubleshooting table for rubber-banding, jitter, and missed hits."
 ---
 import { Callout, Tabs } from 'nextra/components'
 import { SDKTabs } from "../../components/SDKTabs"
@@ -15,7 +15,7 @@ Client prediction only matches the server if **both run the same simulation**. N
 
 ## The contract
 
-These are load-bearing. Break one and prediction drifts or hits stop registering:
+None of these is optional. Break one and prediction drifts or hits stop registering:
 
 1. **One `input.send()` per fixed step.** `predict.tick()` returns how many fixed steps are due this frame; stage and send exactly that many inputs. Every `send()` transmits one input (a body-less frame when nothing changed), so the predicted set equals the server-applied set. Don't send per render frame, and don't skip sends while predicting movement.
 
