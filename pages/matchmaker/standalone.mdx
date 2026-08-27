@@ -30,7 +30,7 @@ This architecture is useful when you want to:
 
 ## Requirements
 
-The matchmaker process and the game server processes must share the same **Presence** (e.g. [Redis](/server/presence)) and **Driver** (e.g. [Redis or Postgres](/server/driver)) instances. Sharing them lets the processes communicate via IPC and share room cache state.
+The matchmaker process and the game server processes must share the same **Presence** and **Driver** instances. Use [Redis](/server/presence) for the presence, and [Redis, Postgres, or the Database driver](/server/driver) for the driver. Sharing them lets the processes communicate via IPC and share room cache state.
 
 ## Game Server Processes
 

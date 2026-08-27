@@ -2,7 +2,7 @@
 title: "Driver"
 description: "The matchmaking driver stores and queries room data in Colyseus. Use the in-memory default for a single process, or an external driver for multi-process deployments."
 ---
-import { Callout, Cards } from "nextra/components";
+import { Callout, Cards, Tabs } from "nextra/components";
 import { HeartIcon } from "@primer/octicons-react";
 
 # Driver
@@ -17,6 +17,7 @@ For single-process deployments, the default in-memory driver is sufficient. For 
 
 - [In-Memory Driver (default)](#in-memory-driver)
 - [Redis Driver](#redis-driver)
+- [Database Driver (`@colyseus/database`)](#database-driver)
 - [Drizzle Driver (PostgreSQL)](#drizzle-driver-postgresql)
 - [MongoDB Driver](#mongodb-driver)
 
@@ -91,6 +92,87 @@ const server = defineServer({
 ```
 
 See [ioredis Cluster documentation](https://redis.github.io/ioredis/classes/Cluster.html) for all available cluster options.
+
+---
+
+### Database Driver
+
+The `DatabaseDriver` from [`@colyseus/database`](/database) stores room data on the same connection your `GameDatabase` already uses for players, cloud saves, and configs. One pool, one dialect (SQLite, PostgreSQL, or PGlite), no second service to run. Use it when your server has a `database:` option. This driver is a different package from the [Drizzle driver](#drizzle-driver-postgresql) below, which manages its own PostgreSQL connection and `roomcaches_v1` table.
+
+```ts {2,8} filename="app.config.ts"
+import { defineServer } from "colyseus";
+import { GameDatabase, DatabaseDriver } from "@colyseus/database";
+
+export const db = new GameDatabase({ connectionString: process.env.DATABASE_URL });
+
+export default defineServer({
+    database: db,
+    driver: new DatabaseDriver(), // adopts the GameDatabase connection
+});
+```
+
+Without options, the driver binds to the most recently constructed `GameDatabase`. With more than one instance in the process, pass it explicitly: `new DatabaseDriver({ database: db })`. The class is also exported from the `@colyseus/database/driver` subpath.
+
+The driver creates its `colyseus_room_caches` table at boot (`CREATE TABLE IF NOT EXISTS`) on whichever dialect the database uses. The table is driver-owned: a server that uses `@colyseus/database` with the in-memory or Redis driver never gets it. Room fields that are not columns (`metadata` and any custom option) are stored in the `metadata` JSON column and remain queryable by `join()` / `joinOrCreate()` filters.
+
+#### Custom Table
+
+To add columns or change the physical name, build the table with the `roomCaches` factory (see [Customizing schemas](/database/schemas)) and pass it as `schema`. Extra columns persist with the room and work as matchmaking filters. `schema` is the only option needed: the driver still binds to the `GameDatabase` constructed above.
+
+<Tabs items={["SQLite", "PostgreSQL"]} storageKey="database-dialect">
+    <Tabs.Tab>
+    ```ts {3,7-9,13} filename="app.config.ts"
+    import { defineServer } from "colyseus";
+    import { GameDatabase, DatabaseDriver, tables } from "@colyseus/database";
+    import { text } from "drizzle-orm/sqlite-core";
+
+    export const db = new GameDatabase({ connectionString: "./game.db" });
+
+    const roomCaches = tables.sqlite.roomCaches("colyseus_room_caches", {
+        region: text("region"),
+    });
+
+    export default defineServer({
+        database: db,
+        driver: new DatabaseDriver({ schema: roomCaches }),
+    });
+    ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+    ```ts {3,7-9,13} filename="app.config.ts"
+    import { defineServer } from "colyseus";
+    import { GameDatabase, DatabaseDriver, tables } from "@colyseus/database";
+    import { text } from "drizzle-orm/pg-core";
+
+    export const db = new GameDatabase({ connectionString: process.env.DATABASE_URL });
+
+    const roomCaches = tables.pg.roomCaches("colyseus_room_caches", {
+        region: text("region"),
+    });
+
+    export default defineServer({
+        database: db,
+        driver: new DatabaseDriver({ schema: roomCaches }),
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+#### Without a `GameDatabase`
+
+The driver also works on a Drizzle instance you manage yourself (node-sqlite, postgres-js, or PGlite). Pass the SQL flavor, since it cannot be detected from the instance. In this mode the driver closes the connection on server shutdown; set `closeOnShutdown: false` if you share the instance elsewhere:
+
+```ts filename="app.config.ts"
+import { defineServer } from "colyseus";
+import { DatabaseDriver } from "@colyseus/database";
+import { drizzle } from "drizzle-orm/node-sqlite";
+
+const sdb = drizzle({ connection: { path: "game.db" } });
+
+export default defineServer({
+    driver: new DatabaseDriver({ drizzle: sdb, dialect: "sqlite" }),
+});
+```
 
 ---
 
