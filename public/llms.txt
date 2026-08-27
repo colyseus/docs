@@ -104,7 +104,7 @@ The full corpus is at https://docs.colyseus.io/llms-full.txt.
 - [Database](https://docs.colyseus.io/database): Persist players, cloud saves, leaderboards, and live configs in Colyseus with the official @colyseus/database package, or bring your own ORM, query builder, or Firebase.
 - [Authentication](https://docs.colyseus.io/database/authentication): How @colyseus/database becomes the user store for @colyseus/auth: auto-mounted routes, ban gating, JWT revocation, admin helpers, and callback customization.
 - [Services](https://docs.colyseus.io/database/services): The @colyseus/database service surface (cloud saves, leaderboards, live configs, analytics, moderation, notes) plus the room plugins that wire them into the room lifecycle.
-- [Customizing schemas](https://docs.colyseus.io/database/schemas): Extend @colyseus/database's built-in drizzle tables with your own columns: table factory, manual column-spread pattern, and the full reference of built-in tables.
+- [Customizing schemas](https://docs.colyseus.io/database/schemas): Extend @colyseus/database's built-in drizzle tables with your own columns, constraints, and indexes: the table factory, the column-spread pattern, drizzle-kit migrations, and the full reference of built-in tables.
 - [Bring your own database](https://docs.colyseus.io/database/bring-your-own): Use any ORM, query builder, or Firebase with Colyseus: query patterns for onAuth and onLeave when not using @colyseus/database.
 
 ## Advanced

@@ -1,11 +1,14 @@
 ---
 title: "Customizing schemas"
-description: "Extend @colyseus/database's built-in drizzle tables with your own columns: table factory, manual column-spread pattern, and the full reference of built-in tables."
+description: "Extend @colyseus/database's built-in drizzle tables with your own columns, constraints, and indexes: the table factory, the column-spread pattern, drizzle-kit migrations, and the full reference of built-in tables."
 ---
+import { Callout, Tabs } from 'nextra/components'
 
 # Customizing built-in table schemas
 
-Every service in `@colyseus/database` is backed by a Drizzle table you can extend with your own columns. Use the per-dialect `tables` factory to spread the built-in columns into a custom table, then pass it via the `schemas` option. Services keep working and return your custom columns with full type inference.
+Every service in `@colyseus/database` is backed by a Drizzle table you can extend with your own columns, constraints, and indexes. Use the per-dialect `tables` factory to build a table from the built-in columns plus yours, then pass it via the `schemas` option. Services keep working and return your custom columns with full type inference.
+
+The examples import column builders from `drizzle-orm`. Add it to your own dependencies at the version `@colyseus/database` depends on (`npm view @colyseus/database dependencies`), so the imports resolve in your project.
 
 ## Built-in tables
 
@@ -20,25 +23,278 @@ Every service in `@colyseus/database` is backed by a Drizzle table you can exten
 | `roles` | `colyseus_roles` | `db.moderation` | Moderation roles + scoped collection permissions |
 | `userNotes` | `colyseus_user_notes` | `db.notes` | Admin notes attached to users |
 | `adminAudit` | `colyseus_admin_audit` | `db.audit` | Admin action audit log |
-| `roomCaches` | `colyseus_room_caches` | [`DatabaseDriver`](/server/driver) | Matchmaker room cache (driver-owned; customize via the driver's `schema` option, not `schemas`) |
+| `roomCaches` | `colyseus_room_caches` | [`DatabaseDriver`](/server/driver#database-driver) | Matchmaker room cache (driver-owned; customize via the driver's `schema` option, not `schemas`) |
 
 ## Example: extending `users`
 
-```ts filename="src/app.config.ts"
-import { GameDatabase, tables } from "@colyseus/database";
-import { text, integer } from "drizzle-orm/sqlite-core";
+<Tabs items={["SQLite", "PostgreSQL"]} storageKey="database-dialect">
+    <Tabs.Tab>
+    ```ts filename="src/db/schema.ts"
+    import { tables } from "@colyseus/database";
+    import { text, integer } from "drizzle-orm/sqlite-core";
 
-const users = tables.sqlite.users("users", {
-    displayName: text("display_name"),
-    level: integer("level").notNull().default(1),
-});
+    export const users = tables.sqlite.users("colyseus_users", {
+        displayName: text("display_name"),
+        level: integer("level").notNull().default(1),
+    });
+    ```
 
-export const db = new GameDatabase({
-    connectionString: "./game.db",
-    schemas: { users },
-});
+    ```ts filename="src/app.config.ts"
+    import { GameDatabase } from "@colyseus/database";
+    import { users } from "./db/schema";
+
+    export const db = new GameDatabase({
+        connectionString: "./game.db",
+        schemas: { users },
+    });
+    ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+    ```ts filename="src/db/schema.ts"
+    import { tables } from "@colyseus/database";
+    import { text, integer } from "drizzle-orm/pg-core";
+
+    export const users = tables.pg.users("colyseus_users", {
+        displayName: text("display_name"),
+        level: integer("level").notNull().default(1),
+    });
+    ```
+
+    ```ts filename="src/app.config.ts"
+    import { GameDatabase } from "@colyseus/database";
+    import { users } from "./db/schema";
+
+    export const db = new GameDatabase({
+        connectionString: process.env.DATABASE_URL, // postgres://…
+        schemas: { users },
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+The first argument is the physical table name. `"colyseus_users"` keeps the default name, so existing rows stay in place. Any other name creates a new, empty table: the rows in the built-in one are not migrated.
+
+The factory is available on both dialects: `tables.sqlite.<name>` with column builders from `drizzle-orm/sqlite-core`, and `tables.pg.<name>` with `drizzle-orm/pg-core`. The tabs on this page remember your choice.
+
+The resolved tables are available as `db.tables.<key>` (`db.tables.users` is the table you passed). The raw Drizzle instance is `db.drizzle`, typed against your schema, for any query the services don't cover:
+
+```ts
+import { eq } from "drizzle-orm";
+
+await db.drizzle.update(db.tables.users)
+    .set({ displayName: "Alice" })
+    .where(eq(db.tables.users.id, userId));
 ```
 
-The factory is available on both dialects: `tables.sqlite.<name>` and `tables.pg.<name>`. For finer control, you can also spread the column maps directly (`columns.sqlite.<name>` / `columns.pg.<name>`) into a hand-rolled `sqliteTable(...)` / `pgTable(...)`.
+<Callout type="warning">
+    The built-in inserts (`/auth/register`, `/auth/anonymous`, OAuth sign-in) fill the built-in columns only. Give custom columns a default or keep them nullable, or those routes fail with a `NOT NULL` error.
+</Callout>
 
-The raw Drizzle instance is available as `db.drizzle` (typed against your resolved schema) for any query the services don't cover.
+## Constraints and indexes
+
+The factory's third argument mirrors `sqliteTable()` / `pgTable()`: a callback that receives the built columns and returns indexes, `CHECK` constraints, and `UNIQUE` constraints. The example below adds a handle that is unique regardless of case, so `JohnSmith` and `johnsmith` cannot coexist:
+
+<Tabs items={["SQLite", "PostgreSQL"]} storageKey="database-dialect">
+    <Tabs.Tab>
+    ```ts filename="src/db/schema.ts"
+    import { tables } from "@colyseus/database";
+    import { text, uniqueIndex, check } from "drizzle-orm/sqlite-core";
+    import { sql } from "drizzle-orm";
+
+    export const users = tables.sqlite.users("colyseus_users", {
+        handle: text("handle"),
+        handleLower: text("handle_lower"),
+    }, (t) => [
+        uniqueIndex("users_handle_lower_idx").on(t.handleLower),
+        check("users_handle_lower_chk", sql`${t.handleLower} = lower(${t.handle})`),
+    ]);
+    ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+    ```ts filename="src/db/schema.ts"
+    import { tables } from "@colyseus/database";
+    import { text, uniqueIndex, check } from "drizzle-orm/pg-core";
+    import { sql } from "drizzle-orm";
+
+    export const users = tables.pg.users("colyseus_users", {
+        handle: text("handle"),
+        handleLower: text("handle_lower"),
+    }, (t) => [
+        uniqueIndex("users_handle_lower_idx").on(t.handleLower),
+        check("users_handle_lower_chk", sql`${t.handleLower} = lower(${t.handle})`),
+    ]);
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+Write both columns together to keep the check satisfied:
+
+```ts
+await db.drizzle.update(db.tables.users)
+    .set({ handle, handleLower: handle.toLowerCase() })
+    .where(eq(db.tables.users.id, userId));
+// a second user with the handle "johnsmith" now fails with a UNIQUE error
+```
+
+`migrations: "auto"` applies these in two ways:
+
+- **When the table is created**: `UNIQUE` (column-level `.unique()` and `unique().on(...)`) and `CHECK` constraints are part of `CREATE TABLE`. They are not added to a table that already exists.
+- **On every boot**: `index()` and `uniqueIndex()` run as `CREATE INDEX IF NOT EXISTS`, so an index declared later still reaches an existing table.
+
+Prefer `uniqueIndex()` over `.unique()` for a table that may already exist in production. For any other change to an existing table, use [drizzle-kit migrations](#migrations-with-drizzle-kit).
+
+<Callout type="info">
+    Constraints and indexes under `migrations: "auto"` require the `@colyseus/database` release after 0.18.1. Earlier versions create columns and primary keys only.
+</Callout>
+
+## Hand-rolled tables with `columns`
+
+For full control, spread the column maps (`columns.sqlite.<name>` / `columns.pg.<name>`) into your own `sqliteTable(...)` / `pgTable(...)`. The factory does the same internally:
+
+<Tabs items={["SQLite", "PostgreSQL"]} storageKey="database-dialect">
+    <Tabs.Tab>
+    ```ts filename="src/db/schema.ts"
+    import { columns } from "@colyseus/database";
+    import { sqliteTable, text, uniqueIndex, check } from "drizzle-orm/sqlite-core";
+    import { sql } from "drizzle-orm";
+
+    export const users = sqliteTable("colyseus_users", {
+        ...columns.sqlite.users,
+        handle: text("handle"),
+        handleLower: text("handle_lower"),
+    }, (t) => [
+        uniqueIndex("users_handle_lower_idx").on(t.handleLower),
+        check("users_handle_lower_chk", sql`${t.handleLower} = lower(${t.handle})`),
+    ]);
+    ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+    ```ts filename="src/db/schema.ts"
+    import { columns } from "@colyseus/database";
+    import { pgTable, text, uniqueIndex, check } from "drizzle-orm/pg-core";
+    import { sql } from "drizzle-orm";
+
+    export const users = pgTable("colyseus_users", {
+        ...columns.pg.users,
+        handle: text("handle"),
+        handleLower: text("handle_lower"),
+    }, (t) => [
+        uniqueIndex("users_handle_lower_idx").on(t.handleLower),
+        check("users_handle_lower_chk", sql`${t.handleLower} = lower(${t.handle})`),
+    ]);
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+`cloudSaves` and `leaderboardEntries` have composite primary keys: `(userId, slot)` and `(boardId, userId, season)`. When you hand-roll those two, add the `primaryKey(...)` yourself. The factory adds it for you.
+
+<Callout type="warning">
+    Spread `columns.sqlite.users` / `columns.pg.users`, not `tables.sqlite.users` / `tables.pg.users`. The latter are functions, so spreading it adds no columns. The server still boots. The first login or room join then fails with `TypeError: Cannot convert undefined or null to object`: the table has none of the built-in columns.
+</Callout>
+
+## Migrations with drizzle-kit
+
+For production schemas, generate SQL migrations with drizzle-kit and apply them with `migrations: { files }`. drizzle-kit reads every table exported from one schema file. Re-export the tables you did not customize from `@colyseus/database/sqlite-defaults` (or `@colyseus/database/pg-defaults`), so they are generated too:
+
+<Tabs items={["SQLite", "PostgreSQL"]} storageKey="database-dialect">
+    <Tabs.Tab>
+    ```ts filename="src/db/schema.ts"
+    import { tables } from "@colyseus/database";
+    import { text, uniqueIndex, check } from "drizzle-orm/sqlite-core";
+    import { sql } from "drizzle-orm";
+
+    export const users = tables.sqlite.users("colyseus_users", {
+        handle: text("handle"),
+        handleLower: text("handle_lower"),
+    }, (t) => [
+        uniqueIndex("users_handle_lower_idx").on(t.handleLower),
+        check("users_handle_lower_chk", sql`${t.handleLower} = lower(${t.handle})`),
+    ]);
+
+    export {
+        configs, cloudSaves, leaderboards, leaderboardEntries,
+        analyticsEvents, roles, userNotes, adminAudit,
+    } from "@colyseus/database/sqlite-defaults";
+    ```
+
+    ```ts filename="drizzle.config.ts"
+    import { defineConfig } from "drizzle-kit";
+
+    export default defineConfig({
+        dialect: "sqlite",
+        schema: "./src/db/schema.ts",
+        out: "./drizzle",
+        dbCredentials: { url: "./colyseus.db" },
+    });
+    ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+    ```ts filename="src/db/schema.ts"
+    import { tables } from "@colyseus/database";
+    import { text, uniqueIndex, check } from "drizzle-orm/pg-core";
+    import { sql } from "drizzle-orm";
+
+    export const users = tables.pg.users("colyseus_users", {
+        handle: text("handle"),
+        handleLower: text("handle_lower"),
+    }, (t) => [
+        uniqueIndex("users_handle_lower_idx").on(t.handleLower),
+        check("users_handle_lower_chk", sql`${t.handleLower} = lower(${t.handle})`),
+    ]);
+
+    export {
+        configs, cloudSaves, leaderboards, leaderboardEntries,
+        analyticsEvents, roles, userNotes, adminAudit,
+    } from "@colyseus/database/pg-defaults";
+    ```
+
+    ```ts filename="drizzle.config.ts"
+    import { defineConfig } from "drizzle-kit";
+
+    export default defineConfig({
+        dialect: "postgresql",
+        schema: "./src/db/schema.ts",
+        out: "./drizzle",
+        dbCredentials: { url: process.env.DATABASE_URL! },
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+`@colyseus/database` uses the 1.0 line of `drizzle-orm`, so install `drizzle-kit` from its `rc` tag rather than `latest`:
+
+```sh
+npm install --save-dev drizzle-kit@rc
+npx drizzle-kit generate
+```
+
+The generated `migration.sql` contains every table, including the unique index and the check constraint. Point `GameDatabase` at the folder:
+
+<Tabs items={["SQLite", "PostgreSQL"]} storageKey="database-dialect">
+    <Tabs.Tab>
+    ```ts filename="src/app.config.ts"
+    import { GameDatabase } from "@colyseus/database";
+    import * as schema from "./db/schema";
+
+    export const db = new GameDatabase({
+        connectionString: "./colyseus.db",
+        schemas: schema,
+        migrations: { files: "./drizzle" },
+    });
+    ```
+    </Tabs.Tab>
+    <Tabs.Tab>
+    ```ts filename="src/app.config.ts"
+    import { GameDatabase } from "@colyseus/database";
+    import * as schema from "./db/schema";
+
+    export const db = new GameDatabase({
+        connectionString: process.env.DATABASE_URL,
+        schemas: schema,
+        migrations: { files: "./drizzle" },
+    });
+    ```
+    </Tabs.Tab>
+</Tabs>
+
+Drizzle records applied migrations in its own table, so every boot re-runs safely. After a schema change, run `drizzle-kit generate` again and commit the new folder.

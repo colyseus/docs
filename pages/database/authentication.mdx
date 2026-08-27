@@ -48,22 +48,26 @@ await db.auth.bumpTokenVersion(userId);
 
 ## Customizing callbacks
 
-To wrap or replace individual callbacks, override keys on the `auth.settings` singleton **after** the server boots. For example, add an invite-code check during registration, or customize the anonymous user payload. The database wiring copies `db.auth.settings` into `auth.settings` at listen time, so any override applied earlier is overwritten:
+To wrap or replace individual callbacks, override keys on the `auth.settings` singleton **after** the server has started listening. For example, add an invite-code check during registration. The database wiring copies `db.auth.settings` into `auth.settings` while `listen()` runs, so an override applied earlier is overwritten:
 
 ```ts filename="src/index.ts"
+import { listen } from "@colyseus/tools";
 import { auth } from "@colyseus/auth";
+import app from "./app.config";
 
-await server.listen(2567);
-
-// after listen(): wrap the database-provided callback
-const original = auth.settings.onRegisterWithEmailAndPassword;
-auth.settings.onRegisterWithEmailAndPassword = async (email, password, options) => {
-    if (options.inviteCode !== process.env.INVITE_CODE) {
-        throw new Error("invalid invite code");
-    }
-    return original(email, password, options);
-};
+listen(app).then(() => {
+    // after listen(): wrap the database-provided callback
+    const original = auth.settings.onRegisterWithEmailAndPassword;
+    auth.settings.onRegisterWithEmailAndPassword = async (email, password, options) => {
+        if (options.inviteCode !== process.env.INVITE_CODE) {
+            throw new Error("invalid invite code");
+        }
+        return original(email, password, options);
+    };
+});
 ```
+
+`options` is the object the client passes as the third argument of `client.auth.registerWithEmailAndPassword(email, password, { inviteCode })` (the `options` field of the `POST /auth/register` body). A thrown error reaches the client as a `401` with the message.
 
 See the [Backend API](/auth/module#backend-api) catalog for the full list of hooks. Assign onto `auth.settings`, not `db.auth.settings`, whose getter returns a fresh throwaway object on every access.
 

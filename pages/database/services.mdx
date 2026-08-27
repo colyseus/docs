@@ -21,10 +21,10 @@ const save = await db.saves.load(userId); // { data, version } | null
 
 try {
     // pass the expected version for optimistic locking
-    await db.saves.save(userId, newData, 0, save.version);
+    await db.saves.save(userId, newData, 0, version);
 } catch (e) {
     if (e instanceof VersionConflictError) {
-        // client had a stale copy: reload and merge
+        // another write landed in between: reload and merge
     }
 }
 
@@ -49,6 +49,8 @@ const nearby = await db.leaderboards.aroundMe("global", userId, 5);
 
 Declare typed configuration keys with [Standard Schema](https://standardschema.dev/) validators (Zod, Valibot, etc.) via `defineConfigs`. Values are validated on write and cached in memory. When a `presence` is provided, the cache is invalidated across all server instances when a value changes (e.g. from an admin panel).
 
+A key with no row yet resolves to the schema's default. With Zod 4, use `.prefault({})` on the object: `.default({})` returns `{}` as-is, without the field defaults.
+
 ```ts filename="src/app.config.ts"
 import { defineServer, RedisPresence } from "colyseus";
 import { GameDatabase, defineConfigs } from "@colyseus/database";
@@ -58,7 +60,7 @@ const configs = defineConfigs({
     matchmaking: z.object({
         minPlayers: z.number().int().default(2),
         maxPlayers: z.number().int().default(10),
-    }).default({}), // inner field defaults fill the object
+    }).prefault({}), // no row yet: parse {} so the field defaults fill in
 });
 
 export const db = new GameDatabase({
@@ -90,26 +92,50 @@ await db.notes.deleteAllForUser(userId); // GDPR cleanup
 
 ## Room plugins
 
-For common patterns, `@colyseus/database` ships [Room Plugins](/room/plugins) that wire the services above into the room lifecycle automatically (no manual `onJoin`/`onLeave` glue):
+For common patterns, `@colyseus/database` ships [Room Plugins](/room/plugins) that wire the services above into the room lifecycle:
 
 - **`CloudSavesPlugin`**: load a player's save on join, persist it on leave
-- **`LeaderboardsPlugin`**: submit scores on dispose
+- **`LeaderboardsPlugin`**: submit scores to one board
 - **`AnalyticsPlugin`**: track room `create`/`join`/`leave`/`dispose` events
+
+Plugin hooks run in a fixed order relative to the room's own hooks: `onJoin` runs **before** the room's `onJoin`, and `onLeave` runs **after** the room's `onLeave`. A room that creates the player entry in `onJoin` and removes it in `onLeave` therefore has no entry when the automatic load or save runs. Turn the automatic hooks off and call the plugin from the room, after creating the entry and before removing it:
 
 ```ts filename="src/rooms/MyRoom.ts"
 import { Room, definePlugins } from "colyseus";
-import { CloudSavesPlugin } from "@colyseus/database";
+import { CloudSavesPlugin, LeaderboardsPlugin, AnalyticsPlugin } from "@colyseus/database";
 import { db } from "../app.config";
 
 export class MyRoom extends Room {
+    state = new GameState();
+
     plugins = definePlugins([
         new CloudSavesPlugin({
             database: db,
+            onJoin: "none",  // load after this room creates the player (see onJoin below)
+            onLeave: "none", // save before this room removes it (see onLeave below)
             payload: (room, client) => room.state.players.get(client.sessionId).toJSON(),
             apply: (room, client, data) => room.state.players.get(client.sessionId).assign(data),
         }),
+        new LeaderboardsPlugin({ database: db, boardId: "arena", submitOn: "none" }),
+        new AnalyticsPlugin({ database: db, prefix: "arena", track: ["join", "leave"] }),
     ]);
+
+    async onJoin(client) {
+        this.state.players.set(client.sessionId, new Player());
+        await this.plugins.cloudSaves.manualLoad(client);
+    }
+
+    async onLeave(client) {
+        const player = this.state.players.get(client.sessionId);
+        await this.plugins.cloudSaves.manualSave(client);
+        await this.plugins.leaderboards.submitScore(client, player.score);
+        this.state.players.delete(client.sessionId);
+    }
 }
 ```
+
+The plugins resolve the user id from `client.auth.id` (set by the default `onAuth` of `@colyseus/auth`); pass `resolveUserId` to read it from elsewhere. `AnalyticsPlugin` needs no per-player state, so its automatic hooks work as-is: the example above writes `arena.join` and `arena.leave` rows.
+
+`LeaderboardsPlugin`'s default `submitOn: "dispose"` submits the score of every client still connected when the room disposes. A room that disposes after its last player left has no clients by then, so submit from `onLeave` as above.
 
 See [Room Plugins](/room/plugins) for how plugins attach and expose methods.
