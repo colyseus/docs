@@ -95,6 +95,12 @@ export const flutter = (props: IconProps = {}) => <Image
             width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
             alt="Flutter" />
 
+export const swift = (props: IconProps = {}) => <Image
+            className="platform-icon"
+            src={require('../../images/icons/swift.svg')}
+            width={0} height={0} style={{ width: props.width || '32px', height: 'auto', display: 'inline-block', marginRight: props.marginRight || '0px' }}
+            alt="Swift" />
+
 /**
  * BRANDS
  */

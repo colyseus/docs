@@ -1,0 +1,457 @@
+---
+title: "Colyseus SDK for Swift"
+description: "Get started with Colyseus multiplayer in Swift. Add the Swift package for iOS, macOS and tvOS, join a room, sync real-time game state, and predict player movement."
+---
+import { Callout } from "nextra/components";
+
+# Swift
+
+<Callout type="warning">
+    The Swift SDK is in **beta**, and may not be stable. Please [report any issues you find](https://github.com/colyseus/native-sdk/issues).
+</Callout>
+
+The Swift SDK is a Swift package over the shared [Colyseus Native SDK](https://github.com/colyseus/native-sdk), the same core behind the Flutter, Godot and GameMaker SDKs. The work on the Native SDK is still in progress, so expect some breaking changes as we go.
+
+The package is published at [colyseus/colyseus-swift](https://github.com/colyseus/colyseus-swift), a read-only mirror generated on every release. Swift Package Manager resolves a package from a repository root and only understands plain semver tags, so the mirror gives it both. Report issues and send pull requests to [colyseus/native-sdk](https://github.com/colyseus/native-sdk), where the source lives under `platforms/swift`.
+
+## Platforms
+
+- macOS (13+)
+- iOS (15+), including the simulator
+- tvOS (15+), including the simulator
+
+The package targets Swift 6 language mode and needs Xcode 16 or newer. Linux, visionOS and watchOS are not supported.
+
+The core is Zig as much as it is C, so SwiftPM cannot compile it from source. It arrives as a prebuilt `Colyseus.xcframework` that the package downloads for you. There is no toolchain to install.
+
+## Installation
+
+In Xcode, choose **File → Add Package Dependencies…** and enter the repository URL:
+
+```
+https://github.com/colyseus/colyseus-swift
+```
+
+Or declare it in your `Package.swift`:
+
+```swift filename="Package.swift"
+dependencies: [
+    .package(url: "https://github.com/colyseus/colyseus-swift", from: "0.18.1"),
+],
+targets: [
+    .executableTarget(
+        name: "MyGame",
+        dependencies: [.product(name: "Colyseus", package: "colyseus-swift")]
+    ),
+]
+```
+
+Then import the single module:
+
+```swift
+import Colyseus
+```
+
+### Sandboxed macOS apps
+
+A sandboxed macOS app needs the outbound-network entitlement, `com.apple.security.network.client`, or every connection fails silently. Add it under **Signing & Capabilities → App Sandbox → Outgoing Connections (Client)**, or directly in the entitlements file:
+
+```xml filename="MyGame.entitlements"
+<key>com.apple.security.network.client</key>
+<true/>
+```
+
+iOS and tvOS apps need no entitlement for outgoing connections.
+
+## Project Setup
+
+The transport runs on its own thread. Inbound traffic is queued there and released inside `Colyseus.pump()`, so decoding, listeners and prediction all run on the thread that pumped. Handlers are delivered on `Colyseus.callbackQueue`, which is the main queue by default.
+
+By default the SDK pumps on its own timer at 60 Hz, and you can join a room without any further setup. A SwiftUI or UIKit app can copy values from a listener into its own observable model and leave it at that.
+
+Games that render every frame should drive the SDK instead. Set `Colyseus.autoPump` to `false` once, then call `Colyseus.pump()` at the top of your frame callback. Decoding, prediction and rendering then all observe the same state within a frame:
+
+```swift filename="GameScene.swift"
+import Colyseus
+import SpriteKit
+
+final class GameScene: SKScene {
+    override func didMove(to view: SKView) {
+        Colyseus.autoPump = false // the app owns the frame from here on
+    }
+
+    override func update(_ currentTime: TimeInterval) {
+        Colyseus.pump() // decode inbound traffic, then deliver listeners
+
+        // read room state and draw
+    }
+}
+```
+
+<Callout type="warning">
+    Two pumps racing each other put decoding back on a second thread. Turn `autoPump` off before you start calling `pump()` yourself.
+</Callout>
+
+## Quick Example
+
+This example shows how to connect to a room, listen for state changes, send messages and leave the room.
+
+```swift filename="Network.swift"
+import Colyseus
+
+final class Network {
+    var client: Colyseus.Client?
+    var room: Colyseus.Room<MyRoomState>?
+
+    func connect() async throws {
+        let client = try Colyseus.Client(endpoint: "ws://localhost:2567")
+
+        // Options are optional, and are JSON-encoded before they are sent.
+        let room = try await client.joinOrCreate(
+            "my_room", options: ["name": "Player 1"], state: MyRoomState.self
+        )
+        self.client = client
+        self.room = room
+
+        print("Joined \(room.name ?? "") (\(room.id ?? "")) as \(room.sessionId ?? "")")
+
+        room.onStateChange { state in
+            print("players: \(state.players.count)")
+        }
+
+        room.onMessage("chat") { payload in
+            print("chat: \(payload["text"]?.string ?? "")")
+        }
+
+        room.onError { code, message in print("error \(code): \(message)") }
+        room.onLeave { code, _ in print("left with code \(code)") }
+
+        room.send("move", ["x": 10, "y": 20])
+    }
+
+    func disconnect() {
+        room?.leave()
+        room = nil
+        client = nil
+    }
+}
+```
+
+`MyRoomState` is a generated class, see [Reading State](#reading-state). Every join method is `async throws` and returns a `Colyseus.Room<State>`. `options:` is JSON-encoded and sent to the server; `state:` types the room:
+
+| Method | Description |
+| --- | --- |
+| `joinOrCreate(roomName, options: ..., state: ...)` | Join an available room, or create one |
+| `join(roomName, ...)` | Join an existing room only |
+| `create(roomName, ...)` | Always create a new room |
+| `joinById(roomId, ...)` | Join a specific room by its id |
+| `reconnect(token: reconnectionToken, state: ...)` | Rejoin a room this client was dropped from |
+
+A refused join throws `Colyseus.Error.matchmaking(code:message:)` with the server's own code and message. The call returns once the join handshake completes, so `room.sessionId` and `room.state` are already set when you get the room.
+
+Endpoints accept `ws://`, `wss://`, `http://` and `https://`. Pass a `Colyseus.Settings` instead of an endpoint to set custom headers or a certificate bundle.
+
+## Sending Messages
+
+```swift
+room.send("move", ["x": 10, "y": 20]) // map, array, string, number, bool or nil
+room.send("ready")                     // payload is optional
+
+room.send(1, [10, 20])                 // numeric message type
+room.sendBytes("snapshot", data)       // raw Data, skips MessagePack
+```
+
+Payloads are `MessagePackValue`. Swift literals convert to it, so a dictionary, array, string, number or `true` works in place.
+
+### Request and response
+
+`room.request()` sends a message and awaits the reply from the server's matching handler. See [Request and response](/room#responding-to-a-message-requestresponse) for the server-side handler.
+
+```swift
+do {
+    let profile = try await room.request("get-profile", ["id": 42])
+    print(profile["name"]?.string ?? "")
+} catch Colyseus.Error.requestRejected(let reason) {
+    print("rejected: \(reason)") // the reason the handler passed to ctx.reject()
+} catch Colyseus.Error.requestTimedOut {
+    print("no reply")
+}
+```
+
+A handler that throws surfaces as `requestFailed(name:message:code:)`, and a room that closes first as `roomClosed(code:reason:)`. The default timeout is 10 seconds; change it per call with `timeout:`, or process-wide through `Colyseus.defaultRequestTimeout`.
+
+## Receiving Messages
+
+Every registration returns a `Subscription`. Keep it and call `cancel()` to remove the handler, or ignore the return value to keep the handler for the room's lifetime.
+
+```swift
+room.onMessage("chat") { payload in
+    print(payload["text"]?.string ?? "")
+}
+
+// Every message, whatever its type.
+room.onMessage { type, payload in
+    print("\(type): \(payload)")
+}
+
+// Messages the server sent with client.sendBytes().
+room.onMessageBytes("snapshot") { data in
+    print("\(data.count) bytes")
+}
+```
+
+`MessagePackValue` exposes typed accessors (`string`, `int`, `double`, `bool`, `array`, `map`) and subscripts by key and by index. Each returns `nil` when the value has another type.
+
+The room exposes these listeners:
+
+| Listener | Handler receives | Fires when |
+| --- | --- | --- |
+| `onJoin` | nothing | the client is seated and the first state has arrived |
+| `onStateChange` | `State` | a state patch has been applied |
+| `onMessage(type)` | `MessagePackValue` | the server sends a message of `type` |
+| `onMessage` | `MessageType, MessagePackValue` | the server sends any message |
+| `onMessageBytes(type)` | `Data` | the server sends raw bytes of `type` |
+| `onError` | `Int32, String` | the server reports an error, with code and message |
+| `onLeave` | `Int32, String` | the room closes for good, with the close code |
+| `onDrop` | `Int32, String` | the connection drops and automatic reconnection starts |
+| `onReconnect` | nothing | automatic reconnection succeeds |
+
+## Reading State
+
+Generate one Swift class per schema from your server's types. Codegen is optional, and it buys type safety and autocomplete in Xcode:
+
+```sh filename="Terminal"
+npx schema-codegen src/rooms/schema/* --swift --bundle --output ../client/Sources/MyGame/Gen/
+```
+
+<Callout type="info">
+    See the full [State Schema Codegen documentation](/state/callbacks#frontend-schema-generation) for more options and details.
+</Callout>
+
+Each generated class is a typed facade over the decoded state. Numbers read as `Double`, strings as `String`, and collections as `MapSchema` and `ArraySchema`:
+
+```swift filename="Gen/Schema.swift"
+import Colyseus
+
+public final class Player: SchemaRef, @unchecked Sendable {
+    public var x: Double { view["x"] }
+    public var y: Double { view["y"] }
+    public var name: String { view.string("name") ?? "" }
+}
+
+public final class MyRoomState: SchemaRef, @unchecked Sendable {
+    public var players: MapSchema<Player> { mapOf("players") }
+    public var currentTurn: String { view.string("currentTurn") ?? "" }
+}
+```
+
+Join with the generated root class. The room is then typed end to end: `room.state` is a `MyRoomState?`, and `onStateChange` fires with it after every patch.
+
+```swift
+let room = try await client.joinOrCreate("my_room", state: MyRoomState.self)
+
+room.onStateChange { state in
+    for (sessionId, player) in state.players.entries {
+        print("\(sessionId): \(player.x), \(player.y)")
+    }
+
+    if let sessionId = room.sessionId, let me = state.players[sessionId] {
+        print(me.name)
+    }
+}
+```
+
+Decoding never depends on generated code. The core builds its own picture of the state from the reflection data sent during the handshake. A generated class is only a typed way to read what was decoded.
+
+<Callout type="warning">
+    A `SchemaRef` points at an instance the decoder owns, and the decoder replaces instances on a full resync or a reconnect. Read instances afresh from `room.state` each frame rather than caching one across frames.
+</Callout>
+
+### Without codegen
+
+Join with `SchemaRef` itself as the state type and read fields by name through `view`. Collections come back as `MapSchema<SchemaRef>` and `ArraySchema<SchemaRef>`:
+
+```swift
+let room = try await client.joinOrCreate("my_room", state: SchemaRef.self)
+
+room.onStateChange { state in
+    print(state.view.string("currentTurn") ?? "")
+
+    for (sessionId, player) in state.mapOf("players", SchemaRef.self).entries {
+        print("\(sessionId): \(player.view["x"]), \(player.view["y"])")
+    }
+}
+```
+
+| Accessor | Returns |
+| --- | --- |
+| `view["field"]` | the numeric field as `Double`; booleans read as 0 or 1 |
+| `view.string("field")` | a `String`, or nil |
+| `view.bool("field")` | a `Bool` |
+| `refOf("field", T.self)` | a nested instance, or nil |
+| `mapOf("field", T.self)` | a `MapSchema<T>` |
+| `arrayOf("field", T.self)` | an `ArraySchema<T>` |
+| `view.fieldNames` | every field declared on the type |
+
+`view["field"]` returns `.nan` for a field the schema does not declare. A typo then shows up as an obviously broken value instead of a plausible zero.
+
+## State Callbacks
+
+Schema callbacks live on `room.callbacks`, also reachable as `Colyseus.Callbacks.get(room)`. Registration takes the field to observe, and collection handlers receive the key and the value. Passing a generated getter's value (`state.players`) binds the registration to the field itself. The registration then survives the server replacing the collection:
+
+```swift
+let callbacks = room.callbacks
+let state = room.state! // joined with state: MyRoomState.self
+
+callbacks.listen(state, "currentTurn", as: String.self) { value, previous in
+    print("turn: \(previous ?? "-") -> \(value ?? "-")")
+}
+
+callbacks.onAdd(state.players) { sessionId, player in
+    print("+ player joined: \(sessionId)")
+
+    callbacks.listen(player, "x", as: Double.self) { x, previous in
+        print("\(sessionId) x: \(previous ?? 0) -> \(x ?? 0)")
+    }
+
+    callbacks.onChange(player) {
+        print("\(sessionId) changed")
+    }
+}
+
+callbacks.onRemove(state.players) { sessionId, player in
+    print("- player left: \(sessionId)")
+}
+```
+
+Map keys arrive as `String` and array indexes as `Int`. `listen` and `onAdd` replay what already decoded, so a late subscription still sees every player and `listen` fires with the current value (pass `immediate: false` to skip the replay). Every handler fires inside `Colyseus.pump()`, in the same frame as the patch that caused it.
+
+## Prediction
+
+Waiting for the server to confirm your own movement costs a round trip. The predict layer applies each input immediately and reconciles when the server disagrees. See [Client Prediction](/netcode/client-prediction) for the concepts. Your room class must declare [`defineInput()`](/netcode/server-input) before any of this works.
+
+```swift filename="Gameplay.swift"
+Colyseus.autoPump = false // the app drives the frame
+
+let predict = Colyseus.Predict.get(room)!
+let input = room.input()! // nil when the server room declares no defineInput()
+
+// Other players are smoothed, since their inputs aren't yours to predict.
+predict.attachAll(
+    state.players, fields: ["x", "y"], options: .init(mode: .damped), except: room.sessionId
+)
+
+// Yours is predicted and reconciled.
+let me = state.players[room.sessionId!]!
+let reconciler = predict.reconciler(
+    truth: me, input: input, fields: ["x", "y", "vx", "vy"]
+) { ctx, state, command in
+    stepPlayer(state, command, dt: ctx.dt) // shared with the server
+}
+
+override func update(_ currentTime: TimeInterval) {
+    Colyseus.pump()                          // decode inbound, deliver events
+
+    for _ in 0 ..< predict.tick(room.clock.now) {
+        input.data.set("moveX", to: keyboard.x)
+        input.send()                         // applied locally right away
+    }
+
+    draw(x: predict.value(me, "x"), y: predict.value(me, "y"))
+}
+```
+
+Points worth knowing before you build on it:
+
+- The order inside the frame matters: pump, then tick and send, then draw. A pose read before the pump is a frame stale.
+- `room.input()` returns `nil` when the server room declares no `defineInput()`. The input schema comes from the handshake, so nothing has to be generated for it.
+- `predict.tick()` takes `room.clock.now`, the timebase the server shares. Never pass `Date()` or wall time.
+- `step` has to compute exactly what the server computes. When it does, `reconciler.drift.status` stays `.matched`; when it drifts, that value tells you.
+- Guard one-shot effects inside a step on `!ctx.isReplay`, or they repeat on every rollback. Use `ctx.memo()` to freeze a value a replay could not re-derive.
+- Call `reconciler.reset()` and `input.reset()` in `onReconnect`. Sequence numbers restart at zero, so replaying the old ones would corrupt the mirror.
+
+`Predict` also covers dead reckoning (`attachAllReckon`), and the `Colyseus` namespace includes `EventChannel` for optimistic events and `Spawns` for entities you create before the server does.
+
+## Reconnection
+
+The SDK reconnects on its own when the connection drops. `onDrop` fires when the retry starts and `onReconnect` when it succeeds; `onLeave` fires only once the room is gone for good. Tune the policy through `room.reconnection`, a `ReconnectionOptions` value:
+
+```swift
+room.onDrop { code, reason in showReconnecting() }
+room.onReconnect { hideReconnecting() }
+
+var policy = room.reconnection
+policy.maxRetries = 10
+room.reconnection = policy
+```
+
+To take back a seat after the process was gone, keep `room.reconnectionToken` and pass it to `client.reconnect(token:state:)`. The server has to hold the seat with `allowReconnection()`, and `room.leave(consented: false)` is what reports a departure as a drop.
+
+## HTTP & Auth
+
+`client.http` resolves paths against the client endpoint. A reply outside 2xx throws `Colyseus.Error.http(status:body:)`:
+
+```swift
+let res = try await client.http.get("/test")
+print(res.status)
+print(res.json?["things"] ?? .null)
+
+struct Things: Decodable { let things: [String] }
+let things = try res.decode(Things.self)
+
+try await client.http.post("/save", json: #"{"name": "endel"}"#)
+```
+
+`client.auth` covers the [authentication](/auth) endpoints, and throws `Colyseus.Error.auth` on a rejected call:
+
+```swift
+let user = try await client.auth.signInAnonymously()
+print(user.data["anonymousId"] ?? .null)
+
+try await client.auth.signIn(email: "user@example.com", password: "secret")
+try await client.auth.register(email: "user@example.com", password: "secret")
+try await client.auth.sendPasswordReset(email: "user@example.com")
+
+// The token is shared with client.http, so later requests are authenticated.
+client.auth.onChange { user in
+    if user == nil { showLoginScreen() }
+}
+
+client.auth.signOut()
+```
+
+<Callout type="info">
+    The token persists in the system keychain under one process-wide key, so it survives a restart. A test suite that signs in should sign out again, or set `client.auth.storageKey`, otherwise later clients send a token the next server rejects.
+</Callout>
+
+## Testing latency
+
+Every room can delay its own traffic, which is how you check that prediction and reconnection hold up on a bad connection:
+
+```swift
+room.setLatency(delayMs: 200, jitterMs: 30) // round trip, split evenly across both directions
+room.dropConnection()                       // kill the socket the way a lost network would
+
+let rtt = try await room.ping()             // one explicit round trip, in milliseconds
+```
+
+`Colyseus.Client.latency(of:)` and `Colyseus.Client.fastestEndpoint(among:)` measure endpoints before you connect, for picking a region.
+
+## Known Limitations
+
+- **No `SetSchema` or `CollectionSchema`.** Neither exists in the core; use `MapSchema` and `ArraySchema`.
+- **Unreliable input is not available.** It needs a datagram transport the core does not have yet.
+- **No SwiftUI or Combine integration ships.** Handlers arrive on the main queue; copy what you need into your own observable model.
+
+## Demos
+
+Two clients are built on this package, and are the best place to see it used:
+
+- [Air Hockey](https://github.com/colyseus/air-hockey-demo/tree/main/clients/swift-app): SpriteKit on macOS, with rollback prediction for the paddle
+- [Prediction Playground](https://github.com/colyseus/prediction-playground/tree/main/clients/swift-app): all twelve netcode labs, see [Learn](/learn#prediction-playground)
+
+## Next Steps
+
+- [Netcode: Prediction & Lag Comp](/netcode) - The prediction stack, and the server settings it needs
+- [State Synchronization](/state) - Understanding Schema definitions
+- [Room API](/room) - Server-side room implementation

@@ -10,7 +10,7 @@ The full corpus is at https://docs.colyseus.io/llms-full.txt.
 ## Overview
 
 - [Introduction](https://docs.colyseus.io/)
-- [Getting Started](https://docs.colyseus.io/getting-started): Get started with Colyseus multiplayer framework. Scaffold a server with npm create colyseus-app, then choose your client SDK for TypeScript, JavaScript, React, Unity, Defold, Construct 3, Cocos Creator, Haxe, Flutter, and more.
+- [Getting Started](https://docs.colyseus.io/getting-started): Get started with Colyseus multiplayer framework. Scaffold a server with npm create colyseus-app, then choose your client SDK for TypeScript, JavaScript, React, Unity, Defold, Construct 3, Cocos Creator, Haxe, Flutter, Swift, and more.
 - [TypeScript](https://docs.colyseus.io/getting-started/typescript): Install and set up the Colyseus JavaScript/TypeScript SDK for building real-time multiplayer games. Includes room connections, state synchronization, and full type safety.
 - [React](https://docs.colyseus.io/getting-started/react): Use Colyseus with React using the @colyseus/react hooks package. Manage room connections and real-time state synchronization with idiomatic React patterns.
 - [Unity](https://docs.colyseus.io/getting-started/unity): Install the Colyseus Unity SDK via Unity Package Manager. Build real-time multiplayer games in Unity with room management and state synchronization.
@@ -22,6 +22,7 @@ The full corpus is at https://docs.colyseus.io/llms-full.txt.
 - [Cocos Creator](https://docs.colyseus.io/getting-started/cocos): Set up Colyseus multiplayer in Cocos Creator 3. Install the SDK extension, import it in TypeScript components, and connect to Colyseus rooms.
 - [Haxe](https://docs.colyseus.io/getting-started/haxe): Use Colyseus with Haxe game engines like OpenFL, HaxeFlixel, Heaps, and more. Install the SDK, connect to rooms, and synchronize state across platforms.
 - [Flutter](https://docs.colyseus.io/getting-started/flutter): Get started with Colyseus multiplayer in Flutter. Install the Dart SDK, connect to a room, sync real-time game state, and predict player movement.
+- [Swift](https://docs.colyseus.io/getting-started/swift): Get started with Colyseus multiplayer in Swift. Add the Swift package for iOS, macOS and tvOS, join a room, sync real-time game state, and predict player movement.
 - [Native SDK (C)](https://docs.colyseus.io/getting-started/native-sdk): Get started with the Colyseus Native SDK for C. Build multiplayer games with raw C integration, supporting desktop, mobile, and web platforms.
 - [Discord Activity](https://docs.colyseus.io/getting-started/discord-activity): Build multiplayer Discord Activities with Colyseus. Use the project template to create real-time HTML5 multiplayer experiences embedded in Discord.
 - [WeChat](https://docs.colyseus.io/getting-started/wechat): Integrate Colyseus with WeChat mini-games for real-time multiplayer. Set up the JavaScript SDK in the WeChat development environment.
