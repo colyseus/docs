@@ -7,7 +7,7 @@ import { PasskeyFillIcon } from '@primer/octicons-react'
 
 # Database
 
-The recommended way to persist game data in Colyseus is **`@colyseus/database`**, the official persistence layer, built on [Drizzle ORM](https://orm.drizzle.team/). A single typed connection backs player accounts, cloud saves, leaderboards, live configs, analytics, moderation, and matchmaking.
+The recommended way to persist game data in Colyseus is **`@colyseus/database`**, the official persistence layer, built on [Drizzle ORM](https://orm.drizzle.team/) ([1.0.0-rc](#drizzle-version)). A single typed connection backs player accounts, cloud saves, leaderboards, live configs, analytics, moderation, and matchmaking.
 
 A single `GameDatabase` instance exposes:
 
@@ -41,6 +41,15 @@ For embedded PGlite, install `@electric-sql/pglite` instead:
 
 ```sh npm2yarn
 npm install --save @electric-sql/pglite
+```
+
+### Drizzle version
+
+`@colyseus/database` is built on the 1.0 release candidate of Drizzle ORM. Whenever you import Drizzle yourself (column builders for [custom tables](/database/schemas), `eq` in queries, `drizzle-kit` for migrations), install it from the `rc` dist-tag. npm's `latest` is still the 0.x line, and its column builders fail inside the table factory with `colBuilder.build(...).postBuild is not a function`.
+
+```sh npm2yarn
+npm install --save drizzle-orm@rc
+npm install --save-dev drizzle-kit@rc
 ```
 
 ## Quick start

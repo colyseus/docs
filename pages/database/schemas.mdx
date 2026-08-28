@@ -8,7 +8,7 @@ import { Callout, Tabs } from 'nextra/components'
 
 Every service in `@colyseus/database` is backed by a Drizzle table you can extend with your own columns, constraints, and indexes. Use the per-dialect `tables` factory to build a table from the built-in columns plus yours, then pass it via the `schemas` option. Services keep working and return your custom columns with full type inference.
 
-The examples import column builders from `drizzle-orm`. Add it to your own dependencies at the version `@colyseus/database` depends on (`npm view @colyseus/database dependencies`), so the imports resolve in your project.
+The examples import column builders from `drizzle-orm`. Install it from the `rc` dist-tag, as described under [Drizzle version](/database#drizzle-version).
 
 ## Built-in tables
 
@@ -144,7 +144,7 @@ await db.drizzle.update(db.tables.users)
 Prefer `uniqueIndex()` over `.unique()` for a table that may already exist in production. For any other change to an existing table, use [drizzle-kit migrations](#migrations-with-drizzle-kit).
 
 <Callout type="info">
-    Constraints and indexes under `migrations: "auto"` require the `@colyseus/database` release after 0.18.1. Earlier versions create columns and primary keys only.
+    Constraints and indexes under `migrations: "auto"` require `@colyseus/database` 0.18.2 or newer. Earlier versions create columns and primary keys only.
 </Callout>
 
 ## Hand-rolled tables with `columns`
@@ -189,12 +189,12 @@ For full control, spread the column maps (`columns.sqlite.<name>` / `columns.pg.
 `cloudSaves` and `leaderboardEntries` have composite primary keys: `(userId, slot)` and `(boardId, userId, season)`. When you hand-roll those two, add the `primaryKey(...)` yourself. The factory adds it for you.
 
 <Callout type="warning">
-    Spread `columns.sqlite.users` / `columns.pg.users`, not `tables.sqlite.users` / `tables.pg.users`. The latter are functions, so spreading it adds no columns. The server still boots. The first login or room join then fails with `TypeError: Cannot convert undefined or null to object`: the table has none of the built-in columns.
+    Spread `columns.sqlite.users` / `columns.pg.users`, not the `tables.*` factories. Those are functions, so spreading them adds no columns. The server still boots. The first login or room join then fails with `TypeError: Cannot convert undefined or null to object`: the table has none of the built-in columns.
 </Callout>
 
 ## Migrations with drizzle-kit
 
-For production schemas, generate SQL migrations with drizzle-kit and apply them with `migrations: { files }`. drizzle-kit reads every table exported from one schema file. Re-export the tables you did not customize from `@colyseus/database/sqlite-defaults` (or `@colyseus/database/pg-defaults`), so they are generated too:
+For production schemas, generate SQL migrations with drizzle-kit and apply them with `migrations: { files }`. drizzle-kit reads every table exported from one schema file. Re-export the tables you did not customize from `@colyseus/database/sqlite-defaults` (or `@colyseus/database/pg-defaults`). That way drizzle-kit generates them too:
 
 <Tabs items={["SQLite", "PostgreSQL"]} storageKey="database-dialect">
     <Tabs.Tab>
@@ -261,10 +261,9 @@ For production schemas, generate SQL migrations with drizzle-kit and apply them 
     </Tabs.Tab>
 </Tabs>
 
-`@colyseus/database` uses the 1.0 line of `drizzle-orm`, so install `drizzle-kit` from its `rc` tag rather than `latest`:
+With `drizzle-kit@rc` installed (see [Drizzle version](/database#drizzle-version)), generate the migration:
 
 ```sh
-npm install --save-dev drizzle-kit@rc
 npx drizzle-kit generate
 ```
 
