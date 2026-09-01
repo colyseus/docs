@@ -141,7 +141,7 @@ Debug.Log($"{room.State.players.Count} players already in the room");
 It resolves immediately when the state has already synchronized, so it is always safe to await, including after reconnections.
 
 <Callout type="warning">
-    Never poll for state with `Task.Delay` on **WebGL** builds. WebGL has no thread-pool timers, so `Task.Delay` never resumes and the wait hangs forever. `WaitForFirstState()` is timer-free: it completes on the message pump and works on every platform, including WebGL.
+    Never poll for state with `Task.Delay` on **WebGL** builds. WebGL has no thread-pool timers, so `Task.Delay` never resumes and the wait hangs forever. `WaitForFirstState()` is timer-free: it completes on the message pump and works on every platform, including WebGL. When your async code does need a delay or timeout, use [UniTask](https://github.com/Cysharp/UniTask). `UniTask.Delay` runs on Unity's player loop instead of thread-pool timers, so it works on WebGL.
 </Callout>
 
 <Callout type="info">
