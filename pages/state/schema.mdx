@@ -475,7 +475,7 @@ Your code reads and writes a plain `number`. The conversion is invisible.
 
 **Picking `mode`** is the only real decision, and the wire size is identical either way:
 
-- **`"clamp"`**: the value has **hard walls**. A pitch limit, a health bar, a 0–1 throttle. Both endpoints are exact and distinct; out-of-range input clamps to the nearest end. Looking past the pitch limit stops *at* the limit.
+- **`"clamp"`**: the value has **hard walls**. A pitch limit, a health bar, a 0–1 throttle. Both endpoints are exact and distinct; out-of-range input clamps to the nearest end. Looking past the pitch limit stops *at* the limit. A range symmetric about zero also carries an exact zero, which matters for input axes and velocities (see below).
 - **`"wrap"`**: the value is **cyclic**: `min` and `max` are the same point. An angle, a compass bearing, a hue, a phase. Any input is reduced modulo the range first, so a large accumulated or negative angle folds back in. A yaw keeps spinning instead of jamming.
 
 > Ask: does one step past the top land you back at the bottom, as the same physical thing? → `"wrap"`. Is the top a wall you can't cross? → `"clamp"`.
@@ -484,6 +484,12 @@ Your code reads and writes a plain `number`. The conversion is invisible.
 
 <Callout type="warning">
     **Choosing the wrong mode is a real bug.** A clamped heading jams at the `0`/`2π` seam. A wrapped pitch flips the camera the instant you look a hair too far up.
+</Callout>
+
+<Callout type="info">
+    **A range symmetric about zero carries an exact zero.** When `min` is exactly `-max`, as in `t.quantized({ min: -1, max: 1 })` for an input axis or `{ min: -150, max: 150 }` for a velocity, the range is laid out so that `min`, `0` and `max` all land exactly on a step. A released axis reads back as `0`, so a `=== 0` test fires, and a velocity you set to zero comes to rest instead of creeping. Evening out the grid costs one of the `2^bits` codes, so the step is a hair coarser and nothing else changes.
+
+    This needs `@colyseus/schema` 5.0.27 on the server and a client SDK released alongside it: Unity 0.18.4, Haxe 0.18.2, Defold 0.18.0, or the native C SDK 0.18.3. The Godot, GameMaker, Flutter and Swift bindings wrap that core and carry it from their next release. Before these versions a symmetric range placed zero half a step off the grid and rounding lifted it to the next step, which showed up as a stuck fraction of throttle on a released stick, or a resting body drifting forever.
 </Callout>
 
 <Callout type="info">
