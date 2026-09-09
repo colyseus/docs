@@ -84,7 +84,9 @@ const unsubscribe = db.configs.subscribe("matchmaking", (value) => {
 await db.analytics.track("match_completed", userId, { mode: "ranked", durationMs: 312_000 });
 
 await db.moderation.setRole(userId, "mod");
-await db.moderation.can(userId, "delete", "guilds"); // boolean
+await db.moderation.assignMod(userId, "guilds");    // mods act only on assigned collections
+await db.moderation.can(userId, "read", "guilds");   // true
+await db.moderation.can(userId, "delete", "guilds"); // false: "delete" is admin-only
 
 await db.notes.add(userId, "Refunded once on 2026-04-12", authorId);
 await db.notes.deleteAllForUser(userId); // GDPR cleanup
@@ -98,11 +100,12 @@ For common patterns, `@colyseus/database` ships [Room Plugins](/room/plugins) th
 - **`LeaderboardsPlugin`**: submit scores to one board
 - **`AnalyticsPlugin`**: track room `create`/`join`/`leave`/`dispose` events
 
-Plugin hooks run in a fixed order relative to the room's own hooks: `onJoin` runs **before** the room's `onJoin`, and `onLeave` runs **after** the room's `onLeave`. A room that creates the player entry in `onJoin` and removes it in `onLeave` therefore has no entry when the automatic load or save runs. Turn the automatic hooks off and call the plugin from the room, after creating the entry and before removing it:
+Plugin hooks run in a fixed order relative to the room's own hooks. The plugin's `onJoin` runs **before** the room's `onJoin`, and its `onLeave` runs **after** the room's `onLeave`. A room that creates the player entry in `onJoin` and removes it in `onLeave` therefore has no entry when the automatic load or save runs. Turn the automatic hooks off and call the plugin from the room, after creating the entry and before removing it:
 
 ```ts filename="src/rooms/MyRoom.ts"
 import { Room, definePlugins } from "colyseus";
 import { CloudSavesPlugin, LeaderboardsPlugin, AnalyticsPlugin } from "@colyseus/database";
+import { GameState, Player } from "./schema";
 import { db } from "../app.config";
 
 export class MyRoom extends Room {

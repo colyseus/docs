@@ -143,8 +143,8 @@ await db.drizzle.update(db.tables.users)
 
 Prefer `uniqueIndex()` over `.unique()` for a table that may already exist in production. For any other change to an existing table, use [drizzle-kit migrations](#migrations-with-drizzle-kit).
 
-<Callout type="info">
-    Constraints and indexes under `migrations: "auto"` require `@colyseus/database` 0.18.2 or newer. Earlier versions create columns and primary keys only.
+<Callout type="warning">
+    The PostgreSQL factory's third argument currently fails type-checking. `tsc` rejects `.on(t.handleLower)` with "Property 'dimensions' is missing", although the code runs. Until the fix ships, use the [hand-rolled `pgTable` form](#hand-rolled-tables-with-columns), which type-checks. SQLite is not affected.
 </Callout>
 
 ## Hand-rolled tables with `columns`
@@ -189,7 +189,7 @@ For full control, spread the column maps (`columns.sqlite.<name>` / `columns.pg.
 `cloudSaves` and `leaderboardEntries` have composite primary keys: `(userId, slot)` and `(boardId, userId, season)`. When you hand-roll those two, add the `primaryKey(...)` yourself. The factory adds it for you.
 
 <Callout type="warning">
-    Spread `columns.sqlite.users` / `columns.pg.users`, not the `tables.*` factories. Those are functions, so spreading them adds no columns. The server still boots. The first login or room join then fails with `TypeError: Cannot convert undefined or null to object`: the table has none of the built-in columns.
+    Spread `columns.sqlite.users` / `columns.pg.users`, not the `tables.*` factories. Those are functions, so spreading them adds no columns. The server still boots. The first login or room join then fails with `TypeError: Cannot convert undefined or null to object`. The table has none of the built-in columns.
 </Callout>
 
 ## Migrations with drizzle-kit

@@ -7,7 +7,7 @@ import { PasskeyFillIcon } from '@primer/octicons-react'
 
 # Database
 
-The recommended way to persist game data in Colyseus is **`@colyseus/database`**, the official persistence layer, built on [Drizzle ORM](https://orm.drizzle.team/) ([1.0.0-rc](#drizzle-version)). A single typed connection backs player accounts, cloud saves, leaderboards, live configs, analytics, moderation, and matchmaking.
+The recommended way to persist game data in Colyseus is **`@colyseus/database`**, the official persistence layer built on version [1.0.0-rc](#drizzle-version) of [Drizzle ORM](https://orm.drizzle.team/). A single typed connection backs player accounts, cloud saves, leaderboards, live configs, analytics, moderation, and matchmaking.
 
 A single `GameDatabase` instance exposes:
 
@@ -31,14 +31,14 @@ Colyseus itself remains database-agnostic: if your project needs a different sta
 npm install --save @colyseus/database
 ```
 
-For PostgreSQL, also install [postgres-js](https://github.com/porsager/postgres), the `postgres` package:
+For PostgreSQL, also install `postgres` ([postgres-js](https://github.com/porsager/postgres)):
 
 ```sh npm2yarn
 npm install --save postgres
 ```
 
 <Callout type="warning">
-    `pg` (node-postgres) is a different package, and `connectionString` never uses it. Drizzle's own PostgreSQL guide installs `pg` by default, so check which one you have. To keep `pg`, open the connection yourself and pass the instance as [`db`](#use-an-existing-drizzle-instance).
+    A `postgres://` connection string always opens postgres-js, never `pg` (node-postgres). Drizzle's own PostgreSQL guide installs `pg`, so check which one you have. To keep `pg`, open the pool yourself and pass it as [`db`](#use-an-existing-drizzle-instance).
 </Callout>
 
 For embedded PGlite, install `@electric-sql/pglite` instead:
@@ -49,12 +49,14 @@ npm install --save @electric-sql/pglite
 
 ### Drizzle version
 
-`@colyseus/database` is built on the 1.0 release candidate of Drizzle ORM. Whenever you import Drizzle yourself (column builders for [custom tables](/database/schemas), `eq` in queries, `drizzle-kit` for migrations), install it from the `rc` dist-tag. npm's `latest` is still the 0.x line, and its column builders fail inside the table factory with `colBuilder.build(...).postBuild is not a function`.
+`@colyseus/database` is built on the 1.0 release candidate of Drizzle ORM and declares `drizzle-orm` as a peer dependency. Install it from the `rc` dist-tag, alongside `drizzle-kit` if you generate migrations. npm's `latest` is still the 0.x line, and its column builders fail inside the table factory with `colBuilder.build(...).postBuild is not a function`.
 
 ```sh npm2yarn
 npm install --save drizzle-orm@rc
 npm install --save-dev drizzle-kit@rc
 ```
+
+Keep a single copy of `drizzle-orm` in `node_modules`. With two copies, the code still runs. `tsc` then rejects `eq(db.tables.users.id, …)` and every other place where a column from one copy meets a query builder from the other. `npm ls drizzle-orm` shows any duplicate.
 
 ## Quick start
 
@@ -81,7 +83,7 @@ import { Room } from "colyseus";
 import { db } from "../app.config";
 
 export class MyRoom extends Room {
-    async onJoin(client, options) {
+    async onJoin(client) {
         // client.auth was populated by the default static onAuth,
         // which already rejects banned/revoked tokens automatically.
         await db.saves.load(client.auth.id);
@@ -113,7 +115,7 @@ new GameDatabase({ dialect: "pglite", connectionString: "pglite://./data" });
 
 ### Use an existing Drizzle instance
 
-Pass `db` to reuse a Drizzle instance you already opened. `GameDatabase` uses it for queries and schema work, and detects the dialect from it unless you pass `dialect`. The connection stays yours: `shutdown()` closes only connections the package opened itself. Use this option to run on `pg` (node-postgres), or to share one pool with the rest of your app.
+Pass `db` to reuse a Drizzle instance you already opened. Use this option to run on `pg` (node-postgres), or to share one pool with the rest of your app. `connectionString` is ignored, and the dialect is read from the instance unless you pass `dialect`.
 
 ```ts filename="src/app.config.ts"
 import { drizzle } from "drizzle-orm/node-postgres";
@@ -126,6 +128,8 @@ export const db = new GameDatabase({
     db: drizzle({ client: pool }),
 });
 ```
+
+`migrations: "auto"` runs through the instance's own client, so any driver Drizzle supports works: postgres-js, node-postgres, PGlite, or `node:sqlite`. An instance that exposes no client (an HTTP proxy driver, for example) needs `migrations: "skip"` or `{ files }`. The connection stays yours: `shutdown()` closes only connections the package opened itself.
 
 ## Migrations
 

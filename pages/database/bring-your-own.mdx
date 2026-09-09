@@ -40,10 +40,10 @@ Query builders are known for their simplicity and flexibility.
 
 ### Query the database in `onAuth()`
 
-You may fetch user data based on the `options` passed to the client on connection, or based on the authentication token.
+Fetch user data from the join `options` the client sends, or from the authentication token.
 
 ```ts filename="src/rooms/MyRoom.ts"
-// ...
+// db: your own client (pg, knex, prisma, ...)
 async onAuth(client, options) {
     const user = await db.query('SELECT * FROM users WHERE id = ?', [options.userId]);
     return user;
@@ -57,7 +57,7 @@ async onJoin (client, options) {
 
 ### Update the database in `onLeave()`
 
-You may update the database when the client leaves the room.
+Update the database when the client leaves the room.
 
 ```ts filename="src/rooms/MyRoom.ts"
 // ...
