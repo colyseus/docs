@@ -31,11 +31,15 @@ Colyseus itself remains database-agnostic: if your project needs a different sta
 npm install --save @colyseus/database
 ```
 
-For PostgreSQL, also install the `postgres` driver:
+For PostgreSQL, also install [postgres-js](https://github.com/porsager/postgres), the `postgres` package:
 
 ```sh npm2yarn
 npm install --save postgres
 ```
+
+<Callout type="warning">
+    `pg` (node-postgres) is a different package, and `connectionString` never uses it. Drizzle's own PostgreSQL guide installs `pg` by default, so check which one you have. To keep `pg`, open the connection yourself and pass the instance as [`db`](#use-an-existing-drizzle-instance).
+</Callout>
 
 For embedded PGlite, install `@electric-sql/pglite` instead:
 
@@ -93,7 +97,7 @@ The dialect is auto-detected from the connection string. When omitted, SQLite is
 |---|---|---|
 | _(omitted)_ or `./game.db` | SQLite | File-based; great for development |
 | `:memory:` | SQLite | Ephemeral; useful for tests |
-| `postgres://…` / `postgresql://…` | PostgreSQL | Production; requires the `postgres` package |
+| `postgres://…` / `postgresql://…` | PostgreSQL | Production; requires the `postgres` package (postgres-js, not `pg`) |
 | `pglite://./data` / `pglite://:memory:` | PGlite | Embedded Postgres, no external server |
 
 ```ts filename="src/app.config.ts"
@@ -105,6 +109,22 @@ new GameDatabase({ connectionString: process.env.DATABASE_URL });
 
 // Embedded PGlite, file-backed
 new GameDatabase({ dialect: "pglite", connectionString: "pglite://./data" });
+```
+
+### Use an existing Drizzle instance
+
+Pass `db` to reuse a Drizzle instance you already opened. `GameDatabase` uses it for queries and schema work, and detects the dialect from it unless you pass `dialect`. The connection stays yours: `shutdown()` closes only connections the package opened itself. Use this option to run on `pg` (node-postgres), or to share one pool with the rest of your app.
+
+```ts filename="src/app.config.ts"
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
+import { GameDatabase } from "@colyseus/database";
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+export const db = new GameDatabase({
+    db: drizzle({ client: pool }),
+});
 ```
 
 ## Migrations
