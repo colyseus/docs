@@ -41,12 +41,13 @@ Each input carries a timestamp telling the server *when* the client's view of th
 
     <Tabs.Tab>
     ```cs
-    var predict = Predict.Get(room);
-    predict.AttachAll("players", new AttachConfig {
-        ["x"] = new PredictFieldOptions { Mode = PredictMode.Lerp, Delay = 100 },
-        ["y"] = new PredictFieldOptions { Mode = PredictMode.Lerp, Delay = 100 },
+    var predict = Predict.Get(room, new PredictGetOptions { Mode = PredictMode.Lerp, Delay = 100 });
+    predict.AttachAll("players", new AttachOptions { Fields = new[] { "x", "y" } });
+    var input = room.Input(cmd);
+    var me = predict.Reconciler(self, new ReconcilerOptions<Player, MoveInput> {
+        Input = input,   // binds the stamp to Delay = 100
+        Step = (ctx, s, c) => ApplyInput(s, c, ctx.Dt),
     });
-    var input = room.Input(cmd);   // stamp auto-derived from the lerp delay
     ```
     </Tabs.Tab>
 
@@ -98,7 +99,7 @@ Each input carries a timestamp telling the server *when* the client's view of th
 
 Two knobs, both optional:
 
-- **`renderDelay`**: pass it to `room.input()` only when you smooth remotes *outside* `Predict`; it must equal your actual interp buffer. The SDK adds the latency term itself. Pass only the buffer.
+- **`renderDelay`**: pass it to `room.input()` only when you smooth remotes *outside* `Predict`; it must equal your actual interp buffer. The SDK adds the latency term itself. Pass only the buffer. The automatic value is the Predict's default lerp `delay`, read live, so a later `setDefaults({ delay })` moves the stamp too. In C#, `InputOptions.RenderDelay` is a `double?`: null binds, and any value, `0` included, is explicit.
 - **`allowRewind`**: a per-input predicate gating which inputs carry the stamp, as a bandwidth trim: `room.input({ allowRewind: (d) => d.fire })` stamps only the inputs the server actually rewinds for. Don't use it when your *own* step hit-tests at `ctx.reckonTime`, because then every input needs the stamp. In GDScript, call `input.set_rewind_field("fire")` instead; in Dart, pass `allowRewind:` a predicate over the input view.
 
 ### Server: rewind targets to where the shooter saw them
@@ -194,7 +195,7 @@ this.rewind.attachAll(this.state.enemies, { fields: ["x", "y"], mode: "reckon" }
 Keep the pairing in one shared constant if you like: the server's `mode` and the client's `predict.attachAll` mode describe the same decision. You can attach the same collection twice with disjoint `fields` to mix timelines on one entity. The room ships exactly the stamp(s) its attached groups need. Nothing extra crosses the wire.
 
 <Callout type="warning">
-    **Don't break the delay pairing.** When the input handle is wired through `predict.reconciler`/`predict.sim`, the lerp `delay` and the rewind stamp share one source: nothing to keep in sync. If you pass `renderDelay` explicitly, it must equal the delay your remotes actually render at. Reverting remotes to `damped` (no fixed delay) silently degrades the rewind to an approximation.
+    **Don't break the delay pairing.** When the input handle is wired through `predict.reconciler`/`predict.sim`, the lerp `delay` and the rewind stamp share one source: nothing to keep in sync. That source is the Predict's *default* `delay`, so a per-attach `delay` that differs from it breaks the pairing too. If you pass `renderDelay` explicitly, it must equal the delay your remotes actually render at. Reverting remotes to `damped` (no fixed delay) silently degrades the rewind to an approximation.
 </Callout>
 
 ## Tuning `maxRewindMs`

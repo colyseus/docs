@@ -41,10 +41,7 @@ Full behavior reference: [the modes table](/netcode/client-prediction#remote-ent
     <Tabs.Tab>
     ```cs
     // Display-only output spring over the lerp result (default 0 = exact).
-    predict.AttachAll("players", new AttachConfig {
-        ["x"] = new PredictFieldOptions { Mode = PredictMode.Lerp, SmoothMs = 25 },
-        ["y"] = new PredictFieldOptions { Mode = PredictMode.Lerp, SmoothMs = 25 },
-    });
+    predict.AttachAll("players", new AttachOptions { Mode = PredictMode.Lerp, Fields = new[] { "x", "y" }, SmoothMs = 25 });
     ```
     </Tabs.Tab>
 
@@ -625,10 +622,7 @@ Smoothing turns a respawn into a glide across the map. The `snap` option (on any
     <Tabs.Tab>
     ```cs
     // Remotes: a passive attach pops past the threshold.
-    predict.AttachAll("players", new AttachConfig {
-        ["x"] = new PredictFieldOptions { Mode = PredictMode.Lerp, Snap = 300 },
-        ["y"] = new PredictFieldOptions { Mode = PredictMode.Lerp, Snap = 300 },
-    });
+    predict.AttachAll("players", new AttachOptions { Mode = PredictMode.Lerp, Fields = new[] { "x", "y" }, Snap = 300 });
 
     // Your own entity: a reconcile correction past it pops instead of gliding.
     var me = predict.Reconciler(self, new ReconcilerOptions<Player, MoveInput> {

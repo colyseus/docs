@@ -745,9 +745,13 @@ Iterates over each element of the array.
     <Tabs.Tab>
 
     ``` cs
-    State.array1.ForEach((value) => {
+    // ArraySchema<T> is an IReadOnlyList<T>: foreach, the indexer and LINQ all work
+    foreach (var value in State.array1) {
         Debug.Log(value);
-    })
+    }
+
+    // the callback form: type the parameters, since two overloads match
+    State.array1.ForEach((int index, string value) => Debug.Log(value));
     ```
     </Tabs.Tab>
 
@@ -895,10 +899,18 @@ Iterates over each key/value pair of the map, in insertion order.
     <Tabs.Tab>
 
     ``` cs
-    State.players.ForEach((key, value) => {
+    // MapSchema<T> is an IReadOnlyDictionary<string, T>: foreach walks insertion order
+    foreach (var (key, player) in State.players) {
         Debug.Log(key);
-        Debug.Log(value);
-    })
+        Debug.Log(player);
+    }
+
+    // typed live views, and LINQ through IReadOnlyDictionary
+    foreach (var player in State.players.Values) { Draw(player); }
+    var alive = State.players.Values.Where(p => p.hp > 0);
+
+    // the callback form: type the parameters, since two overloads match
+    State.players.ForEach((string key, Player player) => Debug.Log(key));
     ```
     </Tabs.Tab>
 
@@ -922,6 +934,8 @@ Iterates over each key/value pair of the map, in insertion order.
     </Tabs.Tab>
 </Tabs>
 
+
+In C#, `foreach` over a `MapSchema<T>` allocates nothing. Adding or removing an entry during enumeration throws an `InvalidOperationException`.
 
 <Callout type="info">
     **More methods available for Map** - Have a look at the [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map/).

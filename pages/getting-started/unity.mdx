@@ -125,7 +125,7 @@ public class NetworkManager : MonoBehaviour
 
 ### Waiting for the first state
 
-A resolved join does **not** mean the state has been synchronized yet. `room.State` is instantiated when you join, but its collections (`players`, nested refs, …) are only populated by the first full state sync. That sync arrives a moment later. Code that reads `room.State` right after joining can find `null` maps.
+A resolved join does **not** mean the state has been synchronized yet. `room.State` is instantiated when you join, but its collections (`players`, nested refs, …) are only populated by the first full state sync. That sync arrives a moment later. Code that reads `room.State` right after joining finds empty collections (or `null` ones, with older generated classes) and `null` refs. Don't keep a reference to a collection read before that sync. The decoder replaces it with the server's copy, and the old instance stays empty.
 
 `WaitForFirstState()` covers the gap. This method is the C# analogue of the JavaScript SDK's `room.onStateChange.once(...)`:
 
@@ -145,8 +145,25 @@ It resolves immediately when the state has already synchronized, so it is always
 </Callout>
 
 <Callout type="info">
-    Registering `Callbacks` (as in the Quick Example above) is safe *before* the first sync. Callbacks are driven by the decoder and fire as the initial state decodes. `WaitForFirstState()` is for code that reads `room.State` directly.
+    Registering `Callbacks` (as in the Quick Example above) is safe *before* the first sync. Callbacks are driven by the decoder and fire as the initial state decodes. A callback on a collection the server hasn't sent yet waits for it, whether the field starts empty or `null`. `WaitForFirstState()` is for code that reads `room.State` directly.
 </Callout>
+
+### Iterating collections
+
+`MapSchema<T>` implements `IReadOnlyDictionary<string, T>` and `ArraySchema<T>` implements `IReadOnlyList<T>`, so `foreach` and LINQ work on them directly. A map iterates in insertion order, the order the server added the entries, and `foreach` allocates nothing.
+
+```csharp
+foreach (var (sessionId, player) in room.State.players) {
+    Debug.Log($"{sessionId}: {player.x}, {player.y}");
+}
+
+foreach (var player in room.State.players.Values) { Draw(player); }
+
+var alive = room.State.players.Values.Count(p => p.hp > 0);
+var first = room.State.turnOrder[0];
+```
+
+`Keys` and `Values` are live typed views, and `ContainsKey` checks for an entry without reading it. Adding or removing an entry while enumerating throws an `InvalidOperationException`. The old `map.items` member still reads and writes the map but is marked obsolete. An `int` key on it is a position, as before.
 
 ## SDK API
 
@@ -159,6 +176,8 @@ For compiled languages like C#, you need to generate client-side schema classes 
 ```sh filename="Terminal"
 npx schema-codegen src/rooms/schema/* --csharp --output ../Assets/Scripts/States/
 ```
+
+The generated classes compile as they are, inside any namespace. `number`, `float32` and `float64` fields are `double`, as the server holds them in memory, so client-side prediction doesn't round between ticks. The wire can still narrow a fractional `number` to float32 precision. Cast where Unity wants a `float`: `new Vector3((float)p.x, 0, (float)p.z)`. Collections start as empty instances, and `.default()` values carry over. Fields declared with `.noSync()` are left out, since they take no field index on the wire. `t.angle()` and `t.quantized()` bounds held in a `const` resolve, including through re-exports.
 
 <Callout type="info">
     See the full [State Schema Codegen documentation](/state/callbacks#frontend-schema-generation) for more options and details.
@@ -248,15 +267,15 @@ Running the codegen command will automatically generate a matching C# class:
 
 ```csharp filename="Generated C# output"
 public class MoveMessage {
-    public float x;
-    public float y;
+    public double x;
+    public double y;
 }
 ```
 
 You can then use these classes when sending and receiving messages on the Unity client:
 
 ```csharp filename="Sending a message to the server"
-room.Send("move", new MoveMessage() { x = 1.0f, y = 2.0f });
+room.Send("move", new MoveMessage() { x = 1.0, y = 2.0 });
 ```
 
 The same applies to messages sent from the server to the client. For example, given a server-side interface:

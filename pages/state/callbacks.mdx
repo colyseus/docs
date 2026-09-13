@@ -562,6 +562,8 @@ Register the `onAdd` callback is called whenever a new instance is added to a co
 
 By default, the callback is called immediately for existing items in the collection.
 
+Registering before the server has sent the collection is fine. A collection the client still holds as `null`, or as the empty instance a generated C# class starts with, counts as not yet received. The callback waits and fires when the first sync, or a later patch, delivers it, replaying the items that arrived with it. A collection a [`StateView`](/state/view) adds later arrives the same way.
+
 <SDKTabs>
     <Tabs.Tab>
     ```ts {1} filename="client.ts"
