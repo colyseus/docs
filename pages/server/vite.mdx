@@ -136,3 +136,94 @@ colyseus({
   httpServer: myHttpServer,
 })
 ```
+
+## Using Nitro
+
+Frameworks such as [TanStack Start](https://tanstack.com/start) deploy through [Nitro](https://nitro.build)'s Vite plugin. The Colyseus plugin runs next to it, in development and in production. This setup needs `colyseus` 0.18.6 or later.
+
+<Callout type="info">
+    Earlier versions fail to load the Colyseus server in development, with `TypeError: Cannot read properties of undefined (reading 'import')`. Their production build also omits `dist/server/server.mjs`.
+</Callout>
+
+<Callout type="warning">
+    Colyseus with Nitro may not work yet on every production target that Nitro supports. The examples below were tested with Nitro's Node.js presets, `node-server` and `node-middleware`. If you deploy to another target, feedback is welcome via [GitHub Issues](https://github.com/colyseus/colyseus/issues).
+</Callout>
+
+### Plugin order
+
+List `colyseus()` before `nitro()`. Nitro's dev server handles every request that reaches it, including the matchmaker routes. If Nitro comes first, those requests return a 404 from your app, and joining a room fails. Your rooms still show as defined in the terminal, so check the plugin order first.
+
+```ts {5,9} filename="vite.config.ts"
+import { defineConfig } from 'vite';
+import { tanstackStart } from '@tanstack/react-start/plugin/vite';
+import { nitro } from 'nitro/vite';
+import viteReact from '@vitejs/plugin-react';
+import { colyseus } from 'colyseus/vite';
+
+export default defineConfig({
+  plugins: [
+    colyseus({ serverEntry: '/src/server/index.ts' }),
+    tanstackStart(),
+    nitro(),
+    viteReact(),
+  ],
+});
+```
+
+In development, your pages, the matchmaker and room connections share Vite's port.
+
+### Deploying as two processes
+
+`vite build` writes two outputs: the Nitro app in `.output/`, and the Colyseus server in `dist/server/server.mjs`. Run each one as its own process:
+
+```bash
+node .output/server/index.mjs   # Nitro, port 3000
+node dist/server/server.mjs     # Colyseus, port 2567
+```
+
+The two processes listen on different ports. Point your frontend's `Client` at the Colyseus port, which differs from the port it uses in development.
+
+### Deploying as one process
+
+To serve everything from the Colyseus server, build Nitro as a Node middleware instead of a standalone server:
+
+```ts filename="vite.config.ts"
+nitro({ preset: 'node-middleware', serveStatic: true }),
+```
+
+The `node-middleware` preset makes `.output/server/index.mjs` export a `middleware` function instead of starting a server. The `serveStatic` option makes that middleware serve your frontend's built assets too. Without it, pages render but their scripts return 404.
+
+Mount the middleware from the `express` option of your server entry:
+
+```ts {1-3,11-18} filename="src/server/index.ts"
+import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+import { defineServer, defineRoom, isDevMode } from "colyseus";
+import { MyRoom } from "./MyRoom.ts";
+
+export const server = defineServer({
+  rooms: {
+    my_room: defineRoom(MyRoom),
+  },
+
+  express: async (app) => {
+    // In development, Vite serves the Nitro app itself.
+    if (isDevMode) { return; }
+
+    const nitroEntry = pathToFileURL(resolve(".output/server/index.mjs")).href;
+    const { middleware } = await import(/* @vite-ignore */ nitroEntry);
+    app.use(middleware);
+  },
+});
+```
+
+Colyseus handles its own HTTP routes and WebSocket connections first. Every other request reaches Nitro.
+
+Start the server from your project root. The Nitro path resolves against the working directory, so the server fails to start from anywhere else:
+
+```bash
+node dist/server/server.mjs
+```
+
+- Leave `serveClient` off. Nitro serves your frontend, so `dist/client/` is never built. With `serveClient` on, every page returns a 404.
+- Keep the `isDevMode` check. The plugin also calls `express` in development, before `.output/` exists. Without the check, development logs a misleading `Express not available` warning.
