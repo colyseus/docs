@@ -1,17 +1,18 @@
 ---
 title: "GeoIPPlugin"
-description: "Resolve a client's country from their IP at auth time and attach it to client.geoip before onJoin runs. Three pluggable database delivery modes: bring-your-own MMDB file, auto-download from MaxMind, or use the bundled DB-IP Lite snapshot."
+description: "Resolve a client's country from their IP at auth time and attach it to client.geoip before onJoin runs. Three pluggable database delivery modes: bring-your-own MMDB file, auto-download from MaxMind, or the credential-free DB-IP Lite download."
 ---
 import { Callout } from "nextra/components";
 import { MovedAnchors } from "../../../components/moved-anchors";
 
 # GeoIPPlugin
 
-{/* Delivery-mode headings dropped their em-dash; keep old double-hyphen slugs working. */}
+{/* Delivery-mode headings dropped their em-dash, and mode 3 stopped being "bundled". */}
 <MovedAnchors map={{
     "1-dbpath--bring-your-own-file": "/room/plugins/geoip#1-dbpath-bring-your-own-file",
     "2-accountid--licensekey--auto-fetch-from-maxmind": "/room/plugins/geoip#2-accountid--licensekey-auto-fetch-from-maxmind",
-    "3-bundled--no-configuration": "/room/plugins/geoip#3-bundled-no-configuration",
+    "3-bundled--no-configuration": "/room/plugins/geoip#3-db-ip-lite-no-configuration",
+    "3-bundled-no-configuration": "/room/plugins/geoip#3-db-ip-lite-no-configuration",
 }} />
 
 Looks up the client's IP at auth time and exposes the resolved country
@@ -20,7 +21,7 @@ matchmaking, GDPR-aware routing, locale defaults, geo-blocking, and
 country-of-origin analytics.
 
 **Footprint:** one MMDB file loaded into memory per process (~6 MB for
-MaxMind GeoLite2-Country, ~3 MB for DB-IP Lite). Lookups are
+MaxMind GeoLite2-Country, ~8 MB for DB-IP Lite). Lookups are
 synchronous and complete in microseconds, with no async cost on the
 join path. Across N rooms in one process, a single reader is shared via a
 module-level cache.
@@ -125,15 +126,28 @@ to get credentials.
   volume populated by a single `geoipupdate` sidecar.
 </Callout>
 
-### 3. Bundled: no configuration
+### 3. DB-IP Lite: no configuration
 
 ```ts
 new GeoIPPlugin()
 ```
 
-Loads a DB-IP Lite Country snapshot shipped inside the package
-(CC-BY-4.0; can be redistributed). Updated on every release; for
-fresher data switch to mode 1 or 2.
+Downloads DB-IP's Lite Country database from db-ip.com on the first
+boot (no account, no credentials) and caches it to disk. DB-IP publishes
+a new snapshot on the 1st of each month; the plugin checks daily and
+picks it up when it lands, falling back to last month's until it does.
+
+| Option              | Type     | Default                              | Description                                                        |
+|---------------------|----------|--------------------------------------|--------------------------------------------------------------------|
+| `cacheDir`          | `string` | `os.tmpdir() + '/colyseus-geoip'`    | Directory where the downloaded `.mmdb` is cached on disk.          |
+| `refreshIntervalMs` | `number` | `24 * 60 * 60 * 1000` (daily)        | How often to check for a new monthly snapshot. A check that finds nothing new makes no request. |
+
+<Callout type="info">
+  The database is fetched rather than shipped inside `@colyseus/geoip`:
+  ~4 MB over the wire, 8 MB on disk, and only for the people who use
+  this mode. It needs outbound network access on the first boot: in an
+  air-gapped deployment, use mode 1 with a file you place yourself.
+</Callout>
 
 ## Examples
 
@@ -234,10 +248,17 @@ GeoLite2 data is provided under the
 
 DB-IP's Lite databases are licensed under
 [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/).
-Free to redistribute including commercially, provided attribution
-travels with the data. The bundled snapshot inside `@colyseus/geoip`
-already includes the required attribution; you don't need to surface
-it to your players.
+`@colyseus/geoip` does **not** redistribute them: mode 3 downloads the
+file from db-ip.com onto your machine, so the attribution obligation is
+yours as the operator.
+
+DB-IP asks that web applications displaying results from the database
+link back to db-ip.com. If your game surfaces country information to
+players, use their suggested credit:
+
+```html
+<a href="https://db-ip.com">IP Geolocation by DB-IP</a>
+```
 
 ## Privacy
 
@@ -259,7 +280,7 @@ policy.
   will still carry the original geo data through the reconnect path. If
   you need fresh-on-reconnect semantics, re-resolve manually with the
   public lookup method (see [Manual lookup from room code](#manual-lookup-from-room-code)).
-- **Country granularity only:** the plugin's bundled reader maps a
+- **Country granularity only:** the plugin's reader maps a
   small subset of MMDB fields. City, ASN, accuracy radius, and other
   richer GeoIP2-City fields are intentionally not exposed. Point the
   reader at a city DB and extend `MMDBReader` if you need them.
