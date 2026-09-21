@@ -8,7 +8,7 @@ import { Callout } from "nextra/components";
 
 Auto-disconnects clients that haven't sent a message in `timeoutMs`. Useful for kicking AFK players from competitive rooms, freeing seats in matchmaking lobbies, or shedding zombie connections that the WebSocket layer still considers alive.
 
-**Footprint:** one `clock.setInterval` per room, **zero** per-message work, **zero** per-client state. Activity is read from `client._lastMessageTime`, which the room already maintains for rate-limiting.
+**Footprint:** one `clock.setInterval` per room, **zero** per-message work, **zero** per-client state. Activity is read from `client._lastMessageTime`, which the room stamps on every inbound frame.
 
 ## Installation
 
@@ -98,7 +98,7 @@ plugins = definePlugins([
 ## Caveats
 
 - **Any inbound frame refreshes activity**: including SDK keepalive PINGs. This behavior is by design: an idle client whose socket is still healthy is preferable to a zombie connection that gets force-closed. If you need stricter "user-payload-only" semantics, manage your own timestamps from your message handlers.
-- **`_lastMessageTime` is updated at most once per second** by the rate-limiter, so timing precision is ±1 second. For an idle timeout measured in seconds-to-minutes, this is far below the noise floor.
+- **Kicks land on the scan tick**, not on the deadline: a client is disconnected up to `scanIntervalMs` after it goes idle.
 
 ## See Also
 
