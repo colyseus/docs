@@ -96,7 +96,7 @@ import { StateView } from "@colyseus/schema";
     }
 ```
 
-The frontend will receive either an "On Add" or "Listen" callback, depending on which structure the schema instance is part of.
+The frontend receives either an `onAdd` or a `listen` callback, depending on where the `.view()` tag is. See [Listening for `StateView` changes on the frontend](#listening-for-stateview-changes-on-the-frontend).
 
 ### Removing a schema instance from a `StateView`
 
@@ -106,7 +106,7 @@ To remove a schema instance from a `StateView`, call `.remove()` on the `StateVi
 client.view.remove(player);
 ```
 
-The frontend will receive either an "On Remove" or "Listen" callback, depending on which structure the schema instance is part of.
+The frontend receives either an `onRemove` or a `listen` callback, depending on where the `.view()` tag is.
 
 ### Checking if instance is part of `StateView`
 
@@ -272,4 +272,62 @@ Subscribing again with a new callback replaces it; `null` drops it. See [Priorit
 
 <Callout type="info">
     Subscribing is per-view. If several clients share one `StateView` instance, one `subscribe()` call covers all of them.
+</Callout>
+
+## Listening for `StateView` changes on the frontend
+
+The frontend has no `StateView` API. When the server adds an instance to a client's view, that client receives the data as a regular state change. You listen for it with the same [state sync callbacks](/state/callbacks) you use for the rest of the state.
+
+Which callback fires depends on where the `.view()` tag is:
+
+| Tagged on the server | `view.add(instance)` triggers | `view.remove(instance)` triggers |
+|---|---|---|
+| The collection: `t.map(Player).view()` | `onAdd` on the collection | `onRemove` on the collection |
+| A field: `position: t.number().view()` | `listen` on the field, with the value | `listen` on the field, with `undefined` |
+
+### Tagged collections: `onAdd` and `onRemove`
+
+When the collection is tagged, a client only sees the items in its view. Each `view.add()` and `view.remove()` call reaches the frontend as an item being added to or removed from the collection:
+
+```ts filename="client.ts"
+import { Client, Callbacks } from "@colyseus/sdk";
+
+const client = new Client("http://localhost:2567");
+const room = await client.joinOrCreate("my_room");
+const callbacks = Callbacks.get(room);
+
+// server called client.view.add(player)
+callbacks.onAdd("players", (player, sessionId) => {
+    console.log("player is now visible:", sessionId);
+});
+
+// server called client.view.remove(player)
+callbacks.onRemove("players", (player, sessionId) => {
+    console.log("player is no longer visible:", sessionId);
+});
+```
+
+Items added through [`view.subscribe()`](#subscribing-to-a-collection) trigger the same `onAdd` callback.
+
+### Tagged fields: `listen`
+
+When only some fields are tagged, every client receives the instance itself. Its tagged fields stay `undefined` until the server adds the instance to that client's view. Listen to the field to know when it is revealed or hidden:
+
+```ts filename="client.ts"
+callbacks.onAdd("players", (player, sessionId) => {
+    // player.position is undefined until the server calls client.view.add(player)
+    callbacks.listen(player, "position", (value, previousValue) => {
+        if (value === undefined) {
+            // server called client.view.remove(player)
+        } else {
+            // revealed by client.view.add(player), or updated afterwards
+        }
+    });
+});
+```
+
+Fields tagged with a [numeric tag](#specialized-tags-with-viewtag-number) behave the same way. They are revealed by `view.add(instance, tag)` with a matching tag.
+
+<Callout type="info">
+    You can register callbacks before the data arrives. An `onAdd` on a tagged collection that this client cannot see yet fires once the server adds items to its view.
 </Callout>
