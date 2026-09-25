@@ -7,5 +7,6 @@ export default {
     "troubleshooting": "",
     "typescript-compilation-errors": "",
     "pricing-billing": "",
+    "api": "Read API",
 
 }

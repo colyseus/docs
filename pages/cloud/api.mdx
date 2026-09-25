@@ -1,0 +1,191 @@
+---
+title: Read API
+description: "Read your Colyseus Cloud applications' metrics, deploys and logs programmatically, to forward them to your own monitoring."
+---
+import { Callout } from 'nextra/components'
+
+# Read API
+
+The Colyseus Cloud API gives read-only access to what the dashboard shows: CPU, memory, CCU and room count per instance, deploy history and output, and a snapshot of each instance's logs. Use it to feed your own dashboards or monitoring tools.
+
+<Callout type="info">
+    **Beta.** The API is enabled per team on request. Email [support@colyseus.io](mailto:support@colyseus.io) with your team name to get access.
+</Callout>
+
+---
+
+## Authentication
+
+Once the API is enabled for your team, owners and admins can create tokens under **Team Settings → API Tokens**. A token can read every application of the team, and nothing else: it cannot deploy or change settings. Deleting a token revokes it immediately.
+
+Send the token as a bearer token:
+
+```sh filename="Terminal"
+curl https://cloud-prod.colyseus.io/api/v1/applications \
+  -H "Authorization: Bearer $COLYSEUS_CLOUD_TOKEN"
+```
+
+All times are ISO 8601 in UTC. Applications are addressed by their slug, as returned by `/applications`.
+
+---
+
+## Endpoints
+
+### List applications
+
+`GET /api/v1/applications`
+
+Your team's applications, with their locations (region, endpoint, plan) and the instances in each location.
+
+```json
+{
+  "data": [{
+    "id": 1234,
+    "slug": "1234-my-game",
+    "name": "My Game",
+    "locations": [{
+      "id": 567,
+      "region": { "code": "fra", "city": "Frankfurt", "country": "DE" },
+      "status": "ready",
+      "scale_strategy": "vertical",
+      "endpoint": "https://de-fra-1a2b3c4d.colyseus.dev",
+      "plan": { "vcpus": 1, "ram_mb": 1024 },
+      "instances": [{
+        "id": 890,
+        "endpoint": "https://de-fra-1a2b3c4d.colyseus.dev",
+        "status": "ready",
+        "deploy_status": "deployed",
+        "deployed_at": "2026-09-24T14:02:11Z"
+      }]
+    }]
+  }]
+}
+```
+
+### Current metrics
+
+`GET /api/v1/applications/{slug}/metrics/current`
+
+Each instance's latest sample (instances report once a minute), and totals per location: CCU and rooms are summed, CPU and memory are the busiest instance's. An instance that hasn't reported in the last 5 minutes has `null` values and is left out of the totals.
+
+```json
+{
+  "application": "1234-my-game",
+  "window_minutes": 5,
+  "locations": [{
+    "id": 567,
+    "region": "fra",
+    "totals": { "ccu": 18, "rooms": 4, "cpu_percent": 12.5, "memory_percent": 41.2 },
+    "instances": [{
+      "id": 890,
+      "sampled_at": "2026-09-25T10:41:00Z",
+      "ccu": 18,
+      "rooms": 4,
+      "cpu_percent": 12.5,
+      "memory_percent": 41.2
+    }]
+  }]
+}
+```
+
+`memory_percent` is relative to the plan's RAM (`plan.ram_mb` in `/applications`).
+
+### Metrics history
+
+`GET /api/v1/applications/{slug}/metrics`
+
+| Parameter | Description |
+|---|---|
+| `resolution` | `minute` (default) or `day`. Daily points are each instance's peak of the day. |
+| `from`, `to` | Window to return. Defaults to the last 24 hours (`minute`) or the last 30 days (`day`). A `minute` window can span at most 24 hours. |
+| `location_id` | Only this location. |
+
+Metrics are kept for 35 days.
+
+```json
+{
+  "resolution": "minute",
+  "from": "2026-09-24T10:41:00Z",
+  "to": "2026-09-25T10:41:00Z",
+  "locations": [{
+    "id": 567,
+    "region": "fra",
+    "points": [
+      { "time": "2026-09-24T10:41:00Z", "ccu": 20, "rooms": 5, "cpu_percent": 14.1, "memory_percent": 40.8 }
+    ]
+  }]
+}
+```
+
+### Deploys
+
+`GET /api/v1/applications/{slug}/deploys?limit=20` lists the most recent deploys first (`limit` up to 50):
+
+```json
+{
+  "data": [{
+    "id": 4321,
+    "status": "deployed",
+    "branch": "main",
+    "commit": "9fceb02d0ae598e95dc970b74767f19372d61af8",
+    "message": "Fix matchmaking timeout",
+    "started_at": "2026-09-24T14:00:03Z",
+    "finished_at": "2026-09-24T14:02:11Z"
+  }]
+}
+```
+
+`status` is one of `enqueued`, `deploying`, `deployed` or `failed`.
+
+`GET /api/v1/applications/{slug}/deploys/{id}` returns the same fields plus `output`, the deploy's build and deploy output as plain text. It follows a running deploy, and is `null` once the output expires after 30 days.
+
+### Instance logs
+
+`GET /api/v1/applications/{slug}/instances/{id}/logs`
+
+The latest lines of an instance's server logs, as `text/plain`.
+
+| Parameter | Description |
+|---|---|
+| `lines` | Up to `500`. Rounded up to 100 or 500. Default `100`. |
+| `stream` | `all` (default), `out` (stdout only) or `err` (stderr only). |
+
+This reads the logs from the instance itself, so it is limited to 2 requests per minute per team. For continuous log collection, send your logs from your server code to your logging service instead.
+
+---
+
+## Limits and freshness
+
+Responses are cached for as long as the data stays current. Polling faster than this returns the same data. Limits are per team, shared by all of its tokens:
+
+| Endpoint | Refreshes every | Requests per minute |
+|---|---|---|
+| `/applications` | 60 s | 60 |
+| `/metrics/current` | 30 s | 60 |
+| `/metrics` (`minute`) | 60 s | 10 |
+| `/metrics` (`day`) | 10 min | 10 |
+| `/deploys` | 15 s | 60 |
+| `/instances/{id}/logs` | 60 s | 2 |
+
+Each response carries `X-RateLimit-Limit` and `X-RateLimit-Remaining` headers. Past the limit, you get a `429` with a `Retry-After` header in seconds.
+
+---
+
+## Errors
+
+Errors have the same shape and a stable `code`:
+
+```json
+{ "error": { "code": "rate_limited", "message": "Too many requests. Retry after the number of seconds in the Retry-After header." } }
+```
+
+| Status | `code` | Meaning |
+|---|---|---|
+| 401 | `unauthenticated` | Missing, invalid or revoked token. |
+| 403 | `api_not_enabled` | The API is not enabled for your team yet. |
+| 404 | `not_found` | No such application, deploy or instance in your team. |
+| 409 | `instance_not_ready` | The instance isn't running, so its logs can't be read. |
+| 422 | `invalid_request` | A parameter is invalid; `error.fields` lists which. |
+| 429 | `rate_limited`, `busy` | Retry after `Retry-After` seconds. |
+| 502 | `instance_unreachable` | The instance didn't answer the log request. |
+| 503 | `timeout`, `busy`, `unavailable` | Temporary; retry after `Retry-After` seconds. |
