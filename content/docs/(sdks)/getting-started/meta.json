@@ -1,6 +1,4 @@
 {
-  "title": "Getting Started",
-  "icon": "NorthStarIcon",
   "pages": [
     "typescript",
     "react",
@@ -15,6 +13,7 @@
     "flutter",
     "swift",
     "native-sdk",
+    "---Platforms---",
     "discord-activity",
     "wechat"
   ]

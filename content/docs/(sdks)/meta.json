@@ -1,0 +1,10 @@
+{
+  "title": "Client SDKs",
+  "description": "Install and use the SDK for your engine",
+  "root": true,
+  "icon": "DevicesIcon",
+  "pages": [
+    "[CodeIcon][Client SDK API](/sdk)",
+    "...getting-started"
+  ]
+}

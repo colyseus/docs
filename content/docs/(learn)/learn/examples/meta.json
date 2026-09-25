@@ -1,6 +1,7 @@
 {
   "title": "Examples",
   "icon": "RepoIcon",
+  "defaultOpen": true,
   "pages": [
     "---JavaScript---",
     "phaser",

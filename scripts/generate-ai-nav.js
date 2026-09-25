@@ -29,21 +29,29 @@ const run = promisify(execFile)
 /**
  * Flattens the page tree into `{ route, title, section }`, depth-first.
  * `title` is the sidebar label (`sidebarTitle`, or a folder's meta.json title).
+ *
+ * Each sidebar tab (root folder) is walked as its own top level. The tab that
+ * holds the home page keeps its separator names as sections; the others are
+ * prefixed with the tab name ("Client SDKs: Platforms").
  */
-function walkNav(nodes, section, out = [], depth = 0) {
+function walkNav(nodes, section, out = [], depth = 0, tab = null) {
     for (const node of nodes) {
         if (node.type === 'separator') {
-            if (depth === 0 && node.name) section = node.name
+            if (depth === 0 && node.name) section = tab ? `${tab}: ${node.name}` : node.name
             continue
         }
         if (node.type === 'page') {
             if (!node.external && node.$ref) out.push({ route: node.url, title: node.name, section })
             continue
         }
+        if (node.root) {
+            const home = node.children.some((c) => c.type === 'page' && c.url === '/')
+            walkNav(node.children, home ? section : node.name, out, 0, home ? null : node.name)
+            continue
+        }
         // folder: its index page carries the folder's label
         if (node.index) out.push({ route: node.index.url, title: node.name, section })
-        // a root folder (sidebar tab) starts its own set of sections
-        walkNav(node.children, section, out, node.root ? 0 : depth + 1)
+        walkNav(node.children, section, out, depth + 1, tab)
     }
     return out
 }

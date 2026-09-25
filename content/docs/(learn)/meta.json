@@ -1,0 +1,9 @@
+{
+  "title": "Learn",
+  "description": "Tutorials, examples and demo projects",
+  "root": true,
+  "icon": "FileCodeIcon",
+  "pages": [
+    "...learn"
+  ]
+}

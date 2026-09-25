@@ -19,7 +19,11 @@ export default function Layout({ children }: { children: ReactNode }) {
         {...base}
         nav={{ ...nav, mode: 'top' }}
         tabMode="navbar"
-        tabs={false}
+        tabs={{
+          // Client SDKs opens with a link into Docs (/sdk); land on its first own page instead.
+          transform: (tab, node) =>
+            node.$ref?.folder === '(sdks)' ? { ...tab, url: '/getting-started/typescript' } : tab,
+        }}
         sidebar={{
           defaultOpenLevel: 0,
           footer: <p className="px-2 text-xs text-fd-muted-foreground">© {new Date().getFullYear()} Endel Dreyer</p>,

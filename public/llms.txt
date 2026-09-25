@@ -11,45 +11,6 @@ The full corpus is at https://docs.colyseus.io/llms-full.txt.
 
 - [Introduction](https://docs.colyseus.io/)
 - [Getting Started](https://docs.colyseus.io/getting-started): Get started with Colyseus multiplayer framework. Scaffold a server with npm create colyseus-app, then choose your client SDK for TypeScript, JavaScript, React, Unity, Defold, Construct 3, Cocos Creator, Haxe, Flutter, Swift, and more.
-- [TypeScript](https://docs.colyseus.io/getting-started/typescript): Install and set up the Colyseus JavaScript/TypeScript SDK for building real-time multiplayer games. Includes room connections, state synchronization, and full type safety.
-- [React](https://docs.colyseus.io/getting-started/react): Use Colyseus with React using the @colyseus/react hooks package. Manage room connections and real-time state synchronization with idiomatic React patterns.
-- [Unity](https://docs.colyseus.io/getting-started/unity): Install the Colyseus Unity SDK via Unity Package Manager. Build real-time multiplayer games in Unity with room management and state synchronization.
-- [MonoGame](https://docs.colyseus.io/getting-started/monogame): Install the Colyseus MonoGame SDK via NuGet. Build real-time multiplayer games in MonoGame with room management and state synchronization.
-- [Godot](https://docs.colyseus.io/getting-started/godot): Get started with Colyseus multiplayer in Godot Engine. Install the SDK, connect to a server, and sync real-time game state.
-- [Defold](https://docs.colyseus.io/getting-started/defold): Integrate Colyseus with Defold Engine for cross-platform multiplayer games. Supports HTML5, iOS, Android, Mac, and Windows.
-- [Construct 3](https://docs.colyseus.io/getting-started/construct3): Add real-time multiplayer to Construct 3 games with the Colyseus SDK plugin. Install, configure, and connect to Colyseus rooms from Construct 3.
-- [GameMaker](https://docs.colyseus.io/getting-started/gamemaker): Get started with Colyseus multiplayer in GameMaker. Install the SDK, connect to a server, and sync real-time game state.
-- [Cocos Creator](https://docs.colyseus.io/getting-started/cocos): Set up Colyseus multiplayer in Cocos Creator 3. Install the SDK extension, import it in TypeScript components, and connect to Colyseus rooms.
-- [Haxe](https://docs.colyseus.io/getting-started/haxe): Use Colyseus with Haxe game engines like OpenFL, HaxeFlixel, Heaps, and more. Install the SDK, connect to rooms, and synchronize state across platforms.
-- [Flutter](https://docs.colyseus.io/getting-started/flutter): Get started with Colyseus multiplayer in Flutter. Install the Dart SDK, connect to a room, sync real-time game state, and predict player movement.
-- [Swift](https://docs.colyseus.io/getting-started/swift): Get started with Colyseus multiplayer in Swift. Add the Swift package for iOS, macOS and tvOS, join a room, sync real-time game state, and predict player movement.
-- [Native SDK (C)](https://docs.colyseus.io/getting-started/native-sdk): Get started with the Colyseus Native SDK for C. Build multiplayer games with raw C integration, supporting desktop, mobile, and web platforms.
-- [Discord Activity](https://docs.colyseus.io/getting-started/discord-activity): Build multiplayer Discord Activities with Colyseus. Use the project template to create real-time HTML5 multiplayer experiences embedded in Discord.
-- [WeChat](https://docs.colyseus.io/getting-started/wechat): Integrate Colyseus with WeChat mini-games for real-time multiplayer. Set up the JavaScript SDK in the WeChat development environment.
-- [Learn](https://docs.colyseus.io/learn): Learn multiplayer game development with Colyseus: step-by-step tutorials, ready-to-run examples, and demo projects across Unity, Godot, Defold, GameMaker, Phaser, Haxe, and the Web.
-- [Tutorials](https://docs.colyseus.io/learn/tutorial): Step-by-step Colyseus tutorials for building real-time multiplayer games with Phaser, Unity, PlayCanvas, Babylon.js, and Cocos Creator.
-- [Phaser Tutorial](https://docs.colyseus.io/learn/tutorial/phaser): Build a real-time multiplayer game with Phaser and Colyseus: basic player movement, linear interpolation, client-predicted input, and a fixed tickrate.
-- [Part 1: Basic Player Movement](https://docs.colyseus.io/learn/tutorial/phaser/basic-player-movement): Part 1 of the Phaser + Colyseus tutorial: set up the server and synchronize basic player movement.
-- [Part 2: Linear Interpolation](https://docs.colyseus.io/learn/tutorial/phaser/linear-interpolation): Part 2 of the Phaser + Colyseus tutorial: smooth remote player movement with linear interpolation.
-- [Part 3: Client Predicted Input](https://docs.colyseus.io/learn/tutorial/phaser/client-predicted-input): Part 3 of the Phaser + Colyseus tutorial: apply input locally before the server confirms it (client prediction).
-- [Part 4: Fixed Tickrate](https://docs.colyseus.io/learn/tutorial/phaser/fixed-tickrate): Part 4 of the Phaser + Colyseus tutorial: run the simulation at a fixed tickrate on both client and server.
-- [MMO Demo](https://docs.colyseus.io/learn/tutorial/unity/mmo): Build a multiplayer MMO demo with Unity and Colyseus: rooms, chat, and persistent player state.
-- [Shooting Gallery Demo](https://docs.colyseus.io/learn/tutorial/unity/shooting-gallery): Build a turn-based multiplayer shooting gallery with Unity and Colyseus.
-- [Starboss Demo](https://docs.colyseus.io/learn/tutorial/unity/starboss): Build a co-op boss battle with Unity and Colyseus in the Starboss tutorial.
-- [Turn Based Tanks Demo](https://docs.colyseus.io/learn/tutorial/unity/turn-based-tanks): Build a turn-based multiplayer tanks game with Unity and Colyseus.
-- [PlayCanvas](https://docs.colyseus.io/learn/tutorial/playcanvas): Build a real-time multiplayer game with PlayCanvas and Colyseus.
-- [Basics](https://docs.colyseus.io/learn/tutorial/babylonjs/intro): Introduction to building multiplayer games with Babylon.js and Colyseus: server setup, room connection, and state synchronization.
-- [Hide and Seek Tech Demo](https://docs.colyseus.io/learn/tutorial/babylonjs/hide-and-seek): Build a multiplayer hide-and-seek game with the Babylon.js Editor and Colyseus.
-- [MMO Demo](https://docs.colyseus.io/learn/tutorial/cocos/mmo): Build a multiplayer MMO demo with Cocos Creator and Colyseus.
-- [Examples](https://docs.colyseus.io/learn/examples): Ready-to-use Colyseus example projects organized by game engine: Phaser, PixiJS, Babylon.js, Three.js, Defold, Discord Activities, and more. Most are MIT licensed.
-- [Phaser Examples](https://docs.colyseus.io/learn/examples/phaser): Open-source Phaser + Colyseus example games to use as starting points for your own multiplayer project.
-- [PixiJS](https://docs.colyseus.io/learn/examples/pixijs): Open-source PixiJS + Colyseus example games to use as starting points for your own multiplayer project.
-- [Babylon.js](https://docs.colyseus.io/learn/examples/babylonjs): Open-source Babylon.js + Colyseus example games to use as starting points for your own multiplayer project.
-- [KAPLAY](https://docs.colyseus.io/learn/examples/kaplay): Open-source KAPLAY + Colyseus example games to use as starting points for your own multiplayer project.
-- [Three.js](https://docs.colyseus.io/learn/examples/threejs): Open-source Three.js + Colyseus example games to use as starting points for your own multiplayer project.
-- [Defold Engine](https://docs.colyseus.io/learn/examples/defold): Open-source Defold Engine + Colyseus example games to use as starting points for your own multiplayer project.
-- [Discord Activity](https://docs.colyseus.io/learn/examples/discord): Example Discord Activities built with Colyseus: embedded multiplayer games running inside Discord.
-- [Decentraland](https://docs.colyseus.io/learn/examples/decentraland): Examples of using Colyseus to power multiplayer experiences in Decentraland scenes.
 
 ## Building Your Game
 
@@ -132,22 +93,6 @@ The full corpus is at https://docs.colyseus.io/llms-full.txt.
 - [Xsolla](https://docs.colyseus.io/payments/xsolla): Integrate Xsolla payments with Colyseus. Handle in-game purchases, subscriptions, and virtual currency with webhook support.
 - [3rd Party Packages](https://docs.colyseus.io/3rd-party-packages): Community packages that pair well with Colyseus: ECS libraries, physics, tooling, and integrations contributed by the community.
 
-## Deploy & Scale
-
-- [Deployment](https://docs.colyseus.io/deployment): Deploy your Colyseus server to production. Production checklist, PM2, Nginx, Apache, Docker, and self-hosting on Vultr, or managed hosting on Colyseus Cloud.
-- [Scalability](https://docs.colyseus.io/scalability): Scale Colyseus across multiple processes and machines with Redis presence, a shared matchmaking driver, and a load balancer, or let Colyseus Cloud handle it.
-- [Traefik Load Balancer](https://docs.colyseus.io/scalability/traefik): Scale Colyseus across multiple processes using Traefik as a reverse proxy and load balancer.
-- [Colyseus Cloud](https://docs.colyseus.io/cloud): Colyseus Cloud is managed infrastructure for Colyseus applications by the framework's own team. Deploy, scale, and monitor without managing servers.
-- [Compute Plans](https://docs.colyseus.io/cloud/compute-plans): Compute plans available on Colyseus Cloud and how to pick the right performance tier for your game.
-- [Private NPM Registry](https://docs.colyseus.io/cloud/private-npm-registry): Configure authentication for private NPM packages so Colyseus Cloud can install them during deployment.
-- [Continuous Deployment](https://docs.colyseus.io/cloud/continuous-deployment): Set up continuous deployment to Colyseus Cloud with GitHub Actions or the CLI.
-- [DDoS Protection](https://docs.colyseus.io/cloud/ddos-protection): DDoS protection on Colyseus Cloud: an extra layer that keeps your game servers online during attacks.
-- [Environment Variables and Secrets](https://docs.colyseus.io/cloud/environment-variables): Store secrets and environment variables for your Colyseus Cloud deployment via the Application Settings page.
-- ["Deploy failed" errors](https://docs.colyseus.io/cloud/troubleshooting): Common Colyseus Cloud deployment failures and how to fix them.
-- [TypeScript/Compilation errors](https://docs.colyseus.io/cloud/typescript-compilation-errors): Fix TypeScript compilation errors when deploying to Colyseus Cloud with the recommended tsconfig.json settings.
-- [Pricing & Billing](https://docs.colyseus.io/cloud/pricing-billing): How Colyseus Cloud pricing and billing work, with a pricing simulator for estimating costs.
-- [Read API](https://docs.colyseus.io/cloud/api): Read your Colyseus Cloud applications' metrics, deploys and logs programmatically, to forward them to your own monitoring.
-
 ## Resources
 
 - [Recipes & Guides](https://docs.colyseus.io/recipes): Practical recipes, guides, and best practices for Colyseus: command pattern, custom room IDs, password-protected rooms, denying joins, and keeping your room code healthy.
@@ -168,3 +113,67 @@ The full corpus is at https://docs.colyseus.io/llms-full.txt.
 
 - [Roadmap](https://docs.colyseus.io/roadmap): Colyseus v1.0 roadmap. Upcoming features, planned improvements, and the path to a stable release.
 - [Sponsors](https://docs.colyseus.io/sponsors): Sponsor Colyseus on GitHub or buy from the Colyseus Shop. Both fund the open-source multiplayer game server framework.
+
+## Client SDKs
+
+- [TypeScript](https://docs.colyseus.io/getting-started/typescript): Install and set up the Colyseus JavaScript/TypeScript SDK for building real-time multiplayer games. Includes room connections, state synchronization, and full type safety.
+- [React](https://docs.colyseus.io/getting-started/react): Use Colyseus with React using the @colyseus/react hooks package. Manage room connections and real-time state synchronization with idiomatic React patterns.
+- [Unity](https://docs.colyseus.io/getting-started/unity): Install the Colyseus Unity SDK via Unity Package Manager. Build real-time multiplayer games in Unity with room management and state synchronization.
+- [MonoGame](https://docs.colyseus.io/getting-started/monogame): Install the Colyseus MonoGame SDK via NuGet. Build real-time multiplayer games in MonoGame with room management and state synchronization.
+- [Godot](https://docs.colyseus.io/getting-started/godot): Get started with Colyseus multiplayer in Godot Engine. Install the SDK, connect to a server, and sync real-time game state.
+- [Defold](https://docs.colyseus.io/getting-started/defold): Integrate Colyseus with Defold Engine for cross-platform multiplayer games. Supports HTML5, iOS, Android, Mac, and Windows.
+- [Construct 3](https://docs.colyseus.io/getting-started/construct3): Add real-time multiplayer to Construct 3 games with the Colyseus SDK plugin. Install, configure, and connect to Colyseus rooms from Construct 3.
+- [GameMaker](https://docs.colyseus.io/getting-started/gamemaker): Get started with Colyseus multiplayer in GameMaker. Install the SDK, connect to a server, and sync real-time game state.
+- [Cocos Creator](https://docs.colyseus.io/getting-started/cocos): Set up Colyseus multiplayer in Cocos Creator 3. Install the SDK extension, import it in TypeScript components, and connect to Colyseus rooms.
+- [Haxe](https://docs.colyseus.io/getting-started/haxe): Use Colyseus with Haxe game engines like OpenFL, HaxeFlixel, Heaps, and more. Install the SDK, connect to rooms, and synchronize state across platforms.
+- [Flutter](https://docs.colyseus.io/getting-started/flutter): Get started with Colyseus multiplayer in Flutter. Install the Dart SDK, connect to a room, sync real-time game state, and predict player movement.
+- [Swift](https://docs.colyseus.io/getting-started/swift): Get started with Colyseus multiplayer in Swift. Add the Swift package for iOS, macOS and tvOS, join a room, sync real-time game state, and predict player movement.
+- [Native SDK (C)](https://docs.colyseus.io/getting-started/native-sdk): Get started with the Colyseus Native SDK for C. Build multiplayer games with raw C integration, supporting desktop, mobile, and web platforms.
+
+## Client SDKs: Platforms
+
+- [Discord Activity](https://docs.colyseus.io/getting-started/discord-activity): Build multiplayer Discord Activities with Colyseus. Use the project template to create real-time HTML5 multiplayer experiences embedded in Discord.
+- [WeChat](https://docs.colyseus.io/getting-started/wechat): Integrate Colyseus with WeChat mini-games for real-time multiplayer. Set up the JavaScript SDK in the WeChat development environment.
+
+## Learn
+
+- [Overview](https://docs.colyseus.io/learn): Learn multiplayer game development with Colyseus: step-by-step tutorials, ready-to-run examples, and demo projects across Unity, Godot, Defold, GameMaker, Phaser, Haxe, and the Web.
+- [Tutorials](https://docs.colyseus.io/learn/tutorial): Step-by-step Colyseus tutorials for building real-time multiplayer games with Phaser, Unity, PlayCanvas, Babylon.js, and Cocos Creator.
+- [Phaser Tutorial](https://docs.colyseus.io/learn/tutorial/phaser): Build a real-time multiplayer game with Phaser and Colyseus: basic player movement, linear interpolation, client-predicted input, and a fixed tickrate.
+- [Part 1: Basic Player Movement](https://docs.colyseus.io/learn/tutorial/phaser/basic-player-movement): Part 1 of the Phaser + Colyseus tutorial: set up the server and synchronize basic player movement.
+- [Part 2: Linear Interpolation](https://docs.colyseus.io/learn/tutorial/phaser/linear-interpolation): Part 2 of the Phaser + Colyseus tutorial: smooth remote player movement with linear interpolation.
+- [Part 3: Client Predicted Input](https://docs.colyseus.io/learn/tutorial/phaser/client-predicted-input): Part 3 of the Phaser + Colyseus tutorial: apply input locally before the server confirms it (client prediction).
+- [Part 4: Fixed Tickrate](https://docs.colyseus.io/learn/tutorial/phaser/fixed-tickrate): Part 4 of the Phaser + Colyseus tutorial: run the simulation at a fixed tickrate on both client and server.
+- [MMO Demo](https://docs.colyseus.io/learn/tutorial/unity/mmo): Build a multiplayer MMO demo with Unity and Colyseus: rooms, chat, and persistent player state.
+- [Shooting Gallery Demo](https://docs.colyseus.io/learn/tutorial/unity/shooting-gallery): Build a turn-based multiplayer shooting gallery with Unity and Colyseus.
+- [Starboss Demo](https://docs.colyseus.io/learn/tutorial/unity/starboss): Build a co-op boss battle with Unity and Colyseus in the Starboss tutorial.
+- [Turn Based Tanks Demo](https://docs.colyseus.io/learn/tutorial/unity/turn-based-tanks): Build a turn-based multiplayer tanks game with Unity and Colyseus.
+- [PlayCanvas](https://docs.colyseus.io/learn/tutorial/playcanvas): Build a real-time multiplayer game with PlayCanvas and Colyseus.
+- [Basics](https://docs.colyseus.io/learn/tutorial/babylonjs/intro): Introduction to building multiplayer games with Babylon.js and Colyseus: server setup, room connection, and state synchronization.
+- [Hide and Seek Tech Demo](https://docs.colyseus.io/learn/tutorial/babylonjs/hide-and-seek): Build a multiplayer hide-and-seek game with the Babylon.js Editor and Colyseus.
+- [MMO Demo](https://docs.colyseus.io/learn/tutorial/cocos/mmo): Build a multiplayer MMO demo with Cocos Creator and Colyseus.
+- [Examples](https://docs.colyseus.io/learn/examples): Ready-to-use Colyseus example projects organized by game engine: Phaser, PixiJS, Babylon.js, Three.js, Defold, Discord Activities, and more. Most are MIT licensed.
+- [Phaser Examples](https://docs.colyseus.io/learn/examples/phaser): Open-source Phaser + Colyseus example games to use as starting points for your own multiplayer project.
+- [PixiJS](https://docs.colyseus.io/learn/examples/pixijs): Open-source PixiJS + Colyseus example games to use as starting points for your own multiplayer project.
+- [Babylon.js](https://docs.colyseus.io/learn/examples/babylonjs): Open-source Babylon.js + Colyseus example games to use as starting points for your own multiplayer project.
+- [KAPLAY](https://docs.colyseus.io/learn/examples/kaplay): Open-source KAPLAY + Colyseus example games to use as starting points for your own multiplayer project.
+- [Three.js](https://docs.colyseus.io/learn/examples/threejs): Open-source Three.js + Colyseus example games to use as starting points for your own multiplayer project.
+- [Defold Engine](https://docs.colyseus.io/learn/examples/defold): Open-source Defold Engine + Colyseus example games to use as starting points for your own multiplayer project.
+- [Discord Activity](https://docs.colyseus.io/learn/examples/discord): Example Discord Activities built with Colyseus: embedded multiplayer games running inside Discord.
+- [Decentraland](https://docs.colyseus.io/learn/examples/decentraland): Examples of using Colyseus to power multiplayer experiences in Decentraland scenes.
+
+## Deploy & Cloud
+
+- [Deployment](https://docs.colyseus.io/deployment): Deploy your Colyseus server to production. Production checklist, PM2, Nginx, Apache, Docker, and self-hosting on Vultr, or managed hosting on Colyseus Cloud.
+- [Scalability](https://docs.colyseus.io/scalability): Scale Colyseus across multiple processes and machines with Redis presence, a shared matchmaking driver, and a load balancer, or let Colyseus Cloud handle it.
+- [Traefik Load Balancer](https://docs.colyseus.io/scalability/traefik): Scale Colyseus across multiple processes using Traefik as a reverse proxy and load balancer.
+- [Colyseus Cloud](https://docs.colyseus.io/cloud): Colyseus Cloud is managed infrastructure for Colyseus applications by the framework's own team. Deploy, scale, and monitor without managing servers.
+- [Compute Plans](https://docs.colyseus.io/cloud/compute-plans): Compute plans available on Colyseus Cloud and how to pick the right performance tier for your game.
+- [Private NPM Registry](https://docs.colyseus.io/cloud/private-npm-registry): Configure authentication for private NPM packages so Colyseus Cloud can install them during deployment.
+- [Continuous Deployment](https://docs.colyseus.io/cloud/continuous-deployment): Set up continuous deployment to Colyseus Cloud with GitHub Actions or the CLI.
+- [DDoS Protection](https://docs.colyseus.io/cloud/ddos-protection): DDoS protection on Colyseus Cloud: an extra layer that keeps your game servers online during attacks.
+- [Environment Variables and Secrets](https://docs.colyseus.io/cloud/environment-variables): Store secrets and environment variables for your Colyseus Cloud deployment via the Application Settings page.
+- ["Deploy failed" errors](https://docs.colyseus.io/cloud/troubleshooting): Common Colyseus Cloud deployment failures and how to fix them.
+- [TypeScript/Compilation errors](https://docs.colyseus.io/cloud/typescript-compilation-errors): Fix TypeScript compilation errors when deploying to Colyseus Cloud with the recommended tsconfig.json settings.
+- [Pricing & Billing](https://docs.colyseus.io/cloud/pricing-billing): How Colyseus Cloud pricing and billing work, with a pricing simulator for estimating costs.
+- [Read API](https://docs.colyseus.io/cloud/api): Read your Colyseus Cloud applications' metrics, deploys and logs programmatically, to forward them to your own monitoring.

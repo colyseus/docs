@@ -1,0 +1,11 @@
+{
+  "title": "Deploy & Cloud",
+  "description": "Ship, scale and host your server",
+  "root": true,
+  "icon": "RocketIcon",
+  "pages": [
+    "deployment",
+    "scalability",
+    "cloud"
+  ]
+}
