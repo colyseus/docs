@@ -18,3 +18,11 @@
 - Plain, technical prose. Skip marketing copy and hedging adverbs; keep the why
   alongside the what.
 - Keep content organized and self-contained within its category.
+
+## Structure
+
+- Pages live in `content/docs/`; each folder's `meta.json` sets sidebar order.
+  See README "Writing a page" for frontmatter and components.
+- Components are global (`components/mdx.tsx`): never add imports to a page,
+  and never repeat the frontmatter `title` as a body `# H1`.
+- Moving or renaming a page or heading: follow the `move-page` skill.

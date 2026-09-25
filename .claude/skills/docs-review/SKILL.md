@@ -24,8 +24,8 @@ Confirm it resolves and the diff is non-empty before spawning anything:
 
 ```
 git rev-parse <fixed-point>
-git diff --stat <fixed-point>...HEAD -- pages/
-git diff <fixed-point>...HEAD -- pages/
+git diff --stat <fixed-point>...HEAD -- content/docs/
+git diff <fixed-point>...HEAD -- content/docs/
 ```
 
 Three dots, so the comparison runs against the merge-base.

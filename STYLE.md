@@ -117,7 +117,7 @@ Recorded so they aren't reintroduced as "improvements".
 - **Gerund headings stay.** `## Defining a Room`, `## Joining Rooms`. STE bans
   `-ing` outside technical names. We keep them because they match how people
   search, and because 214 of them are heading slugs with inbound links:
-  renaming cascades into `check-links`, the `<MovedAnchors>` maps, and external inbound
+  renaming cascades into `check-links`, the `movedAnchors` maps, and external inbound
   links. Two page routes (`/getting-started`, `/migrating`) are gerunds too.
 - **Contractions stay.** `don't`, `it's`, `you'll`. They read as normal
   developer prose and cost nothing in comprehension.
@@ -138,7 +138,7 @@ Recorded so they aren't reintroduced as "improvements".
 
 ## Enforcement
 
-`npm run lint:prose` runs Vale over `pages/`. CI runs it alongside
+`pnpm lint:prose` runs Vale over `content/docs/`. CI runs it alongside
 `check-links`. Vale is a single Go binary and deliberately not an npm
 dependency: `brew install vale`, or see <https://vale.sh/docs/install>.
 
