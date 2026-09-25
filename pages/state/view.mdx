@@ -291,9 +291,10 @@ When the collection is tagged, a client only sees the items in its view. Each `v
 
 ```ts filename="client.ts"
 import { Client, Callbacks } from "@colyseus/sdk";
+import type { MyRoom } from "../server/rooms/MyRoom";
 
 const client = new Client("http://localhost:2567");
-const room = await client.joinOrCreate("my_room");
+const room = await client.joinOrCreate<MyRoom>("my_room");
 const callbacks = Callbacks.get(room);
 
 // server called client.view.add(player)
