@@ -1,0 +1,14 @@
+# Plain static deploy of `out/`. Old-URL redirects live in public/_redirects.
+[build]
+  command = "pnpm build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # Static export: Netlify's Next.js runtime has nothing to do.
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

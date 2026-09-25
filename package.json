@@ -7,10 +7,10 @@
   "scripts": {
     "prepare": "git config core.hooksPath .githooks || true",
     "dev": "next dev",
-    "build": "node scripts/generate-ai-nav.js && next build && node scripts/emit-markdown.js",
-    "start": "next start",
+    "build": "node scripts/generate-ai-nav.js && next build && node scripts/place-markdown.js",
+    "start": "serve out",
+    "types:check": "next typegen && tsc --noEmit",
     "generate:ai-nav": "node scripts/generate-ai-nav.js",
-    "emit-markdown": "node scripts/emit-markdown.js",
     "check:ai-nav": "node scripts/generate-ai-nav.js --check",
     "check-links": "node scripts/check-links.js",
     "lint:prose": "node scripts/lint-prose.js"
@@ -26,20 +26,39 @@
   },
   "homepage": "https://github.com/colyseus/docs#readme",
   "dependencies": {
-    "@primer/octicons-react": "19.13.0",
-    "next": "^13.0.6",
-    "nextjs-google-analytics": "^2.3.7",
-    "nextra": "^3.3.1",
-    "nextra-theme-docs": "^3.3.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "supports-color": "^9.4.0"
+    "@next/third-parties": "^16.3.6",
+    "@primer/octicons-react": "19.38.0",
+    "@shikijs/transformers": "^4.4.3",
+    "fumadocs-core": "16.15.14",
+    "fumadocs-mdx": "15.4.5",
+    "fumadocs-ui": "npm:@fumadocs/base-ui@16.15.14",
+    "mermaid": "^12.0.0",
+    "next": "16.3.6",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/mdast": "^4.0.4",
+    "@types/mdx": "^2.0.14",
     "@types/node": "^22.10.0",
-    "@types/react": "19.0.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "github-slugger": "^2.0.0",
-    "typescript": "^5.7.2"
+    "js-yaml": "^5.4.2",
+    "mdast-util-mdx": "^3.0.0",
+    "mdast-util-to-string": "^4.0.0",
+    "postcss": "^8.5.28",
+    "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-mdx": "^3.1.1",
+    "remark-parse": "^11.0.0",
+    "serve": "^14.2.6",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.0.0"
   },
   "packageManager": "pnpm@10.10.0"
 }

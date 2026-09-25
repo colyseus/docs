@@ -1,6 +1,6 @@
 import React from "react";
 import { LinkExternalIcon, MarkGithubIcon } from "@primer/octicons-react";
-import * as engineIcons from "./icons/platforms";
+import { Logo, type LogoName } from "@/lib/icons";
 
 /**
  * The engine line-up for a demo project — one compact row per client
@@ -18,7 +18,7 @@ import * as engineIcons from "./icons/platforms";
  *         play="https://…" source="https://…" />
  *   </ClientList>
  *
- * `engine` keys into `icons/platforms.tsx`; omit it for clients with no logo
+ * `engine` keys into the logo registry in `lib/icons.tsx`; omit it for clients with no logo
  * on hand and the row falls back to its name alone. `platforms` is the short
  * scannable label, `platformsFull` the exact list, surfaced on hover.
  *
@@ -60,18 +60,17 @@ export function Client({
     play,
     source,
 }: {
-    engine?: keyof typeof engineIcons;
+    engine?: LogoName;
     name: string;
     platforms: string;
     platformsFull?: string;
     play?: string;
     source?: string;
 }) {
-    const icon = engine && (engineIcons[engine] as (p: { width?: string }) => React.ReactElement);
     return (
         <div className="client-row">
             <div className="client-row__name">
-                <span className="client-row__icon">{icon ? icon({ width: "22px" }) : null}</span>
+                <span className="client-row__icon">{engine && <Logo name={engine} className="w-[22px] h-auto" />}</span>
                 {name}
             </div>
             <div className="client-row__platforms" title={platformsFull || platforms}>
