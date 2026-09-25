@@ -1,18 +1,12 @@
 ---
 title: "Client Prediction & Reconciliation"
 description: "Predict your local entity immediately, reconcile to the authoritative server state via rollback and replay, and smooth remote entities: the client half of Colyseus 0.18 netcode using room.input() and Predict."
+sidebarTitle: "Client Prediction"
+# Two heading slugs changed when their em-dashes were removed; keep old deep links working.
+movedAnchors:
+  reconciler--your-own-entity-flat-fields: "/netcode/client-prediction#reconciler-your-own-entity-flat-fields"
+  ctxmemo--freeze-a-value-replay-cant-re-derive: "/netcode/client-prediction#ctxmemo-freeze-a-value-replay-cant-re-derive"
 ---
-import { Callout, Tabs } from 'nextra/components'
-import { SDKTabs } from "../../components/SDKTabs"
-import { MovedAnchors } from "../../components/moved-anchors"
-
-# Client Prediction & Reconciliation
-
-{/* Two heading slugs changed when their em-dashes were removed; keep old deep links working. */}
-<MovedAnchors map={{
-    "reconciler--your-own-entity-flat-fields": "/netcode/client-prediction#reconciler-your-own-entity-flat-fields",
-    "ctxmemo--freeze-a-value-replay-cant-re-derive": "/netcode/client-prediction#ctxmemo-freeze-a-value-replay-cant-re-derive",
-}} />
 
 This page is the **client half** of the netcode stack. Send input, predict your own entity, reconcile to the server's authoritative state, and smooth the entities you don't control. The matching server half lives in [Server Input & Timestep](/netcode/server-input).
 
@@ -22,9 +16,9 @@ This page is the **client half** of the netcode stack. Send input, predict your 
 
 ## At a glance
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     import { Predict } from "@colyseus/sdk";
     import { applyInput } from "./shared/applyInput";   // SAME function the server runs
@@ -55,9 +49,9 @@ This page is the **client half** of the netcode stack. Send input, predict your 
       requestAnimationFrame(frame);
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     using Colyseus.Predict;
 
@@ -86,9 +80,9 @@ This page is the **client half** of the netcode stack. Send input, predict your 
         // remotes: predict.Value(p, "x"), the smoothed read
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     local Predict = require 'colyseus.predict.predict'
 
@@ -118,9 +112,9 @@ This page is the **client half** of the netcode stack. Send input, predict your 
       -- remotes: predict:value(p, "x"), the smoothed read
     end
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     import io.colyseus.predict.Predict;
 
@@ -151,9 +145,9 @@ This page is the **client half** of the netcode stack. Send input, predict your 
         // remotes: predict.value(p, "x"), the smoothed read
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     var predict = Colyseus.Predict.of(room)
 
@@ -181,9 +175,9 @@ This page is the **client half** of the netcode stack. Send input, predict your 
         draw(me.value("x"), me.value("y"))  # your entity: the reconciled read
         # remotes: predict.value(p, "x"), the smoothed read
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     final predict = Predict.get(room);
 
@@ -213,9 +207,9 @@ This page is the **client half** of the netcode stack. Send input, predict your 
       // remotes: predict.value(p, 'x'), the smoothed read
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 The reconciler is a pure **observer**: it watches the handle's sends and predicts each one. You never feed input to the reconciler directly. The frame driver runs `predict.tick()`, sends that many inputs through the handle, and everything downstream reacts. For taps and edges that must land on exactly one step, see [buffer, then consume](/netcode/recipes#taps-between-steps-buffer-then-consume).
 
@@ -227,51 +221,51 @@ The reconciler is a pure **observer**: it watches the handle's sends and predict
 
 Returns the per-room [`InputHandle`](#inputhandle-reference): the single surface that stages and sends input. Created once: later calls return the same handle.
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     const input = room.input({
       type: MoveInput,          // input schema constructor (matches the server's defineInput)
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     var cmd = new MoveInput();      // the instance you stage fields on
     var input = room.Input(cmd);
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     -- the input schema arrives via the join handshake (the server's defineInput)
     local input = room:input()
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     var input = room.input({ type: MoveInput });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     # takes no options: the schema arrives via the join handshake
     var input = room.input()
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     // null when the server room declares no defineInput()
     final input = room.input();
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 - **`type`**: the input schema constructor. Optional when the server called `defineInput()`: the schema then arrives via the join handshake and is used automatically. An explicit constructor always wins.
 - **`mode`**: `"reliable"` (default) or `"unreliable"`. Over plain WebSocket, stay reliable. On a datagram-capable transport, `{ mode: "unreliable", historySize: 4 }` is the recommended rollback setup. Each packet carries the last N inputs as redundancy, so a drop costs nothing and nothing head-of-line blocks. That transport is [WebTransport](/server/transport/webtransport) alone: experimental, and supported by the JavaScript/TypeScript SDK only. Other SDKs reject `"unreliable"` at construction for now.
@@ -283,57 +277,57 @@ The GDScript handle accepts no options object: `render_delay` is a property, and
 
 Stage fields on `input.data`, then `input.send()`, one call per fixed step:
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     input.data.moveX = 1;
     input.data.jump = true;
     input.send();
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     cmd.moveX = 1;        // the instance passed to Room.Input()
     cmd.jump = true;
     input.Send();
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     input.data.moveX = 1
     input.data.jump = true
     input:send()
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     input.data.moveX = 1;
     input.data.jump = true;
     input.send();
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     input.data.moveX = 1
     input.data.jump = true
     input.send()
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     input.data['moveX'] = 1;
     input.data['jump'] = true;
     input.send();
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 Only declared schema fields ride the wire. Writing an undeclared field does nothing, and with the debug panel active the SDK warns you once per key at `send()`.
 
@@ -351,47 +345,47 @@ The handle also surfaces the server-advertised rates from the handshake: `input.
 
 The entry point for all client-side smoothing and prediction. Create one per room and share the instance. Each `Predict.get` call constructs a fresh, independent `Predict`:
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     const predict = Predict.get(room, { mode: "lerp", delay: 100 });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     var predict = Predict.Get(room, new PredictGetOptions { Mode = PredictMode.Lerp, Delay = 100 });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     local predict = Predict.get(room, { mode = "lerp", delay = 100 })
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     var predict = Predict.get(room, { mode: "lerp", delay: 100 });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     # takes only the room: declare mode/delay per attach
     var predict = Colyseus.Predict.of(room)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     // takes only the room: declare mode/delay per attach
     final predict = Predict.get(room);
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 The options seed the room-wide defaults every attach inherits when it omits an option (`mode`, `delay`, `smoothMs`, `snap`, and a reckon `step`/`substep`). `predict.setDefaults(opts)` changes them later, and `predict.mode` reads the current default mode (`SetDefaults` / `Mode` in C#). A change only reaches attaches made *after* the call, since each attach snapshots what it resolved.
 
@@ -409,15 +403,15 @@ Call `predict.tick(now)` **once per render frame**, passing the rAF timestamp. I
 
 For entities you **don't** control, attach smoothing. `attachAll` covers every entry of a collection; `attach` a single instance:
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     predict.attachAll("players", { mode: "lerp", fields: ["x", "y"] });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     // one options set spread over a list of fields:
     predict.AttachAll("players", new AttachOptions { Mode = PredictMode.Lerp, Fields = new[] { "x", "y" } });
@@ -432,9 +426,9 @@ For entities you **don't** control, attach smoothing. `attachAll` covers every e
         ["x"] = new PredictFieldOptions { Mode = PredictMode.Lerp, Delay = 100 },
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     -- one config spread over a list of fields:
     predict:attach_all("players", { mode = "lerp", fields = { "x", "y" } })
@@ -445,9 +439,9 @@ For entities you **don't** control, attach smoothing. `attachAll` covers every e
     -- per-field options instead of a bare mode:
     predict:attach_all("players", { x = { mode = "lerp", delay = 100 } })
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     // one config spread over a list of fields:
     predict.attachAll("players", { mode: "lerp", fields: ["x", "y"] });
@@ -458,9 +452,9 @@ For entities you **don't** control, attach smoothing. `attachAll` covers every e
     // per-field options instead of a bare mode:
     predict.attachAll("players", { x: { mode: "lerp", delay: 100 } });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     # the third argument skips your own entity: the reconciler owns it
     predict.attach_all("players", {
@@ -472,9 +466,9 @@ For entities you **don't** control, attach smoothing. `attachAll` covers every e
         "x": { "mode": Colyseus.Predict.LERP, "delay": 100 },
     })
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     predict.attachAll('players',
         config: {'x': PredictMode.lerp, 'y': PredictMode.lerp},
@@ -484,9 +478,9 @@ For entities you **don't** control, attach smoothing. `attachAll` covers every e
     predict.attachAll('players',
         config: {'x': FieldOptions(mode: PredictMode.lerp, delay: 100)});
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 In C#, Lua, and Haxe the collection attaches in full, your own entity included. The reconciler's overlay wins for your own entity. The GDScript and Dart bindings take an except-key to leave it out explicitly.
 
@@ -512,9 +506,9 @@ Three per-attach options are worth knowing:
 
 Active prediction for **one** entity you control, mirrored off the instance's scalar fields:
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     const me = predict.reconciler(self, {
       input,
@@ -522,9 +516,9 @@ Active prediction for **one** entity you control, mirrored off the instance's sc
       smoothMs: 65,
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     var me = predict.Reconciler(self, new ReconcilerOptions<Player, MoveInput> {
         Input = input,
@@ -532,9 +526,9 @@ Active prediction for **one** entity you control, mirrored off the instance's sc
         Step = (ctx, state, cmd) => ApplyInput(state, cmd, LEVEL, ctx.Dt),
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     local me = predict:reconciler(self_player, {
       input = input,
@@ -543,9 +537,9 @@ Active prediction for **one** entity you control, mirrored off the instance's sc
       step = function(ctx, state, cmd) apply_input(state, cmd, LEVEL, ctx.dt) end,
     })
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     var me = predict.reconciler(self, {
         input: input,
@@ -554,9 +548,9 @@ Active prediction for **one** entity you control, mirrored off the instance's sc
         step: (ctx, state, cmd) -> applyInput(state, cmd, LEVEL, ctx.dt),
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     var me = predict.reconciler(self_player, {
         "input": input,
@@ -565,9 +559,9 @@ Active prediction for **one** entity you control, mirrored off the instance's sc
         "step": _apply_input,     # func(ctx, state, cmd)
     })
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     final me = predict.reconciler(self,
       input: input,
@@ -576,9 +570,9 @@ Active prediction for **one** entity you control, mirrored off the instance's sc
       step: (ctx, state, cmd) => applyInput(state, cmd, level, ctx.dt),
     );
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 - `step(ctx, state, cmd)`: the deterministic step function, **shared with the server**. `cmd` is the buffered wire input recorded at `send()` (the exact value the server decodes), so lossy wire fields (a quantized angle) reconcile by construction. Keep everything the step reads on the input schema.
 - `fields`: optional, and usually best omitted. Every scalar field of the instance's schema is then mirrored, which is the right default. Pass an explicit subset only to exclude scalars deliberately. With the dev panel active, the SDK warns once if the step touches a field the list excludes. Numeric fields get smooth error correction; non-numeric fields (e.g. `grounded`) are copied verbatim on reconcile.
@@ -600,9 +594,9 @@ When your inputs affect **more** than one flat-field entity (a paddle *and* the 
 
 **Composite scalars** need no callbacks: put the decoded schema instances themselves in `world` and they are **auto-bound**. The SDK replaces them in place with plain scalar mirrors that it seeds, re-adopts from server truth on every ack, and smooths:
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     const me = predict.sim({
       input,
@@ -617,9 +611,9 @@ When your inputs affect **more** than one flat-field entity (a paddle *and* the 
     draw(predict.value(player, "x"), predict.value(room.state.puck, "x"));  // one read idiom
     aim(me.world.paddle);           // raw predicted mirror for game logic
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     // your world: any class whose entries hold the decoded instances
     var me = predict.Sim(new SimReconcilerOptions<HockeyWorld, MoveInput> {
@@ -631,9 +625,9 @@ When your inputs affect **more** than one flat-field entity (a paddle *and* the 
 
     Draw(predict.Value(player, "x"), predict.Value(room.State.puck, "x"));  // one read idiom
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     local me = predict:sim({
       input = input,
@@ -647,9 +641,9 @@ When your inputs affect **more** than one flat-field entity (a paddle *and* the 
 
     draw(predict:value(player, "x"), predict:value(room.state.puck, "x"))  -- one read idiom
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     // your world: any class whose entries hold the decoded instances
     var me = predict.sim({
@@ -661,9 +655,9 @@ When your inputs affect **more** than one flat-field entity (a paddle *and* the 
 
     draw(predict.value(player, "x"), predict.value(room.state.puck, "x"));  // one read idiom
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     var me = predict.sim({
         "input": input,
@@ -674,9 +668,9 @@ When your inputs affect **more** than one flat-field entity (a paddle *and* the 
 
     draw(predict.value(player, "x"), predict.value(puck, "x"))  # one read idiom
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     final me = predict.sim(
       input: input,
@@ -691,9 +685,9 @@ When your inputs affect **more** than one flat-field entity (a paddle *and* the 
 
     draw(predict.value(player, 'x'), predict.value(puck, 'x'));  // one read idiom
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 `step` mutates the mirrors, never the decoded tree. Bound entities render through the same `predict.value(instance, field)` read as remotes. One caveat: bound sources are pinned at construction. If the server *replaces* an instance (`state.puck = new Puck()`), recreate the controller.
 
@@ -732,9 +726,9 @@ Three reads, split by purpose:
 
 A predicted timeline produces discrete **events** (a goal, a kill, a pickup) that deserve instant feedback but need server settlement. A channel owns one event type end-to-end:
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     const goals = predict.defineEvent<Team>({
       onPredict: (team) => { celebrate(team); hidePuck(); },   // fires immediately, ~RTT early
@@ -747,9 +741,9 @@ A predicted timeline produces discrete **events** (a goal, a kill, a pickup) tha
     // settlement (the authoritative broadcast):
     room.onMessage("score", () => goals.confirm());
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     var goals = predict.DefineEvent(new PredictedEventChannelOptions<string> {
         OnPredict = team => { Celebrate(team); HidePuck(); },  // fires immediately, ~RTT early
@@ -762,9 +756,9 @@ A predicted timeline produces discrete **events** (a goal, a kill, a pickup) tha
     // settlement (the authoritative broadcast):
     room.OnMessage<Dictionary<string, object>>("score", _ => goals.Confirm());
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     local goals = predict:define_event({
       on_predict = function(team) celebrate(team) end,  -- fires immediately, ~RTT early
@@ -777,9 +771,9 @@ A predicted timeline produces discrete **events** (a goal, a kill, a pickup) tha
     -- settlement (the authoritative broadcast):
     room:on_message("score", function() goals:confirm() end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     var goals = predict.defineEvent({
         onPredict: (team) -> { celebrate(team); hidePuck(); },  // fires immediately, ~RTT early
@@ -792,9 +786,9 @@ A predicted timeline produces discrete **events** (a goal, a kill, a pickup) tha
     // settlement (the authoritative broadcast):
     room.onMessage("score", (_) -> goals.confirm(null));
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     var goals = predict.define_event({
         "on_predict": func(team): celebrate(team),   # fires immediately, ~RTT early
@@ -808,9 +802,9 @@ A predicted timeline produces discrete **events** (a goal, a kill, a pickup) tha
     room.message_received.connect(func(type, _data):
         if type == "score": goals.confirm())
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     final goals = predict.defineEvent(
       onPredict: (team) => celebrate(team),   // fires immediately, ~RTT early
@@ -823,9 +817,9 @@ A predicted timeline produces discrete **events** (a goal, a kill, a pickup) tha
     // settlement (the authoritative broadcast):
     room.onMessage('score').listen((_) => goals.confirm());
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 Settlement is automatic where it can be. A sim-born prediction auto-rejects once the server has processed `graceTicks` (default 10) past its birth step without a `confirm()`. The server ran the very timeline that predicted the event, and stayed silent. UI-born predictions (`goals.predict(payload)` called outside the sim) can't count ticks, so they fall back to a wall-clock TTL (`ttlMs`, default `max(2×rtt, 600ms)`).
 
@@ -846,9 +840,9 @@ Flag-shaped consumers can skip callbacks entirely and derive from `goals.has(key
 
 A broadcast is one settlement signal; more often the signal is **state itself**: a crate's `alive` flipping, a banana joining or leaving its collection. Declare that shape and the channel wires the schema listeners for you (and tears them down with the channel):
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     const breaks = predict.defineEvent<string>({
       confirmOn: { collection: "crates", field: "alive", equals: false },
@@ -860,9 +854,9 @@ A broadcast is one settlement signal; more often the signal is **state itself**:
     // render (flag-shaped): derive, no callbacks needed
     const broken = !crate.alive || breaks.has(crateId);
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     var breaks = predict.DefineEvent(new PredictedEventChannelOptions<string> {
         ConfirmOn = new ConfirmOn { Collection = "crates", Field = "alive", Equals = false },
@@ -874,33 +868,33 @@ A broadcast is one settlement signal; more often the signal is **state itself**:
     // render (flag-shaped): derive, no callbacks needed
     bool broken = !crate.alive || breaks.Has(crateId);
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     -- not available: call channel:confirm(key) from a schema callback watching `alive`
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     // not available: call channel.confirm(key) from a schema callback watching `alive`
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     # not available: call channel.confirm(key) from a schema callback watching `alive`
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     // not available: call channel.confirm(key) from a schema callback watching `alive`
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 When a child's `field` becomes `equals`, the entry keyed by that child's **collection key** confirms, so key your entries by collection key. Two membership variants complete the set:
 
@@ -938,53 +932,53 @@ Branch on the callbacks: `onConfirm` means *we* predicted it, `onUnpredicted` me
 
 `ctx.predict` handles one-shot *events*; `ctx.memo` handles one-shot *values* the sim itself consumes: a lag-comp'd collision outcome, an RNG roll, a server-assigned id. `compute` runs exactly once, on the live step; every replay of that step gets the frozen value back:
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     const hit = ctx.memo(() => collide(state, ctx.reckonTime));
     if (hit) state.vx = hit.vx;   // re-applied identically on every replay
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     var hit = ctx.Memo(() => Collide(state, ctx.ReckonTime));
     if (hit != null) state.vx = hit.Vx;   // re-applied identically on every replay
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     local hit = ctx:memo(function() return collide(state, ctx.reckon_time) end)
     if hit ~= nil then state.vx = hit.vx end   -- re-applied identically on every replay
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     var hit = ctx.memo(() -> collide(state, ctx.reckonTime));
     if (hit != null) state.vx = hit.vx;   // re-applied identically on every replay
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     # keyed and numeric-only: memo_vec freezes a tuple like [hit, vx, vy]
     var verdict: Array = ctx.memo_vec("collide", func(): return _collide(state, ctx.reckon_time))
     if not verdict.is_empty() and verdict[0] != 0.0: state.vx = verdict[1]
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     // keyed and numeric-only: memoVec freezes a tuple like [hit, vx, vy]
     final verdict = ctx.memoVec('collide', () => collide(state, ctx.reckonTime));
     if (verdict.isNotEmpty && verdict[0] != 0) state.vx = verdict[1];
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 Call `memo` on every step and let `compute` decide the value: return `undefined` for "nothing" (stored sparsely). Need more than one memo per step? Disambiguate with a key: `ctx.memo("collide", …)`. The key-less form is **one shared slot per step**. Two calls landing on that slot (two key-less calls, or a repeated key) silently corrupt replay with one frozen value for both. With the dev panel active, the SDK warns on the collision. Prefer reconciled `fields` when the value **is** derivable by re-running the step: that replays *and* self-corrects for free. The key-less shared slot exists in TypeScript, C#, Lua, and Haxe; the Godot and Flutter bindings always take a key and freeze numbers (`memo_vec`/`memoVec` for small tuples).
 

@@ -1,10 +1,8 @@
 ---
 title: "Server Input & Fixed Timestep"
 description: "Declare per-client input with defineInput(), sanitize untrusted values, drive an authoritative fixed-timestep simulation with setFixedTimestep(), and sub-step physics: the server half of Colyseus client-side prediction."
+sidebarTitle: "Server Input & Timestep"
 ---
-import { Callout } from 'nextra/components'
-
-# Server Input & Fixed Timestep
 
 This page covers the **server half** of the netcode stack. Declare what input each client sends, consume it, and advance the authoritative simulation at a fixed tick rate. The matching client half lives in [Client Prediction](/netcode/client-prediction).
 
@@ -14,7 +12,7 @@ This page covers the **server half** of the netcode stack. Declare what input ea
 
 ## At a glance
 
-```ts filename="GameRoom.ts"
+```ts title="GameRoom.ts"
 import { Room } from "@colyseus/core";
 import { MoveInput } from "./shared/MoveInput";
 import { applyInput } from "./shared/applyInput";
@@ -60,7 +58,7 @@ Options and their defaults:
 
 Inputs are **flat schemas: primitives only**. No nested schemas or collections in an input. Use `int8`/`uint8`/`float32` etc. and refine the legal set with generics (`t.int8<-1 | 0 | 1>()`):
 
-```ts filename="shared/MoveInput.ts"
+```ts title="shared/MoveInput.ts"
 import { schema, t, type SchemaType } from "@colyseus/schema";
 
 export const MoveInput = schema({

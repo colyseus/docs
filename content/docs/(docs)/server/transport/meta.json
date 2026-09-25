@@ -1,0 +1,8 @@
+{
+  "pages": [
+    "ws",
+    "uwebsockets",
+    "webtransport",
+    "bun-websockets"
+  ]
+}

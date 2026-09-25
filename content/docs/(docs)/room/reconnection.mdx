@@ -1,22 +1,17 @@
 ---
 title: "Reconnection"
 description: "Handle client reconnection in Colyseus: automatic SDK retries for temporary drops, and manual rejoining via client.reconnect() with a stored reconnection token."
+sidebarTitle: "Reconnection Handling"
+# Client-side reference consolidated into /sdk/connection; keep old deep links working.
+movedAnchors:
+  roomondrop: "/sdk/connection#on-drop-event"
+  roomonreconnect: "/sdk/connection#on-reconnect-event"
+  roomonleave: "/sdk/connection#leaving-a-room"
+  complete-client-example: "/room/reconnection#client-side"
+  reconnection-options: "/sdk/connection#reconnection-options"
+  option-details: "/sdk/connection#reconnection-options"
+  message-buffering: "/sdk/connection#automatic-reconnection"
 ---
-import { Callout, Tabs } from 'nextra/components'
-import { MovedAnchors } from '../../components/moved-anchors'
-
-# Reconnection
-
-{/* Client-side reference consolidated into /sdk/connection; keep old deep links working. */}
-<MovedAnchors map={{
-    "roomondrop": "/sdk/connection#on-drop-event",
-    "roomonreconnect": "/sdk/connection#on-reconnect-event",
-    "roomonleave": "/sdk/connection#leaving-a-room",
-    "complete-client-example": "/room/reconnection#client-side",
-    "reconnection-options": "/sdk/connection#reconnection-options",
-    "option-details": "/sdk/connection#reconnection-options",
-    "message-buffering": "/sdk/connection#automatic-reconnection",
-}} />
 
 Colyseus supports two complementary reconnection flows. Both require the server to hold the client's seat via [`allowReconnection()`](#allowreconnectionclient-seconds):
 

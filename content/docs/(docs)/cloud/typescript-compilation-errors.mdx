@@ -3,11 +3,9 @@ title: TypeScript/Compilation errors
 description: "Fix TypeScript compilation errors when deploying to Colyseus Cloud with the recommended tsconfig.json settings."
 ---
 
-# TypeScript/Compilation errors
-
 If you haven't created your Colyseus application via `npm create colyseus-app@latest`, make sure your `tsconfig.json` is configured as follows:
 
-```json filename="tsconfig.json"
+```json title="tsconfig.json"
 {
   "compilerOptions": {
     "outDir": "build",
@@ -31,7 +29,7 @@ If you haven't created your Colyseus application via `npm create colyseus-app@la
 
 Make sure you are able to compile your application locally before deploying it to Colyseus Cloud:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npm run build
 ```
 
@@ -41,7 +39,7 @@ npm run build
 
 You may run `tsx` directly in production, by updating the following configuration in your `ecosystem.config.js` file:
 
-```diff filename="ecosystem.config.js"
+```diff title="ecosystem.config.js"
 module.exports = {
    apps : [{
      // ...
@@ -54,7 +52,7 @@ module.exports = {
 
 You'll also need to skip the build step by updating `package.json`:
 
-```diff filename="package.json"
+```diff title="package.json"
   "scripts": {
 -    "build": "npm run clean && tsc",
 +    "build": "exit 0"
@@ -66,7 +64,7 @@ You'll also need to skip the build step by updating `package.json`:
 
 You can disable TypeScript strict mode by modifying the following configuration to your `tsconfig.json`. (This is not recommend as it will make your application more prone to runtime errors.)
 
-```json filename="tsconfig.json"
+```json title="tsconfig.json"
 {
   "compilerOptions": {
     // ...
@@ -82,7 +80,7 @@ You can disable TypeScript strict mode by modifying the following configuration 
 
 If you are using a monorepo setup, we recommend using the `pnpm` package manager instead of `npm`. (See [pnpm docs](https://pnpm.io/workspaces) for more information)
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npm install -g pnpm
 ```
 
@@ -90,7 +88,7 @@ npm install -g pnpm
 
 `pnpm` requires you to configure your workspaces in a `pnpm-workspace.yaml` file. See example below:
 
-```yaml filename="pnpm-workspace.yaml"
+```yaml title="pnpm-workspace.yaml"
 packages:
   # all packages in direct subdirs of packages/
   - 'packages/*'
@@ -104,7 +102,7 @@ packages:
 
 Before installing your dependencies with `pnpm`, make sure to remove `node_modules` and `package-lock.json` from your previous package manager from your project.
 
-```sh filename="Terminal"
+```sh title="Terminal"
 pnpm install
 ```
 

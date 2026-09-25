@@ -2,9 +2,6 @@
 title: "Graceful Shutdown"
 description: "How Colyseus shuts down gracefully on SIGTERM/SIGINT: draining rooms via onBeforeShutdown, and customizing or disabling the shutdown routine."
 ---
-import { Callout, Steps, Tabs } from "nextra/components";
-
-# Graceful Shutdown Process
 
 Colyseus listens for `SIGTERM`, `SIGINT`, and `SIGUSR2` signals (and `uncaughtException`) to gracefully shut down the process.
 
@@ -15,7 +12,7 @@ These actions will be performed, in order, before the process is killed:
 
     The custom `server.onBeforeShutdown()` is called, if defined.
 
-    ```ts filename="app.config.ts"
+    ```ts title="app.config.ts"
     server.onBeforeShutdown(async () => {
         // (...) custom logic
     });
@@ -47,7 +44,7 @@ These actions will be performed, in order, before the process is killed:
 
     You may override this method to perform custom actions that will result in the room being disposed in a few minutes. By default, it simply calls `room.disconnect()`, which will trigger `room.onLeave()` for all clients, and then `room.onDispose()` almost immediately.
 
-    ```ts filename="MyRoom.ts"
+    ```ts title="MyRoom.ts"
     onBeforeShutdown() {
         //
         // Notify users that process is shutting down, they may need to save their progress and join a new room
@@ -83,7 +80,7 @@ These actions will be performed, in order, before the process is killed:
 
     At this point there is no more rooms or clients connected to the server.
 
-    ```ts filename="app.config.ts"
+    ```ts title="app.config.ts"
     server.onShutdown(async () => {
         // (...) custom logic
     });
@@ -102,11 +99,11 @@ These actions will be performed, in order, before the process is killed:
 
 You may use `async` functions or return a `Promise` to perform asynchronous operations on `onLeave` and `onDispose` methods, as well as `server.onBeforeShutdown()` and `server.onShutdown()`.
 
-<Tabs items={["Returning a Promise", "Using async"]}>
-    <Tabs.Tab>
+<Tabs>
+    <Tab value="Returning a Promise">
         By returning a `Promise`, the server will wait for them to be completed before killing the worker process.
 
-        ```ts {5,17} filename="MyRoom.ts"
+        ```ts {5,17} title="MyRoom.ts"
         import { Room } from "colyseus";
 
         class MyRoom extends Room {
@@ -135,12 +132,12 @@ You may use `async` functions or return a `Promise` to perform asynchronous oper
             }
         }
         ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Using async">
         The `async` keyword will make your function return a `Promise` under the hood. [Read more about Async / Await](https://basarat.gitbook.io/typescript/future-javascript/async-await).
 
-        ```ts {4,8} filename="MyRoom.ts"
+        ```ts {4,8} title="MyRoom.ts"
         import { Room } from "colyseus";
 
         class MyRoom extends Room {
@@ -153,5 +150,5 @@ You may use `async` functions or return a `Promise` to perform asynchronous oper
             }
         }
         ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>

@@ -1,0 +1,9 @@
+{
+  "title": "Authentication",
+  "icon": "PasskeyFillIcon",
+  "pages": [
+    "room",
+    "http",
+    "module"
+  ]
+}

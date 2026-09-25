@@ -2,9 +2,6 @@
 title: "Standalone Matchmaker"
 description: "Run a dedicated Colyseus matchmaking process separate from game server processes for advanced scaling."
 ---
-import { Callout } from 'nextra/components'
-
-# Standalone Matchmaker
 
 In the default Colyseus setup, matchmaking and room handling run together in the same process. You can separate them so that a **dedicated matchmaker process** handles all matchmaking logic, while **separate game server processes** handle the actual room connections.
 
@@ -36,7 +33,7 @@ The matchmaker process and the game server processes must share the same **Prese
 
 Each game server process runs a full Colyseus server with its rooms defined using `defineServer()`. These processes handle the actual WebSocket connections and room logic.
 
-```ts filename="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer, defineRoom } from "colyseus";
 import { RedisPresence } from "@colyseus/redis-presence";
 import { RedisDriver } from "@colyseus/redis-driver";
@@ -62,7 +59,7 @@ const gameServer = defineServer({
 
 To run a standalone matchmaker, use `defineServer()` with the `isStandaloneMatchMaker` option set to `true`. This option tells Colyseus that the process only handles matchmaking. A standalone matchmaker will not spawn rooms locally, subscribe to IPC room creation requests, or register itself as an available game server process.
 
-```ts {7} filename="app.config.ts"
+```ts {7} title="app.config.ts"
 import { defineServer, defineRoom } from "colyseus";
 import { RedisPresence } from "@colyseus/redis-presence";
 import { RedisDriver } from "@colyseus/redis-driver";
@@ -92,7 +89,7 @@ When `isStandaloneMatchMaker` is enabled, the process:
 
 By default, rooms are created on the game server process with the fewest rooms. You can override this with `selectProcessIdToCreateRoom`:
 
-```ts {7-12} filename="app.config.ts"
+```ts {7-12} title="app.config.ts"
 import { defineServer, defineRoom } from "colyseus";
 import { RedisPresence } from "@colyseus/redis-presence";
 import { RedisDriver } from "@colyseus/redis-driver";

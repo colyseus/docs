@@ -1,10 +1,8 @@
 ---
 title: "FAQ"
 description: "Frequently asked questions about Colyseus: performance, scaling, CCU limits, and common gotchas."
+icon: "QuestionIcon"
 ---
-import { Callout } from 'nextra/components'
-
-# Frequently Asked Questions
 
 ## Performance & Scaling
 
@@ -77,7 +75,7 @@ async onLeave(client, code) {
 
 If you define your state with [`@type()` decorators](/state/schema/decorators) and target ES2022/ESNext in TypeScript, set `"useDefineForClassFields": false` in your tsconfig. This flag makes sure the decorators define property accessors properly. (The [`schema()` builder](/state/schema) does not need any tsconfig flags.)
 
-```json filename="tsconfig.json"
+```json title="tsconfig.json"
 {
     "compilerOptions": {
         "useDefineForClassFields": false,
@@ -103,7 +101,6 @@ Support for per-client state visibility was introduced in version `0.16`. You ca
 | Data changes frequently | Triggering an action/effect |
 | Example: positions, scores | Example: chat, events |
 
-
 ---
 
 ## TypeScript Errors
@@ -112,7 +109,7 @@ Support for per-client state visibility was introduced in version `0.16`. You ca
 
 This error appears when the `target` in your `tsconfig.json` is below `es2015`. The official template uses `ESNext`:
 
-```json filename="tsconfig.json"
+```json title="tsconfig.json"
 {
     "compilerOptions": {
         "target": "ESNext"
@@ -124,7 +121,7 @@ This error appears when the `target` in your `tsconfig.json` is below `es2015`. 
 
 Ensure these settings in your `tsconfig.json` (see [Decorators](/state/schema/decorators) for details):
 
-```json filename="tsconfig.json"
+```json title="tsconfig.json"
 {
     "compilerOptions": {
         "experimentalDecorators": true,
@@ -141,7 +138,7 @@ Ensure these settings in your `tsconfig.json` (see [Decorators](/state/schema/de
 
 If you set a breakpoint while the WebSocket connection is open, the connection closes automatically after 3 seconds due to inactivity. To prevent this, use `pingInterval: 0` during development:
 
-```ts filename="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
 import { WebSocketTransport } from "@colyseus/ws-transport";
 

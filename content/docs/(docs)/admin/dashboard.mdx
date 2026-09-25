@@ -1,22 +1,16 @@
 ---
 title: "Dashboard & widgets"
 description: "Configure the admin panel homepage: built-in preset widgets (totals, recent users, live rooms, system health, player segments) plus custom widgets in KPI, table, list, or JSON render modes."
+# Layout section folded into Widget shape; keep old deep links working.
+movedAnchors:
+  layout: "/admin/dashboard#widget-shape"
 ---
-import { Callout } from "nextra/components"
-import { MovedAnchors } from '../../components/moved-anchors'
-
-# Dashboard & widgets
-
-{/* Layout section folded into Widget shape; keep old deep links working. */}
-<MovedAnchors map={{
-    "layout": "/admin/dashboard#widget-shape",
-}} />
 
 The admin panel homepage hosts a grid of **widgets**, small cards that surface live data from your database or runtime. Five **preset widgets** are enabled by default, and you can append **custom widgets** for anything else you want at a glance.
 
 ![The dashboard with the Totals, Recent users and Live rooms presets and a custom "Active events" KPI card](/admin/dashboard.webp)
 
-```ts {4-16} filename="src/app.config.ts"
+```ts {4-16} title="src/app.config.ts"
 routes: createRouter({
     ...admin({
         database: db,

@@ -1,11 +1,9 @@
 ---
 title: "Colyseus SDK for GameMaker"
 description: "Get started with Colyseus multiplayer in GameMaker. Install the SDK, connect to a server, and sync real-time game state."
+sidebarTitle: "GameMaker"
+icon: "logo:gamemaker"
 ---
-import { Callout } from "nextra/components";
-import { DevicesIcon } from '@primer/octicons-react'
-
-# GameMaker
 
 <Callout type="warning">
     The GameMaker extension is in **beta**, and may not be stable. Please [report any issues you find](https://github.com/colyseus/native-sdk/issues/16).
@@ -42,14 +40,14 @@ Create the client from the **Step** event, on the first frame `colyseus_is_ready
 
 This example shows how to connect to a room, listen for state changes, send messages, and leave the room.
 
-```js filename="Create_0.gml"
+```js title="Create_0.gml"
 /// Create Event: nothing is connected yet
 
 client = 0;
 net_room = 0;
 ```
 
-```js filename="Step_0.gml"
+```js title="Step_0.gml"
 /// Step Event: connect once the extension is ready, then poll every frame
 
 if (client == 0) {
@@ -73,7 +71,7 @@ if (colyseus_room_is_connected(net_room)) {
 }
 ```
 
-```js filename="scr_net.gml"
+```js title="scr_net.gml"
 /// Room event handlers. Called from the object's Step event, so the
 /// function literals below are bound to that instance and can store
 /// instance variables (player_objs, callbacks).
@@ -140,7 +138,7 @@ function net_setup_handlers(net_room) {
 }
 ```
 
-```js filename="CleanUp_0.gml"
+```js title="CleanUp_0.gml"
 /// Clean Up Event: free resources
 
 if (net_room != 0) {
@@ -250,7 +248,7 @@ Create a callbacks manager to listen for state mutations. Omit the `instance` ar
 
 To run the test server locally, you will need to run the following commands in your terminal:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 git clone https://github.com/colyseus/sdks-test-server
 cd sdks-test-server
 npm install
@@ -269,7 +267,7 @@ You should be able to see the server running at `http://localhost:2567`, and the
 
 If you set a breakpoint while the WebSocket connection is open, the connection closes automatically after 3 seconds due to inactivity. To prevent the WebSocket connection from dropping, use `pingInterval: 0` during development:
 
-```ts filename="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
 import { WebSocketTransport } from "@colyseus/ws-transport";
 

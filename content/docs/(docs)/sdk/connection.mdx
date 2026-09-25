@@ -1,11 +1,8 @@
 ---
 title: "Connection Lifecycle & Reconnection"
 description: "Handle the Colyseus room connection lifecycle on the client: leaving a room, automatic and manual reconnection, onDrop and onReconnect, error handling, and removing listeners."
+sidebarTitle: "Connection Lifecycle"
 ---
-import { Callout, Tabs } from "nextra/components";
-import { SDKTabs } from "../../components/SDKTabs";
-
-# Connection Lifecycle & Reconnection
 
 Handle the various states of a room connection.
 
@@ -13,63 +10,61 @@ Handle the various states of a room connection.
 
 Disconnect from the room. Use `consented: true` (default) for intentional leaves, or `false` to simulate an unexpected disconnect.
 
-
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     // consented leave
     room.leave();
 
     // force unconsented leave
     room.leave(false);
     ```
-    </Tabs.Tab>
+    </Tab>
 
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     // consented leave
     room.Leave();
 
     // unconsented leave
     room.Leave(false);
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     -- consented leave
     room:leave()
 
     -- unconsented leave
     room:leave(false)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     // consented leave
     room.leave();
 
     // unconsented leave
     room.leave(false);
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     # consented leave
     room.leave()
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     // consented leave
     await room.leave();
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 <Callout type="info">
     **Backend:** Use [Room → On Leave](/room/lifecycle#on-leave) to handle client disconnection.
@@ -77,58 +72,57 @@ Disconnect from the room. Use `consented: true` (default) for intentional leaves
 
 **Listening for the leave event:**
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     room.onLeave((code) => {
       console.log("client left the room");
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     room.OnLeave += (code) => {
       Debug.Log ("client left the room");
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     room:on("leave", function()
       print("client left the room")
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     room.onLeave += function () {
       trace("client left the room");
     };
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     room.left.connect(_on_room_left)
 
     func _on_room_left(code: int, reason: String):
         print("client left the room: ", reason)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     room.onLeave.listen((code) {
       print('client left the room');
     });
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 **Possible closing `code`s and their meaning:**
 
@@ -149,62 +143,61 @@ The SDK automatically attempts to reconnect when the connection is unexpectedly 
 
 Triggered when the connection is unexpectedly dropped. The SDK will automatically attempt to reconnect.
 
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     room.onDrop((code, reason) => {
       console.log("connection dropped, attempting to reconnect...");
       console.log("code:", code, "reason:", reason);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     room.OnDrop += (code, reason) => {
       Debug.Log("connection dropped, attempting to reconnect...");
       Debug.Log("code: " + code + " reason: " + reason);
     };
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     room:on("drop", function(code, reason)
       print("connection dropped, attempting to reconnect...")
       print("code:", code, "reason:", reason)
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     room.onDrop += function(code, reason) {
       trace("connection dropped, attempting to reconnect...");
       trace("code: " + code + " reason: " + reason);
     };
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     # The Godot SDK handles reconnection automatically
     # Use the error signal to detect connection issues
     room.error.connect(func(code: int, message: String):
         print("connection error: ", message))
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     room.onDrop.listen((error) {
       print('connection dropped, attempting to reconnect...');
       print('code: ${error.code} reason: ${error.message}');
     });
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 <Callout type="info">
     The `onDrop` event is different from `onLeave`. While `onLeave` is triggered when the client intentionally leaves or the connection is permanently closed, `onDrop` indicates a temporary disconnection where reconnection will be attempted.
@@ -222,57 +215,56 @@ Triggered when the connection is unexpectedly dropped. The SDK will automaticall
 
 Triggered when the client successfully reconnects after a connection drop. While disconnected, your `room.send()` calls will be queued and sent to the server when the client reconnects. The maximum number of queued messages is configurable using `room.reconnection.maxEnqueuedMessages`.
 
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     room.onReconnect(() => {
       console.log("successfully reconnected to the room!");
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     room.OnReconnect += () => {
       Debug.Log("successfully reconnected to the room!");
     };
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     room:on("reconnect", function()
       print("successfully reconnected to the room!")
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     room.onReconnect += function() {
       trace("successfully reconnected to the room!");
     };
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     # The Godot SDK handles reconnection automatically
     # The joined signal will fire again after successful reconnection
     room.joined.connect(func():
         print("connected/reconnected to the room!"))
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     room.onReconnect.listen((_) {
       print('successfully reconnected to the room!');
     });
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 ### Reconnection Options
 
@@ -299,12 +291,11 @@ You may configure the reconnection behavior using `room.reconnection`.
 | `retryCount` | number | Current reconnection attempt count |
 | `enqueuedMessages` | array | Messages buffered while disconnected (count: `.length`) |
 
-
 **Customizing reconnection behavior:**
 
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     const room = await client.joinOrCreate("battle");
 
     // Customize reconnection options
@@ -312,11 +303,10 @@ You may configure the reconnection behavior using `room.reconnection`.
     room.reconnection.maxDelay = 10000; // 10 seconds max delay
     room.reconnection.minUptime = 3000; // Allow reconnection after 3 seconds
     ```
-    </Tabs.Tab>
+    </Tab>
 
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     Colyseus.Room<YourStateClass> room = await client.JoinOrCreate<YourStateClass>("battle");
 
     // Customize reconnection options
@@ -324,10 +314,10 @@ You may configure the reconnection behavior using `room.reconnection`.
     room.Reconnection.MaxDelay = 10000; // 10 seconds max delay
     room.Reconnection.MinUptime = 3000; // Allow reconnection after 3 seconds
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     client:join_or_create("battle", {}, function(err, room)
       -- Customize reconnection options
       room.reconnection.max_retries = 10
@@ -335,10 +325,10 @@ You may configure the reconnection behavior using `room.reconnection`.
       room.reconnection.min_uptime = 3000 -- Allow reconnection after 3 seconds
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     client.joinOrCreate("battle", [], YourStateClass, function(err, room) {
       // Customize reconnection options
       room.reconnection.maxRetries = 10;
@@ -346,17 +336,17 @@ You may configure the reconnection behavior using `room.reconnection`.
       room.reconnection.minUptime = 3000; // Allow reconnection after 3 seconds
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     # Reconnection is handled automatically by the Godot SDK
     # Configuration options may vary - check the SDK documentation
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     final room = await client.joinOrCreate('battle');
 
     // Customize reconnection options
@@ -366,59 +356,58 @@ You may configure the reconnection behavior using `room.reconnection`.
       minUptimeMs: 3000, // Allow reconnection after 3 seconds
     );
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 **Custom backoff function:**
 
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     room.reconnection.backoff = (attempt: number, delay: number) => {
       return Math.floor(Math.pow(2, attempt) * delay);
     };
     ```
-    </Tabs.Tab>
+    </Tab>
 
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     room.Reconnection.Backoff = (attempt, delay) => {
       return (int)Math.Floor(Math.Pow(2, attempt) * delay);
     };
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     room.reconnection.backoff = function(attempt, delay)
       return math.floor(math.pow(2, attempt) * delay)
     end
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     room.reconnection.backoff = function(attempt:Int, delay:Int):Int {
       return Math.floor(Math.pow(2, attempt) * delay);
     };
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     # Custom backoff functions are not currently exposed in the Godot SDK
     # The SDK uses a default exponential backoff strategy
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     // Custom backoff functions are not exposed in the Flutter SDK.
     // The native core uses a default exponential backoff strategy.
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 ## Manual Reconnection
 
@@ -427,11 +416,10 @@ For more control, you can manually reconnect using a cached reconnection token. 
 - You must store/cache the `room.reconnectionToken` from an active room connection.
 - The server needs to call [`.allowReconnection()`](/room/reconnection#allowreconnectionclient-seconds) for that client.
 
+<LangTabs>
 
-<SDKTabs>
-
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     try {
       const room = await client.reconnect(cachedReconnectionToken);
       console.log("joined successfully", room);
@@ -440,11 +428,10 @@ For more control, you can manually reconnect using a cached reconnection token. 
       console.error("join error", e);
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     try {
       Colyseus.Room<YourStateClass> room = await client.Reconnect<YourStateClass>(cachedReconnectionToken);
       Debug.Log("joined successfully");
@@ -454,10 +441,10 @@ For more control, you can manually reconnect using a cached reconnection token. 
       Debug.Log(ex.Message);
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     client:reconnect(cached_reconnection_token, function(err, room)
       if (err ~= nil) then
         print("join error: " .. err)
@@ -467,10 +454,10 @@ For more control, you can manually reconnect using a cached reconnection token. 
       print("joined successfully")
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     client.reconnect(cachedReconnectionToken, YourStateClass, function(err, room) {
       if (err != null) {
         trace("join error: " + err);
@@ -480,10 +467,10 @@ For more control, you can manually reconnect using a cached reconnection token. 
       trace("joined successfully");
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     var room: Colyseus.Room = client.reconnect(cached_reconnection_token)
 
     room.joined.connect(func():
@@ -492,10 +479,10 @@ For more control, you can manually reconnect using a cached reconnection token. 
     room.error.connect(func(code: int, message: String):
         printerr("reconnect error: ", message))
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     try {
       final room = await client.reconnect(cachedReconnectionToken);
       print('joined successfully');
@@ -504,75 +491,74 @@ For more control, you can manually reconnect using a cached reconnection token. 
       print('join error: $e');
     }
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 ## Error Handling
 
 Listen for errors that occur in the room.
 
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     room.onError((code, message) => {
       console.log("oops, error occurred:");
       console.log(message);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     room.OnError += (code, message) => {
       Debug.Log ("oops, error occurred:");
       Debug.Log(message);
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     room:on("error", function(code, message)
       print("oops, error occurred:")
       print(message)
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     room.onError += function(code, message) {
       trace("oops, error occurred:");
       trace(message);
     };
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     room.error.connect(_on_room_error)
 
     func _on_room_error(code: int, message: String):
         printerr("oops, error occurred: ", message)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     room.onError.listen((error) {
       print('oops, error occurred:');
       print('${error.code}: ${error.message}');
     });
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 ## Removing Listeners
 
 Remove all event listeners from the room (`onJoin`, `onStateChange`, `onError`, `onLeave`, `onReconnect`, `onDrop`, registered message handlers, and schema callbacks):
 
-```ts filename="client.ts"
+```ts title="client.ts"
 room.removeAllListeners();
 ```
 

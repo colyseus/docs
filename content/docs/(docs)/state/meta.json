@@ -1,0 +1,12 @@
+{
+  "title": "State Sync",
+  "icon": "SyncIcon",
+  "pages": [
+    "schema",
+    "callbacks",
+    "view",
+    "streaming",
+    "optimization",
+    "advanced-usage"
+  ]
+}

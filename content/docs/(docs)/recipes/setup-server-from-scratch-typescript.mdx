@@ -2,10 +2,6 @@
 title: Setup Server from Scratch with TypeScript
 description: "Set up a Colyseus server from scratch using TypeScript without the project template."
 ---
-import { Tabs } from 'nextra/components'
-import { DownloadIcon } from '@primer/octicons-react'
-
-# Setup Server from Scratch with TypeScript
 
 A step-by-step guide for creating a Colyseus server with TypeScript, without the project template. Prefer `npm create colyseus-app@latest` unless you need full control over every file.
 
@@ -17,25 +13,25 @@ A step-by-step guide for creating a Colyseus server with TypeScript, without the
 
 Create a new empty directory.
 
-```sh filename="Terminal"
+```sh title="Terminal"
 mkdir colyseusServer
 ```
 
 Go into the directory.
 
-```sh filename="Terminal"
+```sh title="Terminal"
 cd colyseusServer
 ```
 
 Initialise npm with default options
 
-```sh npm2yarn
+```npm
 npm init
 ```
 
 Change the `"main"` and `"scripts"` property of the `package.json`.
 
-```json filename="package.json"
+```json title="package.json"
 {
   "main": "dist/main.js",
   "scripts": {
@@ -48,19 +44,19 @@ Change the `"main"` and `"scripts"` property of the `package.json`.
 
 Install Dependencies
 
-```sh npm2yarn
+```npm
 npm i colyseus
 ```
 
 Install Dev Dependencies
 
-```sh npm2yarn
+```npm
 npm i --save-dev typescript tsx
 ```
 
 Create a new file called `tsconfig.json` in the root of the project
 
-```json filename="tsconfig.json"
+```json title="tsconfig.json"
 {
     "compilerOptions": {
         "outDir": "./dist",
@@ -84,7 +80,7 @@ Create a new file called `tsconfig.json` in the root of the project
 
 Create a new `src/rooms` directory
 
-```sh filename="Terminal"
+```sh title="Terminal"
 mkdir -p src/rooms
 ```
 
@@ -92,9 +88,9 @@ mkdir -p src/rooms
 
 Define the synchronized state for your room.
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
-    ```ts filename="src/rooms/MyState.ts"
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
+    ```ts title="src/rooms/MyState.ts"
     import { schema, t } from "@colyseus/schema";
 
     export const Player = schema({
@@ -106,9 +102,9 @@ Define the synchronized state for your room.
         players: t.map(Player),
     }, "MyState");
     ```
-    </Tabs.Tab>
-    <Tabs.Tab>
-    ```ts filename="src/rooms/MyState.ts"
+    </Tab>
+    <Tab value="Decorators">
+    ```ts title="src/rooms/MyState.ts"
     import { Schema, MapSchema, type } from "@colyseus/schema";
 
     export class Player extends Schema {
@@ -120,12 +116,12 @@ Define the synchronized state for your room.
         @type({ map: Player }) players = new MapSchema<Player>();
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 Create a room class that uses the state.
 
-```ts filename="src/rooms/MyRoom.ts"
+```ts title="src/rooms/MyRoom.ts"
 import { Room, Client } from "colyseus";
 import { MyState, Player } from "./MyState";
 
@@ -146,7 +142,7 @@ export class MyRoom extends Room {
 
 Create a new file called `main.ts` in the `src` directory. It registers the room type and starts listening.
 
-```ts filename="src/main.ts"
+```ts title="src/main.ts"
 import { defineServer, defineRoom } from "colyseus";
 import { MyRoom } from "./rooms/MyRoom";
 
@@ -167,7 +163,7 @@ Congrats, you finished the setup for a Colyseus server. Clients can now join it 
 
 Start the server in development with:
 
-```sh npm2yarn
+```npm
 npm start
 ```
 
@@ -175,12 +171,12 @@ npm start
 
 For production you first create a build.
 
-```sh npm2yarn
+```npm
 npm run build
 ```
 
 After that you can start the server with the `start:prod` command. This command uses the files which are created from the `build` command in the `dist` folder.
 
-```sh npm2yarn
+```npm
 npm run start:prod
 ```

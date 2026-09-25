@@ -1,0 +1,10 @@
+{
+  "title": "Built-in Tools",
+  "icon": "ToolsIcon",
+  "pages": [
+    "playground",
+    "monitoring",
+    "loadtest",
+    "unit-testing"
+  ]
+}

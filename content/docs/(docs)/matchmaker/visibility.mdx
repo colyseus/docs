@@ -1,10 +1,8 @@
 ---
 title: "Room Visibility & Access: locked, private, unlisted"
 description: "How the locked, private, and unlisted room flags differ in Colyseus, how each behaves on join(), joinById(), and lobby listings, and how to lock, unlock, and password-protect a room."
+sidebarTitle: "Visibility & Access"
 ---
-import { Callout } from "nextra/components";
-
-# Room Visibility & Access
 
 Which rooms a player can discover, and which they can actually enter, are two
 different questions. Three flags answer them.
@@ -37,7 +35,7 @@ Updates multiple matchmaking/listing properties at once, with a single persist o
 - `maxClients` (optional): maximum number of clients allowed
 - `unlisted` (optional): whether the room should be hidden from listing queries
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 // Update multiple properties at once
 await this.setMatchmaking({
     metadata: { difficulty: "hard", rating: 1500 },
@@ -65,7 +63,7 @@ You can also set individual properties:
 
 Locking removes the room from matchmaking: `join()`/`joinOrCreate()` skip it, and `joinById()` rejects with a `room "<roomId>" is locked` error. No new clients can join until it's unlocked.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 this.lock();
 ```
 
@@ -77,6 +75,6 @@ The room also locks **automatically** when it reaches `maxClients`. The two diff
 
 Returns the room to the pool of available rooms. New clients can join again, as long as `maxClients` hasn't been reached.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 this.unlock();
 ```

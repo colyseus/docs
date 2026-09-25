@@ -1,10 +1,9 @@
 ---
 title: "Colyseus SDK for Flutter"
 description: "Get started with Colyseus multiplayer in Flutter. Install the Dart SDK, connect to a room, sync real-time game state, and predict player movement."
+sidebarTitle: "Flutter"
+icon: "logo:flutter"
 ---
-import { Callout } from "nextra/components";
-
-# Flutter
 
 <Callout type="warning">
     The Flutter SDK is in **beta**, and may not be stable. Please [report any issues you find](https://github.com/colyseus/native-sdk/issues).
@@ -26,7 +25,7 @@ The package requires Dart `3.3.0` or newer and Flutter `3.19.0` or newer. Prebui
 
 ## Installation
 
-```sh filename="Terminal"
+```sh title="Terminal"
 flutter pub add colyseus
 ```
 
@@ -40,7 +39,7 @@ import 'package:colyseus/colyseus.dart';
 
 Both platforms need the outbound-network entitlement, `com.apple.security.network.client`. Add it to **both** `macos/Runner/DebugProfile.entitlements` and `macos/Runner/Release.entitlements`:
 
-```xml filename="macos/Runner/Release.entitlements"
+```xml title="macos/Runner/Release.entitlements"
 <key>com.apple.security.network.client</key>
 <true/>
 ```
@@ -53,7 +52,7 @@ Both platforms need the outbound-network entitlement, `com.apple.security.networ
 
 The plugin declares no permissions of its own, so your app must request internet access:
 
-```xml filename="android/app/src/main/AndroidManifest.xml"
+```xml title="android/app/src/main/AndroidManifest.xml"
 <uses-permission android:name="android.permission.INTERNET"/>
 ```
 
@@ -63,7 +62,7 @@ By default the SDK polls the network on its own 16 ms timer, and you can join a 
 
 Games that render every frame should drive the SDK instead. Set `Colyseus.autoPoll` to `false` once, then call `Colyseus.pump()` at the top of your frame callback. Decoding, prediction and rendering then all observe the same state within a frame:
 
-```dart filename="lib/game.dart"
+```dart title="lib/game.dart"
 class _GameState extends State<Game> with SingleTickerProviderStateMixin {
   late final Ticker _ticker;
 
@@ -93,7 +92,7 @@ class _GameState extends State<Game> with SingleTickerProviderStateMixin {
 
 This example shows how to connect to a room, listen for state changes, send messages and leave the room.
 
-```dart filename="lib/network.dart"
+```dart title="lib/network.dart"
 import 'package:colyseus/colyseus.dart';
 
 ColyseusClient? client;
@@ -188,7 +187,7 @@ The room exposes these listeners:
 
 Generate one Dart class per schema from your server's types. Codegen is optional, and it buys type safety and autocomplete in your IDE:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npx schema-codegen src/rooms/schema/* --dart --bundle --output ../client/lib/gen/
 ```
 
@@ -309,7 +308,7 @@ Registration replays what already decoded, so a late subscription still sees eve
 
 Waiting for the server to confirm your own movement costs a round trip. The predict layer applies each input immediately and reconciles when the server disagrees. See [Client Prediction](/netcode/client-prediction) for the concepts. Your room class must declare [`defineInput()`](/netcode/server-input) before any of this works.
 
-```dart filename="lib/gameplay.dart"
+```dart title="lib/gameplay.dart"
 Colyseus.autoPoll = false; // the app drives the frame
 
 final predict = Predict.get(room);

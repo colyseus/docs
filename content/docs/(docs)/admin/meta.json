@@ -1,0 +1,10 @@
+{
+  "title": "Admin Panel",
+  "icon": "ShieldLockIcon",
+  "pages": [
+    "authentication",
+    "resources",
+    "dashboard",
+    "rooms"
+  ]
+}

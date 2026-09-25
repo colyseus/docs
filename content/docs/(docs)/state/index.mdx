@@ -1,25 +1,18 @@
 ---
 title: "State Synchronization"
 description: "How state synchronization works in Colyseus: the server holds authoritative state, mutations are tracked at the property level, and clients receive binary patches."
+# The decorator tsconfig section moved to the decorators page; keep old deep links working.
+# The best-practices half of the old combined heading became /state/optimization.
+movedAnchors:
+  typescript-config: "/state/schema/decorators#typescript-config"
+  limitations-and-best-practices: "/state#limitations"
 ---
-import { Cards, Steps, Tabs } from 'nextra/components'
-import { CodeSquareIcon, FileBinaryIcon, EyeIcon, MeterIcon } from '@primer/octicons-react'
-import { MovedAnchors } from '../components/moved-anchors'
-
-# State Synchronization
-
-{/* The decorator tsconfig section moved to the decorators page; keep old deep links working.
-    The best-practices half of the old combined heading became /state/optimization. */}
-<MovedAnchors map={{
-    "typescript-config": "/state/schema/decorators#typescript-config",
-    "limitations-and-best-practices": "/state#limitations",
-}} />
 
 <Cards>
-    <Cards.Card icon={<FileBinaryIcon/>} title="Schema Definition" href="/state/schema" />
-    <Cards.Card icon={<EyeIcon/>} title="State View" href="/state/view" />
-    <Cards.Card icon={<CodeSquareIcon/>} title="State Sync Callbacks" href="/state/callbacks" />
-    <Cards.Card icon={<MeterIcon/>} title="Optimizing State" href="/state/optimization" />
+    <Card icon={<FileBinaryIcon/>} title="Schema Definition" href="/state/schema" />
+    <Card icon={<EyeIcon/>} title="State View" href="/state/view" />
+    <Card icon={<CodeSquareIcon/>} title="State Sync Callbacks" href="/state/callbacks" />
+    <Card icon={<MeterIcon/>} title="Optimizing State" href="/state/optimization" />
 </Cards>
 
 ## Overview
@@ -36,9 +29,9 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 
     Define your state structures using `schema()` and `t.*` field builders from `@colyseus/schema`, or the classic [`@type()` decorator style](/state/schema/decorators):
 
-    <Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-        <Tabs.Tab>
-        ```ts filename="src/rooms/MyState.ts"
+    <Tabs groupId="schema-style" persist>
+        <Tab value="Schema Builder">
+        ```ts title="src/rooms/MyState.ts"
         import { schema, t, type SchemaType } from "@colyseus/schema";
 
         export const Player = schema({
@@ -55,9 +48,9 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
         ```
 
         The `type` aliases are TypeScript-only sugar: `schema()` returns a value, and `SchemaType` derives the instance type under the same name. Plain JavaScript users omit those lines.
-        </Tabs.Tab>
-        <Tabs.Tab>
-        ```ts filename="src/rooms/MyState.ts"
+        </Tab>
+        <Tab value="Decorators">
+        ```ts title="src/rooms/MyState.ts"
         import { Schema, MapSchema, type } from "@colyseus/schema";
 
         export class Player extends Schema {
@@ -72,17 +65,16 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
         ```
 
         The decorator style requires two `tsconfig.json` flags. See [Decorators → TypeScript Config](/state/schema/decorators#typescript-config).
-        </Tabs.Tab>
+        </Tab>
     </Tabs>
-
 
     ### ... assign and mutate the state
 
     Setting up the state in your room class and mutating it when clients join or leave the room:
 
-    <Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
-        <Tabs.Tab>
-        ```ts {2,5,8,11} filename="src/rooms/MyRoom.ts"
+    <LangTabs>
+        <Tab value="TypeScript">
+        ```ts {2,5,8,11} title="src/rooms/MyRoom.ts"
         import { Room } from "colyseus";
         import { MyState, Player } from "./MyState";
 
@@ -97,10 +89,10 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
             }
         }
         ```
-        </Tabs.Tab>
+        </Tab>
 
-        <Tabs.Tab>
-        ```js {2,5,8,11} filename="src/rooms/MyRoom.js"
+        <Tab value="JavaScript">
+        ```js {2,5,8,11} title="src/rooms/MyRoom.js"
         import { Room } from "colyseus";
         import { MyState, Player } from "./MyState";
 
@@ -115,8 +107,8 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
             }
         }
         ```
-        </Tabs.Tab>
-    </Tabs>
+        </Tab>
+    </LangTabs>
 
     ### Frontend: Full state received on join
 
@@ -124,7 +116,7 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 
     Below is an example of how to listen to player additions and removals on the frontend:
 
-    ```js {9-11,14-16} copy filename="client.js"
+    ```js {9-11,14-16} title="client.js"
     import { Client, Callbacks } from "@colyseus/sdk";
 
     // ...
@@ -147,7 +139,7 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 
     The frontend is not capable of mutating the state directly. Instead, it sends messages to the server to request state changes.
 
-    ```js {4} filename="client.js"
+    ```js {4} title="client.js"
     import { Client, Callbacks } from '@colyseus/sdk';
 
     // ...
@@ -158,7 +150,7 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 
     The backend processes the client messages and mutates the state. Colyseus will take care of synchronizing the state with all clients in the room.
 
-    ```ts {6-11} filename="src/rooms/MyRoom.ts"
+    ```ts {6-11} title="src/rooms/MyRoom.ts"
     // ...
     export class MyRoom extends Room<MyState> {
         state = new MyState();
@@ -177,9 +169,9 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
 
     The client listens to state changes on the instance directly to keep the user interface in sync.
 
-    <Tabs items={["Using .onChange() on an instance", "Using .listen() on a property"]}>
-        <Tabs.Tab>
-        ```js {10-12} filename="client.js"
+    <Tabs>
+        <Tab value="Using .onChange() on an instance">
+        ```js {10-12} title="client.js"
         import { Client, Callbacks } from "@colyseus/sdk";
         // ...
         const client = new Client('http://localhost:2567');
@@ -194,10 +186,10 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
             });
         });
         ```
-        </Tabs.Tab>
+        </Tab>
 
-        <Tabs.Tab>
-        ```js {10-15} filename="client.js"
+        <Tab value="Using .listen() on a property">
+        ```js {10-15} title="client.js"
         import { Client, Callbacks } from "@colyseus/sdk";
         // ...
         const client = new Client('http://localhost:2567');
@@ -215,7 +207,7 @@ Colyseus uses a schema-based approach to define the state of a room. The server 
             });
         });
         ```
-        </Tabs.Tab>
+        </Tab>
     </Tabs>
 </Steps>
 

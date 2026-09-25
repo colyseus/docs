@@ -1,30 +1,27 @@
 ---
 title: "Colyseus SDK for Unity"
 description: "Install the Colyseus Unity SDK via Unity Package Manager. Build real-time multiplayer games in Unity with room management and state synchronization."
+sidebarTitle: "Unity"
+icon: "logo:unity"
 ---
-import { unity } from "../../components/icons/platforms"
-import { Callout, Steps, Tabs } from 'nextra/components'
-import { PeopleIcon, DevicesIcon } from '@primer/octicons-react'
-
-# Unity SDK
 
 ## Install package
 
-<Tabs items={['Unity Package Manager (UPM)', 'From .unitypackage (legacy)']}>
-    <Tabs.Tab>
+<Tabs>
+    <Tab value="Unity Package Manager (UPM)">
         - Go to **Window → Package Management → Package Manager**. Click "+" button, then select "Add package from git URL..."
         - Enter Git URL: `https://github.com/colyseus/colyseus-unity-sdk.git#upm`
         - Click "ADD"
 
         Click to import the example project in order to test the built-in demonstration.
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="From .unitypackage (legacy)">
         - Download the latest [Colyseus Unity SDK](https://github.com/colyseus/colyseus-unity3d/releases/latest/download/Colyseus_Plugin.unitypackage)
         - Import the `Colyseus_Plugin.unitypackage` contents into your project.
 
         The `Colyseus_Plugin.unitypackage` contains an example project under `Assets/Colyseus/Example` you can use as a reference.
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ---
@@ -51,7 +48,7 @@ The example project [included in the SDK package](https://github.com/colyseus/co
 
 To run the test server locally, you will need to run the following commands in your terminal:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 git clone https://github.com/colyseus/sdks-test-server
 cd sdks-test-server
 npm install
@@ -68,7 +65,7 @@ You should be able to see the server running at `http://localhost:2567`, and the
 
 This example shows how to connect to a room, listen for state changes via Callbacks, and send messages.
 
-```csharp filename="NetworkManager.cs"
+```csharp title="NetworkManager.cs"
 using UnityEngine;
 using Colyseus;
 using Colyseus.Schema;
@@ -173,7 +170,7 @@ Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select 
 
 For compiled languages like C#, you need to generate client-side schema classes that match your server's state structure. Run the following command from your server directory:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npx schema-codegen src/rooms/schema/* --csharp --output ../Assets/Scripts/States/
 ```
 
@@ -187,7 +184,7 @@ The generated classes compile as they are, inside any namespace. `number`, `floa
 
 If you want to skip the code generation step entirely, you can use `DynamicSchema` instead of generated schema classes. `DynamicSchema` builds its type metadata at runtime from the server handshake, so no generated files are needed.
 
-```csharp filename="NetworkManager.cs"
+```csharp title="NetworkManager.cs"
 using UnityEngine;
 using Colyseus;
 using Colyseus.Schema;
@@ -248,7 +245,7 @@ The same `schema-codegen` command also generates C# classes for any TypeScript i
 
 For example, given the following server-side code:
 
-```ts filename="src/rooms/MyRoom.ts"
+```ts title="src/rooms/MyRoom.ts"
 interface MoveMessage {
   x: number;
   y: number;
@@ -265,7 +262,7 @@ messages = {
 
 Running the codegen command will automatically generate a matching C# class:
 
-```csharp filename="Generated C# output"
+```csharp title="Generated C# output"
 public class MoveMessage {
     public double x;
     public double y;
@@ -274,13 +271,13 @@ public class MoveMessage {
 
 You can then use these classes when sending and receiving messages on the Unity client:
 
-```csharp filename="Sending a message to the server"
+```csharp title="Sending a message to the server"
 room.Send("move", new MoveMessage() { x = 1.0, y = 2.0 });
 ```
 
 The same applies to messages sent from the server to the client. For example, given a server-side interface:
 
-```ts filename="src/rooms/MyRoom.ts"
+```ts title="src/rooms/MyRoom.ts"
 interface EventMessage {
   type: string;
   data: string;
@@ -295,7 +292,7 @@ onJoin(client: Client) {
 
 You can listen for it on the Unity client with the generated type:
 
-```csharp filename="Receiving a message from the server"
+```csharp title="Receiving a message from the server"
 room.OnMessage<EventMessage>("event", (message) => {
     Debug.Log(message.type);
     Debug.Log(message.data);
@@ -316,7 +313,7 @@ You can enable the Editor Debug Panel at **Window → Colyseus → Room Inspecto
 
 If you set a breakpoint while the WebSocket connection is open, the connection is closed automatically after 3 seconds of inactivity. To prevent the WebSocket connection from dropping, use `pingInterval: 0` during development:
 
-```ts filename="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
 import { WebSocketTransport } from "@colyseus/ws-transport";
 

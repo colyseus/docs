@@ -2,11 +2,6 @@
 title: "Netcode"
 description: "Server-authoritative simulation with client-side prediction, server reconciliation, and lag compensation in Colyseus 0.18: instant local response, interpolated remotes, and rewind-based hit registration."
 ---
-import { Callout, Cards } from 'nextra/components'
-import { ServerIcon, DevicesIcon, GoalIcon, ChecklistIcon, BeakerIcon } from '@primer/octicons-react'
-import { PremiumDemos, premiumDemos } from '../components/premium-demos'
-
-# Netcode
 
 Fast-paced games can't wait for the network. If your character only moves after a round-trip to the server, controls feel sluggish. But if the client simply moves itself, the server is no longer in charge and cheating becomes trivial.
 
@@ -71,11 +66,11 @@ Every interaction in your game maps onto a small set of primitives. Find the row
 New to prediction? Read top to bottom. Each page builds on the one before it:
 
 <Cards>
-  <Cards.Card icon={<ServerIcon />} title="Server Input & Timestep" href="/netcode/server-input" />
-  <Cards.Card icon={<DevicesIcon />} title="Client Prediction" href="/netcode/client-prediction" />
-  <Cards.Card icon={<GoalIcon />} title="Lag Compensation" href="/netcode/lag-compensation" />
-  <Cards.Card icon={<ChecklistIcon />} title="Determinism & The Contract" href="/netcode/determinism" />
-  <Cards.Card icon={<BeakerIcon />} title="Recipes" href="/netcode/recipes" />
+  <Card icon={<ServerIcon />} title="Server Input & Timestep" href="/netcode/server-input" />
+  <Card icon={<DevicesIcon />} title="Client Prediction" href="/netcode/client-prediction" />
+  <Card icon={<GoalIcon />} title="Lag Compensation" href="/netcode/lag-compensation" />
+  <Card icon={<ChecklistIcon />} title="Determinism & The Contract" href="/netcode/determinism" />
+  <Card icon={<BeakerIcon />} title="Recipes" href="/netcode/recipes" />
 </Cards>
 
 ## Runnable reference
@@ -84,7 +79,7 @@ The [**Prediction Playground**](https://prediction-colyseus.vercel.app/) covers 
 
 ### Premium demos
 
-The playground isolates each concept. These {premiumDemos.length} prototypes combine them: authoritative server, client prediction, smoothed remotes and lag compensation running as one stack. Each is playable in the browser.
+The playground isolates each concept. These <PremiumDemoCount /> prototypes combine them: authoritative server, client prediction, smoothed remotes and lag compensation running as one stack. Each is playable in the browser.
 
 The set is actively expanding, with new prototypes and with more engine ports of the existing ones. Air Hockey already ships Godot and Unity clients alongside its Three.js build.
 

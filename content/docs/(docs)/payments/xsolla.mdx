@@ -1,12 +1,9 @@
 ---
 title: "Xsolla Payments Integration"
 description: "Integrate Xsolla payments with Colyseus. Handle in-game purchases, subscriptions, and virtual currency with webhook support."
+sidebarTitle: "Xsolla"
+icon: "logo:xsolla"
 ---
-
-import { Cards, Callout, Steps, Tabs } from 'nextra/components'
-import { LinkExternalIcon, MarkGithubIcon, HeartFillIcon, FileCodeIcon, DeviceDesktopIcon, PasskeyFillIcon, DatabaseIcon, BellIcon } from "@primer/octicons-react"
-
-# Xsolla Payments Integration
 
 [Xsolla](https://xsolla.com/?utm_source=colyseus&utm_medium=referral&utm_campaign=colyseus-docs) is a global **merchant of record** that supports a wide range of payment methods and currencies.
 
@@ -21,22 +18,22 @@ import { LinkExternalIcon, MarkGithubIcon, HeartFillIcon, FileCodeIcon, DeviceDe
 - **Xsolla Webhooks**: The Colyseus backend will respond to Xsolla **webhooks** for user validation and payment confirmation
 
 <Cards>
-    <Cards.Card target="_blank" icon={<MarkGithubIcon/>} title="Full source-code" href="https://github.com/colyseus/colyseus-xsolla-integration" />
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="Xsolla Documentation" href="https://developers.xsolla.com/" />
+    <Card icon={<MarkGithubIcon/>} title="Full source-code" href="https://github.com/colyseus/colyseus-xsolla-integration" />
+    <Card icon={<LinkExternalIcon/>} title="Xsolla Documentation" href="https://developers.xsolla.com/" />
 </Cards>
 
 <Cards>
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="Live demo" href="https://xsolla.colyseus.cloud/">
+    <Card icon={<LinkExternalIcon/>} title="Live demo" href="https://xsolla.colyseus.cloud/">
         <img style={{ display: "inline"}} src="/tutorial/xsolla/screenshot.png" alt="Screenshot" />
-    </Cards.Card>
+    </Card>
 </Cards>
 
 ## Xsolla Account Setup
 
 <Steps>
-### [Register for Xsolla Publisher Account](https://publisher.xsolla.com/signup?target_product=pay_station&utm_source=colyseus&utm_medium=referral&utm_campaign=colyseus-docs)
+### Register for Xsolla Publisher Account
 
-    By registering from this link, you will be supporting Colyseus <span style={{ marginLeft: "2px", color: "red" }}><HeartFillIcon /></span>
+    By registering from [this link](https://publisher.xsolla.com/signup?target_product=pay_station&utm_source=colyseus&utm_medium=referral&utm_campaign=colyseus-docs), you will be supporting Colyseus <span style={{ marginLeft: "2px", color: "red" }}><HeartFillIcon /></span>
 
 ### Create Project
 
@@ -108,13 +105,13 @@ In the next sections, we will cover each step in detail.
         For simplicity's sake, this article only presents the code for direct integration with Xsolla. <br/> The snippets from this section should be used as backend HTTP API routes, as shown in [<FileCodeIcon/> `src/routes/xsolla.ts`](https://github.com/colyseus/colyseus-xsolla-integration/blob/main/src/routes/xsolla.ts) file from [<MarkGithubIcon/> Colyseus Xsolla Integration](https://github.com/colyseus/colyseus-xsolla-integration/) repository.
     </Callout>
 
-    <Tabs items={["Virtual Item(s)", "Subscription"]} storageKey="xsolla-item-type-tab">
-        <Tabs.Tab>
+    <Tabs>
+        <Tab value="Virtual Item(s)">
             <Callout type="info">
                 See ["Shop Builder API: Create payment token for purchase"](https://developers.xsolla.com/api/shop-builder/operation/admin-create-payment-token/) for more information.
             </Callout>
 
-            ```typescript filename="xsolla.ts"
+            ```typescript title="xsolla.ts"
             const userId = "123";
             const name = "John Doe";
             const email = "john.doe@example.com";
@@ -167,14 +164,14 @@ In the next sections, we will cover each step in detail.
                 })
             });
             ```
-        </Tabs.Tab>
+        </Tab>
 
-        <Tabs.Tab>
+        <Tab value="Subscription">
             <Callout type="info">
                 See ["Subscriptions API: Create token"](https://developers.xsolla.com/api/subscriptions/operation/create-token/) for more information.
             </Callout>
 
-            ```typescript filename="xsolla.ts"
+            ```typescript title="xsolla.ts"
             const userId = "123";
             const name = "John Doe";
             const email = "john.doe@example.com";
@@ -215,7 +212,7 @@ In the next sections, we will cover each step in detail.
             });
             ```
 
-        </Tabs.Tab>
+        </Tab>
 
     </Tabs>
 
@@ -227,9 +224,9 @@ In the next sections, we will cover each step in detail.
         See ["Open Payment UI"](https://developers.xsolla.com/doc/subscriptions/integration-guide/open-payment-ui/) for more information.
     </Callout>
 
-    <Tabs items={["Open in Iframe", "Open in Embed Widget", "Open in New Window"]} storageKey="xsolla-pay-station-tab">
-        <Tabs.Tab>
-            ```typescript filename="client.ts"
+    <Tabs>
+        <Tab value="Open in Iframe">
+            ```typescript title="client.ts"
             //
             // Open the Pay Station UI in an iframe
             //
@@ -250,10 +247,10 @@ In the next sections, we will cover each step in detail.
                 document.body.appendChild(iframe);
             });
             ```
-        </Tabs.Tab>
+        </Tab>
 
-        <Tabs.Tab>
-            ```typescript filename="client.ts"
+        <Tab value="Open in Embed Widget">
+            ```typescript title="client.ts"
             //
             // Include the Xsolla Embed Widget script
             //
@@ -282,10 +279,10 @@ In the next sections, we will cover each step in detail.
                 XPayStationWidget.open();
             });
             ```
-        </Tabs.Tab>
+        </Tab>
 
-        <Tabs.Tab>
-            ```typescript filename="client.ts"
+        <Tab value="Open in New Window">
+            ```typescript title="client.ts"
             //
             // Open the Pay Station UI in a new window
             //
@@ -298,7 +295,7 @@ In the next sections, we will cover each step in detail.
                 window.open(`https://${(isSandbox) ? "sandbox-" : ""}secure.xsolla.com/paystation4/?token=${response.data.token}`, "_blank");
             });
             ```
-        </Tabs.Tab>
+        </Tab>
     </Tabs>
 
     <details>
@@ -308,7 +305,7 @@ In the next sections, we will cover each step in detail.
 
         The Pay Station UI triggers many events which you can listen to via post-message from the frontend.
 
-        ```typescript filename="client.ts"
+        ```typescript title="client.ts"
         const postMessageListener = (event) => {
             if (!event.origin.endsWith(".xsolla.com")) {
                 /* Skip messages from other origins except Xsolla */
@@ -342,7 +339,6 @@ In the next sections, we will cover each step in detail.
         window.addEventListener('message', postMessageListener);
         ```
     </details>
-
 
     **Example: Purchasing a single virtual item with the Pay Station UI**
 
@@ -413,7 +409,7 @@ Use the following implementation as a reference to handle the webhooks in your C
 
 You will need to bring your own implementation for the `handleUserValidation()`, `handleOrderPaid()`, `handleOrderCanceled()`, `handleCreateSubscription()`, `handleUpdateSubscription()`, `handleCancelSubscription()`, and `handleRefund()` methods.
 
-```typescript filename="src/app.config.ts"
+```typescript title="src/app.config.ts"
 import { defineServer } from "colyseus";
 import { type Request, type Response } from "express";
 import crypto from "crypto";

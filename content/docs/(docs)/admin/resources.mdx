@@ -1,16 +1,10 @@
 ---
 title: "Resources & CRUD"
 description: "Expose drizzle tables in the admin panel: the tables option, defineAdminResource(), visible columns, form fields, custom actions, per-action RBAC, FK auto-linking, the REST contract, and the built-in audit log."
+# The defineAdminResource section was split: the custom-table half moved up.
+movedAnchors:
+  defineadminresource: "/admin/resources#customizing-a-resource"
 ---
-import { Callout } from "nextra/components"
-import { MovedAnchors } from '../../components/moved-anchors'
-
-# Resources & CRUD
-
-{/* The defineAdminResource section was split: the custom-table half moved up. */}
-<MovedAnchors map={{
-    "defineadminresource": "/admin/resources#customizing-a-resource",
-}} />
 
 Every drizzle table you pass to the admin panel becomes a browse-able **resource** with a full CRUD UI. The UI includes a paginated list with search, filter and sort. It adds a detail view with related rows, create and edit forms, and per-row custom actions. The built-in tables from [`@colyseus/database`](/database) are registered automatically. You customize them, and add your own, with the `tables` and `resources` options.
 
@@ -46,7 +40,7 @@ Unless a table declares its own [policies](#policies), access follows the standa
 
 Two options work together. `tables` decides **which** drizzle tables exist in the panel; `resources` decides **how** each one looks and behaves. A custom table needs both: a `resources` entry alone is stored but never listed, and `/admin-api/guilds` answers `404`.
 
-```ts {2,6-7} filename="src/app.config.ts"
+```ts {2,6-7} title="src/app.config.ts"
 import { admin, defineAdminResource } from "@colyseus/admin";
 import { guilds } from "./db/schema";
 
@@ -68,7 +62,7 @@ routes: createRouter({
 
 Override the defaults of any table, built-in or custom, by passing `defineAdminResource(table, config)` into `resources`:
 
-```ts {4,36-37} filename="src/app.config.ts"
+```ts {4,36-37} title="src/app.config.ts"
 import { admin, defineAdminResource } from "@colyseus/admin";
 import { guilds } from "./db/schema";
 
@@ -250,7 +244,7 @@ actions: [{
 
 The panel reads `database.relations` to decorate foreign-key columns. Relations between the built-in tables are declared for you. A `user_id` column on `cloudSaves` becomes a clickable link to the user's show page automatically. The cell shows the user's `display_name`, `name`, `email` or `title` instead of the raw id. Declare relations for your own tables on the `GameDatabase` constructor, using drizzle property names for `fk`:
 
-```ts {4-7} filename="src/db/database.ts"
+```ts {4-7} title="src/db/database.ts"
 export const db = new GameDatabase({
     connectionString: process.env.DATABASE_URL,
     schemas: schema,

@@ -1,17 +1,10 @@
 ---
 title: "Unit Testing"
 description: "Write unit tests for your Colyseus server rooms using the built-in testing utilities and Vitest."
+# waitForNextSimulationTick was renamed to waitForNextTimestep in @colyseus/testing 0.18.2.
+movedAnchors:
+  wait-for-next-simulation-tick: "/tools/unit-testing#wait-for-next-timestep"
 ---
-import { Callout, Steps, Tabs } from 'nextra/components'
-import { ServerIcon, DevicesIcon } from "@primer/octicons-react";
-import { MovedAnchors } from '../../components/moved-anchors'
-
-# Unit Testing Your Server
-
-{/* waitForNextSimulationTick was renamed to waitForNextTimestep in @colyseus/testing 0.18.2. */}
-<MovedAnchors map={{
-    "wait-for-next-simulation-tick": "/tools/unit-testing#wait-for-next-timestep",
-}} />
 
 The `@colyseus/testing` package provides utility methods for testing your Colyseus application. It simulates client connections and message exchange using the JavaScript SDK, so you can validate both server and client behavior in a single test.
 
@@ -23,7 +16,7 @@ The `@colyseus/testing` package provides utility methods for testing your Colyse
 
 This package is installed by default on new projects created via `npm create colyseus-app`.
 
-```sh npm2yarn
+```npm
 npm install --save-dev @colyseus/testing
 ```
 
@@ -31,10 +24,10 @@ npm install --save-dev @colyseus/testing
 
 Boot the test server with your `app.config.ts`, then create rooms and connect simulated clients inside each test case.
 
-<Tabs items={["Mocha + TypeScript", "Jest + TypeScript"]}>
-    <Tabs.Tab>
+<Tabs>
+    <Tab value="Mocha + TypeScript">
 
-    ```ts filename="App.test.ts"
+    ```ts title="App.test.ts"
     import assert from "assert";
     import { ColyseusTestServer, boot } from "@colyseus/testing";
 
@@ -62,11 +55,11 @@ Boot the test server with your `app.config.ts`, then create rooms and connect si
     });
     ```
 
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Jest + TypeScript">
 
-    ```ts filename="App.test.ts"
+    ```ts title="App.test.ts"
     import { ColyseusTestServer, boot } from "@colyseus/testing";
 
     // import your "app.config.ts" file here.
@@ -92,13 +85,13 @@ Boot the test server with your `app.config.ts`, then create rooms and connect si
       });
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
 </Tabs>
 
 Then run your tests with the framework of the tab you followed:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npx mocha --require ts-node/register App.test.ts   # Mocha
 npx jest                                           # Jest
 ```
@@ -118,7 +111,7 @@ When sending messages between server and client, wait for the server to process 
 
 Wait for a particular message `type` to arrive in the server.
 
-```ts {8} filename="App.test.ts"
+```ts {8} title="App.test.ts"
 it("should receive message", async() => {
     const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
@@ -141,7 +134,7 @@ Wait for any next message to arrive in the server.
 
 - `delay: number` - additional delay after `onMessage` has been called in the backend, in milliseconds (optional)
 
-```ts {11} filename="App.test.ts"
+```ts {11} title="App.test.ts"
 it("should receive message", async() => {
     const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
@@ -162,7 +155,7 @@ it("should receive message", async() => {
 
 Wait for the server to send the latest patched state to all clients.
 
-```ts {5} filename="App.test.ts"
+```ts {5} title="App.test.ts"
 it("client state must match server's after patch is received", async() => {
     const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
@@ -177,7 +170,7 @@ it("client state must match server's after patch is received", async() => {
 
 Wait for the next timestep to complete. Works with either loop: `setTimestep()` and `setFixedTimestep()` both drive the same interval.
 
-```ts {5} filename="App.test.ts"
+```ts {5} title="App.test.ts"
 it("should assert something after room's timestep", async() => {
     const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
@@ -202,7 +195,7 @@ You can call any frontend SDK methods through `colyseus.sdk` to simulate client 
 - [`colyseus.sdk.join()`](/sdk#other-join-methods)
 - [`colyseus.sdk.joinById()`](/sdk#other-join-methods)
 
-```ts filename="App.test.ts"
+```ts title="App.test.ts"
 it("should connect into battle_room with options x, y, z", async () => {
     const client = await colyseus.sdk.joinOrCreate("battle_room", {
         a: "a",
@@ -217,7 +210,7 @@ it("should connect into battle_room with options x, y, z", async () => {
 
 Wait for client state to be in sync with the server.
 
-```ts {3} filename="App.test.ts"
+```ts {3} title="App.test.ts"
 it("should do xyz after receiving message 'x'", async () => {
     const client = await colyseus.sdk.joinOrCreate("battle_room");
     await client.waitForNextPatch();
@@ -229,7 +222,7 @@ it("should do xyz after receiving message 'x'", async () => {
 
 Wait for a particular message `type` to arrive in the client.
 
-```ts {5} filename="App.test.ts"
+```ts {5} title="App.test.ts"
 it("should do xyz after receiving message 'x'", async () => {
     const client = await colyseus.sdk.joinOrCreate("battle_room");
     client.send("ask-for-x");
@@ -243,7 +236,7 @@ it("should do xyz after receiving message 'x'", async () => {
 
 Wait for any next message to arrive in the client.
 
-```ts {5} filename="App.test.ts"
+```ts {5} title="App.test.ts"
 it("should do xyz after receiving message 'x'", async () => {
     const client = await colyseus.sdk.joinOrCreate("battle_room");
     client.send("ask-for-x");
@@ -263,7 +256,7 @@ The `@colyseus/testing` package also provides an HTTP client for testing your cu
 - `colyseus.http.delete(url, opts)`
 - `colyseus.http.put(url, opts)`
 
-```ts filename="App.test.ts"
+```ts title="App.test.ts"
 it("should get json data", async () => {
     const response = await colyseus.http.get("/");
 

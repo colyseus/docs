@@ -2,9 +2,6 @@
 title: "Traefik Load Balancer"
 description: "Scale Colyseus across multiple processes using Traefik as a reverse proxy and load balancer."
 ---
-import { Callout, Steps, Tabs } from 'nextra/components';
-
-# Traefik Load Balancer
 
 <Callout type="info">
     This module is experimental. Please report any issues you may find.
@@ -31,7 +28,7 @@ It automatically registers and de-registers Colyseus server instances with Traef
 
 ## Installation
 
-```sh npm2yarn
+```npm
 npm install @colyseus/traefik
 ```
 
@@ -84,11 +81,11 @@ Registers the Colyseus server with Traefik for load balancing.
 
 ## Traefik Configuration
 
-<Tabs items={["Redis Provider (Recommended)", "HTTP Provider"]}>
-    <Tabs.Tab>
+<Tabs>
+    <Tab value="Redis Provider (Recommended)">
         The Redis provider allows Traefik to read configuration directly from Redis, providing real-time updates when servers join or leave.
 
-        ```yaml {2-5} filename="traefik.yml"
+        ```yaml {2-5} title="traefik.yml"
         providers:
           redis:
             rootKey: "traefik"
@@ -102,7 +99,7 @@ Registers the Colyseus server with Traefik for load balancing.
             address: ":443"
         ```
 
-        ```typescript {3} filename="app.config.ts"
+        ```typescript {3} title="app.config.ts"
         await exposeServerToTraefik({
             server,
             provider: "redis",
@@ -110,13 +107,13 @@ Registers the Colyseus server with Traefik for load balancing.
         });
         ```
 
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="HTTP Provider">
 
         The HTTP provider exposes a `/__traefik` endpoint on your Colyseus server that Traefik polls for configuration updates.
 
-        ```yaml {2-4} filename="traefik.yml"
+        ```yaml {2-4} title="traefik.yml"
         providers:
           http:
             endpoint: "http://127.0.0.1:2567/__traefik"
@@ -129,14 +126,14 @@ Registers the Colyseus server with Traefik for load balancing.
             address: ":443"
         ```
 
-        ```typescript {3} filename="app.config.ts"
+        ```typescript {3} title="app.config.ts"
         await exposeServerToTraefik({
             server,
             provider: "http",
             mainAddress: "backend.yourgamedomain.com",
         });
         ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ## How It Works

@@ -2,9 +2,6 @@
 title: Turn Based Tanks Demo
 description: "Build a turn-based multiplayer tanks game with Unity and Colyseus."
 ---
-import { Callout } from 'nextra/components';
-
-# Turn Based Tanks Demo
 
 <Callout type="warning">
     This demo uses an older version of Colyseus.
@@ -36,7 +33,7 @@ If you are running a local server, the default settings should be sufficient. If
 ### Room Metadata
 
 This demo makes use of the room&#39;s metadata to track the players in the game with their username. When a player joins or creates a room, their username is stored in a property called either `team0` or `team1`. `team0` represents the player that created the room. `team1` represents the player that joined an available room to challenge the creator.
-``` javascript
+```javascript
 this.metadata.team0
 this.metadata.team1
 
@@ -46,7 +43,7 @@ this.setMetadata({"team0": options["creatorId"]});
 
 The usernames set in the metadata are then used to filter the available rooms displayed in the lobby. Within the lobby, users see the rooms they have created, plus any room that is still waiting for a challenger to join. Rooms that you have not created and have two players will not be shown in the lobby.
 
-``` csharp
+```csharp
 private TanksRoomsAvailable[] TrimRooms(TanksRoomsAvailable[] originalRooms)
 {
     List<TanksRoomsAvailable> trimmedRooms = new List<TanksRoomsAvailable>();
@@ -71,12 +68,12 @@ private TanksRoomsAvailable[] TrimRooms(TanksRoomsAvailable[] originalRooms)
 
 To make this demo an asynchronous turn based game, we need to keep the room alive even after both players have left. The room is kept alive by setting the `autoDispose` flag to false (see the `onCreate` hook in the TanksRoom server code).
 
-``` javascript
+```javascript
 this.autoDispose = false;
 ```
 
 We know to disconnect the room after the boolean flag `inProcessOfQuitingGame` has been set true after performing checks to determine if the room should be closed. These checks are performed when a user has quit the game.
-``` javascript
+```javascript
 
 // Check if creator has quit before anyone else has joined
 if(this.metadata.team0 && this.metadata.team1 == null) {
@@ -98,7 +95,7 @@ if(disconnectRoom) {
 
 Since this is an example of an asynchronous game, our room could have no users connected to it for any amount of time. When there are no users connected to the room the server doesn't need to update the simulation loop.
 When users disconnect from the room a check is performed to look if there are no more users connected to the room. When no more users are connected to the room the timestep effectively gets paused by setting the delay to a high value. In this case the value is a little more than 24 days.
-``` javascript
+```javascript
 
 // Within the room's `onLeave` handler
 // Check if the server should pause the simulation loop because
@@ -131,7 +128,7 @@ private setServerPause(pause: boolean) {
 ```
 
 When users rejoin a room that has been paused, the timestep is restored.
-``` javascript
+```javascript
 
 // Within the room's `onJoin` handler
 // Check if the server needs to be unpaused

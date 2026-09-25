@@ -1,21 +1,12 @@
 ---
 title: "Colyseus - Multiplayer Game Framework for Node.js"
 description: "Colyseus is an open-source multiplayer framework for Node.js. Build authoritative game servers with real-time state synchronization, matchmaking, built-in client prediction, and SDKs for every major game engine."
-# toc: false
+sidebarTitle: "Introduction"
+icon: "HomeIcon"
+hideTitle: true
 ---
 
-import Image from 'next/image'
-import { Callout, Steps, Tabs, Cards } from 'nextra/components'
-import { CodeIcon, PeopleIcon, SyncIcon, ServerIcon, CloudIcon, DownloadIcon, RepoIcon, FileCodeIcon, ZapIcon, DevicesIcon } from '@primer/octicons-react'
-import { ScenarioGrid, ScenarioCard } from '../components/scenario-card'
-
-{/* The hero carries the wordmark and tagline, so it stands in as the h1: its alt is what
-    search engines read as the heading. */}
-<h1 style={{ margin: 0 }}>
-    {/* priority: the hero is the LCP element, so it must not be lazy-loaded. */}
-    {/* <Image src={require('../images/hero-christmas.webp')} priority width={0} height={0} style={{ width: '100%', height: 'auto' }} alt="Colyseus Multiplayer Framework" /> */}
-    <Image src={require('../images/hero.webp')} priority width={0} height={0} style={{ width: '100%', height: 'auto' }} alt="Colyseus Multiplayer Framework" />
-</h1>
+<Hero />
 
 Colyseus is an open-source Node.js framework for building authoritative game servers, with real-time state synchronization, matchmaking, and simple integration into any game engine or frontend. Authentication, database services, an admin panel, and dev tooling are all included.
 
@@ -50,10 +41,10 @@ Colyseus is an open-source Node.js framework for building authoritative game ser
 
 Create and start a new Colyseus server using the following commands:
 
-<Tabs items={['Node.js', 'Bun']}>
+<Tabs>
 
-  <Tabs.Tab>
-```sh filename="Terminal: Node.js"
+  <Tab value="Node.js">
+```sh title="Terminal: Node.js"
 # Create a new Colyseus project
 npm create colyseus-app@latest ./my-server
 
@@ -63,10 +54,10 @@ cd my-server
 # Run the server
 npm start
 ```
-  </Tabs.Tab>
+  </Tab>
 
-  <Tabs.Tab>
-```sh filename="Terminal: Bun"
+  <Tab value="Bun">
+```sh title="Terminal: Bun"
 # Create a new Colyseus project
 bun create colyseus-app@latest ./my-server
 
@@ -77,16 +68,16 @@ cd my-server
 bun add @colyseus/bun-websockets
 bun run src/index.ts
 ```
-  </Tabs.Tab>
+  </Tab>
 </Tabs>
 
 ### Define your Room State
 
 The Room state is the data structure that will be synchronized between the server and the connected clients:
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
-    ```ts filename="src/rooms/MyState.ts"
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
+    ```ts title="src/rooms/MyState.ts"
     import { schema, t } from "@colyseus/schema";
 
     export const Player = schema({
@@ -98,9 +89,9 @@ The Room state is the data structure that will be synchronized between the serve
         players: t.map(Player),
     }, "MyState");
     ```
-    </Tabs.Tab>
-    <Tabs.Tab>
-    ```ts filename="src/rooms/MyState.ts"
+    </Tab>
+    <Tab value="Decorators">
+    ```ts title="src/rooms/MyState.ts"
     import { Schema, MapSchema, type } from "@colyseus/schema";
 
     export class Player extends Schema {
@@ -112,14 +103,14 @@ The Room state is the data structure that will be synchronized between the serve
         @type({ map: Player }) players = new MapSchema<Player>();
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ### Create your Room code
 
 Define the game logic and client interactions with the game state within your Room code.
 
-```ts filename="src/rooms/MyRoom.ts"
+```ts title="src/rooms/MyRoom.ts"
 import { Room, Client } from "colyseus";
 import { MyState, Player } from "./MyState";
 
@@ -155,7 +146,7 @@ export class MyRoom extends Room {
 
 Exposing the room type allows clients to connect to the server and dynamically create instances of it.
 
-```ts {6} filename="src/app.config.ts"
+```ts {6} title="src/app.config.ts"
 import { defineServer, defineRoom } from "colyseus";
 import { MyRoom } from "./MyRoom";
 
@@ -170,10 +161,10 @@ const server = defineServer({
 
 Communication between the client and server occurs through room connections. Below are examples for each SDK showing how to join a room and listen for state changes:
 
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+<LangTabs>
 
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     import { Client, Callbacks } from "@colyseus/sdk";
 
     async function connect() {
@@ -201,10 +192,10 @@ Communication between the client and server occurs through room connections. Bel
 
     connect();
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
+    <Tab value="JavaScript">
+    ```js title="client.js"
     import * as Colyseus from "@colyseus/sdk";
 
     const client = new Colyseus.Client('http://localhost:2567');
@@ -228,10 +219,10 @@ Communication between the client and server occurs through room connections. Bel
         room.send("doSomething", {/* ... */});
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     using Colyseus;
 
     async void Connect() {
@@ -260,10 +251,10 @@ Communication between the client and server occurs through room connections. Bel
         }
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     local ColyseusSDK = require("colyseus.sdk")
 
     local client = ColyseusSDK.Client("http://localhost:2567")
@@ -290,10 +281,10 @@ Communication between the client and server occurs through room connections. Bel
         room:send("doSomething", {--[[ ... ]]})
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="Client.hx"
+    <Tab value="Haxe">
+    ```haxe title="Client.hx"
     import io.colyseus.Client;
     import io.colyseus.serializer.schema.Callbacks;
 
@@ -325,17 +316,17 @@ Communication between the client and server occurs through room connections. Bel
         }
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</Tabs>
+</LangTabs>
 
 ### Explore more
 
 Explore more about Colyseus by following the tutorials and example projects:
 
 <Cards>
-    <Cards.Card icon={<RepoIcon/>} title="Example Projects" href="/learn/examples" arrow />
-    <Cards.Card icon={<FileCodeIcon/>} title="Tutorials" href="/learn/tutorial" arrow />
+    <Card icon={<RepoIcon/>} title="Example Projects" href="/learn/examples" />
+    <Card icon={<FileCodeIcon/>} title="Tutorials" href="/learn/tutorial" />
 </Cards>
 
 </Steps>

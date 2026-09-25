@@ -1,21 +1,14 @@
 ---
 title: "Schema Definition"
 description: "Define synchronizable state with Colyseus Schema: typed fields, ArraySchema, MapSchema, nested structures, and change tracking."
+# The step-by-step overview moved to /state; keep old deep links working.
+movedAnchors:
+  overview: "/state#overview"
+  using-the-state-in-your-room: "/state#overview"
+  the-schema-builder: "/state/schema#defining-a-schema-structure"
+  methods-and-initialize: "/state/schema#methods-and-constructors"
+  versioning-and-backwardsforwards-compability: "/state/schema#versioning-and-backwardsforwards-compatibility"
 ---
-import { Tabs, Callout, Cards } from 'nextra/components'
-import { HashIcon } from '@primer/octicons-react'
-import { MovedAnchors } from '../../components/moved-anchors'
-
-# Schema Definition
-
-{/* The step-by-step overview moved to /state; keep old deep links working. */}
-<MovedAnchors map={{
-    "overview": "/state#overview",
-    "using-the-state-in-your-room": "/state#overview",
-    "the-schema-builder": "/state/schema#defining-a-schema-structure",
-    "methods-and-initialize": "/state/schema#methods-and-constructors",
-    "versioning-and-backwardsforwards-compability": "/state/schema#versioning-and-backwardsforwards-compatibility",
-}} />
 
 - Schema structures are defined on the backend and describe data that is continuously synchronized between server and client.
 - A field is synchronized when it is **declared**: with a `t.*` builder, or with a [`@type()` decorator](/state/schema/decorators). Plain class properties are invisible to the serializer.
@@ -31,10 +24,10 @@ import { MovedAnchors } from '../../components/moved-anchors'
 
 ## Defining a `Schema` structure
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
 
-    ```ts filename="MyState.ts"
+    ```ts title="MyState.ts"
     import { schema, t } from "@colyseus/schema";
 
     export const MyState = schema({
@@ -45,11 +38,11 @@ import { MovedAnchors } from '../../components/moved-anchors'
     `schema()` returns a real class: `instanceof` works, and you instantiate it with `new`. It runs in plain JavaScript and TypeScript alike, with no compiler configuration.
 
     Each field takes a `t.*` builder. Since schema 5 (Colyseus 0.18), raw strings like `"string"` as field values are no longer accepted and throw at definition time. (They remain valid as [collection](#array-arrayschema) child types, e.g. `t.array("string")`.)
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Decorators">
 
-    ```ts filename="MyState.ts"
+    ```ts title="MyState.ts"
     import { Schema, type } from "@colyseus/schema";
 
     export class MyState extends Schema {
@@ -58,7 +51,7 @@ import { MovedAnchors } from '../../components/moved-anchors'
     ```
 
     The decorator style requires two `tsconfig.json` flags. See [Decorators → TypeScript Config](/state/schema/decorators#typescript-config).
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 Assign an instance to your room's `state` property to start synchronizing it. [State Synchronization](/state#overview) walks through the full loop, from definition to client callbacks.
@@ -67,12 +60,12 @@ The sections below cover each aspect of a schema definition, in both styles. The
 
 ### Deriving the TypeScript type
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
 
     `schema()` returns a value, not a type. To reference the instance type in TypeScript (`Room<MyState>`, function parameters, etc.), declare a type alias with the same name using `SchemaType`:
 
-    ```ts filename="MyState.ts"
+    ```ts title="MyState.ts"
     import { schema, t, type SchemaType } from "@colyseus/schema";
 
     export const Player = schema({
@@ -83,13 +76,13 @@ The sections below cover each aspect of a schema definition, in both styles. The
     ```
 
     The `const` and the `type` merge under one name, so `Player` works as both: `new Player()` and `function move(player: Player)`. Plain JavaScript users omit the `type` line.
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Decorators">
 
     A decorator class is already its own type (no alias needed):
 
-    ```ts filename="MyState.ts"
+    ```ts title="MyState.ts"
     import { Schema, type } from "@colyseus/schema";
 
     export class Player extends Schema {
@@ -99,37 +92,37 @@ The sections below cover each aspect of a schema definition, in both styles. The
 
     function move(player: Player) { /* ... */ }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ### Naming schemas
 
 The serializer identifies each structure by its runtime class name. An anonymous class degrades error messages, debug output and cross-language code generation.
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
 
     The second argument of `schema()` sets the runtime class name. Pass it for every state structure:
 
     ```ts
     const Player = schema({ /* ... */ }, "Player");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Decorators">
 
     The class name is used automatically:
 
     ```ts
     class Player extends Schema { /* ... */ }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ### Default values
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
 
     Chain `.default(value)` to set a field's initial value. Passing a **function** makes it a factory, invoked once per construction. Use it for any mutable default that must not be shared across instances:
 
@@ -141,9 +134,9 @@ The serializer identifies each structure by its runtime class name. An anonymous
     ```
 
     Fields without an explicit default are auto-instantiated when possible: collections start as an empty `ArraySchema`/`MapSchema`/`SetSchema`/`CollectionSchema`, and a child schema field starts as `new Child()` when the child requires no construction arguments. You don't write the decorator style's property initializers with the builder.
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Decorators">
 
     Use regular class property initializers. Collections and child schemas are initialized explicitly on the property:
 
@@ -153,13 +146,13 @@ The serializer identifies each structure by its runtime class name. An anonymous
         @type({ map: Item }) items = new MapSchema<Item>();
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ### Methods and constructors
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
 
     Function-valued properties become methods on the resulting class. The special `initialize(props)` method acts as the constructor body:
 
@@ -184,9 +177,9 @@ The serializer identifies each structure by its runtime class name. An anonymous
     - Without an `initialize()`, the constructor already accepts a partial props object: `new Player({ hp: 50 })`.
     - With an `initialize()`, its parameter becomes the constructor signature: a required parameter makes `new Player()` a type error, and assigning the schema fields from `props` is `initialize()`'s job.
     - `initialize()` runs only for the exact class being constructed. When extending, invoke the parent's explicitly with `Parent.prototype.initialize.call(this, props)`.
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Decorators">
 
     Methods are ordinary class methods, and a custom constructor replaces `initialize()`:
 
@@ -211,7 +204,7 @@ The serializer identifies each structure by its runtime class name. An anonymous
 
     - Without a custom constructor, the base `Schema` constructor already accepts a partial props object: `new Player({ hp: 50 })`.
     - A custom constructor must call `super()` first: bare `super()` and assign fields yourself, or `super(props)` to keep the automatic property assignment.
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ### Field modifiers
@@ -250,8 +243,8 @@ Tick patches carry the field on the **unreliable transport channel**, dropped ra
     On every WebSocket transport the field reaches clients once, in the full state sync, and then freezes. Tick patches skip it, and the room logs a warning. Keep the field reliable until the transport is in place.
 </Callout>
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
 
     ```ts
     const Player = schema({
@@ -260,9 +253,9 @@ Tick patches carry the field on the **unreliable transport channel**, dropped ra
         aimYaw: t.angle().unreliable(),    // replaced every tick; a drop is free
     }, "Player");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Decorators">
 
     ```ts
     class Player extends Schema {
@@ -273,7 +266,7 @@ Tick patches carry the field on the **unreliable transport channel**, dropped ra
     ```
 
     (`t.angle()` quantization is builder-only: the decorator field stays a plain `number`.)
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 Use it for continuously-overwritten values (look angles, interpolated positions, a cosmetic animation blend). Do **not** use it for anything a client must not miss: inventory, score, health, or any value read as a delta rather than an absolute.
@@ -284,8 +277,8 @@ The field is still written to the full state sync, so a late joiner gets the cur
 
 The field travels on **tick patches only**. A full state sync never includes it, so a client that joins mid-game does not receive it at all. The field appears only when it next changes:
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
 
     ```ts
     const Explosion = schema({
@@ -294,9 +287,9 @@ The field travels on **tick patches only**. A full state sync never includes it,
         flashIntensity: t.number().patchOnly(),  // meaningless to a late joiner
     }, "Explosion");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Decorators">
 
     ```ts
     class Explosion extends Schema {
@@ -305,7 +298,7 @@ The field travels on **tick patches only**. A full state sync never includes it,
         @patchOnly @type("number") flashIntensity: number;  // meaningless to a late joiner
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 Use it for values that are only meaningful *as they happen*: a hit flash, a one-frame impulse, a "last damage taken" readout. Sending them in a full state sync would show a late joiner an event that already finished.
@@ -318,8 +311,8 @@ For **map and room-wide data** that every client needs once: the level layout, t
 
 The field ships in the **full state sync only**: a client receives it on join, and never again.
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
 
     ```ts
     const MyState = schema({
@@ -333,9 +326,9 @@ The field ships in the **full state sync only**: a client receives it on join, a
         players: t.map(Player),
     }, "MyState");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Decorators">
 
     ```ts
     class MyState extends Schema {
@@ -349,7 +342,7 @@ The field ships in the **full state sync only**: a client receives it on join, a
         @type({ map: Player }) players = new MapSchema<Player>();
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 Room-wide data like this tends to be **large and constant**, exactly the combination you don't want anywhere near a per-tick patch. The modifier is a guarantee rather than an optimization you have to keep verifying. The field cannot end up in a patch, however the surrounding code evolves.
@@ -371,22 +364,22 @@ The field itself is not frozen. It stays an ordinary, mutable property on the se
 ## Data Types
 
 <Cards>
-    <Cards.Card icon={<HashIcon/>} title="Primitive Types" href="#primitive-types" arrow />
-    <Cards.Card icon={<HashIcon/>} title="Schema Type" href="#schema-type" arrow />
-    <Cards.Card icon={<HashIcon/>} title="ArraySchema" href="#array-arrayschema" arrow />
-    <Cards.Card icon={<HashIcon/>} title="MapSchema" href="#map-mapschema" arrow />
-    <Cards.Card icon={<HashIcon/>} title="SetSchema" href="#set-setschema" arrow />
-    <Cards.Card icon={<HashIcon/>} title="CollectionSchema" href="#collectionschema" arrow />
+    <Card icon={<HashIcon/>} title="Primitive Types" href="#primitive-types" />
+    <Card icon={<HashIcon/>} title="Schema Type" href="#schema-type" />
+    <Card icon={<HashIcon/>} title="ArraySchema" href="#array-arrayschema" />
+    <Card icon={<HashIcon/>} title="MapSchema" href="#map-mapschema" />
+    <Card icon={<HashIcon/>} title="SetSchema" href="#set-setschema" />
+    <Card icon={<HashIcon/>} title="CollectionSchema" href="#collectionschema" />
 </Cards>
 
 ### Primitive types
 
 Each primitive type is declared through its `t.*` factory (or, in decorator style, by its quoted name):
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
 
-    ```ts filename="MyState.ts"
+    ```ts title="MyState.ts"
     import { schema, t } from "@colyseus/schema";
 
     const Player = schema({
@@ -395,11 +388,11 @@ Each primitive type is declared through its `t.*` factory (or, in decorator styl
         score: t.number(),
     }, "Player");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Decorators">
 
-    ```ts filename="MyState.ts"
+    ```ts title="MyState.ts"
     import { Schema, type } from "@colyseus/schema";
 
     class Player extends Schema {
@@ -408,7 +401,7 @@ Each primitive type is declared through its `t.*` factory (or, in decorator styl
         @type("number") score: number;
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 The available primitive types:
@@ -429,7 +422,6 @@ The available primitive types:
 | `"number"` | also known as "variable length encoding". Auto-detects the number type to use. (may use one extra byte when encoding to identify the type) | ±`1.7976931348623157e+308` (float64 limits) |
 | `"boolean"` | `true` or `false` | `0` or `1` |
 | `"int64"` and `"uint64"` | JavaScript numbers are 64 bit floats and thus cannot represent full 64 bit integers safely | The minimum/maximum integer that can be safely represented by float64 is `-9007199254740991` to `9007199254740991` (53 bits of precision) |
-
 
 Specialized number types:
 
@@ -500,10 +492,10 @@ Your code reads and writes a plain `number`. The conversion is invisible.
 
 A `Schema` type can define properties as primitives, other `Schema` types, or collections (e.g., arrays or maps) that may contain nested types.
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
 
-    ```ts filename="MyState.ts"
+    ```ts title="MyState.ts"
     import { schema, t } from "@colyseus/schema";
 
     const World = schema({
@@ -518,11 +510,11 @@ A `Schema` type can define properties as primitives, other `Schema` types, or co
     ```
 
     The `world` field is auto-instantiated: `new MyState().world` is already a `World` instance. Use `t.ref(World)` instead of the bare class when you need to chain [field modifiers](#field-modifiers).
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Decorators">
 
-    ```ts filename="MyState.ts"
+    ```ts title="MyState.ts"
     import { Schema, type } from "@colyseus/schema";
 
     class World extends Schema {
@@ -535,7 +527,7 @@ A `Schema` type can define properties as primitives, other `Schema` types, or co
         @type(World) world: World = new World();
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 <Callout type="info">
@@ -550,13 +542,13 @@ The `ArraySchema` is a synchronizeable version of the built-in JavaScript [Array
 
 You can't mix types inside `ArraySchema`.
 
-<Tabs items={["Example with primitive child type", "Example with Schema child type"]}>
-    <Tabs.Tab>
+<Tabs>
+    <Tab value="Example with primitive child type">
 
-        <Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-            <Tabs.Tab>
+        <Tabs groupId="schema-style" persist>
+            <Tab value="Schema Builder">
 
-            ```ts filename="MyState.ts"
+            ```ts title="MyState.ts"
             import { schema, t } from "@colyseus/schema";
 
             const MyState = schema({
@@ -565,27 +557,27 @@ You can't mix types inside `ArraySchema`.
             ```
 
             At runtime the field is an `ArraySchema` instance: `state.animals.push("cat")` works right away.
-            </Tabs.Tab>
+            </Tab>
 
-            <Tabs.Tab>
+            <Tab value="Decorators">
 
-            ```ts filename="MyState.ts"
+            ```ts title="MyState.ts"
             import { Schema, ArraySchema, type } from "@colyseus/schema";
 
             class MyState extends Schema {
                 @type([ "string" ]) animals = new ArraySchema<string>();
             }
             ```
-            </Tabs.Tab>
+            </Tab>
         </Tabs>
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Example with Schema child type">
 
-        <Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-            <Tabs.Tab>
+        <Tabs groupId="schema-style" persist>
+            <Tab value="Schema Builder">
 
-            ```ts filename="MyState.ts"
+            ```ts title="MyState.ts"
             import { schema, t } from "@colyseus/schema";
 
             const Block = schema({
@@ -597,11 +589,11 @@ You can't mix types inside `ArraySchema`.
                 blocks: t.array(Block),
             }, "MyState");
             ```
-            </Tabs.Tab>
+            </Tab>
 
-            <Tabs.Tab>
+            <Tab value="Decorators">
 
-            ```ts filename="MyState.ts"
+            ```ts title="MyState.ts"
             import { Schema, ArraySchema, type } from "@colyseus/schema";
 
             class Block extends Schema {
@@ -613,9 +605,9 @@ You can't mix types inside `ArraySchema`.
                 @type([ Block ]) blocks = new ArraySchema<Block>();
             }
             ```
-            </Tabs.Tab>
+            </Tab>
         </Tabs>
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ---
@@ -624,7 +616,7 @@ You can't mix types inside `ArraySchema`.
 
 Adds one or more elements to the end of an array and returns the new length of the array.
 
-``` typescript
+```typescript
 const animals = new ArraySchema<string>();
 animals.push("pigs", "goats");
 animals.push("sheeps");
@@ -638,7 +630,7 @@ animals.push("cows");
 
 Removes the last element from an array and returns that element. This method changes the length of the array.
 
-``` typescript
+```typescript
 animals.pop();
 // output: "cows"
 
@@ -652,7 +644,7 @@ animals.length
 
 Removes the first element from an array and returns that removed element. This method changes the length of the array.
 
-``` typescript
+```typescript
 animals.shift();
 // output: "pigs"
 
@@ -666,7 +658,7 @@ animals.length
 
 Adds one or more elements to the beginning of an array and returns the new length of the array.
 
-``` typescript
+```typescript
 animals.unshift("pigeon");
 // output: 3
 ```
@@ -677,7 +669,7 @@ animals.unshift("pigeon");
 
 Returns the first index at which a given element can be found in the array, or -1 if it is not present
 
-``` typescript
+```typescript
 const itemIndex = animals.indexOf("sheeps");
 ```
 
@@ -687,7 +679,7 @@ const itemIndex = animals.indexOf("sheeps");
 
 Changes the contents of an array by removing or replacing existing elements and/or adding new elements [in place](https://en.wikipedia.org/wiki/In-place_algorithm).
 
-``` typescript
+```typescript
 // find the index of the item you'd like to remove
 const itemIndex = animals.findIndex((animal) => animal === "sheeps");
 
@@ -701,7 +693,7 @@ animals.splice(itemIndex, 1);
 
 Shuffles the array in place. This method returns the shuffled array.
 
-``` typescript
+```typescript
 const animals = new ArraySchema<string>();
 animals.push("pigs", "goats", "sheeps", "cows");
 animals.shuffle();
@@ -727,10 +719,10 @@ state.cards.move((cards) => {
 
 Iterates over each element of the array.
 
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
-    <Tabs.Tab>
+<LangTabs>
+    <Tab value="TypeScript">
 
-    ``` typescript
+    ```typescript
     this.state.array1 = new ArraySchema<string>('a', 'b', 'c');
 
     this.state.array1.forEach(element => {
@@ -740,11 +732,11 @@ Iterates over each element of the array.
     // output: "b"
     // output: "c"
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
 
-    ``` cs
+    ```cs
     // ArraySchema<T> is an IReadOnlyList<T>: foreach, the indexer and LINQ all work
     foreach (var value in State.array1) {
         Debug.Log(value);
@@ -753,27 +745,27 @@ Iterates over each element of the array.
     // the callback form: type the parameters, since two overloads match
     State.array1.ForEach((int index, string value) => Debug.Log(value));
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
 
-    ``` lua
+    ```lua
     state.array1:each(function(value, index)
         print(index, "=>")
         pprint(value)
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
 
-    ``` haxe
+    ```haxe
     for (index => value in state.array1) {
         trace(index + " => " + value);
     }
     ```
-    </Tabs.Tab>
-</Tabs>
+    </Tab>
+</LangTabs>
 
 <Callout type="info">
     **More methods available for Array** - Have a look at the [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/).
@@ -797,11 +789,10 @@ Maps are recommended to track your game entities by id, such as players, enemies
     **Only string keys are supported** - Currently, the `MapSchema` only allows you to customize the value type. The key type is always `string`.
 </Callout>
 
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
-
-    ```ts filename="MyState.ts"
+    ```ts title="MyState.ts"
     import { schema, t } from "@colyseus/schema";
 
     const Player = schema({
@@ -813,11 +804,11 @@ Maps are recommended to track your game entities by id, such as players, enemies
         players: t.map(Player),
     }, "MyState");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Decorators">
 
-    ```ts filename="MyState.ts"
+    ```ts title="MyState.ts"
     import { Schema, MapSchema, type } from "@colyseus/schema";
 
     class Player extends Schema {
@@ -829,7 +820,7 @@ Maps are recommended to track your game entities by id, such as players, enemies
         @type({ map: Player }) players = new MapSchema<Player>();
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ---
@@ -838,7 +829,7 @@ Maps are recommended to track your game entities by id, such as players, enemies
 
 Getting a map item by its key:
 
-``` typescript
+```typescript
 const map = new MapSchema<string>();
 const item = map.get("key");
 ```
@@ -849,7 +840,7 @@ const item = map.get("key");
 
 Setting a map item by key:
 
-``` typescript
+```typescript
 const map = new MapSchema<string>();
 map.set("key", "value");
 ```
@@ -860,7 +851,7 @@ map.set("key", "value");
 
 Removes a map item by key:
 
-``` typescript
+```typescript
 map.delete("key");
 ```
 
@@ -870,7 +861,7 @@ map.delete("key");
 
 Return the number of elements in a `MapSchema` object.
 
-``` typescript
+```typescript
 const map = new MapSchema<number>();
 map.set("one", 1);
 map.set("two", 2);
@@ -885,20 +876,20 @@ console.log(map.size);
 
 Iterates over each key/value pair of the map, in insertion order.
 
-<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]}>
-    <Tabs.Tab>
+<LangTabs>
+    <Tab value="TypeScript">
 
-    ``` typescript
+    ```typescript
     this.state.players.forEach((value, key) => {
         console.log("key =>", key)
         console.log("value =>", value)
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
 
-    ``` cs
+    ```cs
     // MapSchema<T> is an IReadOnlyDictionary<string, T>: foreach walks insertion order
     foreach (var (key, player) in State.players) {
         Debug.Log(key);
@@ -912,28 +903,27 @@ Iterates over each key/value pair of the map, in insertion order.
     // the callback form: type the parameters, since two overloads match
     State.players.ForEach((string key, Player player) => Debug.Log(key));
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
 
-    ``` lua
+    ```lua
     state.players:each(function(value, key)
         print(key, "=>")
         pprint(value)
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
 
-    ``` haxe
+    ```haxe
     for (key => value in state.players) {
         trace(index + " => " + value);
     }
     ```
-    </Tabs.Tab>
-</Tabs>
-
+    </Tab>
+</LangTabs>
 
 In C#, `foreach` over a `MapSchema<T>` allocates nothing. Adding or removing an entry during enumeration throws an `InvalidOperationException`.
 
@@ -959,11 +949,10 @@ The `SetSchema` is a synchronizeable version of the built-in JavaScript [Set](ht
 
 The usage of `SetSchema` is very similar to [`CollectionSchema`], the biggest difference is that Sets hold unique values. Sets do not have a way to access a value directly. (like [collection.at()](#collectionat))
 
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
-
-    ```ts filename="MyState.ts"
+    ```ts title="MyState.ts"
     import { schema, t } from "@colyseus/schema";
 
     const Effect = schema({
@@ -974,11 +963,11 @@ The usage of `SetSchema` is very similar to [`CollectionSchema`], the biggest di
         effects: t.set(Effect),
     }, "Player");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Decorators">
 
-    ```ts filename="MyState.ts"
+    ```ts title="MyState.ts"
     import { Schema, SetSchema, type } from "@colyseus/schema";
 
     class Effect extends Schema {
@@ -989,7 +978,7 @@ The usage of `SetSchema` is very similar to [`CollectionSchema`], the biggest di
         @type({ set: Effect }) effects = new SetSchema<Effect>();
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ---
@@ -998,7 +987,7 @@ The usage of `SetSchema` is very similar to [`CollectionSchema`], the biggest di
 
 Appends an item to the `SetSchema` object.
 
-``` typescript
+```typescript
 const set = new SetSchema<number>();
 set.add(1);
 set.add(2);
@@ -1011,7 +1000,7 @@ set.add(3);
 
 Delete an item by its value.
 
-``` typescript
+```typescript
 set.delete(3);
 ```
 
@@ -1021,7 +1010,7 @@ set.delete(3);
 
 Returns a boolean value whether an item exists in the Collection or not.
 
-``` typescript
+```typescript
 if (set.has(2)) {
     console.log("Exists!");
 } else {
@@ -1035,7 +1024,7 @@ if (set.has(2)) {
 
 Return the number of elements in a `SetSchema` object.
 
-``` typescript
+```typescript
 const set = new SetSchema<number>();
 set.add(10);
 set.add(20);
@@ -1048,7 +1037,6 @@ console.log(set.size);
 <Callout type="info">
     **More methods available for Set** - Have a look at the [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/).
 </Callout>
-
 
 ---
 
@@ -1066,11 +1054,10 @@ Empties the Set. (Frontend will trigger `onRemove` for each element.)
 
 The `CollectionSchema` works similarly as the `ArraySchema`, with the caveat that you don't have control over its indexes.
 
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
-
-    ```ts filename="MyState.ts"
+    ```ts title="MyState.ts"
     import { schema, t } from "@colyseus/schema";
 
     const Item = schema({
@@ -1081,11 +1068,11 @@ The `CollectionSchema` works similarly as the `ArraySchema`, with the caveat tha
         items: t.collection(Item),
     }, "Player");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Decorators">
 
-    ```ts filename="MyState.ts"
+    ```ts title="MyState.ts"
     import { Schema, CollectionSchema, type } from "@colyseus/schema";
 
     class Item extends Schema {
@@ -1096,7 +1083,7 @@ The `CollectionSchema` works similarly as the `ArraySchema`, with the caveat tha
         @type({ collection: Item }) items = new CollectionSchema<Item>();
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ---
@@ -1105,7 +1092,7 @@ The `CollectionSchema` works similarly as the `ArraySchema`, with the caveat tha
 
 Appends an item to the `CollectionSchema` object.
 
-``` typescript
+```typescript
 const collection = new CollectionSchema<number>();
 collection.add(1);
 collection.add(2);
@@ -1118,7 +1105,7 @@ collection.add(3);
 
 Gets an item at the specified `index`.
 
-``` typescript
+```typescript
 const collection = new CollectionSchema<string>();
 collection.add("one");
 collection.add("two");
@@ -1134,7 +1121,7 @@ collection.at(1);
 
 Delete an item by its value.
 
-``` typescript
+```typescript
 collection.delete("three");
 ```
 
@@ -1144,7 +1131,7 @@ collection.delete("three");
 
 Returns a boolean value whether an item exists in the Collection or not.
 
-``` typescript
+```typescript
 if (collection.has("two")) {
     console.log("Exists!");
 } else {
@@ -1158,7 +1145,7 @@ if (collection.has("two")) {
 
 Return the number of elements in a `CollectionSchema` object.
 
-``` typescript
+```typescript
 const collection = new CollectionSchema<number>();
 collection.add(10);
 collection.add(20);
@@ -1174,7 +1161,7 @@ console.log(collection.size);
 
 The `forEach()` method executes a provided function once per each index/value pair in the `CollectionSchema` object, in insertion order.
 
-``` typescript
+```typescript
 collection.forEach((value, at) => {
     console.log("at =>", at)
     console.log("value =>", value)
@@ -1193,22 +1180,21 @@ Empties the Collection. (Frontend will trigger `onRemove` for each element.)
 
 Backwards/forwards compatibility is possible by declaring new fields at the end of existing structures. Earlier declarations must not be removed. Mark them `.deprecated()` instead. See a versioning example below.
 
+<Tabs>
+    <Tab value="Live version 1">
 
-<Tabs items={["Live version 1", "Live version 2", "Live version 3"]}>
-    <Tabs.Tab>
-
-    ```ts filename="MyState.ts"
+    ```ts title="MyState.ts"
     import { schema, t } from "@colyseus/schema";
 
     const MyState = schema({
         myField: t.string(),
     }, "MyState");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Live version 2">
 
-    ```ts filename="MyState.ts"
+    ```ts title="MyState.ts"
     import { schema, t } from "@colyseus/schema";
 
     const MyState = schema({
@@ -1219,11 +1205,11 @@ Backwards/forwards compatibility is possible by declaring new fields at the end 
         newField: t.string(),
     }, "MyState");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Live version 3">
 
-    ```ts filename="MyState.ts"
+    ```ts title="MyState.ts"
     import { schema, t } from "@colyseus/schema";
 
     const MyState = schema({
@@ -1237,7 +1223,7 @@ Backwards/forwards compatibility is possible by declaring new fields at the end 
         anotherNewField: t.string(),
     }, "MyState");
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 Accessing a `.deprecated()` field throws an error; use `.deprecated(false)` to keep reads allowed while the field is retired. (Decorator style: `@deprecated() @type(...)`. See [Deprecating fields](/state/schema/decorators#deprecating-fields).)
@@ -1253,10 +1239,10 @@ These inherited types may define their own serialized fields.
 
 The following example is supported:
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
 
-    ```ts {3-5,8,12-13} filename="MyState.ts"
+    ```ts {3-5,8,12-13} title="MyState.ts"
     import { schema, t } from "@colyseus/schema";
 
     const Item = schema({/* base Item fields */}, "Item");
@@ -1273,11 +1259,11 @@ The following example is supported:
     ```
 
     `.extend()` builds a real prototype chain (`new Weapon() instanceof Item` holds), inheriting fields, methods and defaults. Extended classes are registered with the serializer automatically: no extra registration step.
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Decorators">
 
-    ```ts {3-5,8,12-13} filename="MyState.ts"
+    ```ts {3-5,8,12-13} title="MyState.ts"
     import { Schema, MapSchema, type } from "@colyseus/schema";
 
     class Item extends Schema {/* base Item fields */}
@@ -1294,5 +1280,5 @@ The following example is supported:
     ```
 
     A subclass that adds no new `@type()` fields must be registered with [`@entity`](/state/schema/decorators#inheritance).
-    </Tabs.Tab>
+    </Tab>
 </Tabs>

@@ -2,9 +2,6 @@
 title: "Decorators (@type)"
 description: "Define Colyseus schema state with TypeScript @type() decorators: tsconfig setup, collections, default values, inheritance, @view(), @deprecated() and delivery modifiers. Fully supported alternative to the schema() builder."
 ---
-import { Callout } from 'nextra/components'
-
-# Schema Definition with Decorators
 
 The `@type()` decorator style is the classic way of defining schema structures, and remains **fully supported**. The [schema builder](/state/schema) (`schema()` + `t.*`) is the recommended style for new code, but both produce the identical wire format and interoperate freely: `t.array(DecoratorClass)` and `@type(BuilderClass)` both work.
 
@@ -14,7 +11,7 @@ Schema examples across the docs offer a **Decorators** tab, and your tab selecti
 
 The decorator style requires two settings in your `tsconfig.json`. Enable `experimentalDecorators` and disable `useDefineForClassFields`:
 
-```json filename="tsconfig.json"
+```json title="tsconfig.json"
 {
     "compilerOptions": {
         "experimentalDecorators": true,
@@ -35,7 +32,7 @@ These flags are needed **only** for decorators. The [`schema()` builder](/state/
 
 Extend the `Schema` class and decorate each synchronizable field with `@type()`, passing one of the [primitive type strings](/state/schema#primitive-types):
 
-```ts filename="MyState.ts"
+```ts title="MyState.ts"
 import { Schema, type } from "@colyseus/schema";
 
 export class MyState extends Schema {
@@ -47,7 +44,7 @@ export class MyState extends Schema {
 
 Pass the class itself to `@type()` to nest one schema inside another:
 
-```ts filename="MyState.ts"
+```ts title="MyState.ts"
 import { Schema, type } from "@colyseus/schema";
 
 class World extends Schema {
@@ -65,7 +62,7 @@ class MyState extends Schema {
 
 Collection fields take the child type wrapped in the collection shape: `[...]` for arrays, `{ map: ... }`, `{ set: ... }`, or `{ collection: ... }`. Initialize each field with its collection instance:
 
-```ts filename="MyState.ts"
+```ts title="MyState.ts"
 import { Schema, ArraySchema, MapSchema, SetSchema, CollectionSchema, type } from "@colyseus/schema";
 
 class Block extends Schema {
@@ -88,7 +85,7 @@ The collection instances themselves work exactly as documented in the [main refe
 
 Use regular class property initializers:
 
-```ts filename="MyState.ts"
+```ts title="MyState.ts"
 import { Schema, MapSchema, type } from "@colyseus/schema";
 
 class MyState extends Schema {
@@ -101,7 +98,7 @@ class MyState extends Schema {
 
 Subclasses may define their own serialized fields, and collections accept inherited types of the same base:
 
-```ts filename="MyState.ts"
+```ts title="MyState.ts"
 import { Schema, MapSchema, type, entity } from "@colyseus/schema";
 
 class Item extends Schema {/* base Item fields */}
@@ -129,7 +126,7 @@ inventory.items.set("right", new Shield());
 
 Fields visible only to selected clients take the `@view()` decorator alongside `@type()`:
 
-```ts filename="MyState.ts"
+```ts title="MyState.ts"
 import { Schema, type, view } from "@colyseus/schema";
 
 class Player extends Schema {
@@ -150,7 +147,7 @@ See [State View](/state/view) for how `StateView` works. Everything there applie
 
 `@unreliable`, `@patchOnly`, and `@fullStateOnly` control when and how a field reaches clients. Apply them alongside `@type()`:
 
-```ts filename="MyState.ts"
+```ts title="MyState.ts"
 import { Schema, type, unreliable, patchOnly, fullStateOnly } from "@colyseus/schema";
 
 class Player extends Schema {
@@ -173,7 +170,7 @@ The semantics, use cases and cautions are documented in the [main reference → 
 
 Flag a retired field with `@deprecated()` while keeping its slot in the encoding order:
 
-```ts filename="MyState.ts"
+```ts title="MyState.ts"
 import { Schema, type, deprecated } from "@colyseus/schema";
 
 class MyState extends Schema {
@@ -192,7 +189,7 @@ See [Versioning](/state/schema#versioning-and-backwardsforwards-compatibility) f
     `defineTypes()` is **deprecated**: it still works, but logs a deprecation warning at runtime and in `schema-codegen`. Migrate to [`schema()` with `t.*` builders](/state/schema). (It was briefly removed in early schema 5 releases, 5.0.0–5.0.8. Update `@colyseus/schema` if you hit a missing-export error.)
 </Callout>
 
-```js filename="MyState.js"
+```js title="MyState.js"
 import { Schema, defineTypes } from "@colyseus/schema";
 
 class MyState extends Schema {

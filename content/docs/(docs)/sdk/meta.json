@@ -1,0 +1,7 @@
+{
+  "title": "Client SDK",
+  "icon": "DevicesIcon",
+  "pages": [
+    "connection"
+  ]
+}

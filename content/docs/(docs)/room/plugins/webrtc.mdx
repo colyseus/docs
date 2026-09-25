@@ -1,10 +1,8 @@
 ---
 title: "WebRTCPlugin"
 description: "Add WebRTC peer-to-peer signaling (audio/video) to a Colyseus room with a single plugin. It handles peer list, SDP offer/answer, ICE candidates, and peer-left events."
+sidebarTitle: "WebRTC"
 ---
-import { Callout, Tabs } from "nextra/components";
-
-# WebRTCPlugin
 
 Adds WebRTC peer-to-peer signaling to a room. Wires the four standard signaling messages (peer list + SDP offer/answer + ICE candidate relay) and broadcasts `peer-left` when a connected peer disconnects.
 
@@ -14,7 +12,7 @@ Adds WebRTC peer-to-peer signaling to a room. Wires the four standard signaling 
 
 The server-side plugin ships with the `colyseus` package: no extra install needed.
 
-```ts filename="VideoRoom.ts"
+```ts title="VideoRoom.ts"
 import { Room, definePlugins } from "colyseus";
 import { WebRTCPlugin } from "colyseus/plugins/webrtc";
 
@@ -34,7 +32,7 @@ npm install @colyseus/webrtc
 <Callout type="warning">
   WebRTC SDP payloads can exceed the default `maxPayload` of 4KB. Increase it on your transport when adding the plugin:
 
-  ```ts filename="server.ts"
+  ```ts title="server.ts"
   import { WebSocketTransport } from "@colyseus/ws-transport";
 
   const server = defineServer({
@@ -68,7 +66,7 @@ Use `WebRTCClient` from `@colyseus/webrtc/client` to consume the signaling and m
   The source is a single ~170-line file you can read or fork. See the [reference implementation on GitHub](https://github.com/colyseus/webrtc/blob/main/src/client.ts).
 </Callout>
 
-```ts filename="client.ts"
+```ts title="client.ts"
 import { Client } from "@colyseus/sdk";
 import { WebRTCClient } from "@colyseus/webrtc/client";
 
@@ -136,7 +134,7 @@ new WebRTCClient(room, options?)
 
 The plugin's messages are merged into the room's `messages` map. You can define your own alongside without any conflict:
 
-```ts filename="VideoRoom.ts"
+```ts title="VideoRoom.ts"
 import { Room, Client, definePlugins } from "colyseus";
 import { WebRTCPlugin } from "colyseus/plugins/webrtc";
 

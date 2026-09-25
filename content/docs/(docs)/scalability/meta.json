@@ -1,0 +1,7 @@
+{
+  "title": "Scalability",
+  "icon": "DuplicateIcon",
+  "pages": [
+    "traefik"
+  ]
+}

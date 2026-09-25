@@ -1,12 +1,9 @@
 ---
 title: "Colyseus SDK for WeChat"
 description: "Integrate Colyseus with WeChat mini-games for real-time multiplayer. Set up the JavaScript SDK in the WeChat development environment."
+sidebarTitle: "WeChat"
+icon: "logo:wechat"
 ---
-import _js_ts_header from "./_js_ts_header.mdx"
-import { javascript, wechat } from "../../components/icons/platforms"
-import { Callout, Tabs } from 'nextra/components'
-
-# WeChat (JavaScript/TypeScript SDK)
 
 WeChat is a popular messaging and social media platform in China, and it provides a rich set of APIs for building mini-programs and games. Colyseus can be integrated with WeChat to create real-time multiplayer experiences.
 
@@ -24,11 +21,11 @@ As the WeChat JavaScript runtime is not fully compatible with the browser, you w
 
 WeChat does not provide the [`URL` standard](https://url.spec.whatwg.org/), so you need to install a polyfill to use it.
 
-<Tabs items={["Install polyfill via NPM", "Copy & paste manually"]}>
-    <Tabs.Tab>
+<Tabs>
+    <Tab value="Install polyfill via NPM">
         If you are using a build system, you can install the `url-polyfill` package:
 
-        ```sh npm2yarn
+        ```npm
         npm install --save url-polyfill
         ```
 
@@ -37,11 +34,11 @@ WeChat does not provide the [`URL` standard](https://url.spec.whatwg.org/), so y
         ```javascript
         require('url-polyfill');
         ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Copy & paste manually">
         If you are not using a build system, you can manually copy and paste the polyfill code from the [url-polyfill repository](https://github.com/lifaon74/url-polyfill/blob/master/url-polyfill.js).
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ### WebSocket monkey-patch

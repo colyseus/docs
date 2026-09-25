@@ -1,0 +1,11 @@
+{
+  "title": "Tutorials",
+  "icon": "FileCodeIcon",
+  "pages": [
+    "phaser",
+    "unity",
+    "playcanvas",
+    "babylonjs",
+    "cocos"
+  ]
+}

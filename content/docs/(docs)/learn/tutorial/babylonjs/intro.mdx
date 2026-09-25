@@ -2,10 +2,6 @@
 title: Basics
 description: "Introduction to building multiplayer games with Babylon.js and Colyseus: server setup, room connection, and state synchronization."
 ---
-import { Callout, Cards, Tabs } from "nextra/components";
-import { DownloadIcon, LinkIcon } from '@primer/octicons-react'
-
-# Babylon.js: Real Time Multiplayer Tutorial
 
 ![](/tutorial/babylonjs/gameplay.png)
 
@@ -34,13 +30,13 @@ We will be making a basic server, hosted locally on your computer for keeping pl
 
 To create a fresh new Colyseus server, run the following from your command-line:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npm create colyseus-app@latest ./babylonjs-multiplayer-server
 ```
 
 Let's make sure you can run the server locally now, by running `npm start`:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 cd babylonjs-multiplayer-server
 npm start
 ```
@@ -142,9 +138,9 @@ Let's go back to editing the Server code, and define our Room State in the Serve
 
 We need to handle multiple `Player` instances, and each `Player` will have `x`, `y` and `z` coordinates:
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
-    ```ts filename="MyRoomState.ts"
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
+    ```ts title="MyRoomState.ts"
     import { schema, t } from "@colyseus/schema";
 
     export const Player = schema({
@@ -157,9 +153,9 @@ We need to handle multiple `Player` instances, and each `Player` will have `x`, 
         players: t.map(Player),
     }, "MyRoomState");
     ```
-    </Tabs.Tab>
-    <Tabs.Tab>
-    ```ts filename="MyRoomState.ts"
+    </Tab>
+    <Tab value="Decorators">
+    ```ts title="MyRoomState.ts"
     import { MapSchema, Schema, type } from "@colyseus/schema";
 
     export class Player extends Schema {
@@ -172,7 +168,7 @@ We need to handle multiple `Player` instances, and each `Player` will have `x`, 
         @type({ map: Player }) players = new MapSchema<Player>();
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 <Callout type="info">
@@ -181,7 +177,7 @@ We need to handle multiple `Player` instances, and each `Player` will have `x`, 
 
 Now, still in the backend, let's modify our `onJoin()` method to create a `Player` instance whenever a new connection is established with the room.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 // ...
     onJoin(client: Client, options: any) {
         console.log(client.sessionId, "joined!");
@@ -205,7 +201,7 @@ Now, still in the backend, let's modify our `onJoin()` method to create a `Playe
 
 Also, when the client disconnects, let's remove the player from the map of players:
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 // ...
     onLeave(client: Client, consented: boolean) {
         console.log(client.sessionId, "left!");
@@ -379,7 +375,7 @@ scene.onPointerDown = function (event, pointer) {
 
 Whenever the `"updatePosition"` message is received in the server, we're going to mutate the player that sent the message through its `sessionId`.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 // ...
   state = new MyRoomState();
 

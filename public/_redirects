@@ -1,0 +1,172 @@
+# Old URLs -> current pages. Netlify serves these as HTTP 301s.
+#
+# First match wins, top to bottom: keep specific rules above general ones.
+# `/x/*` also covers deeper paths; `:splat` carries the rest of the path over.
+# Fragments (#anchor) never reach the server: browsers carry them across the
+# 301, and anchors that moved off a page go in that page's `movedAnchors`
+# frontmatter instead. `pnpm check-links` validates every rule here.
+
+/getting-started/javascript-client               /getting-started/typescript                              301
+/getting-started/javascript-client/*             /getting-started/typescript                              301
+/getting-started/javascript                      /getting-started/typescript                              301
+/getting-started/javascript/*                    /getting-started/typescript                              301
+/getting-started/defold-client                   /getting-started/defold                                  301
+/getting-started/defold-client/*                 /getting-started/defold                                  301
+/getting-started/unity3d-client                  /getting-started/unity                                   301
+/getting-started/unity3d-client/*                /getting-started/unity                                   301
+/getting-started/unity-sdk                       /getting-started/unity                                   301
+/getting-started/unity-sdk/*                     /getting-started/unity                                   301
+/getting-started/haxe-client                     /getting-started/haxe                                    301
+/getting-started/haxe-client/*                   /getting-started/haxe                                    301
+/deployment/cloud/typescript-compilation-errors  /cloud/typescript-compilation-errors                     301
+/deployment/cloud/typescript-compilation-errors/* /cloud/typescript-compilation-errors                     301
+/cloud/postgresql                                /cloud                                                   301
+/cloud/postgresql/*                              /cloud                                                   301
+/server/api                                      /server                                                  301
+/server/api/*                                    /server                                                  301
+/server/exception-handling                       /room/exception-handling                                 301
+/server/exception-handling/*                     /room/exception-handling                                 301
+/server/room/exception-handling                  /room/exception-handling                                 301
+/server/room/exception-handling/*                /room/exception-handling                                 301
+/server/room/timing-events                       /room/timing-events                                      301
+/server/room/timing-events/*                     /room/timing-events                                      301
+/server/room                                     /room                                                    301
+/server/room/*                                   /room                                                    301
+/server/matchmaker                               /matchmaker                                              301
+/server/matchmaker/*                             /matchmaker                                              301
+/debugging                                       /server/debugging                                        301
+/debugging/*                                     /server/debugging                                        301
+/tools/monitor                                   /tools/monitoring                                        301
+/tools/monitor/*                                 /tools/monitoring                                        301
+/demo/shooting-gallery                           /learn/tutorial/unity/shooting-gallery                   301
+/demo/shooting-gallery/*                         /learn/tutorial/unity/shooting-gallery                   301
+/demo/starboss                                   /learn/tutorial/unity/starboss                           301
+/demo/starboss/*                                 /learn/tutorial/unity/starboss                           301
+/demo/turn-based-tanks                           /learn/tutorial/unity/turn-based-tanks                   301
+/demo/turn-based-tanks/*                         /learn/tutorial/unity/turn-based-tanks                   301
+/demo/mmo                                        /learn/tutorial/unity/mmo                                301
+/demo/mmo/*                                      /learn/tutorial/unity/mmo                                301
+/demo/cocos/mmo                                  /learn/tutorial/cocos/mmo                                301
+/demo/cocos/mmo/*                                /learn/tutorial/cocos/mmo                                301
+/demo/babylonjs-editor/hide-and-seek             /learn/tutorial/babylonjs/hide-and-seek                  301
+/demo/babylonjs-editor/hide-and-seek/*           /learn/tutorial/babylonjs/hide-and-seek                  301
+/community/custom-room-id                        /recipes/custom-room-id                                  301
+/community/custom-room-id/*                      /recipes/custom-room-id                                  301
+/state/schema-callbacks                          /state/callbacks                                         301
+/state/schema-callbacks/*                        /state/callbacks                                         301
+/state/best-practices                            /state/optimization                                      301
+/state/best-practices/*                          /state/optimization                                      301
+/server/custom-http-routes                       /server/http-routes                                      301
+/server/custom-http-routes/*                     /server/http-routes                                      301
+/upgrading/0.15                                  /migrating/0.15                                          301
+/upgrading/0.15/*                                /migrating/0.15                                          301
+/upgrading/0.16                                  /migrating/0.16                                          301
+/upgrading/0.16/*                                /migrating/0.16                                          301
+/upgrading                                       /migrating                                               301
+/upgrading/*                                     /migrating                                               301
+/recipes/custom-cors-headers                     /server/http-routes#cors                                 301
+/recipes/custom-cors-headers/*                   /server/http-routes#cors                                 301
+/room/examples                                   /learn/examples                                          301
+/room/examples/*                                 /learn/examples                                          301
+
+# state-sync-callbacks moved back home under /state (it lived at
+# /state/callbacks before its detour through /sdk). :splat maps the
+# /react and /custom children.
+/sdk/state-sync-callbacks                        /state/callbacks                                         301
+/sdk/state-sync-callbacks/*                      /state/callbacks/:splat                                  301
+
+# messages folded back into /sdk; heading slugs preserved
+/sdk/messages                                    /sdk                                                     301
+/sdk/messages/*                                  /sdk/:splat                                              301
+
+# Unified Matchmaking section absorbed these pages (heading slugs preserved).
+/room/visibility                                 /matchmaker/visibility                                   301
+/room/visibility/*                               /matchmaker/visibility/:splat                            301
+/room/built-in/lobby                             /matchmaker/lobby                                        301
+/room/built-in/lobby/*                           /matchmaker/lobby/:splat                                 301
+/room/built-in/queue                             /matchmaker/queue                                        301
+/room/built-in/queue/*                           /matchmaker/queue/:splat                                 301
+
+# Built-in Rooms section dissolved: Relay promoted to /room/relay,
+# the index became a section on /room. Relay stays above /room/built-in/*.
+/room/built-in/relay                             /room/relay                                              301
+/room/built-in/relay/*                           /room/relay/:splat                                       301
+/room/built-in                                   /room#built-in-rooms                                     301
+/room/built-in/*                                 /room#built-in-rooms                                     301
+
+# above /client/*, which would otherwise send it to the dead /sdk/room
+/client-prediction                               /netcode                                                 301
+/client-prediction/*                             /netcode                                                 301
+/client/room                                     /room                                                    301
+/client/room/*                                   /room                                                    301
+/client                                          /sdk                                                     301
+/client/*                                        /sdk/:splat                                              301
+/tutorial                                        /learn/tutorial                                          301
+/tutorial/*                                      /learn/tutorial/:splat                                   301
+
+/examples/babylonjs-editor/hide-and-seek         /learn/tutorial/babylonjs/hide-and-seek                  301
+/examples/babylonjs-editor/hide-and-seek/*       /learn/tutorial/babylonjs/hide-and-seek                  301
+/examples/babylonjs                              /learn/examples/babylonjs                                301
+/examples/babylonjs/*                            /learn/examples/babylonjs                                301
+/examples                                        /learn/examples                                          301
+/examples/*                                      /learn/examples                                          301
+
+/unity                                           /getting-started/unity                                   301
+/unity/*                                         /getting-started/unity                                   301
+/colyseus/state/schema                           /state/schema                                            301
+/colyseus/state/schema/*                         /state/schema                                            301
+/deployment/cloud                                /cloud                                                   301
+/deployment/cloud/*                              /cloud                                                   301
+/deployment/scalability                          /scalability                                             301
+/deployment/scalability/*                        /scalability                                             301
+/recommendations/3rd-party-packages              /3rd-party-packages                                      301
+/recommendations/3rd-party-packages/*            /3rd-party-packages                                      301
+/recommendations/command-pattern                 /recipes/command-pattern                                 301
+/recommendations/command-pattern/*               /recipes/command-pattern                                 301
+
+# Best Practices merged into Recipes & Guides; command-pattern stays
+# above /best-practices/*.
+/best-practices/command-pattern                  /recipes/command-pattern                                 301
+/best-practices/command-pattern/*                /recipes/command-pattern                                 301
+/best-practices                                  /recipes                                                 301
+/best-practices/*                                /recipes                                                 301
+/recommendations                                 /recipes                                                 301
+/recommendations/*                               /recipes                                                 301
+/prediction                                      /netcode                                                 301
+/prediction/*                                    /netcode                                                 301
+/concepts                                        /getting-started                                         301
+/concepts/*                                      /getting-started                                         301
+/lag-compensation                                /netcode/lag-compensation                                301
+/lag-compensation/*                              /netcode/lag-compensation                                301
+/netcode/server                                  /netcode/server-input                                    301
+/netcode/server/*                                /netcode/server-input                                    301
+
+# Very old URLs
+/migrating/0.11                                  /migrating/0.17                                          301
+/migrating/0.11/*                                /migrating/0.17                                          301
+/migrating/0.12                                  /migrating/0.17                                          301
+/migrating/0.12/*                                /migrating/0.17                                          301
+/migrating/0.13                                  /migrating/0.17                                          301
+/migrating/0.13/*                                /migrating/0.17                                          301
+/migrating/0.14                                  /migrating/0.17                                          301
+/migrating/0.14/*                                /migrating/0.17                                          301
+/colyseus/room                                   /room                                                    301
+/colyseus/room/*                                 /room                                                    301
+/colyseus                                        /                                                        301
+/colyseus/*                                      /:splat                                                  301
+/quickstart                                      /getting-started                                         301
+/quickstart/*                                    /getting-started                                         301
+/server/getting-started                          /getting-started                                         301
+/server/getting-started/*                        /getting-started                                         301
+/server/authentication                           /auth                                                    301
+/server/authentication/*                         /auth                                                    301
+/authentication                                  /auth                                                    301
+/authentication/*                                /auth                                                    301
+/server/deployment                               /deployment                                              301
+/server/deployment/*                             /deployment                                              301
+
+# Paths that never had a page: a leaked MDX partial and index-less tutorial folders.
+/getting-started/_js_ts_header                   /getting-started/typescript                              301
+/learn/tutorial/unity                            /learn/tutorial                                          301
+/learn/tutorial/babylonjs                        /learn/tutorial/babylonjs/intro                          301
+/learn/tutorial/cocos                            /learn/tutorial/cocos/mmo                                301

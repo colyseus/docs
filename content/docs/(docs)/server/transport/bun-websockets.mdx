@@ -2,9 +2,6 @@
 title: "Bun WebSockets"
 description: "Run Colyseus on Bun with the Bun WebSockets transport."
 ---
-import { Callout, Cards } from "nextra/components";
-
-# Bun WebSockets
 
 Colyseus supports Bun's native WebSockets implementation through the `@colyseus/bun-websockets` package. This transport layer is designed for Bun's built-in HTTP server. The package also provides an Express compatibility layer for easier integration with existing codebases.
 
@@ -14,11 +11,11 @@ Colyseus supports Bun's native WebSockets implementation through the `@colyseus/
 
 ## Installation
 
-```sh filename="Terminal"
+```sh title="Terminal"
 bun add @colyseus/bun-websockets
 ```
 
-```ts {2,6-8} filename="app.config.ts"
+```ts {2,6-8} title="app.config.ts"
 import { defineServer } from "colyseus";
 import { BunWebSockets } from "@colyseus/bun-websockets"
 

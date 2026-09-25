@@ -1,12 +1,9 @@
 ---
 title: "Colyseus SDK for React"
 description: "Use Colyseus with React using the @colyseus/react hooks package. Manage room connections and real-time state synchronization with idiomatic React patterns."
+sidebarTitle: "React"
+icon: "logo:react"
 ---
-import _js_ts_header from "./_js_ts_header.mdx"
-import { javascript, react } from "../../components/icons/platforms"
-import { Callout } from 'nextra/components'
-
-# React (JavaScript/TypeScript SDK)
 
 You can use the `@colyseus/sdk` directly in your React applications. We also provide a separate package, `@colyseus/react`, with custom hooks for room connections and state subscriptions, designed for React's rendering model.
 
@@ -418,7 +415,7 @@ The returned `useLobby()` hook provides the same fields as `useLobbyRoom` (`room
 
 If you prefer manual control over the room lifecycle without the `@colyseus/react` package, you can use `@colyseus/sdk` directly with `useEffect`:
 
-```typescript filename="RoomComponent.tsx"
+```typescript title="RoomComponent.tsx"
 import { useEffect, useState, useRef } from "react";
 import { Client, Room } from "@colyseus/sdk";
 

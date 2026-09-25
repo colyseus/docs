@@ -2,9 +2,6 @@
 title: "Presence"
 description: "The Presence API enables communication between rooms and Node.js processes in Colyseus: LocalPresence for development, RedisPresence for scaling, and pub/sub methods."
 ---
-import { Callout, Cards, Tabs } from "nextra/components";
-
-# Presence
 
 The Presence API is responsible for inter-process communication (IPC) when scaling Colyseus across multiple processes or machines. This API provides pub/sub messaging and shared key-value storage that all server instances can access.
 
@@ -27,13 +24,13 @@ The default presence used by Colyseus is `LocalPresence`, which stores all data 
 
 The `RedisPresence` uses Redis for pub/sub messaging and shared storage using [ioredis](https://github.com/redis/ioredis). This presence is required for multi-process or distributed deployments.
 
-```sh npm2yarn
+```npm
 npm install --save @colyseus/redis-presence
 ```
 
 #### Basic Usage
 
-```ts {2,5} filename="app.config.ts"
+```ts {2,5} title="app.config.ts"
 import { defineServer } from "colyseus";
 import { RedisPresence } from "@colyseus/redis-presence";
 
@@ -70,7 +67,7 @@ See [ioredis connection options](https://redis.github.io/ioredis/index.html#Redi
 
 For high-availability setups, the presence supports Redis Cluster mode:
 
-```ts {2,5-12} filename="app.config.ts"
+```ts {2,5-12} title="app.config.ts"
 import { defineServer } from "colyseus";
 import { RedisPresence } from "@colyseus/redis-presence";
 
@@ -97,7 +94,7 @@ The Presence API is based on Redis's data structures, providing key-value storag
 
 Every [`Room`](/room) instance has a [`presence`](/room#presence) property:
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 export class MyRoom extends Room {
     onCreate() {
         this.presence // Presence API is available 
@@ -107,7 +104,7 @@ export class MyRoom extends Room {
 
 Alternatively, you can access `matchMaker.presence` from anywhere by importing the [Matchmaker API](/matchmaker/):
 
-```ts filename="server.ts"
+```ts title="server.ts"
 import { matchMaker } from "colyseus";
 
 matchMaker.presence // full Presence API is available from here
@@ -121,8 +118,7 @@ matchMaker.presence // full Presence API is available from here
 
 Subscribes to the given `topic`. The `callback` will be triggered whenever a message is [published](#publish) on that topic.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 this.presence.subscribe("global-event", (data) => {
     console.log("received message:", data);
 });
@@ -134,28 +130,27 @@ this.presence.subscribe("global-event", (data) => {
 
 Unsubscribe from a given `topic`.
 
-
-<Tabs items={["Unsubscribe from all", "Unsubscribe from specific callback"]}>
-    <Tabs.Tab>
+<Tabs>
+    <Tab value="Unsubscribe from all">
     Unsubscribe from all previously subscribed "global-event" callbacks.
 
-    ```ts filename="MyRoom.ts"
+    ```ts title="MyRoom.ts"
     //
     this.presence.unsubscribe("global-event");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Unsubscribe from specific callback">
     Unsubscribe from a specific "topic" callback.
 
-    ``` typescript
+    ```typescript
     function callback(data) { }
     this.presence.subscribe("global-event", callback);
 
     // unsubscribing from specific callback
     this.presence.unsubscribe("global-event", callback);
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ---
@@ -164,8 +159,7 @@ Unsubscribe from a given `topic`.
 
 Posts a message to the given `topic`. All subscribers will receive the message.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 this.presence.publish("global-event", { any: 1, data: 2, here: "3" });
 ```
 
@@ -175,8 +169,7 @@ this.presence.publish("global-event", { any: 1, data: 2, here: "3" });
 
 Returns the list of active channels matching a pattern.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 // Get all channels
 const allChannels = await this.presence.channels();
 
@@ -192,8 +185,7 @@ const gameChannels = await this.presence.channels("game:*");
 
 Set a key to hold a string value.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 await this.presence.set("global-key", "a string value");
 ```
 
@@ -203,8 +195,7 @@ await this.presence.set("global-key", "a string value");
 
 Set a key to hold a string value with an expiration time in seconds.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 // Set a key that expires after 2 minutes
 await this.presence.setex("global-key", "a string value", 120);
 ```
@@ -215,8 +206,7 @@ await this.presence.setex("global-key", "a string value", 120);
 
 Set a timeout on a key. After the timeout, the key will be automatically deleted.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 await this.presence.set("global-key", "value");
 await this.presence.expire("global-key", 60); // expires in 60 seconds
 ```
@@ -227,8 +217,7 @@ await this.presence.expire("global-key", 60); // expires in 60 seconds
 
 Get the value of a key.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 const value = await this.presence.get("global-key");
 ```
 
@@ -238,8 +227,7 @@ const value = await this.presence.get("global-key");
 
 Delete a key.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 await this.presence.del("global-key");
 ```
 
@@ -249,8 +237,7 @@ await this.presence.del("global-key");
 
 Check if a key exists.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 const exists = await this.presence.exists("global-key");
 ```
 
@@ -260,10 +247,9 @@ const exists = await this.presence.exists("global-key");
 
 Increment the integer value of a key by one.
 
-
 If the key does not exist, it is set to `0` before performing the operation.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 await this.presence.incr("global-count");
 await this.presence.incr("global-count");
 await this.presence.incr("global-count");
@@ -278,10 +264,9 @@ console.log(count); // => "3"
 
 Decrement the integer value of a key by one.
 
-
 If the key does not exist, it is set to `0` before performing the operation.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 await this.presence.set("global-count", "10");
 await this.presence.decr("global-count");
 
@@ -299,10 +284,9 @@ Sets are collections of unique string values.
 
 Add a member to a set.
 
-
 If the member already exists, it is ignored. If the key does not exist, a new set is created.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 await this.presence.sadd("global-set", "member-one");
 await this.presence.sadd("global-set", "member-one"); // ignored, already exists
 await this.presence.sadd("global-set", "member-two");
@@ -314,8 +298,7 @@ await this.presence.sadd("global-set", "member-two");
 
 Get all members of a set.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 const members = await this.presence.smembers("global-set");
 console.log(members); // => ["member-one", "member-two"]
 ```
@@ -326,10 +309,9 @@ console.log(members); // => ["member-one", "member-two"]
 
 Check if a value is a member of a set.
 
-
 Returns `1` if the element is a member, `0` if not (or if the key does not exist).
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 const isMember = await this.presence.sismember("global-set", "member-one");
 if (isMember) {
     console.log("member-one is in the set");
@@ -342,8 +324,7 @@ if (isMember) {
 
 Remove a member from a set.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 await this.presence.srem("global-set", "member-one");
 ```
 
@@ -353,8 +334,7 @@ await this.presence.srem("global-set", "member-one");
 
 Get the number of members in a set (cardinality).
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 const count = await this.presence.scard("global-set");
 console.log(count); // => 2
 ```
@@ -365,8 +345,7 @@ console.log(count); // => 2
 
 Get the intersection of multiple sets.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 await this.presence.sadd("set1", "a");
 await this.presence.sadd("set1", "b");
 await this.presence.sadd("set2", "b");
@@ -386,10 +365,9 @@ Hashes are maps of field-value pairs, useful for storing objects.
 
 Set a field in a hash.
 
-
 Returns `true` if the field is new, `false` if it was updated.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 await this.presence.hset("player:123", "name", "John");
 await this.presence.hset("player:123", "score", "100");
 ```
@@ -400,8 +378,7 @@ await this.presence.hset("player:123", "score", "100");
 
 Get the value of a field in a hash.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 const name = await this.presence.hget("player:123", "name");
 console.log(name); // => "John"
 ```
@@ -412,8 +389,7 @@ console.log(name); // => "John"
 
 Get all fields and values of a hash.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 const player = await this.presence.hgetall("player:123");
 console.log(player); // => { name: "John", score: "100" }
 ```
@@ -424,10 +400,9 @@ console.log(player); // => { name: "John", score: "100" }
 
 Delete a field from a hash.
 
-
 Returns `true` if the field was removed, `false` if the field did not exist.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 await this.presence.hdel("player:123", "score");
 ```
 
@@ -437,8 +412,7 @@ await this.presence.hdel("player:123", "score");
 
 Get the number of fields in a hash.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 const fieldCount = await this.presence.hlen("player:123");
 console.log(fieldCount); // => 2
 ```
@@ -449,8 +423,7 @@ console.log(fieldCount); // => 2
 
 Increment the integer value of a hash field.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 await this.presence.hset("player:123", "score", "100");
 const newScore = await this.presence.hincrby("player:123", "score", 10);
 console.log(newScore); // => 110
@@ -466,8 +439,7 @@ Lists are ordered collections of strings, supporting push/pop operations from bo
 
 Get the length of a list.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 const length = await this.presence.llen("queue");
 ```
 
@@ -477,10 +449,9 @@ const length = await this.presence.llen("queue");
 
 Append a value to the end of a list.
 
-
 Returns the length of the list after the push.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 await this.presence.rpush("queue", "task1");
 await this.presence.rpush("queue", "task2");
 ```
@@ -491,10 +462,9 @@ await this.presence.rpush("queue", "task2");
 
 Prepend a value to the beginning of a list.
 
-
 Returns the length of the list after the push.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 await this.presence.lpush("queue", "urgent-task");
 ```
 
@@ -504,8 +474,7 @@ await this.presence.lpush("queue", "urgent-task");
 
 Remove and return the last element of a list.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 const lastItem = await this.presence.rpop("queue");
 ```
 
@@ -515,8 +484,7 @@ const lastItem = await this.presence.rpop("queue");
 
 Remove and return the first element of a list.
 
-
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 const firstItem = await this.presence.lpop("queue");
 ```
 
@@ -526,10 +494,9 @@ const firstItem = await this.presence.lpop("queue");
 
 Remove and return the last element of a list, or block until one is available.
 
-
 The last argument is the timeout in seconds. Returns `null` if the timeout is reached.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 // Block for up to 5 seconds waiting for an item
 const result = await this.presence.brpop("queue", 5);
 if (result) {

@@ -1,20 +1,12 @@
 ---
 title: "Matchmaking"
 description: "How matchmaking works in Colyseus: room visibility flags, filterBy and sortBy matchmaking filters, lobby and queue rooms, and the server-side matchMaker API."
+# Old heading slugs: "Match-making" (hyphenated) became "Methods"; the
+# page's former H1 "Match-maker API" became the "Matchmaker API" section.
+movedAnchors:
+  match-making: "/matchmaker#methods"
+  match-maker-api: "/matchmaker#matchmaker-api"
 ---
-import { Callout, Tabs } from 'nextra/components'
-import { EyeClosedIcon, RowsIcon, ListOrderedIcon, ServerIcon } from '@primer/octicons-react'
-import { MovedAnchors } from '../components/moved-anchors'
-import { ScenarioGrid, ScenarioCard } from '../components/scenario-card'
-
-# Matchmaking
-
-{/* Old heading slugs: "Match-making" (hyphenated) became "Methods"; the
-    page's former H1 "Match-maker API" became the "Matchmaker API" section. */}
-<MovedAnchors map={{
-    "match-making": "/matchmaker#methods",
-    "match-maker-api": "/matchmaker#matchmaker-api",
-}} />
 
 Every join call from the SDK goes through the matchmaker. It picks the room a
 client lands in, and answers with a **seat reservation** the SDK consumes to
@@ -48,18 +40,17 @@ Room types accept matchmaking options at definition time: which client
 
 When a room is created by `create()` or `joinOrCreate()`, only the `options` declared in `filterBy()` are stored internally. Those stored options then filter candidate rooms in later `join()` or `joinOrCreate()` calls.
 
-
 **Parameters**
 
 - `options: string[]` - a list of option names
 
 **Examples**
 
-<Tabs items={['Filter by "mode" provided by the client', 'Filter by "maxClients" server config']}>
-    <Tabs.Tab>
+<Tabs>
+    <Tab value='Filter by "mode" provided by the client'>
     Filter matchmaking by `mode` option.
 
-    ```ts filename="server.ts"
+    ```ts title="server.ts"
     const server = defineServer({
       rooms: {
         battle: defineRoom(BattleRoom).filterBy(['mode'])
@@ -69,13 +60,13 @@ When a room is created by `create()` or `joinOrCreate()`, only the `options` dec
 
     Whenever the room is created, the `mode` option is going to be stored internally.
 
-    ```js filename="client.js"
+    ```js title="client.js"
     client.joinOrCreate("battle", { mode: "duo" }).then(room => {/* ... */});
     ```
 
     You can handle the provided option in the `onCreate()` and/or `onJoin()` to implement the requested feature inside your room implementation.
 
-    ```ts filename="BattleRoom.ts"
+    ```ts title="BattleRoom.ts"
     class BattleRoom extends Room {
         onCreate(options) {
             if (options.mode === "duo") {
@@ -89,14 +80,14 @@ When a room is created by `create()` or `joinOrCreate()`, only the `options` dec
         }
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value='Filter by "maxClients" server config'>
     Filter matchmaking by the room's `maxClients` capacity.
 
     `maxClients` is stored top-level in the matchmaking cache from the **room instance's actual value**, not from the client's option, so the room must apply the option for the filter to work:
 
-    ```ts filename="BattleRoom.ts"
+    ```ts title="BattleRoom.ts"
     class BattleRoom extends Room {
         onCreate(options) {
             // apply the requested capacity: the filter compares against
@@ -106,7 +97,7 @@ When a room is created by `create()` or `joinOrCreate()`, only the `options` dec
     }
     ```
 
-    ```ts filename="server.ts"
+    ```ts title="server.ts"
     const server = defineServer({
       rooms: {
         battle: defineRoom(BattleRoom).filterBy(['maxClients'])
@@ -116,11 +107,11 @@ When a room is created by `create()` or `joinOrCreate()`, only the `options` dec
 
     The client can then ask to join a room with a specific capacity. Each value fills its own set of rooms:
 
-    ```js filename="client.js"
+    ```js title="client.js"
     client.joinOrCreate("battle", { maxClients: 10 }).then(room => {/* ... */});
     client.joinOrCreate("battle", { maxClients: 20 }).then(room => {/* ... */});
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ---
@@ -129,13 +120,12 @@ When a room is created by `create()` or `joinOrCreate()`, only the `options` dec
 
 You can also give a different priority for joining rooms depending on their information upon creation.
 
-
 The `options` parameter is a key-value object containing the field name in the left, and the sorting direction in the right. Sorting direction can be one of these values: `-1`, `"desc"`, `"descending"`, `1`, `"asc"` or `"ascending"`.
 
 **Example**
 
-<Tabs items={['Sorting by the built-in "clients"']}>
-    <Tabs.Tab>
+<Tabs>
+    <Tab value='Sorting by the built-in "clients"'>
     The `clients` is an internal variable stored for matchmaking, which contains the current number of connected clients. On the example below, the rooms with the highest amount of clients connected will have priority. Use `-1`, `"desc"` or `"descending"` for descending order:
 
     ```typescript
@@ -155,9 +145,8 @@ The `options` parameter is a key-value object containing the field name in the l
       }
     })
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
-
 
 ---
 
@@ -185,7 +174,7 @@ The Matchmaker API gives you server-side control over room management and player
 
 From your server code, you can create rooms, join players to existing rooms, query available rooms, and reserve seats. You can also monitor statistics across processes: connected users (CCU) and room counts. You can call methods on rooms running in a different process, too. None of it depends on a client request.
 
-``` typescript
+```typescript
 import { matchMaker } from "colyseus";
 ```
 
@@ -230,7 +219,7 @@ console.log(globalCCU);
 
 Get the number of connected clients on the current process.
 
-```ts filename="server.ts"
+```ts title="server.ts"
 matchMaker.stats.local.ccu
 ```
 
@@ -238,7 +227,7 @@ matchMaker.stats.local.ccu
 
 Get the number of rooms on the current process.
 
-```ts filename="server.ts"
+```ts title="server.ts"
 matchMaker.stats.local.roomCount
 ```
 
@@ -247,7 +236,6 @@ matchMaker.stats.local.roomCount
 #### Create a Room
 
 Creates a new room and return its cached data.
-
 
 **Parameters:**
 
@@ -270,13 +258,12 @@ console.log(room);
 
 Join or create a room and return a client seat reservation.
 
-
 **Parameters:**
 
 - **`roomName`**: the identifier you defined in the `rooms` configuration of `defineServer()`.
 - **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`).
 
-```ts filename="server.ts"
+```ts title="server.ts"
 const reservation = await matchMaker.joinOrCreate("battle", { mode: "duo" });
 console.log(reservation);
 /*
@@ -297,14 +284,13 @@ console.log(reservation);
 
 Creates a seat reservation in a specific room.
 
-
 **Parameters:**
 
 - **`room`**: room data (result from `createRoom()`, etc).
 - **`clientOptions`**: options for `onJoin`.
 - **`authData`**: authentication data (available during `onJoin` as `client.auth`)
 
-```ts filename="server.ts"
+```ts title="server.ts"
 const room = await matchMaker.findOneRoomAvailable("battle", { mode: "duo" });
 const reservation = await matchMaker.reserveSeatFor(room, {});
 console.log(reservation);
@@ -326,13 +312,12 @@ console.log(reservation);
 
 Join a room and return seat reservation. An exception is thrown if there are no rooms available for `roomName`.
 
-
 **Parameters:**
 
 - **`roomName`**: the identifier you defined in the `rooms` configuration of `defineServer()`.
 - **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`).
 
-```ts filename="server.ts"
+```ts title="server.ts"
 const reservation = await matchMaker.join("battle", { mode: "duo" });
 console.log(reservation);
 /*
@@ -353,13 +338,12 @@ console.log(reservation);
 
 Join a room by ID and return client seat reservation. An exception is thrown if a room is not found for `roomId`.
 
-
 **Parameters:**
 
 - **`roomId`**: the id of a specific room instance.
 - **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`).
 
-```ts filename="server.ts"
+```ts title="server.ts"
 const reservation = await matchMaker.joinById("xxxxxxxxx", {});
 console.log(reservation);
 /*
@@ -380,13 +364,12 @@ console.log(reservation);
 
 Create a new room and return client seat reservation.
 
-
 **Parameters:**
 
 - **`roomName`**: the identifier you defined in the `rooms` configuration of `defineServer()`.
 - **`options`**: options for the client seat reservation (for `onJoin`/`onAuth`).
 
-``` typescript
+```typescript
 const reservation = await matchMaker.create("battle", { mode: "duo" });
 console.log(reservation);
 /*
@@ -407,18 +390,17 @@ console.log(reservation);
 
 Perform a query against cached rooms.
 
-
 **Parameters:**
 
 - **`conditions`**: key-value conditions object.
 - **`sortOptions`**: key-value sort object.
 
-<Tabs items={["Query with conditions", "Query with sorting"]}>
+<Tabs>
 
-    <Tabs.Tab>
+    <Tab value="Query with conditions">
     Example querying with conditions:
 
-    ``` typescript
+    ```typescript
     const rooms = await matchMaker.query({ name: "battle", mode: "duo" });
     console.log(rooms);
     /*
@@ -429,21 +411,20 @@ Perform a query against cached rooms.
     ]
     */
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Query with sorting">
     Example querying with sort options and conditions:
 
-    ``` typescript
+    ```typescript
     const rooms = await matchMaker.query({ name: "battle", mode: "duo" }, { clients: -1});
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 #### Find One Room Available
 
 Find an available room the same way `join()`/`joinOrCreate()` do: rooms flagged [`locked` or `private`](/matchmaker/visibility#matchmaking-properties) are skipped (`unlisted` rooms still match).
-
 
 **Parameters:**
 
@@ -451,7 +432,7 @@ Find an available room the same way `join()`/`joinOrCreate()` do: rooms flagged 
 - **`filterOptions`**: options matched against the room type's [`filterBy()`](#filter-by-filterby) fields.
 - **`additionalSortOptions`**: _(optional)_ extra sort criteria applied on top of the room type's `sortBy()`.
 
-``` typescript
+```typescript
 const room = await matchMaker.findOneRoomAvailable("battle", { mode: "duo" });
 console.log(room);
 /*
@@ -463,12 +444,11 @@ console.log(room);
 
 Get room data by ID. This method returns the cached room data, and is safe to call from any process.
 
-
 **Parameters:**
 
 - **`roomId`**: the id of a specific room instance.
 
-``` typescript
+```typescript
 const room = await matchMaker.getRoomById("xxxxxxxxx");
 console.log(room);
 /*
@@ -480,12 +460,11 @@ console.log(room);
 
 Get the actual Room instance by ID. This method only returns the room instance if it's available in the current process, otherwise it will return `undefined`.
 
-
 **Parameters:**
 
 - **`roomId`**: the id of a specific room instance.
 
-``` typescript
+```typescript
 const room = await matchMaker.getLocalRoomById("xxxxxxxxx");
 room.clients[0].send("hello", "world");
 ```
@@ -515,14 +494,13 @@ Missing roomIds are absent from the returned `Map`. Prefer this over `matchMaker
 
 Call a method or return a property on a remote room.
 
-
 **Parameters:**
 
 - **`roomId`**: the id of a specific room instance.
 - **`method`**: method or attribute to call or retrieve.
 - **`args`**: array of arguments.
 
-``` typescript
+```typescript
 // call lock() on a remote room by id
 await matchMaker.remoteRoomCall("xxxxxxxxx", "lock");
 ```
@@ -536,7 +514,7 @@ You can restrict the frontend to be allowed only to call specific matchmaking me
 **Example:** by exposing only `join`, `joinById`, and `reconnect` methods, the frontend is
 not going to be able to perform `create` or `joinOrCreate` calls.
 
-``` typescript
+```typescript
 import { matchMaker } from "colyseus";
 
 matchMaker.controller.exposedMethods = ['join', 'joinById', 'reconnect'];

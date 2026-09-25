@@ -1,0 +1,7 @@
+{
+  "title": "Payments",
+  "icon": "CreditCardIcon",
+  "pages": [
+    "xsolla"
+  ]
+}

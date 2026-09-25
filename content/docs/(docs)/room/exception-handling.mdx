@@ -2,11 +2,8 @@
 title: "Exception Handling"
 description: "Handle uncaught exceptions in Colyseus rooms to prevent crashes and implement custom error recovery."
 ---
-import { Callout } from 'nextra/components'
 
-# Exception Handling in Rooms
-
-<Callout type="info" emoji="🆕">
+<Callout type="info" icon="🆕">
     This feature is available since `@colyseus/core` version `0.15.55`.
 </Callout>
 
@@ -14,7 +11,7 @@ By default, if an uncaught exception occurs inside a room, the server is shut do
 
 You can now handle uncaught exceptions by implementing the `onUncaughtException()` method in your room class. With this method, all user-facing callbacks will be wrapped in try/catch blocks, and any exceptions will be forwarded to `onUncaughtException()`.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 import { Room } from "colyseus";
 
 class MyRoom extends Room {
@@ -64,7 +61,7 @@ When the exception is thrown inside the `onCreate` method.
 
 - `options` - the options passed to the room's `onCreate` method.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 import { OnCreateException } from "colyseus";
 // ...
     onUncaughtException (err: Error, methodName: string) {
@@ -86,7 +83,7 @@ When the exception is thrown inside the `onAuth` method.
 - `client` - the client that is trying to authenticate.
 - `options` - the options passed to the room's `onAuth` method.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 import { OnAuthException } from "colyseus";
 // ...
     onUncaughtException (err: Error, methodName: string) {
@@ -108,7 +105,7 @@ When the exception is thrown inside the `onJoin` method.
 - `client` - the client that is trying to join the room.
 - `options` - the options passed to the room's `onJoin` method.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 import { OnJoinException } from "colyseus";
 // ...
     onUncaughtException (err: Error, methodName: string) {
@@ -130,7 +127,7 @@ When the exception is thrown inside the `onLeave` method.
 - `client` - the client that is leaving the room.
 - `consented` - the close code associated with the client leaving the room.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 import { OnLeaveException } from "colyseus";
 // ...
     onUncaughtException (err: Error, methodName: string) {
@@ -163,7 +160,7 @@ When the exception is thrown inside the `onMessage` method.
 - `payload` - the message payload sent by the client.
 - `type` - the message type sent by the client.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 import { OnMessageException } from "colyseus";
 // ...
     onUncaughtException (err: Error, methodName: string) {
@@ -181,7 +178,7 @@ import { OnMessageException } from "colyseus";
 
 When the exception is thrown inside the `onDispose` method.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 import { OnDisposeException } from "colyseus";
 // ...
     onUncaughtException (err: Error, methodName: string) {
@@ -196,7 +193,7 @@ import { OnDisposeException } from "colyseus";
 
 When the exception is thrown inside the `setTimestep` or `setFixedTimestep` callback (`methodName` is `"setTimestep"` / `"setFixedTimestep"`). `SimulationIntervalException` remains as a deprecated alias.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 import { TimestepException } from "colyseus";
 // ...
     onUncaughtException (err: Error, methodName: string) {
@@ -215,7 +212,7 @@ When the exception is thrown inside the `clock.setTimeout` or `clock.setInterval
 
 - `args` - optional arguments passed to the timeout or interval.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 import { TimedEventException } from "colyseus";
 // ...
     onUncaughtException (err: Error, methodName: string) {

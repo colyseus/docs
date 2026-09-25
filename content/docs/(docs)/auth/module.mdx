@@ -1,11 +1,8 @@
 ---
 title: "Auth Module"
 description: "The @colyseus/auth module: email/password and anonymous auth, OAuth providers, JWT tokens, email verification, and password reset for Colyseus."
+icon: "PackageIcon"
 ---
-import { Callout, Tabs, Steps, Cards, FileTree } from 'nextra/components'
-import { DevicesIcon, GearIcon, LinkIcon, MailIcon, GlobeIcon } from '@primer/octicons-react';
-
-# Auth Module
 
 <Callout type="warning">
     This module is in beta - Feedback is welcome on [colyseus/colyseus#660](https://github.com/colyseus/colyseus/issues/660).
@@ -20,8 +17,8 @@ The `@colyseus/auth` module is highly configurable and allows you to implement y
 The module does not provide a database or email sending capabilities. Instead, it provides callbacks that you can implement to query your database, send emails, and handle OAuth providers.
 
 <Cards>
-    <Cards.Card icon={<DevicesIcon/>} title="Frontend API" href="#frontend-api" arrow />
-    <Cards.Card icon={<GearIcon/>} title="Backend API" href="#backend-api" arrow />
+    <Card icon={<DevicesIcon/>} title="Frontend API" href="#frontend-api" />
+    <Card icon={<GearIcon/>} title="Backend API" href="#backend-api" />
 </Cards>
 
 ## Features
@@ -40,14 +37,14 @@ The module does not provide a database or email sending capabilities. Instead, i
 
 Install the `@colyseus/auth` module:
 
-```sh npm2yarn
+```npm
 npm install --save @colyseus/auth
 ```
 
 <Steps>
 ### Bind the `auth` routes to Express
 
-    ```ts filename="src/app.config.ts"
+    ```ts title="src/app.config.ts"
     import { auth } from "@colyseus/auth";
     import { defineServer } from "colyseus";
 
@@ -77,7 +74,7 @@ It is required to provide the following environment variables to your applicatio
     **`AUTH_SALT` is legacy.** Required only when upgrading an existing deployment from a version prior to 0.18. The legacy `scrypt`-based hasher reads it to verify passwords created before the upgrade. New 0.18 projects don't need it; the default hasher derives its own per-password salt.
 </Callout>
 
-<Callout type="error" emoji="🚨">
+<Callout type="error" icon="🚨">
     **Keep Your Secrets Safe!**
 
     The exposure of these secrets may lead to security breaches on your application. Make sure to never expose them publicly, and limit the number of people in your team who have access to them.
@@ -93,7 +90,7 @@ It is required to provide the following environment variables to your applicatio
 
 Create a configuration file for the `@colyseus/auth` module. The following example shows how to configure the module to use a fake database. You should replace the methods with your own database queries.
 
-```ts filename="src/config/auth.ts"
+```ts title="src/config/auth.ts"
 import { auth } from "@colyseus/auth";
 
 auth.backend_url = "http://localhost:2567";
@@ -162,11 +159,10 @@ auth.oauth.addProvider('discord', {
 
 Register a new user with email/password and return userdata. The user will be automatically logged in after registration. This method modifies the `client.auth.token` property.
 
-
 The `options` argument may contain user data you can use when creating the user's account.
 
-<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
-    <Tabs.Tab>
+<Tabs groupId="auth-module">
+    <Tab value="Client API">
     ```js
     try {
         const userdata = await client.auth.registerWithEmailAndPassword(email, password);
@@ -176,10 +172,10 @@ The `options` argument may contain user data you can use when creating the user'
         console.error(e.message);
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```ts filename="src/config/auth.ts"
+    <Tab value="Backend config">
+    ```ts title="src/config/auth.ts"
     import { auth } from "@colyseus/auth";
     // ...
 
@@ -191,18 +187,16 @@ The `options` argument may contain user data you can use when creating the user'
         return await User.insert({ email, password });
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
-
 
 ### Sign In With Email and Password
 
 Sign in with email/password and return userdata. This method modifies the `client.auth.token` property.
 
-
-<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
-    <Tabs.Tab>
-    ```js filename="client.js"
+<Tabs groupId="auth-module">
+    <Tab value="Client API">
+    ```js title="client.js"
     try {
         const userdata = await client.auth.signInWithEmailAndPassword(email, password);
         console.log(userdata);
@@ -211,10 +205,10 @@ Sign in with email/password and return userdata. This method modifies the `clien
         console.error(e.message);
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```ts filename="src/config/auth.ts"
+    <Tab value="Backend config">
+    ```ts title="src/config/auth.ts"
     import { auth } from "@colyseus/auth";
     // ...
 
@@ -222,17 +216,16 @@ Sign in with email/password and return userdata. This method modifies the `clien
         return await User.query().selectAll().where("email", "=", email).executeTakeFirst();
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ### Sign In Anonymously
 
 Sign in anonymously and return anonymous userdata. This method modifies the `client.auth.token` property.
 
-
-<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
-    <Tabs.Tab>
-    ```js filename="client.js"
+<Tabs groupId="auth-module">
+    <Tab value="Client API">
+    ```js title="client.js"
     try {
         const userdata = await client.auth.signInAnonymously();
         console.log(userdata);
@@ -241,10 +234,10 @@ Sign in anonymously and return anonymous userdata. This method modifies the `cli
         console.error(e.message);
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```ts filename="src/config/auth.ts"
+    <Tab value="Backend config">
+    ```ts title="src/config/auth.ts"
     import { auth } from "@colyseus/auth";
     // ...
 
@@ -253,17 +246,16 @@ Sign in anonymously and return anonymous userdata. This method modifies the `cli
         return { userId };
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ### Sign In With OAuth Provider
 
 Sign in with OAuth provider and return userdata. This method modifies the `client.auth.token` property.
 
-
-<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
-    <Tabs.Tab>
-    ```js filename="client.js"
+<Tabs groupId="auth-module">
+    <Tab value="Client API">
+    ```js title="client.js"
     try {
         const userdata = await client.auth.signInWithProvider('discord');
         console.log(userdata);
@@ -272,12 +264,12 @@ Sign in with OAuth provider and return userdata. This method modifies the `clien
         console.error(e.message);
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Backend config">
     Each provider requires a different configuration. See the [OAuth providers](#oauth-providers-discord-google-x-etc) section for more information.
 
-    ```ts filename="src/config/auth.ts"
+    ```ts title="src/config/auth.ts"
     import { auth } from "@colyseus/auth";
     // ...
     auth.oauth.addProvider('[PROVIDER-ID]', {
@@ -286,7 +278,7 @@ Sign in with OAuth provider and return userdata. This method modifies the `clien
         scope: ['identify', 'email'],
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 <Callout type="info">
@@ -303,10 +295,9 @@ Sign in with OAuth provider and return userdata. This method modifies the `clien
 
 Send an email to the user with a link to reset their password.
 
-
-<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
-    <Tabs.Tab>
-    ```js filename="client.js"
+<Tabs groupId="auth-module">
+    <Tab value="Client API">
+    ```js title="client.js"
     try {
         const result = await client.auth.sendPasswordResetEmail('user@domain.io');
         console.log(result);
@@ -315,10 +306,10 @@ Send an email to the user with a link to reset their password.
         console.error(e.message);
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```ts filename="src/config/auth.ts"
+    <Tab value="Backend config">
+    ```ts title="src/config/auth.ts"
     import { auth } from "@colyseus/auth";
     // ...
 
@@ -331,19 +322,18 @@ Send an email to the user with a link to reset their password.
         });
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ### Get User Data
 
 Get the current user's data. This method does not modify the `client.auth.token` property.
 
-
-<Tabs items={[<><DevicesIcon/> Client API</>, <><GearIcon/> Backend config</>]}>
-    <Tabs.Tab>
+<Tabs groupId="auth-module">
+    <Tab value="Client API">
     Fetch the current user's data from the server.
 
-    ```js filename="client.js"
+    ```js title="client.js"
     try {
         const userdata = await client.auth.getUserData();
         console.log(userdata);
@@ -352,12 +342,12 @@ Get the current user's data. This method does not modify the `client.auth.token`
         console.error(e.message);
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Backend config">
     You may customize the `onParseToken` callback to include additional user data for the frontend.
 
-    ```ts filename="src/config/auth.ts"
+    ```ts title="src/config/auth.ts"
     import { auth } from "@colyseus/auth";
     // ...
 
@@ -365,16 +355,14 @@ Get the current user's data. This method does not modify the `client.auth.token`
         return userdata;
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ### On Auth State Change
 
 Define a callback that is triggered when internal auth state changes. It only triggers as a response from `client.auth` method calls - this is not a realtime subscription.
 
-
-
-```ts filename="client.js"
+```ts title="client.js"
 client.auth.onChange(function(authData) {
     console.log(authData.user);
     console.log(authData.token);
@@ -393,7 +381,7 @@ client.auth.signOut();
 
 The authentication token is automatically sent to the server on every request. Operations that result in a user being logged in will set the `client.auth.token` property, which is a JWT token containing the user's data. The contents of this token are
 
-```ts filename="client.ts"
+```ts title="client.ts"
 client.auth.token = "xxxx";
 ```
 
@@ -417,7 +405,7 @@ The backend URL is used to:
 - Redirect the user to confirm their email address
 - Build the OAuth provider's callback URL
 
- ```ts filename="src/config/auth.ts"
+ ```ts title="src/config/auth.ts"
 import { auth } from "@colyseus/auth";
 
 if (process.env.NODE_ENV === "production") {
@@ -438,7 +426,6 @@ In order to allow email/password authentication, you must implement the followin
 #### On Find User By Email
 
 Use this callback to query your database for the user's by its email address. (The database module is not provided by this module, you must provide your own.)
-
 
 **Return value**: The function should return the user entry from the database, including the `password` field. All fields except `password` will be encoded in the JWT token. At minimum, return the user's `id` and `password`, though additional fields can be included for convenience
 
@@ -485,7 +472,6 @@ By default, the anonymous user will have the following fields on its JWT token p
 
 You may use this callback to customize the JWT token payload for anonymous users. The fields returned by this callback will be available in the JWT token as payload.
 
-
 On the example below the anonymous user is being inserted into the database, and its `userId` is being returned as payload.
 
 ```typescript
@@ -512,7 +498,6 @@ You are responsible for limiting user access to your application until their ema
 
 Use this callback to send the email verification to the user.
 
-
 | Argument | Description |
 |------|-------------|
 | `email` | the email address of the user |
@@ -536,7 +521,6 @@ auth.settings.onSendEmailConfirmation = async function(email, html, link) {
 #### On Email Confirmed
 
 Use this callback to update the user's database record as verified.
-
 
 | Argument | Description |
 |------|-------------|
@@ -566,7 +550,6 @@ To enable "Forgot Password" feature, you must provide the following callbacks:
 
 Use this callback to send the "forgot password" email to the user. The email template used is `reset-password-email.html`.
 
-
 ```typescript
 import { auth } from "@colyseus/auth";
 
@@ -583,7 +566,6 @@ auth.settings.onForgotPassword = async function (email: string, html: string/* ,
 #### On Reset Password
 
 Use this callback to update the user's password. The password is already hashed.
-
 
 ```typescript
 import { auth } from "@colyseus/auth";
@@ -609,7 +591,6 @@ In order to enable OAuth authentication, you must add at least one OAuth provide
 
 Add an OAuth provider to the authentication module.
 
-
 | Argument | Description |
 |------|-------------|
 | `providerId` | the provider ID (e.g. "discord", "google", "twitter", etc) |
@@ -630,7 +611,6 @@ auth.oauth.addProvider('[PROVIDER-ID]', {
 Register a callback to handle the OAuth provider's response.
 
 The callback should return the user's data, which will be stored in the JWT token.
-
 
 | Argument | Description |
 |------|-------------|
@@ -661,13 +641,13 @@ auth.oauth.onCallback(async (data, provider) => {
 });
 ```
 
-<Tabs items={["Example: Discord"]}>
-    <Tabs.Tab>
+<Tabs>
+    <Tab value="Example: Discord">
     To enable Discord authentication, you must create a new application at [Discord Developer Portal](https://discord.com/developers/applications).
 
     Under the _"Settings -> OAuth2"_ you will find the Client ID (`key`) and Client Secret (`secret`), that must be used to configure the provider:
 
-    ```ts filename="src/config/auth.ts"
+    ```ts title="src/config/auth.ts"
     auth.oauth.addProvider('discord', {
         key: "XXXXXXXXXXXXXXXXXX", // Client ID
         secret: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", // Client Secret
@@ -680,7 +660,7 @@ auth.oauth.onCallback(async (data, provider) => {
     ```
     https://[YOUR-DOMAIN]/auth/provider/discord/callback
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ---
@@ -696,7 +676,6 @@ You may customize the following settings:
 
 Use this callback to modify the user's data before sending it to the frontend during the [Get User Data](#get-user-data) call.
 
-
 ```typescript
 import { auth } from "@colyseus/auth";
 
@@ -708,7 +687,6 @@ auth.settings.onParseToken = async function (data) {
 #### On Generate Token
 
 Use this callback to customize the token generation from the user's data.
-
 
 ```typescript
 import { auth, JWT } from "@colyseus/auth";
@@ -722,7 +700,7 @@ auth.settings.onGenerateToken = async function (userdata) {
 
 Password hashing is customized through the `Hash` class. The default algorithm is `scrypt`, with `sha1` available as the only other built-in:
 
-```ts filename="src/config/auth.ts"
+```ts title="src/config/auth.ts"
 import { Hash } from "@colyseus/auth";
 
 Hash.algorithm = "sha1"; // default: "scrypt"
@@ -750,21 +728,21 @@ app.get("/protected", auth.middleware(), (req: Request, res) => {
 
 If you need to customize the email templates, you must provide your own templates under the `html` directory. You can copy the default templates from the `@colyseus/auth` package, and modify them as needed.
 
-<FileTree>
-  <FileTree.Folder name="my-colyseus-app" defaultOpen>
-    <FileTree.Folder name="src">
-        <FileTree.File name="..." />
-        <FileTree.File name="index.ts" />
-    </FileTree.Folder>
-    <FileTree.Folder name="html" defaultOpen>
-      <FileTree.File name="address-confirmation-email.html" />
-      <FileTree.File name="address-confirmation.html" />
-      <FileTree.File name="reset-password-email.html" />
-      <FileTree.File name="reset-password-form.html" />
-    </FileTree.Folder>
-    <FileTree.File name="package.json" />
-  </FileTree.Folder>
-</FileTree>
+<Files>
+  <Folder name="my-colyseus-app" defaultOpen>
+    <Folder name="src">
+        <File name="..." />
+        <File name="index.ts" />
+    </Folder>
+    <Folder name="html" defaultOpen>
+      <File name="address-confirmation-email.html" />
+      <File name="address-confirmation.html" />
+      <File name="reset-password-email.html" />
+      <File name="reset-password-form.html" />
+    </Folder>
+    <File name="package.json" />
+  </Folder>
+</Files>
 
 #### Email Confirmation Template
 
@@ -789,9 +767,9 @@ You may use the contents of the previous active auth token (`upgradingToken`) wh
 - Upgrade an anonymous user to an email/password or OAuth account
 - Link multiple OAuth providers to the same account
 
-<Tabs items={["Upgrade with email/password", "Upgrade with OAuth provider"]}>
-    <Tabs.Tab>
-    ```ts filename="src/config/auth.ts"
+<Tabs>
+    <Tab value="Upgrade with email/password">
+    ```ts title="src/config/auth.ts"
     import { auth } from "@colyseus/auth";
 
     auth.settings.onRegisterWithEmailAndPassword = async function (email, password, options) {
@@ -802,10 +780,10 @@ You may use the contents of the previous active auth token (`upgradingToken`) wh
         options.upgradingToken
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```ts filename="src/config/auth.ts"
+    <Tab value="Upgrade with OAuth provider">
+    ```ts title="src/config/auth.ts"
     import { auth } from "@colyseus/auth";
 
     auth.oauth.onCallback(async (data, provider) => {
@@ -816,5 +794,5 @@ You may use the contents of the previous active auth token (`upgradingToken`) wh
         data.upgradingToken
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>

@@ -1,10 +1,9 @@
 ---
 title: "Colyseus SDK for Swift"
 description: "Get started with Colyseus multiplayer in Swift. Add the Swift package for iOS, macOS and tvOS, join a room, sync real-time game state, and predict player movement."
+sidebarTitle: "Swift"
+icon: "logo:swift"
 ---
-import { Callout } from "nextra/components";
-
-# Swift
 
 <Callout type="warning">
     The Swift SDK is in **beta**, and may not be stable. Please [report any issues you find](https://github.com/colyseus/native-sdk/issues).
@@ -34,7 +33,7 @@ https://github.com/colyseus/colyseus-swift
 
 Or declare it in your `Package.swift`:
 
-```swift filename="Package.swift"
+```swift title="Package.swift"
 dependencies: [
     .package(url: "https://github.com/colyseus/colyseus-swift", from: "0.18.1"),
 ],
@@ -56,7 +55,7 @@ import Colyseus
 
 A sandboxed macOS app needs the outbound-network entitlement, `com.apple.security.network.client`, or every connection fails silently. Add it under **Signing & Capabilities → App Sandbox → Outgoing Connections (Client)**, or directly in the entitlements file:
 
-```xml filename="MyGame.entitlements"
+```xml title="MyGame.entitlements"
 <key>com.apple.security.network.client</key>
 <true/>
 ```
@@ -71,7 +70,7 @@ By default the SDK pumps on its own timer at 60 Hz, and you can join a room with
 
 Games that render every frame should drive the SDK instead. Set `Colyseus.autoPump` to `false` once, then call `Colyseus.pump()` at the top of your frame callback. Decoding, prediction and rendering then all observe the same state within a frame:
 
-```swift filename="GameScene.swift"
+```swift title="GameScene.swift"
 import Colyseus
 import SpriteKit
 
@@ -96,7 +95,7 @@ final class GameScene: SKScene {
 
 This example shows how to connect to a room, listen for state changes, send messages and leave the room.
 
-```swift filename="Network.swift"
+```swift title="Network.swift"
 import Colyseus
 
 final class Network {
@@ -220,7 +219,7 @@ The room exposes these listeners:
 
 Generate one Swift class per schema from your server's types. Codegen is optional, and it buys type safety and autocomplete in Xcode:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npx schema-codegen src/rooms/schema/* --swift --bundle --output ../client/Sources/MyGame/Gen/
 ```
 
@@ -230,7 +229,7 @@ npx schema-codegen src/rooms/schema/* --swift --bundle --output ../client/Source
 
 Each generated class is a typed facade over the decoded state. Numbers read as `Double`, strings as `String`, and collections as `MapSchema` and `ArraySchema`:
 
-```swift filename="Gen/Schema.swift"
+```swift title="Gen/Schema.swift"
 import Colyseus
 
 public final class Player: SchemaRef, @unchecked Sendable {
@@ -330,7 +329,7 @@ Map keys arrive as `String` and array indexes as `Int`. `listen` and `onAdd` rep
 
 Waiting for the server to confirm your own movement costs a round trip. The predict layer applies each input immediately and reconciles when the server disagrees. See [Client Prediction](/netcode/client-prediction) for the concepts. Your room class must declare [`defineInput()`](/netcode/server-input) before any of this works.
 
-```swift filename="Gameplay.swift"
+```swift title="Gameplay.swift"
 Colyseus.autoPump = false // the app drives the frame
 
 let predict = Colyseus.Predict.get(room)!

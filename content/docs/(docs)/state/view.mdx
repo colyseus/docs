@@ -2,11 +2,8 @@
 title: "State View"
 description: "StateView gives each Colyseus client a filtered view of the room state: per-player visibility without sending the full state to everyone."
 ---
-import { Callout, Tabs } from 'nextra/components'
 
-# Per-client State Visibility with `StateView`
-
-<Callout type="info" emoji="🆕">
+<Callout type="info" icon="🆕">
     This feature was introduced in version `0.16` and replaces the previously experimental `@filter()` and `@filterChildren()` decorators.
 </Callout>
 
@@ -27,7 +24,7 @@ A `StateView` instance must be assigned to the `client.view`.
 
 ## Initializing a `StateView`
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 import { StateView } from "@colyseus/schema";
 // ...
     onJoin(client, options) {
@@ -45,15 +42,14 @@ import { StateView } from "@colyseus/schema";
     - Internally, all "shared" properties (properties not tagged with `.view()`) are serialized first, and then each `StateView` is serialized with its own set of properties.
 </Callout>
 
-
 ## Tagging fields with `.view()`
 
 The `.view()` field modifier (or `@view()` decorator) is used to tag a field as only visible to `StateView` instances that contain that `Schema` instance.
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
 
-    ```ts {6} filename="MyState.ts"
+    ```ts {6} title="MyState.ts"
     const Player = schema({
         // visible to all
         name: t.string(),
@@ -62,11 +58,11 @@ The `.view()` field modifier (or `@view()` decorator) is used to tag a field as 
         position: t.number().view(),
     }, "Player");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Decorators">
 
-    ```ts {6} filename="MyState.ts"
+    ```ts {6} title="MyState.ts"
     class Player extends Schema {
         // visible to all
         @type("string") name: string;
@@ -75,7 +71,7 @@ The `.view()` field modifier (or `@view()` decorator) is used to tag a field as 
         @view() @type("number") position: number;
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 In the example above, the `position` field is only visible to clients that contain this `Player` instance in their `StateView`.
@@ -84,7 +80,7 @@ In the example above, the `position` field is only visible to clients that conta
 
 To add a schema instance to a `StateView`, call `.add()` on the `StateView` instance:
 
-```ts {7,8} filename="MyRoom.ts"
+```ts {7,8} title="MyRoom.ts"
 import { StateView } from "@colyseus/schema";
 // ...
     onJoin(client, options) {
@@ -122,10 +118,10 @@ if (client.view.has(player)) {
 
 Sometimes you may want to have multiple views with different fields.
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
 
-    ```ts {9} filename="MyState.ts"
+    ```ts {9} title="MyState.ts"
     const Player = schema({
         // visible to all
         name: t.string(),
@@ -137,11 +133,11 @@ Sometimes you may want to have multiple views with different fields.
         position: t.number().view(1),
     }, "Player");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Decorators">
 
-    ```ts {9} filename="MyState.ts"
+    ```ts {9} title="MyState.ts"
     class Player extends Schema {
         // visible to all
         @type("string") name: string;
@@ -153,12 +149,12 @@ Sometimes you may want to have multiple views with different fields.
         @view(1) @type("number") position: number;
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 You can assign a numeric tag to the `.view()` modifier. That field is then only visible to clients whose `StateView` contains this `Schema` instance with the same tag:
 
-```ts {6,7} filename="MyRoom.ts"
+```ts {6,7} title="MyRoom.ts"
 // ...
     onJoin(client, options) {
         const player = new Player().assign({ name: "Player 1", health: 100, position: 0 });
@@ -169,7 +165,6 @@ You can assign a numeric tag to the `.view()` modifier. That field is then only 
     }
 // ...
 ```
-
 
 In the example above, only clients that added this `Player` instance with tag `1` can see the `position` field. The `health` field is visible to all clients that contain this `Player` instance in their `StateView`.
 
@@ -191,10 +186,10 @@ When you tag an array or map with `.view()`, elements added to the collection **
     To grant a client every future element automatically, [subscribe to the collection](#subscribing-to-a-collection) instead of adding each element by hand.
 </Callout>
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
 
-    ```ts {7} filename="MyState.ts"
+    ```ts {7} title="MyState.ts"
     const Player = schema({
         name: t.string(),
         position: t.number(),
@@ -204,11 +199,11 @@ When you tag an array or map with `.view()`, elements added to the collection **
         players: t.map(Player).view(),
     }, "MyState");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Decorators">
 
-    ```ts {7} filename="MyState.ts"
+    ```ts {7} title="MyState.ts"
     class Player extends Schema {
         @type("string") name: string;
         @type("number") position: number;
@@ -218,12 +213,12 @@ When you tag an array or map with `.view()`, elements added to the collection **
         @view() @type({ map: Player }) players = new MapSchema<Player>();
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 The instance must be assigned to the state and added to the `StateView`:
 
-```ts {5,8} filename="MyRoom.ts"
+```ts {5,8} title="MyRoom.ts"
 import { StateView } from "@colyseus/schema";
 // ...
     onJoin(client, options) {
@@ -242,7 +237,7 @@ import { StateView } from "@colyseus/schema";
 
 `view.subscribe(collection)` makes it standing. The view receives **all future content changes** of that collection, with no further bookkeeping:
 
-```ts {7} filename="MyRoom.ts"
+```ts {7} title="MyRoom.ts"
 import { StateView } from "@colyseus/schema";
 // ...
     onJoin(client, options) {
@@ -263,7 +258,7 @@ How new elements are delivered depends on the collection kind:
 
 On a streamed collection, a second argument orders that client's backlog. The callback receives the candidate element, so it can close over whatever this client sorts by:
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 client.view.subscribe(this.state.enemies, (enemy) =>
     -((enemy.x - player.x) ** 2 + (enemy.y - player.y) ** 2));   // nearest first
 ```
@@ -289,7 +284,7 @@ Which callback fires depends on where the `.view()` tag is:
 
 When the collection is tagged, a client only sees the items in its view. Each `view.add()` and `view.remove()` call reaches the frontend as an item being added to or removed from the collection:
 
-```ts filename="client.ts"
+```ts title="client.ts"
 import { Client, Callbacks } from "@colyseus/sdk";
 import type { MyRoom } from "../server/rooms/MyRoom";
 
@@ -314,7 +309,7 @@ Items added through [`view.subscribe()`](#subscribing-to-a-collection) trigger t
 
 When only some fields are tagged, every client receives the instance itself. Its tagged fields stay `undefined` until the server adds the instance to that client's view. Listen to the field to know when it is revealed or hidden:
 
-```ts filename="client.ts"
+```ts title="client.ts"
 callbacks.onAdd("players", (player, sessionId) => {
     // player.position is undefined until the server calls client.view.add(player)
     callbacks.listen(player, "position", (value, previousValue) => {

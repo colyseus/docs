@@ -1,11 +1,8 @@
 ---
 title: "Deployment"
 description: "Deploy your Colyseus server to production. Production checklist, PM2, Nginx, Apache, Docker, and self-hosting on Vultr, or managed hosting on Colyseus Cloud."
+icon: "RocketIcon"
 ---
-import { Tabs, Steps, Cards, Callout } from "nextra/components"
-import { CloudIcon, StackIcon } from "@primer/octicons-react"
-
-# Deploying your Colyseus server
 
 Deploying Colyseus is no different than deploying a regular Node.js application. [See DigitalOcean's guide for the general setup](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-22-04). Scaling to multiple processes or machines requires extra steps. See [Scalability](/scalability).
 
@@ -14,8 +11,8 @@ Deploying Colyseus is no different than deploying a regular Node.js application.
 </Callout>
 
 <Cards>
-    <Cards.Card icon={<StackIcon/>} title="Scalability" href="/scalability" />
-    <Cards.Card icon={<CloudIcon/>} title="Colyseus Cloud" href="/cloud" />
+    <Card icon={<StackIcon/>} title="Scalability" href="/scalability" />
+    <Card icon={<CloudIcon/>} title="Colyseus Cloud" href="/cloud" />
 </Cards>
 
 ## Production checklist
@@ -24,7 +21,7 @@ Deploying Colyseus is no different than deploying a regular Node.js application.
 - **Set `NODE_ENV=production`**: dependencies and error verbosity behave accordingly, and `server.simulateLatency()` must never run in production.
 - **Run under a process manager**: [PM2](https://pm2.keymetrics.io/) restarts crashed processes and plays well with Colyseus:
 
-```js filename="ecosystem.config.js"
+```js title="ecosystem.config.js"
 const os = require('os');
 
 module.exports = {
@@ -47,7 +44,7 @@ module.exports = {
 
 ---
 
-## Self-hosting on [Vultr](https://www.vultr.com/?ref=9632185-9J)
+## Self-hosting on Vultr
 
 {/*
 https://www.vultr.com/?ref=8013231
@@ -73,7 +70,7 @@ When self-hosting, it is recommended to use `nginx` and `pm2` in your production
 
 ### Nginx configuration
 
-```conf filename="/etc/nginx/sites-available/yourdomain.com"
+```nginx title="/etc/nginx/sites-available/yourdomain.com"
 server {
     listen 80;
     server_name yourdomain.com;
@@ -96,7 +93,7 @@ server {
 
 It's recommended to acquire your certificate from [LetsEncrypt](https://letsencrypt.org).
 
-```conf filename="/etc/nginx/sites-available/yourdomain.com"
+```nginx title="/etc/nginx/sites-available/yourdomain.com"
 server {
     listen 80;
     listen 443 ssl;
@@ -131,7 +128,7 @@ Here's how to use Apache as a proxy to your Node.js Colyseus app. (Thanks [tomkl
 
 Install the required Apache modules:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 sudo a2enmod ssl
 sudo a2enmod proxy
 sudo a2enmod proxy_http
@@ -141,7 +138,7 @@ sudo a2enmod proxy_wstunnel
 
 Virtual host configuration:
 
-```conf filename="/etc/apache2/sites-available/yourdomain.com.conf"
+```apache title="/etc/apache2/sites-available/yourdomain.com.conf"
 <VirtualHost *:80>
     ServerName servername.xyz
     # Redirect all requests received from port 80 to the HTTPS variant (force ssl)
@@ -191,7 +188,7 @@ Virtual host configuration:
 <Steps>
 ### Create `Dockerfile` in the root of the Colyseus project
 
-```dockerfile filename="Dockerfile"
+```dockerfile title="Dockerfile"
 FROM node:22
 
 ENV PORT 2567
@@ -214,7 +211,7 @@ CMD [ "npm", "start" ]
 
 ### Create `.dockerignore` file in the same directory
 
-```txt filename=".dockerignore"
+```txt title=".dockerignore"
 node_modules
 npm-debug.log
 ```
@@ -225,7 +222,7 @@ This will prevent your local modules and debug logs from being copied onto your 
 
 Go to the directory that has your Dockerfile and run the following command to build the Docker image. The -t flag lets you tag your image so it's easier to find later using the docker images command:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 docker build -t <your username>/colyseus-server .
 ```
 
@@ -233,7 +230,7 @@ docker build -t <your username>/colyseus-server .
 
 Your image will now be listed by Docker with following command:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 docker images
 ```
 
@@ -250,7 +247,7 @@ node                               22         1934b0b038d1    About a minute ago
 
 Run the Docker Image with following command:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 docker run -p 2567:2567 -d <your username>/colyseus-server
 ```
 

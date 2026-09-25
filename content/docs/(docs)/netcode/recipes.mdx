@@ -1,11 +1,8 @@
 ---
 title: "Netcode Recipes"
 description: "Task-oriented Colyseus netcode patterns: predicted projectiles with predict.spawns, optimistic hit FX and pickups, dead-reckoned AI, cooldown clocks, teleports, and physics-engine prediction with predict.sim."
+sidebarTitle: "Recipes"
 ---
-import { Callout, Tabs } from 'nextra/components'
-import { SDKTabs } from "../../components/SDKTabs"
-
-# Netcode Recipes
 
 Task-oriented patterns that build on the [Client Prediction](/netcode/client-prediction), [Server Input](/netcode/server-input), and [Lag Compensation](/netcode/lag-compensation) APIs. Each recipe stands alone. Jump to the one that matches what you're building.
 
@@ -29,23 +26,23 @@ Full behavior reference: [the modes table](/netcode/client-prediction#remote-ent
 
 `smoothMs` on a lerp attach arms a display-only **output spring** over the interpolated result, keeping rendered velocity continuous. The default is `0`: exact interpolation, no spring.
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     // Display-only output spring over the lerp result (default 0 = exact).
     predict.attachAll("players", { mode: "lerp", fields: ["x", "y"], smoothMs: 25 });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     // Display-only output spring over the lerp result (default 0 = exact).
     predict.AttachAll("players", new AttachOptions { Mode = PredictMode.Lerp, Fields = new[] { "x", "y" }, SmoothMs = 25 });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     -- Display-only output spring over the lerp result (default 0 = exact).
     predict:attach_all("players", {
@@ -53,9 +50,9 @@ Full behavior reference: [the modes table](/netcode/client-prediction#remote-ent
       y = { mode = "lerp", smooth_ms = 25 },
     })
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     // Display-only output spring over the lerp result (default 0 = exact).
     predict.attachAll("players", {
@@ -63,9 +60,9 @@ Full behavior reference: [the modes table](/netcode/client-prediction#remote-ent
         y: { mode: "lerp", smoothMs: 25 },
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     # Display-only output spring over the lerp result (default 0 = exact).
     predict.attach_all("players", {
@@ -73,9 +70,9 @@ Full behavior reference: [the modes table](/netcode/client-prediction#remote-ent
         "y": { "mode": Colyseus.Predict.LERP, "smooth_ms": 25 },
     }, room.get_session_id())
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     // Display-only output spring over the lerp result (default 0 = exact).
     predict.attachAll('players', config: {
@@ -83,9 +80,9 @@ Full behavior reference: [the modes table](/netcode/client-prediction#remote-ent
       'y': FieldOptions(mode: PredictMode.lerp, smoothMs: 25),
     }, exceptKey: room.sessionId);
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 Sizing: during steady motion the spring trails the exact interpolant by `speed × smoothMs`, at any frame rate. Start near `25`: it removes the velocity discontinuities at minimal added lag. `65` smooths rougher streams, at that much more display lag. On `damped` and `extrapolate` the same option is the chase rate and defaults to `50`.
 
@@ -100,9 +97,9 @@ Input is sampled once per **fixed step**, not per render frame. Frames and steps
 
 **Buffer the press when it happens; consume it inside the step loop on exactly one step:**
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     let jumpBuffered = false;
     onKeyDown("Space", () => jumpBuffered = true);  // buffer: the tap happened
@@ -117,9 +114,9 @@ Input is sampled once per **fixed step**, not per render frame. Frames and steps
       }
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     bool jumpBuffered = false;
     void OnJumpPressed() => jumpBuffered = true;    // buffer: the tap happened
@@ -134,9 +131,9 @@ Input is sampled once per **fixed step**, not per render frame. Frames and steps
         }
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     local jump_buffered = false
 
@@ -156,9 +153,9 @@ Input is sampled once per **fixed step**, not per render frame. Frames and steps
       end
     end
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     var jumpBuffered = false;
     onKeyDown(Space, () -> jumpBuffered = true);  // buffer: the tap happened
@@ -173,9 +170,9 @@ Input is sampled once per **fixed step**, not per render frame. Frames and steps
         }
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     var jump_buffered := false
 
@@ -191,9 +188,9 @@ Input is sampled once per **fixed step**, not per render frame. Frames and steps
             jump_buffered = false           # consume: fires on exactly one step
             input.send()
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     var jumpBuffered = false;
     onKeyDown('Space', () => jumpBuffered = true);  // buffer: the tap happened
@@ -209,9 +206,9 @@ Input is sampled once per **fixed step**, not per render frame. Frames and steps
       }
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 Variants of the same shape:
 
@@ -231,49 +228,49 @@ On a datagram-capable transport, input frames don't need reliable delivery. Each
     Other SDKs **reject** `mode: "unreliable"` at construction for now: over their WebSocket-only transports the redundancy ring would cost bandwidth for no benefit. Use `mode: "reliable"` there.
 </Callout>
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     const input = room.input({ type: MoveInput, mode: "unreliable", historySize: 4 });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     // Not available yet: Room.Input() rejects mode "unreliable"
     // (WebSocket-only transport). Use "reliable".
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     -- Not available yet: room:input() rejects mode "unreliable"
     -- (WebSocket-only transport). Use "reliable".
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     // Not available yet: room.input() rejects mode "unreliable"
     // (WebSocket-only transport). Use "reliable".
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     # Not available: the Godot SDK sends input over the reliable channel only.
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     // Not available yet: room.input() throws on InputMode.unreliable
     // (WebSocket-only transport). Use InputMode.reliable.
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 That's the whole migration. The framework runs its own sequence numbers and acks by seq **value**, so rollback reconciliation works unchanged. No user-side bookkeeping, no seq field on your schema. `historySize` is the redundancy depth (how many recent inputs ride along in each datagram; default 3).
 
@@ -281,9 +278,9 @@ That's the whole migration. The framework runs its own sequence numbers and acks
 
 A fired bullet needs zero-latency feedback, but the server assigns its identity ~RTT later. `predict.spawns` runs the whole lifecycle: render the predicted local instantly, then correlate it to the authoritative entity when it arrives. One **stable id** persists across the handoff, so the sprite never flickers:
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     const rockets = predict.spawns("rockets", {
       owned:     r => r.owner === room.sessionId,      // which server entities are mine
@@ -300,9 +297,9 @@ A fired bullet needs zero-latency feedback, but the server assigns its identity 
       draw(e.id, rockets.value(e, "x"), rockets.value(e, "z"));
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     var rockets = predict.Spawns<Rocket, Shot>("rockets",
         new PredictedSpawnsOptions<Rocket, Shot> {
@@ -320,9 +317,9 @@ A fired bullet needs zero-latency feedback, but the server assigns its identity 
         Draw(e.Id, rockets.Value(e, "x"), rockets.Value(e, "z"));
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     local rockets = predict:spawns("rockets", {
       owned      = function(r) return r.owner == room.session_id end,  -- mine?
@@ -339,9 +336,9 @@ A fired bullet needs zero-latency feedback, but the server assigns its identity 
       draw(e.id, rockets:value(e, "x"), rockets:value(e, "z"))
     end
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     var rockets = predict.spawns("rockets", {
         owned:     (r) -> r.owner == room.sessionId,   // which server entities are mine
@@ -358,9 +355,9 @@ A fired bullet needs zero-latency feedback, but the server assigns its identity 
         draw(e.id, rockets.value(e, "x"), rockets.value(e, "z"));
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     var rockets = predict.spawns("rockets", {
         "owned":      func(r): return r.owner == room.get_session_id(),
@@ -376,9 +373,9 @@ A fired bullet needs zero-latency feedback, but the server assigns its identity 
     for e in rockets.entries():
         draw(e.id, rockets.value(e.id, "x"), rockets.value(e.id, "z"))
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     final rockets = predict.spawns('rockets', SpawnsOptions(
       owned:     (r) => r['owner'] == room.sessionId,       // which server entities are mine
@@ -395,9 +392,9 @@ A fired bullet needs zero-latency feedback, but the server assigns its identity 
       draw(e.id, rockets.value(e, 'x'), rockets.value(e, 'z'));
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 With `spawnTime`, an **owned** projectile keeps flying the *shooter's* timeline through the handoff. No snap-back, and the rendered trajectory is the one a favor-the-shooter rewind actually judges. Foreign projectiles (other players') render at server-present, aged forward automatically. An unmatched prediction expires after a TTL (`max(2×rtt, 600ms)` by default) and `onReject` fires: the ghost reverts.
 
@@ -407,9 +404,9 @@ For fast projectiles, hit-test the swept **segment** between last and current po
 
 Impact feedback (hit marker, sound, decal) shouldn't wait for the server, but a mispredicted hit must clean up after itself. Key the channel by projectile so multiple in-flight shots settle independently:
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     const impacts = predict.defineEvent<{ projectileId: string; x: number; y: number }>({
       uniqueBy:  (h) => h.projectileId,          // payload carries FX data; identity is the projectile
@@ -423,9 +420,9 @@ Impact feedback (hit marker, sound, decal) shouldn't wait for the server, but a 
     // settlement:
     room.onMessage("impact", (m) => impacts.confirm(m.projectileId));
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     var impacts = predict.DefineEvent(new PredictedEventChannelOptions<Hit> {
         UniqueBy  = h => h.projectileId,          // payload carries FX data; identity is the projectile
@@ -440,9 +437,9 @@ Impact feedback (hit marker, sound, decal) shouldn't wait for the server, but a 
     room.OnMessage<Dictionary<string, object>>("impact",
         m => impacts.Confirm((string)m["projectileId"]));
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     local impacts = predict:define_event({
       unique_by  = function(h) return h.projectileId end,  -- identity is the projectile
@@ -456,9 +453,9 @@ Impact feedback (hit marker, sound, decal) shouldn't wait for the server, but a 
     -- settlement:
     room:on_message("impact", function(m) impacts:confirm(m.projectileId) end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     var impacts = predict.defineEvent({
         uniqueBy:  (h) -> h.projectileId,          // payload carries FX data; identity is the projectile
@@ -472,9 +469,9 @@ Impact feedback (hit marker, sound, decal) shouldn't wait for the server, but a 
     // settlement:
     room.onMessage("impact", (m) -> impacts.confirm(m.projectileId));
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     # string-keyed: the projectile id IS the entry identity (no uniqueBy, no payloads);
     # FX coordinates come from your own app state.
@@ -490,9 +487,9 @@ Impact feedback (hit marker, sound, decal) shouldn't wait for the server, but a 
     room.message_received.connect(func(type, m):
         if type == "impact": impacts.confirm(m.projectileId))
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     // string-keyed: the projectile id IS the entry identity (no uniqueBy, no payloads);
     // FX coordinates come from your own app state.
@@ -507,9 +504,9 @@ Impact feedback (hit marker, sound, decal) shouldn't wait for the server, but a 
     // settlement:
     room.onMessage('impact').listen((m) => impacts.confirm(m['projectileId']));
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 A sim-born prediction auto-rejects once the server processes past its birth step without confirming. See [Optimistic events](/netcode/client-prediction#optimistic-events-defineevent).
 
@@ -544,48 +541,48 @@ A mispredict needs no cleanup code: the entry auto-rejects once the server proce
 
 Some entities move predictably but nobody controls them directly (patrolling AI, ballistics). For these, pair the client's `reckon` display with a `reckon` rewind timeline (both sides describe the same decision):
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     predict.attachAll("enemies", { mode: "reckon", fields: ["x", "y"], step: stepEnemy });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     predict.AttachAll("enemies", new ReckonOptions<Enemy> {
         Fields = new[] { "x", "y" },
         Step = (e, dt, elapsedMs) => StepEnemy(e, dt),
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     predict:attach_all("enemies", { mode = "reckon", fields = { "x", "y" }, step = step_enemy })
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     predict.attachAll("enemies", { mode: "reckon", fields: ["x", "y"], step: stepEnemy });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     predict.attach_all_reckon("enemies", ["x", "y"], _step_enemy)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     predict.attachAllReckon('enemies', const ['x', 'y'], stepEnemy);
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 The server rewinds on the matching timeline (no double compensation):
 
@@ -606,9 +603,9 @@ this.rewind.attachAll(this.state.enemies, {
 
 Smoothing turns a respawn into a glide across the map. The `snap` option (on any attach or reconciler config) declares a value-space threshold past which a jump is a **teleport**. Smoothing resets and the entity pops to the new value:
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     // Remotes: a passive attach pops past the threshold.
     predict.attachAll("players", { mode: "lerp", fields: ["x", "y"], snap: 300 });
@@ -617,9 +614,9 @@ Smoothing turns a respawn into a glide across the map. The `snap` option (on any
     // (and doesn't count toward divergence telemetry).
     const me = predict.reconciler(self, { input, step, snap: 300 });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     // Remotes: a passive attach pops past the threshold.
     predict.AttachAll("players", new AttachOptions { Mode = PredictMode.Lerp, Fields = new[] { "x", "y" }, Snap = 300 });
@@ -631,9 +628,9 @@ Smoothing turns a respawn into a glide across the map. The `snap` option (on any
         Snap = 300,
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     -- Remotes: a passive attach pops past the threshold.
     predict:attach_all("players", {
@@ -644,9 +641,9 @@ Smoothing turns a respawn into a glide across the map. The `snap` option (on any
     -- Your own entity: a reconcile correction past it pops instead of gliding.
     local me = predict:reconciler(self_player, { input = input, step = step, snap = 300 })
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     // Remotes: a passive attach pops past the threshold.
     predict.attachAll("players", {
@@ -657,9 +654,9 @@ Smoothing turns a respawn into a glide across the map. The `snap` option (on any
     // Your own entity: a reconcile correction past it pops instead of gliding.
     var me = predict.reconciler(self, { input: input, step: step, snap: 300 });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     # Remotes: a passive attach pops past the threshold.
     predict.attach_all("players", {
@@ -672,9 +669,9 @@ Smoothing turns a respawn into a glide across the map. The `snap` option (on any
         "input": input, "step": _step, "snap": 300,
     })
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     // Remotes: a passive attach pops past the threshold.
     predict.attachAll('players', config: {
@@ -685,9 +682,9 @@ Smoothing turns a respawn into a glide across the map. The `snap` option (on any
     // Your own entity: a reconcile correction past it pops instead of gliding.
     final me = predict.reconciler(self, input: input, step: step, snap: 300);
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 Size it well above per-patch motion (`maxSpeed × patchInterval`) and below your smallest legitimate teleport. Respawns that land on the same position induce zero correction and never trip it.
 

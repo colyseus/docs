@@ -2,9 +2,6 @@
 title: MMO Demo
 description: "Build a multiplayer MMO demo with Unity and Colyseus: rooms, chat, and persistent player state."
 ---
-import { Callout } from 'nextra/components';
-
-# MMO Tech Demo
 
 <Callout type="warning">
     This demo uses an older version of Colyseus.
@@ -28,15 +25,9 @@ Additionally, this demo uses MongoDB for player persistence. To run it locally, 
 
 ### ColyseusSettings ScriptableObject
 
-
-
 All server settings can be changed via the ColyseusSetting ScriptableObject located here:
 
-
-
 ![ScriptableObject](/tutorial/unity/scriptable-object.png)
-
-
 
 If you are running a local server, the default settings should be sufficient. To host a server, change the **Colyseus Server Address** and **Colyseus Server Port** values accordingly.
 
@@ -121,7 +112,7 @@ As you play around with this demo, you may want to make some adjustments to bett
 
 ### Using your own DB
 To point this demo at your own database, provide a different Mongo connection string in the `arena.env` file in the `Server` directory. The current string expects a locally hosted mongo db:
-``` javascript
+```javascript
 DEMO_DATABASE=mongodb://localhost:27017/demo?retryWrites=true&w=majority
 ```
 
@@ -183,7 +174,7 @@ export  function  getStateForType(type: string) : InteractableState {
 }
 ```
 The variable `coinChange` is the amount a user's coin count should change upon use. If the value is negative (the interactable COSTS coins to use), the server confirms the user has enough coins before responding with success. See the function `handleObjectCost` in `MMORoom.ts`:
-``` javascript
+```javascript
 handleObjectCost(object: InteractableState, user: NetworkedEntityState): boolean {
     let cost: number = object.coinChange;
     let worked: boolean = false;
@@ -209,12 +200,12 @@ handleObjectCost(object: InteractableState, user: NetworkedEntityState): boolean
 ```
 If this check is successful, object interaction will move forward normally.
 The variable `useDuration` is used to factor in how long an interactable will remain `inUse` after a user interacts with it. When an interactable gets used, it's `availableTimestamp` is set as so:
-``` javascript
+```javascript
 interactableObject.inUse = true;
 interactableObject.availableTimestamp = this.state.serverTime + interactableObject.useDuration;
 ```
 The server then checks on each timestep:
-``` javascript
+```javascript
 checkObjectReset() {
     this.state.interactableItems.forEach((state: InteractableState) => {
       if (state.inUse && state.availableTimestamp <= this.state.serverTime) {

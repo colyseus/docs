@@ -2,11 +2,6 @@
 title: "Getting Started"
 description: "Get started with Colyseus multiplayer framework. Scaffold a server with npm create colyseus-app, then choose your client SDK for TypeScript, JavaScript, React, Unity, Defold, Construct 3, Cocos Creator, Haxe, Flutter, Swift, and more."
 ---
-import { Cards, Tabs, Steps, Callout } from 'nextra/components'
-import { typescript, react, unity, defold, construct3, cocos, haxe, discord, wechat, godot, gamemaker, monogame, flutter, swift, c } from '../components/icons/platforms'
-import { SyncIcon, RowsIcon, DownloadIcon, ZapIcon } from '@primer/octicons-react'
-
-# Getting Started
 
 ## Prerequisites
 
@@ -19,21 +14,21 @@ import { SyncIcon, RowsIcon, DownloadIcon, ZapIcon } from '@primer/octicons-reac
 Colyseus is unopinionated on the game engine or framework you use in the frontend. See how to get started with one of the official SDKs available for different platforms:
 
 <Cards>
-    <Cards.Card icon={typescript()} title="TypeScript" href="/getting-started/typescript" />
-    <Cards.Card icon={react()} title="React" href="/getting-started/react" />
-    <Cards.Card icon={unity()} title="Unity" href="/getting-started/unity" />
-    <Cards.Card icon={monogame()} title="MonoGame" href="/getting-started/monogame" />
-    <Cards.Card icon={godot()} title="Godot" href="/getting-started/godot" />
-    <Cards.Card icon={defold()} title="Defold Engine" href="/getting-started/defold" />
-    <Cards.Card icon={construct3()} title="Construct 3" href="/getting-started/construct3" />
-    <Cards.Card icon={gamemaker()} title="GameMaker" href="/getting-started/gamemaker" />
-    <Cards.Card icon={cocos()} title="Cocos Creator" href="/getting-started/cocos" />
-    <Cards.Card icon={haxe()} title="Haxe" href="/getting-started/haxe" />
-    <Cards.Card icon={flutter()} title="Flutter" href="/getting-started/flutter" />
-    <Cards.Card icon={swift()} title="Swift" href="/getting-started/swift" />
-    <Cards.Card icon={c()} title="Native SDK (C)" href="/getting-started/native-sdk" />
-    <Cards.Card icon={discord()} title="Discord Activity" href="/getting-started/discord-activity" />
-    <Cards.Card icon={wechat()} title="WeChat" href="/getting-started/wechat" />
+    <Card icon={<Logo name="typescript" />} title="TypeScript" href="/getting-started/typescript" />
+    <Card icon={<Logo name="react" />} title="React" href="/getting-started/react" />
+    <Card icon={<Logo name="unity" />} title="Unity" href="/getting-started/unity" />
+    <Card icon={<Logo name="monogame" />} title="MonoGame" href="/getting-started/monogame" />
+    <Card icon={<Logo name="godot" />} title="Godot" href="/getting-started/godot" />
+    <Card icon={<Logo name="defold" />} title="Defold Engine" href="/getting-started/defold" />
+    <Card icon={<Logo name="construct3" />} title="Construct 3" href="/getting-started/construct3" />
+    <Card icon={<Logo name="gamemaker" />} title="GameMaker" href="/getting-started/gamemaker" />
+    <Card icon={<Logo name="cocos" />} title="Cocos Creator" href="/getting-started/cocos" />
+    <Card icon={<Logo name="haxe" />} title="Haxe" href="/getting-started/haxe" />
+    <Card icon={<Logo name="flutter" />} title="Flutter" href="/getting-started/flutter" />
+    <Card icon={<Logo name="swift" />} title="Swift" href="/getting-started/swift" />
+    <Card icon={<Logo name="c" />} title="Native SDK (C)" href="/getting-started/native-sdk" />
+    <Card icon={<Logo name="discord" />} title="Discord Activity" href="/getting-started/discord-activity" />
+    <Card icon={<Logo name="wechat" />} title="WeChat" href="/getting-started/wechat" />
 </Cards>
 
 ## Backend
@@ -43,10 +38,10 @@ Run one command and follow the prompts to create your local development server.
 <Steps>
 ### Create your Colyseus server
 
-<Tabs items={['npm', 'pnpm', 'yarn', 'Bun']}>
+<Tabs groupId="package-manager" persist>
 
-  <Tabs.Tab>
-``` bash filename="Terminal: npm"
+  <Tab value="npm">
+```bash title="Terminal: npm"
 # Create a new Colyseus project
 npm create colyseus-app@latest ./my-server
 
@@ -56,10 +51,10 @@ cd my-server
 # Run the server
 npm start
 ```
-  </Tabs.Tab>
+  </Tab>
 
-  <Tabs.Tab>
-``` bash filename="Terminal: pnpm"
+  <Tab value="pnpm">
+```bash title="Terminal: pnpm"
 # Create a new Colyseus project
 pnpm create colyseus-app@latest ./my-server
 
@@ -69,10 +64,10 @@ cd my-server
 # Run the server
 pnpm start
 ```
-  </Tabs.Tab>
+  </Tab>
 
-  <Tabs.Tab>
-``` bash filename="Terminal: yarn"
+  <Tab value="yarn">
+```bash title="Terminal: yarn"
 # Create a new Colyseus project
 yarn create colyseus-app ./my-server
 
@@ -82,10 +77,10 @@ cd my-server
 # Run the server
 yarn start
 ```
-  </Tabs.Tab>
+  </Tab>
 
-  <Tabs.Tab>
-``` bash filename="Terminal: Bun"
+  <Tab value="Bun">
+```bash title="Terminal: Bun"
 # Create a new Colyseus project
 bun create colyseus-app@latest ./my-server
 
@@ -96,7 +91,7 @@ cd my-server
 bun add @colyseus/bun-websockets
 bun run src/index.ts
 ```
-  </Tabs.Tab>
+  </Tab>
 </Tabs>
 
 The generator asks which language to use and what you're building. **Minimal server** is enough to follow along. See [Scaffolding options](#scaffolding-options) for every preset and flag.
@@ -106,9 +101,9 @@ The generator asks which language to use and what you're building. **Minimal ser
 Go to `src/rooms/MyRoom.ts` and start building your game logic! See more:
 
 <Cards>
-    <Cards.Card icon={<RowsIcon/>} title="Room API" href="/room" />
-    <Cards.Card icon={<SyncIcon/>} title="State Synchronization" href="/state" />
-    <Cards.Card icon={<ZapIcon/>} title="Netcode: Prediction & Lag Comp" href="/netcode" />
+    <Card icon={<RowsIcon/>} title="Room API" href="/room" />
+    <Card icon={<SyncIcon/>} title="State Synchronization" href="/state" />
+    <Card icon={<ZapIcon/>} title="Netcode: Prediction & Lag Comp" href="/netcode" />
 </Cards>
 
 </Steps>
@@ -117,7 +112,7 @@ Go to `src/rooms/MyRoom.ts` and start building your game logic! See more:
 
 Most models learned Colyseus from material older than 0.18. Without guidance, they write `colyseus.js` imports, `Room<MyState>` generics and `client.id`. The [Colyseus skill](https://github.com/colyseus/skill) keeps the agent on the current APIs and has it check your installed version before writing any Room or Schema code. Install it for Claude Code, Codex, Cursor, Gemini CLI, Copilot or any other agent that supports skills:
 
-``` bash filename="Terminal"
+```bash title="Terminal"
 npx skills add colyseus/skill            # this project
 npx skills add colyseus/skill --global   # every project
 ```
@@ -145,7 +140,7 @@ The first question is what you're building. Pick a preset, or **Custom** to choo
 
 Every question has a flag. Options you pass are not asked, and they override the preset. `--yes` fills the rest with defaults, so a single command works in a terminal, a script, or CI.
 
-``` bash filename="Terminal"
+```bash title="Terminal"
 npm create colyseus-app@latest my-server -- --preset realtime-action --yes
 
 npm create colyseus-app@latest my-server -- --ts --layout vite --netcode fixed \

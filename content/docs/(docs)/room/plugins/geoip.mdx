@@ -1,19 +1,14 @@
 ---
 title: "GeoIPPlugin"
 description: "Resolve a client's country from their IP at auth time and attach it to client.geoip before onJoin runs. Three pluggable database delivery modes: bring-your-own MMDB file, auto-download from MaxMind, or the credential-free DB-IP Lite download."
+sidebarTitle: "GeoIP"
+# Delivery-mode headings dropped their em-dash, and mode 3 stopped being "bundled".
+movedAnchors:
+  1-dbpath--bring-your-own-file: "/room/plugins/geoip#1-dbpath-bring-your-own-file"
+  2-accountid--licensekey--auto-fetch-from-maxmind: "/room/plugins/geoip#2-accountid--licensekey-auto-fetch-from-maxmind"
+  3-bundled--no-configuration: "/room/plugins/geoip#3-db-ip-lite-no-configuration"
+  3-bundled-no-configuration: "/room/plugins/geoip#3-db-ip-lite-no-configuration"
 ---
-import { Callout } from "nextra/components";
-import { MovedAnchors } from "../../../components/moved-anchors";
-
-# GeoIPPlugin
-
-{/* Delivery-mode headings dropped their em-dash, and mode 3 stopped being "bundled". */}
-<MovedAnchors map={{
-    "1-dbpath--bring-your-own-file": "/room/plugins/geoip#1-dbpath-bring-your-own-file",
-    "2-accountid--licensekey--auto-fetch-from-maxmind": "/room/plugins/geoip#2-accountid--licensekey-auto-fetch-from-maxmind",
-    "3-bundled--no-configuration": "/room/plugins/geoip#3-db-ip-lite-no-configuration",
-    "3-bundled-no-configuration": "/room/plugins/geoip#3-db-ip-lite-no-configuration",
-}} />
 
 Looks up the client's IP at auth time and exposes the resolved country
 as `client.geoip` before `onJoin` runs. Useful for region-locked
@@ -32,11 +27,11 @@ module-level cache.
 [`maxmind`](https://github.com/runk/node-maxmind) library and (optional)
 database files:
 
-```sh npm2yarn
+```npm
 npm install @colyseus/geoip
 ```
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 import { Room, definePlugins } from "colyseus";
 import { GeoIPPlugin } from "@colyseus/geoip";
 
@@ -153,7 +148,7 @@ picks it up when it lands, falling back to last month's until it does.
 
 ### Region-locked matchmaking
 
-```ts filename="EuropeRoom.ts"
+```ts title="EuropeRoom.ts"
 import { Room, definePlugins, ServerError } from "colyseus";
 import { GeoIPPlugin } from "@colyseus/geoip";
 
@@ -179,7 +174,7 @@ export class EuropeRoom extends Room {
 
 ### Locale defaults at join
 
-```ts filename="LobbyRoom.ts"
+```ts title="LobbyRoom.ts"
 async onJoin(client) {
   const defaultLocale = pickLocale(client.geoip?.isoCode);
   client.send("locale", defaultLocale);
@@ -188,7 +183,7 @@ async onJoin(client) {
 
 ### GDPR-aware analytics routing
 
-```ts filename="GameRoom.ts"
+```ts title="GameRoom.ts"
 async onJoin(client) {
   if (client.geoip?.isInEU) {
     analytics.useEUPipeline(client.sessionId);
@@ -205,7 +200,7 @@ useful when you need a geo result outside the auth path. Typical cases
 include re-resolving on reconnect, annotating analytics events, and
 anti-fraud checks against an unrelated IP:
 
-```ts filename="GameRoom.ts"
+```ts title="GameRoom.ts"
 async onReconnect(client) {
   // If you tracked the client's current IP separately, re-resolve it
   // here. `client.geoip` itself is not refreshed on reconnect.

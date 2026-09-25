@@ -2,9 +2,6 @@
 title: "Room Plugins"
 description: "Compose Colyseus rooms with reusable plugins that contribute message handlers, lifecycle hooks, and public methods."
 ---
-import { Callout, Tabs } from "nextra/components";
-
-# Room Plugins
 
 Cross-cutting room behavior (AFK kicks, session limits, geo lookups) tends to get copy-pasted between room classes. A **Room Plugin** packages that behavior once, as a composable extension to a `Room`. Each plugin can contribute any subset of:
 
@@ -30,7 +27,7 @@ All plugins above ship with the `colyseus` package, with no extra dependency to 
 
 Use `definePlugins` inside your `Room` subclass. The **array form** is recommended. Each plugin declares its own canonical key via `readonly pluginName = '...' as const`, and the framework turns the array into a typed record:
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 import { Room, definePlugins } from "colyseus";
 import { IdleKickPlugin } from "colyseus/plugins/idle-kick";
 
@@ -52,7 +49,7 @@ The key (`idleKick` here) comes from the plugin's `pluginName` field, with no pe
 
 `definePlugins` also accepts a keyed record. Use it when you want to pick the key yourself per-room, or when you need two instances of the same plugin class with different keys:
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 plugins = definePlugins({
   adminChat:  new ChatPlugin({ channel: "admin" }),
   playerChat: new ChatPlugin({ channel: "public" }),
@@ -67,7 +64,7 @@ A plugin can also accept its `pluginName` as a constructor argument, which lets 
 
 Subclass `RoomPlugin` and override any subset of lifecycle hooks. `this.room` is wired automatically after the host room is fully constructed. Don't access it from the plugin's constructor.
 
-```ts filename="ChatPlugin.ts"
+```ts title="ChatPlugin.ts"
 import { RoomPlugin, type Client } from "@colyseus/core";
 
 export class ChatPlugin extends RoomPlugin {
@@ -102,7 +99,7 @@ export class ChatPlugin extends RoomPlugin {
 
 Use it like any other plugin:
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 import { Room, definePlugins } from "colyseus";
 import { ChatPlugin } from "./ChatPlugin";
 
@@ -121,7 +118,7 @@ export class MyRoom extends Room {
 
 A plugin can declare other plugin classes it needs alongside it via a `static dependencies` field. The framework auto-instantiates any missing ones at room construction time. Your app code only mentions the plugin you actually care about:
 
-```ts filename="UniqueSessionPlugin.ts"
+```ts title="UniqueSessionPlugin.ts"
 import { RoomPlugin, type PluginDependencies } from "@colyseus/core";
 import { TrackUserSessionsPlugin } from "colyseus/plugins/track-user-sessions";
 
@@ -157,7 +154,7 @@ A plugin's `onAuth(client, options, context)` differs from the room's in one way
 
 To override the default for a specific hook:
 
-```ts filename="MyPlugin.ts"
+```ts title="MyPlugin.ts"
 import { RoomPlugin } from "@colyseus/core";
 
 export class MyPlugin extends RoomPlugin {
@@ -185,7 +182,7 @@ At runtime the plugin's message handlers are fully merged into the room. For **c
 
 Plugins that need typed access to the host room's state expose a generic parameter on their class:
 
-```ts filename="LeaderboardsPlugin.ts"
+```ts title="LeaderboardsPlugin.ts"
 import { RoomPlugin, type Client, type Room } from "@colyseus/core";
 
 export class LeaderboardsPlugin<R extends Room = Room> extends RoomPlugin<R> {
@@ -200,7 +197,7 @@ export class LeaderboardsPlugin<R extends Room = Room> extends RoomPlugin<R> {
 
 The generic argument must come from **outside** the room class. Declare a type alias for the room shape next to it:
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 type MyRoomShape = Room<{ state: MyState }>;
 
 export class MyRoom extends Room<{ state: MyState }> {
@@ -218,7 +215,7 @@ export class MyRoom extends Room<{ state: MyState }> {
 
 Use `attachToTestRoom` to inject a stub room and exercise the plugin's hooks without spinning up a full Colyseus server. Because lifecycle hooks and `messages` are `protected`, reach into them via bracket-notation (TS skips visibility checks on indexed access):
 
-```ts filename="MyPlugin.test.ts"
+```ts title="MyPlugin.test.ts"
 import assert from "assert";
 import { attachToTestRoom } from "@colyseus/core";
 import { ChatPlugin } from "./ChatPlugin";

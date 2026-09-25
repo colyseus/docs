@@ -2,9 +2,6 @@
 title: "Transport"
 description: "The transport layer handles network communication between the Colyseus server and clients: WebSocket (default), uWebSockets.js, Bun WebSockets, and WebTransport."
 ---
-import { Callout, Cards, Tabs } from "nextra/components";
-
-# Transport
 
 The Transport layer is responsible for handling the low-level network communication between the Colyseus server and clients. It manages WebSocket connections, handles ping/pong heartbeats to detect disconnected clients, and provides the underlying HTTP server for the application.
 
@@ -13,15 +10,15 @@ The Transport layer is responsible for handling the low-level network communicat
 ### Node.js Runtime
 
 <Cards>
-    <Cards.Card title="WebSockets (Default)" href="/server/transport/ws" arrow />
-    <Cards.Card title="uWebSockets.js (Native)" href="/server/transport/uwebsockets" arrow />
-    <Cards.Card title="WebTransport" href="/server/transport/webtransport" arrow />
+    <Card title="WebSockets (Default)" href="/server/transport/ws" />
+    <Card title="uWebSockets.js (Native)" href="/server/transport/uwebsockets" />
+    <Card title="WebTransport" href="/server/transport/webtransport" />
 </Cards>
 
 ### Bun Runtime
 
 <Cards>
-    <Cards.Card title="Bun WebSockets" href="/server/transport/bun-websockets" arrow />
+    <Card title="Bun WebSockets" href="/server/transport/bun-websockets" />
 </Cards>
 
 <Callout type="info">

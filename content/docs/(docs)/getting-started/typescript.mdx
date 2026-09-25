@@ -1,45 +1,49 @@
 ---
 title: "Colyseus SDK for TypeScript"
 description: "Install and set up the Colyseus JavaScript/TypeScript SDK for building real-time multiplayer games. Includes room connections, state synchronization, and full type safety."
+sidebarTitle: "TypeScript"
+icon: "logo:typescript"
 ---
-import _js_ts_header from "./_js_ts_header.mdx"
-import { Callout, Tabs } from 'nextra/components'
-import Image from 'next/image'
 
-# JavaScript / TypeScript SDK
+The JavaScript/TypeScript SDK is engine agnostic and can be used with any game engine or framework that supports WebSockets, such as:
 
-<_js_ts_header />
+- Modern web browsers (and mobile web browsers)
+- Node.js
+- Bun
+- Electron
+- React Native
+- Engines/Frameworks: Phaser, PlayCanvas, React, Pixi.js, Babylon.js, THREE.js, KAPLAY, etc.
 
 ---
 
 ## Installation
 
-<Tabs items={['Package Manager', 'CDN', 'Download']}>
-<Tabs.Tab>
+<Tabs>
+<Tab value="Package Manager">
 
-```sh npm2yarn
+```npm
 npm install --save @colyseus/sdk
 ```
 
 The SDK includes TypeScript definitions out of the box.
 
-</Tabs.Tab>
+</Tab>
 
-<Tabs.Tab>
+<Tab value="CDN">
 Include directly from unpkg. Replace `@x.x.x` with a version compatible with your server:
 
 ```html
 <script src="https://unpkg.com/@colyseus/sdk@^0.17.0/dist/colyseus.js"></script>
 ```
-</Tabs.Tab>
+</Tab>
 
-<Tabs.Tab>
+<Tab value="Download">
 Download the release binaries from [GitHub Releases](https://github.com/colyseus/colyseus/releases?q=%22%40colyseus%2Fsdk%22&expanded=true) and include them in your project:
 
 ```html
 <script src="colyseus.js"></script>
 ```
-</Tabs.Tab>
+</Tab>
 </Tabs>
 
 ## Quick Example
@@ -185,7 +189,7 @@ import "@colyseus/sdk/debug";
 
 If you define your state with the [`@type()` decorator style](/state/schema/decorators) and target ES2022 or ESNext, ensure your `tsconfig.json` includes:
 
-```json filename="tsconfig.json"
+```json title="tsconfig.json"
 {
     "compilerOptions": {
         "useDefineForClassFields": false,

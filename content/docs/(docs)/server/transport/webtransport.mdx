@@ -2,9 +2,6 @@
 title: "WebTransport"
 description: "Use the experimental WebTransport (HTTP/3) transport with Colyseus."
 ---
-import { Callout, Cards } from "nextra/components";
-
-# WebTransport
 
 WebTransport is a new transport protocol that allows for low-latency, bidirectional, and multiplexed communication between a client and a server. The protocol is built on top of HTTP/3 and QUIC, which in turn is built on UDP instead of TCP.
 
@@ -25,13 +22,13 @@ WebTransport is the only Colyseus transport with a real **unreliable** channel: 
 
 Every WebSocket transport lacks that channel. `.unreliable()` fields then stop updating after the full state sync, with a warning logged once. Unreliable input falls back to the reliable channel, its redundancy wasted. Client-side WebTransport support is currently limited to the JavaScript/TypeScript SDK.
 
-```sh npm2yarn
+```npm
 npm install --save @colyseus/h3-transport
 ```
 
 **Usage**
 
-```ts {2-3,9-13} filename="app.config.ts"
+```ts {2-3,9-13} title="app.config.ts"
 import express from "express";
 import { defineServer } from "colyseus";
 import { H3Transport } from "@colyseus/h3-transport"

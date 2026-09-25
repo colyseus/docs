@@ -2,9 +2,6 @@
 title: Read API
 description: "Read your Colyseus Cloud applications' metrics, deploys and logs programmatically, to forward them to your own monitoring."
 ---
-import { Callout } from 'nextra/components'
-
-# Read API
 
 The Colyseus Cloud API gives read-only access to what the dashboard shows: CPU, memory, CCU and room count per instance, deploy history and output, and a snapshot of each instance's logs. Use it to feed your own dashboards or monitoring tools.
 
@@ -20,7 +17,7 @@ Once the API is enabled for your team, owners and admins can create tokens under
 
 Send the token as a bearer token:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 curl https://cloud-prod.colyseus.io/api/v1/applications \
   -H "Authorization: Bearer $COLYSEUS_CLOUD_TOKEN"
 ```

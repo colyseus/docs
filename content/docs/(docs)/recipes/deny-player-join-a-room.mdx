@@ -2,9 +2,6 @@
 title: Deny a Player Joining a Room
 description: "How to deny a player from joining a Colyseus room based on custom conditions using onAuth or onJoin."
 ---
-import { Callout } from 'nextra/components'
-
-# Deny a Player Joining a Room
 
 You can deny a player connection by throwing a `ServerError` during the `onAuth()` or `onJoin()` methods.
 
@@ -12,7 +9,7 @@ When to deny a player connection will depend on your use-case.
 
 Below you can see an example validating the client's auth token, and retrieving a `Hero` record linked with the user id. The check lives in the **static** `onAuth`. For token-bearing clients, the instance `onAuth` is skipped entirely (see [Room Authentication](/auth/room)).
 
-```ts filename="BattleRoom.ts"
+```ts title="BattleRoom.ts"
 import { Room, ServerError } from "colyseus";
 import { JWT } from "@colyseus/auth";
 import { Hero } from "../models/Hero"; // your own database model
@@ -41,7 +38,7 @@ export class BattleRoom extends Room {
 
 The client sends its token and receives the error when trying to join the room:
 
-```js filename="client.js"
+```js title="client.js"
 client.auth.token = "YOUR AUTH TOKEN";
 
 client.joinOrCreate("battle", {}).then(room => {

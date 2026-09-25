@@ -1,12 +1,9 @@
 ---
 title: "Colyseus SDK for Construct 3"
 description: "Add real-time multiplayer to Construct 3 games with the Colyseus SDK plugin. Install, configure, and connect to Colyseus rooms from Construct 3."
+sidebarTitle: "Construct 3"
+icon: "logo:construct3"
 ---
-import { construct3 } from "../../components/icons/platforms"
-import { Callout } from 'nextra/components'
-import { DownloadIcon, CodeIcon } from '@primer/octicons-react'
-
-# Construct 3
 
 <Callout type="info">
     [Launch Construct3 FREE TRIAL here](https://www.construct.net/a/429195?t=construct3freetrial).
@@ -83,7 +80,7 @@ A deliberate rejection is part of your game's flow, not a failure: it triggers "
 
 On the server, the same `messages` handlers serve both plain messages and requests:
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 messages = {
     "get-profile": async (client, { userId }) => {
         return await db.profiles.findById(userId); // → "On Room Response"

@@ -1,10 +1,9 @@
 ---
 title: "Colyseus Native SDK (C)"
 description: "Get started with the Colyseus Native SDK for C. Build multiplayer games with raw C integration, supporting desktop, mobile, and web platforms."
+sidebarTitle: "Native SDK (C)"
+icon: "logo:c"
 ---
-import { Callout } from "nextra/components";
-
-# Native SDK (C)
 
 <Callout type="warning">
     The Native SDK is in **beta**, and may not be stable. Please [report any issues you find](https://github.com/colyseus/native-sdk/issues).
@@ -55,13 +54,13 @@ The build output will be in `zig-out/lib/` (library) and `zig-out/include/` (hea
 
 Generate C structs from your server-side schema definitions:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npx schema-codegen src/rooms/schema/* --c --output client/schema/
 ```
 
 This produces a header file with typed structs, field metadata, and vtables for each schema class. For example, a `Player` schema generates:
 
-```c filename="schema/player.h"
+```c title="schema/player.h"
 typedef struct {
     colyseus_schema_t __base;   // Must be the first field
     double x;
@@ -202,7 +201,7 @@ colyseus_callbacks_on_add(callbacks, state, "players",
 
 This example shows how to connect to a server, join a room, listen for state changes, send messages, and handle cleanup.
 
-```c filename="main.c"
+```c title="main.c"
 #include <stdio.h>
 #include <string.h>
 #include <colyseus/client.h>

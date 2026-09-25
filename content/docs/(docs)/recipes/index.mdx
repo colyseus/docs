@@ -2,10 +2,6 @@
 title: "Recipes & Guides"
 description: "Practical recipes, guides, and best practices for Colyseus: command pattern, custom room IDs, password-protected rooms, denying joins, and keeping your room code healthy."
 ---
-import { Cards, Callout } from 'nextra/components'
-import { SyncIcon, PackageIcon, ChecklistIcon } from "@primer/octicons-react";
-
-# Recipes & Guides
 
 Recipes and guides for common tasks with Colyseus.
 
@@ -14,11 +10,11 @@ Recipes and guides for common tasks with Colyseus.
 </Callout>
 
 <Cards>
-    <Cards.Card title="The Command Pattern" href="/recipes/command-pattern" arrow />
-    <Cards.Card title="Custom Room ID" href="/recipes/custom-room-id" arrow />
-    <Cards.Card title="Deny a Player Joining a Room" href="/recipes/deny-player-join-a-room" arrow />
-    <Cards.Card title="Password Protect Room" href="/recipes/password-protect-room" arrow />
-    <Cards.Card title="Setup Server from Scratch with TypeScript" href="/recipes/setup-server-from-scratch-typescript" arrow />
+    <Card title="The Command Pattern" href="/recipes/command-pattern" />
+    <Card title="Custom Room ID" href="/recipes/custom-room-id" />
+    <Card title="Deny a Player Joining a Room" href="/recipes/deny-player-join-a-room" />
+    <Card title="Password Protect Room" href="/recipes/password-protect-room" />
+    <Card title="Setup Server from Scratch with TypeScript" href="/recipes/setup-server-from-scratch-typescript" />
 </Cards>
 
 ## Best Practices
@@ -33,7 +29,7 @@ General recommendations to keep your codebase healthy and readable for your team
 - Your game logic may be handled by specialized structures, such as external functions, the [Command Pattern →](/recipes/command-pattern), or an [Entity-Component System →](/3rd-party-packages#entity-component-system-ecs).
 
 <Cards>
-    <Cards.Card icon={<PackageIcon/>} title="3rd Party Packages" href="/3rd-party-packages" arrow />
-    <Cards.Card icon={<ChecklistIcon/>} title="Unit Testing" href="/tools/unit-testing" arrow />
-    <Cards.Card icon={<SyncIcon/>} title="Optimizing State" href="/state/optimization" arrow />
+    <Card icon={<PackageIcon/>} title="3rd Party Packages" href="/3rd-party-packages" />
+    <Card icon={<ChecklistIcon/>} title="Unit Testing" href="/tools/unit-testing" />
+    <Card icon={<SyncIcon/>} title="Optimizing State" href="/state/optimization" />
 </Cards>

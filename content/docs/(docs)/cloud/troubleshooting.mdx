@@ -1,12 +1,7 @@
 ---
-title: >
-    "Deploy failed" errors
+title: "\"Deploy failed\" errors"
 description: "Common Colyseus Cloud deployment failures and how to fix them."
 ---
-import { Callout, Steps, Tabs } from 'nextra/components'
-import { AlertIcon, CheckCircleIcon } from "@primer/octicons-react"
-
-# Troubleshooting "Deploy failed" errors
 
 Here you will find the most common scenarios where a deployment can fail.
 
@@ -27,8 +22,8 @@ Deploy failed with exit code: 1
 
 <AlertIcon/> **Symptom:** "Permission denied" errors as shown below:
 
-<Tabs items={["rimraf: Permission denied", "tsc: Permission denied", "colyseus-post-deploy: Permission denied"]}>
-    <Tabs.Tab>
+<Tabs>
+    <Tab value="rimraf: Permission denied">
     ```txt {3}
     Error Output:
     ================
@@ -37,9 +32,9 @@ Deploy failed with exit code: 1
     Deploy failed
     Deploy failed with exit code: 1
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="tsc: Permission denied">
     ```txt {3}
     Error Output:
     ================
@@ -48,9 +43,9 @@ Deploy failed with exit code: 1
     Deploy failed
     Deploy failed with exit code: 1
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="colyseus-post-deploy: Permission denied">
     ```txt {3}
     Error Output:
     ================
@@ -59,7 +54,7 @@ Deploy failed with exit code: 1
     Deploy failed
     Deploy failed with exit code: 1
     ```
-    </Tabs.Tab>
+    </Tab>
 
 </Tabs>
 
@@ -110,7 +105,7 @@ Then, try to deploy again.
 
 <AlertIcon/> **Symptom:** The following error message `Process list empty, cannot save empty list`
 
-    ``` hl_lines="1"
+    ```txt {1}
     Error: Process list empty, cannot save empty list
         at fin (/usr/lib/node_modules/pm2/lib/API/Startup.js:448:23)
         at ex (/usr/lib/node_modules/pm2/lib/API/Startup.js:492:30)
@@ -126,7 +121,7 @@ Then, try to deploy again.
 
 <CheckCircleIcon/> **Solution:** Make sure you have an `ecosystem.config.js` (or `ecosystem.config.cjs`) file at the root of the project - with the `"script"` pointing to your application's entrypoint.
 
-```js {6} filename="ecosystem.config.js"
+```js {6} title="ecosystem.config.js"
 const os = require('os');
 
 module.exports = {
@@ -150,7 +145,7 @@ If you see TypeScript compilation errors like the example below, read the
 [TypeScript compilation errors](/cloud/typescript-compilation-errors) article, as it
 explains how to fix them.
 
-``` hl_lines="1 2 3"
+```txt {1,2,3}
 src/app.config.ts(3,28): error TS2307: Cannot find module '@colyseus/playground' or its corresponding type declarations.
 src/app.config.ts(25,34): error TS7006: Parameter 'req' implicitly has an 'any' type.
 src/app.config.ts(25,39): error TS7006: Parameter 'res' implicitly has an 'any' type.

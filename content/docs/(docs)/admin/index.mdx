@@ -2,9 +2,6 @@
 title: "Admin Panel"
 description: "Production operations console for Colyseus: install, mount, and bootstrap @colyseus/admin for user management, database CRUD, live room inspection, customizable dashboards, and an append-only audit trail."
 ---
-import { Callout, Tabs } from "nextra/components"
-
-# Admin Panel
 
 `@colyseus/admin` is a browser-based operations console for projects using [`@colyseus/database`](/database). The panel provides user management (browse, ban, revoke sessions), CRUD over your drizzle tables, a live room inspector, and a customizable dashboard. Everything is gated by session-based login with role-based access control and an append-only audit log.
 
@@ -20,7 +17,7 @@ For a lightweight, no-auth dashboard intended for room and process inspection, s
 
 On top of `@colyseus/core`, the panel has two peer dependencies: [`@colyseus/database`](/database) (user store, audit log, drizzle table introspection) and [`@colyseus/auth`](/auth/module) (JWT signing, password hashing). Install all three together:
 
-```sh npm2yarn
+```npm
 npm install --save @colyseus/admin @colyseus/database @colyseus/auth
 ```
 
@@ -28,11 +25,11 @@ npm install --save @colyseus/admin @colyseus/database @colyseus/auth
 
 The admin panel mounts in two ways:
 
-<Tabs items={["Standard router (recommended)", "Express middleware"]}>
-    <Tabs.Tab>
+<Tabs>
+    <Tab value="Standard router (recommended)">
     Spread `admin({})` into `createRouter`. The factory returns both the SPA static-serving routes and the REST API in one map:
 
-    ```ts {3,10} filename="src/app.config.ts"
+    ```ts {3,10} title="src/app.config.ts"
     import { defineServer, createRouter } from "colyseus";
     import { GameDatabase } from "@colyseus/database";
     import { admin } from "@colyseus/admin";
@@ -46,12 +43,12 @@ The admin panel mounts in two ways:
         }),
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Express middleware">
     For Express-based stacks, `admin(...)` is also a valid Express middleware. Mount it at the root to keep the default `/admin` and `/admin-api` paths, or under any path to move both:
 
-    ```ts {3,10,13} filename="src/app.config.ts"
+    ```ts {3,10,13} title="src/app.config.ts"
     import { defineServer } from "colyseus";
     import { GameDatabase } from "@colyseus/database";
     import { admin } from "@colyseus/admin";
@@ -70,7 +67,7 @@ The admin panel mounts in two ways:
     ```
 
     Behind a reverse proxy that strips a prefix, forward it as `X-Forwarded-Prefix` and the served HTML adjusts its base URL.
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 <Callout type="info">
@@ -112,7 +109,7 @@ The defaults are tuned for local development. Before exposing the panel to the p
 - **Swap the in-memory rate limiters for a Redis-backed implementation** on multi-process deployments. The default token buckets don't share state across instances. The limiter keys on `X-Forwarded-For` / `X-Real-IP` when present, so only expose the panel behind a proxy that overwrites those headers.
 - **Gate the Monitor and Playground** behind `admin.guard()` so you don't have multiple unauthenticated panels exposed:
 
-    ```ts filename="src/app.config.ts"
+    ```ts title="src/app.config.ts"
     routes: createRouter({
         ...playground({ use: [admin.guard()] }),
         ...monitor({    use: [admin.guard()] }),

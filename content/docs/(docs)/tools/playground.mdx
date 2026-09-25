@@ -2,10 +2,6 @@
 title: "Playground"
 description: "Use the Colyseus Playground to create room connections, inspect messages, and debug state synchronization in the browser."
 ---
-import { PackageIcon } from "@primer/octicons-react";
-import { Callout } from "nextra/components";
-
-# Playground
 
 The Colyseus Playground is a browser-based development tool for real-time debugging of your multiplayer server. The Playground lets you create and manage WebSocket room connections, inspect synchronized state, send and receive messages, and test HTTP endpoints. All of it works without writing any client-side code.
 
@@ -29,7 +25,7 @@ The Colyseus Playground is a browser-based development tool for real-time debugg
 
 This package is installed by default on new projects created via `npm create colyseus-app`.
 
-```sh npm2yarn
+```npm
 npm install --save @colyseus/playground
 ```
 
@@ -41,7 +37,7 @@ The playground can be mounted in two ways.
 
 Spread `playground()` into `createRouter` and set the `prefix` to the path you want it served from:
 
-```ts {2,6} filename="app.config.ts"
+```ts {2,6} title="app.config.ts"
 import { defineServer, createRouter } from "colyseus";
 import { playground } from "@colyseus/playground";
 
@@ -60,7 +56,7 @@ const server = defineServer({
 
 Use this mode if you rely on existing Express middleware or libraries:
 
-```ts {2,7} filename="app.config.ts"
+```ts {2,7} title="app.config.ts"
 import { defineServer } from "colyseus";
 import { playground } from "@colyseus/playground";
 
@@ -84,7 +80,7 @@ If you mounted the playground at a different path, adjust the URL accordingly.
 
 The playground exposes full access to your rooms and server endpoints. **Do not expose it in production without password protection.** Pass a guard middleware through the playground's `use` option. Colyseus ships with a built-in [`basicAuth`](/server/http-routes#basic-authentication):
 
-```ts {1,4,8} filename="app.config.ts"
+```ts {1,4,8} title="app.config.ts"
 import { defineServer, createRouter, basicAuth } from "colyseus";
 import { playground } from "@colyseus/playground";
 
@@ -99,7 +95,7 @@ const server = defineServer({
 
 The `use` option works in both mounting modes, so you can pass the same guard when mounting via Express:
 
-```ts filename="app.config.ts"
+```ts title="app.config.ts"
 app.use("/playground", playground({ use: [guard] }));
 ```
 

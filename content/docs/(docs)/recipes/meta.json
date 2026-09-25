@@ -1,0 +1,11 @@
+{
+  "title": "Recipes & Guides",
+  "icon": "LightBulbIcon",
+  "pages": [
+    "command-pattern",
+    "custom-room-id",
+    "deny-player-join-a-room",
+    "password-protect-room",
+    "setup-server-from-scratch-typescript"
+  ]
+}

@@ -2,9 +2,6 @@
 title: "Relay Room"
 description: "The built-in RelayRoom broadcasts client messages to everyone else with minimal backend state, for simple multiplayer without server authority."
 ---
-import { Callout, Cards, Tabs } from "nextra/components";
-
-# Relay Room
 
 The built-in `RelayRoom` provides a lightweight relay for simple multiplayer use cases where you only need to track connected clients.
 
@@ -19,7 +16,7 @@ The built-in `RelayRoom` provides a lightweight relay for simple multiplayer use
 
 ## Server
 
-```ts filename="server.ts"
+```ts title="server.ts"
 import { defineServer, defineRoom, RelayRoom } from "colyseus";
 
 //
@@ -41,7 +38,7 @@ See how to register callbacks for players joining, leaving, sending and receivin
 
 ### Connecting into the room
 
-```ts filename="client.ts"
+```ts title="client.ts"
 import { Client } from "@colyseus/sdk";
 
 const client = new Client("http://localhost:2567");
@@ -56,7 +53,7 @@ const relay = await client.joinOrCreate("your_relayed_room", {
 
 ### Registering callbacks when players join and leave
 
-```ts filename="client.ts"
+```ts title="client.ts"
 import { Callbacks } from "@colyseus/sdk";
 
 const callbacks = Callbacks.get(relay);
@@ -98,7 +95,7 @@ callbacks.onAdd("players", (player, sessionId) => {
 
 ### Sending and receiving messages
 
-```ts filename="client.ts"
+```ts title="client.ts"
 //
 // By sending a message, all other clients will receive it under the same name.
 // Messages are only sent to other connected clients, never the current one.

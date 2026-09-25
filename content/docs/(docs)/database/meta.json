@@ -1,0 +1,10 @@
+{
+  "title": "Database",
+  "icon": "DatabaseIcon",
+  "pages": [
+    "authentication",
+    "services",
+    "schemas",
+    "bring-your-own"
+  ]
+}

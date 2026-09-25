@@ -2,9 +2,6 @@
 title: "uWebSockets.js"
 description: "Use the uWebSockets.js transport for higher-performance WebSocket handling in Colyseus."
 ---
-import { Callout, Cards, Tabs } from "nextra/components";
-
-# uWebSockets.js
 
 The uWebSockets.js generally performs better than the default WebSockets implementation, and is capable of handling more connections while using less resources. This transport is recommended for production environments.
 
@@ -14,19 +11,19 @@ The uWebSockets.js generally performs better than the default WebSockets impleme
 
 ## Installation
 
-```sh npm2yarn
+```npm
 npm install --save @colyseus/uwebsockets-transport@^0.18.0
 ```
 
 To use the `express:` option with this transport, also install the optional [`uwebsockets-express`](https://github.com/colyseus/uWebSockets-express) compatibility layer (`^2.0.1` for Express v5, `^1.4.1` for Express v4):
 
-```sh npm2yarn
+```npm
 npm install --save uwebsockets-express
 ```
 
 **Usage**
 
-```ts {1,6-10} filename="app.config.ts"
+```ts {1,6-10} title="app.config.ts"
 import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
 import { defineServer } from "colyseus";
 
@@ -125,30 +122,30 @@ Password for the SSL file. (for SSL termination through the Node.js application.
 
 The `@colyseus/uwebsockets-transport` package ships with a specific version of `uWebSockets.js` as a dependency. You may need a different version, for example to pick up a bug fix or to match a specific platform requirement. In that case, override it directly from your project's `package.json`.
 
-<Tabs items={["npm", "yarn", "pnpm"]}>
-    <Tabs.Tab>
+<Tabs groupId="package-manager" persist>
+    <Tab value="npm">
     Use the [`overrides`](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#overrides) field:
-    ```json filename="package.json"
+    ```json title="package.json"
     {
       "overrides": {
         "uWebSockets.js": "uNetworking/uWebSockets.js#v20.51.0"
       }
     }
     ```
-    </Tabs.Tab>
-    <Tabs.Tab>
+    </Tab>
+    <Tab value="yarn">
     Use the [`resolutions`](https://classic.yarnpkg.com/lang/en/docs/selective-version-resolutions/) field:
-    ```json filename="package.json"
+    ```json title="package.json"
     {
       "resolutions": {
         "uWebSockets.js": "uNetworking/uWebSockets.js#v20.51.0"
       }
     }
     ```
-    </Tabs.Tab>
-    <Tabs.Tab>
+    </Tab>
+    <Tab value="pnpm">
     Use the [`pnpm.overrides`](https://pnpm.io/package_json#pnpmoverrides) field:
-    ```json filename="package.json"
+    ```json title="package.json"
     {
       "pnpm": {
         "overrides": {
@@ -157,7 +154,7 @@ The `@colyseus/uwebsockets-transport` package ships with a specific version of `
       }
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 After updating `package.json`, remove your `node_modules` directory and reinstall dependencies for the override to take effect.

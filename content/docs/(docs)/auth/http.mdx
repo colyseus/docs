@@ -2,10 +2,6 @@
 title: HTTP Middleware
 description: "Authenticate HTTP requests to a Colyseus server with the Authorization header and JWT-protected routes."
 ---
-import { Steps, Tabs, Cards, Callout } from "nextra/components"
-import { SignInIcon, ShieldCheckIcon, PackageIcon } from "@primer/octicons-react"
-
-# HTTP Middleware
 
 If you are using the HTTP API, you can authenticate your requests using the `Authorization` header.
 
@@ -13,7 +9,7 @@ If you are using the HTTP API, you can authenticate your requests using the `Aut
 
 ## Client SDK: Set the auth token
 
-```js filename="client.js"
+```js title="client.js"
 // set the auth token
 client.auth.token = "YOUR AUTH TOKEN";
 ```
@@ -26,7 +22,7 @@ client.auth.token = "YOUR AUTH TOKEN";
 
 The HTTP requests contain the auth token in the `Authorization` header.
 
-```js filename="client.js"
+```js title="client.js"
 client.http.get("/profile").then((response) => {
     console.log(response.data);
 });
@@ -36,9 +32,9 @@ client.http.get("/profile").then((response) => {
 
 If you are using the `@colyseus/auth` module, `auth.middleware()` works in both the [HTTP Routes](/server/http-routes) system (`createEndpoint` / `createMiddleware`) and as an Express middleware. The decoded JWT payload is exposed on `ctx.context.auth` (HTTP routes) or `req.auth` (Express).
 
-<Tabs items={["HTTP Routes (createEndpoint)", "Express middleware", "Custom authentication"]}>
-    <Tabs.Tab>
-    ```ts filename="src/endpoints/profile.ts"
+<Tabs>
+    <Tab value="HTTP Routes (createEndpoint)">
+    ```ts title="src/endpoints/profile.ts"
     import { createEndpoint } from "colyseus";
     import { auth } from "@colyseus/auth";
 
@@ -52,10 +48,10 @@ If you are using the `@colyseus/auth` module, `auth.middleware()` works in both 
     ```
 
     See [HTTP Routes](/server/http-routes) for how endpoints are mounted via `createRouter`.
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```ts filename="src/app.config.ts"
+    <Tab value="Express middleware">
+    ```ts title="src/app.config.ts"
     import { defineServer } from "colyseus";
     import { auth } from "@colyseus/auth";
 
@@ -70,10 +66,10 @@ If you are using the `@colyseus/auth` module, `auth.middleware()` works in both 
         // ...
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```ts filename="src/app.config.ts"
+    <Tab value="Custom authentication">
+    ```ts title="src/app.config.ts"
     function yourAuthMiddleware (req, res, next) {
         const authorization = req.headers.authorization;
         // TODO: validate the "authorization" token here
@@ -84,7 +80,7 @@ If you are using the `@colyseus/auth` module, `auth.middleware()` works in both 
         // handle the request
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 <Callout type="warning">

@@ -1,34 +1,24 @@
 ---
 title: "Colyseus Client SDK"
 description: "Complete API reference for the Colyseus Client SDK. Connect to rooms, synchronize state, send messages, handle reconnection, and measure latency across TypeScript, Unity, Godot, Defold, Haxe, and Flutter."
+# Connection lifecycle moved to a child page; keep old deep links working.
+# `#connection-lifecycle` is absent on purpose: that heading survives here as
+# a pointer, and redirecting it would make this page's own table of contents
+# bounce readers away.
+movedAnchors:
+  leaving-a-room: "/sdk/connection#leaving-a-room"
+  automatic-reconnection: "/sdk/connection#automatic-reconnection"
+  on-drop-event: "/sdk/connection#on-drop-event"
+  on-reconnect-event: "/sdk/connection#on-reconnect-event"
+  reconnection-options: "/sdk/connection#reconnection-options"
+  manual-reconnection: "/sdk/connection#manual-reconnection"
+  error-handling: "/sdk/connection#error-handling"
+  removing-listeners: "/sdk/connection#removing-listeners"
 ---
-import { Callout, Cards, Tabs } from "nextra/components";
-import { ZapIcon, SyncIcon, ServerIcon, PasskeyFillIcon } from "@primer/octicons-react";
-import { SDKTabs } from "../components/SDKTabs"
-import { MovedAnchors } from "../components/moved-anchors";
-
-# Client SDK
-
-{/*
-  Connection lifecycle moved to a child page; keep old deep links working.
-  `#connection-lifecycle` is absent on purpose: that heading survives here as
-  a pointer, and redirecting it would make this page's own table of contents
-  bounce readers away.
-*/}
-<MovedAnchors map={{
-    "leaving-a-room": "/sdk/connection#leaving-a-room",
-    "automatic-reconnection": "/sdk/connection#automatic-reconnection",
-    "on-drop-event": "/sdk/connection#on-drop-event",
-    "on-reconnect-event": "/sdk/connection#on-reconnect-event",
-    "reconnection-options": "/sdk/connection#reconnection-options",
-    "manual-reconnection": "/sdk/connection#manual-reconnection",
-    "error-handling": "/sdk/connection#error-handling",
-    "removing-listeners": "/sdk/connection#removing-listeners",
-}} />
 
 <Cards>
-    <Cards.Card icon={<ZapIcon/>} title="Getting Started" href="/getting-started" />
-    <Cards.Card icon={<SyncIcon />} title="State Sync Callbacks" href="/state/callbacks" />
+    <Card icon={<ZapIcon/>} title="Getting Started" href="/getting-started" />
+    <Card icon={<SyncIcon />} title="State Sync Callbacks" href="/state/callbacks" />
 </Cards>
 
 The Client SDK provides everything you need to connect to a Colyseus server from your game or application.
@@ -39,10 +29,10 @@ The Client SDK provides everything you need to connect to a Colyseus server from
 
 The `Client` instance is your entry point to connect to the server.
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     import { Client } from "@colyseus/sdk";
     const client = new Client("http://localhost:2567");
 
@@ -50,48 +40,47 @@ The `Client` instance is your entry point to connect to the server.
     import type { server } from "../../server/src/app.config.ts";
     const client = new Client<typeof server>("http://localhost:2567");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     using Colyseus;
 
     Client client = new Client("http://localhost:2567");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     local Colyseus = require("colyseus.sdk")
 
     local client = Colyseus.Client("http://localhost:2567");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     import io.colyseus.Client;
 
     var client = new Client("http://localhost:2567");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     var client = Colyseus.Client.new("ws://localhost:2567")
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     import 'package:colyseus/colyseus.dart';
 
     final client = ColyseusClient('ws://localhost:2567');
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 ---
 
@@ -103,11 +92,10 @@ Once you have a client, you can join rooms. Choose the method that best fits you
 
 The most common way to connect. Joins an existing room if available, or creates a new one.
 
+<LangTabs>
 
-<SDKTabs>
-
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     try {
       const room = await client.joinOrCreate("battle", {/* options */});
       console.log("joined successfully", room);
@@ -116,11 +104,10 @@ The most common way to connect. Joins an existing room if available, or creates 
       console.error("join error", e);
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     try {
       Colyseus.Room<YourStateClass> room = await client.JoinOrCreate<YourStateClass>("battle", /* Dictionary of options */);
       Debug.Log("joined successfully");
@@ -130,10 +117,10 @@ The most common way to connect. Joins an existing room if available, or creates 
       Debug.Log(ex.Message);
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     client:join_or_create("battle", {--[[options]]}, function(err, room)
       if (err ~= nil) then
         print("join error: " .. err)
@@ -143,10 +130,10 @@ The most common way to connect. Joins an existing room if available, or creates 
       print("joined successfully")
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     client.joinOrCreate("battle", [/* options */], YourStateClass, function(err, room) {
       if (err != null) {
         trace("join error: " + err);
@@ -156,10 +143,10 @@ The most common way to connect. Joins an existing room if available, or creates 
       trace("joined successfully");
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     var room: Colyseus.Room = client.join_or_create("battle")
 
     room.joined.connect(func():
@@ -168,10 +155,10 @@ The most common way to connect. Joins an existing room if available, or creates 
     room.error.connect(func(code: int, message: String):
         printerr("join error: ", message))
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     try {
       final room = await client.joinOrCreate('battle',
           options: {/* options */}, stateType: MyRoomState.new);
@@ -181,9 +168,9 @@ The most common way to connect. Joins an existing room if available, or creates 
       print('join error: $e');
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 <Callout type="info">
     Locked or private rooms are ignored by this method.
@@ -206,7 +193,7 @@ These methods use the same pattern as `joinOrCreate`. Replace the method name ac
 
 **Example: Creating an invite link with `joinById`**
 
-```ts filename="client.ts"
+```ts title="client.ts"
 // Share the room ID with other players
 const inviteLink = `https://mygame.com/join?roomId=${room.roomId}`;
 
@@ -225,10 +212,9 @@ Once connected to a room, you can send and receive messages in real-time.
 
 Send messages to the room. Messages are encoded with MsgPack and can hold any JSON-serializable data.
 
-
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     //
     // sending message with string type
     //
@@ -239,11 +225,10 @@ Send messages to the room. Messages are encoded with MsgPack and can hold any JS
     //
     room.send(0, { direction: "left"});
     ```
-    </Tabs.Tab>
+    </Tab>
 
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     //
     // sending message with string type
     //
@@ -254,10 +239,10 @@ Send messages to the room. Messages are encoded with MsgPack and can hold any JS
     //
     await room.Send(0, new { direction = "left" });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     --
     -- sending message with string type
     --
@@ -268,10 +253,10 @@ Send messages to the room. Messages are encoded with MsgPack and can hold any JS
     --
     room:send(0, { direction = "left" })
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     //
     // sending message with string type
     //
@@ -282,20 +267,20 @@ Send messages to the room. Messages are encoded with MsgPack and can hold any JS
     //
     room.send(0, { direction: "left" });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     # sending message with string type
     room.send_message("move", {"direction": "left"})
 
     # sending message with number type
     room.send_message(0, {"direction": "left"})
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     //
     // sending message with string type
     //
@@ -306,8 +291,8 @@ Send messages to the room. Messages are encoded with MsgPack and can hold any JS
     //
     room.sendInt(0, {'direction': 'left'});
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 <Callout type="info">
     **Backend:** See [Room → Message Handling](/room#message-handling) for detailed documentation on receiving messages from the client.
@@ -317,7 +302,7 @@ Send messages to the room. Messages are encoded with MsgPack and can hold any JS
 
 For custom encoding, send a `Uint8Array` of raw bytes.
 
-```js filename="client.js"
+```js title="client.js"
 //
 // sending message with number type
 //
@@ -337,20 +322,19 @@ room.sendBytes("some-bytes", new Uint8Array([ 172, 72, 101, 108, 108, 111, 32, 1
 
 Listen for messages sent from the server.
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     room.onMessage("powerup", (message) => {
       console.log("message received from server");
       console.log(message);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     class PowerUpMessage {
       string kind;
     }
@@ -360,46 +344,46 @@ Listen for messages sent from the server.
       Debug.Log(message);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     room:on_message("powerup", function(message)
       print("message received from server")
       print(message)
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     room.onMessage("powerup", function(message) {
       trace("message received from server");
       trace(Std.string(message));
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     room.message_received.connect(_on_message_received)
 
     func _on_message_received(type: Variant, message: Variant):
         print("message received from server")
         print(message)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     room.onMessage('powerup').listen((message) {
       print('message received from server');
       print(message);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 <Callout type="info">
     **Backend:** To send a message from the server to a client, use [client.send()](/room#send-message) or [room.broadcast()](/room/#broadcast-message).
@@ -409,7 +393,7 @@ Listen for messages sent from the server.
 
 Send a message and await the server's reply. The server answers by [returning a value from its matching message handler](/room#responding-to-a-message-requestresponse).
 
-```ts filename="client.ts"
+```ts title="client.ts"
 //
 // Promise form: room.request(type, payload)
 //
@@ -433,7 +417,7 @@ The promise rejects (or the callback receives an `error`) when the handler throw
 
 The server may also **deliberately reject** a request via [`ctx.reject(reason)`](/room#responding-to-a-message-requestresponse): a business-logic "no", distinct from an error. The rejection arrives as an `Error` with `name: "rejected"`, and the server's raw `reason` on its `.reason` property:
 
-```ts filename="client.ts"
+```ts title="client.ts"
 try {
     await room.request("join-team", { team: "red" });
 } catch (e: any) {
@@ -455,7 +439,7 @@ Pass `mode: "unreliable"` in the options to send the request over the unreliable
 
 For prediction-ready rooms (rooms that call [`defineInput()`](/netcode/server-input) on the server), `room.input()` returns a typed input channel: stage fields on `input.data`, then `input.send()` once per fixed step.
 
-```ts filename="client.ts"
+```ts title="client.ts"
 const input = room.input();   // input schema arrives from the server's defineInput()
 
 input.data.moveX = 1;
@@ -479,9 +463,9 @@ The room state is automatically synchronized from the server to all connected cl
 
 Use `Callbacks` to listen for specific property changes with fine-grained control.
 
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     import { Callbacks } from "@colyseus/sdk";
 
     const callbacks = Callbacks.get(room);
@@ -502,10 +486,10 @@ Use `Callbacks` to listen for specific property changes with fine-grained contro
         console.log("Player left:", sessionId);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```cs filename="client.cs"
+    <Tab value="C#">
+    ```cs title="client.cs"
     var callbacks = Colyseus.Schema.Callbacks.Get(room);
 
     callbacks.Listen(state => state.currentTurn, (currentValue, previousValue) => {
@@ -524,10 +508,10 @@ Use `Callbacks` to listen for specific property changes with fine-grained contro
         Debug.Log($"Player left: {sessionId}");
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     local callbacks = ColyseusSDK.callbacks(room)
 
     callbacks:listen("currentTurn", function(currentValue, previousValue)
@@ -546,10 +530,10 @@ Use `Callbacks` to listen for specific property changes with fine-grained contro
         print("Player left: " .. sessionId)
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     import io.colyseus.serializer.schema.Callbacks;
 
     var callbacks = Callbacks.get(room);
@@ -570,10 +554,10 @@ Use `Callbacks` to listen for specific property changes with fine-grained contro
         trace("Player left: " + sessionId);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     var callbacks = Colyseus.Callbacks.of(room)
 
     callbacks.listen("currentTurn", _on_turn_change)
@@ -590,10 +574,10 @@ Use `Callbacks` to listen for specific property changes with fine-grained contro
     func _on_player_remove(player: Dictionary, key: String):
         print("Player left: ", key)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     final callbacks = Callbacks.get(room);
     final state = room.state!;   // joined with stateType: MyRoomState.new
 
@@ -613,8 +597,8 @@ Use `Callbacks` to listen for specific property changes with fine-grained contro
       print('Player left: $sessionId');
     });
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 <Callout type="info">
     See the full [State Sync Callbacks](/state/callbacks) documentation for all available methods including `listen`, `onAdd`, `onRemove`, and more.
@@ -654,14 +638,13 @@ Measure network latency and choose optimal servers for your players.
 
 Create a temporary connection to measure latency before joining a room.
 
-
 **Parameters**
 
 - `options.pingCount`: Number of pings to send (default: `1`). Returns the average latency when greater than 1.
 
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     const latency = await client.getLatency();
     console.log("Latency:", latency, "ms");
 
@@ -669,11 +652,10 @@ Create a temporary connection to measure latency before joining a room.
     const avgLatency = await client.getLatency({ pingCount: 5 });
     console.log("Average Latency:", avgLatency, "ms");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     float latency = await client.GetLatency();
     Debug.Log("Latency: " + latency + " ms");
 
@@ -681,10 +663,10 @@ Create a temporary connection to measure latency before joining a room.
     float avgLatency = await client.GetLatency(new LatencyOptions { PingCount = 5 });
     Debug.Log("Average Latency: " + avgLatency + " ms");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     client:get_latency(function(err, latency)
       print("Latency: " .. latency .. " ms")
     end)
@@ -694,10 +676,10 @@ Create a temporary connection to measure latency before joining a room.
       print("Average Latency: " .. avg_latency .. " ms")
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     client.getLatency(function(err, latency) {
       trace("Latency: " + latency + " ms");
     });
@@ -707,76 +689,74 @@ Create a temporary connection to measure latency before joining a room.
       trace("Average Latency: " + avgLatency + " ms");
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     # Latency measurement API may vary in the Godot SDK
     # Check the SDK documentation for available methods
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     // Not available in the Flutter SDK.
     // Measure round-trip time on a live connection with room.ping() instead.
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 #### During a Room Connection
 
 Measure round-trip time on an existing connection.
 
-
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     room.ping((latency) => {
       console.log("Latency:", latency, "ms");
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     room.Ping((latency) => {
       Debug.Log("Latency: " + latency + " ms");
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     room:ping(function(latency)
       print("Latency: " .. latency .. " ms")
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     room.ping(function(latency) {
       trace("Latency: " + latency + " ms");
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     # Ping API may vary in the Godot SDK
     # Check the SDK documentation for available methods
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     final latency = await room.ping();
     print('Latency: $latency ms');
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 <Callout type="info">
     If the connection is not open, calling `ping()` has no effect.
@@ -786,16 +766,15 @@ Measure round-trip time on an existing connection.
 
 Automatically connect to the server with the lowest latency from a list of endpoints.
 
-
 **Parameters**
 
 - `endpoints`: Array of server endpoints (URLs or endpoint settings objects).
 - `options`: Optional client options to pass to each client instance.
 - `latencyOptions.pingCount`: Number of pings to send per endpoint (default: `1`).
 
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     import { Client } from "@colyseus/sdk";
 
     // Select the best server from multiple regions
@@ -808,11 +787,10 @@ Automatically connect to the server with the lowest latency from a list of endpo
     // Now use the client with the lowest latency
     const room = await client.joinOrCreate("game");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     using Colyseus;
 
     // Select the best server from multiple regions
@@ -825,10 +803,10 @@ Automatically connect to the server with the lowest latency from a list of endpo
     // Now use the client with the lowest latency
     Room<YourStateClass> room = await client.joinOrCreate<YourStateClass>("game");
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     local Colyseus = require("colyseus.sdk")
 
     -- Select the best server from multiple regions
@@ -843,10 +821,10 @@ Automatically connect to the server with the lowest latency from a list of endpo
       end)
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     import io.colyseus.Client;
 
     // Select the best server from multiple regions
@@ -861,10 +839,10 @@ Automatically connect to the server with the lowest latency from a list of endpo
       });
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     # Multi-region server selection may vary in the Godot SDK
     # You can manually test latency to multiple endpoints:
     var endpoints = [
@@ -876,16 +854,16 @@ Automatically connect to the server with the lowest latency from a list of endpo
     # Select endpoint with lowest latency and create client
     var client = Colyseus.Client.new(endpoints[0])  # Set your preferred endpoint
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     // Multi-region selection is not available in the Flutter SDK.
     // Pick an endpoint yourself and create the client for it:
     final client = ColyseusClient('wss://us-east.gameserver.com');
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 <Callout type="info">
     The method logs the latency for each endpoint to the console for debugging purposes. If all endpoints fail to respond, an error is thrown.

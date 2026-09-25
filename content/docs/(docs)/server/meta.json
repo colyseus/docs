@@ -1,0 +1,18 @@
+{
+  "title": "Server",
+  "icon": "ServerIcon",
+  "pages": [
+    "---Setup---",
+    "transport",
+    "driver",
+    "presence",
+    "http-routes",
+    "---Development---",
+    "devmode",
+    "vite",
+    "debugging",
+    "logging",
+    "---Production---",
+    "graceful-shutdown"
+  ]
+}

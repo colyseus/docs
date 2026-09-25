@@ -1,11 +1,9 @@
 ---
 title: "Colyseus SDK for Godot"
 description: "Get started with Colyseus multiplayer in Godot Engine. Install the SDK, connect to a server, and sync real-time game state."
+sidebarTitle: "Godot"
+icon: "logo:godot"
 ---
-import { Callout } from "nextra/components";
-import { DevicesIcon } from '@primer/octicons-react'
-
-# Godot Engine
 
 <Callout type="warning">
     The GDExtension is in **beta**, and may not be stable. Please [report any issues you find](https://github.com/colyseus/native-sdk/issues/8).
@@ -56,7 +54,7 @@ Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select 
 
 This example shows how to connect to a room, listen for state changes, send messages and leave the room.
 
-```gdscript filename="Network.gd"
+```gdscript title="Network.gd"
 extends Node
 
 var client: Colyseus.Client
@@ -162,7 +160,7 @@ Colyseus.poll()
 
 The State Schema Codegen is optional but recommended: it gives you type safety and autocomplete in your IDE.
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npx schema-codegen src/rooms/schema/* --gdscript --bundle --output ../colyseus/schema/
 ```
 

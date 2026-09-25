@@ -1,10 +1,8 @@
 ---
 title: "UniqueSessionPlugin"
 description: "Enforce one (or N) concurrent room sessions per user, preventing two-tab abuse and stale matchmaking re-queues."
+sidebarTitle: "Unique Session"
 ---
-import { Callout } from "nextra/components";
-
-# UniqueSessionPlugin
 
 Enforces a max number of **concurrent sessions of this room type per user**. Default `max: 1` (strict singleton). A second join from the same user while the first is still active is either **rejected** or **replaces** the older session, depending on configuration.
 
@@ -18,7 +16,7 @@ Typical uses:
 
 The plugin ships with the `colyseus` package:
 
-```ts filename="GameRoom.ts"
+```ts title="GameRoom.ts"
 import { Room, definePlugins } from "colyseus";
 import { UniqueSessionPlugin } from "colyseus/plugins/unique-session";
 
@@ -68,7 +66,7 @@ So a typical first-join (no prior entries) is **one** wire op. A duplicate check
 
 The plugin throws a `ServerError(4400, "already_in_room")`. On the client:
 
-```ts filename="client.ts"
+```ts title="client.ts"
 try {
   await client.joinOrCreate("game");
 } catch (err) {
@@ -84,7 +82,7 @@ For custom codes, configure `rejectCode` / `rejectMessage`.
 
 ### Allow up to two concurrent tabs
 
-```ts filename="GameRoom.ts"
+```ts title="GameRoom.ts"
 plugins = definePlugins([
   new UniqueSessionPlugin({ max: 2 }),
 ]);
@@ -94,7 +92,7 @@ A third join from the same user is rejected.
 
 ### Replace the older session on duplicate
 
-```ts filename="GameRoom.ts"
+```ts title="GameRoom.ts"
 plugins = definePlugins([
   new UniqueSessionPlugin({
     max: 1,
@@ -119,7 +117,7 @@ The predicate receives:
 
 #### Scope by game mode metadata
 
-```ts filename="GameRoom.ts"
+```ts title="GameRoom.ts"
 plugins = definePlugins([
   new UniqueSessionPlugin({
     max: 1,
@@ -135,7 +133,7 @@ plugins = definePlugins([
 
 #### Per-process exemption (multi-region)
 
-```ts filename="GameRoom.ts"
+```ts title="GameRoom.ts"
 import { matchMaker } from "@colyseus/core";
 
 plugins = definePlugins([
@@ -153,7 +151,7 @@ plugins = definePlugins([
 
 #### Don't count rooms that are already full
 
-```ts filename="GameRoom.ts"
+```ts title="GameRoom.ts"
 plugins = definePlugins([
   new UniqueSessionPlugin({
     max: 1,
@@ -167,7 +165,7 @@ plugins = definePlugins([
 
 ### Custom auth shape
 
-```ts filename="GameRoom.ts"
+```ts title="GameRoom.ts"
 plugins = definePlugins([
   new UniqueSessionPlugin({
     resolveUserId: (client) => (client as any).auth?.profile?.sub,

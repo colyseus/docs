@@ -2,9 +2,6 @@
 title: "Message Composability"
 description: "Define reusable, type-safe message handlers for Colyseus rooms using the Messages type."
 ---
-import { Callout } from 'nextra/components'
-
-# Message Composability
 
 The `Messages<R>` type allows you to define reusable, type-safe message handlers that can be composed and spread into your Room's `messages` property. This pattern is useful for:
 
@@ -20,7 +17,7 @@ The `Messages<R>` type allows you to define reusable, type-safe message handlers
 
 Use the `Messages<R>` generic type to define a set of message handlers outside of your Room class. The generic parameter `R` should be your Room class to ensure proper typing for `this` context.
 
-```typescript filename="thirdPartyMessages.ts"
+```typescript title="thirdPartyMessages.ts"
 import { Room, validate, type Client, type Messages } from "colyseus";
 import { z } from "zod";
 import { MyRoom } from "./MyRoom";
@@ -53,7 +50,7 @@ export const thirdPartyMessages: Messages<MyRoom> = {
 
 Use the spread operator to compose multiple message handler objects into your Room's `messages` property:
 
-```typescript filename="MyRoom.ts"
+```typescript title="MyRoom.ts"
 import { Room, Client, validate } from "colyseus";
 import { z } from "zod";
 import { thirdPartyMessages } from "./thirdPartyMessages";
@@ -94,7 +91,7 @@ export class MyRoom extends Room<{ client: MyClient }> {
 
 When spreading multiple handler objects, handlers defined later will override earlier ones with the same name:
 
-```typescript filename="MyRoom.ts"
+```typescript title="MyRoom.ts"
 messages = {
   ...thirdPartyMessages,  // Contains "chat" handler
   

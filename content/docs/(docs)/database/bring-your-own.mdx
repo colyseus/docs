@@ -2,10 +2,6 @@
 title: "Bring your own database"
 description: "Use any ORM, query builder, or Firebase with Colyseus: query patterns for onAuth and onLeave when not using @colyseus/database."
 ---
-import { Cards } from 'nextra/components'
-import { LinkExternalIcon } from '@primer/octicons-react'
-
-# Bring your own database
 
 `@colyseus/database` is the recommended path, but Colyseus does not require it. Any database or Node.js module works. Query it directly from your room's lifecycle methods.
 
@@ -16,11 +12,11 @@ If you go this route, we still recommend [Drizzle ORM](https://orm.drizzle.team/
 ORMs are known for abstracting the database layer and providing a more object-oriented approach.
 
 <Cards>
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="DrizzleORM" href="https://orm.drizzle.team/" />
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="MikroORM" href="https://mikro-orm.io/" />
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="Prisma" href="http://www.prisma.io/" />
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="Sequelize" href="https://sequelize.org/" />
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="TypeORM" href="https://typeorm.io/" />
+    <Card icon={<LinkExternalIcon/>} title="DrizzleORM" href="https://orm.drizzle.team/" />
+    <Card icon={<LinkExternalIcon/>} title="MikroORM" href="https://mikro-orm.io/" />
+    <Card icon={<LinkExternalIcon/>} title="Prisma" href="http://www.prisma.io/" />
+    <Card icon={<LinkExternalIcon/>} title="Sequelize" href="https://sequelize.org/" />
+    <Card icon={<LinkExternalIcon/>} title="TypeORM" href="https://typeorm.io/" />
 </Cards>
 
 ## Query builders
@@ -28,8 +24,8 @@ ORMs are known for abstracting the database layer and providing a more object-or
 Query builders are known for their simplicity and flexibility.
 
 <Cards>
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="Kysely" href="https://kysely.dev/" />
-    <Cards.Card target="_blank" icon={<LinkExternalIcon/>} title="Knex" href="https://knexjs.org/" />
+    <Card icon={<LinkExternalIcon/>} title="Kysely" href="https://kysely.dev/" />
+    <Card icon={<LinkExternalIcon/>} title="Knex" href="https://knexjs.org/" />
 </Cards>
 
 ## Backend-as-a-Service
@@ -42,7 +38,7 @@ Query builders are known for their simplicity and flexibility.
 
 Fetch user data from the join `options` the client sends, or from the authentication token.
 
-```ts filename="src/rooms/MyRoom.ts"
+```ts title="src/rooms/MyRoom.ts"
 // db: your own client (pg, knex, prisma, ...)
 async onAuth(client, options) {
     const user = await db.query('SELECT * FROM users WHERE id = ?', [options.userId]);
@@ -59,7 +55,7 @@ async onJoin (client, options) {
 
 Update the database when the client leaves the room.
 
-```ts filename="src/rooms/MyRoom.ts"
+```ts title="src/rooms/MyRoom.ts"
 // ...
 async onLeave(client, consented) {
     // ...

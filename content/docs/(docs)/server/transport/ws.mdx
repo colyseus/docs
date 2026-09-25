@@ -2,9 +2,6 @@
 title: "WebSocket (Default)"
 description: "The default Colyseus WebSocket transport (ws): options, ping/pong heartbeats, and customization."
 ---
-import { Callout, Steps, Tabs } from 'nextra/components'
-
-# WebSocket Transport (via `ws`)
 
 The `WebSocketTransport` with its default options is going to be used automatically if no `transport` is provided. You may customize its options by providing a custom `WebSocketTransport` instance.
 
@@ -14,7 +11,7 @@ The `WebSocketTransport` with its default options is going to be used automatica
 
 ## Example
 
-```ts {2,7-11} filename="app.config.ts"
+```ts {2,7-11} title="app.config.ts"
 import { defineServer } from "colyseus";
 import { WebSocketTransport } from "@colyseus/ws-transport"
 
@@ -39,9 +36,9 @@ const server = defineServer({
 
 A Node.js http server instance to re-use for the WebSocket server. Useful when you'd like to use Express along with Colyseus.
 
-<Tabs items={["Example", "Example + Express"]}>
-    <Tabs.Tab>
-    ```ts {3,8-10} filename="app.config.ts"
+<Tabs>
+    <Tab value="Example">
+    ```ts {3,8-10} title="app.config.ts"
     import { createServer } from "http";
     import { defineServer } from "@colyseus/core";
     import { WebSocketTransport } from "@colyseus/ws-transport"
@@ -54,10 +51,10 @@ A Node.js http server instance to re-use for the WebSocket server. Useful when y
       })
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```ts {1,4,6-7,10-12} filename="server.ts"
+    <Tab value="Example + Express">
+    ```ts {1,4,6-7,10-12} title="server.ts"
     import express from "express";
     import { createServer } from "http";
     import { defineServer } from "@colyseus/core";
@@ -72,7 +69,7 @@ A Node.js http server instance to re-use for the WebSocket server. Useful when y
       })
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 By not providing this option, an http server is going to be created automatically for you.
@@ -156,7 +153,6 @@ then the handshake is automatically accepted.
     - `result` (Boolean) Whether or not to accept the handshake.
     - `code` (Number) When `result` is `false` this field determines the HTTP error status code to be sent to the client.
     - `name` (String) When `result` is `false` this field determines the HTTP reason phrase.
-
 
 ---
 

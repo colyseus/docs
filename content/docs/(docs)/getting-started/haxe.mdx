@@ -1,12 +1,9 @@
 ---
 title: "Colyseus SDK for Haxe"
 description: "Use Colyseus with Haxe game engines like OpenFL, HaxeFlixel, Heaps, and more. Install the SDK, connect to rooms, and synchronize state across platforms."
+sidebarTitle: "Haxe"
+icon: "logo:haxe"
 ---
-import { haxe } from "../../components/icons/platforms"
-import { Callout } from "nextra/components";
-import { DevicesIcon } from '@primer/octicons-react'
-
-# Haxe
 
 You're encouraged to use this SDK along with any Haxe Game Engine, such as: [OpenFL](https://www.openfl.org/), [Kha](http://kha.tech/), [HaxeFlixel](http://haxeflixel.com/), [Heaps](https://heaps.io/), [HaxePunk](http://haxepunk.com/), etc.
 
@@ -14,7 +11,7 @@ You're encouraged to use this SDK along with any Haxe Game Engine, such as: [Ope
 
 Install `colyseus` from haxelib:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 haxelib install colyseus
 ```
 
@@ -24,7 +21,7 @@ The [colyseus-hx](https://github.com/colyseus/colyseus-hx) repository contains a
 
 ### Compiling the example project to `html5`
 
-```sh filename="Terminal"
+```sh title="Terminal"
 git clone https://github.com/colyseus/colyseus-hx.git
 cd colyseus-hx/example/openfl
 
@@ -44,7 +41,7 @@ haxelib run lime test project.xml html5
 
 To run the test server locally, you will need to run the following commands in your terminal:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 git clone https://github.com/colyseus/sdks-test-server
 cd sdks-test-server
 npm install
@@ -128,7 +125,7 @@ Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select 
 
 For compiled languages like Haxe, you need to generate client-side schema classes that match your server's state structure. Run the following command from your server directory:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npx schema-codegen src/rooms/schema/* --haxe --output ../src/schema/
 ```
 

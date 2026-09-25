@@ -1,0 +1,21 @@
+{
+  "title": "Getting Started",
+  "icon": "NorthStarIcon",
+  "pages": [
+    "typescript",
+    "react",
+    "unity",
+    "monogame",
+    "godot",
+    "defold",
+    "construct3",
+    "gamemaker",
+    "cocos",
+    "haxe",
+    "flutter",
+    "swift",
+    "native-sdk",
+    "discord-activity",
+    "wechat"
+  ]
+}

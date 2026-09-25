@@ -1,0 +1,15 @@
+{
+  "title": "Colyseus Cloud",
+  "icon": "CloudIcon",
+  "pages": [
+    "compute-plans",
+    "private-npm-registry",
+    "continuous-deployment",
+    "ddos-protection",
+    "environment-variables",
+    "troubleshooting",
+    "typescript-compilation-errors",
+    "pricing-billing",
+    "api"
+  ]
+}

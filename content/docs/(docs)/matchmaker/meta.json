@@ -1,0 +1,10 @@
+{
+  "title": "Matchmaking",
+  "icon": "StackIcon",
+  "pages": [
+    "visibility",
+    "lobby",
+    "queue",
+    "standalone"
+  ]
+}

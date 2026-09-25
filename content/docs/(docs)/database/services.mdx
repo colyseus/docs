@@ -3,8 +3,6 @@ title: "Services"
 description: "The @colyseus/database service surface (cloud saves, leaderboards, live configs, analytics, moderation, notes) plus the room plugins that wire them into the room lifecycle."
 ---
 
-# Services
-
 Each `GameDatabase` instance exposes a set of services, read-and-write APIs over the built-in tables. All examples below assume the exported `db` instance from the [Quick start](/database#quick-start).
 
 ## Cloud saves
@@ -51,7 +49,7 @@ Declare typed configuration keys with [Standard Schema](https://standardschema.d
 
 A key with no row yet resolves to the schema's default. With Zod 4, use `.prefault({})` on the object: `.default({})` returns `{}` as-is, without the field defaults.
 
-```ts filename="src/app.config.ts"
+```ts title="src/app.config.ts"
 import { defineServer, RedisPresence } from "colyseus";
 import { GameDatabase, defineConfigs } from "@colyseus/database";
 import { z } from "zod";
@@ -70,7 +68,7 @@ export const db = new GameDatabase({
 });
 ```
 
-```ts filename="src/rooms/Lobby.ts"
+```ts title="src/rooms/Lobby.ts"
 const mm = await db.configs.get("matchmaking"); // typed: { minPlayers, maxPlayers }
 
 const unsubscribe = db.configs.subscribe("matchmaking", (value) => {
@@ -102,7 +100,7 @@ For common patterns, `@colyseus/database` ships [Room Plugins](/room/plugins) th
 
 Plugin hooks run in a fixed order relative to the room's own hooks. The plugin's `onJoin` runs **before** the room's `onJoin`, and its `onLeave` runs **after** the room's `onLeave`. A room that creates the player entry in `onJoin` and removes it in `onLeave` therefore has no entry when the automatic load or save runs. Turn the automatic hooks off and call the plugin from the room, after creating the entry and before removing it:
 
-```ts filename="src/rooms/MyRoom.ts"
+```ts title="src/rooms/MyRoom.ts"
 import { Room, definePlugins } from "colyseus";
 import { CloudSavesPlugin, LeaderboardsPlugin, AnalyticsPlugin } from "@colyseus/database";
 import { GameState, Player } from "./schema";

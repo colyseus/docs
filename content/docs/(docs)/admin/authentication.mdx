@@ -2,9 +2,6 @@
 title: "Authentication & RBAC"
 description: "How admin sessions, roles, and the admin.guard() middleware work: JWT cookies, three-role hierarchy, scoped mod assignments, password reset over the API, rate limits, and gating sibling tools."
 ---
-import { Callout } from "nextra/components"
-
-# Authentication & RBAC
 
 The admin panel uses **session-based JWT cookies** for authentication and a three-role hierarchy (`admin` / `mod` / `user`) for authorization. Both reuse [`@colyseus/database`](/database) and [`@colyseus/auth`](/auth/module), so revocation, password hashing, and JWT signing follow the same rules as your application's player auth.
 
@@ -90,7 +87,7 @@ This pattern lets you give a community manager full control over guilds without 
 
 The `admin.guard()` middleware checks the same session cookie used by the panel itself. You can therefore gate other HTTP routes (the Monitor, the Playground, or any custom endpoint) behind a single admin login.
 
-```ts {1,6-7} filename="src/app.config.ts"
+```ts {1,6-7} title="src/app.config.ts"
 import { admin } from "@colyseus/admin";
 import { playground } from "@colyseus/playground";
 import { monitor } from "@colyseus/monitor";
@@ -145,7 +142,7 @@ The reset flow is implemented on the API, but **the panel ships no reset page ye
     The default `onResetRequest` forwards through [`auth.settings.onForgotPassword`](/auth/module#on-forgot-password) when configured. It renders `html/admin-reset-password-email.html` from your project when present, and the standard `reset-password-email.html` otherwise. Both use the `[LINK]` placeholder (see [custom templates](/auth/module#customizing-the-email-templates)). Without that hook it logs the link through the admin logger, which is fine for local development only.
 </Callout>
 
-```ts filename="src/app.config.ts"
+```ts title="src/app.config.ts"
 admin({
     database: db,
     onResetRequest: async ({ email, url }) => {

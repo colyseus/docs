@@ -2,9 +2,6 @@
 title: "Development Mode"
 description: "Colyseus development mode (devMode) restores rooms and state across server restarts while you iterate on room code locally."
 ---
-import { Callout } from "nextra/components";
-
-# Development Mode
 
 ## How Development Mode Works
 
@@ -30,7 +27,7 @@ Clients try to reconnect as soon as the server goes down. They keep trying a few
 
 The `devMode` is disabled by default and it can be enabled via [Server option](/server#development-mode):
 
-```ts {5} filename="app.config.ts"
+```ts {5} title="app.config.ts"
 import { defineServer } from "colyseus";
 
 const server = defineServer({
@@ -61,7 +58,7 @@ const server = defineServer({
 
 The `onCacheRoom` will be executed before the room is cached and disposed.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 export class MyRoom extends Room {
   // ...
 
@@ -81,7 +78,7 @@ The argument provided for the `onRestoreRoom` is the data previously returned by
 
 No clients are connected yet at this point.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 export class MyRoom extends Room {
   // ...
 

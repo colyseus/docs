@@ -2,11 +2,6 @@
 title: "State Sync Callbacks"
 description: "React to state changes on the client: register callbacks on Schema instances for property changes, additions, and removals during decoding."
 ---
-import { Tabs, Callout, Steps } from 'nextra/components'
-import { SDKTabs } from "../../components/SDKTabs"
-import { SyncIcon } from "@primer/octicons-react";
-
-# State Sync Callbacks (Schema Callbacks)
 
 When applying state changes coming from the server, the frontend is going to trigger callbacks on local instances according to the changes being applied.
 
@@ -21,9 +16,9 @@ In order to register callbacks to Schema instances, you must access the instance
 <Steps>
     ### Get the callback handler
 
-    <SDKTabs>
-        <Tabs.Tab>
-        ```ts {10} filename="client.ts"
+    <LangTabs>
+        <Tab value="TypeScript">
+        ```ts {10} title="client.ts"
         import { Client, Callbacks } from "@colyseus/sdk";
 
         // initialize SDK
@@ -35,10 +30,10 @@ In order to register callbacks to Schema instances, you must access the instance
         // get state callbacks handler
         const callbacks = Callbacks.get(room);
         ```
-        </Tabs.Tab>
+        </Tab>
 
-        <Tabs.Tab>
-        ```cs {10} filename="client.cs"
+        <Tab value="C#">
+        ```cs {10} title="client.cs"
         using Colyseus;
 
         // initialize SDK
@@ -50,10 +45,10 @@ In order to register callbacks to Schema instances, you must access the instance
         // get state callbacks handler
         var callbacks = Colyseus.Schema.Callbacks.Get(room);
         ```
-        </Tabs.Tab>
+        </Tab>
 
-        <Tabs.Tab>
-        ```lua {10} filename="client.lua"
+        <Tab value="Lua">
+        ```lua {10} title="client.lua"
         local ColyseusSDK = require("colyseus.sdk")
 
         -- initialize SDK
@@ -66,10 +61,10 @@ In order to register callbacks to Schema instances, you must access the instance
             local callbacks = ColyseusSDK.callbacks(room)
         end)
         ```
-        </Tabs.Tab>
+        </Tab>
 
-        <Tabs.Tab>
-        ```haxe {2,11} filename="client.hx"
+        <Tab value="Haxe">
+        ```haxe {2,11} title="client.hx"
         import colyseus.Client;
         import io.colyseus.serializer.schema.Callbacks;
 
@@ -83,10 +78,10 @@ In order to register callbacks to Schema instances, you must access the instance
             var callbacks = Callbacks.get(room);
         });
         ```
-        </Tabs.Tab>
+        </Tab>
 
-        <Tabs.Tab>
-        ```gdscript {10} filename="client.gd"
+        <Tab value="GDScript">
+        ```gdscript {10} title="client.gd"
         # initialize SDK
         var client = Colyseus.Client.new("ws://localhost:2567")
 
@@ -97,10 +92,10 @@ In order to register callbacks to Schema instances, you must access the instance
             # get state callbacks handler
             var callbacks = Colyseus.Callbacks.of(room))
         ```
-        </Tabs.Tab>
+        </Tab>
 
-        <Tabs.Tab>
-        ```dart {10} filename="client.dart"
+        <Tab value="Dart">
+        ```dart {10} title="client.dart"
         import 'package:colyseus/colyseus.dart';
 
         // initialize SDK
@@ -112,14 +107,14 @@ In order to register callbacks to Schema instances, you must access the instance
         // get state callbacks handler
         final callbacks = Callbacks.get(room);
         ```
-        </Tabs.Tab>
-    </SDKTabs>
+        </Tab>
+    </LangTabs>
 
     ### Register the callbacks
 
-    <SDKTabs>
-        <Tabs.Tab>
-        ```ts filename="client.ts"
+    <LangTabs>
+        <Tab value="TypeScript">
+        ```ts title="client.ts"
         callbacks.listen("currentTurn", (currentValue, previousValue) => {
             // ...
         });
@@ -140,10 +135,10 @@ In order to register callbacks to Schema instances, you must access the instance
             console.log("entity removed", entity);
         });
         ```
-        </Tabs.Tab>
+        </Tab>
 
-        <Tabs.Tab>
-        ```cs filename="client.cs"
+        <Tab value="C#">
+        ```cs title="client.cs"
         callbacks.Listen(state => state.currentTurn, (currentValue, previousValue) => {
             // ...
         });
@@ -164,10 +159,10 @@ In order to register callbacks to Schema instances, you must access the instance
             Debug.Log($"entity removed {entity}");
         });
         ```
-        </Tabs.Tab>
+        </Tab>
 
-        <Tabs.Tab>
-        ```lua filename="client.lua"
+        <Tab value="Lua">
+        ```lua title="client.lua"
         callbacks:listen("currentTurn", function (currentValue, previousValue)
             -- ...
         end)
@@ -189,10 +184,10 @@ In order to register callbacks to Schema instances, you must access the instance
             pprint(entity)
         end)
         ```
-        </Tabs.Tab>
+        </Tab>
 
-        <Tabs.Tab>
-        ```haxe filename="client.hx"
+        <Tab value="Haxe">
+        ```haxe title="client.hx"
         callbacks.listen("currentTurn", function (currentValue, previousValue) {
             // ...
         });
@@ -213,10 +208,10 @@ In order to register callbacks to Schema instances, you must access the instance
             trace("entity removed", entity);
         });
         ```
-        </Tabs.Tab>
+        </Tab>
 
-        <Tabs.Tab>
-        ```gdscript filename="client.gd"
+        <Tab value="GDScript">
+        ```gdscript title="client.gd"
         callbacks.listen("currentTurn", _on_turn_change)
 
         func _on_turn_change(current_value, previous_value):
@@ -237,10 +232,10 @@ In order to register callbacks to Schema instances, you must access the instance
         func _on_entity_remove(entity, session_id):
             print("entity removed: ", entity)
         ```
-        </Tabs.Tab>
+        </Tab>
 
-        <Tabs.Tab>
-        ```dart filename="client.dart"
+        <Tab value="Dart">
+        ```dart title="client.dart"
         final state = room.state!;
 
         callbacks.listen(state, 'currentTurn', (value, previous) {
@@ -263,8 +258,8 @@ In order to register callbacks to Schema instances, you must access the instance
             print('entity removed: $entity');
         });
         ```
-        </Tabs.Tab>
-    </SDKTabs>
+        </Tab>
+    </LangTabs>
 </Steps>
 
 <Callout type="warning">
@@ -279,69 +274,69 @@ In order to register callbacks to Schema instances, you must access the instance
 
 Listens for a single property change within a `Schema` instance.
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     callbacks.listen("currentTurn", (currentValue, previousValue) => {
         console.log(`currentTurn is now ${currentValue}`);
         console.log(`previous value was: ${previousValue}`);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```cs filename="client.cs"
+    <Tab value="C#">
+    ```cs title="client.cs"
     callbacks.Listen(state => state.currentTurn, (currentValue, previousValue) => {
         Debug.Log($"currentTurn is now {currentValue}");
         Debug.Log($"previous value was: {previousValue}");
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     callbacks:listen("currentTurn", function (currentValue, previousValue)
         print("currentTurn is now " .. currentValue)
         print("previous value was: " .. previousValue)
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     callbacks.listen("currentTurn", function (currentValue, previousValue) {
         trace("currentTurn is now " + currentValue);
         trace("previous value was: " + previousValue);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     callbacks.listen("currentTurn", _on_turn_change)
 
     func _on_turn_change(current_value, previous_value):
         print("currentTurn is now ", current_value)
         print("previous value was: ", previous_value)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     callbacks.listen(state, 'currentTurn', (value, previous) {
         print('currentTurn is now $value');
         print('previous value was: $previous');
     });
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 **Removing the callback:** The `.listen()` method returns a function that, when called, removes the attached callback. In Dart, it returns a `StreamSubscription`. Call `cancel()` on it instead:
 
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     const unbindCallback = callbacks.listen("currentTurn", (currentValue, previousValue) => {
         // ...
     });
@@ -349,10 +344,10 @@ Listens for a single property change within a `Schema` instance.
     // stop listening for `"currentTurn"` changes.
     unbindCallback();
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```cs filename="client.cs"
+    <Tab value="C#">
+    ```cs title="client.cs"
     var unbindCallback = callbacks.Listen(state => state.currentTurn, (currentValue, previousValue) => {
         // ...
     });
@@ -360,10 +355,10 @@ Listens for a single property change within a `Schema` instance.
     // stop listening for `"currentTurn"` changes.
     unbindCallback();
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     local unbind_callback = callbacks:listen("currentTurn", function (currentValue, previousValue)
         -- ...
     end)
@@ -371,10 +366,10 @@ Listens for a single property change within a `Schema` instance.
     -- stop listening for `"currentTurn"` changes.
     unbind_callback()
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     var unbindCallback = callbacks.listen("currentTurn", function (currentValue, previousValue) {
         // ...
     });
@@ -382,19 +377,19 @@ Listens for a single property change within a `Schema` instance.
     // stop listening for `"currentTurn"` changes.
     unbindCallback();
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     var unbind_callback = callbacks.listen("currentTurn", _on_turn_change)
 
     # stop listening for "currentTurn" changes
     unbind_callback.call()
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     final subscription = callbacks.listen(state, 'currentTurn', (value, previous) {
         // ...
     });
@@ -402,8 +397,8 @@ Listens for a single property change within a `Schema` instance.
     // stop listening for `"currentTurn"` changes.
     await subscription.cancel();
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 ---
 
@@ -417,62 +412,62 @@ Bind properties directly to `targetObject`, whenever the client receives an upda
 - `properties`: (optional) list of properties that will be assigned to
   `targetObject`. By default, every synchronized property will be used.
 
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     callbacks.onAdd("players", (player, sessionId) => {
         const playerVisual = PIXI.Sprite.from('player');
         callbacks.bindTo(player, playerVisual);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```cs filename="client.cs"
+    <Tab value="C#">
+    ```cs title="client.cs"
     callbacks.OnAdd(state => state.players, (sessionId, player) => {
         var playerVisual = new PlayerVisual();
         callbacks.BindTo(player, playerVisual);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     --
     -- callbacks:bind_to() is not implemented in Lua SDK yet
     -- contributions are very welcome!
     --
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     //
     // callbacks.bindTo() is not implemented in Haxe SDK yet
     // contributions are very welcome!
     //
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     #
     # callbacks.bind_to() is not implemented in Godot SDK yet
     # contributions are very welcome!
     #
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart filename="client.dart"
+    <Tab value="Dart">
+    ```dart title="client.dart"
     //
     // callbacks.bindTo() is not implemented in Flutter SDK yet
     // contributions are very welcome!
     //
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 ---
 
@@ -483,9 +478,9 @@ The On Change callback is invoked whenever a direct property of a `Schema` insta
 - **Triggers only for direct property changes:** It does not cascade or propagate changes from nested properties within the Schema.
 - The callback fires after the changes have been applied to the Schema instance, so you're dealing with the updated instance when it executes.
 
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts {3-5} filename="client.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts {3-5} title="client.ts"
     callbacks.onAdd("entities", (entity, sessionId) => {
         // ...
         callbacks.onChange(entity, () => {
@@ -493,10 +488,10 @@ The On Change callback is invoked whenever a direct property of a `Schema` insta
         })
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```cs {3-5} filename="client.cs"
+    <Tab value="C#">
+    ```cs {3-5} title="client.cs"
     callbacks.OnAdd(state => state.entities, (sessionId, entity) => {
         // ...
         callbacks.OnChange(entity, () => {
@@ -504,10 +499,10 @@ The On Change callback is invoked whenever a direct property of a `Schema` insta
         });
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua {3-5} filename="client.lua"
+    <Tab value="Lua">
+    ```lua {3-5} title="client.lua"
     callbacks:on_add("entities", function (entity, sessionId)
         -- ...
         callbacks:on_change(entity, function ()
@@ -515,10 +510,10 @@ The On Change callback is invoked whenever a direct property of a `Schema` insta
         end)
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe {3-5} filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe {3-5} title="client.hx"
     callbacks.onAdd("entities", function(entity, sessionId) {
         // ...
         callbacks.onChange(entity, function() {
@@ -526,10 +521,10 @@ The On Change callback is invoked whenever a direct property of a `Schema` insta
         });
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     callbacks.on_add("entities", _on_entity_add)
 
     func _on_entity_add(entity, session_id):
@@ -538,10 +533,10 @@ The On Change callback is invoked whenever a direct property of a `Schema` insta
             # some property changed inside entity
             pass)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart {3-5} filename="client.dart"
+    <Tab value="Dart">
+    ```dart {3-5} title="client.dart"
     callbacks.onAdd(state.entities, (sessionId, entity) {
         // ...
         callbacks.onChange(entity, () {
@@ -549,8 +544,8 @@ The On Change callback is invoked whenever a direct property of a `Schema` insta
         });
     });
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 ---
 
@@ -564,9 +559,9 @@ By default, the callback is called immediately for existing items in the collect
 
 Registering before the server has sent the collection is fine. A collection the client still holds as `null`, or as the empty instance a generated C# class starts with, counts as not yet received. The callback waits and fires when the first sync, or a later patch, delivers it, replaying the items that arrived with it. A collection a [`StateView`](/state/view) adds later arrives the same way.
 
-<SDKTabs>
-    <Tabs.Tab>
-    ```ts {1} filename="client.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts {1} title="client.ts"
     callbacks.onAdd("players", (player, sessionId) => {
         console.log(player, "has been added at", sessionId);
 
@@ -579,10 +574,10 @@ Registering before the server has sent the collection is fine. A collection the 
         });
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```cs {1} filename="client.cs"
+    <Tab value="C#">
+    ```cs {1} title="client.cs"
     callbacks.OnAdd(state => state.players, (string sessionId, Player player) => {
         Debug.Log("player has been added at " + sessionId);
 
@@ -595,10 +590,10 @@ Registering before the server has sent the collection is fine. A collection the 
         });
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua {1} filename="client.lua"
+    <Tab value="Lua">
+    ```lua {1} title="client.lua"
     callbacks:on_add("players", function (player, sessionId)
         print("player has been added at " .. sessionId);
 
@@ -611,10 +606,10 @@ Registering before the server has sent the collection is fine. A collection the 
         end)
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe {1} filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe {1} title="client.hx"
     callbacks.onAdd("players", (player, sessionId) => {
         trace("player has been added at " + sessionId);
 
@@ -627,10 +622,10 @@ Registering before the server has sent the collection is fine. A collection the 
         });
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     callbacks.on_add("players", _on_player_add)
 
     func _on_player_add(player, session_id):
@@ -643,10 +638,10 @@ Registering before the server has sent the collection is fine. A collection the 
             print(value)
             print(previous_value))
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart {1} filename="client.dart"
+    <Tab value="Dart">
+    ```dart {1} title="client.dart"
     callbacks.onAdd(state.players, (sessionId, player) {
         print('player has been added at $sessionId');
 
@@ -659,8 +654,8 @@ Registering before the server has sent the collection is fine. A collection the 
         });
     });
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 ---
 
@@ -668,50 +663,50 @@ Registering before the server has sent the collection is fine. A collection the 
 
 The `onRemove` callback is called with the removed item and its key on holder object as argument.
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
-    ```ts {1} filename="client.ts"
+    <Tab value="TypeScript">
+    ```ts {1} title="client.ts"
     callbacks.onRemove("players", (player, sessionId) => {
         console.log(player, "has been removed at", sessionId);
 
         // remove your player entity from the game world!
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```cs {1} filename="client.cs"
+    <Tab value="C#">
+    ```cs {1} title="client.cs"
     callbacks.OnRemove(state => state.players, (string sessionId, Player player) => {
         Debug.Log("player has been removed at " + sessionId);
 
         // remove your player entity from the game world!
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua {1} filename="client.lua"
+    <Tab value="Lua">
+    ```lua {1} title="client.lua"
     callbacks:on_remove("players", function (player, sessionId)
         print("player has been removed at " .. sessionId);
 
         -- remove your player entity from the game world!
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe {1} filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe {1} title="client.hx"
     callbacks.onRemove("players", (player, sessionId) => {
         trace("player has been removed at " + sessionId);
 
         // remove your player entity from the game world!
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```gdscript filename="client.gd"
+    <Tab value="GDScript">
+    ```gdscript title="client.gd"
     callbacks.on_remove("players", _on_player_remove)
 
     func _on_player_remove(player, session_id):
@@ -719,18 +714,18 @@ The `onRemove` callback is called with the removed item and its key on holder ob
 
         # remove your player entity from the game world!
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```dart {1} filename="client.dart"
+    <Tab value="Dart">
+    ```dart {1} title="client.dart"
     callbacks.onRemove(state.players, (sessionId, player) {
         print('player has been removed at $sessionId');
 
         // remove your player entity from the game world!
     });
     ```
-    </Tabs.Tab>
-</SDKTabs>
+    </Tab>
+</LangTabs>
 
 ---
 
@@ -748,13 +743,13 @@ To decode the state on the frontend, its local schema definitions must be compat
 
 To see the usage, From your terminal, `cd` into your server's directory and run the following command:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npx schema-codegen --help
 ```
 
 **Output:**
 
-```sh filename="Terminal"
+```sh title="Terminal"
 schema-codegen [path/to/Schema.ts]
 
 Usage (C#/Unity)
@@ -784,7 +779,7 @@ Optional:
 
 Below is a real example to generate the C# schema files from the [demo Unity project](https://github.com/colyseus/colyseus-unity3d/blob/aa9a722a50b2958ce01785969cd8ecb8aee24fd0/Server/package.json#L12).
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npx schema-codegen src/rooms/schema/* --csharp --output ../Assets/Scripts/States/
 generated: Player.cs
 generated: State.cs
@@ -794,7 +789,7 @@ generated: State.cs
 
 For short, it is recommended to have your `schema-codegen` arguments configured under a `npm` script in your `package.json`:
 
-```json filename="package.json"
+```json title="package.json"
 "scripts": {
     "schema-codegen": "schema-codegen src/rooms/schema/* --csharp --output ../Assets/Scripts/States/"
 }
@@ -802,7 +797,7 @@ For short, it is recommended to have your `schema-codegen` arguments configured 
 
 This way you can run `npm run schema-codegen` rather than the full command:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npm run schema-codegen
 generated: Player.cs
 generated: State.cs

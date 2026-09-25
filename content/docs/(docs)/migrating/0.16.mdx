@@ -2,9 +2,6 @@
 title: "Migrating to 0.16"
 description: "Migration guide from Colyseus 0.15 to 0.16. Covers breaking changes, new features, and updated APIs."
 ---
-import { Callout } from 'nextra/components'
-
-# Migrating to version 0.16 (from 0.15)
 
 Use this guide to migrate your existing 0.15 projects to version 0.16.
 
@@ -16,7 +13,7 @@ Make sure `colyseus` and all `@colyseus/*` packages on `package.json` are pointi
 
 **Backend:**
 
-```json filename="package.json"
+```json title="package.json"
     "@colyseus/schema": "^3.0.0",
     "colyseus": "^0.16.0",
     "@colyseus/auth": "^0.16.0",
@@ -31,7 +28,7 @@ Make sure `colyseus` and all `@colyseus/*` packages on `package.json` are pointi
 
 **Frontend:**
 
-```json filename="package.json"
+```json title="package.json"
     "colyseus.js": "^0.16.0",
 ```
 
@@ -43,7 +40,7 @@ Make sure you don't have any packages under `0.15.x`, neither `@colyseus/schema`
 
 The callback methods have been extracted out of the `Schema` instances. To attach callbacks, you now have to get a proxied version of your instances via `$(yourInstance)`.
 
-```ts filename="client.ts"
+```ts title="client.ts"
 import { getStateCallbacks } from "colyseus.js";
 
 const room = await client.joinOrCreate("my_room");
@@ -62,7 +59,7 @@ $(room.state).players.onAdd((player, sessionId) => {
 
 The proxy is capable of entering nested objects, even if they're not available at the time you're attaching the callback.
 
-```ts filename="client.ts"
+```ts title="client.ts"
 $(room.state)
     .yourInstance // this is a Schema instance (may not be immediately available)
     .yourItems // this is a MapSchema or ArraySchema (may also not be immediately available)
@@ -71,15 +68,13 @@ $(room.state)
     });
 ```
 
-
 > For more context on why these changes are being applied, see [colyseus/colyseus#709](https://github.com/colyseus/colyseus/issues/709)
-
 
 ## `@filter()` and `@filterChildren()` are now removed!
 
 The `StateView` feature has been introduced in version 0.16, which allows you to create a view of your state with a subset of the data.
 
-```ts filename="MyState.ts"
+```ts title="MyState.ts"
 import { view, type, Schema, MapSchema } from "@colyseus/schema";
 
 class MyState extends Schema {
@@ -97,7 +92,7 @@ class Player extends Schema {
 
 The `StateView` must be assigned to the `client.view`. The room serializer is going to use the `client.view` to serialize the state before sending it to the client.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 import { StateView } from "@colyseus/schema";
 
 // ...
@@ -121,7 +116,7 @@ See more in the [`StateView` documentation](/state/view).
 
 The `playground` routes are now returned from a method call instead:
 
-```diff filename="src/app.config.ts"
+```diff title="src/app.config.ts"
 import { playground } from "@colyseus/playground";
 
 // ...
@@ -139,7 +134,7 @@ The `getAvailableRooms()` method has been removed from the SDKs. The usage of `g
 
 If you rely on this method, you can easily re-implement it on your backend code. A more secure way to query rooms is recommended, such as using the `LobbyRoom`.
 
-```ts filename="app.config.ts"
+```ts title="app.config.ts"
 import { matchMaker } from "colyseus";
 
 // ...
@@ -163,7 +158,6 @@ From the client SDK, you can use `client.http.get("/rooms/:roomName")` to get th
 
 - `matchMaker.getRoomById()` now returns the cached room data. This method will return properly when called from any process.
 - `matchMaker.getLocalRoomById()` returns the room instance itself, if it's available in the current process.
-
 
 ### `ArraySchema.deleteAt()` has been removed.
 

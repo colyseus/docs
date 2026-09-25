@@ -1,0 +1,11 @@
+{
+  "title": "Netcode",
+  "icon": "ZapIcon",
+  "pages": [
+    "server-input",
+    "client-prediction",
+    "lag-compensation",
+    "determinism",
+    "recipes"
+  ]
+}

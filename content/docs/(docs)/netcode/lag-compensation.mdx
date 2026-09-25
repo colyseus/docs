@@ -1,18 +1,12 @@
 ---
 title: "Lag Compensation: What You See Is What You Hit"
 description: "Server-side lag compensation in Colyseus 0.18: rewind entities to the shooter's render time with allowRewindState() and rewind.lastSeenBy() so hits on moving targets register. Favor-the-shooter hit registration."
+sidebarTitle: "Lag Compensation"
+# Em-dash headings renamed (punctuation ban); keep old deep links working.
+movedAnchors:
+  client--the-render-time-stamp: "/netcode/lag-compensation#client-the-render-time-stamp"
+  server--rewind-targets-to-where-the-shooter-saw-them: "/netcode/lag-compensation#server-rewind-targets-to-where-the-shooter-saw-them"
 ---
-import { Callout, Tabs } from 'nextra/components'
-import { SDKTabs } from "../../components/SDKTabs"
-import { MovedAnchors } from "../../components/moved-anchors"
-
-# Lag Compensation
-
-{/* Em-dash headings renamed (punctuation ban); keep old deep links working. */}
-<MovedAnchors map={{
-    "client--the-render-time-stamp": "/netcode/lag-compensation#client-the-render-time-stamp",
-    "server--rewind-targets-to-where-the-shooter-saw-them": "/netcode/lag-compensation#server-rewind-targets-to-where-the-shooter-saw-them",
-}} />
 
 When you aim at another player, you're aiming at the past. The target on your screen is delayed by the network (≈ `rtt/2`) and rendered further behind on purpose (the `delay` of your interp buffer). If the server judged shots against where targets are *now*, every player would have to lead moving targets by their own latency. Lag compensation removes that burden. The server **rewinds** each target to the moment the shooter saw it, then runs the hit test: "what you see is what you hit."
 
@@ -30,16 +24,16 @@ Enabling it takes a stamp on the client's inputs and a rewind on the server. The
 
 Each input carries a timestamp telling the server *when* the client's view of the world was. Once the room enables rewind, the SDK stamps every input on its own. Wiring the handle through `predict.reconciler` / `predict.sim` then binds the stamp's interp-buffer term to the `Predict` lerp `delay`. The buffer you render at and the instant the server rewinds to come from **one number**, so they can't drift apart.
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     const predict = Predict.get(room, { mode: "lerp", delay: 100 });
     const input = room.input({ type: MoveInput });   // stamp auto-derived from delay: 100
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     var predict = Predict.Get(room, new PredictGetOptions { Mode = PredictMode.Lerp, Delay = 100 });
     predict.AttachAll("players", new AttachOptions { Fields = new[] { "x", "y" } });
@@ -49,9 +43,9 @@ Each input carries a timestamp telling the server *when* the client's view of th
         Step = (ctx, s, c) => ApplyInput(s, c, ctx.Dt),
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     local predict = Predict.get(room)
     predict:attach_all("players", {
@@ -60,9 +54,9 @@ Each input carries a timestamp telling the server *when* the client's view of th
     })
     local input = room:input()   -- stamp auto-derived from the lerp delay
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     var predict = Predict.get(room);
     predict.attachAll("players", {
@@ -71,9 +65,9 @@ Each input carries a timestamp telling the server *when* the client's view of th
     });
     var input = room.input({ type: MoveInput });   // stamp auto-derived from the lerp delay
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     var predict = Colyseus.Predict.of(room)
     predict.attach_all("players", {
@@ -82,9 +76,9 @@ Each input carries a timestamp telling the server *when* the client's view of th
     }, room.get_session_id())
     var input = room.input()   # stamp auto-derived from the lerp delay
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     final predict = Predict.get(room);
     predict.attachAll('players', config: {
@@ -93,9 +87,9 @@ Each input carries a timestamp telling the server *when* the client's view of th
     }, exceptKey: room.sessionId);
     final input = room.input()!;   // stamp auto-derived from the lerp delay
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 Two knobs, both optional:
 

@@ -2,9 +2,6 @@
 title: "Customizing schemas"
 description: "Extend @colyseus/database's built-in drizzle tables with your own columns, constraints, and indexes: the table factory, the column-spread pattern, drizzle-kit migrations, and the full reference of built-in tables."
 ---
-import { Callout, Tabs } from 'nextra/components'
-
-# Customizing built-in table schemas
 
 Every service in `@colyseus/database` is backed by a Drizzle table you can extend with your own columns, constraints, and indexes. Use the per-dialect `tables` factory to build a table from the built-in columns plus yours, then pass it via the `schemas` option. Services keep working and return your custom columns with full type inference.
 
@@ -27,9 +24,9 @@ The examples import column builders from `drizzle-orm`. Install it from the `rc`
 
 ## Example: extending `users`
 
-<Tabs items={["SQLite", "PostgreSQL"]} storageKey="database-dialect">
-    <Tabs.Tab>
-    ```ts filename="src/db/schema.ts"
+<Tabs groupId="db-dialect" persist>
+    <Tab value="SQLite">
+    ```ts title="src/db/schema.ts"
     import { tables } from "@colyseus/database";
     import { text, integer } from "drizzle-orm/sqlite-core";
 
@@ -39,7 +36,7 @@ The examples import column builders from `drizzle-orm`. Install it from the `rc`
     });
     ```
 
-    ```ts filename="src/app.config.ts"
+    ```ts title="src/app.config.ts"
     import { GameDatabase } from "@colyseus/database";
     import { users } from "./db/schema";
 
@@ -48,9 +45,9 @@ The examples import column builders from `drizzle-orm`. Install it from the `rc`
         schemas: { users },
     });
     ```
-    </Tabs.Tab>
-    <Tabs.Tab>
-    ```ts filename="src/db/schema.ts"
+    </Tab>
+    <Tab value="PostgreSQL">
+    ```ts title="src/db/schema.ts"
     import { tables } from "@colyseus/database";
     import { text, integer } from "drizzle-orm/pg-core";
 
@@ -60,7 +57,7 @@ The examples import column builders from `drizzle-orm`. Install it from the `rc`
     });
     ```
 
-    ```ts filename="src/app.config.ts"
+    ```ts title="src/app.config.ts"
     import { GameDatabase } from "@colyseus/database";
     import { users } from "./db/schema";
 
@@ -69,7 +66,7 @@ The examples import column builders from `drizzle-orm`. Install it from the `rc`
         schemas: { users },
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 The first argument is the physical table name. `"colyseus_users"` keeps the default name, so existing rows stay in place. Any other name creates a new, empty table: the rows in the built-in one are not migrated.
@@ -94,9 +91,9 @@ await db.drizzle.update(db.tables.users)
 
 The factory's third argument mirrors `sqliteTable()` / `pgTable()`: a callback that receives the built columns and returns indexes, `CHECK` constraints, and `UNIQUE` constraints. The example below adds a handle that is unique regardless of case, so `JohnSmith` and `johnsmith` cannot coexist:
 
-<Tabs items={["SQLite", "PostgreSQL"]} storageKey="database-dialect">
-    <Tabs.Tab>
-    ```ts filename="src/db/schema.ts"
+<Tabs groupId="db-dialect" persist>
+    <Tab value="SQLite">
+    ```ts title="src/db/schema.ts"
     import { tables } from "@colyseus/database";
     import { text, uniqueIndex, check } from "drizzle-orm/sqlite-core";
     import { sql } from "drizzle-orm";
@@ -109,9 +106,9 @@ The factory's third argument mirrors `sqliteTable()` / `pgTable()`: a callback t
         check("users_handle_lower_chk", sql`${t.handleLower} = lower(${t.handle})`),
     ]);
     ```
-    </Tabs.Tab>
-    <Tabs.Tab>
-    ```ts filename="src/db/schema.ts"
+    </Tab>
+    <Tab value="PostgreSQL">
+    ```ts title="src/db/schema.ts"
     import { tables } from "@colyseus/database";
     import { text, uniqueIndex, check } from "drizzle-orm/pg-core";
     import { sql } from "drizzle-orm";
@@ -124,7 +121,7 @@ The factory's third argument mirrors `sqliteTable()` / `pgTable()`: a callback t
         check("users_handle_lower_chk", sql`${t.handleLower} = lower(${t.handle})`),
     ]);
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 Write both columns together to keep the check satisfied:
@@ -151,9 +148,9 @@ Prefer `uniqueIndex()` over `.unique()` for a table that may already exist in pr
 
 For full control, spread the column maps (`columns.sqlite.<name>` / `columns.pg.<name>`) into your own `sqliteTable(...)` / `pgTable(...)`. The factory does the same internally:
 
-<Tabs items={["SQLite", "PostgreSQL"]} storageKey="database-dialect">
-    <Tabs.Tab>
-    ```ts filename="src/db/schema.ts"
+<Tabs groupId="db-dialect" persist>
+    <Tab value="SQLite">
+    ```ts title="src/db/schema.ts"
     import { columns } from "@colyseus/database";
     import { sqliteTable, text, uniqueIndex, check } from "drizzle-orm/sqlite-core";
     import { sql } from "drizzle-orm";
@@ -167,9 +164,9 @@ For full control, spread the column maps (`columns.sqlite.<name>` / `columns.pg.
         check("users_handle_lower_chk", sql`${t.handleLower} = lower(${t.handle})`),
     ]);
     ```
-    </Tabs.Tab>
-    <Tabs.Tab>
-    ```ts filename="src/db/schema.ts"
+    </Tab>
+    <Tab value="PostgreSQL">
+    ```ts title="src/db/schema.ts"
     import { columns } from "@colyseus/database";
     import { pgTable, text, uniqueIndex, check } from "drizzle-orm/pg-core";
     import { sql } from "drizzle-orm";
@@ -183,7 +180,7 @@ For full control, spread the column maps (`columns.sqlite.<name>` / `columns.pg.
         check("users_handle_lower_chk", sql`${t.handleLower} = lower(${t.handle})`),
     ]);
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 `cloudSaves` and `leaderboardEntries` have composite primary keys: `(userId, slot)` and `(boardId, userId, season)`. When you hand-roll those two, add the `primaryKey(...)` yourself. The factory adds it for you.
@@ -196,9 +193,9 @@ For full control, spread the column maps (`columns.sqlite.<name>` / `columns.pg.
 
 For production schemas, generate SQL migrations with drizzle-kit and apply them with `migrations: { files }`. drizzle-kit reads every table exported from one schema file. Re-export the tables you did not customize from `@colyseus/database/sqlite-defaults` (or `@colyseus/database/pg-defaults`). That way drizzle-kit generates them too:
 
-<Tabs items={["SQLite", "PostgreSQL"]} storageKey="database-dialect">
-    <Tabs.Tab>
-    ```ts filename="src/db/schema.ts"
+<Tabs groupId="db-dialect" persist>
+    <Tab value="SQLite">
+    ```ts title="src/db/schema.ts"
     import { tables } from "@colyseus/database";
     import { text, uniqueIndex, check } from "drizzle-orm/sqlite-core";
     import { sql } from "drizzle-orm";
@@ -217,7 +214,7 @@ For production schemas, generate SQL migrations with drizzle-kit and apply them 
     } from "@colyseus/database/sqlite-defaults";
     ```
 
-    ```ts filename="drizzle.config.ts"
+    ```ts title="drizzle.config.ts"
     import { defineConfig } from "drizzle-kit";
 
     export default defineConfig({
@@ -227,9 +224,9 @@ For production schemas, generate SQL migrations with drizzle-kit and apply them 
         dbCredentials: { url: "./colyseus.db" },
     });
     ```
-    </Tabs.Tab>
-    <Tabs.Tab>
-    ```ts filename="src/db/schema.ts"
+    </Tab>
+    <Tab value="PostgreSQL">
+    ```ts title="src/db/schema.ts"
     import { tables } from "@colyseus/database";
     import { text, uniqueIndex, check } from "drizzle-orm/pg-core";
     import { sql } from "drizzle-orm";
@@ -248,7 +245,7 @@ For production schemas, generate SQL migrations with drizzle-kit and apply them 
     } from "@colyseus/database/pg-defaults";
     ```
 
-    ```ts filename="drizzle.config.ts"
+    ```ts title="drizzle.config.ts"
     import { defineConfig } from "drizzle-kit";
 
     export default defineConfig({
@@ -258,7 +255,7 @@ For production schemas, generate SQL migrations with drizzle-kit and apply them 
         dbCredentials: { url: process.env.DATABASE_URL! },
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 With `drizzle-kit@rc` installed (see [Drizzle version](/database#drizzle-version)), generate the migration:
@@ -269,9 +266,9 @@ npx drizzle-kit generate
 
 The generated `migration.sql` contains every table, including the unique index and the check constraint. Point `GameDatabase` at the folder:
 
-<Tabs items={["SQLite", "PostgreSQL"]} storageKey="database-dialect">
-    <Tabs.Tab>
-    ```ts filename="src/app.config.ts"
+<Tabs groupId="db-dialect" persist>
+    <Tab value="SQLite">
+    ```ts title="src/app.config.ts"
     import { GameDatabase } from "@colyseus/database";
     import * as schema from "./db/schema";
 
@@ -281,9 +278,9 @@ The generated `migration.sql` contains every table, including the unique index a
         migrations: { files: "./drizzle" },
     });
     ```
-    </Tabs.Tab>
-    <Tabs.Tab>
-    ```ts filename="src/app.config.ts"
+    </Tab>
+    <Tab value="PostgreSQL">
+    ```ts title="src/app.config.ts"
     import { GameDatabase } from "@colyseus/database";
     import * as schema from "./db/schema";
 
@@ -293,7 +290,7 @@ The generated `migration.sql` contains every table, including the unique index a
         migrations: { files: "./drizzle" },
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 Drizzle records applied migrations in its own table, so every boot re-runs safely. After a schema change, run `drizzle-kit generate` again and commit the new folder.

@@ -2,9 +2,6 @@
 title: "Timing Events"
 description: "Use delayed actions, intervals, and the built-in clock in Colyseus rooms for game loops and scheduled events."
 ---
-import { Callout } from "nextra/components";
-
-# Timing Events
 
 For [timing events](https://www.w3.org/TR/2011/WD-html5-20110525/timers.html),
 it's recommended to use the [`this.clock`](/room#clock) methods,
@@ -45,7 +42,7 @@ The example below shows a Room with `setInterval()`, `setTimeout`, and clearing 
 
 After 1 second 'Time now ' + `this.clock.currentTime` is `console.log`'d, and then after 10 seconds we clear the interval via `this.delayedInterval.clear()`
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 // Import Delayed
 import { Room, Client, Delayed } from "colyseus";
 
@@ -145,5 +142,4 @@ Returns `true` if timer is still running.
 #### `delayed.paused: boolean`
 
 Returns `true` if timer has been paused via `.pause()`.
-
 

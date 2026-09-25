@@ -1,10 +1,8 @@
 ---
 title: "Room Lifecycle Events"
 description: "Reference for every Colyseus room lifecycle hook: onCreate, onAuth, onJoin, onDrop, onReconnect, onLeave, onDispose, and the devMode and shutdown hooks."
+sidebarTitle: "Lifecycle Events"
 ---
-import { Callout, Tabs } from "nextra/components";
-
-# Room Lifecycle Events
 
 These hooks are called automatically, in the order a client moves through the
 room: created, authenticated, joined, dropped, reconnected, left, disposed.
@@ -13,9 +11,9 @@ is supported in all of them.
 
 The room's lifecycle events are called automatically. [`async`/`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) is supported in all of them.
 
-<Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
-    <Tabs.Tab>
-    ```ts filename="MyRoom.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts title="MyRoom.ts"
     import { Room, Client, AuthContext } from "colyseus";
 
     export class MyRoom extends Room {
@@ -41,10 +39,10 @@ The room's lifecycle events are called automatically. [`async`/`await`](https://
         onDispose () { }
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```js filename="MyRoom.js"
+    <Tab value="JavaScript">
+    ```js title="MyRoom.js"
     import { Room } from "colyseus";
 
     export class MyRoom extends Room {
@@ -70,14 +68,14 @@ The room's lifecycle events are called automatically. [`async`/`await`](https://
         onDispose () { }
     }
     ```
-    </Tabs.Tab>
-</Tabs>
+    </Tab>
+</LangTabs>
 
 ## On Create
 
 Called once, when the room is created by the matchmaker. `options` is the merged values specified on [`defineRoom()`](/server/#define-room-type) with the options provided from the SDK at [`.joinOrCreate()`](/sdk#join-or-create-recommended) or [`.join()`](/sdk#other-join-methods).
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 onCreate (options) {
     /**
      * This is a good place to initialize your room state.
@@ -87,10 +85,10 @@ onCreate (options) {
 
 The server may overwrite options in [`defineRoom()`](/server/#define-room-type) for authority over client-provided options:
 
-<Tabs items={["Backend", "Frontend"]}>
-    <Tabs.Tab>
+<Tabs>
+    <Tab value="Backend">
 
-        ```ts filename="app.config.ts"
+        ```ts title="app.config.ts"
         // (backend)
         const server = defineServer({
           rooms: {
@@ -98,12 +96,12 @@ The server may overwrite options in [`defineRoom()`](/server/#define-room-type) 
           }
         })
         ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Frontend">
         The `options` argument is provided by the client upon room creation:
 
-        ```js filename="client.js"
+        ```js title="client.js"
         // (frontend - using the javascript sdk)
         // ...
         client.joinOrCreate("my_room", {
@@ -111,7 +109,7 @@ The server may overwrite options in [`defineRoom()`](/server/#define-room-type) 
             map: "de_dust2"
         })
         ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 On this example, the `map` option is `"cs_assault"` during `onCreate()`, and `"de_dust2"` during `onJoin()`.
@@ -122,9 +120,9 @@ On this example, the `map` option is `"cs_assault"` during `onCreate()`, and `"d
 
 The `onAuth` method is called before `onJoin`, and it is responsible for validating the client's request to join a room.
 
-<Tabs items={["Instance onAuth", "Static onAuth"]}>
-    <Tabs.Tab>
-    ```ts filename="MyRoom.ts"
+<Tabs>
+    <Tab value="Instance onAuth">
+    ```ts title="MyRoom.ts"
     async onAuth (client, options, context) {
         /**
          * This is a good place to validate the client's auth token.
@@ -139,10 +137,10 @@ The `onAuth` method is called before `onJoin`, and it is responsible for validat
         - `.headers` - the headers sent by the client.
         - `.ip` - the IP address of the client.
 
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```ts filename="MyRoom.ts"
+    <Tab value="Static onAuth">
+    ```ts title="MyRoom.ts"
     static async onAuth (token, options, context) {
         /**
          * This is a good place to validate the client's auth token.
@@ -157,7 +155,7 @@ The `onAuth` method is called before `onJoin`, and it is responsible for validat
         - `.headers` - the headers sent by the client.
         - `.ip` - the IP address of the client.
 
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 <Callout type="info">
@@ -176,7 +174,7 @@ Triggered when a client successfully joins the room, after a successful `onAuth`
 - `options`: Options provided by the Client SDK. _(Merged with default values provided by [Server#define()](/server#define-room-type))_
 - `auth`: _(optional)_ auth data returned by [`onAuth`](#on-auth) method.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 async onJoin (client, options, auth?) {
     /**
      * This is a good place to add the client to the state.
@@ -203,7 +201,7 @@ Triggered when a client disconnects unexpectedly (without consent). This hook is
 - `client`: The client that was dropped from the room.
 - `code`: _(optional)_ The close code of the leave event.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 async onDrop (client, code) {
     await this.allowReconnection(client, 20);
 }
@@ -221,14 +219,13 @@ async onDrop (client, code) {
     New in 0.17. See [Automatic Reconnection](/room/reconnection) for more details.
 </Callout>
 
-
 Triggered when a client successfully reconnects to the room after calling `allowReconnection()`.
 
 **Parameters:**
 
 - `client`: The client that reconnected to the room.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 onReconnect (client) {
     /**
      * Client has reconnected successfully.
@@ -251,7 +248,7 @@ Triggered when a client effectively leaves the room.
 - `client`: The client that left the room.
 - `code`: _(optional)_ The close code of the leave event.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 async onLeave (client, code) {
     /**
      * This is a good place to remove the client from the state.
@@ -261,25 +258,25 @@ async onLeave (client, code) {
 
 You may define this function as `async`:
 
-<Tabs items={["Synchronous", "Asynchronous"]}>
-    <Tabs.Tab>
-    ``` typescript
+<Tabs>
+    <Tab value="Synchronous">
+    ```typescript
     onLeave(client, code) {
         if (this.state.players.has(client.sessionId)) {
             this.state.players.delete(client.sessionId);
         }
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ``` typescript
+    <Tab value="Asynchronous">
+    ```typescript
     async onLeave(client, code) {
         const player = this.state.players.get(client.sessionId);
         await persistUserOnDatabase(player);
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 <Callout type="info">
@@ -295,7 +292,7 @@ The `onDispose()` method is called before the room is destroyed, which happens w
 - there are no more clients left in the room, and `autoDispose` is set to `true` (default)
 - you manually call [`.disconnect()`](/room#disconnect).
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 async onDispose() {
     /**
      * This is a good place to perform cleanup tasks.
@@ -315,7 +312,7 @@ You may define `async onDispose()` an asynchronous method in order to persist so
 
 Opt-in to catch unhandled exceptions in your room. This method is called when an unhandled exception occurs in any of the lifecycle methods.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 onUncaughtException (err: Error, methodName: string) {
     console.error("An error occurred in", methodName, ":", err);
     err.cause // original unhandled error
@@ -333,7 +330,7 @@ onUncaughtException (err: Error, methodName: string) {
 
 The `onBeforePatch` lifecycle hook is triggered before state synchronization, at patch rate frequency. (see [`patchRate`](/room#configuration-properties))
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 onBeforePatch(state) {
     /*
      * Here you can mutate something in the state just before it is encoded &
@@ -349,7 +346,7 @@ onBeforePatch(state) {
 An optional hook to cache external data when [`devMode`](/server/devmode) is enabled.
 (See [restoring data outside the room's state](/server/devmode#restoring-external-data))
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 export class MyRoom extends Room {
   // ...
 
@@ -365,7 +362,7 @@ export class MyRoom extends Room {
 
 An optional hook to reprocess/restore data which was returned and stored from the previous hook [`onCacheRoom`](#on-cache-room-devmode) when [Development Mode](/server/devmode) is enabled.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 export class MyRoom extends Room {
   // ...
 
@@ -393,7 +390,7 @@ By default, the room will disconnect all clients and dispose itself immediately.
 
 You may customize how the room should behave during the shutdown process:
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 onBeforeShutdown() {
     //
     // Notify users that process is shutting down, they may need to save their progress and join a new room

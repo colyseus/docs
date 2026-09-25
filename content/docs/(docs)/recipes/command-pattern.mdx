@@ -2,9 +2,6 @@
 title: "The Command Pattern"
 description: "Use the @colyseus/command package to implement the Command Pattern for organized room logic in Colyseus."
 ---
-import { Callout, Cards, Tabs } from "nextra/components";
-
-# The Command Pattern
 
 Colyseus has an optional package called `@colyseus/command` that implements the Command Pattern. This pattern is useful when you need to decouple the classes that invoke the operation from the object that knows how to execute it.
 
@@ -20,15 +17,15 @@ The command pattern has several advantages, such as:
 
 Installation
 
-```sh npm2yarn
+```npm
 npm install --save @colyseus/command
 ```
 
 Initialize the `dispatcher` in your room implementation:
 
-<Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
-    <Tabs.Tab>
-    ```ts filename="MyRoom.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts title="MyRoom.ts"
     import { Room } from "colyseus";
     import { Dispatcher } from "@colyseus/command";
 
@@ -49,10 +46,10 @@ Initialize the `dispatcher` in your room implementation:
       }
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```js filename="MyRoom.js"
+    <Tab value="JavaScript">
+    ```js title="MyRoom.js"
     import { Room } from "colyseus";
     import { Dispatcher } from "@colyseus/command";
 
@@ -73,14 +70,14 @@ Initialize the `dispatcher` in your room implementation:
       }
     }
     ```
-    </Tabs.Tab>
-</Tabs>
+    </Tab>
+</LangTabs>
 
 How a command implementation looks like:
 
-<Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
-    <Tabs.Tab>
-    ```ts filename="OnJoinCommand.ts"
+<LangTabs>
+    <Tab value="TypeScript">
+    ```ts title="OnJoinCommand.ts"
     import { Command } from "@colyseus/command";
 
     export class OnJoinCommand extends Command<MyRoom, {
@@ -93,10 +90,10 @@ How a command implementation looks like:
 
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```js filename="OnJoinCommand.js"
+    <Tab value="JavaScript">
+    ```js title="OnJoinCommand.js"
     import { Command } from "@colyseus/command";
 
     export class OnJoinCommand extends Command {
@@ -107,8 +104,8 @@ How a command implementation looks like:
 
     }
     ```
-    </Tabs.Tab>
-</Tabs>
+    </Tab>
+</LangTabs>
 
 ## See more
 

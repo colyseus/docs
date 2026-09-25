@@ -1,10 +1,8 @@
 ---
 title: "IdleKickPlugin"
 description: "Auto-disconnect Colyseus clients that haven't sent a message within a configurable timeout. Lightweight and zero per-message overhead."
+sidebarTitle: "Kick Idle"
 ---
-import { Callout } from "nextra/components";
-
-# IdleKickPlugin
 
 Auto-disconnects clients that haven't sent a message in `timeoutMs`. Useful for kicking AFK players from competitive rooms, freeing seats in matchmaking lobbies, or shedding zombie connections that the WebSocket layer still considers alive.
 
@@ -14,7 +12,7 @@ Auto-disconnects clients that haven't sent a message in `timeoutMs`. Useful for 
 
 The plugin ships with the `colyseus` package: no extra dependency to install.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 import { Room, definePlugins } from "colyseus";
 import { IdleKickPlugin } from "colyseus/plugins/idle-kick";
 
@@ -40,7 +38,7 @@ export class MyRoom extends Room {
 
 By default the plugin closes with WS code `1000` ("normal closure") and reason `'kicked'`. The SDK treats `1000` as a final leave (no auto-reconnect attempt) and forwards the reason string to `room.onLeave`:
 
-```ts filename="client.ts"
+```ts title="client.ts"
 room.onLeave((code, reason) => {
   if (code === 1000 && reason === "kicked") {
     showAfkScreen();
@@ -52,7 +50,7 @@ room.onLeave((code, reason) => {
 
 ### Exempt admins
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 plugins = definePlugins([
   new IdleKickPlugin({
     timeoutMs: 30_000,
@@ -63,7 +61,7 @@ plugins = definePlugins([
 
 ### Broadcast a notice before kicking
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 plugins = definePlugins([
   new IdleKickPlugin({
     timeoutMs: 60_000,
@@ -85,7 +83,7 @@ plugins = definePlugins([
 
 If you'd rather signal a domain-specific reason (e.g., to differentiate from a generic 1000 disconnect), use a custom code in the range `4011`–`4999`. Colyseus reserves `4000`–`4010`. `4010` in particular triggers the SDK's auto-reconnect, the opposite of a kick:
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 plugins = definePlugins([
   new IdleKickPlugin({
     timeoutMs: 60_000,

@@ -1,0 +1,10 @@
+{
+  "title": "Room Plugins",
+  "pages": [
+    "idle-kick",
+    "geoip",
+    "webrtc",
+    "unique-session",
+    "track-user-sessions"
+  ]
+}

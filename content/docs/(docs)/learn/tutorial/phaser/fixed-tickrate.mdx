@@ -2,10 +2,6 @@
 title: "Part 4: Fixed Tickrate"
 description: "Part 4 of the Phaser + Colyseus tutorial: run the simulation at a fixed tickrate on both client and server."
 ---
-import { Callout, Cards, Tabs } from "nextra/components";
-import { DownloadIcon, LinkIcon } from '@primer/octicons-react'
-
-# Phaser #4: Fixed Tickrate
 
 <Callout type="info">
     This tutorial enqueues and dequeues inputs at a fixed tick **by hand** to teach the concept. For the built-in 0.18 API (`defineInput()` + `setFixedTimestep()`), see [Server Input & Fixed Timestep](/netcode/server-input).
@@ -47,8 +43,8 @@ A common technique we can apply is to enqueue player inputs, and process them al
 
 Let's update the server's `Player` definition to hold a queue of inputs, a local-only field that is never synchronized to clients:
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
     The `.noSync()` modifier keeps the field on the instance without registering it for synchronization:
 
     ```typescript
@@ -57,8 +53,8 @@ Let's update the server's `Player` definition to hold a queue of inputs, a local
       inputQueue: t.ref(Array).noSync().default(() => []),
     }, "Player");
     ```
-    </Tabs.Tab>
-    <Tabs.Tab>
+    </Tab>
+    <Tab value="Decorators">
     A class field without `@type()` is never synchronized:
 
     ```typescript
@@ -67,12 +63,12 @@ Let's update the server's `Player` definition to hold a queue of inputs, a local
       inputQueue: any[] = [];
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 Now, when receiving the player input messages, instead of processing them immediately, we are going to enqueue them to be processed later:
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 // (...)
 messages = {
     0: (client, payload) => {
@@ -91,7 +87,7 @@ We need to have an update loop in the backend with the same implementation we do
 
 For this, we use `this.setTimestep()` to register the update loop:
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 // (...)
 onCreate() {
     // (...)
@@ -103,7 +99,7 @@ onCreate() {
 
 The enqueued inputs from every player need to be processed during the `update` loop:
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 update(deltaTime: number) {
     const velocity = 2;
 
@@ -178,7 +174,7 @@ update(time: number, delta: number): void {
 
 Let's do the same for the backend now:
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 // (...)
 onCreate() {
     let elapsedTime = 0;

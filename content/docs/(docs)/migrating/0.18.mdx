@@ -2,9 +2,6 @@
 title: "Migrating to 0.18"
 description: "Migration guide from Colyseus 0.17 to 0.18. Covers the @colyseus/schema 5.x upgrade, request/response messaging, built-in client-side prediction & lag compensation, the new @colyseus/database / @colyseus/admin packages, the setSimulationInterval → setTimestep rename, the setMetadata / client.id / password-hashing breaking changes, the 63-field Schema limit, and production hardening of the playground."
 ---
-import { Callout } from 'nextra/components'
-
-# Migrating to version 0.18 (from 0.17)
 
 <Callout type="info">
     See [0.18 release notes](https://github.com/colyseus/colyseus/releases/tag/0.18) for the full changelog.
@@ -14,7 +11,7 @@ import { Callout } from 'nextra/components'
 
 Get all the latest 0.18.x versions for the package names you already have in your `package.json`:
 
-```json filename="package.json"
+```json title="package.json"
 {
     "dependencies": {
         "colyseus": "^0.18.1",
@@ -35,14 +32,14 @@ Get all the latest 0.18.x versions for the package names you already have in you
 
 The `@colyseus/schema` package is now at version **5.0.x**. 0.18 requires it (reconnect resync and input schema reflection build on it):
 
-```diff filename="package.json"
+```diff title="package.json"
 -   "@colyseus/schema": "^4.0.8",
 +   "@colyseus/schema": "^5.0.8",
 ```
 
 On the frontend, bump `@colyseus/sdk` as well:
 
-```diff filename="package.json"
+```diff title="package.json"
 -   "@colyseus/sdk": "^0.17.26",
 +   "@colyseus/sdk": "^0.18.1",
 ```
@@ -54,7 +51,7 @@ Two new official packages ship alongside the framework. Both are optional. Insta
 - [`@colyseus/database`](/database): the recommended persistence layer (Drizzle ORM, SQLite/PostgreSQL, user store, cloud saves, leaderboards, configs, analytics, audit log).
 - [`@colyseus/admin`](/admin): the production operations console (CRUD over your tables, live room inspector, dashboard, RBAC). Depends on `@colyseus/database` and `@colyseus/auth`.
 
-```sh npm2yarn
+```npm
 npm install --save @colyseus/database @colyseus/admin
 ```
 
@@ -71,13 +68,13 @@ These are additive. Existing rooms are unaffected. See [Netcode](/netcode) for t
 
 Clients can now `await` a reply from a message handler. No more hand-rolled ping/pong message pairs:
 
-```ts filename="client.ts"
+```ts title="client.ts"
 const profile = await room.request("get-profile", { userId: 42 });
 ```
 
 On the server, the same `messages` handlers serve both fire-and-forget sends and requests. **Return a value** to answer, or use the new optional `ctx` argument to reject with a typed reason:
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 messages = {
     "get-profile": async (client, { userId }) => {
         return await db.profiles.findById(userId); // becomes the client's response

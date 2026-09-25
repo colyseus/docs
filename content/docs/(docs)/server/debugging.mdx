@@ -2,9 +2,6 @@
 title: "Debugging"
 description: "Debug a Colyseus server: enable debug messages per category and attach the Node.js inspector to a local or production process."
 ---
-import { Callout, Steps } from "nextra/components";
-
-# Debugging
 
 - [Debug messages](#debug-messages)
 - [Inspector (`--inspect` flag)](#inspector)
@@ -13,7 +10,7 @@ import { Callout, Steps } from "nextra/components";
 
 To enable all debug logs, run your server using the `DEBUG=colyseus:*` environment variable:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 DEBUG=colyseus:* npm start
 ```
 
@@ -43,13 +40,13 @@ Be careful when using the inspector on production. Using memory snapshots and br
 <Steps>
 #### SSH into the Remote Server
 
-```sh filename="Terminal (local)"
+```sh title="Terminal (local)"
 ssh root@remote.example.com
 ```
 
 #### Check the PID of the Node process
 
-```sh filename="Terminal (remote)"
+```sh title="Terminal (remote)"
 ps aux | grep node
 ```
 
@@ -57,7 +54,7 @@ ps aux | grep node
 
 The `kill` command will send the `SIGUSR1` signal to the Node.js process, which will start the inspector. It does not kill the process.
 
-```sh filename="Terminal (remote)"
+```sh title="Terminal (remote)"
 kill -usr1 PID
 ```
 
@@ -65,7 +62,7 @@ kill -usr1 PID
 
 From a new terminal window, create a SSH tunnel to access the inspector:
 
-```sh filename="Terminal (local)"
+```sh title="Terminal (local)"
 ssh -L 9229:localhost:9229 root@remote.example.com
 ```
 

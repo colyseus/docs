@@ -2,9 +2,6 @@
 title: "Load Testing"
 description: "Stress test your Colyseus multiplayer server by simulating concurrent client connections with the @colyseus/loadtest tool."
 ---
-import { Tabs } from 'nextra/components'
-
-# Load Testing
 
 The `@colyseus/loadtest` tool lets you stress test your Colyseus server by simulating multiple concurrent client connections. Each simulated client runs a custom script where you can implement bot behavior (joining rooms, sending messages, and reacting to state changes). Use it to verify how your server performs under load.
 
@@ -12,7 +9,7 @@ The `@colyseus/loadtest` tool lets you stress test your Colyseus server by simul
 
 This package is installed by default on new projects created via `npm create colyseus-app`.
 
-```sh npm2yarn
+```npm
 npm install --save-dev @colyseus/loadtest
 ```
 
@@ -27,7 +24,7 @@ Run the load test command with the following arguments:
 
 For example, to connect 50 clients into a `"battle"` room:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npx tsx loadtest/example.ts --room battle --numClients 50 --endpoint http://localhost:2567
 ```
 
@@ -37,10 +34,10 @@ npx tsx loadtest/example.ts --room battle --numClients 50 --endpoint http://loca
 
 Each simulated client executes the script you provide. Use room lifecycle events to implement bot behavior that interacts with the room during the test.
 
-<Tabs items={["TypeScript", "JavaScript"]} storageKey="ts-or-js">
-    <Tabs.Tab>
+<LangTabs>
+    <Tab value="TypeScript">
 
-    ```ts filename="loadtest/example.ts"
+    ```ts title="loadtest/example.ts"
     import { Client, Room } from "@colyseus/sdk";
     import { cli, Options } from "@colyseus/loadtest";
 
@@ -72,11 +69,11 @@ Each simulated client executes the script you provide. Use room lifecycle events
     cli(main);
     ```
 
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="JavaScript">
 
-    ```js filename="loadtest/example.js"
+    ```js title="loadtest/example.js"
     import { Client } from "@colyseus/sdk";
     import { cli } from "@colyseus/loadtest";
 
@@ -108,5 +105,5 @@ Each simulated client executes the script you provide. Use room lifecycle events
     cli(main);
     ```
 
-    </Tabs.Tab>
-</Tabs>
+    </Tab>
+</LangTabs>

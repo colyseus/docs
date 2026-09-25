@@ -1,17 +1,15 @@
 ---
 title: "Colyseus SDK for MonoGame"
 description: "Install the Colyseus MonoGame SDK via NuGet. Build real-time multiplayer games in MonoGame with room management and state synchronization."
+sidebarTitle: "MonoGame"
+icon: "logo:monogame"
 ---
-import { Callout } from 'nextra/components'
-import { DevicesIcon } from '@primer/octicons-react'
-
-# MonoGame SDK
 
 ## Install package
 
 Add the `Colyseus.MonoGame` NuGet package to your project:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 dotnet add package Colyseus.MonoGame
 ```
 
@@ -21,7 +19,7 @@ dotnet add package Colyseus.MonoGame
 
 This example shows how to connect to a room, listen for state changes via Callbacks, and send messages.
 
-```csharp filename="Game1.cs"
+```csharp title="Game1.cs"
 using Microsoft.Xna.Framework;
 using Colyseus;
 using Colyseus.Schema;
@@ -81,7 +79,7 @@ public class Game1 : Game
 
 The SDK automatically dispatches WebSocket messages internally via an async Task loop, so no extra setup is needed. However, you can optionally register the `ColyseusGameComponent` to synchronize message dispatching with MonoGame's `Update()` cycle:
 
-```csharp filename="Game1.cs"
+```csharp title="Game1.cs"
 using Colyseus.MonoGame;
 
 protected override void Initialize()
@@ -99,7 +97,7 @@ Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select 
 
 For compiled languages like C#, you need to generate client-side schema classes that match your server's state structure. Run the following command from your server directory:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npx schema-codegen src/rooms/schema/* --csharp --output ../MyGame/States/
 ```
 
@@ -111,7 +109,7 @@ npx schema-codegen src/rooms/schema/* --csharp --output ../MyGame/States/
 
 If you want to skip the code generation step entirely, you can use `DynamicSchema` instead of generated schema classes. `DynamicSchema` builds its type metadata at runtime from the server handshake, so no generated files are needed.
 
-```csharp filename="Game1.cs"
+```csharp title="Game1.cs"
 using Microsoft.Xna.Framework;
 using Colyseus;
 using Colyseus.Schema;
@@ -170,7 +168,7 @@ The same `schema-codegen` command also generates C# classes for any TypeScript i
 
 For example, given the following server-side code:
 
-```ts filename="src/rooms/MyRoom.ts"
+```ts title="src/rooms/MyRoom.ts"
 interface MoveMessage {
   x: number;
   y: number;
@@ -187,7 +185,7 @@ messages = {
 
 Running the codegen command will automatically generate a matching C# class:
 
-```csharp filename="Generated C# output"
+```csharp title="Generated C# output"
 public class MoveMessage {
     public float x;
     public float y;
@@ -196,13 +194,13 @@ public class MoveMessage {
 
 You can then use these classes when sending and receiving messages on the client:
 
-```csharp filename="Sending a message to the server"
+```csharp title="Sending a message to the server"
 room.Send("move", new MoveMessage() { x = 1.0f, y = 2.0f });
 ```
 
 The same applies to messages sent from the server to the client. For example, given a server-side interface:
 
-```ts filename="src/rooms/MyRoom.ts"
+```ts title="src/rooms/MyRoom.ts"
 interface EventMessage {
   type: string;
   data: string;
@@ -217,7 +215,7 @@ onJoin(client: Client) {
 
 You can listen for it on the client with the generated type:
 
-```csharp filename="Receiving a message from the server"
+```csharp title="Receiving a message from the server"
 room.OnMessage<EventMessage>("event", (message) => {
     System.Diagnostics.Debug.WriteLine(message.type);
     System.Diagnostics.Debug.WriteLine(message.data);
@@ -230,7 +228,7 @@ room.OnMessage<EventMessage>("event", (message) => {
 
 If you set a breakpoint in your application while the WebSocket connection is open, it closes after 3 seconds of inactivity. To prevent the WebSocket connection from dropping, use `pingInterval: 0` during development:
 
-```ts filename="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
 import { WebSocketTransport } from "@colyseus/ws-transport";
 

@@ -1,12 +1,9 @@
 ---
 title: "Colyseus SDK for Defold"
 description: "Integrate Colyseus with Defold Engine for cross-platform multiplayer games. Supports HTML5, iOS, Android, Mac, and Windows."
+sidebarTitle: "Defold"
+icon: "logo:defold"
 ---
-import { defold } from "../../components/icons/platforms"
-import { Callout } from 'nextra/components'
-import { DevicesIcon } from '@primer/octicons-react'
-
-# Defold Engine
 
 The Colyseus SDK for Defold supports all major platforms, including:
 
@@ -44,7 +41,7 @@ The [colyseus-defold](https://github.com/colyseus/colyseus-defold) repository co
 
 To run the test server locally, you will need to run the following commands in your terminal:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 git clone https://github.com/colyseus/sdks-test-server
 cd sdks-test-server
 npm install
@@ -61,7 +58,7 @@ You should be able to see the server running at `http://localhost:2567`, and the
 
 This example shows how to connect to a room, listen for state changes, send messages, and leave the room.
 
-```lua filename="network.script"
+```lua title="network.script"
 local ColyseusSDK = require("colyseus.sdk")
 
 local client
@@ -125,7 +122,7 @@ interpolation of the entities you don't control. [Client Prediction &
 Reconciliation](/netcode/client-prediction) covers it in depth. Every example
 there has a **Lua** tab. The Defold-shaped loop:
 
-```lua filename="network.script"
+```lua title="network.script"
 local Predict = require("colyseus.predict.predict")
 
 local predict = Predict.get(room)
@@ -177,7 +174,7 @@ Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select 
 
 If you placed your server directory inside the Defold project directory, the Defold Editor might fail to load the project. You can fix this by adding the server directory to the `.defignore` file.
 
-```txt filename=".defignore"
+```txt title=".defignore"
 /server
 ```
 
@@ -199,7 +196,7 @@ You'll need to get the WSL2 machine's IP by using `wsl hostname -I` and use that
 environment there. Put it in `game.project` and read it with
 `sys.get_config_string`, which works on every platform:
 
-```txt filename="game.project"
+```txt title="game.project"
 [colyseus]
 endpoint = ws://localhost:2567
 ```
@@ -211,7 +208,7 @@ client = ColyseusSDK.Client(endpoint)
 
 Bundling overrides it without touching the file:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 java -jar bob.jar --config=colyseus.endpoint=wss://your-server.example.com \
     resolve build bundle
 ```

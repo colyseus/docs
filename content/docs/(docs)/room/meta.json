@@ -1,0 +1,13 @@
+{
+  "title": "Rooms",
+  "icon": "PeopleIcon",
+  "pages": [
+    "lifecycle",
+    "messages",
+    "timing-events",
+    "reconnection",
+    "exception-handling",
+    "plugins",
+    "relay"
+  ]
+}

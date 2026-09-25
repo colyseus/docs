@@ -2,10 +2,6 @@
 title: "Determinism & The Contract"
 description: "The rules Colyseus client-side prediction depends on: one shared step function, one input per fixed step, identical fixed dt, flat-primitive inputs, replay-safe one-shots, and a troubleshooting table for rubber-banding, jitter, and missed hits."
 ---
-import { Callout, Tabs } from 'nextra/components'
-import { SDKTabs } from "../../components/SDKTabs"
-
-# Determinism & The Contract
 
 Client prediction only matches the server if **both run the same simulation**. None of the rules below is hard to follow, but each is easy to break by accident. The resulting bugs look mysterious: rubber-banding, re-firing sounds, hits that don't land. This page collects the rules and the symptom each break produces. Read it alongside [Client Prediction](/netcode/client-prediction) and [Server Input](/netcode/server-input).
 
@@ -53,15 +49,15 @@ You don't have to guess from feel. Every `reconciler`/`sim` controller keeps rol
 
 Set **`warnOnDivergence`** (a tolerance in world units) on the controller to get a console warning when the persistent component crosses it. Telemetry runs while watched (this option set, or the dev panel active):
 
-<SDKTabs>
+<LangTabs>
 
-    <Tabs.Tab>
+    <Tab value="TypeScript">
     ```ts
     const me = predict.reconciler(self, { input, step, warnOnDivergence: 0.05 });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="C#">
     ```cs
     var me = predict.Reconciler(self, new ReconcilerOptions<Player, MoveInput> {
         Input = input,
@@ -69,38 +65,38 @@ Set **`warnOnDivergence`** (a tolerance in world units) on the controller to get
         WarnOnDivergence = 0.05,
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Lua">
     ```lua
     local me = predict:reconciler(self_player, {
       input = input, step = step, warn_on_divergence = 0.05,
     })
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Haxe">
     ```haxe
     var me = predict.reconciler(self, { input: input, step: step, warnOnDivergence: 0.05 });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="GDScript">
     ```gdscript
     # No warnOnDivergence option. Read the drift telemetry yourself:
     if me.drift_ema > 0.05:
         push_warning("prediction diverging from the server")
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="Dart">
     ```dart
     // No warnOnDivergence option. Read the drift telemetry yourself:
     if (me.drift.ema > 0.05) log('prediction diverging from the server');
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</SDKTabs>
+</LangTabs>
 
 The dev panel (`import "@colyseus/sdk/debug"`) classifies through the **same rule** and shows a per-controller verdict: **✓ matched** (both ~0), **~ jitter** (spikes that decay out), **✗ diverging** (persistent `ema`). The panel and the warning can therefore never disagree about what the numbers mean. `me.reset()` zeroes the telemetry, and a `snap`-absorbed correction is excluded from it, so a deliberate pose jump doesn't read as divergence.
 

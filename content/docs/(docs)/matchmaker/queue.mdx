@@ -2,9 +2,6 @@
 title: "Queue Room"
 description: "The built-in QueueRoom is a matchmaking queue that groups players by rank and team over time, then spawns a match room when a group is ready."
 ---
-import { Callout, Steps, Tabs } from "nextra/components";
-
-# Queue Room
 
 The built-in `QueueRoom` provides a matchmaking queue that groups players over time and spawns a match room when a group is ready.
 
@@ -24,7 +21,7 @@ The built-in `QueueRoom` provides a matchmaking queue that groups players over t
 <Steps>
 ### Expose the queue room
 
-```ts {5-10} filename="server.ts"
+```ts {5-10} title="server.ts"
 import { defineServer, defineRoom, QueueRoom } from "colyseus";
 
 const server = defineServer({
@@ -40,7 +37,7 @@ const server = defineServer({
 
 ### Expose your match room
 
-```ts {7} filename="server.ts"
+```ts {7} title="server.ts"
 import { defineServer, defineRoom, Room } from "colyseus";
 
 class BattleRoom extends Room {}
@@ -73,7 +70,7 @@ const server = defineServer({
 
 ### Joining the queue
 
-```ts filename="client.ts"
+```ts title="client.ts"
 import { Client } from "@colyseus/sdk";
 
 const client = new Client("http://localhost:2567");
@@ -89,58 +86,58 @@ const queue = await client.joinOrCreate("queue", {
 
 The server periodically notifies clients with the number of players currently in their group.
 
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+<LangTabs>
 
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     queue.onMessage("clients", (count) => {
       console.log("Players in your group:", count);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
+    <Tab value="JavaScript">
+    ```js title="client.js"
     queue.onMessage("clients", (count) => {
       console.log("Players in your group:", count);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     queue.OnMessage("clients", (int count) => {
       Debug.Log("Players in your group: " + count);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     queue:on_message("clients", function(count)
       print("Players in your group: " .. tostring(count))
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     queue.onMessage("clients", function(count: Int) {
       trace("Players in your group: " + Std.string(count));
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</Tabs>
+</LangTabs>
 
 ### Receiving a seat reservation
 
 When a group is ready, the queue sends a seat reservation for the target match room:
 
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+<LangTabs>
 
-    <Tabs.Tab>
-    ```ts filename="client.ts"
+    <Tab value="TypeScript">
+    ```ts title="client.ts"
     queue.onMessage("seat", async (reservation) => {
       // Optionally confirm the reservation to the queue
       queue.send("confirm");
@@ -150,10 +147,10 @@ When a group is ready, the queue sends a seat reservation for the target match r
       console.log("Joined match", match.roomId);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```js filename="client.js"
+    <Tab value="JavaScript">
+    ```js title="client.js"
     queue.onMessage("seat", (reservation) => {
       // Optionally confirm the reservation to the queue
       queue.send("confirm");
@@ -164,10 +161,10 @@ When a group is ready, the queue sends a seat reservation for the target match r
       });
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```cs filename="Client.cs"
+    <Tab value="C#">
+    ```cs title="Client.cs"
     queue.OnMessage("seat", async (SeatReservation reservation) => {
       // Optionally confirm the reservation to the queue
       await queue.Send("confirm");
@@ -177,10 +174,10 @@ When a group is ready, the queue sends a seat reservation for the target match r
       Debug.Log("Joined match " + match.roomId);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua filename="client.lua"
+    <Tab value="Lua">
+    ```lua title="client.lua"
     queue:on_message("seat", function(reservation)
       -- Optionally confirm the reservation to the queue
       queue:send("confirm")
@@ -195,10 +192,10 @@ When a group is ready, the queue sends a seat reservation for the target match r
       end)
     end)
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe filename="client.hx"
+    <Tab value="Haxe">
+    ```haxe title="client.hx"
     queue.onMessage("seat", function(reservation: Dynamic) {
       // Optionally confirm the reservation to the queue
       queue.send("confirm");
@@ -213,9 +210,9 @@ When a group is ready, the queue sends a seat reservation for the target match r
       });
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</Tabs>
+</LangTabs>
 
 ## Matching behavior
 
@@ -223,7 +220,7 @@ When a group is ready, the queue sends a seat reservation for the target match r
 
 By default, clients are grouped by rank and split into multiple groups if the rank difference becomes too high. You can customize this logic with `compare`:
 
-```ts filename="server.ts"
+```ts title="server.ts"
 import { defineRoom, QueueRoom } from "colyseus";
 
 defineRoom(QueueRoom, {
@@ -239,7 +236,7 @@ defineRoom(QueueRoom, {
 
 Provide `maxTeamSize` and pass `teamId` from the client to enforce team cohesion:
 
-```ts filename="server.ts"
+```ts title="server.ts"
 defineRoom(QueueRoom, {
 	matchRoomName: "battle",
 	maxPlayers: 6,
@@ -247,7 +244,7 @@ defineRoom(QueueRoom, {
 });
 ```
 
-```ts filename="client.ts"
+```ts title="client.ts"
 await client.joinOrCreate("queue", {
 	rank: 980,
 	teamId: "party-7",
@@ -258,7 +255,7 @@ await client.joinOrCreate("queue", {
 
 If you want matches to start even when groups are not full, enable `allowIncompleteGroups`. Your match room should fill the remaining slots with bots.
 
-```ts filename="server.ts"
+```ts title="server.ts"
 defineRoom(QueueRoom, {
 	matchRoomName: "battle",
 	maxPlayers: 4,
@@ -271,7 +268,7 @@ defineRoom(QueueRoom, {
 
 Use `onGroupReady` to decide how and where a match room is created:
 
-```ts filename="server.ts"
+```ts title="server.ts"
 import { defineRoom, QueueRoom, matchMaker } from "colyseus";
 
 defineRoom(QueueRoom, {

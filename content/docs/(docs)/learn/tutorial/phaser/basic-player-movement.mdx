@@ -2,10 +2,6 @@
 title: "Part 1: Basic Player Movement"
 description: "Part 1 of the Phaser + Colyseus tutorial: set up the server and synchronize basic player movement."
 ---
-import { Callout, Cards, Tabs } from "nextra/components";
-import { DownloadIcon, LinkIcon } from '@primer/octicons-react'
-
-# Phaser #1: Basic Player Movement
 
 This guide will show you how you can build a multiplayer experience with Colyseus Multiplayer Framework and Phaser.
 
@@ -40,13 +36,13 @@ We will be making a basic server, hosted locally on your computer for keeping pl
 
 To create a fresh new Colyseus server, run the following from your command-line:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npm init colyseus-app ./server
 ```
 
 Let's make sure you can run the server locally now, by running `npm start`:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 cd server
 npm start
 ```
@@ -67,7 +63,7 @@ We are going to set up a new project using NPM, Parcel and TypeScript for the fr
 
 Create the frontend project by running the following commands from your terminal:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 mkdir client
 cd client
 npm init -y
@@ -75,25 +71,25 @@ npm init -y
 
 Install the development dependencies (`parcel` and `typescript`):
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npm install --save-dev parcel typescript
 ```
 
 Install the runtime dependencies (`phaser` and `@colyseus/sdk`):
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npm install --save phaser @colyseus/sdk
 ```
 
 Generate the `tsconfig.json` file by running the following command:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npx tsc --init
 ```
 
 **IMPORTANT**: By default, the generated `tsconfig.json` file has _strict_ type checking enabled. We suggest disabling strict type checking for this tutorial.
 
-```json filename="tsconfig.json"
+```json title="tsconfig.json"
 // (...)
     /* Type Checking */
     "strict": false,
@@ -102,7 +98,7 @@ npx tsc --init
 
 Create the `index.html` file, importing our entrypoint file as a module:
 
-```html filename="index.html"
+```html title="index.html"
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -122,7 +118,7 @@ Create the `index.html` file, importing our entrypoint file as a module:
 
 And, finally, create the entrypoint `index.ts` file TypeScript file, creating a `Phaser.Game` instance, and a `GameScene`:
 
-```ts filename="index.ts"
+```ts title="index.ts"
 import Phaser from "phaser";
 
 // custom scene class
@@ -158,13 +154,13 @@ const game = new Phaser.Game(config);
 
 To access the frontend project from your web browser, let's start `parcel` in another terminal tab. Parcel builds and serves the frontend files:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npx parcel serve index.html
 ```
 
 Alternatively, you can edit your `package.json` file and add a `"start"` command with this:
 
-```json filename="package.json"
+```json title="package.json"
   // (...)
   "scripts": {
     "start": "parcel serve index.html",
@@ -174,7 +170,7 @@ Alternatively, you can edit your `package.json` file and add a `"start"` command
 
 Then, instead of running that first long `parcel` command, you can run `npm start` for short now:
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npm start
 ```
 
@@ -252,9 +248,9 @@ Let's go back to editing the Server code, and define our Room State in the Serve
 
 We need to handle multiple `Player` instances, and each `Player` will have `x`, `y` and `z` coordinates:
 
-<Tabs items={["Schema Builder", "Decorators"]} storageKey="schema-style">
-    <Tabs.Tab>
-    ```ts filename="MyRoomState.ts"
+<Tabs groupId="schema-style" persist>
+    <Tab value="Schema Builder">
+    ```ts title="MyRoomState.ts"
     import { schema, t } from "@colyseus/schema";
 
     export const Player = schema({
@@ -266,9 +262,9 @@ We need to handle multiple `Player` instances, and each `Player` will have `x`, 
         players: t.map(Player),
     }, "MyRoomState");
     ```
-    </Tabs.Tab>
-    <Tabs.Tab>
-    ```ts filename="MyRoomState.ts"
+    </Tab>
+    <Tab value="Decorators">
+    ```ts title="MyRoomState.ts"
     import { MapSchema, Schema, type } from "@colyseus/schema";
 
     export class Player extends Schema {
@@ -280,7 +276,7 @@ We need to handle multiple `Player` instances, and each `Player` will have `x`, 
         @type({ map: Player }) players = new MapSchema<Player>();
     }
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 <Callout type="info">
@@ -289,7 +285,7 @@ We need to handle multiple `Player` instances, and each `Player` will have `x`, 
 
 Now, still in the backend, let's modify our `onJoin()` method to create a `Player` instance whenever a new connection is established with the room.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 // (...)
     onJoin(client: Client, options: any) {
         console.log(client.sessionId, "joined!");
@@ -314,7 +310,7 @@ Now, still in the backend, let's modify our `onJoin()` method to create a `Playe
 
 Also, when the client disconnects, let's remove the player from the map of players:
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 // (...)
     onLeave(client: Client, consented: boolean) {
         console.log(client.sessionId, "left!");
@@ -471,7 +467,7 @@ Whenever the message is received in the server, we're going to mutate the player
 
 > **⚠️ Note:** We are going to update this method on Part 3. The final implementation with **client-side prediction** needs to process the input at every tick instead of when receiving the message.
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 // (...)
   state = new MyRoomState();
 

@@ -2,9 +2,6 @@
 title: Colyseus Cloud
 description: "Colyseus Cloud is managed infrastructure for Colyseus applications by the framework's own team. Deploy, scale, and monitor without managing servers."
 ---
-import { Tabs, FileTree } from "nextra/components"
-
-# Colyseus Cloud - Premium Managed Hosting
 
 [Colyseus Cloud](https://cloud.colyseus.io/) provides a managed infrastructure for your Colyseus application, made by the same team behind Colyseus Framework.
 
@@ -19,19 +16,19 @@ function from `colyseus` for easy integration with its infrastructure.
 
 In order to deploy your Colyseus application to Colyseus Cloud, you need to follow the project template from `npm create colyseus-app@latest` command:
 
-<center>
+<div className="text-center">
 ![Project structure](/cloud/project-structure.png)
-</center>
+</div>
 
 The key important configurations the template provide are:
 
 1. Usage of `defineServer()` from `colyseus` to start the application
 2. An `ecosystem.config.js` file at the root of the project (with the `"script"` pointing to your application's entrypoint)
 
-<Tabs items={["src/app.config.ts", "ecosystem.config.js"]}>
-    <Tabs.Tab>
+<Tabs>
+    <Tab value="src/app.config.ts">
 
-    ```ts filename="src/app.config.ts"
+    ```ts title="src/app.config.ts"
     import { defineServer, defineRoom } from "colyseus";
     import { MyRoom } from "./rooms/MyRoom";
 
@@ -47,11 +44,11 @@ The key important configurations the template provide are:
         }
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
+    <Tab value="ecosystem.config.js">
 
-    ```js {6} filename="ecosystem.config.js"
+    ```js {6} title="ecosystem.config.js"
     const os = require('os');
 
     module.exports = {
@@ -66,7 +63,7 @@ The key important configurations the template provide are:
         }],
     };
     ```
-    </Tabs.Tab>
+    </Tab>
 </Tabs>
 
 ---
@@ -75,7 +72,7 @@ The key important configurations the template provide are:
 
 From your terminal, run the following command to deploy your application to Colyseus Cloud.
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npx @colyseus/cloud deploy
 ```
 
@@ -99,7 +96,7 @@ By default, Colyseus Cloud is going to build your backend code using the `build`
 
 You may customize how your backend is built by updating the **"Build Command"** in your Colyseus Cloud application settings, under **"Build settings"**.
 
-```json filename="package.json"
+```json title="package.json"
 {
   "scripts": {
     "build": "tsc"

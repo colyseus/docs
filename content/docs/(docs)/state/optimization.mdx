@@ -2,9 +2,6 @@
 title: "Optimizing State"
 description: "What a Colyseus state patch costs in bytes, and the levers that make it smaller: field types, quantization, schema shape, collection operations, and change-tracking control."
 ---
-import { Callout } from 'nextra/components'
-
-# Optimizing State
 
 State synchronization is already delta-encoded. Only the properties that changed since the last patch are sent, and a property re-assigned to the same value is not sent at all. Most rooms never need to think past that.
 
@@ -135,7 +132,7 @@ Every mutation of a synchronized field is recorded as a change. These methods op
 | `instance.isTrackingPaused` | `true` while recording is paused |
 | `instance.setDirty(property, operation?)` | Forces a field into the next patch |
 
-```ts filename="src/rooms/MyRoom.ts"
+```ts title="src/rooms/MyRoom.ts"
 onCreate() {
     this.state = new MyState();
 

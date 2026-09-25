@@ -2,9 +2,6 @@
 title: "Migrating to 0.17"
 description: "Migration guide from Colyseus 0.16 to 0.17. Covers breaking changes, new APIs, and updated patterns."
 ---
-import { Callout } from 'nextra/components'
-
-# Migrating to version 0.17 (from 0.16)
 
 <Callout type="info">
     See [0.17 release notes](https://github.com/colyseus/colyseus/releases/tag/0.17) for more details.
@@ -18,7 +15,7 @@ import { Callout } from 'nextra/components'
 
 Get all the latest 0.17.x versions for the package names you already have in your `package.json`:
 
-```json filename="package.json"
+```json title="package.json"
 {
     "dependencies": {
         "colyseus": "^0.17.8",
@@ -39,14 +36,14 @@ Get all the latest 0.17.x versions for the package names you already have in you
 
 The `@colyseus/schema` package is now at version 4.0.x
 
-```diff filename="package.json"
+```diff title="package.json"
 -   "@colyseus/schema": "^3.0.x",
 +   "@colyseus/schema": "^4.0.8",
 ```
 
 On the frontend, replace `colyseus.js` with the `@colyseus/sdk` package:
 
-```diff filename="package.json"
+```diff title="package.json"
 -   "colyseus.js": "^0.16.x",
 +   "@colyseus/sdk": "^0.17.26",
 ```
@@ -55,7 +52,7 @@ On the frontend, replace `colyseus.js` with the `@colyseus/sdk` package:
 
 If you use uWebSockets.js, it is now required to add `uwebsockets-express` as a dependency to your project.
 
-```diff filename="package.json"
+```diff title="package.json"
 -   "uwebsockets-express": "^1.3.x",
 +   "uwebsockets-express": "^1.4.1",
 ```
@@ -66,7 +63,7 @@ If you use uWebSockets.js, it is now required to add `uwebsockets-express` as a 
 
 We are soft-deprecating how to structure the `app.config.ts` file. The previous syntax is still supported, but we recommend using the new one. Eventually, the previous syntax will be removed.
 
-```diff filename="app.config.ts"
+```diff title="app.config.ts"
 -import config from "@colyseus/tools";
 +import { defineServer, defineRoom } from "colyseus";
 +import { MyRoom } from "./rooms/MyRoom";
@@ -128,7 +125,7 @@ The `Room<State, Metadata>` generic type has changed to `Room<{ state: S, metada
 
 If you only use `Room<State>`, you can remove the generic types, and assign the state instance to the `state` property.
 
-```diff filename="MyRoom.ts"
+```diff title="MyRoom.ts"
 -export class MyRoom extends Room<MyState> {
 +export class MyRoom extends Room {
 +    state = new MyState();
@@ -136,7 +133,7 @@ If you only use `Room<State>`, you can remove the generic types, and assign the 
 
 Alternatively, if you need to initialize the state in `onCreate()` (e.g., passing arguments to the state constructor), use the new generic type format:
 
-```ts filename="MyRoom.ts"
+```ts title="MyRoom.ts"
 export class MyRoom extends Room<{ state: MyState }> {
     onCreate(options) {
         this.state = new MyState(options.someArg);
@@ -230,7 +227,7 @@ async onLeave (client: Client, code: number) {
 
 If you were accessing or modifying internal undocumented properties of the `Room` class, you may need to update your code.
 
-```diff filename="Example"
+```diff title="Example"
 -this.resetAutoDisposeTimeout();
 +this["resetAutoDisposeTimeout"]();
 ```
@@ -270,7 +267,7 @@ this.onMessage("move", (client, message) => { /* new handler */ });
 
 If you were using the `onMessageHandlers` property directly to register a fallback for all messages, you need to update your code to use the `onMessageFallbacks` property instead.
 
-```diff filename="Example"
+```diff title="Example"
 -this.onMessageHandlers["__no_message_handler"] = {
 -    callback: (client, type, payload) => {
 -       // ... your existing code ...

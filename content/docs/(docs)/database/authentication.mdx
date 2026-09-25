@@ -2,9 +2,6 @@
 title: "Authentication"
 description: "How @colyseus/database becomes the user store for @colyseus/auth: auto-mounted routes, ban gating, JWT revocation, admin helpers, and callback customization."
 ---
-import { Callout } from 'nextra/components'
-
-# Authentication
 
 When [`@colyseus/auth`](/auth/module) is installed alongside `@colyseus/database` and you pass `database:` to `defineServer`, the database becomes the user store and all auth routes mount automatically. The only callbacks left to write are the email-delivery ones.
 
@@ -22,7 +19,7 @@ The same env secrets (`JWT_SECRET`, `SESSION_SECRET`) still apply. See [Auth Mod
 
 Once `database:` is set on `defineServer`, the auth integration is live. No additional wiring is required:
 
-```ts {2,6} filename="src/app.config.ts"
+```ts {2,6} title="src/app.config.ts"
 import { defineServer } from "colyseus";
 import { GameDatabase } from "@colyseus/database";
 
@@ -50,7 +47,7 @@ await db.auth.bumpTokenVersion(userId);
 
 To wrap or replace individual callbacks, override keys on the `auth.settings` singleton **after** the server has started listening. `listen()` copies `db.auth.settings` into `auth.settings`, so an override applied earlier is overwritten. The example below adds an invite-code check during registration:
 
-```ts filename="src/index.ts"
+```ts title="src/index.ts"
 import { listen } from "@colyseus/tools";
 import { auth } from "@colyseus/auth";
 import app from "./app.config";

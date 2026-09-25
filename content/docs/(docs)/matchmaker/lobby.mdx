@@ -2,9 +2,6 @@
 title: "Lobby Room"
 description: "The built-in LobbyRoom provides a live listing of available rooms: the backend for a room browser UI, with automatic updates and filtering."
 ---
-import { Callout, Steps, Cards, Tabs } from "nextra/components";
-
-# Lobby Room
 
 The built-in `LobbyRoom` provides a live listing of available rooms in your game server.
 
@@ -24,7 +21,7 @@ Rooms flagged [`private` or `unlisted`](/matchmaker/visibility#matchmaking-prope
 <Steps>
 ### Expose the lobby room
 
-```ts {5} filename="server.ts"
+```ts {5} title="server.ts"
 import { defineServer, defineRoom, LobbyRoom } from "colyseus";
 
 const server = defineServer({
@@ -38,7 +35,7 @@ const server = defineServer({
 
 When _realtime listing_ is enabled, the `LobbyRoom` is notified automatically during `onCreate()`, `onJoin()`, `onLeave()` and `onDispose()`.
 
-```ts {6} filename="server.ts"
+```ts {6} title="server.ts"
 import { defineServer, defineRoom, LobbyRoom } from "colyseus";
 
 const server = defineServer({
@@ -54,10 +51,10 @@ const server = defineServer({
 
 The `LobbyRoom` will send messages to the client whenever a room is added, removed or updated.
 
-<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} storageKey='sdk-tab-language'>
+<LangTabs>
 
-    <Tabs.Tab>
-    ```ts {8,12,22} filename="client.ts"
+    <Tab value="TypeScript">
+    ```ts {8,12,22} title="client.ts"
     import { Client, RoomAvailable } from "@colyseus/sdk";
 
     const client = new Client("http://localhost:2567");
@@ -83,10 +80,10 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
       allRooms = allRooms.filter((room) => room.roomId !== roomId);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```ts {8,12,22} filename="client.ts"
+    <Tab value="JavaScript">
+    ```ts {8,12,22} title="client.ts"
     import * as Colyseus from "@colyseus/sdk";
 
     const client = new Colyseus.Client("http://localhost:2567");
@@ -113,10 +110,10 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
         });
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```cs {8,14,26} filename="LobbyClient.cs"
+    <Tab value="C#">
+    ```cs {8,14,26} title="LobbyClient.cs"
     using Colyseus;
 
     Client client = new Client("http://localhost:2567");
@@ -147,10 +144,10 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
       allRooms.RemoveAll((r) => r.roomId == roomId);
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```lua {13,17,33} filename="lobby.lua"
+    <Tab value="Lua">
+    ```lua {13,17,33} title="lobby.lua"
     local Colyseus = require("colyseus.sdk")
 
     local client = Colyseus.Client("http://localhost:2567")
@@ -194,10 +191,10 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
     end)
 
     ```
-    </Tabs.Tab>
+    </Tab>
 
-    <Tabs.Tab>
-    ```haxe {13,17,33} filename="Lobby.hx"
+    <Tab value="Haxe">
+    ```haxe {13,17,33} title="Lobby.hx"
     import io.colyseus.Client;
     import io.colyseus.Room;
 
@@ -235,15 +232,15 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
         });
     });
     ```
-    </Tabs.Tab>
+    </Tab>
 
-</Tabs>
+</LangTabs>
 
 ### Filtering rooms
 
 Filter the listing by providing the `filter` option when joining the lobby. A filter **must include `name`**. The name check runs unconditionally, so a metadata-only filter matches nothing. Use `metadata` to narrow within a room name:
 
-```ts {2-7} filename="client.ts"
+```ts {2-7} title="client.ts"
 const lobby = await client.joinOrCreate("lobby", {
   filter: {
     name: "my_room",

@@ -2,11 +2,6 @@
 title: "Sponsors"
 description: "Sponsor Colyseus on GitHub or buy from the Colyseus Shop. Both fund the open-source multiplayer game server framework."
 ---
-import Image from 'next/image'
-import { Cards } from 'nextra/components'
-import { HeartFillIcon, GiftIcon } from "@primer/octicons-react";
-
-# Sponsors
 
 Colyseus is an independent project: no venture capital, no corporate parent. One
 developer maintains all of it full-time, from the server and the schema
@@ -21,7 +16,7 @@ Colyseus is proudly sponsored by these amazing companies and people <HeartFillIc
 ---
 
 <a href="https://cdn.jsdelivr.net/gh/colyseus/.github@main/sponsorkit/sponsors.svg">
-    <Image src="https://cdn.jsdelivr.net/gh/colyseus/.github@main/sponsorkit/sponsors.svg" width={0} height={0} style={{ width: '100%', height: 'auto' }} alt="Sponsors" />
+    <img src="https://cdn.jsdelivr.net/gh/colyseus/.github@main/sponsorkit/sponsors.svg" style={{ width: '100%', height: 'auto' }} alt="Sponsors" />
 </a>
 
 ---
@@ -44,6 +39,6 @@ t-shirts, hoodies, hats, mugs, and stickers, and it ships worldwide. Every order
 funds the work, and you get to look cool doing it. 😎
 
 <Cards>
-    <Cards.Card icon={<HeartFillIcon/>} title="Become a sponsor" href="https://github.com/sponsors/endel" target="_blank" arrow />
-    <Cards.Card icon={<GiftIcon/>} title="Visit the shop" href="https://shop.colyseus.io/" target="_blank" arrow />
+    <Card icon={<HeartFillIcon/>} title="Become a sponsor" href="https://github.com/sponsors/endel" />
+    <Card icon={<GiftIcon/>} title="Visit the shop" href="https://shop.colyseus.io/" />
 </Cards>

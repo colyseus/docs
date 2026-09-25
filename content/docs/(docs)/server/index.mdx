@@ -1,18 +1,13 @@
 ---
 title: "Server"
 description: "Configure the Colyseus Server instance: transport, presence, matchmaking driver, room definitions, process selection, devMode, and graceful shutdown."
+# filterBy/sortBy/realtime-listing moved to the Matchmaking section.
+movedAnchors:
+  filter-by-filterby: "/matchmaker#filter-by-filterby"
+  sort-by-sortby: "/matchmaker#sort-by-sortby"
+  realtime-listing-for-lobby: "/matchmaker#realtime-listing-for-lobby"
+  constructor-options: "/server#server-options"
 ---
-import { Callout, Cards, Tabs } from "nextra/components";
-import { MovedAnchors } from "../components/moved-anchors";
-
-# Server
-
-{/* filterBy/sortBy/realtime-listing moved to the Matchmaking section. */}
-<MovedAnchors map={{
-    "filter-by-filterby": "/matchmaker#filter-by-filterby",
-    "sort-by-sortby": "/matchmaker#sort-by-sortby",
-    "realtime-listing-for-lobby": "/matchmaker#realtime-listing-for-lobby",
-}} />
 
 The Colyseus `Server` instance holds the server configuration options, such as transport options, presence, matchmaking driver, etc.
 
@@ -24,13 +19,13 @@ The Colyseus `Server` instance holds the server configuration options, such as t
 
 The recommended structure to initialize a new Colyseus server is created using `npm create colyseus-app@latest` command.
 
-```sh filename="Terminal"
+```sh title="Terminal"
 npm create colyseus-app@latest ./my-server
 ```
 
 You may add your own [Room Definitions](/room/), and [API routes](/server/http-routes) to your server:
 
-```ts {2,6,10-12} filename="app.config.ts"
+```ts {2,6,10-12} title="app.config.ts"
 import { defineServer, defineRoom } from "colyseus";
 import { MyRoom } from "./rooms/MyRoom";
 
@@ -62,7 +57,7 @@ Each Transport has its own options you may customize.
     The default transport is `WebSocketTransport`. See [Transport → WebSocket Transport (ws)](/server/transport/ws) for more details.
 </Callout>
 
-```ts {2,5-7} filename="app.config.ts"
+```ts {2,5-7} title="app.config.ts"
 import { defineServer } from "colyseus";
 import { WebSocketTransport } from "@colyseus/ws-transport";
 
@@ -89,7 +84,7 @@ The matchmaking driver. Rooms are cached and queried against a Driver implementa
 
 When scaling Colyseus through multiple processes / machines, you need to provide a presence server. Read more about [Scalability](/scalability), and the [`Presence API`](/server/presence#presence-api).
 
-``` typescript
+```typescript
 import { defineServer, RedisPresence } from "colyseus";
 
 const server = defineServer({
@@ -104,7 +99,7 @@ const server = defineServer({
 
 Type-safe HTTP endpoints for your server, built with `createRouter()` and `createEndpoint()`.
 
-```ts {5-9} filename="app.config.ts"
+```ts {5-9} title="app.config.ts"
 import { defineServer, createRouter, createEndpoint } from "colyseus";
 
 const server = defineServer({
@@ -125,7 +120,7 @@ const server = defineServer({
 
 A callback that receives an Express-compatible `app`, for binding routes with the classic Express API. With `uWebSocketsTransport`, the app is provided via the `uwebsockets-express` compatibility layer.
 
-```ts {5-9} filename="app.config.ts"
+```ts {5-9} title="app.config.ts"
 import { defineServer } from "colyseus";
 
 const server = defineServer({
@@ -146,7 +141,7 @@ const server = defineServer({
 
 An optional callback executed before the server starts listening. Use it to connect to a database or other services first. `async` is supported: the server waits for it.
 
-```ts {5-7} filename="app.config.ts"
+```ts {5-7} title="app.config.ts"
 import { defineServer } from "colyseus";
 
 const server = defineServer({
@@ -161,7 +156,7 @@ const server = defineServer({
 
 Boots a database module (usually `@colyseus/database`'s `db` instance) before the matchmaker accepts connections. The database may also contribute default routes, such as the auth endpoints.
 
-```ts {2,6} filename="app.config.ts"
+```ts {2,6} title="app.config.ts"
 import { defineServer } from "colyseus";
 import { db } from "./db";
 
@@ -179,7 +174,7 @@ const server = defineServer({
 
 Controls mounting of the [`@colyseus/auth`](/auth/module) routes. Pass an options object to mount them explicitly (useful when `database` is not in use), or `false` to disable auto-mounting even when a `database` would provide defaults.
 
-```ts filename="app.config.ts"
+```ts title="app.config.ts"
 const server = defineServer({
     // ...
     auth: {
@@ -217,7 +212,7 @@ The `selectProcessIdToCreateRoom` is a callback that allows you to customize whi
 
 By default, the process with the **least amount of rooms** is selected to create a new room.
 
-```ts {4-8} filename="app.config.ts"
+```ts {4-8} title="app.config.ts"
 import { defineServer, matchMaker } from "colyseus";
 
 const server = defineServer({
@@ -231,7 +226,7 @@ const server = defineServer({
 
 A common alternative is to use the process with least amount of **connections**:
 
-```ts {4-8} filename="app.config.ts"
+```ts {4-8} title="app.config.ts"
 import { defineServer, matchMaker } from "colyseus";
 
 const server = defineServer({
@@ -251,7 +246,7 @@ When set to `true`, this process will only handle matchmaking and will **not** s
 
 Default is `false`.
 
-```ts {4} filename="app.config.ts"
+```ts {4} title="app.config.ts"
 import { defineServer } from "colyseus";
 
 const server = defineServer({
@@ -271,7 +266,7 @@ When `devMode` is enabled, the server restores previous rooms and room state aft
 
 Default is `false`.
 
-```ts {4} filename="app.config.ts"
+```ts {4} title="app.config.ts"
 import { defineServer } from "colyseus";
 
 const server = defineServer({
@@ -291,7 +286,7 @@ Whether to register the shutdown routine automatically. Default is `true`.
 
 If disabled, you should call [`gracefullyShutdown()`](#graceful-shutdown) method manually in your shutdown process.
 
-```ts {4} filename="app.config.ts"
+```ts {4} title="app.config.ts"
 import { defineServer } from "colyseus";
 
 const server = defineServer({
@@ -303,7 +298,6 @@ const server = defineServer({
     See [Graceful Shutdown](/server/graceful-shutdown/).
 </Callout>
 
-
 ---
 
 ## Methods
@@ -314,7 +308,6 @@ Define room types for the matchmaker using the `rooms` configuration in `defineS
 
 - Rooms are **not created** during configuration
 - Rooms are created upon client request ([See frontend methods](/sdk#joining-rooms))
-
 
 **Parameters:**
 
@@ -397,7 +390,7 @@ server.removeRoomType("battle");
 
 Colyseus allows you to simulate latency between the server and the client. `simulateLatency()` is a convenience method for simulating clients with high latency during development.
 
-```ts filename="server.ts"
+```ts title="server.ts"
 // Make sure to never call the `simulateLatency()` method in production.
 if (process.env.NODE_ENV !== "production") {
 
@@ -416,7 +409,7 @@ if (process.env.NODE_ENV !== "production") {
 
 Binds the [Transport](/server/transport) layer into the specified port.
 
-```ts {5} filename="src/app.config.ts"
+```ts {5} title="src/app.config.ts"
 import { defineServer } from "colyseus";
 const server = defineServer({
     // ...
@@ -430,7 +423,7 @@ server.listen(2567);
 
 Register a custom callback that is called **before** the Graceful Shutdown routine starts.
 
-```ts filename="server.ts"
+```ts title="server.ts"
 server.onBeforeShutdown(async () => {
     // ... custom logic
 });
@@ -462,7 +455,7 @@ server.onShutdown(async () => {
 
 Triggers the Graceful Shutdown routine.
 
-```ts filename="app.config.ts"
+```ts title="app.config.ts"
 server.gracefullyShutdown();
 ```
 
