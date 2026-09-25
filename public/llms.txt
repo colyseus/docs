@@ -143,7 +143,7 @@ The full corpus is at https://docs.colyseus.io/llms-full.txt.
 - [Continuous Deployment](https://docs.colyseus.io/cloud/continuous-deployment): Set up continuous deployment to Colyseus Cloud with GitHub Actions or the CLI.
 - [DDoS Protection](https://docs.colyseus.io/cloud/ddos-protection): DDoS protection on Colyseus Cloud: an extra layer that keeps your game servers online during attacks.
 - [Environment Variables and Secrets](https://docs.colyseus.io/cloud/environment-variables): Store secrets and environment variables for your Colyseus Cloud deployment via the Application Settings page.
-- [>](https://docs.colyseus.io/cloud/troubleshooting): Common Colyseus Cloud deployment failures and how to fix them.
+- ["Deploy failed" errors](https://docs.colyseus.io/cloud/troubleshooting): Common Colyseus Cloud deployment failures and how to fix them.
 - [TypeScript/Compilation errors](https://docs.colyseus.io/cloud/typescript-compilation-errors): Fix TypeScript compilation errors when deploying to Colyseus Cloud with the recommended tsconfig.json settings.
 - [Pricing & Billing](https://docs.colyseus.io/cloud/pricing-billing): How Colyseus Cloud pricing and billing work, with a pricing simulator for estimating costs.
 - [Read API](https://docs.colyseus.io/cloud/api): Read your Colyseus Cloud applications' metrics, deploys and logs programmatically, to forward them to your own monitoring.

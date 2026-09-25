@@ -9,7 +9,7 @@ pnpm check:ai-nav
 # Vale on the staged pages only, at error level. The full advisory run is
 # `pnpm lint:prose`; replaying 300+ pre-existing warnings on every commit is how
 # a hook gets ignored.
-staged=$(git diff --cached --name-only --diff-filter=ACM -- 'pages/**/*.mdx' 'pages/*.mdx')
+staged=$(git diff --cached --name-only --diff-filter=ACM -- 'content/**/*.mdx')
 if [ -n "$staged" ]; then
     echo "$staged" | xargs node scripts/lint-prose.js --minAlertLevel=error
 fi

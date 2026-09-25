@@ -1,207 +1,221 @@
 /**
  * Internal link checker for the docs.
  *
- * Validates every internal markdown/JSX link in `pages/`:
+ * Validates, against the same page tree and heading ids the site ships:
  *
- * - **page links** (`/room`) resolve to an `.mdx` file or a directory route
- * - **anchors** (`/room#game-loop`, `#game-loop`) resolve to a real heading on
- *   the target page, slugged with `github-slugger` — the same slugger Nextra
- *   uses, so the results match what actually ships
+ * - **page links** (`/room`) resolve to a page
+ * - **anchors** (`/room#game-loop`, `#game-loop`) resolve to a real heading,
+ *   slugged by Fumadocs' own `remarkHeading`
  * - **assets** (`/images/foo.png`) resolve to a file in `public/`
+ * - **`movedAnchors`** frontmatter: targets resolve, and no key is still a live
+ *   heading on its own page (the redirect would hijack a working anchor)
+ * - **`public/_redirects`**: targets resolve, no rule is dead, shadowed, or loops
+ *
+ * Plus the content conventions a build would only catch as a runtime bug:
+ * no imports (components are global), no relative links, no links inside
+ * headings (nested <a> breaks hydration), and tabs with explicit values.
  *
  * Anchor checking is the point: a link to a heading that was renamed still
  * loads the page, so it never shows up as a 404 and rots silently.
  *
- * Usage: `npm run check-links`. Exits non-zero when anything is broken.
+ * Usage: `pnpm check-links`. Exits non-zero when anything is broken.
  */
 import fs from 'node:fs'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import GithubSlugger from 'github-slugger'
+import { unified } from 'unified'
+import remarkParse from 'remark-parse'
+import remarkMdx from 'remark-mdx'
+import remarkGfm from 'remark-gfm'
+import remarkFrontmatter from 'remark-frontmatter'
+import { visit } from 'unist-util-visit'
+import { remarkHeading } from 'fumadocs-core/mdx-plugins'
+import { loadSource, publicDir, root } from './lib/pages.js'
 
-const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
-const pagesDir = path.join(root, 'pages')
-const publicDir = path.join(root, 'public')
+const ASSET_RE = /\.(png|jpe?g|gif|svg|webp|ico|pdf|mp4|webm|mp3|wav|zip|json|txt|xml|md)$/i
+// Written by the build, so not in public/.
+const GENERATED = new Set(['/llms-full.txt', '/sitemap.xml', '/api/search.json'])
+const LANGUAGES = new Set(['TypeScript', 'JavaScript', 'C#', 'Lua', 'Haxe', 'GDScript', 'Dart'])
 
-const ASSET_RE = /\.(png|jpe?g|gif|svg|webp|ico|pdf|mp4|webm|mp3|wav|zip|json|txt)$/i
+const processor = unified().use(remarkParse).use(remarkMdx).use(remarkGfm).use(remarkFrontmatter).use(remarkHeading)
 
-// `pages/404.mdx` holds the redirect map — its "links" are old URLs by design.
-const SKIP_FILES = new Set([path.join(pagesDir, '404.mdx')])
+const { source, pages } = loadSource()
+const broken = []
+const report = (file, line, target, reason) => broken.push({ file, line, target, reason })
 
-function walk(dir, out = []) {
-    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-        const full = path.join(dir, entry.name)
-        if (entry.isDirectory()) walk(full, out)
-        else if (entry.name.endsWith('.mdx')) out.push(full)
+// ---- pass 1: parse every page, collect heading ids ------------------------
+
+const parsed = new Map() // route -> { page, tree }
+const anchors = new Map() // route -> Set of heading ids
+for (const page of pages.values()) {
+    const file = { value: fs.readFileSync(page.source, 'utf8'), data: {} }
+    const tree = processor.runSync(processor.parse(file.value), file)
+    const ids = new Set()
+    visit(tree, 'heading', (h) => { if (h.data?.hProperties?.id) ids.add(h.data.hProperties.id) })
+    anchors.set(page.route, ids)
+    parsed.set(page.route, { page, tree })
+}
+
+/** `null` when `target` resolves, else the reason it doesn't. */
+function resolve(target, selfRoute) {
+    const hashAt = target.indexOf('#')
+    let route = hashAt === -1 ? target : target.slice(0, hashAt)
+    const anchor = hashAt === -1 ? '' : decodeURIComponent(target.slice(hashAt + 1))
+    route = route === '' ? selfRoute : route.replace(/\/$/, '') || '/'
+    if (ASSET_RE.test(route)) {
+        return GENERATED.has(route) || fs.existsSync(path.join(publicDir, route)) ? null : 'asset not found'
     }
-    return out
+    if (!anchors.has(route)) return 'page not found'
+    if (anchor && !anchors.get(route).has(anchor)) return `no such heading on ${route}`
+    return null
 }
 
-/** Replace a matched span with blanks, preserving its newlines (line numbers stay put). */
-const blank = (s) => s.replace(/[^\n]/g, ' ')
+const attr = (node, name) => node.attributes?.find((a) => a.type === 'mdxJsxAttribute' && a.name === name)?.value
 
-/**
- * Blank out regions that only look like content: fenced code blocks and
- * JSX/HTML comments (commented-out `<Cards.Card href>` entries are common here).
- * Line numbers are preserved so reports stay accurate.
- */
-function stripNonContent(content) {
-    let fenced = false
-    return content.split('\n').map((line) => {
-        if (/^\s*(```|~~~)/.test(line)) { fenced = !fenced; return '' }
-        return fenced ? '' : line
-    }).join('\n')
-        .replace(/\{\/\*[\s\S]*?\*\/\}/g, blank)
-        .replace(/<!--[\s\S]*?-->/g, blank)
-}
+// ---- pass 2: links and conventions per page -------------------------------
 
-/** Lines safe to scan for headings. Inline code is kept — `### `roomId`` is a real heading. */
-const headingLines = (content) => stripNonContent(content).split('\n')
-
-/** Lines safe to scan for links. Also drops inline code, so `` `[a](/b)` `` isn't a link. */
-const linkLines = (content) => stripNonContent(content).replace(/`[^`\n]*`/g, blank).split('\n')
-
-function routeOf(file) {
-    const rel = path.relative(pagesDir, file).replace(/\\/g, '/').replace(/\.mdx$/, '')
-    return rel === 'index' ? '/' : '/' + rel.replace(/\/index$/, '')
-}
-
-const files = walk(pagesDir)
-
-// route -> Set of heading slugs. One slugger per file so duplicate headings get
-// the same -1/-2 suffixes Nextra assigns.
-const anchors = new Map()
-for (const file of files) {
-    const slugger = new GithubSlugger()
-    const slugs = new Set()
-    for (const line of headingLines(fs.readFileSync(file, "utf8"))) {
-        const m = /^#{1,6}\s+(.+?)\s*$/.exec(line)
-        if (!m) continue
-        // Slug the *rendered* heading text: unwrap `[label](url)`, drop code ticks
-        // and emphasis, so `## Self-hosting on [Vultr](https://…)` -> self-hosting-on-vultr.
-        const text = m[1]
-            .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
-            .replace(/[`*_]/g, '')
-            .trim()
-        slugs.add(slugger.slug(text))
+for (const { page, tree } of parsed.values()) {
+    const file = page.file
+    const check = (target, line) => {
+        if (/^(\.\.?\/|[\w-]+\.mdx?(#|$))/.test(target)) return report(file, line, target, 'relative link: use the absolute route')
+        if (!target.startsWith('/') && !target.startsWith('#')) return // external
+        const reason = resolve(target, page.route)
+        if (reason) report(file, line, target, reason)
     }
-    const route = routeOf(file)
-    anchors.set(route, slugs)
-}
 
-// Directory routes (a folder with pages under it) are valid link targets even
-// without their own .mdx.
-const dirRoutes = new Set()
-for (const route of anchors.keys()) {
-    const parts = route.split('/').filter(Boolean)
-    for (let i = 1; i < parts.length; i++) dirRoutes.add('/' + parts.slice(0, i).join('/'))
-}
-
-const LINK_PATTERNS = [
-    /\]\((\/[^)\s]*|#[^)\s]*)\)/g,        // markdown [text](/path#anchor)
-    /(?:href|src)="(\/[^"]*|#[^"]*)"/g,   // JSX href/src
-    // Bare "/path#anchor" string literals in JSX props — covers the <MovedAnchors>
-    // redirect maps, whose targets would otherwise never be validated.
-    /"(\/[^"\s]*#[^"\s]*)"/g,
-]
-
-function extractLinks(content) {
-    const links = new Map() // "line:target" -> entry, so overlapping patterns don't double-report
-    linkLines(content).forEach((line, i) => {
-        for (const re of LINK_PATTERNS) {
-            for (const m of line.matchAll(re)) links.set(`${i + 1}:${m[1]}`, { target: m[1], line: i + 1 })
+    visit(tree, (node) => {
+        const line = node.position?.start.line
+        switch (node.type) {
+            case 'link':
+            case 'definition':
+            case 'image':
+                check(node.url, line)
+                break
+            case 'mdxjsEsm':
+                report(file, line, 'import', 'no imports in content: register the component in components/mdx.tsx')
+                break
+            case 'heading': {
+                let hasLink = false
+                visit(node, 'link', () => { hasLink = true })
+                if (hasLink) report(file, line, 'heading', 'link inside a heading: the heading anchor wraps it, and a nested <a> breaks hydration')
+                break
+            }
+            case 'mdxJsxFlowElement':
+            case 'mdxJsxTextElement': {
+                for (const name of ['href', 'src']) {
+                    const v = attr(node, name)
+                    if (typeof v === 'string') check(v, line)
+                }
+                if (node.name === 'Tabs' || node.name === 'LangTabs') {
+                    // a one-line <Tab> parses as inline JSX inside a paragraph
+                    const tabs = node.children.flatMap((c) => (c.type === 'paragraph' ? c.children : [c]))
+                    const values = tabs.filter((c) => c.name === 'Tab').map((t) => attr(t, 'value'))
+                    if (values.some((v) => typeof v !== 'string')) report(file, line, node.name, '<Tab> without a string value')
+                    if (new Set(values).size !== values.length) report(file, line, node.name, 'duplicate <Tab> values')
+                    if (node.name === 'LangTabs') {
+                        for (const v of values) if (typeof v === 'string' && !LANGUAGES.has(v)) report(file, line, v, `not a LangTabs language (${[...LANGUAGES].join(', ')})`)
+                    }
+                }
+                break
+            }
         }
     })
-    return [...links.values()]
+
+    for (const [slug, target] of Object.entries(page.data.movedAnchors ?? {})) {
+        if (anchors.get(page.route).has(slug)) report(file, 1, `movedAnchors.${slug}`, 'still a live heading on this page')
+        const reason = resolve(target, page.route)
+        if (reason) report(file, 1, `movedAnchors.${slug}: ${target}`, reason)
+    }
 }
 
-const broken = []
+// ---- meta.json link items ---------------------------------------------------
 
-// ---- 404.mdx redirect-map lint ----
-// The map's entries aren't markdown links, so the main pass skips the file.
-// Three failure modes rot silently without this: a `to:` target that doesn't
-// resolve (page or anchor), a `from:` that matches a live route (the entry can
-// never fire — usually a reversed mapping), and an entry shadowed by an earlier
-// one (matching is `currentPath.includes(from)` + first-hit).
 {
-    const file = path.join(pagesDir, '404.mdx')
-    const src = fs.readFileSync(file, 'utf8')
-    const lineAt = (idx) => src.slice(0, idx).split('\n').length
-    const report = (line, target, reason) => broken.push({ file, line, target, reason })
-
-    const entries = []
-    for (const m of src.matchAll(/from:\s*"([^"]+)"/g)) entries.push({ from: m[1], line: lineAt(m.index) })
-
-    for (const m of src.matchAll(/to:\s*"([^"]+)"/g)) {
-        const line = lineAt(m.index)
-        const hashAt = m[1].indexOf('#')
-        const route = (hashAt === -1 ? m[1] : m[1].slice(0, hashAt)).replace(/\/$/, '') || '/'
-        const anchor = hashAt === -1 ? '' : m[1].slice(hashAt + 1)
-        if (!anchors.has(route)) {
-            if (!dirRoutes.has(route)) report(line, m[1], 'redirect target not found')
-        } else if (anchor && !anchors.get(route).has(anchor)) {
-            report(line, m[1], `no such heading on ${route}`)
+    const walk = (dir) => {
+        for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+            const full = path.join(dir, e.name)
+            if (e.isDirectory()) walk(full)
+            else if (e.name === 'meta.json') {
+                for (const item of JSON.parse(fs.readFileSync(full, 'utf8')).pages ?? []) {
+                    const m = /^(?:\[[^\]]*\])?\[[^\]]*\]\((\/[^)]*)\)$/.exec(item)
+                    if (!m) continue
+                    const reason = resolve(m[1], '/')
+                    if (reason) report(path.relative(root, full), 1, m[1], reason)
+                }
+            }
         }
     }
-
-    for (let i = 0; i < entries.length; i++) {
-        const { from, line } = entries[i]
-        // A live route serves 200 (with or without a fragment), so the 404 page
-        // — and this entry — can never run for it.
-        const fromRoute = (from.split('#')[0]).replace(/\/$/, '') || '/'
-        if (anchors.has(fromRoute)) {
-            report(line, from, 'from: matches a live route — entry can never fire')
-        }
-        const shadow = entries.slice(0, i).find((e) => from.includes(e.from))
-        if (shadow) report(line, from, `shadowed by earlier entry "${shadow.from}" (line ${shadow.line})`)
-    }
+    walk(path.join(root, 'content', 'docs'))
 }
 
-for (const file of files) {
-    if (SKIP_FILES.has(file)) continue
-    const selfRoute = routeOf(file)
+// ---- public/_redirects --------------------------------------------------------
+// Netlify: first match wins; `/x/*` matches `/x` and everything under it;
+// a rule never fires for a path that is a live page (no `!` force).
 
-    for (const { target, line } of extractLinks(fs.readFileSync(file, 'utf8'))) {
-        const hashAt = target.indexOf('#')
-        let route = hashAt === -1 ? target : target.slice(0, hashAt)
-        const anchor = hashAt === -1 ? '' : target.slice(hashAt + 1)
+{
+    const file = 'public/_redirects'
+    const rules = []
+    fs.readFileSync(path.join(root, file), 'utf8').split('\n').forEach((raw, i) => {
+        const line = raw.trim()
+        if (!line || line.startsWith('#')) return // `#` mid-line is a URL fragment, not a comment
+        const [from, to, status = '301', ...rest] = line.split(/\s+/)
+        const r = { from, to, status, line: i + 1 }
+        if (rest.length || !to) return report(file, r.line, raw.trim(), 'expected: from  to  [status]')
+        if (!/^\/[^*]*(\/\*)?$/.test(from)) return report(file, r.line, from, '`*` only as a trailing `/*`')
+        if (!/^(301|302)!?$/.test(status)) return report(file, r.line, status, 'use 301 (or 302)')
+        rules.push(r)
+    })
 
-        // Bare "#anchor" points at the current page.
-        route = route === '' ? selfRoute : route.replace(/\/$/, '') || '/'
+    const isSplat = (r) => r.from.endsWith('/*')
+    const prefix = (r) => r.from.slice(0, -2)
+    const matches = (r, p) => (isSplat(r) ? p === prefix(r) || p.startsWith(prefix(r) + '/') : p === r.from)
+    const apply = (r, p) => (isSplat(r) ? r.to.replace(':splat', p.slice(prefix(r).length + 1)).replace(/\/$/, '') || '/' : r.to)
+    const live = (p) => anchors.has(p.split('#')[0])
 
-        const report = (reason) => broken.push({ file, line, target, reason })
-
-        if (ASSET_RE.test(route)) {
-            if (!fs.existsSync(path.join(publicDir, route))) report('asset not found')
-            continue
+    rules.forEach((r, i) => {
+        // target
+        const target = r.to.includes(':splat') ? r.to.split('/:splat')[0] || '/' : r.to
+        if (target.startsWith('/')) {
+            const reason = resolve(target, '/')
+            if (reason) report(file, r.line, r.to, reason)
         }
-
-        if (!anchors.has(route)) {
-            if (!dirRoutes.has(route)) report('page not found')
-            continue // directory route — no page of its own, so no anchors to check
+        // dead: Netlify serves the live page and skips the rule
+        if (!isSplat(r) && live(r.from)) report(file, r.line, r.from, 'from is a live page: the rule can never fire')
+        // shadowed by an earlier rule
+        const probe = isSplat(r) ? prefix(r) + '/__probe' : r.from
+        const earlier = rules.slice(0, i).find((e) => matches(e, probe) && (isSplat(r) ? isSplat(e) : true))
+        if (earlier) report(file, r.line, r.from, `shadowed by line ${earlier.line} (${earlier.from})`)
+        // loops and dead ends
+        let p = probe
+        const seen = new Set([p])
+        for (let hop = 0; hop < 5; hop++) {
+            if (live(p)) break
+            const next = rules.find((x) => matches(x, p.split('#')[0]))
+            if (!next) {
+                if (!isSplat(r)) report(file, r.line, r.from, `redirect chain ends at ${p}, which is not a page`)
+                break
+            }
+            p = apply(next, p.split('#')[0])
+            if (seen.has(p)) { report(file, r.line, r.from, `redirect loop through ${p}`); break }
+            seen.add(p)
         }
-
-        if (anchor && !anchors.get(route).has(anchor)) {
-            report(`no such heading on ${route}`)
-        }
-    }
+    })
 }
+
+// ---- report ----------------------------------------------------------------
 
 if (broken.length === 0) {
-    console.log(`✓ ${files.length} pages checked — no broken internal links`)
+    console.log(`✓ ${pages.size} pages checked — no broken internal links`)
     process.exit(0)
 }
 
 const byFile = new Map()
 for (const b of broken) {
-    const key = path.relative(root, b.file)
-    if (!byFile.has(key)) byFile.set(key, [])
-    byFile.get(key).push(b)
+    if (!byFile.has(b.file)) byFile.set(b.file, [])
+    byFile.get(b.file).push(b)
 }
-
 for (const [file, items] of [...byFile].sort()) {
     console.log(`\n${file}`)
     for (const b of items) console.log(`  ${b.line}: ${b.target}  — ${b.reason}`)
 }
-console.log(`\n✗ ${broken.length} broken internal link(s) across ${byFile.size} file(s)`)
+console.log(`\n✗ ${broken.length} problem(s) across ${byFile.size} file(s)`)
 process.exit(1)

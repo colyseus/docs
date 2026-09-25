@@ -1,0 +1,8 @@
+# Commits that touched every page without changing what it says. GitHub blame
+# skips them; scripts/generate-ai-nav.js skips them for sitemap lastmod.
+# Local blame: git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# Move pages into content/docs for Fumadocs
+b5045e5eb559077c2a45a3031fff1619f8f1a294
+# Convert page content from Nextra to Fumadocs syntax
+826de5a224ef7b1fc0798051433d8a90aa5466d7
