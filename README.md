@@ -28,7 +28,8 @@ Without it, `pnpm lint:prose` warns and exits 0. CI always runs it.
 | --- | --- |
 | `content/docs/` | Every page, as `.mdx`. A `(name)` folder groups pages without adding to the URL. |
 | `content/docs/**/meta.json` | Sidebar order, separators (`"---Title---"`), folder titles and icons. |
-| `components/mdx.tsx` | Every component a page can use. Pages import nothing. |
+| `components/mdx.tsx` | Fumadocs' built-in components, registered for every page. |
+| `content/partials/` | Shared MDX, pulled into pages with `<include>`. |
 | `lib/source.ts` | The Fumadocs loader: routes, page tree, markdown twins. |
 | `lib/llms-markdown.ts` | How each component reads in the `.md` twins. |
 | `public/_redirects` | Old URLs → current pages, served by Netlify as 301s. |
@@ -43,26 +44,35 @@ Don't repeat it as a `# H1` in the body. Optional fields:
 | --- | --- |
 | `description` | Meta description and llms.txt summary. Every page has one. |
 | `sidebarTitle` | Shorter sidebar label when `title` is long. |
-| `icon` | Sidebar icon: an octicon name (`PeopleIcon`) or `logo:unity`. |
+| `icon` | Sidebar icon: a [lucide](https://lucide.dev/icons) name (`Server`) or an engine logo (`logo:unity`). |
 | `movedAnchors` | Old heading slug → new `/path#anchor`. See the `move-page` skill. |
 
-Components worth knowing, all available without an import:
+Use [Fumadocs' built-in components](https://fumadocs.dev/docs/ui/components)
+rather than building new ones. These are available without an import:
 
-- `<LangTabs>` with `<Tab value="TypeScript">`: the SDK language switcher. One
-  choice persists across the whole site. Values: TypeScript, JavaScript, C#,
-  Lua, Haxe, GDScript, Dart.
-- `<Tabs>` with `<Tab value="…">`: any other tabs. Add `groupId` and `persist`
-  to sync a set across pages, as `schema-style` does.
-- `<Callout type="info|warning|error">`, `<Cards>` / `<Card>`, `<Steps>`
-  (headings inside become steps), `<Files>` / `<Folder>` / `<File>`.
-- A ```` ```npm ```` fence becomes npm/pnpm/yarn/bun tabs.
-- Code fences take `title="file.ts"` and `{1,3-5}` line highlights.
+- `<Tabs items={["TypeScript", "C#"]}>` with a `<Tab value="TypeScript">` per
+  item. `groupId` + `persist` sync a set across pages: `groupId="lang"` is the
+  SDK language switcher (TypeScript, JavaScript, C#, Lua, Haxe, GDScript, Dart),
+  and `schema-style` the builder/decorator choice.
+- `<Callout type="info|warn|error">`, `<Steps>` with a `<Step>` per step,
+  `<Accordions>` / `<Accordion title>`, `<Files>` / `<Folder>` / `<File>`,
+  and `<Cards>` / `<Card icon title href>` (children become the description).
+- Card icons come from lucide, imported at the top of the page:
+  `import { Rocket } from 'lucide-react';`. Engine logos: `<Logo name="unity" />`.
+- Content shared by several pages lives in `content/partials/` and is pulled in
+  with `<include cwd>content/partials/name.mdx</include>`.
+
+Code fences take `title="file.ts"`. Highlight lines with a
+[Shiki notation](https://shiki.style/packages/transformers) comment on its own
+line above them: `// [!code highlight]` for one line, `// [!code highlight:3]`
+for three (`#` or `--` in languages that comment that way). A ```` ```npm ````
+fence becomes npm/pnpm/yarn/bun tabs.
 
 ## Checks
 
 | Command | What it proves |
 | --- | --- |
-| `pnpm check-links` | Every internal link **and anchor** resolves against the heading ids the site renders, `movedAnchors` and `public/_redirects` are sound, and pages follow the content conventions (no imports, no links in headings, valid tab values). `next build` checks none of this. |
+| `pnpm check-links` | Every internal link **and anchor** resolves against the heading ids the site renders, `movedAnchors` and `public/_redirects` are sound, and pages follow the content conventions (only lucide imports, no links in headings, tab `items` matching their values). `next build` checks none of this. |
 | `pnpm check:ai-nav` | The committed `llms.txt` and `robots.txt` match the sidebar, and every page is in the sidebar. |
 | `pnpm lint:prose` | Vale over `content/docs/`. Terminology and em-dash violations are errors and gate CI; everything else is advisory. |
 | `pnpm types:check` | TypeScript over the app, components, and config. |

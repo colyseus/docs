@@ -16,16 +16,14 @@ function from `colyseus` for easy integration with its infrastructure.
 
 In order to deploy your Colyseus application to Colyseus Cloud, you need to follow the project template from `npm create colyseus-app@latest` command:
 
-<div className="text-center">
 ![Project structure](/cloud/project-structure.png)
-</div>
 
 The key important configurations the template provide are:
 
 1. Usage of `defineServer()` from `colyseus` to start the application
 2. An `ecosystem.config.js` file at the root of the project (with the `"script"` pointing to your application's entrypoint)
 
-<Tabs>
+<Tabs items={["src/app.config.ts", "ecosystem.config.js"]}>
     <Tab value="src/app.config.ts">
 
     ```ts title="src/app.config.ts"
@@ -48,12 +46,13 @@ The key important configurations the template provide are:
 
     <Tab value="ecosystem.config.js">
 
-    ```js {6} title="ecosystem.config.js"
+    ```js title="ecosystem.config.js"
     const os = require('os');
 
     module.exports = {
         apps : [{
             name: "colyseus-app",
+            // [!code highlight]
             script: 'build/index.js',
             time: true,
             watch: false,

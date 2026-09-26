@@ -12,8 +12,6 @@ export const docs = defineDocs({
       sidebarTitle: z.string().optional(),
       /** Old heading slug -> new `/path#anchor`, for anchors that moved off this page. */
       movedAnchors: z.record(z.string().regex(/^[\w-]+$/), z.string().startsWith('/')).optional(),
-      /** The page renders its own heading (the home page hero). */
-      hideTitle: z.boolean().optional(),
     }),
     postprocess: { includeProcessedMarkdown: llmsOptions },
   },

@@ -1,5 +1,5 @@
 /**
- * Prose linter for the docs — runs Vale over `content/docs/` with the rules in
+ * Prose linter for the docs — runs Vale over `content/` with the rules in
  * `styles/Colyseus/` and the terminology table in `STYLE.md`.
  *
  * Vale is a single Go binary and is intentionally *not* an npm dependency: the
@@ -13,12 +13,12 @@
  * warnings (sentence length, ambiguous `This`, idioms).
  *
  * Arguments are forwarded to Vale, which is how the pre-commit hook narrows the
- * run to the staged files at error level. With none, it lints all of `content/docs/`.
+ * run to the staged files at error level. With none, it lints all of `content/`.
  */
 import { spawnSync } from 'node:child_process'
 
 const args = process.argv.slice(2)
-const result = spawnSync('vale', args.length > 0 ? args : ['content/docs/'], { stdio: 'inherit' })
+const result = spawnSync('vale', args.length > 0 ? args : ['content/'], { stdio: 'inherit' })
 
 if (result.error?.code === 'ENOENT') {
     console.warn(

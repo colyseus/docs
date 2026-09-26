@@ -3,11 +3,6 @@
 @import 'fumadocs-ui/css/preset.css';
 @import '../style.css';
 
-/* Octicons set `display` as an SVG attribute, which preflight's `svg { display: block }` overrides. */
-svg.octicon {
-  display: inline-block;
-}
-
 /* Nextra's default blue, so links and accents keep their look. */
 :root {
   --color-fd-primary: hsl(212 100% 45%);

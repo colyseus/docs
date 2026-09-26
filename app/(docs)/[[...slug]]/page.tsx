@@ -40,15 +40,11 @@ export default async function Page(props: { params: Promise<{ slug?: string[] }>
       tableOfContentPopover={{ footer: <EditOnGitHub href={edit} /> }}
     >
       {page.data.movedAnchors && <MovedAnchors path={page.url} map={page.data.movedAnchors} />}
-      {!page.data.hideTitle && (
-        <>
-          <DocsTitle>{page.data.title}</DocsTitle>
-          <div className="flex flex-row gap-2 items-center border-b pb-4 not-prose">
-            <MarkdownCopyButton markdownUrl={md} />
-            <ViewOptionsPopover markdownUrl={md} githubUrl={edit} />
-          </div>
-        </>
-      )}
+      <DocsTitle>{page.data.title}</DocsTitle>
+      <div className="flex flex-row gap-2 items-center border-b pb-4 not-prose">
+        <MarkdownCopyButton markdownUrl={md} />
+        <ViewOptionsPopover markdownUrl={md} githubUrl={edit} />
+      </div>
       <DocsBody>
         <MDX components={getMDXComponents()} />
       </DocsBody>

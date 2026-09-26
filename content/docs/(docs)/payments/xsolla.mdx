@@ -5,6 +5,8 @@ sidebarTitle: "Xsolla"
 icon: "logo:xsolla"
 ---
 
+import { ExternalLink, FolderGit2 } from 'lucide-react';
+
 [Xsolla](https://xsolla.com/?utm_source=colyseus&utm_medium=referral&utm_campaign=colyseus-docs) is a global **merchant of record** that supports a wide range of payment methods and currencies.
 
 <Callout type="info">
@@ -18,27 +20,32 @@ icon: "logo:xsolla"
 - **Xsolla Webhooks**: The Colyseus backend will respond to Xsolla **webhooks** for user validation and payment confirmation
 
 <Cards>
-    <Card icon={<MarkGithubIcon/>} title="Full source-code" href="https://github.com/colyseus/colyseus-xsolla-integration" />
-    <Card icon={<LinkExternalIcon/>} title="Xsolla Documentation" href="https://developers.xsolla.com/" />
+    <Card icon={<FolderGit2 />} title="Full source-code" href="https://github.com/colyseus/colyseus-xsolla-integration" />
+    <Card icon={<ExternalLink />} title="Xsolla Documentation" href="https://developers.xsolla.com/" />
 </Cards>
 
 <Cards>
-    <Card icon={<LinkExternalIcon/>} title="Live demo" href="https://xsolla.colyseus.cloud/">
-        <img style={{ display: "inline"}} src="/tutorial/xsolla/screenshot.png" alt="Screenshot" />
+    <Card icon={<ExternalLink />} title="Live demo" href="https://xsolla.colyseus.cloud/">
+        ![Screenshot](/tutorial/xsolla/screenshot.png)
     </Card>
 </Cards>
 
 ## Xsolla Account Setup
 
 <Steps>
+<Step>
 ### Register for Xsolla Publisher Account
 
-    By registering from [this link](https://publisher.xsolla.com/signup?target_product=pay_station&utm_source=colyseus&utm_medium=referral&utm_campaign=colyseus-docs), you will be supporting Colyseus <span style={{ marginLeft: "2px", color: "red" }}><HeartFillIcon /></span>
+    By registering from [this link](https://publisher.xsolla.com/signup?target_product=pay_station&utm_source=colyseus&utm_medium=referral&utm_campaign=colyseus-docs), you will be supporting Colyseus.
+</Step>
 
+<Step>
 ### Create Project
 
     ![Create Project](/tutorial/xsolla/create-project.png)
+</Step>
 
+<Step>
 ### Create Virtual Item
 
     Virtual items are one-time purchases. If you plan to sell virtual items, let's create the first one.
@@ -48,7 +55,9 @@ icon: "logo:xsolla"
     <Callout type="info">
         See ["Set up virtual item"](https://developers.xsolla.com/doc/shop-builder/features/virtual-items/#shop_builder_virtual_items_set_up_in_pa_create_item) for more information.
     </Callout>
+</Step>
 
+<Step>
 ### Configure Subscriptions
 
     Xsolla supports 3 types of subscriptions:
@@ -60,13 +69,17 @@ icon: "logo:xsolla"
     <Callout type="info">
         See ["Set up subscription plan"](https://developers.xsolla.com/doc/subscriptions/integration-guide/set-up-plan/) for more information.
     </Callout>
+</Step>
 
+<Step>
 ### Create "All projects" API Key
 
     To create an "All projects" API Key, go to your company settings, select the "API keys" section, and create a new API key.
 
     ![Get API Credentials](/tutorial/xsolla/api-key.png)
+</Step>
 
+<Step>
 ### Environment Variables
 
 You will need to set the following environment variables in your Colyseus server. Make sure to replace the values with your own.
@@ -78,6 +91,7 @@ You will need to set the following environment variables in your Colyseus server
 | `XSOLLA_API_KEY` | Create an "All projects" API Key in your company settings → "API keys" section |
 | `XSOLLA_WEBHOOK_SECRET_KEY` | See [Webhooks](#webhooks) section for instructions on how to get this value |
 | `NODE_ENV` | Set to `development` for testing, `production` for live environment |
+</Step>
 
 </Steps>
 
@@ -85,9 +99,7 @@ You will need to set the following environment variables in your Colyseus server
 
 The following diagram shows how the payment flow works.
 
-<div align="center" style={{ margin: "1.5em 0" }}>
-    ![How webhooks work](/tutorial/xsolla/webhooks-general.svg)
-</div>
+![How webhooks work](/tutorial/xsolla/webhooks-general.svg)
 
 In the next sections, we will cover each step in detail.
 
@@ -95,17 +107,18 @@ In the next sections, we will cover each step in detail.
 
 <Steps>
 
+<Step>
 ### Generate the Payment Token
 
     To initiate a purchase, we first need to generate a **Payment Token**. This step is required to later open the Xsolla **Pay Station** UI.
 
     Use the following snippets and modify them to fit your needs.
 
-    <Callout type="warning">
-        For simplicity's sake, this article only presents the code for direct integration with Xsolla. <br/> The snippets from this section should be used as backend HTTP API routes, as shown in [<FileCodeIcon/> `src/routes/xsolla.ts`](https://github.com/colyseus/colyseus-xsolla-integration/blob/main/src/routes/xsolla.ts) file from [<MarkGithubIcon/> Colyseus Xsolla Integration](https://github.com/colyseus/colyseus-xsolla-integration/) repository.
+    <Callout type="warn">
+        For simplicity's sake, this article only presents the code for direct integration with Xsolla. <br/> The snippets from this section should be used as backend HTTP API routes, as shown in [`src/routes/xsolla.ts`](https://github.com/colyseus/colyseus-xsolla-integration/blob/main/src/routes/xsolla.ts) file from [Colyseus Xsolla Integration](https://github.com/colyseus/colyseus-xsolla-integration/) repository.
     </Callout>
 
-    <Tabs>
+    <Tabs items={["Virtual Item(s)", "Subscription"]}>
         <Tab value="Virtual Item(s)">
             <Callout type="info">
                 See ["Shop Builder API: Create payment token for purchase"](https://developers.xsolla.com/api/shop-builder/operation/admin-create-payment-token/) for more information.
@@ -215,7 +228,9 @@ In the next sections, we will cover each step in detail.
         </Tab>
 
     </Tabs>
+</Step>
 
+<Step>
 ### Open Payment UI
 
     After generating the payment token, you can open the Xsolla **Pay Station** UI from the frontend.
@@ -224,7 +239,7 @@ In the next sections, we will cover each step in detail.
         See ["Open Payment UI"](https://developers.xsolla.com/doc/subscriptions/integration-guide/open-payment-ui/) for more information.
     </Callout>
 
-    <Tabs>
+    <Tabs items={["Open in Iframe", "Open in Embed Widget", "Open in New Window"]}>
         <Tab value="Open in Iframe">
             ```typescript title="client.ts"
             //
@@ -298,8 +313,8 @@ In the next sections, we will cover each step in detail.
         </Tab>
     </Tabs>
 
-    <details>
-        <summary><BellIcon/> Listening to events from the Pay Station UI</summary>
+    <Accordions>
+    <Accordion title="Listening to events from the Pay Station UI">
 
         ---
 
@@ -338,20 +353,23 @@ In the next sections, we will cover each step in detail.
          */
         window.addEventListener('message', postMessageListener);
         ```
-    </details>
+    </Accordion>
+    </Accordions>
 
     **Example: Purchasing a single virtual item with the Pay Station UI**
 
     ![Pay Station UI](/tutorial/xsolla/payment-ui.png)
+</Step>
 
+<Step>
 ### Webhooks
 
 From your Xsolla project, navigate to **"Payments → Webhooks"**, paste the URL of your publicly accessible Colyseus server and click to **"Enable webhooks"**.
 
 ![Enable webhooks](/tutorial/xsolla/webhooks-enable.png)
 
-<details>
-<summary><DeviceDesktopIcon/> Testing webhooks from a **local server**</summary>
+<Accordions>
+<Accordion title="Testing webhooks from a local server">
 
 ---
 
@@ -376,9 +394,10 @@ https://[random-string].trycloudflare.com
 ```
 
 4. Paste the public URL in the Xsolla Webhook server field and enable webhooks.
-</details>
+</Accordion>
+</Accordions>
 
-<Callout type="warning">
+<Callout type="warn">
     Whenever you change the **Webhook server URL**, make sure to copy the updated **"Secret key"** value and paste it in the `XSOLLA_WEBHOOK_SECRET_KEY` environment variable.
 </Callout>
 
@@ -518,10 +537,11 @@ function processWebhook(data: any, res: Response): void {
     res.status(204).send();
 }
 ```
+</Step>
 </Steps>
 
 ## Recommendations
 
-- Use the [<PasskeyFillIcon/> Authentication → HTTP Middleware](/auth/http) to authenticate the user's request before generating the payment token.
-- Use one of the [<DatabaseIcon/> Database](/database) recommended solutions for storing, retrieving and validating the user's data.
+- Use the [Authentication → HTTP Middleware](/auth/http) to authenticate the user's request before generating the payment token.
+- Use one of the [Database](/database) recommended solutions for storing, retrieving and validating the user's data.
 - Disallow receiving webhooks from IPs that are not Xsolla IPs. (See [Xsolla IP ranges](https://developers.xsolla.com/webhooks/overview/#section/Webhook-listener))

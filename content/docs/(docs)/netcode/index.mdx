@@ -3,6 +3,8 @@ title: "Netcode"
 description: "Server-authoritative simulation with client-side prediction, server reconciliation, and lag compensation in Colyseus 0.18: instant local response, interpolated remotes, and rewind-based hit registration."
 ---
 
+import { FlaskConical, Goal, ListChecks, MonitorSmartphone, Server } from 'lucide-react';
+
 Fast-paced games can't wait for the network. If your character only moves after a round-trip to the server, controls feel sluggish. But if the client simply moves itself, the server is no longer in charge and cheating becomes trivial.
 
 Colyseus 0.18 gives you both: the server stays authoritative, and the client **predicts**. Your own movement responds instantly, remote players move smoothly, and hits register against what you saw on screen. The framework runs the prediction, reconciliation, and rewind loops. You supply the deterministic step function.
@@ -66,11 +68,11 @@ Every interaction in your game maps onto a small set of primitives. Find the row
 New to prediction? Read top to bottom. Each page builds on the one before it:
 
 <Cards>
-  <Card icon={<ServerIcon />} title="Server Input & Timestep" href="/netcode/server-input" />
-  <Card icon={<DevicesIcon />} title="Client Prediction" href="/netcode/client-prediction" />
-  <Card icon={<GoalIcon />} title="Lag Compensation" href="/netcode/lag-compensation" />
-  <Card icon={<ChecklistIcon />} title="Determinism & The Contract" href="/netcode/determinism" />
-  <Card icon={<BeakerIcon />} title="Recipes" href="/netcode/recipes" />
+  <Card icon={<Server />} title="Server Input & Timestep" href="/netcode/server-input" />
+  <Card icon={<MonitorSmartphone />} title="Client Prediction" href="/netcode/client-prediction" />
+  <Card icon={<Goal />} title="Lag Compensation" href="/netcode/lag-compensation" />
+  <Card icon={<ListChecks />} title="Determinism & The Contract" href="/netcode/determinism" />
+  <Card icon={<FlaskConical />} title="Recipes" href="/netcode/recipes" />
 </Cards>
 
 ## Runnable reference
@@ -79,11 +81,11 @@ The [**Prediction Playground**](https://prediction-colyseus.vercel.app/) covers 
 
 ### Premium demos
 
-The playground isolates each concept. These <PremiumDemoCount /> prototypes combine them: authoritative server, client prediction, smoothed remotes and lag compensation running as one stack. Each is playable in the browser.
+The playground isolates each concept. These prototypes combine them: authoritative server, client prediction, smoothed remotes and lag compensation running as one stack. Each is playable in the browser.
 
 The set is actively expanding, with new prototypes and with more engine ports of the existing ones. Air Hockey already ships Godot and Unity clients alongside its Three.js build.
 
-<PremiumDemos />
+<include cwd>content/partials/premium-demos.mdx</include>
 
 <Callout type="info">
     Coming from the manual approach? The [Phaser tutorial](/learn/tutorial/phaser/linear-interpolation) builds prediction, interpolation, and a fixed tick rate **by hand** to teach the concepts. This section documents the built-in 0.18 API that does the same work for you.

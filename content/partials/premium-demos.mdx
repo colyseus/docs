@@ -1,0 +1,43 @@
+{/* Shared by /learn and /netcode through <include>. */}
+
+<Cards>
+    <Card title="Air Hockey" href="https://air-hockey-colyseus.vercel.app/">
+        ![Air Hockey](/demos/netcode/air-hockey.webp)
+
+        3D air hockey where everything is predicted: your mallet, the puck, hits and even goals resolve locally and are settled by the server. First to 7 wins.
+
+        Three.js · Godot · Unity
+    </Card>
+    <Card title="ColyStrike (FPS)" href="https://colystrike.vercel.app/">
+        ![ColyStrike (FPS)](/demos/netcode/fps.webp)
+
+        First-person shooter: predicted movement with reconciliation, server-validated hitscan with lag compensation, and a C4 plant and defuse loop.
+
+        Three.js
+    </Card>
+    <Card title="MOBA" href="https://moba-colyseus.vercel.app/">
+        ![MOBA](/demos/netcode/moba.webp)
+
+        A 3-lane MOBA on a deterministic shared simulation: fixed timestep and client prediction driving heroes, creeps, towers and 5v5 bot matches.
+
+        Three.js
+    </Card>
+    <Card title="Platformer" href="https://platformer-colyseus.vercel.app/">
+        ![Platformer](/demos/netcode/platformer.webp)
+
+        2.5D platformer built as a prediction harness: reconciled movement, rideable moving platforms, and stomps and dashes that hold up under lag.
+
+        Three.js
+    </Card>
+    <Card title="Colyseus Karts" href="https://racing-colyseus.vercel.app/">
+        ![Colyseus Karts](/demos/netcode/racing.webp)
+
+        Kart racing with hold-to-drift mini-turbos, item boxes and rockets: rollback prediction, dead-reckoned projectiles, and rewind-based hit checks.
+
+        Three.js
+    </Card>
+</Cards>
+
+The source code is the sponsor-only part: these repositories are private, open to [Colyseus sponsors](https://github.com/sponsors/endel). [Air Hockey](https://github.com/colyseus/air-hockey-demo) · [ColyStrike (FPS)](https://github.com/colyseus/fps-colystrike-demo) · [MOBA](https://github.com/colyseus/moba-demo) · [Platformer](https://github.com/colyseus/platformer-demo) · [Colyseus Karts](https://github.com/colyseus/racing-karts-demo).
+
+[Become a sponsor for the source code →](https://github.com/sponsors/endel)

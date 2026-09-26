@@ -1,45 +1,29 @@
+import type { ComponentProps } from 'react';
 import defaultMdxComponents from 'fumadocs-ui/mdx';
+import * as TabsComponents from 'fumadocs-ui/components/tabs';
+import { Step, Steps } from 'fumadocs-ui/components/steps';
+import { Accordion, Accordions } from 'fumadocs-ui/components/accordion';
 import { File, Files, Folder } from 'fumadocs-ui/components/files';
-import * as Octicons from '@primer/octicons-react';
 import type { MDXComponents } from 'mdx/types';
 import { Logo } from '@/lib/icons';
-import { LangTabs, Tab, Tabs } from './mdx/tabs';
-import { Steps } from './mdx/steps';
 import { Mermaid } from './mdx/mermaid';
-import { Hero } from './mdx/hero';
-import { Img } from './mdx/image';
-import { ScenarioCard, ScenarioGrid } from './scenario-card';
-import { Client, ClientList, DemoSource } from './client-list';
-import { PremiumDemoCount, PremiumDemos } from './premium-demos';
 
-// Every octicon (`<PeopleIcon/>`) is usable in MDX without an import.
-const octicons = Object.fromEntries(
-  Object.entries(Octicons).filter(([name]) => name.endsWith('Icon')),
-) as Record<string, React.ComponentType<Octicons.IconProps>>;
-
-/** Every component a page can use. Pages import nothing. */
+/** Fumadocs' built-in components, available in every page without an import. */
 export function getMDXComponents(components?: MDXComponents) {
   return {
-    ...octicons,
     ...defaultMdxComponents,
-    img: Img,
-    Tabs,
-    Tab,
-    LangTabs,
+    ...TabsComponents,
+    // Keep inactive panels in the static HTML (hidden), so every language's code is crawlable.
+    Tab: (props: ComponentProps<typeof TabsComponents.Tab>) => <TabsComponents.Tab keepMounted {...props} />,
     Steps,
-    Mermaid,
+    Step,
+    Accordions,
+    Accordion,
     Files,
     Folder,
     File,
+    Mermaid,
     Logo,
-    Hero,
-    ScenarioGrid,
-    ScenarioCard,
-    ClientList,
-    Client,
-    DemoSource,
-    PremiumDemos,
-    PremiumDemoCount,
     ...components,
   } satisfies MDXComponents;
 }

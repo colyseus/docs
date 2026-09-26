@@ -57,12 +57,11 @@ npm run cloudflared
 
 You will need to update your Discord Activity's "OAuth2 → Redirect URL" and "URL Mappings → Target" to the URL provided by `cloudflared`:
 
-<div float="left">
-  <img src="/tutorial/discord/settings-oauth.png" width="49%" />
-  <img src="/tutorial/discord/settings-url-mappings.png" width="49%" />
-</div>
+![OAuth2 redirect settings](/tutorial/discord/settings-oauth.png)
 
-<Callout type="warning">
+![URL mapping settings](/tutorial/discord/settings-url-mappings.png)
+
+<Callout type="warn">
   Each time you run `cloudflared`, it will generate a new URL. Be sure to update your Discord Activity's "OAuth2 → Redirect URL" and "URL Mappings → Target" to the new URL.
 </Callout>
 

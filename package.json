@@ -27,11 +27,11 @@
   "homepage": "https://github.com/colyseus/docs#readme",
   "dependencies": {
     "@next/third-parties": "^16.3.6",
-    "@primer/octicons-react": "19.38.0",
-    "@shikijs/transformers": "^4.4.3",
     "fumadocs-core": "16.15.14",
     "fumadocs-mdx": "15.4.5",
     "fumadocs-ui": "npm:@fumadocs/base-ui@16.15.14",
+    "lucide-react": "^1.48.0",
+    "mdast-util-to-markdown": "^2.1.2",
     "mermaid": "^12.0.0",
     "next": "16.3.6",
     "react": "^19.3.0",

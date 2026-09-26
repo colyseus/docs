@@ -12,8 +12,9 @@
  * - **`public/_redirects`**: targets resolve, no rule is dead, shadowed, or loops
  *
  * Plus the content conventions a build would only catch as a runtime bug:
- * no imports (components are global), no relative links, no links inside
- * headings (nested <a> breaks hydration), and tabs with explicit values.
+ * imports only for lucide icons (Fumadocs components are global), no relative
+ * links, no links inside headings (nested <a> breaks hydration), and tabs whose
+ * `items` match their `<Tab value>`s.
  *
  * Anchor checking is the point: a link to a heading that was renamed still
  * loads the page, so it never shows up as a 404 and rots silently.
@@ -91,7 +92,8 @@ for (const { page, tree } of parsed.values()) {
                 check(node.url, line)
                 break
             case 'mdxjsEsm':
-                report(file, line, 'import', 'no imports in content: register the component in components/mdx.tsx')
+                if (!/^import\s*\{[^}]*\}\s*from\s*['"]lucide-react['"];?\s*$/.test(node.value.trim()))
+                    report(file, line, 'import', 'only lucide-react icons are imported; Fumadocs components are global (components/mdx.tsx)')
                 break
             case 'heading': {
                 let hasLink = false
@@ -105,14 +107,17 @@ for (const { page, tree } of parsed.values()) {
                     const v = attr(node, name)
                     if (typeof v === 'string') check(v, line)
                 }
-                if (node.name === 'Tabs' || node.name === 'LangTabs') {
+                if (node.name === 'Tabs') {
                     // a one-line <Tab> parses as inline JSX inside a paragraph
                     const tabs = node.children.flatMap((c) => (c.type === 'paragraph' ? c.children : [c]))
                     const values = tabs.filter((c) => c.name === 'Tab').map((t) => attr(t, 'value'))
-                    if (values.some((v) => typeof v !== 'string')) report(file, line, node.name, '<Tab> without a string value')
-                    if (new Set(values).size !== values.length) report(file, line, node.name, 'duplicate <Tab> values')
-                    if (node.name === 'LangTabs') {
-                        for (const v of values) if (typeof v === 'string' && !LANGUAGES.has(v)) report(file, line, v, `not a LangTabs language (${[...LANGUAGES].join(', ')})`)
+                    let items
+                    try { items = new Function(`return (${attr(node, 'items')?.value})`)() } catch {}
+                    if (values.some((v) => typeof v !== 'string')) report(file, line, 'Tabs', '<Tab> without a string value')
+                    if (new Set(values).size !== values.length) report(file, line, 'Tabs', 'duplicate <Tab> values')
+                    if (JSON.stringify(items) !== JSON.stringify(values)) report(file, line, 'Tabs', `items don't match the <Tab> values in order: ${JSON.stringify(items)}`)
+                    if (attr(node, 'groupId') === 'lang') {
+                        for (const v of values) if (typeof v === 'string' && !LANGUAGES.has(v)) report(file, line, v, `not a groupId="lang" language (${[...LANGUAGES].join(', ')})`)
                     }
                 }
                 break
@@ -124,6 +129,24 @@ for (const { page, tree } of parsed.values()) {
         if (anchors.get(page.route).has(slug)) report(file, 1, `movedAnchors.${slug}`, 'still a live heading on this page')
         const reason = resolve(target, page.route)
         if (reason) report(file, 1, `movedAnchors.${slug}: ${target}`, reason)
+    }
+}
+
+// ---- partials (pulled into pages with <include>) ------------------------------
+
+{
+    const dir = path.join(root, 'content', 'partials')
+    for (const name of fs.existsSync(dir) ? fs.readdirSync(dir) : []) {
+        const file = `content/partials/${name}`
+        const tree = processor.parse(fs.readFileSync(path.join(dir, name), 'utf8'))
+        visit(tree, (node) => {
+            const targets = ['link', 'definition', 'image'].includes(node.type) ? [node.url] : ['href', 'src'].map((a) => attr(node, a)).filter((v) => typeof v === 'string')
+            for (const t of targets) {
+                if (!t.startsWith('/') && !t.startsWith('#')) continue
+                const reason = resolve(t, '/')
+                if (reason) report(file, node.position?.start.line, t, reason)
+            }
+        })
     }
 }
 

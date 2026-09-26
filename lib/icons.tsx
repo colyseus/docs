@@ -1,5 +1,5 @@
 import { createElement, type ElementType } from 'react';
-import * as Octicons from '@primer/octicons-react';
+import { icons } from 'lucide-react';
 import javascript from '@/images/icons/javascript.png';
 import typescript from '@/images/icons/typescript.png';
 import react from '@/images/icons/react.png';
@@ -35,13 +35,14 @@ export function Logo({ name, className = 'size-4' }: { name: LogoName; className
 }
 
 /**
- * Resolves the `icon` of a page (frontmatter) or folder (meta.json):
- * `PeopleIcon` is an octicon, `logo:unity` an engine logo. Unknown names fail the build.
+ * Resolves the `icon` of a page (frontmatter) or folder (meta.json): a lucide
+ * name (`Server`), as Fumadocs' lucideIconsPlugin does, or `logo:unity` for an
+ * engine logo, which lucide doesn't carry. Unknown names fail the build.
  */
 export function resolveIcon(name: string | undefined) {
   if (!name) return;
   if (name.startsWith('logo:')) return <Logo name={name.slice(5) as LogoName} />;
-  const Icon = (Octicons as Record<string, unknown>)[name];
-  if (!Icon) throw new Error(`Unknown octicon "${name}"`);
+  const Icon = icons[name as keyof typeof icons];
+  if (!Icon) throw new Error(`Unknown lucide icon "${name}"`);
   return createElement(Icon as ElementType);
 }

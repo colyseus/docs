@@ -2,46 +2,48 @@
 title: "Colyseus - Multiplayer Game Framework for Node.js"
 description: "Colyseus is an open-source multiplayer framework for Node.js. Build authoritative game servers with real-time state synchronization, matchmaking, built-in client prediction, and SDKs for every major game engine."
 sidebarTitle: "Introduction"
-icon: "HomeIcon"
-hideTitle: true
+icon: "House"
 ---
 
-<Hero />
+import { BookMarked, Code, FileCode, MonitorSmartphone, RefreshCw, Server, Users, Zap } from 'lucide-react';
+
+![Colyseus Multiplayer Framework](/hero.webp)
 
 Colyseus is an open-source Node.js framework for building authoritative game servers, with real-time state synchronization, matchmaking, and simple integration into any game engine or frontend. Authentication, database services, an admin panel, and dev tooling are all included.
 
 ## Key Features
 
-<ScenarioGrid>
-    <ScenarioCard icon={<PeopleIcon size={18}/>} title="Rooms & Matchmaking" href="/room">
+<Cards>
+    <Card icon={<Users />} title="Rooms & Matchmaking" href="/room">
         From a single Room definition, clients are matched into multiple room instances, with visibility flags, lobbies, and ranked queues.
-    </ScenarioCard>
-    <ScenarioCard icon={<SyncIcon size={18}/>} title="State Synchronization" href="/state">
+    </Card>
+    <Card icon={<RefreshCw />} title="State Synchronization" href="/state">
         Define your state on the server; clients receive binary delta patches automatically.
-    </ScenarioCard>
-    <ScenarioCard icon={<ZapIcon size={18}/>} title="Prediction-Ready Netcode" href="/netcode">
+    </Card>
+    <Card icon={<Zap />} title="Prediction-Ready Netcode" href="/netcode">
         Built-in client prediction, rollback, interpolation, and lag compensation, new in 0.18.
-    </ScenarioCard>
-    <ScenarioCard icon={<CodeIcon size={18}/>} title="Full-Stack Type Safety" href="/sdk">
+    </Card>
+    <Card icon={<Code />} title="Full-Stack Type Safety" href="/sdk">
         Share your server's types with the SDK: typed messages, typed join options, typed state.
-    </ScenarioCard>
-    <ScenarioCard icon={<DevicesIcon size={18}/>} title="Any Engine" href="/getting-started">
+    </Card>
+    <Card icon={<MonitorSmartphone />} title="Any Engine" href="/getting-started">
         Official SDKs for the Web, Unity, Godot, Defold, GameMaker, Construct, Haxe, and more.
-    </ScenarioCard>
-    <ScenarioCard icon={<ServerIcon size={18}/>} title="Scale & Deploy Anywhere" href="/scalability">
+    </Card>
+    <Card icon={<Server />} title="Scale & Deploy Anywhere" href="/scalability">
         Horizontal scaling across processes. Self-host for free, or use Colyseus Cloud for managed hosting.
-    </ScenarioCard>
-</ScenarioGrid>
+    </Card>
+</Cards>
 
 ## What does it look like?
 
 <Steps>
 
+<Step>
 ### Create a server
 
 Create and start a new Colyseus server using the following commands:
 
-<Tabs>
+<Tabs items={["Node.js", "Bun"]}>
 
   <Tab value="Node.js">
 ```sh title="Terminal: Node.js"
@@ -70,12 +72,14 @@ bun run src/index.ts
 ```
   </Tab>
 </Tabs>
+</Step>
 
+<Step>
 ### Define your Room State
 
 The Room state is the data structure that will be synchronized between the server and the connected clients:
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
     ```ts title="src/rooms/MyState.ts"
     import { schema, t } from "@colyseus/schema";
@@ -105,7 +109,9 @@ The Room state is the data structure that will be synchronized between the serve
     ```
     </Tab>
 </Tabs>
+</Step>
 
+<Step>
 ### Create your Room code
 
 Define the game logic and client interactions with the game state within your Room code.
@@ -141,27 +147,32 @@ export class MyRoom extends Room {
     onDispose() { }
 }
 ```
+</Step>
 
+<Step>
 ### Expose the Room identifier
 
 Exposing the room type allows clients to connect to the server and dynamically create instances of it.
 
-```ts {6} title="src/app.config.ts"
+```ts title="src/app.config.ts"
 import { defineServer, defineRoom } from "colyseus";
 import { MyRoom } from "./MyRoom";
 
 const server = defineServer({
     rooms: {
+        // [!code highlight]
         my_room: defineRoom(MyRoom),
     },
 });
 ```
+</Step>
 
+<Step>
 ### Join the Room from the client SDK
 
 Communication between the client and server occurs through room connections. Below are examples for each SDK showing how to join a room and listen for state changes:
 
-<LangTabs>
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts title="client.ts"
@@ -318,15 +329,18 @@ Communication between the client and server occurs through room connections. Bel
     ```
     </Tab>
 
-</LangTabs>
+</Tabs>
+</Step>
 
+<Step>
 ### Explore more
 
 Explore more about Colyseus by following the tutorials and example projects:
 
 <Cards>
-    <Card icon={<RepoIcon/>} title="Example Projects" href="/learn/examples" />
-    <Card icon={<FileCodeIcon/>} title="Tutorials" href="/learn/tutorial" />
+    <Card icon={<BookMarked />} title="Example Projects" href="/learn/examples" />
+    <Card icon={<FileCode />} title="Tutorials" href="/learn/tutorial" />
 </Cards>
+</Step>
 
 </Steps>

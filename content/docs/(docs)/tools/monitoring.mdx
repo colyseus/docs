@@ -5,7 +5,7 @@ description: "Use the Colyseus Monitoring Panel to view active rooms, inspect st
 
 The Colyseus Monitoring Panel is a browser-based administration tool for inspecting and managing your multiplayer server in real time. It gives you visibility into active rooms, connected clients, and room state. It also lets you take actions like disposing rooms, disconnecting clients, or broadcasting messages.
 
-<img src="https://github.com/colyseus/colyseus-monitor/blob/master/media/demo.gif?raw=1" />
+![The Monitoring Panel listing rooms and inspecting one](https://github.com/colyseus/colyseus-monitor/blob/master/media/demo.gif?raw=1)
 
 ## Features
 
@@ -16,7 +16,7 @@ The Colyseus Monitoring Panel is a browser-based administration tool for inspect
     - Send/broadcast messages for a client
     - Force disconnect a client
 
-<Callout type="warning">
+<Callout type="warn">
     The monitoring panel exposes full control over your rooms and clients. Do not expose it in production without password protection. See [Password protection](#password-protection) below.
 </Callout>
 
@@ -36,12 +36,14 @@ The monitor can be mounted in two ways.
 
 Spread `monitor()` into `createRouter`. The monitor is served at `/monitor` by default. Customize the mount path with the `prefix` option:
 
-```ts {2,6} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer, createRouter } from "colyseus";
+// [!code highlight]
 import { monitor } from "@colyseus/monitor";
 
 const server = defineServer({
     routes: createRouter({
+        // [!code highlight]
         ...monitor(), // served at /monitor by default
     })
 });
@@ -51,13 +53,15 @@ const server = defineServer({
 
 Use this mode if you rely on existing Express middleware or libraries:
 
-```ts {2,7} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
+// [!code highlight]
 import { monitor } from "@colyseus/monitor";
 
 const server = defineServer({
     // ...
     express: (app) => {
+        // [!code highlight]
         app.use("/monitor", monitor());
     }
 });
@@ -77,14 +81,17 @@ All active rooms spawned by your server are automatically listed, along with the
 
 The monitoring panel exposes full control over your rooms and clients. **Do not expose it in production without password protection.** Pass a guard middleware through the monitor's `use` option. Colyseus ships with a built-in [`basicAuth`](/server/http-routes#basic-authentication):
 
-```ts {1,4,8} title="app.config.ts"
+```ts title="app.config.ts"
+// [!code highlight]
 import { defineServer, createRouter, basicAuth } from "colyseus";
 import { monitor } from "@colyseus/monitor";
 
+// [!code highlight]
 const guard = basicAuth({ users: { admin: "s3cret" } });
 
 const server = defineServer({
     routes: createRouter({
+        // [!code highlight]
         ...monitor({ use: [guard] }),
     })
 });
