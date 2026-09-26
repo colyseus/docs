@@ -1,13 +1,15 @@
 ---
 title: "Getting Started"
 description: "Get started with Colyseus multiplayer framework. Scaffold a server with npm create colyseus-app, then choose your client SDK for TypeScript, JavaScript, React, Unity, Defold, Construct 3, Cocos Creator, Haxe, Flutter, Swift, and more."
-icon: "NorthStarIcon"
+icon: "Sparkles"
 ---
+
+import { RefreshCw, Rows3, Zap } from 'lucide-react';
 
 ## Prerequisites
 
-- [<DownloadIcon /> Node.js](https://nodejs.org/) LTS version (or [Bun](https://bun.sh/))
-- [<DownloadIcon /> Git](https://git-scm.com/downloads)
+- [Node.js](https://nodejs.org/) LTS version (or [Bun](https://bun.sh/))
+- [Git](https://git-scm.com/downloads)
 - A code editor ([VS Code](https://code.visualstudio.com/) recommended)
 
 ## Frontend
@@ -37,9 +39,10 @@ Colyseus is unopinionated on the game engine or framework you use in the fronten
 Run one command and follow the prompts to create your local development server.
 
 <Steps>
+<Step>
 ### Create your Colyseus server
 
-<Tabs groupId="package-manager" persist>
+<Tabs items={["npm", "pnpm", "yarn", "Bun"]} groupId="package-manager" persist>
 
   <Tab value="npm">
 ```bash title="Terminal: npm"
@@ -96,16 +99,19 @@ bun run src/index.ts
 </Tabs>
 
 The generator asks which language to use and what you're building. **Minimal server** is enough to follow along. See [Scaffolding options](#scaffolding-options) for every preset and flag.
+</Step>
 
+<Step>
 ### Edit your room code
 
 Go to `src/rooms/MyRoom.ts` and start building your game logic! See more:
 
 <Cards>
-    <Card icon={<RowsIcon/>} title="Room API" href="/room" />
-    <Card icon={<SyncIcon/>} title="State Synchronization" href="/state" />
-    <Card icon={<ZapIcon/>} title="Netcode: Prediction & Lag Comp" href="/netcode" />
+    <Card icon={<Rows3 />} title="Room API" href="/room" />
+    <Card icon={<RefreshCw />} title="State Synchronization" href="/state" />
+    <Card icon={<Zap />} title="Netcode: Prediction & Lag Comp" href="/netcode" />
 </Cards>
+</Step>
 
 </Steps>
 

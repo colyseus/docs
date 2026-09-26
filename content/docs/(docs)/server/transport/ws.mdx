@@ -11,13 +11,15 @@ The `WebSocketTransport` with its default options is going to be used automatica
 
 ## Example
 
-```ts {2,7-11} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
+// [!code highlight]
 import { WebSocketTransport } from "@colyseus/ws-transport"
 
 const server = defineServer({
   // ...
 
+  // [!code highlight:5]
   transport: new WebSocketTransport({
     pingInterval: 6000,
     pingMaxRetries: 4,
@@ -36,16 +38,18 @@ const server = defineServer({
 
 A Node.js http server instance to re-use for the WebSocket server. Useful when you'd like to use Express along with Colyseus.
 
-<Tabs>
+<Tabs items={["Example", "Example + Express"]}>
     <Tab value="Example">
-    ```ts {3,8-10} title="app.config.ts"
+    ```ts title="app.config.ts"
     import { createServer } from "http";
     import { defineServer } from "@colyseus/core";
+    // [!code highlight]
     import { WebSocketTransport } from "@colyseus/ws-transport"
 
     const httpServer = createServer(); // create the http server manually
 
     const server = defineServer({
+      // [!code highlight:3]
       transport: new WebSocketTransport({
         server: httpServer // provide the custom server for `WebSocketTransport`
       })
@@ -54,16 +58,20 @@ A Node.js http server instance to re-use for the WebSocket server. Useful when y
     </Tab>
 
     <Tab value="Example + Express">
-    ```ts {1,4,6-7,10-12} title="server.ts"
+    ```ts title="server.ts"
+    // [!code highlight]
     import express from "express";
     import { createServer } from "http";
     import { defineServer } from "@colyseus/core";
+    // [!code highlight]
     import { WebSocketTransport } from "@colyseus/ws-transport"
 
+    // [!code highlight:2]
     const app = express();
     const httpServer = createServer(app); // create the http server manually
 
     const server = defineServer({
+      // [!code highlight:3]
       transport: new WebSocketTransport({
         server: httpServer // provide the custom server for `WebSocketTransport`
       })

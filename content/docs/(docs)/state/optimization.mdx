@@ -74,7 +74,7 @@ Strings carry a length prefix: 1 byte under 32 UTF-8 bytes, 2 under 256, then 3 
 
 **Field count barely matters on the wire.** A field at index 62 costs the same single byte as a field at index 0. A `Schema` with 8 fields or fewer does track its changes more cheaply, without a per-instance array allocation. The bytes it produces are identical, so this is a memory saving rather than a bandwidth one.
 
-<Callout type="warning">
+<Callout type="warn">
     A `Schema` holds at most **63 fields**. Colyseus rejects the 64th field where the class is defined. A field index shares one byte with the operation code, and the last combination collides with the marker that starts a new structure. Nest a child `Schema` before you reach the cap.
 </Callout>
 
@@ -92,7 +92,7 @@ Most `ArraySchema` operations cost far less than people assume:
 | `clear()` | 1 byte, and it discards any operations already pending |
 | **`sort()`** | **The entire array** |
 
-<Callout type="warning">
+<Callout type="warn">
     **`sort()` re-sends every element.** The call marks every index as changed. A sorted array of 200 entities therefore produces a full 200-element patch, every time. Sort a plain copy on the client instead, or sort a separate array of indexes.
 </Callout>
 
@@ -155,7 +155,7 @@ Two properties of this API are worth stating plainly, because neither is guessab
     Use this for an instance's own fields. Pausing a parent does not pause the child instances hanging off it. A structural change, such as inserting into a collection, is still recorded on the structure that owns it.
 </Callout>
 
-<Callout type="warning">
+<Callout type="warn">
     **A mutation made while tracking is paused never reaches clients that are already connected.** It is not queued, and resuming does not flush it. The value stays invisible until something marks the field dirty: a later ordinary mutation, an explicit `setDirty()`, or a full state sync on join.
 </Callout>
 
@@ -165,7 +165,7 @@ Two costs apply once per client, at join time, rather than every tick.
 
 **Fields left `undefined`, and fields set to `null`, are skipped entirely in the full state sync.** An `.optional()` field that is never assigned costs nothing. So does a [`.deprecated()`](/state/schema#versioning-and-backwardsforwards-compatibility) field: its setter is a no-op, so it never holds a value to send.
 
-<Callout type="warning">
+<Callout type="warn">
     `.deprecated(false)` is the exception. Silencing the access error keeps the real accessors, so the field can still hold a value. That value then ships in every full state sync. A retired field also keeps its slot against the 63-field cap.
 </Callout>
 

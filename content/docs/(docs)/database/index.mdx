@@ -7,7 +7,7 @@ The recommended way to persist game data in Colyseus is **`@colyseus/database`**
 
 A single `GameDatabase` instance exposes:
 
-- **`db.auth`**: user store for [<PasskeyFillIcon/> `@colyseus/auth`](/auth/module): bans, session revocation, password management
+- **`db.auth`**: user store for [`@colyseus/auth`](/auth/module): bans, session revocation, password management
 - **`db.saves`**: versioned cloud saves with optimistic locking
 - **`db.leaderboards`**: keep-best scores, seasons, top-N and around-me queries
 - **`db.configs`**: typed, hot-reloadable live-ops configuration
@@ -33,7 +33,7 @@ For PostgreSQL, also install `postgres` ([postgres-js](https://github.com/porsag
 npm install --save postgres
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     A `postgres://` connection string always opens postgres-js, never `pg` (node-postgres). Drizzle's own PostgreSQL guide installs `pg`, so check which one you have. To keep `pg`, open the pool yourself and pass it as [`db`](#use-an-existing-drizzle-instance).
 </Callout>
 
@@ -58,11 +58,13 @@ Keep a single copy of `drizzle-orm` in `node_modules`. With two copies, the code
 
 Construct a `GameDatabase` and pass it to `defineServer` via the `database` option. The server boots the database (running migrations) before it starts listening, and automatically mounts the [`@colyseus/auth`](/auth/module) routes when that package is installed.
 
-```ts {2,5} title="src/app.config.ts"
+```ts title="src/app.config.ts"
 import { defineServer } from "colyseus";
+// [!code highlight]
 import { GameDatabase } from "@colyseus/database";
 
 export const db = new GameDatabase({
+    // [!code highlight]
     connectionString: process.env.DATABASE_URL,
 });
 
@@ -146,14 +148,16 @@ new GameDatabase({
 
 Reuse the same connection as your [matchmaking driver](/server/driver#database-driver) (one pool for everything, no separate Redis required):
 
-```ts {2,8} title="src/app.config.ts"
+```ts title="src/app.config.ts"
 import { defineServer } from "colyseus";
+// [!code highlight]
 import { GameDatabase, DatabaseDriver } from "@colyseus/database";
 
 export const db = new GameDatabase({ connectionString: process.env.DATABASE_URL });
 
 export default defineServer({
     database: db,
+    // [!code highlight]
     driver: new DatabaseDriver(), // adopts the GameDatabase connection
 });
 ```

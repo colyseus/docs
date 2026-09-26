@@ -1,6 +1,6 @@
 {
   "title": "Learn",
-  "icon": "FileCodeIcon",
+  "icon": "FileCode",
   "pages": [
     "tutorial",
     "examples"

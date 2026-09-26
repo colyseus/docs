@@ -8,17 +8,18 @@ When applying state changes coming from the server, the frontend is going to tri
 In order to register callbacks to Schema instances, you must access the instances through a "callbacks handler".
 
 <Callout type="info">
-    Read more about [<SyncIcon /> State Synchronization](/state)
+    Read more about [State Synchronization](/state)
 </Callout>
 
 ## Overview
 
 <Steps>
+    <Step>
     ### Get the callback handler
 
-    <LangTabs>
+    <Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
         <Tab value="TypeScript">
-        ```ts {10} title="client.ts"
+        ```ts title="client.ts"
         import { Client, Callbacks } from "@colyseus/sdk";
 
         // initialize SDK
@@ -28,12 +29,13 @@ In order to register callbacks to Schema instances, you must access the instance
         const room = await client.joinOrCreate("my_room");
 
         // get state callbacks handler
+        // [!code highlight]
         const callbacks = Callbacks.get(room);
         ```
         </Tab>
 
         <Tab value="C#">
-        ```cs {10} title="client.cs"
+        ```cs title="client.cs"
         using Colyseus;
 
         // initialize SDK
@@ -43,12 +45,13 @@ In order to register callbacks to Schema instances, you must access the instance
         var room = await client.JoinOrCreate<MyRoomState>("my_room");
 
         // get state callbacks handler
+        // [!code highlight]
         var callbacks = Colyseus.Schema.Callbacks.Get(room);
         ```
         </Tab>
 
         <Tab value="Lua">
-        ```lua {10} title="client.lua"
+        ```lua title="client.lua"
         local ColyseusSDK = require("colyseus.sdk")
 
         -- initialize SDK
@@ -58,14 +61,16 @@ In order to register callbacks to Schema instances, you must access the instance
         client:join_or_create("my_room", function(room)
 
             -- get state callbacks handler
+            -- [!code highlight]
             local callbacks = ColyseusSDK.callbacks(room)
         end)
         ```
         </Tab>
 
         <Tab value="Haxe">
-        ```haxe {2,11} title="client.hx"
+        ```haxe title="client.hx"
         import colyseus.Client;
+        // [!code highlight]
         import io.colyseus.serializer.schema.Callbacks;
 
         // initialize SDK
@@ -75,13 +80,14 @@ In order to register callbacks to Schema instances, you must access the instance
         client.joinOrCreate("my_room", [], MyRoomState, function(err, room) {
 
             // get state callbacks handler
+            // [!code highlight]
             var callbacks = Callbacks.get(room);
         });
         ```
         </Tab>
 
         <Tab value="GDScript">
-        ```gdscript {10} title="client.gd"
+        ```gdscript title="client.gd"
         # initialize SDK
         var client = Colyseus.Client.new("ws://localhost:2567")
 
@@ -95,7 +101,7 @@ In order to register callbacks to Schema instances, you must access the instance
         </Tab>
 
         <Tab value="Dart">
-        ```dart {10} title="client.dart"
+        ```dart title="client.dart"
         import 'package:colyseus/colyseus.dart';
 
         // initialize SDK
@@ -105,14 +111,17 @@ In order to register callbacks to Schema instances, you must access the instance
         final room = await client.joinOrCreate('my_room', stateType: MyRoomState.new);
 
         // get state callbacks handler
+        // [!code highlight]
         final callbacks = Callbacks.get(room);
         ```
         </Tab>
-    </LangTabs>
+    </Tabs>
+    </Step>
 
+    <Step>
     ### Register the callbacks
 
-    <LangTabs>
+    <Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
         <Tab value="TypeScript">
         ```ts title="client.ts"
         callbacks.listen("currentTurn", (currentValue, previousValue) => {
@@ -259,10 +268,11 @@ In order to register callbacks to Schema instances, you must access the instance
         });
         ```
         </Tab>
-    </LangTabs>
+    </Tabs>
+    </Step>
 </Steps>
 
-<Callout type="warning">
+<Callout type="warn">
     **C#, C++, Haxe, Dart** - When using statically typed languages, you need to generate the frontend schema files based on your TypeScript schema definitions. [See generating schema on the frontend](#frontend-schema-generation).
 </Callout>
 
@@ -274,7 +284,7 @@ In order to register callbacks to Schema instances, you must access the instance
 
 Listens for a single property change within a `Schema` instance.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts title="client.ts"
@@ -330,11 +340,11 @@ Listens for a single property change within a `Schema` instance.
     });
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 **Removing the callback:** The `.listen()` method returns a function that, when called, removes the attached callback. In Dart, it returns a `StreamSubscription`. Call `cancel()` on it instead:
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
     <Tab value="TypeScript">
     ```ts title="client.ts"
     const unbindCallback = callbacks.listen("currentTurn", (currentValue, previousValue) => {
@@ -398,7 +408,7 @@ Listens for a single property change within a `Schema` instance.
     await subscription.cancel();
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 ---
 
@@ -412,7 +422,7 @@ Bind properties directly to `targetObject`, whenever the client receives an upda
 - `properties`: (optional) list of properties that will be assigned to
   `targetObject`. By default, every synchronized property will be used.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
     <Tab value="TypeScript">
     ```ts title="client.ts"
     callbacks.onAdd("players", (player, sessionId) => {
@@ -467,7 +477,7 @@ Bind properties directly to `targetObject`, whenever the client receives an upda
     ```
     </Tab>
 
-</LangTabs>
+</Tabs>
 
 ---
 
@@ -478,11 +488,12 @@ The On Change callback is invoked whenever a direct property of a `Schema` insta
 - **Triggers only for direct property changes:** It does not cascade or propagate changes from nested properties within the Schema.
 - The callback fires after the changes have been applied to the Schema instance, so you're dealing with the updated instance when it executes.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
     <Tab value="TypeScript">
-    ```ts {3-5} title="client.ts"
+    ```ts title="client.ts"
     callbacks.onAdd("entities", (entity, sessionId) => {
         // ...
+        // [!code highlight:3]
         callbacks.onChange(entity, () => {
             // some property changed inside `entity`
         })
@@ -491,9 +502,10 @@ The On Change callback is invoked whenever a direct property of a `Schema` insta
     </Tab>
 
     <Tab value="C#">
-    ```cs {3-5} title="client.cs"
+    ```cs title="client.cs"
     callbacks.OnAdd(state => state.entities, (sessionId, entity) => {
         // ...
+        // [!code highlight:3]
         callbacks.OnChange(entity, () => {
             // some property changed inside `entity`
         });
@@ -502,9 +514,10 @@ The On Change callback is invoked whenever a direct property of a `Schema` insta
     </Tab>
 
     <Tab value="Lua">
-    ```lua {3-5} title="client.lua"
+    ```lua title="client.lua"
     callbacks:on_add("entities", function (entity, sessionId)
         -- ...
+        -- [!code highlight:3]
         callbacks:on_change(entity, function ()
             -- some property changed inside `entity`
         end)
@@ -513,9 +526,10 @@ The On Change callback is invoked whenever a direct property of a `Schema` insta
     </Tab>
 
     <Tab value="Haxe">
-    ```haxe {3-5} title="client.hx"
+    ```haxe title="client.hx"
     callbacks.onAdd("entities", function(entity, sessionId) {
         // ...
+        // [!code highlight:3]
         callbacks.onChange(entity, function() {
             // some property changed inside `entity`
         });
@@ -536,16 +550,17 @@ The On Change callback is invoked whenever a direct property of a `Schema` insta
     </Tab>
 
     <Tab value="Dart">
-    ```dart {3-5} title="client.dart"
+    ```dart title="client.dart"
     callbacks.onAdd(state.entities, (sessionId, entity) {
         // ...
+        // [!code highlight:3]
         callbacks.onChange(entity, () {
             // some property changed inside `entity`
         });
     });
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 ---
 
@@ -559,9 +574,10 @@ By default, the callback is called immediately for existing items in the collect
 
 Registering before the server has sent the collection is fine. A collection the client still holds as `null`, or as the empty instance a generated C# class starts with, counts as not yet received. The callback waits and fires when the first sync, or a later patch, delivers it, replaying the items that arrived with it. A collection a [`StateView`](/state/view) adds later arrives the same way.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
     <Tab value="TypeScript">
-    ```ts {1} title="client.ts"
+    ```ts title="client.ts"
+    // [!code highlight]
     callbacks.onAdd("players", (player, sessionId) => {
         console.log(player, "has been added at", sessionId);
 
@@ -577,7 +593,8 @@ Registering before the server has sent the collection is fine. A collection the 
     </Tab>
 
     <Tab value="C#">
-    ```cs {1} title="client.cs"
+    ```cs title="client.cs"
+    // [!code highlight]
     callbacks.OnAdd(state => state.players, (string sessionId, Player player) => {
         Debug.Log("player has been added at " + sessionId);
 
@@ -593,7 +610,8 @@ Registering before the server has sent the collection is fine. A collection the 
     </Tab>
 
     <Tab value="Lua">
-    ```lua {1} title="client.lua"
+    ```lua title="client.lua"
+    -- [!code highlight]
     callbacks:on_add("players", function (player, sessionId)
         print("player has been added at " .. sessionId);
 
@@ -609,7 +627,8 @@ Registering before the server has sent the collection is fine. A collection the 
     </Tab>
 
     <Tab value="Haxe">
-    ```haxe {1} title="client.hx"
+    ```haxe title="client.hx"
+    // [!code highlight]
     callbacks.onAdd("players", (player, sessionId) => {
         trace("player has been added at " + sessionId);
 
@@ -641,7 +660,8 @@ Registering before the server has sent the collection is fine. A collection the 
     </Tab>
 
     <Tab value="Dart">
-    ```dart {1} title="client.dart"
+    ```dart title="client.dart"
+    // [!code highlight]
     callbacks.onAdd(state.players, (sessionId, player) {
         print('player has been added at $sessionId');
 
@@ -655,7 +675,7 @@ Registering before the server has sent the collection is fine. A collection the 
     });
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 ---
 
@@ -663,10 +683,11 @@ Registering before the server has sent the collection is fine. A collection the 
 
 The `onRemove` callback is called with the removed item and its key on holder object as argument.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
-    ```ts {1} title="client.ts"
+    ```ts title="client.ts"
+    // [!code highlight]
     callbacks.onRemove("players", (player, sessionId) => {
         console.log(player, "has been removed at", sessionId);
 
@@ -676,7 +697,8 @@ The `onRemove` callback is called with the removed item and its key on holder ob
     </Tab>
 
     <Tab value="C#">
-    ```cs {1} title="client.cs"
+    ```cs title="client.cs"
+    // [!code highlight]
     callbacks.OnRemove(state => state.players, (string sessionId, Player player) => {
         Debug.Log("player has been removed at " + sessionId);
 
@@ -686,7 +708,8 @@ The `onRemove` callback is called with the removed item and its key on holder ob
     </Tab>
 
     <Tab value="Lua">
-    ```lua {1} title="client.lua"
+    ```lua title="client.lua"
+    -- [!code highlight]
     callbacks:on_remove("players", function (player, sessionId)
         print("player has been removed at " .. sessionId);
 
@@ -696,7 +719,8 @@ The `onRemove` callback is called with the removed item and its key on holder ob
     </Tab>
 
     <Tab value="Haxe">
-    ```haxe {1} title="client.hx"
+    ```haxe title="client.hx"
+    // [!code highlight]
     callbacks.onRemove("players", (player, sessionId) => {
         trace("player has been removed at " + sessionId);
 
@@ -717,7 +741,8 @@ The `onRemove` callback is called with the removed item and its key on holder ob
     </Tab>
 
     <Tab value="Dart">
-    ```dart {1} title="client.dart"
+    ```dart title="client.dart"
+    // [!code highlight]
     callbacks.onRemove(state.players, (sessionId, player) {
         print('player has been removed at $sessionId');
 
@@ -725,13 +750,13 @@ The `onRemove` callback is called with the removed item and its key on holder ob
     });
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 ---
 
 ## Frontend Schema Generation
 
-<Callout type="warning">
+<Callout type="warn">
     **Not required when using [JavaScript SDK](/getting-started/typescript) or [Defold SDK](/getting-started/defold).** The following section is only required when using statically typed languages in your frontend, such as C#, Haxe, etc.
 </Callout>
 

@@ -1,6 +1,6 @@
 {
   "title": "State Sync",
-  "icon": "SyncIcon",
+  "icon": "RefreshCw",
   "pages": [
     "schema",
     "callbacks",

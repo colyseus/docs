@@ -3,9 +3,11 @@ title: "Recipes & Guides"
 description: "Practical recipes, guides, and best practices for Colyseus: command pattern, custom room IDs, password-protected rooms, denying joins, and keeping your room code healthy."
 ---
 
+import { ListChecks, Package, RefreshCw } from 'lucide-react';
+
 Recipes and guides for common tasks with Colyseus.
 
-<Callout type="warning">
+<Callout type="warn">
     Contributions are welcome! If you have a recipe or guide you'd like to share, please [open an issue](https://github.com/colyseus/docs/issues/new?title=Feedback%20for%20%E2%80%9CRecipes%E2%80%9D&labels=feedback) or submit a pull request.
 </Callout>
 
@@ -29,7 +31,7 @@ General recommendations to keep your codebase healthy and readable for your team
 - Your game logic may be handled by specialized structures, such as external functions, the [Command Pattern →](/recipes/command-pattern), or an [Entity-Component System →](/3rd-party-packages#entity-component-system-ecs).
 
 <Cards>
-    <Card icon={<PackageIcon/>} title="3rd Party Packages" href="/3rd-party-packages" />
-    <Card icon={<ChecklistIcon/>} title="Unit Testing" href="/tools/unit-testing" />
-    <Card icon={<SyncIcon/>} title="Optimizing State" href="/state/optimization" />
+    <Card icon={<Package />} title="3rd Party Packages" href="/3rd-party-packages" />
+    <Card icon={<ListChecks />} title="Unit Testing" href="/tools/unit-testing" />
+    <Card icon={<RefreshCw />} title="Optimizing State" href="/state/optimization" />
 </Cards>

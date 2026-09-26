@@ -11,7 +11,7 @@ You can authenticate your users using the `onAuth` method in your room. This met
 
 With the `colyseus` bundle (which includes `@colyseus/auth`), the default **static** `onAuth` verifies the client's JWT. A malformed or expired token is rejected with `AUTH_FAILED`. A client that sends no token passes through with no auth data.
 
-<Callout type="warning">
+<Callout type="warn">
     **Static `onAuth` runs first, and short-circuits the instance `onAuth`.** The static hook runs at matchmake time, and whatever it returns becomes `client.auth`. When it produced a payload (any token-bearing client), the **instance** `onAuth` is skipped entirely. Override the *static* `onAuth` when you need custom token validation; use the instance form only for rooms whose clients join without tokens.
 </Callout>
 
@@ -21,9 +21,10 @@ With the `colyseus` bundle (which includes `@colyseus/auth`), the default **stat
 
 <Steps>
 
+<Step>
 ## Server: `onAuth` method
 
-<Tabs>
+<Tabs items={["Static onAuth (recommended)", "Instance onAuth"]}>
     <Tab value="Static onAuth (recommended)">
     The `static onAuth` is recommended because it does not require the room instance to be created before authenticating the client.
 
@@ -31,11 +32,12 @@ With the `colyseus` bundle (which includes `@colyseus/auth`), the default **stat
         If you need to access the room instance during the authentication process, use the instance `onAuth` method.
     </Callout>
 
-    ```ts {5} title="src/rooms/MyRoom.ts"
+    ```ts title="src/rooms/MyRoom.ts"
     import { Room } from "colyseus";
     import { JWT } from "@colyseus/auth";
 
     class MyRoom extends Room {
+        // [!code highlight]
         static async onAuth (token, options, context) {
             // validate the token
             const userdata = await JWT.verify(token);
@@ -50,11 +52,12 @@ With the `colyseus` bundle (which includes `@colyseus/auth`), the default **stat
     <Tab value="Instance onAuth">
     The instance `onAuth` method is called after the room instance is created, so it can read room properties: connected clients, room state. Remember it only runs when the static `onAuth` produced no payload (see the warning above), so use it for room-specific checks on token-less clients, not for token validation:
 
-    ```ts {5} title="src/rooms/MyRoom.ts"
+    ```ts title="src/rooms/MyRoom.ts"
     import { Room, ServerError } from "colyseus";
 
     class MyRoom extends Room {
         async onAuth (client, options, context) {
+            // [!code highlight]
             // room-specific gate, e.g. reject spectators once the match started
             if (this.state.phase !== "lobby" && !options.spectator) {
                 throw new ServerError(400, "match already in progress");
@@ -65,23 +68,28 @@ With the `colyseus` bundle (which includes `@colyseus/auth`), the default **stat
     ```
     </Tab>
 </Tabs>
+</Step>
 
+<Step>
 ## Server: `onJoin` method
 
 Get the user data during the `onJoin` method via the `client.auth` property.
 
-```ts {5} title="src/rooms/MyRoom.ts"
+```ts title="src/rooms/MyRoom.ts"
 import { Room } from "colyseus";
 // ...
 class MyRoom extends Room {
     // ...
+    // [!code highlight]
     async onJoin (client, options, auth) {
         console.log(auth); // contains the "userdata" returned by onAuth
         console.log(client.auth); // shorthand/equivalent to `auth`
     }
 }
 ```
+</Step>
 
+<Step>
 ## Client SDK: Setting the auth token
 
 The `client.auth.token` property is used to set the authentication token. This token will be sent as an `Authorization` header in all HTTP requests to the server.
@@ -94,7 +102,9 @@ client.auth.token = "YOUR AUTH TOKEN";
 <Callout type="info">
     If you are using the `@colyseus/auth` module, this token is managed automatically. See [Authentication → Module](/auth/module).
 </Callout>
+</Step>
 
+<Step>
 ## Client SDK: Requesting to join a Room
 
 Matchmaking requests will contain the auth token.
@@ -104,6 +114,7 @@ client.joinOrCreate("my_room").then((room) => {
     console.log(room);
 });
 ```
+</Step>
 
 </Steps>
 
@@ -111,13 +122,15 @@ client.joinOrCreate("my_room").then((room) => {
 
 When the [`@colyseus/database`](/database/authentication) integration is active, the default `onAuth` verifies the JWT and enforces `tokenVersion`-based revocation. Bans and explicit `bumpTokenVersion()` calls both reject stale tokens automatically. Override the **static** `onAuth` only for room-specific logic (for example, surfacing the ban reason in the close frame instead of a generic AUTH_FAILED). Note that overriding it replaces the default, so you re-do the token verification yourself:
 
-```ts {2-3,7-13} title="src/rooms/MyRoom.ts"
+```ts title="src/rooms/MyRoom.ts"
 import { Room, ServerError } from "colyseus";
+// [!code highlight:2]
 import { JWT } from "@colyseus/auth";
 import { db } from "../app.config";
 
 class MyRoom extends Room {
     static async onAuth(token, options, context) {
+        // [!code highlight:7]
         const payload = await JWT.verify(token); // throws on invalid/expired
         const { banned, reason } = await db.auth.isBanned(payload.id);
         if (banned) {
@@ -143,9 +156,10 @@ The `context` object has the following properties:
 
 The authentication token is available in the `context.token` property.
 
-```ts {3} title="src/rooms/MyRoom.ts"
+```ts title="src/rooms/MyRoom.ts"
 // ...
 async onAuth(client, options, context) {
+    // [!code highlight]
     console.log(context.token);
 }
 // ...
@@ -155,9 +169,10 @@ async onAuth(client, options, context) {
 
 The request headers are available in the `context.headers` property.
 
-```ts {3} title="src/rooms/MyRoom.ts"
+```ts title="src/rooms/MyRoom.ts"
 // ...
 async onAuth(client, options, context) {
+    // [!code highlight]
     console.log(context.headers);
 }
 // ...
@@ -170,9 +185,10 @@ address. Colyseus reads it from `x-real-ip`, then the first entry of
 `x-forwarded-for`, then `x-client-ip`, and falls back to the address of the
 connection itself. The property is `undefined` when no source provides one.
 
-```ts {3} title="src/rooms/MyRoom.ts"
+```ts title="src/rooms/MyRoom.ts"
 // ...
 async onAuth(client, options, context) {
+    // [!code highlight]
     console.log(context.ip);
 }
 // ...

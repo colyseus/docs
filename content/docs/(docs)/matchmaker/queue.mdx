@@ -19,13 +19,15 @@ The built-in `QueueRoom` provides a matchmaking queue that groups players over t
 ## Server
 
 <Steps>
+<Step>
 ### Expose the queue room
 
-```ts {5-10} title="server.ts"
+```ts title="server.ts"
 import { defineServer, defineRoom, QueueRoom } from "colyseus";
 
 const server = defineServer({
 	rooms: {
+		// [!code highlight:6]
 		queue: defineRoom(QueueRoom, {
 			matchRoomName: "battle",
 			maxPlayers: 4,
@@ -34,21 +36,25 @@ const server = defineServer({
 	}
 });
 ```
+</Step>
 
+<Step>
 ### Expose your match room
 
-```ts {7} title="server.ts"
+```ts title="server.ts"
 import { defineServer, defineRoom, Room } from "colyseus";
 
 class BattleRoom extends Room {}
 
 const server = defineServer({
 	rooms: {
+		// [!code highlight]
 		battle: defineRoom(BattleRoom),
 		queue: defineRoom(QueueRoom, { matchRoomName: "battle" })
 	}
 });
 ```
+</Step>
 </Steps>
 
 ## Options
@@ -86,7 +92,7 @@ const queue = await client.joinOrCreate("queue", {
 
 The server periodically notifies clients with the number of players currently in their group.
 
-<LangTabs>
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts title="client.ts"
@@ -128,13 +134,13 @@ The server periodically notifies clients with the number of players currently in
     ```
     </Tab>
 
-</LangTabs>
+</Tabs>
 
 ### Receiving a seat reservation
 
 When a group is ready, the queue sends a seat reservation for the target match room:
 
-<LangTabs>
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts title="client.ts"
@@ -212,7 +218,7 @@ When a group is ready, the queue sends a seat reservation for the target match r
     ```
     </Tab>
 
-</LangTabs>
+</Tabs>
 
 ## Matching behavior
 

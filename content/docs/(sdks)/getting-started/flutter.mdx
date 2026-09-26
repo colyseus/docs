@@ -5,7 +5,7 @@ sidebarTitle: "Flutter"
 icon: "logo:flutter"
 ---
 
-<Callout type="warning">
+<Callout type="warn">
     The Flutter SDK is in **beta**, and may not be stable. Please [report any issues you find](https://github.com/colyseus/native-sdk/issues).
 </Callout>
 
@@ -44,7 +44,7 @@ Both platforms need the outbound-network entitlement, `com.apple.security.networ
 <true/>
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     `flutter create` does not add the entitlement. Without it every connection fails silently inside the sandbox, with no error to catch.
 </Callout>
 
@@ -237,7 +237,7 @@ print(me['hp']);
 | `instance.getRef('field')` | a nested `SchemaInstance`, or null |
 | `instance.fieldNames` | every field declared on the type |
 
-<Callout type="warning">
+<Callout type="warn">
     Schema handles are raw native pointers. The decoder frees and replaces instances on a full resync or a reconnect. Read instances afresh from `room.state` rather than caching one across frames; the typed wrappers handle this for you.
 </Callout>
 

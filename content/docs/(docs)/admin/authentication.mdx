@@ -55,7 +55,7 @@ Each admin-panel user has a row in the `roles` table (set via `db.moderation.set
 
 Roles are read from the live DB on every request. A demotion takes effect immediately without re-issuing the cookie.
 
-<Callout type="warning">
+<Callout type="warn">
     `POST /admin-api/auth/login` issues a session to any user row that has a password, whatever its role. Combined with the `user` row above, a registered player can call `GET /admin-api/users` or `GET /admin-api/rooms/:roomId`. Those answers contain other players' emails and live room state. Until the package closes this gap, keep the panel off the player-facing hostname. A network-level guard of your own in front of `/admin-api` also works.
 </Callout>
 
@@ -87,12 +87,14 @@ This pattern lets you give a community manager full control over guilds without 
 
 The `admin.guard()` middleware checks the same session cookie used by the panel itself. You can therefore gate other HTTP routes (the Monitor, the Playground, or any custom endpoint) behind a single admin login.
 
-```ts {1,6-7} title="src/app.config.ts"
+```ts title="src/app.config.ts"
+// [!code highlight]
 import { admin } from "@colyseus/admin";
 import { playground } from "@colyseus/playground";
 import { monitor } from "@colyseus/monitor";
 
 routes: createRouter({
+    // [!code highlight:2]
     ...playground({ use: [admin.guard()] }),
     ...monitor({    use: [admin.guard({ role: "mod" })] }),
     ...admin({ database: db }),

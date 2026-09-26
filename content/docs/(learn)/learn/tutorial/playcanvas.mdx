@@ -15,8 +15,8 @@ description: "Build a real-time multiplayer game with PlayCanvas and Colyseus."
 
 ## Materials
 
-- [<LinkIcon/> PlayCanvas Project (Frontend)](https://playcanvas.com/project/859259/overview/colyseus-demo)
-- [<LinkIcon/> Colyseus TypeScript Project (Backend)](https://github.com/colyseus/tutorial-playcanvas-server)
+- [PlayCanvas Project (Frontend)](https://playcanvas.com/project/859259/overview/colyseus-demo)
+- [Colyseus TypeScript Project (Backend)](https://github.com/colyseus/tutorial-playcanvas-server)
 
 ## Before you start
 
@@ -129,7 +129,7 @@ Let's go back to editing the Server code, and define our Room State in the Serve
 
 We need to handle multiple `Player` instances, and each `Player` will have `x`, `y` and `z` coordinates:
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
     ```typescript
     // MyRoomState.ts

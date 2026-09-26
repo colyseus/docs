@@ -2,7 +2,7 @@
   "title": "Learn",
   "description": "Tutorials, examples and demo projects",
   "root": true,
-  "icon": "FileCodeIcon",
+  "icon": "FileCode",
   "pages": [
     "...learn"
   ]

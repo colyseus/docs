@@ -5,7 +5,7 @@ sidebarTitle: "Swift"
 icon: "logo:swift"
 ---
 
-<Callout type="warning">
+<Callout type="warn">
     The Swift SDK is in **beta**, and may not be stable. Please [report any issues you find](https://github.com/colyseus/native-sdk/issues).
 </Callout>
 
@@ -87,7 +87,7 @@ final class GameScene: SKScene {
 }
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     Two pumps racing each other put decoding back on a second thread. Turn `autoPump` off before you start calling `pump()` yourself.
 </Callout>
 
@@ -262,7 +262,7 @@ room.onStateChange { state in
 
 Decoding never depends on generated code. The core builds its own picture of the state from the reflection data sent during the handshake. A generated class is only a typed way to read what was decoded.
 
-<Callout type="warning">
+<Callout type="warn">
     A `SchemaRef` points at an instance the decoder owns, and the decoder replaces instances on a full resync or a reconnect. Read instances afresh from `room.state` each frame rather than caching one across frames.
 </Callout>
 

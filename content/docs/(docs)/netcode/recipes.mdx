@@ -26,7 +26,7 @@ Full behavior reference: [the modes table](/netcode/client-prediction#remote-ent
 
 `smoothMs` on a lerp attach arms a display-only **output spring** over the interpolated result, keeping rendered velocity continuous. The default is `0`: exact interpolation, no spring.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts
@@ -82,7 +82,7 @@ Full behavior reference: [the modes table](/netcode/client-prediction#remote-ent
     ```
     </Tab>
 
-</LangTabs>
+</Tabs>
 
 Sizing: during steady motion the spring trails the exact interpolant by `speed × smoothMs`, at any frame rate. Start near `25`: it removes the velocity discontinuities at minimal added lag. `65` smooths rougher streams, at that much more display lag. On `damped` and `extrapolate` the same option is the chase rate and defaults to `50`.
 
@@ -97,7 +97,7 @@ Input is sampled once per **fixed step**, not per render frame. Frames and steps
 
 **Buffer the press when it happens; consume it inside the step loop on exactly one step:**
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts
@@ -208,7 +208,7 @@ Input is sampled once per **fixed step**, not per render frame. Frames and steps
     ```
     </Tab>
 
-</LangTabs>
+</Tabs>
 
 Variants of the same shape:
 
@@ -222,13 +222,13 @@ Buffer outside the loop, consume inside it: draining an edge anywhere else eithe
 
 On a datagram-capable transport, input frames don't need reliable delivery. Each packet carries the last few inputs as redundancy, so a dropped datagram costs nothing and nothing head-of-line blocks.
 
-<Callout type="warning">
+<Callout type="warn">
     **Experimental, and WebTransport only.** Unreliable input needs a datagram channel, which only [WebTransport](/server/transport/webtransport) provides today (itself experimental). Right now only the JavaScript/TypeScript SDK supports WebTransport, and with it unreliable input.
 
     Other SDKs **reject** `mode: "unreliable"` at construction for now: over their WebSocket-only transports the redundancy ring would cost bandwidth for no benefit. Use `mode: "reliable"` there.
 </Callout>
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts
@@ -270,7 +270,7 @@ On a datagram-capable transport, input frames don't need reliable delivery. Each
     ```
     </Tab>
 
-</LangTabs>
+</Tabs>
 
 That's the whole migration. The framework runs its own sequence numbers and acks by seq **value**, so rollback reconciliation works unchanged. No user-side bookkeeping, no seq field on your schema. `historySize` is the redundancy depth (how many recent inputs ride along in each datagram; default 3).
 
@@ -278,7 +278,7 @@ That's the whole migration. The framework runs its own sequence numbers and acks
 
 A fired bullet needs zero-latency feedback, but the server assigns its identity ~RTT later. `predict.spawns` runs the whole lifecycle: render the predicted local instantly, then correlate it to the authoritative entity when it arrives. One **stable id** persists across the handoff, so the sprite never flickers:
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts
@@ -394,7 +394,7 @@ A fired bullet needs zero-latency feedback, but the server assigns its identity 
     ```
     </Tab>
 
-</LangTabs>
+</Tabs>
 
 With `spawnTime`, an **owned** projectile keeps flying the *shooter's* timeline through the handoff. No snap-back, and the rendered trajectory is the one a favor-the-shooter rewind actually judges. Foreign projectiles (other players') render at server-present, aged forward automatically. An unmatched prediction expires after a TTL (`max(2×rtt, 600ms)` by default) and `onReject` fires: the ghost reverts.
 
@@ -404,7 +404,7 @@ For fast projectiles, hit-test the swept **segment** between last and current po
 
 Impact feedback (hit marker, sound, decal) shouldn't wait for the server, but a mispredicted hit must clean up after itself. Key the channel by projectile so multiple in-flight shots settle independently:
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts
@@ -506,7 +506,7 @@ Impact feedback (hit marker, sound, decal) shouldn't wait for the server, but a 
     ```
     </Tab>
 
-</LangTabs>
+</Tabs>
 
 A sim-born prediction auto-rejects once the server processes past its birth step without confirming. See [Optimistic events](/netcode/client-prediction#optimistic-events-defineevent).
 
@@ -541,7 +541,7 @@ A mispredict needs no cleanup code: the entry auto-rejects once the server proce
 
 Some entities move predictably but nobody controls them directly (patrolling AI, ballistics). For these, pair the client's `reckon` display with a `reckon` rewind timeline (both sides describe the same decision):
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts
@@ -582,7 +582,7 @@ Some entities move predictably but nobody controls them directly (patrolling AI,
     ```
     </Tab>
 
-</LangTabs>
+</Tabs>
 
 The server rewinds on the matching timeline (no double compensation):
 
@@ -603,7 +603,7 @@ this.rewind.attachAll(this.state.enemies, {
 
 Smoothing turns a respawn into a glide across the map. The `snap` option (on any attach or reconciler config) declares a value-space threshold past which a jump is a **teleport**. Smoothing resets and the entity pops to the new value:
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts
@@ -684,7 +684,7 @@ Smoothing turns a respawn into a glide across the map. The `snap` option (on any
     ```
     </Tab>
 
-</LangTabs>
+</Tabs>
 
 Size it well above per-patch motion (`maxSpeed × patchInterval`) and below your smallest legitimate teleport. Respawns that land on the same position induce zero correction and never trip it.
 
@@ -727,7 +727,7 @@ const me = predict.sim({
     The opaque-engine face (`adopt` + `pose`) is JavaScript-only. See [the sim note](/netcode/client-prediction#composite--engine-state-predictsim). On the other SDKs, keep engine state in bound schema mirrors (C# and Flutter still take `adopt` for opaque extras). See [Composite scalars](#composite-scalars-predictsim-no-engine) below.
 </Callout>
 
-<Callout type="warning">
+<Callout type="warn">
     Reseed **every** scalar the sim depends on in `adopt` (position **and** velocity). Engine-internal non-scalar state isn't rolled back. See [the warning on `predict.sim`](/netcode/client-prediction#composite--engine-state-predictsim).
 </Callout>
 

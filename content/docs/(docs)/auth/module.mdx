@@ -1,10 +1,12 @@
 ---
 title: "Auth Module"
 description: "The @colyseus/auth module: email/password and anonymous auth, OAuth providers, JWT tokens, email verification, and password reset for Colyseus."
-icon: "PackageIcon"
+icon: "Package"
 ---
 
-<Callout type="warning">
+import { MonitorSmartphone, Settings } from 'lucide-react';
+
+<Callout type="warn">
     This module is in beta - Feedback is welcome on [colyseus/colyseus#660](https://github.com/colyseus/colyseus/issues/660).
 </Callout>
 
@@ -17,8 +19,8 @@ The `@colyseus/auth` module is highly configurable and allows you to implement y
 The module does not provide a database or email sending capabilities. Instead, it provides callbacks that you can implement to query your database, send emails, and handle OAuth providers.
 
 <Cards>
-    <Card icon={<DevicesIcon/>} title="Frontend API" href="#frontend-api" />
-    <Card icon={<GearIcon/>} title="Backend API" href="#backend-api" />
+    <Card icon={<MonitorSmartphone />} title="Frontend API" href="#frontend-api" />
+    <Card icon={<Settings />} title="Backend API" href="#backend-api" />
 </Cards>
 
 ## Features
@@ -42,6 +44,7 @@ npm install --save @colyseus/auth
 ```
 
 <Steps>
+<Step>
 ### Bind the `auth` routes to Express
 
     ```ts title="src/app.config.ts"
@@ -58,7 +61,9 @@ npm install --save @colyseus/auth
     // ...
     });
     ```
+</Step>
 
+<Step>
 ### Required Environment Secrets
 
 It is required to provide the following environment variables to your application:
@@ -70,7 +75,7 @@ It is required to provide the following environment variables to your applicatio
     **How to generate a random string** - You may use the following command to generate a random string `openssl rand -base64 32`. Alternatively, you can use [an online strong password generator](https://1password.com/password-generator/).
 </Callout>
 
-<Callout type="warning">
+<Callout type="warn">
     **`AUTH_SALT` is legacy.** Required only when upgrading an existing deployment from a version prior to 0.18. The legacy `scrypt`-based hasher reads it to verify passwords created before the upgrade. New 0.18 projects don't need it; the default hasher derives its own per-password salt.
 </Callout>
 
@@ -85,7 +90,9 @@ It is required to provide the following environment variables to your applicatio
     - Rotating `SESSION_SECRET` will invalidate all session cookies. (only used during OAuth flow)
     - Rotating `AUTH_SALT` (legacy upgrades only) will invalidate every pre-upgrade password hash. Users created before the upgrade will need to reset their password.
 </Callout>
+</Step>
 
+<Step>
 ### Backend Configuration
 
 Create a configuration file for the `@colyseus/auth` module. The following example shows how to configure the module to use a fake database. You should replace the methods with your own database queries.
@@ -148,6 +155,7 @@ auth.oauth.addProvider('discord', {
     scope: ['identify', 'email'],
 });
 ```
+</Step>
 
 </Steps>
 
@@ -161,7 +169,7 @@ Register a new user with email/password and return userdata. The user will be au
 
 The `options` argument may contain user data you can use when creating the user's account.
 
-<Tabs groupId="auth-module">
+<Tabs items={["Client API", "Backend config"]} groupId="auth-module">
     <Tab value="Client API">
     ```js
     try {
@@ -194,7 +202,7 @@ The `options` argument may contain user data you can use when creating the user'
 
 Sign in with email/password and return userdata. This method modifies the `client.auth.token` property.
 
-<Tabs groupId="auth-module">
+<Tabs items={["Client API", "Backend config"]} groupId="auth-module">
     <Tab value="Client API">
     ```js title="client.js"
     try {
@@ -223,7 +231,7 @@ Sign in with email/password and return userdata. This method modifies the `clien
 
 Sign in anonymously and return anonymous userdata. This method modifies the `client.auth.token` property.
 
-<Tabs groupId="auth-module">
+<Tabs items={["Client API", "Backend config"]} groupId="auth-module">
     <Tab value="Client API">
     ```js title="client.js"
     try {
@@ -253,7 +261,7 @@ Sign in anonymously and return anonymous userdata. This method modifies the `cli
 
 Sign in with OAuth provider and return userdata. This method modifies the `client.auth.token` property.
 
-<Tabs groupId="auth-module">
+<Tabs items={["Client API", "Backend config"]} groupId="auth-module">
     <Tab value="Client API">
     ```js title="client.js"
     try {
@@ -295,7 +303,7 @@ Sign in with OAuth provider and return userdata. This method modifies the `clien
 
 Send an email to the user with a link to reset their password.
 
-<Tabs groupId="auth-module">
+<Tabs items={["Client API", "Backend config"]} groupId="auth-module">
     <Tab value="Client API">
     ```js title="client.js"
     try {
@@ -329,7 +337,7 @@ Send an email to the user with a link to reset their password.
 
 Get the current user's data. This method does not modify the `client.auth.token` property.
 
-<Tabs groupId="auth-module">
+<Tabs items={["Client API", "Backend config"]} groupId="auth-module">
     <Tab value="Client API">
     Fetch the current user's data from the server.
 
@@ -641,7 +649,7 @@ auth.oauth.onCallback(async (data, provider) => {
 });
 ```
 
-<Tabs>
+<Tabs items={["Example: Discord"]}>
     <Tab value="Example: Discord">
     To enable Discord authentication, you must create a new application at [Discord Developer Portal](https://discord.com/developers/applications).
 
@@ -706,7 +714,7 @@ import { Hash } from "@colyseus/auth";
 Hash.algorithm = "sha1"; // default: "scrypt"
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     The `auth.settings.onHashPassword` callback exists on the settings object but is **not invoked by any endpoint in 0.18**, so overriding it has no effect. Use `Hash.algorithm` / `Hash.algorithms` instead.
 </Callout>
 
@@ -748,15 +756,15 @@ If you need to customize the email templates, you must provide your own template
 
 This template is used to send the email confirmation link to the user when they register with email/password. When the user clicks on the link, they are redirected to the _Email Confirmation Page_.
 
-- [<MailIcon/> Email Template ↗](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation-email.html) - (`html/address-confirmation-email.html`)
-- [<GlobeIcon/> Web Page Template ↗](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation.html) - (`html/address-confirmation.html`)
+- [Email Template ↗](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation-email.html) - (`html/address-confirmation-email.html`)
+- [Web Page Template ↗](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/address-confirmation.html) - (`html/address-confirmation.html`)
 
 #### Reset Password Template
 
 This template is used to send the reset password link to the user when they request to reset their password. When the user clicks on the link, they are redirected to the _Reset Password Page_.
 
--  [<MailIcon/> Email Template ↗](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-email.html) - (`html/reset-password-email.html` )
--  [<GlobeIcon/> Web Page Template ↗](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-form.html) - (`html/reset-password-form.html`)
+-  [Email Template ↗](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-email.html) - (`html/reset-password-email.html` )
+-  [Web Page Template ↗](https://github.com/colyseus/colyseus/tree/master/packages/auth/html/reset-password-form.html) - (`html/reset-password-form.html`)
 
 ---
 
@@ -767,7 +775,7 @@ You may use the contents of the previous active auth token (`upgradingToken`) wh
 - Upgrade an anonymous user to an email/password or OAuth account
 - Link multiple OAuth providers to the same account
 
-<Tabs>
+<Tabs items={["Upgrade with email/password", "Upgrade with OAuth provider"]}>
     <Tab value="Upgrade with email/password">
     ```ts title="src/config/auth.ts"
     import { auth } from "@colyseus/auth";

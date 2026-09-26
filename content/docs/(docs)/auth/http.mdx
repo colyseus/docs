@@ -7,6 +7,7 @@ If you are using the HTTP API, you can authenticate your requests using the `Aut
 
 <Steps>
 
+<Step>
 ## Client SDK: Set the auth token
 
 ```js title="client.js"
@@ -17,7 +18,9 @@ client.auth.token = "YOUR AUTH TOKEN";
 <Callout type="info">
     If you are using the `@colyseus/auth` module, this token is managed automatically. See [Authentication → Module](/auth/module).
 </Callout>
+</Step>
 
+<Step>
 ## Client SDK: Make HTTP requests
 
 The HTTP requests contain the auth token in the `Authorization` header.
@@ -27,12 +30,14 @@ client.http.get("/profile").then((response) => {
     console.log(response.data);
 });
 ```
+</Step>
 
+<Step>
 ## Server: Validate the auth token
 
 If you are using the `@colyseus/auth` module, `auth.middleware()` works in both the [HTTP Routes](/server/http-routes) system (`createEndpoint` / `createMiddleware`) and as an Express middleware. The decoded JWT payload is exposed on `ctx.context.auth` (HTTP routes) or `req.auth` (Express).
 
-<Tabs>
+<Tabs items={["HTTP Routes (createEndpoint)", "Express middleware", "Custom authentication"]}>
     <Tab value="HTTP Routes (createEndpoint)">
     ```ts title="src/endpoints/profile.ts"
     import { createEndpoint } from "colyseus";
@@ -83,8 +88,9 @@ If you are using the `@colyseus/auth` module, `auth.middleware()` works in both 
     </Tab>
 </Tabs>
 
-<Callout type="warning">
+<Callout type="warn">
     `tokenVersion`-based revocation (`db.auth.ban()`, `db.auth.bumpTokenVersion()`) is enforced on **room joins**. `auth.middleware()` only verifies the JWT's signature and expiry. A revoked-but-unexpired token still passes HTTP routes; if a route must observe revocation immediately, check `db.auth.isBanned()` / the `tokenVersion` claim yourself inside the handler. See [Database → Authentication](/database/authentication).
 </Callout>
+</Step>
 
 </Steps>

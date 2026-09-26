@@ -24,7 +24,7 @@ npm install --save-dev @colyseus/testing
 
 Boot the test server with your `app.config.ts`, then create rooms and connect simulated clients inside each test case.
 
-<Tabs>
+<Tabs items={["Mocha + TypeScript", "Jest + TypeScript"]}>
     <Tab value="Mocha + TypeScript">
 
     ```ts title="App.test.ts"
@@ -111,7 +111,7 @@ When sending messages between server and client, wait for the server to process 
 
 Wait for a particular message `type` to arrive in the server.
 
-```ts {8} title="App.test.ts"
+```ts title="App.test.ts"
 it("should receive message", async() => {
     const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
@@ -119,6 +119,7 @@ it("should receive message", async() => {
     client1.send("foo", "payload");
 
     // wait for a specific message
+    // [!code highlight]
     const [ client, message ] = await room.waitForMessage("foo");
 
     assert.strictEqual(client.sessionId, client1.sessionId);
@@ -134,7 +135,7 @@ Wait for any next message to arrive in the server.
 
 - `delay: number` - additional delay after `onMessage` has been called in the backend, in milliseconds (optional)
 
-```ts {11} title="App.test.ts"
+```ts title="App.test.ts"
 it("should receive message", async() => {
     const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
@@ -145,6 +146,7 @@ it("should receive message", async() => {
     });
 
     client1.send("foo");
+    // [!code highlight]
     await room.waitForNextMessage();
 
     assert.ok(received);
@@ -155,11 +157,12 @@ it("should receive message", async() => {
 
 Wait for the server to send the latest patched state to all clients.
 
-```ts {5} title="App.test.ts"
+```ts title="App.test.ts"
 it("client state must match server's after patch is received", async() => {
     const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
 
+    // [!code highlight]
     await room.waitForNextPatch();
 
     assert.deepStrictEqual(client1.state.toJSON(), room.state.toJSON());
@@ -170,11 +173,12 @@ it("client state must match server's after patch is received", async() => {
 
 Wait for the next timestep to complete. Works with either loop: `setTimestep()` and `setFixedTimestep()` both drive the same interval.
 
-```ts {5} title="App.test.ts"
+```ts title="App.test.ts"
 it("should assert something after room's timestep", async() => {
     const room = await colyseus.createRoom("my_room");
     const client1 = await colyseus.connectTo(room);
 
+    // [!code highlight]
     await room.waitForNextTimestep();
 
     // assuming the room's state has a "tick" property that updates during setTimestep()
@@ -210,9 +214,10 @@ it("should connect into battle_room with options x, y, z", async () => {
 
 Wait for client state to be in sync with the server.
 
-```ts {3} title="App.test.ts"
+```ts title="App.test.ts"
 it("should do xyz after receiving message 'x'", async () => {
     const client = await colyseus.sdk.joinOrCreate("battle_room");
+    // [!code highlight]
     await client.waitForNextPatch();
     // perform assertions after client has received a message
 });
@@ -222,11 +227,12 @@ it("should do xyz after receiving message 'x'", async () => {
 
 Wait for a particular message `type` to arrive in the client.
 
-```ts {5} title="App.test.ts"
+```ts title="App.test.ts"
 it("should do xyz after receiving message 'x'", async () => {
     const client = await colyseus.sdk.joinOrCreate("battle_room");
     client.send("ask-for-x");
 
+    // [!code highlight]
     await client.waitForMessage("received-x");
     // perform assertions after client has received "received-x" message type.
 });
@@ -236,11 +242,12 @@ it("should do xyz after receiving message 'x'", async () => {
 
 Wait for any next message to arrive in the client.
 
-```ts {5} title="App.test.ts"
+```ts title="App.test.ts"
 it("should do xyz after receiving message 'x'", async () => {
     const client = await colyseus.sdk.joinOrCreate("battle_room");
     client.send("ask-for-x");
 
+    // [!code highlight]
     await client.waitForNextMessage();
     // perform assertions after client has received a message
 });

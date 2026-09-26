@@ -33,11 +33,13 @@ npm install --save @colyseus/redis-driver
 
 #### Basic Usage
 
-```ts {2,5} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
+// [!code highlight]
 import { RedisDriver } from "@colyseus/redis-driver";
 
 const server = defineServer({
+    // [!code highlight]
     driver: new RedisDriver(),
     // ...
 });
@@ -70,11 +72,13 @@ See [ioredis connection options](https://redis.github.io/ioredis/index.html#Redi
 
 For high-availability setups, the driver supports Redis Cluster mode:
 
-```ts {2,5-12} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
+// [!code highlight]
 import { RedisDriver } from "@colyseus/redis-driver";
 
 const server = defineServer({
+    // [!code highlight:8]
     driver: new RedisDriver([
         { host: "node1.redis.example.com", port: 6379 },
         { host: "node2.redis.example.com", port: 6379 },
@@ -95,14 +99,16 @@ See [ioredis Cluster documentation](https://redis.github.io/ioredis/classes/Clus
 
 The `DatabaseDriver` from [`@colyseus/database`](/database) stores room data on the same connection your `GameDatabase` already uses for players, cloud saves, and configs. One pool, one dialect (SQLite, PostgreSQL, or PGlite), no second service to run. Use it when your server has a `database:` option. This driver is a different package from the [Drizzle driver](#drizzle-driver-postgresql) below, which manages its own PostgreSQL connection and `roomcaches_v1` table.
 
-```ts {2,8} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
+// [!code highlight]
 import { GameDatabase, DatabaseDriver } from "@colyseus/database";
 
 export const db = new GameDatabase({ connectionString: process.env.DATABASE_URL });
 
 export default defineServer({
     database: db,
+    // [!code highlight]
     driver: new DatabaseDriver(), // adopts the GameDatabase connection
 });
 ```
@@ -115,39 +121,45 @@ The driver creates its `colyseus_room_caches` table at boot (`CREATE TABLE IF NO
 
 To add columns or change the physical name, build the table with the `roomCaches` factory (see [Customizing schemas](/database/schemas)) and pass it as `schema`. Extra columns persist with the room and work as matchmaking filters. `schema` is the only option needed: the driver still binds to the `GameDatabase` constructed above.
 
-<Tabs groupId="db-dialect" persist>
+<Tabs items={["SQLite", "PostgreSQL"]} groupId="db-dialect" persist>
     <Tab value="SQLite">
-    ```ts {3,7-9,13} title="app.config.ts"
+    ```ts title="app.config.ts"
     import { defineServer } from "colyseus";
     import { GameDatabase, DatabaseDriver, tables } from "@colyseus/database";
+    // [!code highlight]
     import { text } from "drizzle-orm/sqlite-core";
 
     export const db = new GameDatabase({ connectionString: "./game.db" });
 
+    // [!code highlight:3]
     const roomCaches = tables.sqlite.roomCaches("colyseus_room_caches", {
         region: text("region"),
     });
 
     export default defineServer({
         database: db,
+        // [!code highlight]
         driver: new DatabaseDriver({ schema: roomCaches }),
     });
     ```
     </Tab>
     <Tab value="PostgreSQL">
-    ```ts {3,7-9,13} title="app.config.ts"
+    ```ts title="app.config.ts"
     import { defineServer } from "colyseus";
     import { GameDatabase, DatabaseDriver, tables } from "@colyseus/database";
+    // [!code highlight]
     import { text } from "drizzle-orm/pg-core";
 
     export const db = new GameDatabase({ connectionString: process.env.DATABASE_URL });
 
+    // [!code highlight:3]
     const roomCaches = tables.pg.roomCaches("colyseus_room_caches", {
         region: text("region"),
     });
 
     export default defineServer({
         database: db,
+        // [!code highlight]
         driver: new DatabaseDriver({ schema: roomCaches }),
     });
     ```
@@ -188,11 +200,13 @@ npm install --save @colyseus/drizzle-driver
 
 The simplest way to use the driver is to set the `DATABASE_URL` environment variable:
 
-```ts {2,5} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
+// [!code highlight]
 import { PostgresDriver } from "@colyseus/drizzle-driver";
 
 const server = defineServer({
+    // [!code highlight]
     driver: new PostgresDriver(),
     // ...
 });
@@ -204,21 +218,24 @@ The driver will automatically connect using the `DATABASE_URL` environment varia
 
 If you already have a Drizzle database instance in your application, you can pass it to the driver:
 
-```ts {2,3,6,9} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
+// [!code highlight:2]
 import { drizzle } from "drizzle-orm/postgres-js";
 import { PostgresDriver } from "@colyseus/drizzle-driver";
 
 // Your existing database instance
+// [!code highlight]
 const db = drizzle(process.env.DATABASE_URL);
 
 const server = defineServer({
+    // [!code highlight]
     driver: new PostgresDriver({ db }),
     // ...
 });
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     When providing your own database instance, you are responsible for managing the schema initialization. The `roomcaches_v1` table must exist before the driver is used.
 </Callout>
 
@@ -277,11 +294,13 @@ The driver creates a `roomcaches_v1` table with the following structure:
 
 The `MongooseDriver` stores room data in a MongoDB database. This driver is not actively maintained and is not recommended for production environments.
 
-```ts {2,5} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
+// [!code highlight]
 import { MongooseDriver } from "@colyseus/mongoose-driver";
 
 const server = defineServer({
+    // [!code highlight]
     driver: new MongooseDriver(/* connection URI (falls back to MONGO_URI env, then mongodb://127.0.0.1:27017/colyseus) */),
     // ...
 });

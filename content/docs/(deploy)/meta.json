@@ -2,7 +2,7 @@
   "title": "Deploy & Cloud",
   "description": "Ship, scale and host your server",
   "root": true,
-  "icon": "RocketIcon",
+  "icon": "Rocket",
   "pages": [
     "deployment",
     "scalability",

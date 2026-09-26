@@ -49,7 +49,7 @@ You don't have to guess from feel. Every `reconciler`/`sim` controller keeps rol
 
 Set **`warnOnDivergence`** (a tolerance in world units) on the controller to get a console warning when the persistent component crosses it. Telemetry runs while watched (this option set, or the dev panel active):
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts
@@ -96,7 +96,7 @@ Set **`warnOnDivergence`** (a tolerance in world units) on the controller to get
     ```
     </Tab>
 
-</LangTabs>
+</Tabs>
 
 The dev panel (`import "@colyseus/sdk/debug"`) classifies through the **same rule** and shows a per-controller verdict: **✓ matched** (both ~0), **~ jitter** (spikes that decay out), **✗ diverging** (persistent `ema`). The panel and the warning can therefore never disagree about what the numbers mean. `me.reset()` zeroes the telemetry, and a `snap`-absorbed correction is excluded from it, so a deliberate pose jump doesn't read as divergence.
 

@@ -1,6 +1,6 @@
 {
   "title": "Server",
-  "icon": "ServerIcon",
+  "icon": "Server",
   "pages": [
     "---Setup---",
     "transport",

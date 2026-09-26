@@ -7,7 +7,7 @@ A collection that gains hundreds of entries in one tick produces one enormous pa
 
 **Streaming** spreads those additions across ticks. Each client drains a bounded number of new entries per tick, in an order you control. The nearest entities arrive first, and the rest trickle in behind them.
 
-<Callout type="warning">
+<Callout type="warn">
     **Experimental.** The API may still change: the shape of `t.stream()`, the priority callback, and how the per-tick budget applies. Pin your `@colyseus/schema` version if you depend on it.
 </Callout>
 
@@ -56,7 +56,7 @@ Declares a **`StreamSchema`**, a collection keyed by a monotonic position counte
 
 That position is the point. Entries keep a stable identity even as others are removed, so a client's partially-delivered view stays coherent across ticks.
 
-<Callout type="warning">
+<Callout type="warn">
     The element type must be a `Schema` subclass. Priority batching relies on stable ref ids, which primitives don't carry, so `t.stream("number")` is a TypeScript error. No runtime check enforces it, so plain JavaScript gets no diagnostic.
 </Callout>
 
@@ -83,7 +83,7 @@ const MyState = schema({
 }, "MyState");
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     **`.stream()` is not supported on `t.array(X)`** and throws at definition time.
 
     Array positional operations (`splice`, `unshift`, `reverse`) shift every subsequent index. Holding some additions back for a later tick while indexes move underneath them would leave clients in a state that doesn't match the server. Use `t.stream(X)` (stable positions) or `t.map(X).stream()` (keys never shift) instead.
@@ -108,7 +108,7 @@ client.view = new StateView();
 client.view.subscribe(this.state.enemies);
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     **`subscribe()` is not optional.** As soon as one client holds a `StateView`, the stream stops seeding its broadcast backlog. Every entry added after that point reaches subscribed views only.
 
     Entries added earlier (in `onCreate`, before anyone joined) are already in the broadcast backlog and still reach every client. A room that skips the subscription therefore looks like it works, then silently stops delivering once the first client joins.
@@ -158,7 +158,7 @@ A per-client callback overrides this one for that client. Assigning `state.enemi
 
 The callback runs per client, per pending entry, on every tick with a backlog. Avoid allocation and hoist any lookup you can. Squared distance beats `Math.hypot`.
 
-<Callout type="warning">
+<Callout type="warn">
     Priority applies to per-view encoding only. In broadcast mode, with no `StateView` anywhere in the room, every client receives the same bytes and the backlog drains in insertion order.
 </Callout>
 

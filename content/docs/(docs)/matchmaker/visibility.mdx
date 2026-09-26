@@ -45,7 +45,7 @@ await this.setMatchmaking({
 });
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     `metadata` is **replaced**, never merged. To merge, spread the current value yourself:
     `setMatchmaking({ metadata: { ...this.metadata, round: 2 } })`.
 </Callout>

@@ -10,7 +10,7 @@ Handle the various states of a room connection.
 
 Disconnect from the room. Use `consented: true` (default) for intentional leaves, or `false` to simulate an unexpected disconnect.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
     <Tab value="TypeScript">
     ```ts title="client.ts"
     // consented leave
@@ -64,7 +64,7 @@ Disconnect from the room. Use `consented: true` (default) for intentional leaves
     await room.leave();
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 <Callout type="info">
     **Backend:** Use [Room → On Leave](/room/lifecycle#on-leave) to handle client disconnection.
@@ -72,7 +72,7 @@ Disconnect from the room. Use `consented: true` (default) for intentional leaves
 
 **Listening for the leave event:**
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts title="client.ts"
@@ -122,7 +122,7 @@ Disconnect from the room. Use `consented: true` (default) for intentional leaves
     });
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 **Possible closing `code`s and their meaning:**
 
@@ -135,7 +135,7 @@ Disconnect from the room. Use `consented: true` (default) for intentional leaves
 
 The SDK automatically attempts to reconnect when the connection is unexpectedly dropped.
 
-<Callout type="warning">
+<Callout type="warn">
     Automatic reconnection only triggers if the room has been connected for at least `minUptime` milliseconds. This threshold prevents reconnection loops for rooms that fail immediately after joining.
 </Callout>
 
@@ -143,7 +143,7 @@ The SDK automatically attempts to reconnect when the connection is unexpectedly 
 
 Triggered when the connection is unexpectedly dropped. The SDK will automatically attempt to reconnect.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
     <Tab value="TypeScript">
     ```ts title="client.ts"
     room.onDrop((code, reason) => {
@@ -197,7 +197,7 @@ Triggered when the connection is unexpectedly dropped. The SDK will automaticall
     });
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 <Callout type="info">
     The `onDrop` event is different from `onLeave`. While `onLeave` is triggered when the client intentionally leaves or the connection is permanently closed, `onDrop` indicates a temporary disconnection where reconnection will be attempted.
@@ -215,7 +215,7 @@ Triggered when the connection is unexpectedly dropped. The SDK will automaticall
 
 Triggered when the client successfully reconnects after a connection drop. While disconnected, your `room.send()` calls will be queued and sent to the server when the client reconnects. The maximum number of queued messages is configurable using `room.reconnection.maxEnqueuedMessages`.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
     <Tab value="TypeScript">
     ```ts title="client.ts"
     room.onReconnect(() => {
@@ -264,7 +264,7 @@ Triggered when the client successfully reconnects after a connection drop. While
     });
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 ### Reconnection Options
 
@@ -293,7 +293,7 @@ You may configure the reconnection behavior using `room.reconnection`.
 
 **Customizing reconnection behavior:**
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
     <Tab value="TypeScript">
     ```ts title="client.ts"
     const room = await client.joinOrCreate("battle");
@@ -357,11 +357,11 @@ You may configure the reconnection behavior using `room.reconnection`.
     );
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 **Custom backoff function:**
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
     <Tab value="TypeScript">
     ```ts title="client.ts"
     room.reconnection.backoff = (attempt: number, delay: number) => {
@@ -407,7 +407,7 @@ You may configure the reconnection behavior using `room.reconnection`.
     // The native core uses a default exponential backoff strategy.
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 ## Manual Reconnection
 
@@ -416,7 +416,7 @@ For more control, you can manually reconnect using a cached reconnection token. 
 - You must store/cache the `room.reconnectionToken` from an active room connection.
 - The server needs to call [`.allowReconnection()`](/room/reconnection#allowreconnectionclient-seconds) for that client.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts title="client.ts"
@@ -492,13 +492,13 @@ For more control, you can manually reconnect using a cached reconnection token. 
     }
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 ## Error Handling
 
 Listen for errors that occur in the room.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
     <Tab value="TypeScript">
     ```ts title="client.ts"
     room.onError((code, message) => {
@@ -552,7 +552,7 @@ Listen for errors that occur in the room.
     });
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 ## Removing Listeners
 

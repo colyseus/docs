@@ -25,6 +25,8 @@ movedAnchors:
   allowreconnection-client-seconds: "/room/reconnection#allowreconnectionclient-seconds"
 ---
 
+import { ListOrdered, RadioTower, Rows3 } from 'lucide-react';
+
 The `Room` class is the core building block of Colyseus. Each room instance holds one group of clients, who interact through shared state and messages.
 
 ## Why Rooms?
@@ -38,7 +40,7 @@ The `Room` class is the core building block of Colyseus. Each room instance hold
 
 You can define a Room using a class that extends `Room`.
 
-<Tabs>
+<Tabs items={["Simple", "With Full Type Safety"]}>
     <Tab value="Simple">
     ```ts title="MyRoom.ts"
     import { Room, Client } from "colyseus";
@@ -107,7 +109,7 @@ export class MyRoom extends Room {
 }
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     The room's `state` is **mutable**. You should not reassign the `state` object, but rather mutate it directly when updating the state.
 </Callout>
 
@@ -313,7 +315,7 @@ Available options are:
 - **`except`**: a [`Client`](/room#client-instance), or array of `Client` instances not to send the message to
 - **`afterNextPatch`**: waits until next patch to broadcast the message
 
-<Tabs>
+<Tabs items={["Broadcast to all", "Broadcast except for sender", "Broadcast after state patch"]}>
 
     <Tab value="Broadcast to all">
     Broadcasting a message to all clients:
@@ -418,7 +420,7 @@ await this.disconnect(4020);
 
 ### Broadcast Patch
 
-<Callout type="warning">
+<Callout type="warn">
     **You may not need this!** - This method is called automatically by the framework.
 </Callout>
 
@@ -492,7 +494,7 @@ onCreate(options) {
 }
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     The `metadata` setter can only be used during `onCreate()`. To update metadata after the room is created, use [`setMetadata()`](/matchmaker/visibility#matchmaking-properties) or [`setMatchmaking()`](/matchmaker/visibility#matchmaking-properties) instead.
 </Callout>
 
@@ -652,7 +654,7 @@ onJoin(client, options) {
 ```
 
 <Callout type="info">
-    See [<SyncIcon/> State Synchronization → State View](/state/view) for more details.
+    See [State Synchronization → State View](/state/view) for more details.
 </Callout>
 
 ---
@@ -771,17 +773,17 @@ client.leave(4020);
 Colyseus ships pre-built room types you can use directly or extend. Lobby and
 Queue are documented under Matchmaking, since that's the job they do:
 
-<ScenarioGrid>
-    <ScenarioCard icon={<RowsIcon size={18}/>} title="Lobby Room" href="/matchmaker/lobby">
+<Cards>
+    <Card icon={<Rows3 />} title="Lobby Room" href="/matchmaker/lobby">
         A live listing of available rooms, the backend for a room browser UI.
-    </ScenarioCard>
-    <ScenarioCard icon={<ListOrderedIcon size={18}/>} title="Queue Room" href="/matchmaker/queue">
+    </Card>
+    <Card icon={<ListOrdered />} title="Queue Room" href="/matchmaker/queue">
         A matchmaking queue that groups players over time and spawns a match room when a group is ready.
-    </ScenarioCard>
-    <ScenarioCard icon={<BroadcastIcon size={18}/>} title="Relay Room" href="/room/relay">
+    </Card>
+    <Card icon={<RadioTower />} title="Relay Room" href="/room/relay">
         A lightweight relay that broadcasts client messages to everyone else, with no authoritative state.
-    </ScenarioCard>
-</ScenarioGrid>
+    </Card>
+</Cards>
 
 ## Next Steps
 

@@ -1,6 +1,6 @@
 {
   "title": "Netcode",
-  "icon": "ZapIcon",
+  "icon": "Zap",
   "pages": [
     "server-input",
     "client-prediction",

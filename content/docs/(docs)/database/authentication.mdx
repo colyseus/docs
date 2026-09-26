@@ -19,12 +19,14 @@ The same env secrets (`JWT_SECRET`, `SESSION_SECRET`) still apply. See [Auth Mod
 
 Once `database:` is set on `defineServer`, the auth integration is live. No additional wiring is required:
 
-```ts {2,6} title="src/app.config.ts"
+```ts title="src/app.config.ts"
 import { defineServer } from "colyseus";
+// [!code highlight]
 import { GameDatabase } from "@colyseus/database";
 
 export const db = new GameDatabase({ connectionString: process.env.DATABASE_URL });
 
+// [!code highlight]
 export default defineServer({
     database: db, // ← wires @colyseus/auth routes + user store automatically
 });

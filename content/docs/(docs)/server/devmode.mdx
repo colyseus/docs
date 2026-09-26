@@ -7,7 +7,7 @@ description: "Colyseus development mode (devMode) restores rooms and state acros
 
 The `devMode` option has been introduced to speed up **local development** while updating your room implementation.
 
-<Callout type="warning">
+<Callout type="warn">
     **Do not use `devMode` in a production environment** - This feature is not optimized for a large amount of rooms. Use it for local development only.
 </Callout>
 
@@ -27,17 +27,18 @@ Clients try to reconnect as soon as the server goes down. They keep trying a few
 
 The `devMode` is disabled by default and it can be enabled via [Server option](/server#development-mode):
 
-```ts {5} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
 
 const server = defineServer({
     // ...
+    // [!code highlight]
     devMode: true,
     // ...
 });
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     **Attention on the frontend**
 
     Upon re-establishing a connection on devMode, the `onAdd` schema callback will be triggered again on the frontend.

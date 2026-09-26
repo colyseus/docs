@@ -1,6 +1,6 @@
 {
   "title": "Built-in Tools",
-  "icon": "ToolsIcon",
+  "icon": "Wrench",
   "pages": [
     "playground",
     "monitoring",

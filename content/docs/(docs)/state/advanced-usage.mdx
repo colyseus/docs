@@ -182,7 +182,7 @@ In order to encode 3rd party structures, there are 2 steps to take:
 1. Use `Metadata.setFields()` to define the properties to be encoded.
 2. Initialize each instance with `Schema.initialize()` as soon as the 3rd party structure has been instantiated.
 
-<Callout type="warning">
+<Callout type="warn">
     **Possible conflicts with 3rd party libraries**
 
     - `Schema.initialize()` is going to assign a property descriptor per property defined by `Metadata.setFields()`.
@@ -254,7 +254,7 @@ Options:
 
 ### Order matters: detach, then release
 
-<Callout type="warning">
+<Callout type="warn">
     Remove the instance from its parent collection **before** calling `release()`. Releasing an instance that is still attached throws: it would otherwise be reset while the encoder still considered it part of the state tree.
 </Callout>
 
@@ -265,7 +265,7 @@ pool.release(entity);        // then release
 
 ### Re-assign every field after `acquire()`
 
-<Callout type="warning">
+<Callout type="warn">
     **Pooling does not clear primitive values.** An acquired instance still carries the numbers, strings and booleans from its previous life. Those retained values *are* re-encoded when it re-enters the state tree. A field you forget to re-assign will silently ship the previous entity's value to clients.
 </Callout>
 

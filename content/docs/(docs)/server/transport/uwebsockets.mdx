@@ -23,12 +23,14 @@ npm install --save uwebsockets-express
 
 **Usage**
 
-```ts {1,6-10} title="app.config.ts"
+```ts title="app.config.ts"
+// [!code highlight]
 import { uWebSocketsTransport } from "@colyseus/uwebsockets-transport"
 import { defineServer } from "colyseus";
 
 const server = defineServer({
   // ...
+  // [!code highlight:5]
   transport: new uWebSocketsTransport({
     /* transport options */
   }, {
@@ -122,7 +124,7 @@ Password for the SSL file. (for SSL termination through the Node.js application.
 
 The `@colyseus/uwebsockets-transport` package ships with a specific version of `uWebSockets.js` as a dependency. You may need a different version, for example to pick up a bug fix or to match a specific platform requirement. In that case, override it directly from your project's `package.json`.
 
-<Tabs groupId="package-manager" persist>
+<Tabs items={["npm", "yarn", "pnpm"]} groupId="package-manager" persist>
     <Tab value="npm">
     Use the [`overrides`](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#overrides) field:
     ```json title="package.json"
@@ -159,7 +161,7 @@ The `@colyseus/uwebsockets-transport` package ships with a specific version of `
 
 After updating `package.json`, remove your `node_modules` directory and reinstall dependencies for the override to take effect.
 
-<Callout type="warning">
+<Callout type="warn">
     Check the [uWebSockets.js releases](https://github.com/uNetworking/uWebSockets.js/releases) for available versions.
 </Callout>
 

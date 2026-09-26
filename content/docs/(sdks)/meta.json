@@ -2,9 +2,9 @@
   "title": "Client SDKs",
   "description": "Install and use the SDK for your engine",
   "root": true,
-  "icon": "DevicesIcon",
+  "icon": "MonitorSmartphone",
   "pages": [
-    "[CodeIcon][Client SDK API](/sdk)",
+    "[Code][Client SDK API](/sdk)",
     "...getting-started"
   ]
 }

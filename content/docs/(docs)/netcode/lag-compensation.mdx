@@ -24,7 +24,7 @@ Enabling it takes a stamp on the client's inputs and a rewind on the server. The
 
 Each input carries a timestamp telling the server *when* the client's view of the world was. Once the room enables rewind, the SDK stamps every input on its own. Wiring the handle through `predict.reconciler` / `predict.sim` then binds the stamp's interp-buffer term to the `Predict` lerp `delay`. The buffer you render at and the instant the server rewinds to come from **one number**, so they can't drift apart.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts
@@ -89,7 +89,7 @@ Each input carries a timestamp telling the server *when* the client's view of th
     ```
     </Tab>
 
-</LangTabs>
+</Tabs>
 
 Two knobs, both optional:
 
@@ -188,7 +188,7 @@ this.rewind.attachAll(this.state.enemies, { fields: ["x", "y"], mode: "reckon" }
 
 Keep the pairing in one shared constant if you like: the server's `mode` and the client's `predict.attachAll` mode describe the same decision. You can attach the same collection twice with disjoint `fields` to mix timelines on one entity. The room ships exactly the stamp(s) its attached groups need. Nothing extra crosses the wire.
 
-<Callout type="warning">
+<Callout type="warn">
     **Don't break the delay pairing.** When the input handle is wired through `predict.reconciler`/`predict.sim`, the lerp `delay` and the rewind stamp share one source: nothing to keep in sync. That source is the Predict's *default* `delay`, so a per-attach `delay` that differs from it breaks the pairing too. If you pass `renderDelay` explicitly, it must equal the delay your remotes actually render at. Reverting remotes to `damped` (no fixed delay) silently degrades the rewind to an approximation.
 </Callout>
 

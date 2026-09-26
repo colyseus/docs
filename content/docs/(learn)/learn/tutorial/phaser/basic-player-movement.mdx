@@ -15,12 +15,12 @@ This guide will show you how you can build a multiplayer experience with Colyseu
 
 ### Materials
 
-- [<LinkIcon/> Part 1: Phaser Scene source-code](https://github.com/colyseus/tutorial-phaser/blob/master/client/src/scenes/Part1Scene.ts)
-- [<LinkIcon/> Part 1: Colyseus Room source-code](https://github.com/colyseus/tutorial-phaser/blob/master/server/src/rooms/Part1Room.ts)
+- [Part 1: Phaser Scene source-code](https://github.com/colyseus/tutorial-phaser/blob/master/client/src/scenes/Part1Scene.ts)
+- [Part 1: Colyseus Room source-code](https://github.com/colyseus/tutorial-phaser/blob/master/server/src/rooms/Part1Room.ts)
 
 ---
 
-- [<LinkIcon/> Full source-code on GitHub](https://github.com/colyseus/tutorial-phaser)
+- [Full source-code on GitHub](https://github.com/colyseus/tutorial-phaser)
 
 ## Before you start
 
@@ -248,7 +248,7 @@ Let's go back to editing the Server code, and define our Room State in the Serve
 
 We need to handle multiple `Player` instances, and each `Player` will have `x`, `y` and `z` coordinates:
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
     ```ts title="MyRoomState.ts"
     import { schema, t } from "@colyseus/schema";

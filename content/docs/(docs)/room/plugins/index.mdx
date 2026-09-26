@@ -93,7 +93,7 @@ export class ChatPlugin extends RoomPlugin {
 }
 ```
 
-<Callout type="warning">
+<Callout type="warn">
   **Always declare lifecycle hooks (`onCreate` / `onAuth` / `onJoin` / `onLeave` / `onDispose`), `messages`, and `order` as `protected`.** They're protected on the base `RoomPlugin` class. If you omit the modifier on a subclass override, TypeScript silently widens it to `public`, which leaks those framework slots into `this.plugins.<key>.<member>` autocomplete. The `pluginName` field stays `public` so type inference can read its literal.
 </Callout>
 
@@ -207,7 +207,7 @@ export class MyRoom extends Room<{ state: MyState }> {
 }
 ```
 
-<Callout type="warning">
+<Callout type="warn">
   **Prefer a type alias over `<this>` inside the `plugins =` initializer.** `new LeaderboardsPlugin<this>()` makes the field's type depend on the class being defined. That dependency has historically tripped TypeScript's cycle detection (`'plugins' implicitly has type 'any'`) on some compiler versions. The type-alias pattern above sidesteps the question entirely (the alias resolves before the class does) and is the canonical way to thread the room shape.
 </Callout>
 

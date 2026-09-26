@@ -30,11 +30,13 @@ npm install --save @colyseus/redis-presence
 
 #### Basic Usage
 
-```ts {2,5} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
+// [!code highlight]
 import { RedisPresence } from "@colyseus/redis-presence";
 
 const server = defineServer({
+    // [!code highlight]
     presence: new RedisPresence(),
     // ...
 });
@@ -67,11 +69,13 @@ See [ioredis connection options](https://redis.github.io/ioredis/index.html#Redi
 
 For high-availability setups, the presence supports Redis Cluster mode:
 
-```ts {2,5-12} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
+// [!code highlight]
 import { RedisPresence } from "@colyseus/redis-presence";
 
 const server = defineServer({
+    // [!code highlight:8]
     presence: new RedisPresence([
         { host: "node1.redis.example.com", port: 6379 },
         { host: "node2.redis.example.com", port: 6379 },
@@ -130,7 +134,7 @@ this.presence.subscribe("global-event", (data) => {
 
 Unsubscribe from a given `topic`.
 
-<Tabs>
+<Tabs items={["Unsubscribe from all", "Unsubscribe from specific callback"]}>
     <Tab value="Unsubscribe from all">
     Unsubscribe from all previously subscribed "global-event" callbacks.
 

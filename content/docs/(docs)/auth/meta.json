@@ -1,6 +1,6 @@
 {
   "title": "Authentication",
-  "icon": "PasskeyFillIcon",
+  "icon": "KeyRound",
   "pages": [
     "room",
     "http",

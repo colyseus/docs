@@ -2,7 +2,7 @@
   "title": "Docs",
   "description": "Build your game with the Colyseus framework",
   "root": true,
-  "icon": "BookIcon",
+  "icon": "Book",
   "pages": [
     "---Overview---",
     "index",

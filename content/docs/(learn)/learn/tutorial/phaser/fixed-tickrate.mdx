@@ -20,12 +20,12 @@ This guide will show you how you can build a multiplayer experience with Colyseu
 
 ### Materials
 
-- [<LinkIcon/> Part 4: Phaser Scene source-code](https://github.com/colyseus/tutorial-phaser/blob/master/client/src/scenes/Part4Scene.ts)
-- [<LinkIcon/> Part 4: Colyseus Room source-code](https://github.com/colyseus/tutorial-phaser/blob/master/server/src/rooms/Part4Room.ts)
+- [Part 4: Phaser Scene source-code](https://github.com/colyseus/tutorial-phaser/blob/master/client/src/scenes/Part4Scene.ts)
+- [Part 4: Colyseus Room source-code](https://github.com/colyseus/tutorial-phaser/blob/master/server/src/rooms/Part4Room.ts)
 
 ---
 
-- [<LinkIcon/> Full source-code on GitHub](https://github.com/colyseus/tutorial-phaser)
+- [Full source-code on GitHub](https://github.com/colyseus/tutorial-phaser)
 
 ---
 
@@ -43,7 +43,7 @@ A common technique we can apply is to enqueue player inputs, and process them al
 
 Let's update the server's `Player` definition to hold a queue of inputs, a local-only field that is never synchronized to clients:
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
     The `.noSync()` modifier keeps the field on the instance without registering it for synchronization:
 

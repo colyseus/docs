@@ -10,11 +10,13 @@ movedAnchors:
   versioning-and-backwardsforwards-compability: "/state/schema#versioning-and-backwardsforwards-compatibility"
 ---
 
+import { Hash } from 'lucide-react';
+
 - Schema structures are defined on the backend and describe data that is continuously synchronized between server and client.
 - A field is synchronized when it is **declared**: with a `t.*` builder, or with a [`@type()` decorator](/state/schema/decorators). Plain class properties are invisible to the serializer.
 - A declared field can opt out with [`.noSync()`](#field-modifiers), and *how* it reaches clients is tunable with [delivery modifiers](#delivery-modifiers).
 
-<Callout type="warning">
+<Callout type="warn">
     `Schema` is for the two things that synchronize continuously: your room's **state**, and the **[input](/netcode/server-input)** clients send back. Don't reach for it elsewhere. [Room messages](/room/messages) and other one-off payloads have their own serialization and don't need a schema.
 </Callout>
 
@@ -24,7 +26,7 @@ movedAnchors:
 
 ## Defining a `Schema` structure
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
 
     ```ts title="MyState.ts"
@@ -60,7 +62,7 @@ The sections below cover each aspect of a schema definition, in both styles. The
 
 ### Deriving the TypeScript type
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
 
     `schema()` returns a value, not a type. To reference the instance type in TypeScript (`Room<MyState>`, function parameters, etc.), declare a type alias with the same name using `SchemaType`:
@@ -99,7 +101,7 @@ The sections below cover each aspect of a schema definition, in both styles. The
 
 The serializer identifies each structure by its runtime class name. An anonymous class degrades error messages, debug output and cross-language code generation.
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
 
     The second argument of `schema()` sets the runtime class name. Pass it for every state structure:
@@ -121,7 +123,7 @@ The serializer identifies each structure by its runtime class name. An anonymous
 
 ### Default values
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
 
     Chain `.default(value)` to set a field's initial value. Passing a **function** makes it a factory, invoked once per construction. Use it for any mutable default that must not be shared across instances:
@@ -151,7 +153,7 @@ The serializer identifies each structure by its runtime class name. An anonymous
 
 ### Methods and constructors
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
 
     Function-valued properties become methods on the resulting class. The special `initialize(props)` method acts as the constructor body:
@@ -237,13 +239,13 @@ The modifiers above answer *what* a field is. These three answer **when and how 
 
 Tick patches carry the field on the **unreliable transport channel**, dropped rather than retransmitted when the network is congested. For a value that is fully replaced every tick anyway, a dropped packet costs nothing: the next tick supersedes it. Retransmitting it would only add latency.
 
-<Callout type="warning">
+<Callout type="warn">
     **Experimental, and WebTransport only.** Unreliable delivery needs a datagram channel, which only [WebTransport](/server/transport/webtransport) provides today, and that transport is itself experimental.
 
     On every WebSocket transport the field reaches clients once, in the full state sync, and then freezes. Tick patches skip it, and the room logs a warning. Keep the field reliable until the transport is in place.
 </Callout>
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
 
     ```ts
@@ -277,7 +279,7 @@ The field is still written to the full state sync, so a late joiner gets the cur
 
 The field travels on **tick patches only**. A full state sync never includes it, so a client that joins mid-game does not receive it at all. The field appears only when it next changes:
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
 
     ```ts
@@ -311,7 +313,7 @@ For **map and room-wide data** that every client needs once: the level layout, t
 
 The field ships in the **full state sync only**: a client receives it on join, and never again.
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
 
     ```ts
@@ -355,7 +357,7 @@ That makes it the exact mirror of `.patchOnly()`:
 | `.patchOnly()` | ❌ | ✅ |
 | `.fullStateOnly()` | ✅ | ❌ |
 
-<Callout type="warning">
+<Callout type="warn">
     Writes after a client has joined are **silently dropped**: no error, and that client keeps the value it joined with. Populate these fields during `onCreate()`, before anyone is connected. If clients need to see a field change while they're connected, it can't be `.fullStateOnly()`.
 </Callout>
 
@@ -364,19 +366,19 @@ The field itself is not frozen. It stays an ordinary, mutable property on the se
 ## Data Types
 
 <Cards>
-    <Card icon={<HashIcon/>} title="Primitive Types" href="#primitive-types" />
-    <Card icon={<HashIcon/>} title="Schema Type" href="#schema-type" />
-    <Card icon={<HashIcon/>} title="ArraySchema" href="#array-arrayschema" />
-    <Card icon={<HashIcon/>} title="MapSchema" href="#map-mapschema" />
-    <Card icon={<HashIcon/>} title="SetSchema" href="#set-setschema" />
-    <Card icon={<HashIcon/>} title="CollectionSchema" href="#collectionschema" />
+    <Card icon={<Hash />} title="Primitive Types" href="#primitive-types" />
+    <Card icon={<Hash />} title="Schema Type" href="#schema-type" />
+    <Card icon={<Hash />} title="ArraySchema" href="#array-arrayschema" />
+    <Card icon={<Hash />} title="MapSchema" href="#map-mapschema" />
+    <Card icon={<Hash />} title="SetSchema" href="#set-setschema" />
+    <Card icon={<Hash />} title="CollectionSchema" href="#collectionschema" />
 </Cards>
 
 ### Primitive types
 
 Each primitive type is declared through its `t.*` factory (or, in decorator style, by its quoted name):
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
 
     ```ts title="MyState.ts"
@@ -474,7 +476,7 @@ Your code reads and writes a plain `number`. The conversion is invisible.
 
 `t.angle(opts?)` is sugar for a full-circle wrapping angle in radians: `t.quantized({ min: 0, max: 2π, mode: "wrap", bits: opts?.bits ?? 16 })`. At the 16-bit default that's ~0.0055° per step, finer than any mouse can resolve, in 2 bytes.
 
-<Callout type="warning">
+<Callout type="warn">
     **Choosing the wrong mode is a real bug.** A clamped heading jams at the `0`/`2π` seam. A wrapped pitch flips the camera the instant you look a hair too far up.
 </Callout>
 
@@ -492,7 +494,7 @@ Your code reads and writes a plain `number`. The conversion is invisible.
 
 A `Schema` type can define properties as primitives, other `Schema` types, or collections (e.g., arrays or maps) that may contain nested types.
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
 
     ```ts title="MyState.ts"
@@ -542,10 +544,10 @@ The `ArraySchema` is a synchronizeable version of the built-in JavaScript [Array
 
 You can't mix types inside `ArraySchema`.
 
-<Tabs>
+<Tabs items={["Example with primitive child type", "Example with Schema child type"]}>
     <Tab value="Example with primitive child type">
 
-        <Tabs groupId="schema-style" persist>
+        <Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
             <Tab value="Schema Builder">
 
             ```ts title="MyState.ts"
@@ -574,7 +576,7 @@ You can't mix types inside `ArraySchema`.
 
     <Tab value="Example with Schema child type">
 
-        <Tabs groupId="schema-style" persist>
+        <Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
             <Tab value="Schema Builder">
 
             ```ts title="MyState.ts"
@@ -719,7 +721,7 @@ state.cards.move((cards) => {
 
 Iterates over each element of the array.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]} groupId="lang" persist>
     <Tab value="TypeScript">
 
     ```typescript
@@ -765,7 +767,7 @@ Iterates over each element of the array.
     }
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 <Callout type="info">
     **More methods available for Array** - Have a look at the [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/).
@@ -785,11 +787,11 @@ The `MapSchema` is a synchronizeable version of the built-in JavaScript [Map](ht
 
 Maps are recommended to track your game entities by id, such as players, enemies, etc.
 
-<Callout type="warning">
+<Callout type="warn">
     **Only string keys are supported** - Currently, the `MapSchema` only allows you to customize the value type. The key type is always `string`.
 </Callout>
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
 
     ```ts title="MyState.ts"
@@ -876,7 +878,7 @@ console.log(map.size);
 
 Iterates over each key/value pair of the map, in insertion order.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe"]} groupId="lang" persist>
     <Tab value="TypeScript">
 
     ```typescript
@@ -923,7 +925,7 @@ Iterates over each key/value pair of the map, in insertion order.
     }
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 In C#, `foreach` over a `MapSchema<T>` allocates nothing. Adding or removing an entry during enumeration throws an `InvalidOperationException`.
 
@@ -941,7 +943,7 @@ Empties the Map. (Frontend will trigger `onRemove` for each element.)
 
 ### Set (`SetSchema`)
 
-<Callout type="warning">
+<Callout type="warn">
     **`SetSchema` is only available for JavaScript SDK** - Haxe, C# and Lua SDKs are not implemented.
 </Callout>
 
@@ -949,7 +951,7 @@ The `SetSchema` is a synchronizeable version of the built-in JavaScript [Set](ht
 
 The usage of `SetSchema` is very similar to [`CollectionSchema`], the biggest difference is that Sets hold unique values. Sets do not have a way to access a value directly. (like [collection.at()](#collectionat))
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
 
     ```ts title="MyState.ts"
@@ -1048,13 +1050,13 @@ Empties the Set. (Frontend will trigger `onRemove` for each element.)
 
 ### CollectionSchema
 
-<Callout type="warning">
+<Callout type="warn">
     **`CollectionSchema` is only available for JavaScript SDK** - Haxe, C#, Lua and C++ clients are not implemented.
 </Callout>
 
 The `CollectionSchema` works similarly as the `ArraySchema`, with the caveat that you don't have control over its indexes.
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
 
     ```ts title="MyState.ts"
@@ -1180,7 +1182,7 @@ Empties the Collection. (Frontend will trigger `onRemove` for each element.)
 
 Backwards/forwards compatibility is possible by declaring new fields at the end of existing structures. Earlier declarations must not be removed. Mark them `.deprecated()` instead. See a versioning example below.
 
-<Tabs>
+<Tabs items={["Live version 1", "Live version 2", "Live version 3"]}>
     <Tab value="Live version 1">
 
     ```ts title="MyState.ts"
@@ -1239,21 +1241,24 @@ These inherited types may define their own serialized fields.
 
 The following example is supported:
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
 
-    ```ts {3-5,8,12-13} title="MyState.ts"
+    ```ts title="MyState.ts"
     import { schema, t } from "@colyseus/schema";
 
+    // [!code highlight:3]
     const Item = schema({/* base Item fields */}, "Item");
     const Weapon = Item.extend({/* specialized Weapon fields */}, "Weapon");
     const Shield = Item.extend({/* specialized Shield fields */}, "Shield");
 
     const Inventory = schema({
+        // [!code highlight]
         items: t.map(Item),
     }, "Inventory");
 
     const inventory = new Inventory();
+    // [!code highlight:2]
     inventory.items.set("left", new Weapon());
     inventory.items.set("right", new Shield());
     ```
@@ -1263,18 +1268,21 @@ The following example is supported:
 
     <Tab value="Decorators">
 
-    ```ts {3-5,8,12-13} title="MyState.ts"
+    ```ts title="MyState.ts"
     import { Schema, MapSchema, type } from "@colyseus/schema";
 
+    // [!code highlight:3]
     class Item extends Schema {/* base Item fields */}
     class Weapon extends Item {/* specialized Weapon fields */}
     class Shield extends Item {/* specialized Shield fields */}
 
     class Inventory extends Schema {
+        // [!code highlight]
         @type({ map: Item }) items = new MapSchema<Item>();
     }
 
     const inventory = new Inventory();
+    // [!code highlight:2]
     inventory.items.set("left", new Weapon());
     inventory.items.set("right", new Shield());
     ```

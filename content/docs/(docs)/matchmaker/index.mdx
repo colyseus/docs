@@ -8,6 +8,8 @@ movedAnchors:
   match-maker-api: "/matchmaker#matchmaker-api"
 ---
 
+import { EyeOff, ListOrdered, Rows3, Server } from 'lucide-react';
+
 Every join call from the SDK goes through the matchmaker. It picks the room a
 client lands in, and answers with a **seat reservation** the SDK consumes to
 establish the room connection. `joinOrCreate()` finds a compatible room or
@@ -16,20 +18,20 @@ specific room. See [Joining Rooms](/sdk#joining-rooms) for the frontend.
 
 Which rooms are eligible, and in what order, is up to you:
 
-<ScenarioGrid>
-    <ScenarioCard icon={<EyeClosedIcon size={18}/>} title="Visibility & Access" href="/matchmaker/visibility">
+<Cards>
+    <Card icon={<EyeOff />} title="Visibility & Access" href="/matchmaker/visibility">
         How the <code>locked</code>, <code>private</code>, and <code>unlisted</code> flags control who can find and join a room.
-    </ScenarioCard>
-    <ScenarioCard icon={<RowsIcon size={18}/>} title="Lobby Room" href="/matchmaker/lobby">
+    </Card>
+    <Card icon={<Rows3 />} title="Lobby Room" href="/matchmaker/lobby">
         A live listing of available rooms, the backend for a room browser UI.
-    </ScenarioCard>
-    <ScenarioCard icon={<ListOrderedIcon size={18}/>} title="Queue Room" href="/matchmaker/queue">
+    </Card>
+    <Card icon={<ListOrdered />} title="Queue Room" href="/matchmaker/queue">
         A matchmaking queue that groups players over time and spawns a match room when a group is ready.
-    </ScenarioCard>
-    <ScenarioCard icon={<ServerIcon size={18}/>} title="Standalone Matchmaker" href="/matchmaker/standalone">
+    </Card>
+    <Card icon={<Server />} title="Standalone Matchmaker" href="/matchmaker/standalone">
         Run matchmaking on a dedicated process, separate from your game servers.
-    </ScenarioCard>
-</ScenarioGrid>
+    </Card>
+</Cards>
 
 ## Matchmaking Options
 
@@ -46,7 +48,7 @@ When a room is created by `create()` or `joinOrCreate()`, only the `options` dec
 
 **Examples**
 
-<Tabs>
+<Tabs items={["Filter by \"mode\" provided by the client", "Filter by \"maxClients\" server config"]}>
     <Tab value='Filter by "mode" provided by the client'>
     Filter matchmaking by `mode` option.
 
@@ -124,7 +126,7 @@ The `options` parameter is a key-value object containing the field name in the l
 
 **Example**
 
-<Tabs>
+<Tabs items={["Sorting by the built-in \"clients\""]}>
     <Tab value='Sorting by the built-in "clients"'>
     The `clients` is an internal variable stored for matchmaking, which contains the current number of connected clients. On the example below, the rooms with the highest amount of clients connected will have priority. Use `-1`, `"desc"` or `"descending"` for descending order:
 
@@ -395,7 +397,7 @@ Perform a query against cached rooms.
 - **`conditions`**: key-value conditions object.
 - **`sortOptions`**: key-value sort object.
 
-<Tabs>
+<Tabs items={["Query with conditions", "Query with sorting"]}>
 
     <Tab value="Query with conditions">
     Example querying with conditions:

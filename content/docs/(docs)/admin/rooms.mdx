@@ -56,7 +56,7 @@ Records `action: "room.lock"` or `"room.unlock"`.
 
 The detail page renders the room's state tree as JSON. Click a leaf value to change it in place, or remove an entry from a map or array. Edits are applied to the live `Schema` instance inside the room process, so they reach every connected client on the next patch. The editor is deliberately narrow. You can change leaf values and delete entries; you cannot add keys, change a value's type, or replace a whole object. Direct edits are useful for adjusting in-flight match state (revert a bug, grant a permission, set a flag) without a server restart.
 
-<Callout type="warning">
+<Callout type="warn">
     State edits are immediate and broadcast to all connected clients. A path that does not resolve is a silent no-op: the request still answers `200` and writes an audit row. Use sparingly and prefer adding a dedicated custom action for repeatable workflows (see [Resources → Custom actions](/admin/resources#custom-actions)).
 </Callout>
 
@@ -111,7 +111,7 @@ The inspector uses a synthetic `rooms` resource for the standard role rules:
 - **Mod**: no access without the `rooms` scope. Assign with `db.moderation.assignMod(userId, "rooms")`. Scoped mods get read plus kick, lock and state edits. Dispose stays admin-only (it maps to the `delete` action, which mods never have).
 - **User**: cannot open the panel UI (403), but the list and inspect endpoints still answer.
 
-<Callout type="warning">
+<Callout type="warn">
     The `user` role passes the `list` and `read` gates. Any registered player who can sign in at `/admin-api/auth/login` can therefore open every room. The answer includes live state, metadata, and the emails of the connected clients. See [Authentication → Roles](/admin/authentication#roles) for the mitigation until the package closes this.
 </Callout>
 

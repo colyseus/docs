@@ -24,7 +24,7 @@ The examples import column builders from `drizzle-orm`. Install it from the `rc`
 
 ## Example: extending `users`
 
-<Tabs groupId="db-dialect" persist>
+<Tabs items={["SQLite", "PostgreSQL"]} groupId="db-dialect" persist>
     <Tab value="SQLite">
     ```ts title="src/db/schema.ts"
     import { tables } from "@colyseus/database";
@@ -83,7 +83,7 @@ await db.drizzle.update(db.tables.users)
     .where(eq(db.tables.users.id, userId));
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     The built-in inserts (`/auth/register`, `/auth/anonymous`, OAuth sign-in) fill the built-in columns only. Give custom columns a default or keep them nullable, or those routes fail with a `NOT NULL` error.
 </Callout>
 
@@ -91,7 +91,7 @@ await db.drizzle.update(db.tables.users)
 
 The factory's third argument mirrors `sqliteTable()` / `pgTable()`: a callback that receives the built columns and returns indexes, `CHECK` constraints, and `UNIQUE` constraints. The example below adds a handle that is unique regardless of case, so `JohnSmith` and `johnsmith` cannot coexist:
 
-<Tabs groupId="db-dialect" persist>
+<Tabs items={["SQLite", "PostgreSQL"]} groupId="db-dialect" persist>
     <Tab value="SQLite">
     ```ts title="src/db/schema.ts"
     import { tables } from "@colyseus/database";
@@ -140,7 +140,7 @@ await db.drizzle.update(db.tables.users)
 
 Prefer `uniqueIndex()` over `.unique()` for a table that may already exist in production. For any other change to an existing table, use [drizzle-kit migrations](#migrations-with-drizzle-kit).
 
-<Callout type="warning">
+<Callout type="warn">
     The PostgreSQL factory's third argument currently fails type-checking. `tsc` rejects `.on(t.handleLower)` with "Property 'dimensions' is missing", although the code runs. Until the fix ships, use the [hand-rolled `pgTable` form](#hand-rolled-tables-with-columns), which type-checks. SQLite is not affected.
 </Callout>
 
@@ -148,7 +148,7 @@ Prefer `uniqueIndex()` over `.unique()` for a table that may already exist in pr
 
 For full control, spread the column maps (`columns.sqlite.<name>` / `columns.pg.<name>`) into your own `sqliteTable(...)` / `pgTable(...)`. The factory does the same internally:
 
-<Tabs groupId="db-dialect" persist>
+<Tabs items={["SQLite", "PostgreSQL"]} groupId="db-dialect" persist>
     <Tab value="SQLite">
     ```ts title="src/db/schema.ts"
     import { columns } from "@colyseus/database";
@@ -185,7 +185,7 @@ For full control, spread the column maps (`columns.sqlite.<name>` / `columns.pg.
 
 `cloudSaves` and `leaderboardEntries` have composite primary keys: `(userId, slot)` and `(boardId, userId, season)`. When you hand-roll those two, add the `primaryKey(...)` yourself. The factory adds it for you.
 
-<Callout type="warning">
+<Callout type="warn">
     Spread `columns.sqlite.users` / `columns.pg.users`, not the `tables.*` factories. Those are functions, so spreading them adds no columns. The server still boots. The first login or room join then fails with `TypeError: Cannot convert undefined or null to object`. The table has none of the built-in columns.
 </Callout>
 
@@ -193,7 +193,7 @@ For full control, spread the column maps (`columns.sqlite.<name>` / `columns.pg.
 
 For production schemas, generate SQL migrations with drizzle-kit and apply them with `migrations: { files }`. drizzle-kit reads every table exported from one schema file. Re-export the tables you did not customize from `@colyseus/database/sqlite-defaults` (or `@colyseus/database/pg-defaults`). That way drizzle-kit generates them too:
 
-<Tabs groupId="db-dialect" persist>
+<Tabs items={["SQLite", "PostgreSQL"]} groupId="db-dialect" persist>
     <Tab value="SQLite">
     ```ts title="src/db/schema.ts"
     import { tables } from "@colyseus/database";
@@ -266,7 +266,7 @@ npx drizzle-kit generate
 
 The generated `migration.sql` contains every table, including the unique index and the check constraint. Point `GameDatabase` at the folder:
 
-<Tabs groupId="db-dialect" persist>
+<Tabs items={["SQLite", "PostgreSQL"]} groupId="db-dialect" persist>
     <Tab value="SQLite">
     ```ts title="src/app.config.ts"
     import { GameDatabase } from "@colyseus/database";

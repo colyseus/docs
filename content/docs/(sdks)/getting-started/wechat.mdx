@@ -9,7 +9,7 @@ WeChat is a popular messaging and social media platform in China, and it provide
 
 As the WeChat JavaScript runtime is not fully compatible with the browser, you will need to use the following polyfills to ensure compatibility.
 
-<Callout type="warning">
+<Callout type="warn">
   Feedback? Join the discussion on GitHub: https://github.com/colyseus/colyseus.js/pull/158
 </Callout>
 
@@ -21,7 +21,7 @@ As the WeChat JavaScript runtime is not fully compatible with the browser, you w
 
 WeChat does not provide the [`URL` standard](https://url.spec.whatwg.org/), so you need to install a polyfill to use it.
 
-<Tabs>
+<Tabs items={["Install polyfill via NPM", "Copy & paste manually"]}>
     <Tab value="Install polyfill via NPM">
         If you are using a build system, you can install the `url-polyfill` package:
 

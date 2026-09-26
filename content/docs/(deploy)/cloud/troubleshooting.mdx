@@ -8,11 +8,12 @@ Here you will find the most common scenarios where a deployment can fail.
 When a deployment fails, you will see the following at the bottom of your last
 "deployment log":
 
-```txt {5}
+```txt
 Error Output:
 ================
 ...
 Deploy failed
+# [!code highlight]
 Deploy failed with exit code: 1
 ```
 
@@ -20,13 +21,14 @@ Deploy failed with exit code: 1
 
 ## The `node_modules` folder should not be on git
 
-<AlertIcon/> **Symptom:** "Permission denied" errors as shown below:
+**Symptom:** "Permission denied" errors as shown below:
 
-<Tabs>
+<Tabs items={["rimraf: Permission denied", "tsc: Permission denied", "colyseus-post-deploy: Permission denied"]}>
     <Tab value="rimraf: Permission denied">
-    ```txt {3}
+    ```txt
     Error Output:
     ================
+    # [!code highlight]
     sh: 1: rimraf: Permission denied
       post-deploy hook failed
     Deploy failed
@@ -35,9 +37,10 @@ Deploy failed with exit code: 1
     </Tab>
 
     <Tab value="tsc: Permission denied">
-    ```txt {3}
+    ```txt
     Error Output:
     ================
+    # [!code highlight]
     sh: 1: tsc: Permission denied
       post-deploy hook failed
     Deploy failed
@@ -46,9 +49,10 @@ Deploy failed with exit code: 1
     </Tab>
 
     <Tab value="colyseus-post-deploy: Permission denied">
-    ```txt {3}
+    ```txt
     Error Output:
     ================
+    # [!code highlight]
     sh: 1: colyseus-post-deploy: Permission denied
       post-deploy hook failed
     Deploy failed
@@ -58,7 +62,7 @@ Deploy failed with exit code: 1
 
 </Tabs>
 
-<CheckCircleIcon/> **Solution:** Remove the `node_modules` directory from your git repository,
+**Solution:** Remove the `node_modules` directory from your git repository,
 
 ```txt
 git rm -r node_modules
@@ -72,15 +76,16 @@ Then, try to deploy again.
 
 ## Not having the `package.json` in the root of your git project
 
-<AlertIcon/> **Symptom:** `ENOENT: no such file or directory, open '/home/deploy/source/package.json'`
+**Symptom:** `ENOENT: no such file or directory, open '/home/deploy/source/package.json'`
 
-    ```txt {7}
+    ```txt
     Error Output:
     ================
     npm ERR! code ENOENT
     npm ERR! syscall open
     npm ERR! path /home/deploy/source/package.json
     npm ERR! errno -2
+    # [!code highlight]
     npm ERR! enoent ENOENT: no such file or directory, open '/home/deploy/source/package.json'
     npm ERR! enoent This is related to npm not being able to find a file.
     npm ERR! enoent
@@ -92,7 +97,7 @@ Then, try to deploy again.
     Deploy failed with exit code: 1
     ```
 
-<CheckCircleIcon/> **Possible solutions:**
+**Possible solutions:**
 
 1. Move your server files to the git root path.
 2. Alternatively, update the "Root Directory" from your Application's "Settings" page, under "Build settings":
@@ -103,9 +108,10 @@ Then, try to deploy again.
 
 ## Missing, or bad `ecosystem.config.js` file
 
-<AlertIcon/> **Symptom:** The following error message `Process list empty, cannot save empty list`
+**Symptom:** The following error message `Process list empty, cannot save empty list`
 
-    ```txt {1}
+    ```txt
+    # [!code highlight]
     Error: Process list empty, cannot save empty list
         at fin (/usr/lib/node_modules/pm2/lib/API/Startup.js:448:23)
         at ex (/usr/lib/node_modules/pm2/lib/API/Startup.js:492:30)
@@ -119,14 +125,15 @@ Then, try to deploy again.
         at Writable.write (node:internal/streams/writable:337:10)
     ```
 
-<CheckCircleIcon/> **Solution:** Make sure you have an `ecosystem.config.js` (or `ecosystem.config.cjs`) file at the root of the project - with the `"script"` pointing to your application's entrypoint.
+**Solution:** Make sure you have an `ecosystem.config.js` (or `ecosystem.config.cjs`) file at the root of the project - with the `"script"` pointing to your application's entrypoint.
 
-```js {6} title="ecosystem.config.js"
+```js title="ecosystem.config.js"
 const os = require('os');
 
 module.exports = {
     apps : [{
         name: "colyseus-app",
+        // [!code highlight]
         script: 'build/index.js',
         time: true,
         watch: false,
@@ -145,7 +152,8 @@ If you see TypeScript compilation errors like the example below, read the
 [TypeScript compilation errors](/cloud/typescript-compilation-errors) article, as it
 explains how to fix them.
 
-```txt {1,2,3}
+```txt
+# [!code highlight:3]
 src/app.config.ts(3,28): error TS2307: Cannot find module '@colyseus/playground' or its corresponding type declarations.
 src/app.config.ts(25,34): error TS7006: Parameter 'req' implicitly has an 'any' type.
 src/app.config.ts(25,39): error TS7006: Parameter 'res' implicitly has an 'any' type.

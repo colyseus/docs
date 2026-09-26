@@ -118,7 +118,7 @@ The accessor `this.inputs.get(sessionId)` exposes the per-client buffered stream
   }
   ```
 
-<Callout type="warning">
+<Callout type="warn">
     Draining all frames but simulating only the latest jumps the ack past inputs you never ran. The client then reconciles against state it can't reproduce. Match the consumption style to how you step.
 </Callout>
 
@@ -203,7 +203,7 @@ What should happen on a tick where a client sent nothing? Pick one of three poli
 
 The policy also covers **absent sessions**. A player who dropped but is still inside their `allowReconnection` window lingers in `state`. The input accessor resolves through a registry that outlives the connection, so your loop keeps synthesizing idle frames for the empty seat. No `if (!cmd) continue` needed.
 
-<Callout type="warning">
+<Callout type="warn">
     Three things to know about synthesized idle frames. They are **not consumed inputs**: they advance neither the reconcile ack (`lastProcessed`) nor `renderTime`. They are **one reused instance** per client: read within the tick, don't store. And never build overrides by **spreading** a schema instance (`{ ...latest, yaw }`): schema fields are prototype accessors, so the spread copies none of them. Return `latest` itself, or name the fields you want.
 </Callout>
 
@@ -257,7 +257,7 @@ For a non-deterministic game loop that just needs wall-clock delta (no predictio
 this.setTimestep((deltaTime) => this.update(deltaTime));    // default ~16.6ms (60fps)
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     `setSimulationInterval()` is the deprecated name for `setTimestep()` and still works (it forwards). For client-predicted games you want `setFixedTimestep()` instead: a variable step can't be replayed deterministically.
 </Callout>
 

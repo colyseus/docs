@@ -5,7 +5,7 @@ sidebarTitle: "Native SDK (C)"
 icon: "logo:c"
 ---
 
-<Callout type="warning">
+<Callout type="warn">
     The Native SDK is in **beta**, and may not be stable. Please [report any issues you find](https://github.com/colyseus/native-sdk/issues).
 </Callout>
 
@@ -94,8 +94,8 @@ The root state vtable is passed to `colyseus_room_set_state_type()` to enable au
 
 ## Auto Schemas (Without Codegen)
 
-<details>
-<summary>Show how to use schemas without running the codegen step</summary>
+<Accordions>
+<Accordion title="Show how to use schemas without running the codegen step">
 
 If you do **not** call `colyseus_room_set_state_type()`, the SDK automatically builds schema definitions at runtime from the server's reflection data sent during the handshake. This mode is useful for:
 
@@ -195,7 +195,8 @@ colyseus_callbacks_on_add(callbacks, state, "players",
     Auto schemas trade compile-time type safety and direct struct-offset access for runtime flexibility. For performance-critical paths, prefer codegen.
 </Callout>
 
-</details>
+</Accordion>
+</Accordions>
 
 ## Quick Example
 

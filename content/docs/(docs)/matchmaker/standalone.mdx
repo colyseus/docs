@@ -59,13 +59,14 @@ const gameServer = defineServer({
 
 To run a standalone matchmaker, use `defineServer()` with the `isStandaloneMatchMaker` option set to `true`. This option tells Colyseus that the process only handles matchmaking. A standalone matchmaker will not spawn rooms locally, subscribe to IPC room creation requests, or register itself as an available game server process.
 
-```ts {7} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer, defineRoom } from "colyseus";
 import { RedisPresence } from "@colyseus/redis-presence";
 import { RedisDriver } from "@colyseus/redis-driver";
 import { BattleRoom } from "./rooms/BattleRoom";
 
 const server = defineServer({
+    // [!code highlight]
     isStandaloneMatchMaker: true,
     presence: new RedisPresence(),
     driver: new RedisDriver(),
@@ -81,7 +82,7 @@ When `isStandaloneMatchMaker` is enabled, the process:
 - **Skips health checks**: it does not register itself in the process stats, so room creation never targets it while a healthy game server is registered. Two fallbacks still land a room here: when **no** game-server stats exist yet, and when a remote room-creation request times out over IPC.
 - **Delegates room creation**: when a matchmaking request requires a new room, the default `selectProcessIdToCreateRoom` will select one of the available game server processes
 
-<Callout type="warning">
+<Callout type="warn">
     The matchmaker process must register the same room types as the game servers. Room classes are needed for `filterBy()` options and `onAuth()` validation during matchmaking, even though rooms are not instantiated on this process.
 </Callout>
 
@@ -89,13 +90,14 @@ When `isStandaloneMatchMaker` is enabled, the process:
 
 By default, rooms are created on the game server process with the fewest rooms. You can override this with `selectProcessIdToCreateRoom`:
 
-```ts {7-12} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer, defineRoom } from "colyseus";
 import { RedisPresence } from "@colyseus/redis-presence";
 import { RedisDriver } from "@colyseus/redis-driver";
 import { BattleRoom } from "./rooms/BattleRoom";
 
 const server = defineServer({
+    // [!code highlight:6]
     isStandaloneMatchMaker: true,
     presence: new RedisPresence(),
     driver: new RedisDriver(),

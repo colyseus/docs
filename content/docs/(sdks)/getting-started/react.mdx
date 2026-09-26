@@ -177,7 +177,7 @@ The first argument connects to the queue room. The second argument is called wit
 
 React bindings for the `@colyseus/sdk` Predict tools: client prediction, reconciliation and remote smoothing. See [Client Prediction & Reconciliation](/netcode/client-prediction) for the underlying concepts.
 
-<Callout type="warning">
+<Callout type="warn">
   **The one rule:** structure renders through snapshots, motion renders through predict reads. `useRoomState` re-renders at patch rate with **raw synced values**, so rendering positions from it gives you jittery patch-rate motion. Predicted/smoothed values change every frame and must stay out of the React render cycle. Read them with `predict.value(instance, field)` inside your frame loop (R3F `useFrame`, or the `usePredictLoop` callback) and write into refs.
 </Callout>
 

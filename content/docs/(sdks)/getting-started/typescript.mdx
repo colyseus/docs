@@ -18,7 +18,7 @@ The JavaScript/TypeScript SDK is engine agnostic and can be used with any game e
 
 ## Installation
 
-<Tabs>
+<Tabs items={["Package Manager", "CDN", "Download"]}>
 <Tab value="Package Manager">
 
 ```npm
@@ -121,11 +121,13 @@ Use `import type` to import the state type and pass it as a generic to `joinOrCr
 
 This way, you don't get type inference for the message name or the payload type.
 
-```ts {2,5}
+```ts
 import { Client } from "@colyseus/sdk";
+// [!code highlight]
 import type { MyState } from "../server/rooms/schema/MyState";
 
 const client = new Client("http://localhost:2567");
+// [!code highlight]
 const room = await client.joinOrCreate<MyState>("my_room");
 
 room.state.players  // ✓ Auto-complete works
@@ -138,11 +140,13 @@ room.onMessage("...", (client, payload) => {}); // ?? Missing type here!
 
 Use `import type` and pass the type as a generic to `joinOrCreate<T>()`. This generic gives you **type inference** for `room.state` and state callbacks.
 
-```ts {2,5}
+```ts
 import { Client } from "@colyseus/sdk";
+// [!code highlight]
 import type { MyRoom } from "../server/rooms/MyRoom";
 
 const client = new Client("http://localhost:2567");
+// [!code highlight]
 const room = await client.joinOrCreate<MyRoom>("my_room");
 
 room.state.players  // ✓ Auto-complete works
@@ -158,11 +162,13 @@ If you import the actual schema class (not just its type) and pass it as the **t
 1. **Custom methods available**: Any custom methods you've defined on your schema classes become accessible on the client.
 2. **Reduced bandwidth**: The server skips sending the state structure definition when the client joins, since the client already knows the schema shape.
 
-```ts {2,5}
+```ts
 import { Client } from "@colyseus/sdk";
+// [!code highlight]
 import { MyState } from "../server/rooms/MyState";
 
 const client = new Client("http://localhost:2567");
+// [!code highlight]
 const room = await client.joinOrCreate("my_room", {}, MyState);
 
 room.state.players  // ✓ Auto-complete works
@@ -177,7 +183,8 @@ The debug panel allows you to inspect the room state and messages in real-time d
 
 You can enable the Room Debug Panel in development mode by:
 
-```ts {1}
+```ts
+// [!code highlight]
 import "@colyseus/sdk/debug";
 ```
 

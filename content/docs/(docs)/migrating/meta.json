@@ -1,6 +1,6 @@
 {
   "title": "Migrating Versions",
-  "icon": "VersionsIcon",
+  "icon": "RotateCcwClock",
   "pages": [
     "0.18",
     "0.17",

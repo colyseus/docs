@@ -81,12 +81,13 @@ Registers the Colyseus server with Traefik for load balancing.
 
 ## Traefik Configuration
 
-<Tabs>
+<Tabs items={["Redis Provider (Recommended)", "HTTP Provider"]}>
     <Tab value="Redis Provider (Recommended)">
         The Redis provider allows Traefik to read configuration directly from Redis, providing real-time updates when servers join or leave.
 
-        ```yaml {2-5} title="traefik.yml"
+        ```yaml title="traefik.yml"
         providers:
+          # [!code highlight:4]
           redis:
             rootKey: "traefik"
             endpoints:
@@ -99,9 +100,10 @@ Registers the Colyseus server with Traefik for load balancing.
             address: ":443"
         ```
 
-        ```typescript {3} title="app.config.ts"
+        ```typescript title="app.config.ts"
         await exposeServerToTraefik({
             server,
+            // [!code highlight]
             provider: "redis",
             mainAddress: "backend.yourgamedomain.com",
         });
@@ -113,8 +115,9 @@ Registers the Colyseus server with Traefik for load balancing.
 
         The HTTP provider exposes a `/__traefik` endpoint on your Colyseus server that Traefik polls for configuration updates.
 
-        ```yaml {2-4} title="traefik.yml"
+        ```yaml title="traefik.yml"
         providers:
+          # [!code highlight:3]
           http:
             endpoint: "http://127.0.0.1:2567/__traefik"
             pollInterval: "5s"
@@ -126,9 +129,10 @@ Registers the Colyseus server with Traefik for load balancing.
             address: ":443"
         ```
 
-        ```typescript {3} title="app.config.ts"
+        ```typescript title="app.config.ts"
         await exposeServerToTraefik({
             server,
+            // [!code highlight]
             provider: "http",
             mainAddress: "backend.yourgamedomain.com",
         });

@@ -1,6 +1,6 @@
 {
   "title": "Admin Panel",
-  "icon": "ShieldLockIcon",
+  "icon": "Shield",
   "pages": [
     "authentication",
     "resources",

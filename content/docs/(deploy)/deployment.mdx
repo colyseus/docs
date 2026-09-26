@@ -1,18 +1,20 @@
 ---
 title: "Deployment"
 description: "Deploy your Colyseus server to production. Production checklist, PM2, Nginx, Apache, Docker, and self-hosting on Vultr, or managed hosting on Colyseus Cloud."
-icon: "RocketIcon"
+icon: "Rocket"
 ---
+
+import { Cloud, Layers } from 'lucide-react';
 
 Deploying Colyseus is no different than deploying a regular Node.js application. [See DigitalOcean's guide for the general setup](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-22-04). Scaling to multiple processes or machines requires extra steps. See [Scalability](/scalability).
 
-<Callout type="warning">
+<Callout type="warn">
     Consider using [Colyseus Cloud](https://cloud.colyseus.io/) to deploy and scale your Colyseus servers. Every item on the checklist below is handled for you.
 </Callout>
 
 <Cards>
-    <Card icon={<StackIcon/>} title="Scalability" href="/scalability" />
-    <Card icon={<CloudIcon/>} title="Colyseus Cloud" href="/cloud" />
+    <Card icon={<Layers />} title="Scalability" href="/scalability" />
+    <Card icon={<Cloud />} title="Colyseus Cloud" href="/cloud" />
 </Cards>
 
 ## Production checklist
@@ -186,6 +188,7 @@ Virtual host configuration:
 - Set up the `npm start` command so it starts the server
 
 <Steps>
+<Step>
 ### Create `Dockerfile` in the root of the Colyseus project
 
 ```dockerfile title="Dockerfile"
@@ -208,7 +211,9 @@ EXPOSE 2567
 
 CMD [ "npm", "start" ]
 ```
+</Step>
 
+<Step>
 ### Create `.dockerignore` file in the same directory
 
 ```txt title=".dockerignore"
@@ -217,7 +222,9 @@ npm-debug.log
 ```
 
 This will prevent your local modules and debug logs from being copied onto your Docker image and possibly overwriting modules installed within your image.
+</Step>
 
+<Step>
 ### Build Docker Image
 
 Go to the directory that has your Dockerfile and run the following command to build the Docker image. The -t flag lets you tag your image so it's easier to find later using the docker images command:
@@ -225,7 +232,9 @@ Go to the directory that has your Dockerfile and run the following command to bu
 ```sh title="Terminal"
 docker build -t <your username>/colyseus-server .
 ```
+</Step>
 
+<Step>
 ### Confirm Image Build
 
 Your image will now be listed by Docker with following command:
@@ -242,7 +251,9 @@ REPOSITORY                         TAG        ID              CREATED
 node                               22         1934b0b038d1    About a minute ago
 <your username>/colyseus-server    latest     d64d3505b0d2    About a minute ago
 ```
+</Step>
 
+<Step>
 ### Run the Docker Image
 
 Run the Docker Image with following command:
@@ -252,10 +263,13 @@ docker run -p 2567:2567 -d <your username>/colyseus-server
 ```
 
 Running your image with -d runs the container in detached mode, leaving the container running in the background. The -p flag redirects a public port to a private port inside the container.
+</Step>
 
+<Step>
 ### Done
 
 Done, now you can connect to the server with `localhost:2567`
+</Step>
 
 </Steps>
 

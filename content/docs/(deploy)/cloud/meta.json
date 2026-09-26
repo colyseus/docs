@@ -1,6 +1,6 @@
 {
   "title": "Colyseus Cloud",
-  "icon": "CloudIcon",
+  "icon": "Cloud",
   "pages": [
     "compute-plans",
     "private-npm-registry",

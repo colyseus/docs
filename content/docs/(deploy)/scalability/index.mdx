@@ -3,7 +3,7 @@ title: "Scalability"
 description: "Scale Colyseus across multiple processes and machines with Redis presence, a shared matchmaking driver, and a load balancer, or let Colyseus Cloud handle it."
 ---
 
-<Callout type="warning">
+<Callout type="warn">
     If you find configuring scalability overwhelming, consider using [Colyseus Cloud](https://cloud.colyseus.io/) to easily deploy and scale your Colyseus servers.
 
     You do not need to specify `driver`, `presence`, or `publicAddress` when using Colyseus Cloud.
@@ -21,25 +21,28 @@ description: "Scale Colyseus across multiple processes and machines with Redis p
     [Redis](https://redis.io/topics/quickstart) is required for scaling.
 </Callout>
 
-<details>
-    <summary> <FileMediaIcon/> Check out the diagram of how matchmaking works with scaling infrastructure and multiple processes.</summary>
+<Accordions>
+<Accordion title="Check out the diagram of how matchmaking works with scaling infrastructure and multiple processes.">
 
     ---
 
     ![Scalability diagram](/diagrams/scalability.webp)
-</details>
+</Accordion>
+</Accordions>
 
 <Steps>
 
+<Step>
 ## Use a shared `Presence` and `Driver`
 
-```ts {7-8} title="server.ts"
+```ts title="server.ts"
 import { defineServer } from "colyseus";
 import { RedisPresence } from "@colyseus/redis-presence";
 import { RedisDriver } from "@colyseus/redis-driver";
 
 const server = defineServer({
   // ...
+  // [!code highlight:2]
   presence: new RedisPresence(),
   driver: new RedisDriver(),
 });
@@ -52,18 +55,21 @@ The process to join a Room consists of two requests:
 <Callout type="info">
     See [Presence API](/server/presence) and [Driver](/server/driver).
 </Callout>
+</Step>
 
+<Step>
 ## Make each Colyseus process publicly accessible
 
 Configure each Colyseus process to use its very own public address, so clients can connect directly to it.
 
-```ts {6-9} title="src/app.config.ts"
+```ts title="src/app.config.ts"
     import { defineServer } from "colyseus";
     // ...
     const server = defineServer({
         driver: new RedisDriver(),
         presence: new RedisPresence(),
 
+        // [!code highlight:3]
         // use a unique public address for each process
         publicAddress: `backend.yourdomain.com/${(Number(process.env.PORT) + Number(process.env.NODE_APP_INSTANCE))}`,
         // ...
@@ -71,7 +77,9 @@ Configure each Colyseus process to use its very own public address, so clients c
     ```
 
 You may have a regular load balancer sitting behind all the Colyseus processes in order to distribute the incoming connections. The load balancer must be the initial entrypoint.
+</Step>
 
+<Step>
 ## Spawn multiple Colyseus processes
 
 To run multiple Colyseus instances in the same server, you need each one of them to listen on a different port number. It's recommended to use ports `2567`, `2568`, `2569`, `2570`, and so on.
@@ -110,10 +118,12 @@ Now you're ready to start multiple Colyseus processes.
 pm2 start ecosystem.config.js
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     **TypeScript Users** - It is recommended compile your TypeScript files before running `pm2 start`, via `npx tsc`. Alternatively, you can [install the TypeScript interpreter for PM2](http://pm2.keymetrics.io/docs/tutorials/using-transpilers-with-pm2) (`pm2 install typescript`) and set the `exec_interpreter: "ts-node"`.
 </Callout>
+</Step>
 
+<Step>
 ## Use NGINX as a reverse proxy
 
 Install [nginx](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/) and configure it to proxy requests to your Colyseus processes.
@@ -126,9 +136,10 @@ The following NGINX config file will:
 - Proxy requests to `backend.yourgame.com` to the Colyseus processes running on ports `2567`, `2568`, `2569`, `2570`, and so on.
 - Dynamically use the port number from the URL, e.g. `backend.yourgame.com/2567/` will proxy to the Colyseus process running on port `2567`.
 
-```sh {3-8,14,20-21,35-36} title="/etc/nginx/sites-enabled/backend.yourgame.com"
+```sh title="/etc/nginx/sites-enabled/backend.yourgame.com"
 error_page 502 /error.html;
 
+# [!code highlight:6]
 upstream colyseus_servers {
     server 127.0.0.1:2567;
     server 127.0.0.1:2568;
@@ -140,12 +151,14 @@ server {
     listen 80 default_server;
     listen 443 ssl;
 
+    # [!code highlight]
     server_name backend.yourgame.com;
 
     ssl_certificate /root/certs/fullchain.pem;
     ssl_certificate_key /root/certs/privkey.pem;
 
     # Proxy to the colyseus_servers upstream
+    # [!code highlight:2]
     location / {
         proxy_pass http://colyseus_servers/;
         proxy_http_version 1.1;
@@ -161,6 +174,7 @@ server {
     }
 
     # Dynamically use the port number from the URL
+    # [!code highlight:2]
     location ~ "^/(?<PORT>2[0-9]{3})/(.*)" {
         proxy_pass http://127.0.0.1:$PORT;
         proxy_http_version 1.1;
@@ -181,10 +195,13 @@ server {
     }
 }
 ```
+</Step>
 
+<Step>
 ## SSL Certificate Setup
 
 It is recommended to use SSL certificates to secure the communication between the client and the server. Replace the `ssl_certificate` and `ssl_certificate_key` paths in the NGINX configuration file with your own SSL certificates.
+</Step>
 
 </Steps>
 

@@ -14,8 +14,8 @@ description: "Introduction to building multiplayer games with Babylon.js and Col
 
 ### Full source code
 
-- [<LinkIcon/> Babylon.js Project (Frontend)](https://github.com/colyseus/tutorial-babylonjs-client/)
-- [<LinkIcon/> Colyseus Node.js/TypeScrippt Project (Backend)](https://github.com/colyseus/tutorial-babylonjs-server/)
+- [Babylon.js Project (Frontend)](https://github.com/colyseus/tutorial-babylonjs-client/)
+- [Colyseus Node.js/TypeScrippt Project (Backend)](https://github.com/colyseus/tutorial-babylonjs-server/)
 
 ## Before you start
 
@@ -55,7 +55,7 @@ For simplicity's sake, the examples on this guide are using the [Babylon.js Play
 
 In the Playground, we inject the Colyseus JavaScript SDK manually through a `<script>` tag created via code. This technique is described in [_"Using External Assets In The Playground"_ → _"Javascript files"_](https://doc.babylonjs.com/toolsAndResources/tools/playground/externalPGAssets#javascript-files).
 
-<Callout type="warning">
+<Callout type="warn">
     This approach is not recommended in a real-world scenario!
 </Callout>
 
@@ -103,7 +103,7 @@ var createScene = function() {
     Note that we're using the local `http://localhost:2567` endpoint here. You need to [deploy your server](/deployment) to the public internet in order to play with others online.
 </Callout>
 
-<Callout type="warning">
+<Callout type="warn">
     If you happen to see `net::ERR_BLOCKED_BY_CLIENT` error in the console, make sure to disable ad-block or shields due to untrusted origin.
 </Callout>
 
@@ -138,7 +138,7 @@ Let's go back to editing the Server code, and define our Room State in the Serve
 
 We need to handle multiple `Player` instances, and each `Player` will have `x`, `y` and `z` coordinates:
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
     ```ts title="MyRoomState.ts"
     import { schema, t } from "@colyseus/schema";

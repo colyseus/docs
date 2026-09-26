@@ -11,7 +11,7 @@ is supported in all of them.
 
 The room's lifecycle events are called automatically. [`async`/`await`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function) is supported in all of them.
 
-<LangTabs>
+<Tabs items={["TypeScript", "JavaScript"]} groupId="lang" persist>
     <Tab value="TypeScript">
     ```ts title="MyRoom.ts"
     import { Room, Client, AuthContext } from "colyseus";
@@ -69,7 +69,7 @@ The room's lifecycle events are called automatically. [`async`/`await`](https://
     }
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 ## On Create
 
@@ -85,7 +85,7 @@ onCreate (options) {
 
 The server may overwrite options in [`defineRoom()`](/server/#define-room-type) for authority over client-provided options:
 
-<Tabs>
+<Tabs items={["Backend", "Frontend"]}>
     <Tab value="Backend">
 
         ```ts title="app.config.ts"
@@ -120,7 +120,7 @@ On this example, the `map` option is `"cs_assault"` during `onCreate()`, and `"d
 
 The `onAuth` method is called before `onJoin`, and it is responsible for validating the client's request to join a room.
 
-<Tabs>
+<Tabs items={["Instance onAuth", "Static onAuth"]}>
     <Tab value="Instance onAuth">
     ```ts title="MyRoom.ts"
     async onAuth (client, options, context) {
@@ -258,7 +258,7 @@ async onLeave (client, code) {
 
 You may define this function as `async`:
 
-<Tabs>
+<Tabs items={["Synchronous", "Asynchronous"]}>
     <Tab value="Synchronous">
     ```typescript
     onLeave(client, code) {

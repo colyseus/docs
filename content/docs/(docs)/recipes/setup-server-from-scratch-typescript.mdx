@@ -7,7 +7,7 @@ A step-by-step guide for creating a Colyseus server with TypeScript, without the
 
 ## Requirements
 
-- [<DownloadIcon/> Download and Install Node.js](https://nodejs.org/)
+- [Download and Install Node.js](https://nodejs.org/)
 
 ### Setup
 
@@ -88,7 +88,7 @@ mkdir -p src/rooms
 
 Define the synchronized state for your room.
 
-<Tabs groupId="schema-style" persist>
+<Tabs items={["Schema Builder", "Decorators"]} groupId="schema-style" persist>
     <Tab value="Schema Builder">
     ```ts title="src/rooms/MyState.ts"
     import { schema, t } from "@colyseus/schema";

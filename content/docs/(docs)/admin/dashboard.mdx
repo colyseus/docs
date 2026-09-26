@@ -10,10 +10,11 @@ The admin panel homepage hosts a grid of **widgets**, small cards that surface l
 
 ![The dashboard with the Totals, Recent users and Live rooms presets and a custom "Active events" KPI card](/admin/dashboard.webp)
 
-```ts {4-16} title="src/app.config.ts"
+```ts title="src/app.config.ts"
 routes: createRouter({
     ...admin({
         database: db,
+        // [!code highlight:13]
         dashboard: {
             presets: {
                 totals: { only: ["users", "cloudSaves"] },

@@ -1,6 +1,6 @@
 {
   "title": "Client SDK",
-  "icon": "DevicesIcon",
+  "icon": "MonitorSmartphone",
   "pages": [
     "connection"
   ]

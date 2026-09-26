@@ -40,12 +40,14 @@ Unless a table declares its own [policies](#policies), access follows the standa
 
 Two options work together. `tables` decides **which** drizzle tables exist in the panel; `resources` decides **how** each one looks and behaves. A custom table needs both: a `resources` entry alone is stored but never listed, and `/admin-api/guilds` answers `404`.
 
-```ts {2,6-7} title="src/app.config.ts"
+```ts title="src/app.config.ts"
 import { admin, defineAdminResource } from "@colyseus/admin";
+// [!code highlight]
 import { guilds } from "./db/schema";
 
 routes: createRouter({
     ...admin({
+        // [!code highlight:2]
         tables: { ...db.tables, guilds },                 // what exists
         resources: { guilds: defineAdminResource(guilds, { label: "Guilds" }) }, // how it looks
     }),
@@ -62,10 +64,11 @@ routes: createRouter({
 
 Override the defaults of any table, built-in or custom, by passing `defineAdminResource(table, config)` into `resources`:
 
-```ts {4,36-37} title="src/app.config.ts"
+```ts title="src/app.config.ts"
 import { admin, defineAdminResource } from "@colyseus/admin";
 import { guilds } from "./db/schema";
 
+// [!code highlight]
 const guildResource = defineAdminResource(guilds, {
     label: "Guilds",
     icon: "safety",
@@ -98,13 +101,14 @@ const guildResource = defineAdminResource(guilds, {
 routes: createRouter({
     ...admin({
         database: db,
+        // [!code highlight:2]
         tables: { ...db.tables, guilds },
         resources: { guilds: guildResource },
     }),
 }),
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     Column lists (`list.columns`, `form.fields`, `show.fields`) and the keys of `columns` are **SQL column names** (`owner_id`), not drizzle property names (`ownerId`). A property name matches nothing and is dropped without an error.
 </Callout>
 
@@ -236,7 +240,7 @@ actions: [{
 }]
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     A non-empty `roles` list is checked literally and **never includes admins implicitly**, so always list the `admin` role. Omitting `roles`, or passing `[]`, skips the role check entirely. Any signed-in identity can then invoke the action, even a plain `user` who cannot open the panel. The action also bypasses an `update: "deny"` policy on the resource. Give every action an explicit `roles` list. To remove an action, omit it from the resource definition instead.
 </Callout>
 
@@ -244,10 +248,11 @@ actions: [{
 
 The panel reads `database.relations` to decorate foreign-key columns. Relations between the built-in tables are declared for you. A `user_id` column on `cloudSaves` becomes a clickable link to the user's show page automatically. The cell shows the user's `display_name`, `name`, `email` or `title` instead of the raw id. Declare relations for your own tables on the `GameDatabase` constructor, using drizzle property names for `fk`:
 
-```ts {4-7} title="src/db/database.ts"
+```ts title="src/db/database.ts"
 export const db = new GameDatabase({
     connectionString: process.env.DATABASE_URL,
     schemas: schema,
+    // [!code highlight:4]
     relations: {
         guilds: [{ name: "owner", target: "users", kind: "one", fk: "ownerId" }],
         users:  [{ name: "ownedGuilds", target: "guilds", kind: "many", fk: "ownerId" }],

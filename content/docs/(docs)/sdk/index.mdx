@@ -16,9 +16,11 @@ movedAnchors:
   removing-listeners: "/sdk/connection#removing-listeners"
 ---
 
+import { RefreshCw, Zap } from 'lucide-react';
+
 <Cards>
-    <Card icon={<ZapIcon/>} title="Getting Started" href="/getting-started" />
-    <Card icon={<SyncIcon />} title="State Sync Callbacks" href="/state/callbacks" />
+    <Card icon={<Zap />} title="Getting Started" href="/getting-started" />
+    <Card icon={<RefreshCw />} title="State Sync Callbacks" href="/state/callbacks" />
 </Cards>
 
 The Client SDK provides everything you need to connect to a Colyseus server from your game or application.
@@ -29,7 +31,7 @@ The Client SDK provides everything you need to connect to a Colyseus server from
 
 The `Client` instance is your entry point to connect to the server.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts title="client.ts"
@@ -80,7 +82,7 @@ The `Client` instance is your entry point to connect to the server.
     ```
     </Tab>
 
-</LangTabs>
+</Tabs>
 
 ---
 
@@ -92,7 +94,7 @@ Once you have a client, you can join rooms. Choose the method that best fits you
 
 The most common way to connect. Joins an existing room if available, or creates a new one.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts title="client.ts"
@@ -170,7 +172,7 @@ The most common way to connect. Joins an existing room if available, or creates 
     ```
     </Tab>
 
-</LangTabs>
+</Tabs>
 
 <Callout type="info">
     Locked or private rooms are ignored by this method.
@@ -212,7 +214,7 @@ Once connected to a room, you can send and receive messages in real-time.
 
 Send messages to the room. Messages are encoded with MsgPack and can hold any JSON-serializable data.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
     <Tab value="TypeScript">
     ```ts title="client.ts"
     //
@@ -292,7 +294,7 @@ Send messages to the room. Messages are encoded with MsgPack and can hold any JS
     room.sendInt(0, {'direction': 'left'});
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 <Callout type="info">
     **Backend:** See [Room → Message Handling](/room#message-handling) for detailed documentation on receiving messages from the client.
@@ -314,7 +316,7 @@ room.sendBytes(0, new Uint8Array([ 172, 72, 101, 108, 108, 111, 32, 119, 111, 11
 room.sendBytes("some-bytes", new Uint8Array([ 172, 72, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 33 ]));
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     The payload must be a `Uint8Array`. A plain `number[]` array silently sends an **empty** message, since the SDK reads `.byteLength` from the payload.
 </Callout>
 
@@ -322,7 +324,7 @@ room.sendBytes("some-bytes", new Uint8Array([ 172, 72, 101, 108, 108, 111, 32, 1
 
 Listen for messages sent from the server.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
     ```ts title="client.ts"
@@ -383,7 +385,7 @@ Listen for messages sent from the server.
     ```
     </Tab>
 
-</LangTabs>
+</Tabs>
 
 <Callout type="info">
     **Backend:** To send a message from the server to a client, use [client.send()](/room#send-message) or [room.broadcast()](/room/#broadcast-message).
@@ -463,7 +465,7 @@ The room state is automatically synchronized from the server to all connected cl
 
 Use `Callbacks` to listen for specific property changes with fine-grained control.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
     <Tab value="TypeScript">
     ```ts title="client.ts"
     import { Callbacks } from "@colyseus/sdk";
@@ -598,7 +600,7 @@ Use `Callbacks` to listen for specific property changes with fine-grained contro
     });
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 <Callout type="info">
     See the full [State Sync Callbacks](/state/callbacks) documentation for all available methods including `listen`, `onAdd`, `onRemove`, and more.
@@ -615,7 +617,7 @@ room.onStateChange((state) => {
 ```
 
 <Callout type="info">
-    Read more about [<SyncIcon/> State Synchronization](/state)
+    Read more about [State Synchronization](/state)
 </Callout>
 
 ---
@@ -642,7 +644,7 @@ Create a temporary connection to measure latency before joining a room.
 
 - `options.pingCount`: Number of pings to send (default: `1`). Returns the average latency when greater than 1.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
     <Tab value="TypeScript">
     ```ts title="client.ts"
     const latency = await client.getLatency();
@@ -704,13 +706,13 @@ Create a temporary connection to measure latency before joining a room.
     // Measure round-trip time on a live connection with room.ping() instead.
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 #### During a Room Connection
 
 Measure round-trip time on an existing connection.
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
     <Tab value="TypeScript">
     ```ts title="client.ts"
     room.ping((latency) => {
@@ -756,7 +758,7 @@ Measure round-trip time on an existing connection.
     print('Latency: $latency ms');
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 <Callout type="info">
     If the connection is not open, calling `ping()` has no effect.
@@ -772,7 +774,7 @@ Automatically connect to the server with the lowest latency from a list of endpo
 - `options`: Optional client options to pass to each client instance.
 - `latencyOptions.pingCount`: Number of pings to send per endpoint (default: `1`).
 
-<LangTabs>
+<Tabs items={["TypeScript", "C#", "Lua", "Haxe", "GDScript", "Dart"]} groupId="lang" persist>
     <Tab value="TypeScript">
     ```ts title="client.ts"
     import { Client } from "@colyseus/sdk";
@@ -863,7 +865,7 @@ Automatically connect to the server with the lowest latency from a list of endpo
     final client = ColyseusClient('wss://us-east.gameserver.com');
     ```
     </Tab>
-</LangTabs>
+</Tabs>
 
 <Callout type="info">
     The method logs the latency for each endpoint to the console for debugging purposes. If all endpoints fail to respond, an error is thrown.
@@ -890,7 +892,7 @@ const response = await client.http.delete("/profile");
 ```
 
 <Callout type="info">
-    See [<ServerIcon/> Server → HTTP Routes](/server/http-routes) for setting up HTTP endpoints on your server, and [<PasskeyFillIcon/> Authentication → HTTP Middleware](/auth/http) for securing them.
+    See [Server → HTTP Routes](/server/http-routes) for setting up HTTP endpoints on your server, and [Authentication → HTTP Middleware](/auth/http) for securing them.
 </Callout>
 
 ---

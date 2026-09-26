@@ -1,6 +1,6 @@
 {
   "title": "Tutorials",
-  "icon": "FileCodeIcon",
+  "icon": "FileCode",
   "defaultOpen": true,
   "pages": [
     "phaser",

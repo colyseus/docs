@@ -25,16 +25,19 @@ npm create colyseus-app@latest ./my-server
 
 You may add your own [Room Definitions](/room/), and [API routes](/server/http-routes) to your server:
 
-```ts {2,6,10-12} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer, defineRoom } from "colyseus";
+// [!code highlight]
 import { MyRoom } from "./rooms/MyRoom";
 
 const server = defineServer({
     rooms: {
+        // [!code highlight]
         my_room: defineRoom(MyRoom),
     },
     express: (app) => {
         // Bind your express routes here:
+        // [!code highlight:3]
         app.get("/", (req, res) => {
             res.send("It's time to kick ass and chew bubblegum!");
         });
@@ -57,11 +60,13 @@ Each Transport has its own options you may customize.
     The default transport is `WebSocketTransport`. See [Transport → WebSocket Transport (ws)](/server/transport/ws) for more details.
 </Callout>
 
-```ts {2,5-7} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
+// [!code highlight]
 import { WebSocketTransport } from "@colyseus/ws-transport";
 
 const server = defineServer({
+    // [!code highlight:3]
     transport: new WebSocketTransport({
         pingInterval: 10000
     }),
@@ -99,11 +104,12 @@ const server = defineServer({
 
 Type-safe HTTP endpoints for your server, built with `createRouter()` and `createEndpoint()`.
 
-```ts {5-9} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer, createRouter, createEndpoint } from "colyseus";
 
 const server = defineServer({
     // ...
+    // [!code highlight:5]
     routes: createRouter({
         hello: createEndpoint("/hello", { method: "GET" }, async (ctx) => {
             return { message: "Hello, world!" };
@@ -120,11 +126,12 @@ const server = defineServer({
 
 A callback that receives an Express-compatible `app`, for binding routes with the classic Express API. With `uWebSocketsTransport`, the app is provided via the `uwebsockets-express` compatibility layer.
 
-```ts {5-9} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
 
 const server = defineServer({
     // ...
+    // [!code highlight:5]
     express: (app) => {
         app.get("/", (req, res) => {
             res.send("Hello, world!");
@@ -141,11 +148,12 @@ const server = defineServer({
 
 An optional callback executed before the server starts listening. Use it to connect to a database or other services first. `async` is supported: the server waits for it.
 
-```ts {5-7} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
 
 const server = defineServer({
     // ...
+    // [!code highlight:3]
     beforeListen: async () => {
         await connectToMyDatabase();
     },
@@ -156,12 +164,14 @@ const server = defineServer({
 
 Boots a database module (usually `@colyseus/database`'s `db` instance) before the matchmaker accepts connections. The database may also contribute default routes, such as the auth endpoints.
 
-```ts {2,6} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
+// [!code highlight]
 import { db } from "./db";
 
 const server = defineServer({
     // ...
+    // [!code highlight]
     database: db,
 });
 ```
@@ -212,10 +222,11 @@ The `selectProcessIdToCreateRoom` is a callback that allows you to customize whi
 
 By default, the process with the **least amount of rooms** is selected to create a new room.
 
-```ts {4-8} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer, matchMaker } from "colyseus";
 
 const server = defineServer({
+    // [!code highlight:5]
     selectProcessIdToCreateRoom: async function (roomName: string, clientOptions: any) {
         return (await matchMaker.stats.fetchAll())
             .sort((p1, p2) => p1.roomCount > p2.roomCount ? 1 : -1)[0]
@@ -226,10 +237,11 @@ const server = defineServer({
 
 A common alternative is to use the process with least amount of **connections**:
 
-```ts {4-8} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer, matchMaker } from "colyseus";
 
 const server = defineServer({
+    // [!code highlight:5]
     selectProcessIdToCreateRoom: async function (roomName: string, clientOptions: any) {
         return (await matchMaker.stats.fetchAll())
             .sort((p1, p2) => p1.ccu > p2.ccu ? 1 : -1)[0]
@@ -246,10 +258,11 @@ When set to `true`, this process will only handle matchmaking and will **not** s
 
 Default is `false`.
 
-```ts {4} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
 
 const server = defineServer({
+    // [!code highlight]
     isStandaloneMatchMaker: true,
 });
 ```
@@ -266,10 +279,11 @@ When `devMode` is enabled, the server restores previous rooms and room state aft
 
 Default is `false`.
 
-```ts {4} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
 
 const server = defineServer({
+    // [!code highlight]
     devMode: true,
 });
 ```
@@ -286,10 +300,11 @@ Whether to register the shutdown routine automatically. Default is `true`.
 
 If disabled, you should call [`gracefullyShutdown()`](#graceful-shutdown) method manually in your shutdown process.
 
-```ts {4} title="app.config.ts"
+```ts title="app.config.ts"
 import { defineServer } from "colyseus";
 
 const server = defineServer({
+    // [!code highlight]
     gracefullyShutdown: false,
 });
 ```
@@ -369,7 +384,7 @@ const server = defineServer({
 })
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     Use these events for logging and monitoring purposes only. Do not manipulate a room's state through them. Use the [Room's Lifecycle Events](/room/lifecycle) in your room class instead.
 </Callout>
 
@@ -399,7 +414,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 ```
 
-<Callout type="warning">
+<Callout type="warn">
     Make sure to never enable this feature in production environments.
 </Callout>
 
@@ -409,11 +424,12 @@ if (process.env.NODE_ENV !== "production") {
 
 Binds the [Transport](/server/transport) layer into the specified port.
 
-```ts {5} title="src/app.config.ts"
+```ts title="src/app.config.ts"
 import { defineServer } from "colyseus";
 const server = defineServer({
     // ...
 });
+// [!code highlight]
 server.listen(2567);
 ```
 

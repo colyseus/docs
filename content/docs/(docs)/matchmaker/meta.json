@@ -1,6 +1,6 @@
 {
   "title": "Matchmaking",
-  "icon": "StackIcon",
+  "icon": "Layers",
   "pages": [
     "visibility",
     "lobby",

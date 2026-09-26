@@ -1,7 +1,7 @@
 ---
 title: "FAQ"
 description: "Frequently asked questions about Colyseus: performance, scaling, CCU limits, and common gotchas."
-icon: "QuestionIcon"
+icon: "CircleQuestionMark"
 ---
 
 ## Performance & Scaling
@@ -55,13 +55,14 @@ When a client disconnects (e.g., closed browser tab), you can allow them to reco
 2. Use `client.reconnect(reconnectionToken)` to rejoin
 3. On the server, set `allowReconnection` in `onLeave`:
 
-```ts {7}
+```ts
 import { CloseCode } from "colyseus";
 // ...
 
 async onLeave(client, code) {
     if (code !== CloseCode.CONSENTED) {
         // Allow reconnection for 30 seconds
+        // [!code highlight]
         await this.allowReconnection(client, 30);
     }
 }
@@ -149,7 +150,7 @@ const server = defineServer({
 });
 ```
 
-<Callout type="warning">
+<Callout type="warn">
 Remember to set `pingInterval` back to a positive value (default: 3000) in production.
 </Callout>
 

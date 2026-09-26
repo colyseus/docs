@@ -1,6 +1,6 @@
 {
   "title": "Scalability",
-  "icon": "DuplicateIcon",
+  "icon": "Copy",
   "pages": [
     "traefik"
   ]

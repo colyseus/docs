@@ -19,42 +19,48 @@ Rooms flagged [`private` or `unlisted`](/matchmaker/visibility#matchmaking-prope
 ## Server
 
 <Steps>
+<Step>
 ### Expose the lobby room
 
-```ts {5} title="server.ts"
+```ts title="server.ts"
 import { defineServer, defineRoom, LobbyRoom } from "colyseus";
 
 const server = defineServer({
   rooms: {
+    // [!code highlight]
     lobby: defineRoom(LobbyRoom)
   }
 })
 ```
+</Step>
 
+<Step>
 ### Enable _realtime listing_ on your game room
 
 When _realtime listing_ is enabled, the `LobbyRoom` is notified automatically during `onCreate()`, `onJoin()`, `onLeave()` and `onDispose()`.
 
-```ts {6} title="server.ts"
+```ts title="server.ts"
 import { defineServer, defineRoom, LobbyRoom } from "colyseus";
 
 const server = defineServer({
   rooms: {
     lobby: defineRoom(LobbyRoom),
+    // [!code highlight]
     my_room: defineRoom(MyRoom).enableRealtimeListing()
   }
 })
 ```
+</Step>
 </Steps>
 
 ## Client
 
 The `LobbyRoom` will send messages to the client whenever a room is added, removed or updated.
 
-<LangTabs>
+<Tabs items={["TypeScript", "JavaScript", "C#", "Lua", "Haxe"]} groupId="lang" persist>
 
     <Tab value="TypeScript">
-    ```ts {8,12,22} title="client.ts"
+    ```ts title="client.ts"
     import { Client, RoomAvailable } from "@colyseus/sdk";
 
     const client = new Client("http://localhost:2567");
@@ -62,10 +68,12 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
 
     let allRooms: RoomAvailable[] = [];
 
+    // [!code highlight]
     lobby.onMessage("rooms", (rooms) => {
       allRooms = rooms;
     });
 
+    // [!code highlight]
     lobby.onMessage("+", ([roomId, room]) => {
       const roomIndex = allRooms.findIndex((room) => room.roomId === roomId);
       if (roomIndex !== -1) {
@@ -76,6 +84,7 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
       }
     });
 
+    // [!code highlight]
     lobby.onMessage("-", (roomId) => {
       allRooms = allRooms.filter((room) => room.roomId !== roomId);
     });
@@ -83,7 +92,7 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
     </Tab>
 
     <Tab value="JavaScript">
-    ```ts {8,12,22} title="client.ts"
+    ```ts title="client.ts"
     import * as Colyseus from "@colyseus/sdk";
 
     const client = new Colyseus.Client("http://localhost:2567");
@@ -91,10 +100,12 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
     client.joinOrCreate("lobby").then(function(lobby) {
         let allRooms = [];
 
+        // [!code highlight]
         lobby.onMessage("rooms", (rooms) => {
             allRooms = rooms;
         });
 
+        // [!code highlight]
         lobby.onMessage("+", ([roomId, room]) => {
             const roomIndex = allRooms.findIndex((room) => room.roomId === roomId);
             if (roomIndex !== -1) {
@@ -105,6 +116,7 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
             }
         });
 
+        // [!code highlight]
         lobby.onMessage("-", (roomId) => {
             allRooms = allRooms.filter((room) => room.roomId !== roomId);
         });
@@ -113,7 +125,7 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
     </Tab>
 
     <Tab value="C#">
-    ```cs {8,14,26} title="LobbyClient.cs"
+    ```cs title="LobbyClient.cs"
     using Colyseus;
 
     Client client = new Client("http://localhost:2567");
@@ -121,12 +133,14 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
 
     List<RoomAvailable> allRooms = new List<RoomAvailable>();
 
+    // [!code highlight]
     lobbyRoom.OnMessage("rooms", (RoomAvailable[] rooms) =>
     {
       allRooms.Clear();
       allRooms.AddRange(rooms);
     });
 
+    // [!code highlight]
     lobbyRoom.OnMessage("+", (object[] message) =>
     {
       string roomId = (string)message[0];
@@ -139,6 +153,7 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
       }
     });
 
+    // [!code highlight]
     lobbyRoom.OnMessage("-", (string roomId) =>
     {
       allRooms.RemoveAll((r) => r.roomId == roomId);
@@ -147,7 +162,7 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
     </Tab>
 
     <Tab value="Lua">
-    ```lua {13,17,33} title="lobby.lua"
+    ```lua title="lobby.lua"
     local Colyseus = require("colyseus.sdk")
 
     local client = Colyseus.Client("http://localhost:2567")
@@ -160,10 +175,12 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
 
         local all_rooms = {}
 
+        -- [!code highlight]
         lobby:on_message("rooms", function(rooms)
             all_rooms = rooms
         end)
 
+        -- [!code highlight]
         lobby:on_message("+", function(message)
             local room_id = message[1]
             local room = message[2]
@@ -180,6 +197,7 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
             end
         end)
 
+        -- [!code highlight]
         lobby:on_message("-", function(room_id)
             for i, r in ipairs(all_rooms) do
                 if r.roomId == room_id then
@@ -194,7 +212,7 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
     </Tab>
 
     <Tab value="Haxe">
-    ```haxe {13,17,33} title="Lobby.hx"
+    ```haxe title="Lobby.hx"
     import io.colyseus.Client;
     import io.colyseus.Room;
 
@@ -207,10 +225,12 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
 
         var allRooms:Array<Dynamic> = [];
 
+        // [!code highlight]
         lobby.onMessage("rooms", (rooms: Array<Dynamic>) -> {
             allRooms = rooms;
         });
 
+        // [!code highlight]
         lobby.onMessage("+", (message: Dynamic) -> {
             var roomId:String = message[0];
             var room:Dynamic = message[1];
@@ -227,6 +247,7 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
             }
         });
 
+        // [!code highlight]
         lobby.onMessage("-", (roomId: String) -> {
             allRooms = allRooms.filter((room) -> room.roomId != roomId);
         });
@@ -234,14 +255,15 @@ The `LobbyRoom` will send messages to the client whenever a room is added, remov
     ```
     </Tab>
 
-</LangTabs>
+</Tabs>
 
 ### Filtering rooms
 
 Filter the listing by providing the `filter` option when joining the lobby. A filter **must include `name`**. The name check runs unconditionally, so a metadata-only filter matches nothing. Use `metadata` to narrow within a room name:
 
-```ts {2-7} title="client.ts"
+```ts title="client.ts"
 const lobby = await client.joinOrCreate("lobby", {
+  // [!code highlight:6]
   filter: {
     name: "my_room",
     metadata: {

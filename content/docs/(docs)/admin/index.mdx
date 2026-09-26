@@ -9,7 +9,7 @@ description: "Production operations console for Colyseus: install, mount, and bo
 
 For a lightweight, no-auth dashboard intended for room and process inspection, see the [Monitoring Panel](/tools/monitoring) instead. The admin panel is the heavier counterpart, built for production operations.
 
-<Callout type="warning">
+<Callout type="warn">
     `@colyseus/admin` is in **beta**: APIs may change between releases as we incorporate community feedback. Share yours on the [public roadmap](/roadmap).
 </Callout>
 
@@ -25,13 +25,14 @@ npm install --save @colyseus/admin @colyseus/database @colyseus/auth
 
 The admin panel mounts in two ways:
 
-<Tabs>
+<Tabs items={["Standard router (recommended)", "Express middleware"]}>
     <Tab value="Standard router (recommended)">
     Spread `admin({})` into `createRouter`. The factory returns both the SPA static-serving routes and the REST API in one map:
 
-    ```ts {3,10} title="src/app.config.ts"
+    ```ts title="src/app.config.ts"
     import { defineServer, createRouter } from "colyseus";
     import { GameDatabase } from "@colyseus/database";
+    // [!code highlight]
     import { admin } from "@colyseus/admin";
 
     export const db = new GameDatabase({ connectionString: process.env.DATABASE_URL });
@@ -39,6 +40,7 @@ The admin panel mounts in two ways:
     export default defineServer({
         database: db,
         routes: createRouter({
+            // [!code highlight]
             ...admin({}),
         }),
     });
@@ -48,9 +50,10 @@ The admin panel mounts in two ways:
     <Tab value="Express middleware">
     For Express-based stacks, `admin(...)` is also a valid Express middleware. Mount it at the root to keep the default `/admin` and `/admin-api` paths, or under any path to move both:
 
-    ```ts {3,10,13} title="src/app.config.ts"
+    ```ts title="src/app.config.ts"
     import { defineServer } from "colyseus";
     import { GameDatabase } from "@colyseus/database";
+    // [!code highlight]
     import { admin } from "@colyseus/admin";
 
     export const db = new GameDatabase({ connectionString: process.env.DATABASE_URL });
@@ -58,9 +61,11 @@ The admin panel mounts in two ways:
     export default defineServer({
         database: db,
         express: (app) => {
+            // [!code highlight]
             app.use(admin({}));          // UI at /admin/, API at /admin-api
 
             // or, under a path: UI at /ops/, API at /ops/admin-api
+            // [!code highlight]
             // app.use("/ops", admin({}));
         },
     });

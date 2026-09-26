@@ -1,6 +1,6 @@
 {
   "title": "Recipes & Guides",
-  "icon": "LightBulbIcon",
+  "icon": "Lightbulb",
   "pages": [
     "command-pattern",
     "custom-room-id",

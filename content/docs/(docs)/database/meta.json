@@ -1,6 +1,6 @@
 {
   "title": "Database",
-  "icon": "DatabaseIcon",
+  "icon": "Database",
   "pages": [
     "authentication",
     "services",
