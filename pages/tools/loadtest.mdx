@@ -22,7 +22,7 @@ Run the load test command with the following arguments:
 
 - `script`: path to your custom client script
 - `--room`: name of the room to connect to
-- `--numClients`: number of simulated clients to spawn
+- `--numClients`: number of simulated clients to spawn in this process (see [Running Multiple Processes](#running-multiple-processes))
 - `--endpoint`: your server endpoint (defaults to `ws://localhost:2567`)
 
 For example, to connect 50 clients into a `"battle"` room:
@@ -110,3 +110,28 @@ Each simulated client executes the script you provide. Use room lifecycle events
 
     </Tabs.Tab>
 </Tabs>
+
+## Running Multiple Processes
+
+A load test runs all of its simulated clients in a single Node.js process, on one CPU core. Every simulated client decodes its own copy of each state patch. The server encodes each patch only once per room and sends the same bytes to every client in it.
+
+The decoding cost grows with the number of clients. At the default [`patchRate`](/room#configuration-properties) of 20 patches per second, 500 clients decode 10,000 patches per second on that one core. The load test process can reach its limit before your server does. After that point, patches queue up and the results measure the load test instead of your server.
+
+Watch the `cpu` value in the `processing` panel of the terminal UI. A value at or near 100% means the load test process is the bottleneck. Compare it with the server's CPU usage in `top` or the [Monitoring Panel](/tools/monitoring).
+
+To simulate more clients, split them across several processes. Run each process in its own terminal, because the terminal UI takes over the screen:
+
+```sh filename="Terminal 1"
+npx tsx loadtest/example.ts --room battle --numClients 250 --endpoint http://localhost:2567
+```
+
+```sh filename="Terminal 2"
+npx tsx loadtest/example.ts --room battle --numClients 250 --endpoint http://localhost:2567
+```
+
+Run at most one load test process per CPU core. Keep the load test on a different machine from the server, so the two don't compete for cores. When you run out of cores, spread the processes across more machines.
+
+When you split a load test across processes:
+
+- `options.clientId` counts from `0` in each process, so it isn't unique across processes.
+- Each `console.log` call redraws the terminal UI. The example script above logs every state change for demonstration. Remove per-patch logging for large tests.
