@@ -165,6 +165,7 @@ if (client != 0) {
 | `colyseus_client_create_room(client, room_name, options_json)` | Create a new room. |
 | `colyseus_client_join_by_id(client, room_id, options_json)` | Join a room by its ID. |
 | `colyseus_client_reconnect(client, reconnection_token)` | Re-take a seat with a token saved from `colyseus_room_get_reconnection_token()`, for example after the process was killed. The server must `allowReconnection()`. |
+| `colyseus_client_consume_seat_reservation(client, reservation)` | Join with a seat your backend reserved (see [Consuming a Seat Reservation](/sdk#consuming-a-seat-reservation)). Takes a struct, such as an HTTP reply or a room message, or a JSON string. Returns a room handle; an invalid reservation fails through `colyseus_on_error()`. Requires SDK 0.18.5. |
 
 ### Room
 

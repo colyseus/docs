@@ -146,6 +146,7 @@ final class Network {
 | `create(roomName, ...)` | Always create a new room |
 | `joinById(roomId, ...)` | Join a specific room by its id |
 | `reconnect(token: reconnectionToken, state: ...)` | Rejoin a room this client was dropped from |
+| `consumeSeatReservation(reservation, state: ...)` | Join with a seat your backend reserved, as a `Colyseus.SeatReservation` or a message payload. See [Consuming a Seat Reservation](/sdk#consuming-a-seat-reservation). Requires 0.18.9 |
 
 A refused join throws `Colyseus.Error.matchmaking(code:message:)` with the server's own code and message. The call returns once the join handshake completes, so `room.sessionId` and `room.state` are already set when you get the room.
 

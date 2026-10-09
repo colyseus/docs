@@ -198,7 +198,7 @@ These methods use the same pattern as `joinOrCreate`. Replace the method name ac
 | `create` | `client.create(roomName, options)` | Always creates a new room, even if others exist. |
 | `join` | `client.join(roomName, options)` | Joins an existing room. Fails if none available. Locked/private rooms are ignored. |
 | `joinById` | `client.joinById(roomId, options)` | Joins a specific room by its unique ID. **Private rooms can be joined by ID.** Useful for invite links. |
-| `consumeSeatReservation` | `client.consumeSeatReservation(reservation)` | Joins using a pre-reserved seat from the server. See [Matchmaker → Reserve Seat For](/matchmaker#reserve-a-seat-for). |
+| `consumeSeatReservation` | `client.consumeSeatReservation(reservation)` | Joins with a seat your backend reserved. See [Consuming a Seat Reservation](#consuming-a-seat-reservation). |
 
 <Callout type="info">
   You may disallow the client from creating rooms. See [Matchmaker → Restricting the frontend from creating rooms](/matchmaker#restricting-the-frontend-from-creating-rooms)
@@ -214,6 +214,104 @@ const inviteLink = `https://mygame.com/join?roomId=${room.roomId}`;
 const params = new URLSearchParams(window.location.search);
 const room = await client.joinById(params.get("roomId"));
 ```
+
+### Consuming a Seat Reservation
+
+Your backend can do the matchmaking itself and hand the client a seat. The server reserves it with a [matchmaker method](/matchmaker#methods) such as `matchMaker.joinOrCreate()` or `matchMaker.reserveSeatFor()`. The client then joins with `consumeSeatReservation`, which makes no matchmaking request of its own.
+
+```ts filename="app.config.ts"
+import { defineServer, createEndpoint, createRouter, matchMaker } from "colyseus";
+
+const findMatch = createEndpoint("/find_match", { method: "POST" }, async (ctx) => {
+    // apply your own rules here (party, rank, region), then reserve the seat
+    return await matchMaker.joinOrCreate("battle", { mode: "duo" });
+});
+
+const server = defineServer({
+    routes: createRouter({ findMatch }),
+});
+```
+
+The client posts to that route and consumes the reservation it returns:
+
+<SDKTabs>
+
+    <Tabs.Tab>
+    ```ts filename="client.ts"
+    const { data: reservation } = await client.http.post("/find_match");
+    const room = await client.consumeSeatReservation(reservation);
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```cs filename="Client.cs"
+    var reservation = await client.Http.Post<SeatReservation>("find_match");
+    var room = await client.ConsumeSeatReservation<YourStateClass>(reservation);
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```lua filename="client.lua"
+    client.http:post("/find_match", function(err, reservation)
+      if (err ~= nil) then return end
+
+      client:consume_seat_reservation(reservation, function(err, room)
+        if (err ~= nil) then
+          print("join error: " .. err)
+          return
+        end
+        print("joined " .. room.room_id)
+      end)
+    end)
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```haxe filename="client.hx"
+    client.http.post("find_match", null, function(err, reservation) {
+      if (err != null) return;
+
+      client.consumeSeatReservation(reservation, YourStateClass, function(err, room) {
+        if (err != null) {
+          trace("join error: " + err);
+          return;
+        }
+        trace("joined " + room.roomId);
+      });
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```gdscript filename="client.gd"
+    client.http.post("/find_match", {}, func(err, reservation):
+        if err:
+            return
+        # a Dictionary, or the same object as a JSON String
+        var room: Colyseus.Room = client.consume_seat_reservation(reservation)
+        room.joined.connect(func(): print("joined ", room.get_id()))
+        room.error.connect(func(code, message): printerr("join error: ", message)))
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```dart filename="client.dart"
+    final response = await client.http.post('/find_match');
+    final room = await client.consumeSeatReservation(
+        SeatReservation.fromJson(response.json),
+        stateType: MyRoomState.new);
+    ```
+    </Tabs.Tab>
+
+</SDKTabs>
+
+A [queue](/matchmaker/queue#receiving-a-seat-reservation) or lobby room can send the reservation as a message instead. Pass the message payload the same way: GDScript takes the `Dictionary` as it arrives, and Dart reads it with `SeatReservation.fromJson()`.
+
+The [GameMaker](/getting-started/gamemaker#client), [Swift](/getting-started/swift#quick-example) and [C](/getting-started/native-sdk#seat-reservations) SDKs expose the same call. Minimum native SDK versions: Godot 0.18.4, Flutter 0.18.5, GameMaker 0.18.5, Swift and C 0.18.9.
+
+<Callout type="info">
+    A reservation expires if the client doesn't join within the room's `seatReservationTimeout` (15 seconds by default). When the server sets a [`publicAddress`](/server#public-address-publicaddress), the reservation carries it, and the client connects to that address directly.
+</Callout>
 
 ---
 

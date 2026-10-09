@@ -512,3 +512,18 @@ const char* token = colyseus_room_get_reconnection_token(room);
 // Later, reconnect
 colyseus_client_reconnect(client, token, on_room_success, on_error, NULL);
 ```
+
+## Seat Reservations
+
+When your backend reserves the seat itself (see [Consuming a Seat Reservation](/sdk#consuming-a-seat-reservation)), join with that reservation instead of a room name. Pass the JSON the server returned:
+
+```c
+static void on_reservation(const colyseus_http_response_t* response, void* userdata) {
+    colyseus_client_consume_seat_reservation_json(client, response->body,
+        on_room_success, on_matchmaking_error, NULL);
+}
+
+colyseus_http_post(http, "/find_match", "{}", on_reservation, on_http_error, NULL);
+```
+
+`colyseus_client_consume_seat_reservation()` takes a `colyseus_seat_reservation_t` instead, for a reservation you assembled yourself. Both functions copy the reservation. They report a missing `name`, `roomId`, `processId` or `sessionId` through the error callback.

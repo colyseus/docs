@@ -141,6 +141,7 @@ Every join method returns a `Future<ColyseusRoom>`. `options:` is JSON-encoded a
 | `create(roomName, ...)` | Always create a new room |
 | `joinById(roomId, ...)` | Join a specific room by its id |
 | `reconnect(reconnectionToken, stateType: ...)` | Rejoin a room this client was dropped from |
+| `consumeSeatReservation(reservation, stateType: ...)` | Join with a seat your backend reserved; read it with `SeatReservation.fromJson()`. See [Consuming a Seat Reservation](/sdk#consuming-a-seat-reservation). Requires 0.18.5 |
 
 <Callout type="info">
     The join future resolves as soon as the server confirms the seat, which can happen before the first state patch arrives. Code that looks for its own entity in the state should wait for `onStateChange` rather than reading immediately.
