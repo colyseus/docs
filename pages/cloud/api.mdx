@@ -9,7 +9,7 @@ import { Callout, Steps } from 'nextra/components'
 The Colyseus Cloud API gives read-only access to what the dashboard shows: your applications' status, metrics, egress, deploys and logs, and your billing summary. Use it to feed your own dashboards or monitoring tools.
 
 <Callout type="info">
-    **Beta.** The API is enabled per team on request. Email [support@colyseus.io](mailto:support@colyseus.io) with your team name to get access.
+    **Beta.** Every team can use the API. Tell us what you'd like it to cover at [support@colyseus.io](mailto:support@colyseus.io).
 </Callout>
 
 ---
@@ -19,7 +19,7 @@ The Colyseus Cloud API gives read-only access to what the dashboard shows: your 
 <Steps>
 ### Create a token
 
-Once the API is enabled for your team, create a token in your team's settings, under **API tokens** ([open your API tokens](https://cloud-prod.colyseus.io/settings/api-tokens)). It's shown only once, so keep it somewhere safe.
+Create a token under **API tokens** in the dashboard ([open your API tokens](https://cloud-prod.colyseus.io/settings/api-tokens)). It's shown only once, so keep it somewhere safe.
 
 Run this, paste the token and press Enter. It keeps the token out of your shell history:
 
@@ -48,7 +48,7 @@ curl https://cloud-prod.colyseus.io/api/v1/applications/1234-my-game/metrics/cur
 
 ## Authentication
 
-Once the API is enabled for your team, owners and admins create tokens in the **API tokens** section of the team's settings. A token can read every application of the team and the team's billing summary, and nothing else: it cannot deploy or change settings.
+Owners and admins create tokens under **API tokens** in the dashboard. A token can read every application of the team and the team's billing summary, and nothing else: it cannot deploy or change settings.
 
 A token is shown only once. It doesn't expire, but it stops working when the person who created it leaves the team, is removed from it, or stops being an owner or admin. Any owner or admin can also delete it, which revokes it immediately.
 
@@ -379,7 +379,6 @@ Errors have the same shape and a stable `code`:
 | Status | `code` | Meaning |
 |---|---|---|
 | 401 | `unauthenticated` | Missing, invalid or revoked token. |
-| 403 | `api_not_enabled` | The API is not enabled for your team yet. |
 | 404 | `not_found` | No such application, deploy or instance in your team. |
 | 405 | `method_not_allowed` | The API only answers `GET`. |
 | 409 | `instance_not_ready` | The instance isn't running, so its logs can't be read. |
