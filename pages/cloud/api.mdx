@@ -2,11 +2,11 @@
 title: Cloud API
 description: "Access your Colyseus Cloud applications programmatically: read their status, metrics, egress, deploys, logs and billing summary for your own dashboards and monitoring."
 ---
-import { Callout } from 'nextra/components'
+import { Callout, Steps } from 'nextra/components'
 
 # Cloud API
 
-The Colyseus Cloud API gives programmatic access to what the dashboard shows. For now the API is read-only. It returns your applications' status, CPU, memory, CCU and room count per instance, network egress, deploy history and output, each instance's recent logs, and your subscriptions and account balance. Use it to feed your own dashboards or monitoring tools.
+The Colyseus Cloud API gives read-only access to what the dashboard shows: your applications' status, metrics, egress, deploys and logs, and your billing summary. Use it to feed your own dashboards or monitoring tools.
 
 <Callout type="info">
     **Beta.** The API is enabled per team on request. Email [support@colyseus.io](mailto:support@colyseus.io) with your team name to get access.
@@ -14,24 +14,61 @@ The Colyseus Cloud API gives programmatic access to what the dashboard shows. Fo
 
 ---
 
-## Authentication
+## Quickstart
 
-Once the API is enabled for your team, owners and admins can create tokens on the team's settings page, under **Create API Token**. A token can read every application of the team and the team's billing summary, and nothing else: it cannot deploy or change settings.
+<Steps>
+### Create a token
 
-A token is shown only once, and never expires. It belongs to the team rather than to whoever created it, so it keeps working if that person leaves. Any owner or admin can delete it, which revokes it immediately.
+Once the API is enabled for your team, create a token in your team's settings, under **API tokens** ([open your API tokens](https://cloud-prod.colyseus.io/settings/api-tokens)). It's shown only once, so keep it somewhere safe.
 
-Send the token as a bearer token:
+Run this, paste the token and press Enter. It keeps the token out of your shell history:
+
+```sh filename="Terminal"
+read -rs COLYSEUS_CLOUD_TOKEN && export COLYSEUS_CLOUD_TOKEN
+```
+
+### Find your application's slug
 
 ```sh filename="Terminal"
 curl https://cloud-prod.colyseus.io/api/v1/applications \
   -H "Authorization: Bearer $COLYSEUS_CLOUD_TOKEN"
 ```
 
-All times are ISO 8601 in UTC. Applications are addressed by their slug, as returned by `/applications`. The slug stays the same when you rename the application.
+Each application's `slug`, such as `1234-my-game`, goes in the URLs of the other endpoints.
+
+### Read its current metrics
+
+```sh filename="Terminal"
+curl https://cloud-prod.colyseus.io/api/v1/applications/1234-my-game/metrics/current \
+  -H "Authorization: Bearer $COLYSEUS_CLOUD_TOKEN"
+```
+</Steps>
+
+---
+
+## Authentication
+
+Once the API is enabled for your team, owners and admins create tokens in the **API tokens** section of the team's settings. A token can read every application of the team and the team's billing summary, and nothing else: it cannot deploy or change settings.
+
+A token is shown only once. It doesn't expire, but it stops working when the person who created it leaves the team, is removed from it, or stops being an owner or admin. Any owner or admin can also delete it, which revokes it immediately.
+
+Send the token in the `Authorization` header, as `Bearer <token>`.
 
 ---
 
 ## Endpoints
+
+The base URL is `https://cloud-prod.colyseus.io/api/v1`. All times are ISO 8601 in UTC. Applications are addressed by their slug, as returned by `/applications`. The slug stays the same when you rename the application.
+
+| Endpoint | Returns |
+|---|---|
+| [`GET /applications`](#list-applications) | Your applications, with their regions, plans and instances. |
+| [`GET /applications/{slug}/metrics/current`](#current-metrics) | Each instance's latest CCU, rooms, CPU, memory and processes. |
+| [`GET /applications/{slug}/metrics`](#metrics-history) | The same per location, by minute or by day. |
+| [`GET /applications/{slug}/egress`](#egress) | Network traffic per location and per day. |
+| [`GET /applications/{slug}/deploys`](#deploys) | Recent deploys, and each one's output. |
+| [`GET /billing`](#billing) | Your subscriptions and account balance. |
+| [`GET /applications/{slug}/instances/{id}/logs`](#instance-logs) | An instance's latest server logs. |
 
 ### List applications
 
@@ -66,9 +103,11 @@ Your team's applications, with their locations (region, endpoint, plan) and the 
 }
 ```
 
+Use `slug` in every application URL below, and an instance's `id` to read its [logs](#instance-logs).
+
 `scale_strategy` is `vertical` (one instance) or `horizontal` (several instances behind a load balancer). A location's or instance's `status` is one of `pending`, `provisioning`, `installing`, `ready`, `error`, `destroying`, `resizing` or `unpaid`. An instance's `deploy_status` takes the [deploy](#deploys) values, or is `null`. `endpoint` is `null` until the location or instance has an address.
 
-`maintenance_mode` is `true` while the application's maintenance mode is on in the dashboard. `plan.transfer_gb` is the monthly transfer the plan includes per instance. Egress is not billed; see [Egress](#egress) for your usage.
+`maintenance_mode` is `true` while the application's maintenance mode is on in the dashboard. `plan.transfer_gb` is the monthly transfer the plan includes per instance; [Egress](#egress) has your usage.
 
 ### Current metrics
 
@@ -290,6 +329,42 @@ Every endpoint draws from one budget of 60 requests per minute per team, shared 
 | `/instances/{id}/logs` | 60 s | 2 |
 
 Rate-limited responses carry `X-RateLimit-Limit` and `X-RateLimit-Remaining`, for the tightest limit on that endpoint. Past a limit, you get a `429` with a `Retry-After` header in seconds. A cached answer still counts toward the limit.
+
+### Polling
+
+Between requests, wait for as long as `Cache-Control` says. After a `429` or a `5xx`, wait for as long as `Retry-After` says. Wait at least a few seconds either way, in case a header is missing or isn't a number of seconds:
+
+```js filename="poll.mjs"
+const BASE_URL = "https://cloud-prod.colyseus.io/api/v1";
+const headers = { Authorization: `Bearer ${process.env.COLYSEUS_CLOUD_TOKEN}` };
+
+// at least 5 s, and the fallback when the header is missing or a date
+const wait = (value, fallback) => Math.max(5, Number(value) || fallback);
+
+async function poll(path, onData) {
+  while (true) {
+    const response = await fetch(BASE_URL + path, { headers });
+    let seconds;
+
+    if (response.ok) {
+      onData(await response.json());
+      seconds = wait(response.headers.get("cache-control")?.match(/max-age=(\d+)/)?.[1], 60);
+    } else if (response.status === 429 || response.status >= 500) {
+      seconds = wait(response.headers.get("retry-after"), 30);
+    } else {
+      throw new Error(`${response.status}: ${await response.text()}`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+  }
+}
+
+poll("/applications/1234-my-game/metrics/current", (metrics) => {
+  for (const location of metrics.locations) {
+    console.log(location.region, location.totals?.ccu ?? "no recent data");
+  }
+});
+```
 
 ---
 
