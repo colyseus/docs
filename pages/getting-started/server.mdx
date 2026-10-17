@@ -1,0 +1,195 @@
+---
+title: "Create a Colyseus Server"
+description: "Create a Colyseus multiplayer game server with npm create colyseus-app, run it locally, and add the first room that the client SDK examples connect to."
+---
+import { Cards, Tabs, Steps, Callout } from 'nextra/components'
+import { SyncIcon, RowsIcon, DownloadIcon, ZapIcon } from '@primer/octicons-react'
+
+# Create a Server
+
+A Colyseus game has a server and one or more clients. The server runs your game rooms and owns their state. Clients connect to it. This page creates the server, and the [client SDK pages](/getting-started#connect-a-client) connect to it.
+
+## Prerequisites
+
+- [<DownloadIcon /> Node.js](https://nodejs.org/) LTS version (or [Bun](https://bun.sh/))
+- [<DownloadIcon /> Git](https://git-scm.com/downloads)
+- A code editor ([VS Code](https://code.visualstudio.com/) recommended)
+
+## Setting up your server
+
+<Steps>
+### Create your Colyseus server
+
+<Tabs items={['npm', 'pnpm', 'yarn', 'Bun']}>
+
+  <Tabs.Tab>
+``` bash filename="Terminal: npm"
+# Create a new Colyseus project
+npm create colyseus-app@latest ./my-server
+
+# Enter the project directory
+cd my-server
+
+# Run the server
+npm start
+```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+``` bash filename="Terminal: pnpm"
+# Create a new Colyseus project
+pnpm create colyseus-app@latest ./my-server
+
+# Enter the project directory
+cd my-server
+
+# Run the server
+pnpm start
+```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+``` bash filename="Terminal: yarn"
+# Create a new Colyseus project
+yarn create colyseus-app ./my-server
+
+# Enter the project directory
+cd my-server
+
+# Run the server
+yarn start
+```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+``` bash filename="Terminal: Bun"
+# Create a new Colyseus project
+bun create colyseus-app@latest ./my-server
+
+# Enter the project directory
+cd my-server
+
+# Install Bun transport & Run the server
+bun add @colyseus/bun-websockets
+bun run src/index.ts
+```
+  </Tabs.Tab>
+</Tabs>
+
+The generator asks which language to use and what you're building. **Minimal server** is enough to follow along. See [Scaffolding options](#scaffolding-options) for every preset and flag.
+
+The server listens on `http://localhost:2567`. Open that address in a browser to reach the [Playground](/tools/playground), where you can join a room and send messages without writing a client.
+
+### Add players to your room
+
+The generated room has no game logic yet. Replace both files below. The Quick Example on each client SDK page joins this room: it reads the `players` map, sends `move`, and listens for `chat`.
+
+```ts filename="src/rooms/schema/MyRoomState.ts"
+import { schema, t, type SchemaType } from "@colyseus/schema";
+
+export const Player = schema({
+  x: t.number().default(0),
+  y: t.number().default(0),
+});
+export type Player = SchemaType<typeof Player>;
+
+export const MyRoomState = schema({
+  players: t.map(Player),
+});
+export type MyRoomState = SchemaType<typeof MyRoomState>;
+```
+
+```ts filename="src/rooms/MyRoom.ts"
+import { Room, Client, CloseCode } from "colyseus";
+import { MyRoomState, Player } from "./schema/MyRoomState.js";
+
+export class MyRoom extends Room<{ state: MyRoomState }> {
+  maxClients = 4;
+  state = new MyRoomState();
+
+  messages = {
+    move: (client: Client, message: { x: number, y: number }) => {
+      const player = this.state.players.get(client.sessionId);
+      if (!player) { return; }
+
+      player.x = message.x;
+      player.y = message.y;
+    },
+  };
+
+  onJoin(client: Client, options: any) {
+    this.state.players.set(client.sessionId, new Player());
+    this.broadcast("chat", `${client.sessionId} joined.`);
+  }
+
+  onLeave(client: Client, code: CloseCode) {
+    this.state.players.delete(client.sessionId);
+    this.broadcast("chat", `${client.sessionId} left.`);
+  }
+}
+```
+
+Each client gets a `Player` entry when it joins, and the server moves it when that client sends `move`. Every change to `players` reaches all clients in the room. `npm start` restarts the server when a file changes. If you chose JavaScript, use the same code without the type annotations.
+
+### Connect a client
+
+Pick the SDK for your engine or framework under [Connect a client](/getting-started#connect-a-client), and run its Quick Example against this server.
+
+</Steps>
+
+## Build your game logic
+
+The room is where your game runs. Continue with:
+
+<Cards>
+    <Cards.Card icon={<RowsIcon/>} title="Room API" href="/room" />
+    <Cards.Card icon={<SyncIcon/>} title="State Synchronization" href="/state" />
+    <Cards.Card icon={<ZapIcon/>} title="Netcode: Prediction & Lag Comp" href="/netcode" />
+</Cards>
+
+## Scaffolding options
+
+`create-colyseus-app` asks a few questions and creates the project from your answers. Each option adds working, wired-in code, and the room comes with a headless test.
+
+### Presets
+
+The first question is what you're building. Pick a preset, or **Custom** to choose each feature individually.
+
+| Preset | `--preset` | What you get |
+| --- | --- | --- |
+| **Minimal server** | `minimal` | A single room, nothing else. |
+| **Realtime action** | `realtime-action` | Vite project (client, server and shared code) with an authoritative fixed tick, server-validated input and client-side prediction, plus lobby and reconnection. TypeScript only. |
+| **Turn-based** | `turn-based` | Server-owned turn order with a per-turn deadline, plus reconnection. |
+| **Custom** | `custom` | Asks every question: layout, netcode, matchmaking, authentication and database. |
+
+### Using command-line options
+
+Every question has a flag. Options you pass are not asked, and they override the preset. `--yes` fills the rest with defaults, so a single command works in a terminal, a script, or CI.
+
+``` bash filename="Terminal"
+npm create colyseus-app@latest my-server -- --preset realtime-action --yes
+
+npm create colyseus-app@latest my-server -- --ts --layout vite --netcode fixed \
+    --matchmaking lobby,reconnection --auth module --database colyseus --yes
+```
+
+<Callout type="info">
+`npm create` needs the `--` separator to forward options to the generator. `pnpm`, `yarn`, `bun create` and `npx create-colyseus-app@latest` don't.
+</Callout>
+
+Pass `.` as the directory to scaffold into the current folder. Omit the directory to be asked for a project name.
+
+| Option | Choices (first is the default) |
+| --- | --- |
+| `--language` | `typescript` · `esm` · `cjs` · `haxe`. Also as shorthand flags: `--ts`, `--esm`, `--cjs`, `--haxe` |
+| `--preset` | `minimal` · `realtime-action` · `turn-based` · `custom` |
+| `--layout` | `server` · `vite` (client + server + shared code in one Vite project) · `monorepo` (`apps/backend` + `apps/frontend`) |
+| `--netcode` | `none` · `fixed` (fixed tick + client prediction) · `tick` (simple server tick) · `turn-based` · `relay` (client-authoritative) |
+| `--matchmaking` | none by default. Comma-separated: `lobby` · `filterby` · `reconnection` · `idle-kick` |
+| `--auth` | `none` · `onauth` (validate a token in `onAuth()`, no dependencies) · `module` (`@colyseus/auth`: anonymous + email/password) · `oauth` (`@colyseus/auth` + OAuth provider) |
+| `--oauth-provider` | `discord` · `google` · `github` · `twitch` |
+| `--database` | `none` · `colyseus` (`@colyseus/database`: SQLite in development, Postgres in production) |
+
+The `realtime-action` preset, the `vite` and `monorepo` layouts, `fixed` netcode, `oauth` and the database require TypeScript. Haxe projects take none of these options: the generator copies the Haxe template as is.
+
+Other flags: `--name <pkg-name>`, `--git` (initialize a repository with a first commit), `--no-install`, `--overwrite`. Run `npx create-colyseus-app@latest --help` for the full reference.

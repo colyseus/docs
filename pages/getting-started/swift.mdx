@@ -3,6 +3,7 @@ title: "Colyseus SDK for Swift"
 description: "Get started with Colyseus multiplayer in Swift. Add the Swift package for iOS, macOS and tvOS, join a room, sync real-time game state, and predict player movement."
 ---
 import { Callout } from "nextra/components";
+import { ServerRequired } from "../../components/server-required"
 
 # Swift
 
@@ -94,6 +95,8 @@ final class GameScene: SKScene {
 
 ## Quick Example
 
+<ServerRequired />
+
 This example shows how to connect to a room, listen for state changes, send messages and leave the room.
 
 ```swift filename="Network.swift"
@@ -120,7 +123,7 @@ final class Network {
         }
 
         room.onMessage("chat") { payload in
-            print("chat: \(payload["text"]?.string ?? "")")
+            print("chat: \(payload.string ?? "")")
         }
 
         room.onError { code, message in print("error \(code): \(message)") }

@@ -5,6 +5,7 @@ description: "Install the Colyseus Unity SDK via Unity Package Manager. Build re
 import { unity } from "../../components/icons/platforms"
 import { Callout, Steps, Tabs } from 'nextra/components'
 import { PeopleIcon, DevicesIcon } from '@primer/octicons-react'
+import { ServerRequired } from "../../components/server-required"
 
 # Unity SDK
 
@@ -66,6 +67,8 @@ You should be able to see the server running at `http://localhost:2567`, and the
 
 ## Quick Example
 
+<ServerRequired />
+
 This example shows how to connect to a room, listen for state changes via Callbacks, and send messages.
 
 ```csharp filename="NetworkManager.cs"
@@ -88,17 +91,12 @@ public class NetworkManager : MonoBehaviour
         // Get state callbacks handler
         var callbacks = Callbacks.Get(room);
 
-        // Listen for changes on a state property
-        callbacks.Listen(state => state.currentTurn, (currentValue, previousValue) => {
-            Debug.Log($"Turn changed: {previousValue} -> {currentValue}");
-        });
-
         // Listen for players being added
         callbacks.OnAdd(state => state.players, (sessionId, player) => {
             Debug.Log($"Player joined: {sessionId}");
 
-            callbacks.Listen(player, p => p.hp, (currentHp, previousHp) => {
-                Debug.Log($"Player {sessionId} hp: {currentHp}");
+            callbacks.Listen(player, p => p.x, (currentX, previousX) => {
+                Debug.Log($"Player {sessionId} x: {currentX}");
             });
         });
 

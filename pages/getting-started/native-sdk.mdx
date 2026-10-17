@@ -3,6 +3,7 @@ title: "Colyseus Native SDK (C)"
 description: "Get started with the Colyseus Native SDK for C. Build multiplayer games with raw C integration, supporting desktop, mobile, and web platforms."
 ---
 import { Callout } from "nextra/components";
+import { ServerRequired } from "../../components/server-required"
 
 # Native SDK (C)
 
@@ -199,6 +200,8 @@ colyseus_callbacks_on_add(callbacks, state, "players",
 </details>
 
 ## Quick Example
+
+<ServerRequired />
 
 This example shows how to connect to a server, join a room, listen for state changes, send messages, and handle cleanup.
 

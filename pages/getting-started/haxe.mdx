@@ -5,6 +5,7 @@ description: "Use Colyseus with Haxe game engines like OpenFL, HaxeFlixel, Heaps
 import { haxe } from "../../components/icons/platforms"
 import { Callout } from "nextra/components";
 import { DevicesIcon } from '@primer/octicons-react'
+import { ServerRequired } from "../../components/server-required"
 
 # Haxe
 
@@ -59,6 +60,8 @@ You should be able to see the server running at `http://localhost:2567`, and the
 
 ## Quick Example
 
+<ServerRequired />
+
 This example shows how to connect to a room, listen for state changes, and send messages.
 
 ```haxe
@@ -85,17 +88,12 @@ class NetworkManager {
             // Get state callbacks handler
             var callbacks = Callbacks.get(room);
 
-            // Listen for changes on a state property
-            callbacks.listen("currentTurn", function(currentValue, previousValue) {
-                trace("Turn changed: " + previousValue + " -> " + currentValue);
-            });
-
             // Listen for players being added
             callbacks.onAdd("players", function(player, sessionId) {
                 trace("Player joined: " + sessionId);
 
-                callbacks.listen(player, "hp", function(currentHp, previousHp) {
-                    trace("Player " + sessionId + " hp: " + currentHp);
+                callbacks.listen(player, "x", function(currentX, previousX) {
+                    trace("Player " + sessionId + " x: " + currentX);
                 });
             });
 

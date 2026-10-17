@@ -4,6 +4,7 @@ description: "Install the Colyseus MonoGame SDK via NuGet. Build real-time multi
 ---
 import { Callout } from 'nextra/components'
 import { DevicesIcon } from '@primer/octicons-react'
+import { ServerRequired } from "../../components/server-required"
 
 # MonoGame SDK
 
@@ -18,6 +19,8 @@ dotnet add package Colyseus.MonoGame
 ---
 
 ## Quick Example
+
+<ServerRequired />
 
 This example shows how to connect to a room, listen for state changes via Callbacks, and send messages.
 
@@ -41,17 +44,12 @@ public class Game1 : Game
         // Get state callbacks handler
         var callbacks = Callbacks.Get(room);
 
-        // Listen for changes on a state property
-        callbacks.Listen(state => state.currentTurn, (currentValue, previousValue) => {
-            System.Diagnostics.Debug.WriteLine($"Turn changed: {previousValue} -> {currentValue}");
-        });
-
         // Listen for players being added
         callbacks.OnAdd(state => state.players, (sessionId, player) => {
             System.Diagnostics.Debug.WriteLine($"Player joined: {sessionId}");
 
-            callbacks.Listen(player, p => p.hp, (currentHp, previousHp) => {
-                System.Diagnostics.Debug.WriteLine($"Player {sessionId} hp: {currentHp}");
+            callbacks.Listen(player, p => p.x, (currentX, previousX) => {
+                System.Diagnostics.Debug.WriteLine($"Player {sessionId} x: {currentX}");
             });
         });
 

@@ -5,6 +5,7 @@ description: "Install and set up the Colyseus JavaScript/TypeScript SDK for buil
 import _js_ts_header from "./_js_ts_header.mdx"
 import { Callout, Tabs } from 'nextra/components'
 import Image from 'next/image'
+import { ServerRequired } from "../../components/server-required"
 
 # JavaScript / TypeScript SDK
 
@@ -44,6 +45,8 @@ Download the release binaries from [GitHub Releases](https://github.com/colyseus
 
 ## Quick Example
 
+<ServerRequired />
+
 Connect to a server, join a room, and listen for state changes:
 
 ```ts
@@ -57,18 +60,13 @@ const room = await client.joinOrCreate("my_room");
 // Get state callbacks handler
 const callbacks = Callbacks.get(room);
 
-// Listen for changes on a state property
-callbacks.listen("currentTurn", (currentValue, previousValue) => {
-    console.log("Turn changed:", previousValue, "->", currentValue);
-});
-
 // Listen for entities being added to a collection
 callbacks.onAdd("players", (player, sessionId) => {
     console.log("Player joined:", sessionId);
 
     // Listen for changes on nested properties
-    callbacks.listen(player, "hp", (currentHp, previousHp) => {
-        console.log("Player", sessionId, "hp:", currentHp);
+    callbacks.listen(player, "x", (currentX, previousX) => {
+        console.log("Player", sessionId, "x:", currentX);
     });
 });
 

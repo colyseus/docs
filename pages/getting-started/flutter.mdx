@@ -3,6 +3,7 @@ title: "Colyseus SDK for Flutter"
 description: "Get started with Colyseus multiplayer in Flutter. Install the Dart SDK, connect to a room, sync real-time game state, and predict player movement."
 ---
 import { Callout } from "nextra/components";
+import { ServerRequired } from "../../components/server-required"
 
 # Flutter
 
@@ -91,6 +92,8 @@ class _GameState extends State<Game> with SingleTickerProviderStateMixin {
 
 ## Quick Example
 
+<ServerRequired />
+
 This example shows how to connect to a room, listen for state changes, send messages and leave the room.
 
 ```dart filename="lib/network.dart"
@@ -114,7 +117,7 @@ Future<void> connect() async {
     print('players: ${players?.length ?? 0}');
   });
 
-  joined.onMessage('chat').listen((data) => print('chat: ${data['text']}'));
+  joined.onMessage('chat').listen((message) => print('chat: $message'));
 
   joined.onError.listen((e) => print('error ${e.code}: ${e.message}'));
   joined.onLeave.listen((code) => print('left with code $code'));

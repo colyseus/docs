@@ -4,6 +4,7 @@ description: "Get started with Colyseus multiplayer in GameMaker. Install the SD
 ---
 import { Callout } from "nextra/components";
 import { DevicesIcon } from '@primer/octicons-react'
+import { ServerRequired } from "../../components/server-required"
 
 # GameMaker
 
@@ -39,6 +40,8 @@ You must call `colyseus_process()` once per frame in the **Step** event to poll 
 Create the client from the **Step** event, on the first frame `colyseus_is_ready()` returns `true`. On HTML5 the WASM module finishes instantiating after the game has started, so a Create event runs too early; native is ready from the first frame, so the same code works everywhere.
 
 ## Quick Example
+
+<ServerRequired />
 
 This example shows how to connect to a room, listen for state changes, send messages, and leave the room.
 
@@ -87,11 +90,6 @@ function net_setup_handlers(net_room) {
         // Store as instance variables (no "var") so nested callbacks can access them
         player_objs = {};
         callbacks = colyseus_callbacks_create(_room);
-
-        // Listen to root state properties (instance can be omitted for root)
-        colyseus_listen(callbacks, "currentTurn", function(value, prev) {
-            show_debug_message("Turn changed: " + string(prev) + " -> " + string(value));
-        });
 
         // Listen for players added to the "players" map
         colyseus_on_add(callbacks, "players", function(instance, key) {

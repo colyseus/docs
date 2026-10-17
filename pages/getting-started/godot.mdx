@@ -4,6 +4,7 @@ description: "Get started with Colyseus multiplayer in Godot Engine. Install the
 ---
 import { Callout } from "nextra/components";
 import { DevicesIcon } from '@primer/octicons-react'
+import { ServerRequired } from "../../components/server-required"
 
 # Godot Engine
 
@@ -54,6 +55,8 @@ Navigate to the [<DevicesIcon/> Client SDK](/sdk) for API Reference, and select 
 
 ## Quick Example / Reference
 
+<ServerRequired />
+
 This example shows how to connect to a room, listen for state changes, send messages and leave the room.
 
 ```gdscript filename="Network.gd"
@@ -70,7 +73,7 @@ func _ready():
 	print("Connecting to: ", client.get_endpoint())
 
 	# Join or create a room (options are passed as Dictionary)
-	room = client.join_or_create("test_room")
+	room = client.join_or_create("my_room")
 
 	# Connect signals
 	if room:
@@ -88,25 +91,17 @@ func _on_room_joined():
 	# Get callbacks container for the room
 	callbacks = Colyseus.Callbacks.of(room)
 
-	# Listen to root state property changes
-	callbacks.listen("currentTurn", _on_turn_change)
-
 	# Listen to collection additions/removals/changes
 	callbacks.on_add("players", _on_player_add)
 	callbacks.on_remove("players", _on_player_remove)
 
 	# Send a message
-	room.send_message("add_item", {"name": "MY NEW ITEM"})
-
-func _on_turn_change(current_value, previous_value):
-	print("Turn changed: ", previous_value, " -> ", current_value)
+	room.send_message("move", {"x": 10, "y": 20})
 
 func _on_player_add(player, key: String):
 	print("+ Player joined: ", key)
 	# Listen to nested schema properties
-	callbacks.listen(player, "hp", _on_player_hp_change)
-	# Listen to nested collections
-	callbacks.on_add(player, "items", _on_item_add)
+	callbacks.listen(player, "x", _on_player_x_change)
 	# Listen to any property change on this player
 	callbacks.on_change(player, _on_player_changed)
 
@@ -119,14 +114,8 @@ func _on_players_change(key, value):
 func _on_player_changed():
 	print("  Player instance changed")
 
-func _on_player_hp_change(current_hp, previous_hp):
-	print("  HP changed: ", previous_hp, " -> ", current_hp)
-
-func _on_item_add(item, index: int):
-	print("  Item added at index: ", index, " -> ", item)
-
-	callbacks.listen(item, "name", func(name, _prev):
-		print("  Item name: ", name))
+func _on_player_x_change(current_x, previous_x):
+	print("  x changed: ", previous_x, " -> ", current_x)
 
 func _on_state_changed():
 	print("Room state changed")

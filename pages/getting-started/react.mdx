@@ -426,14 +426,14 @@ const client = new Client("http://localhost:2567");
 
 function RoomComponent () {
     const roomRef = useRef<Room>();
-    const [ players, setPlayers ] = useState([]);
+    const [ sessionIds, setSessionIds ] = useState<string[]>([]);
 
     useEffect(() => {
         const req = client.joinOrCreate("my_room", {});
 
         req.then((room) => {
             roomRef.current = room;
-            room.onStateChange((state) => setPlayers(state.players.toJSON()));
+            room.onStateChange((state) => setSessionIds(Array.from(state.players.keys())));
         });
 
         return () => { req.then((room) => room.leave()); };
@@ -441,8 +441,8 @@ function RoomComponent () {
 
     return (
         <div>
-            {players.map((player) => (
-                <div key={player.id}>{player.name}</div>
+            {sessionIds.map((sessionId) => (
+                <div key={sessionId}>{sessionId}</div>
             ))}
         </div>
     );
