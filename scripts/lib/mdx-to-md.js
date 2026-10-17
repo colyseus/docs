@@ -28,7 +28,7 @@ const SITE = 'https://docs.colyseus.io'
 const ASSET_RE = /\.(png|jpe?g|gif|svg|webp|ico|pdf|mp4|webm|mp3|wav|zip)$/i
 
 // <SDKTabs> wraps <Tabs> with this fixed item list — see components/SDKTabs.tsx.
-const SDK_TAB_LABELS = ['TypeScript', 'C#', 'Lua', 'Haxe', 'GDScript', 'Dart']
+const SDK_TAB_LABELS = ['TypeScript', 'C#', 'Lua', 'Haxe', 'GDScript', 'Dart', 'GML']
 
 const CALLOUT_LABELS = { info: 'Note', warning: 'Warning', error: 'Important' }
 
