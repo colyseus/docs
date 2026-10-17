@@ -197,7 +197,7 @@ Register callbacks for room lifecycle events. These are dispatched by `colyseus_
 
 | Function | Description |
 | --- | --- |
-| `colyseus_send(room, type, data)` | Send a message. `data` is a struct (sent as a map of strings, numbers and booleans), or a bare string, number or boolean. |
+| `colyseus_send(room, type, data)` | Send a message. `type` is a string or a number. `data` is a struct (sent as a map of strings, numbers and booleans), or a bare string, number or boolean. |
 | `colyseus_room_send(room, type, data)` | Send raw encoded bytes with a string type. |
 | `colyseus_room_send_bytes(room, type, data, length)` | Send raw bytes. |
 | `colyseus_room_send_int(room, type, data)` | Send raw encoded bytes with a numeric type. |

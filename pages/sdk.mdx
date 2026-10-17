@@ -1,6 +1,6 @@
 ---
 title: "Colyseus Client SDK"
-description: "Complete API reference for the Colyseus Client SDK. Connect to rooms, synchronize state, send messages, handle reconnection, and measure latency across TypeScript, Unity, Godot, Defold, Haxe, and Flutter."
+description: "Complete API reference for the Colyseus Client SDK. Connect to rooms, synchronize state, send messages, handle reconnection, and measure latency across TypeScript, Unity, Godot, Defold, Haxe, Flutter, and GameMaker."
 ---
 import { Callout, Cards, Tabs } from "nextra/components";
 import { ZapIcon, SyncIcon, ServerIcon, PasskeyFillIcon } from "@primer/octicons-react";
@@ -88,6 +88,20 @@ The `Client` instance is your entry point to connect to the server.
     import 'package:colyseus/colyseus.dart';
 
     final client = ColyseusClient('ws://localhost:2567');
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.gml"
+    // Create event
+    client = 0;
+
+    // Step event: on HTML5 the SDK finishes loading after the game starts
+    if (client == 0) {
+        if (!colyseus_is_ready()) exit;
+        client = colyseus_client_create("http://localhost:2567");
+    }
+    colyseus_process(); // once per Step: delivers every queued event and callback
     ```
     </Tabs.Tab>
 
@@ -180,6 +194,21 @@ The most common way to connect. Joins an existing room if available, or creates 
     } catch (e) {
       print('join error: $e');
     }
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.gml"
+    // "room" is a GameMaker built-in, so use another name
+    net_room = colyseus_client_join_or_create(client, "battle", {/* options */});
+
+    colyseus_on_join(net_room, function(_room) {
+        show_debug_message("joined successfully");
+    });
+
+    colyseus_on_error(net_room, function(_code, _message) {
+        show_debug_message("join error: " + _message);
+    });
     ```
     </Tabs.Tab>
 
@@ -303,11 +332,27 @@ The client posts to that route and consumes the reservation it returns:
     ```
     </Tabs.Tab>
 
+    <Tabs.Tab>
+    ```js filename="client.gml"
+    colyseus_http_post(client, "/find_match", {}, function(_err, _reservation) {
+        if (_err != undefined) return;
+
+        net_room = colyseus_client_consume_seat_reservation(client, _reservation);
+        colyseus_on_join(net_room, function(_room) {
+            show_debug_message("joined " + colyseus_room_get_id(_room));
+        });
+        colyseus_on_error(net_room, function(_code, _message) {
+            show_debug_message("join error: " + _message);
+        });
+    });
+    ```
+    </Tabs.Tab>
+
 </SDKTabs>
 
-A [queue](/matchmaker/queue#receiving-a-seat-reservation) or lobby room can send the reservation as a message instead. Pass the message payload the same way: GDScript takes the `Dictionary` as it arrives, and Dart reads it with `SeatReservation.fromJson()`.
+A [queue](/matchmaker/queue#receiving-a-seat-reservation) or lobby room can send the reservation as a message instead. Pass the message payload the same way. GDScript and GML take it as it arrives (a `Dictionary` and a struct), and Dart reads it with `SeatReservation.fromJson()`.
 
-The [GameMaker](/getting-started/gamemaker#client), [Swift](/getting-started/swift#quick-example) and [C](/getting-started/native-sdk#seat-reservations) SDKs expose the same call. Minimum native SDK versions: Godot 0.18.4, Flutter 0.18.5, GameMaker 0.18.5, Swift and C 0.18.9.
+The [Swift](/getting-started/swift#quick-example) and [C](/getting-started/native-sdk#seat-reservations) SDKs expose the same call. Minimum native SDK versions: Godot 0.18.4, Flutter 0.18.5, GameMaker 0.18.5, Swift and C 0.18.9.
 
 <Callout type="info">
     A reservation expires if the client doesn't join within the room's `seatReservationTimeout` (15 seconds by default). When the server sets a [`publicAddress`](/server#public-address-publicaddress), the reservation carries it, and the client connects to that address directly.
@@ -405,6 +450,16 @@ Send messages to the room. Messages are encoded with MsgPack and can hold any JS
     room.sendInt(0, {'direction': 'left'});
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.gml"
+    // sending message with string type
+    colyseus_send(net_room, "move", { direction: "left" });
+
+    // sending message with number type
+    colyseus_send(net_room, 0, { direction: "left" });
+    ```
+    </Tabs.Tab>
 </SDKTabs>
 
 <Callout type="info">
@@ -493,6 +548,18 @@ Listen for messages sent from the server.
     room.onMessage('powerup').listen((message) {
       print('message received from server');
       print(message);
+    });
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.gml"
+    // one handler per room receives every message type
+    colyseus_on_message(net_room, function(_room, _type, _message) {
+        if (_type != "powerup") return;
+
+        show_debug_message("message received from server");
+        show_debug_message(_message);
     });
     ```
     </Tabs.Tab>
@@ -712,6 +779,32 @@ Use `Callbacks` to listen for specific property changes with fine-grained contro
     });
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.gml"
+    // the callbacks manager needs the joined room's state
+    colyseus_on_join(net_room, function(_room) {
+        callbacks = colyseus_callbacks_create(_room);
+
+        colyseus_listen(callbacks, "currentTurn", function(_value, _previous) {
+            show_debug_message("Turn changed: " + string(_previous) + " -> " + string(_value));
+        });
+
+        colyseus_on_add(callbacks, "players", function(_player, _session_id) {
+            show_debug_message("Player joined: " + _session_id);
+
+            // nested callbacks can't see outer locals: bind them with method()
+            colyseus_listen(callbacks, _player, "hp", method({ session_id: _session_id }, function(_hp, _previous) {
+                show_debug_message("Player " + session_id + " hp: " + string(_hp));
+            }));
+        });
+
+        colyseus_on_remove(callbacks, "players", function(_player, _session_id) {
+            show_debug_message("Player left: " + _session_id);
+        });
+    });
+    ```
+    </Tabs.Tab>
 </SDKTabs>
 
 <Callout type="info">
@@ -820,6 +913,17 @@ Create a temporary connection to measure latency before joining a room.
     // Measure round-trip time on a live connection with room.ping() instead.
     ```
     </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.gml"
+    colyseus_get_latency(client, "ws://localhost:2567", function(_err, _latency) {
+        if (_err != undefined) return;
+        show_debug_message("Latency: " + string(_latency) + " ms");
+    });
+
+    // No pingCount option: each call sends one ping.
+    ```
+    </Tabs.Tab>
 </SDKTabs>
 
 #### During a Room Connection
@@ -872,6 +976,13 @@ Measure round-trip time on an existing connection.
     ```dart filename="client.dart"
     final latency = await room.ping();
     print('Latency: $latency ms');
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.gml"
+    // Not available in the GameMaker SDK.
+    // Measure latency with colyseus_get_latency() instead.
     ```
     </Tabs.Tab>
 </SDKTabs>
@@ -981,6 +1092,28 @@ Automatically connect to the server with the lowest latency from a list of endpo
     // Multi-region selection is not available in the Flutter SDK.
     // Pick an endpoint yourself and create the client for it:
     final client = ColyseusClient('wss://us-east.gameserver.com');
+    ```
+    </Tabs.Tab>
+
+    <Tabs.Tab>
+    ```js filename="client.gml"
+    // Select the best server from multiple regions
+    colyseus_select_by_latency(client, [
+        "wss://us-east.gameserver.com",
+        "wss://eu-west.gameserver.com",
+        "wss://asia.gameserver.com"
+    ], function(_err, _best) {
+        if (_err != undefined) return;
+
+        // Now use a client for the lowest-latency endpoint
+        colyseus_client_free(client);
+        client = colyseus_client_create(_best.endpoint);
+
+        net_room = colyseus_client_join_or_create(client, "game", {});
+        colyseus_on_join(net_room, function(_room) {
+            show_debug_message("joined successfully");
+        });
+    });
     ```
     </Tabs.Tab>
 </SDKTabs>
