@@ -27,11 +27,13 @@ The SDK includes TypeScript definitions out of the box.
 </Tabs.Tab>
 
 <Tabs.Tab>
-Include directly from unpkg. Replace `@x.x.x` with a version compatible with your server:
+Include directly from unpkg:
 
 ```html
-<script src="https://unpkg.com/@colyseus/sdk@^0.17.0/dist/colyseus.js"></script>
+<script src="https://unpkg.com/@colyseus/sdk/dist/colyseus.js"></script>
 ```
+
+This URL always loads the latest release. In production, pin the version your server uses by adding it after the package name: `@colyseus/sdk@<version>`.
 </Tabs.Tab>
 
 <Tabs.Tab>
