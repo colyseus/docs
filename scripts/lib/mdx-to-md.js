@@ -325,6 +325,12 @@ function renderNode(node, ctx) {
         case 'SDKTabs': return renderTabs(node, SDK_TAB_LABELS, ctx)
         case 'Tabs.Tab': return body(node, ctx) // an orphan tab, outside <Tabs>
 
+        // same text as components/server-required.tsx
+        case 'ServerRequired': return [
+            '> **Note:**', '>',
+            '> The state schema and messages in this example come from the room built in [Create a Server](/getting-started/server). Start that server before you run it.',
+        ].join('\n')
+
         case 'Cards.Card': {
             const title = attr(attrs, 'title') || inline(body(node, ctx))
             const href = attr(attrs, 'href')

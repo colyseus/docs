@@ -2,7 +2,7 @@ import { ServerIcon } from '@primer/octicons-react'
 import { javascript, typescript, react, unity, defold, construct3, cocos, haxe, discord, wechat, gamemaker, godot, monogame, flutter, swift, c } from '../../components/icons/platforms'
 
 export default {
-    "server": { title: <span><ServerIcon size={19} style={{ marginRight: '2px' }} /> Create a Server</span> },
+    "server": { title: <span><ServerIcon size={19} /> Create a Server</span> },
     "-- clients": { type: 'separator', title: 'Client SDKs' },
     "typescript": { title: <span>{typescript({ width: '19px', marginRight: '2px' })} TypeScript</span> },
     "react": { title: <span>{react({ width: '19px', marginRight: '2px' })} React</span> },
