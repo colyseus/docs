@@ -94,13 +94,9 @@ The `Client` instance is your entry point to connect to the server.
     <Tabs.Tab>
     ```js filename="client.gml"
     // Create event
-    client = 0;
+    client = colyseus_client_create("http://localhost:2567");
 
-    // Step event: on HTML5 the SDK finishes loading after the game starts
-    if (client == 0) {
-        if (!colyseus_is_ready()) exit;
-        client = colyseus_client_create("http://localhost:2567");
-    }
+    // Step event
     colyseus_process(); // once per Step: delivers every queued event and callback
     ```
     </Tabs.Tab>
