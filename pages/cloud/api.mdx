@@ -105,7 +105,7 @@ Your team's applications, with their locations (region, endpoint, plan) and the 
 
 Use `slug` in every application URL below, and an instance's `id` to read its [logs](#instance-logs).
 
-`scale_strategy` is `vertical` (one instance) or `horizontal` (several instances behind a load balancer). A location's or instance's `status` is one of `pending`, `provisioning`, `installing`, `ready`, `error`, `destroying`, `resizing` or `unpaid`. An instance's `deploy_status` takes the [deploy](#deploys) values, or is `null`. `endpoint` is `null` until the location or instance has an address.
+`scale_strategy` is `vertical` (one instance) or `horizontal` (several instances behind a load balancer). A location's or instance's `status` is one of `pending`, `provisioning`, `installing`, `ready`, `error`, `destroying`, `resizing`, `unpaid` or `parked` (an application that hasn't deployed in its first month has its server removed until its first deploy). An instance's `deploy_status` takes the [deploy](#deploys) values, or is `null`. `endpoint` is `null` until the location or instance has an address.
 
 `maintenance_mode` is `true` while the application's maintenance mode is on in the dashboard. `plan.transfer_gb` is the monthly transfer the plan includes per instance; [Egress](#egress) has your usage.
 
