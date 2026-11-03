@@ -285,6 +285,8 @@ update (deltaTime) {
     `setSimulationInterval()` is the previous name for `setTimestep()` and still works (it forwards). For **client-predicted** games, use the fixed-step loop **`setFixedTimestep(step, tickRate)`** instead. It advances by a constant `dt` and advertises the rate to predicting clients, which a variable step can't do deterministically. See [Server Input & Fixed Timestep](/netcode/server-input).
 </Callout>
 
+If each tick sends many messages, set [`autoBatch`](#batch-writes) to write them to each client as one socket write.
+
 ---
 
 ### Visibility & Access
@@ -303,6 +305,7 @@ join a room, alongside `lock()`, `unlock()`, and `setMatchmaking()`. See
 | `patchRate` | `50` | Frequency to send state updates to clients, in milliseconds (20fps). |
 | `autoDispose` | `true` | Automatically dispose the room when last client disconnects. |
 | `maxMessagesPerSecond` | `Infinity` | Maximum messages a client can send per second. Exceeding disconnects the client. |
+| `autoBatch` | `false` | Write everything one tick of the game loop sends a client as one socket write. Requires `@colyseus/core` 0.18.27. See [Batch Writes](#batch-writes). |
 | `seatReservationTimeout` | `15` | Seconds to wait for a client to effectively join after reserving a seat. |
 | `locked` | _(read-only)_ | Whether the room is currently locked (via `maxClients` or `lock()`). |
 
@@ -377,6 +380,56 @@ Send a raw byte array to all connected clients, skipping the default MsgPack enc
 ```ts filename="MyRoom.ts"
 this.broadcastBytes("raw-update", new Uint8Array([ 1, 2, 3 ]), { except: client });
 ```
+
+---
+
+### Batch Writes
+
+By default, every message a room sends is its own socket write. A tick that sends many messages (hits, projectiles, effects) pays one write per message, for each client.
+
+Set `autoBatch` to `true` to write everything one tick of the game loop sends a client as a single write. Each client receives the same messages, in the same order.
+
+```ts filename="MyRoom.ts"
+export class BattleRoom extends Room {
+    autoBatch = true;
+
+    onCreate() {
+        this.setFixedTimestep((ctx) => this.step(ctx), 30);
+    }
+}
+```
+
+With `autoBatch` on, a client gets one write for:
+
+- Each firing of [`setFixedTimestep()` or `setTimestep()`](#game-loop), including the `clock` timers and every catch-up step that run in it.
+- A [`broadcastPatch()`](#broadcast-patch) with `afterNextPatch` messages queued behind the patch.
+
+`autoBatch` is off by default. Without it, a room writes each message separately.
+
+One measurement ran on Windows, with 8 clients on the default WebSocket transport. A tick that broadcast 180 messages went from 12.2 ms to 0.8 ms. The gain depends on the platform and on how many messages each tick sends, so measure your own room.
+
+#### `batch(fn)`
+
+Call `batch(fn)` to hold the writes of any synchronous code the same way. Use it for bursts outside the game loop: a message handler, a timer, or a callback. This method works whether `autoBatch` is on or off.
+
+```ts filename="MyRoom.ts"
+messages = {
+    "volley": (client, arrows: number) => this.batch(() => {
+        for (let i = 0; i < arrows; i++) {
+            this.broadcast("arrow", i);
+        }
+    })
+}
+```
+
+- `batch()` returns what `fn` returns.
+- If `fn` throws, `batch()` rethrows the error. The messages `fn` sent before throwing are still written.
+- A `batch()` inside a batched tick, or inside another `batch()`, adds nothing: the outer one does the writing.
+- `fn` must be synchronous. For an `async` function, only the messages sent before its first `await` are held.
+
+<Callout type="info">
+    Requires `@colyseus/core` 0.18.27 and a transport that supports it. With an older transport, each message is written separately, as before. Support starts at 0.18.5 for `@colyseus/ws-transport`, `@colyseus/uwebsockets-transport` and `@colyseus/bun-websockets`, and at 0.18.6 for `@colyseus/h3-transport`. See [Transport](/server/transport#batched-writes).
+</Callout>
 
 ---
 
