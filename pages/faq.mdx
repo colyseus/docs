@@ -24,6 +24,7 @@ As a baseline, a small cloud server (1 vCPU, 1GB RAM) can typically handle 1,000
 - **Reduce state size**: Only include data that needs to be synchronized. Use messages for transient data.
 - **Optimize patch rate**: The default `patchRate` is 50ms. Increase it if your game doesn't need frequent updates.
 - **Use State View**: Limit what each client sees using [State View](/state/view) to reduce bandwidth per client.
+- **Batch messages**: If your game loop sends many messages each time it runs, set [`autoBatch`](/room#batch-writes). Each run's messages then reach a client as one socket write.
 - **Profile your room code**: Avoid heavy computations.
 
 [Optimizing State](/state/optimization) covers what a patch costs in bytes, and which field types, schema shapes and collection operations make it smaller.

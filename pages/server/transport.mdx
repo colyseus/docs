@@ -36,3 +36,9 @@ When a client connects to the server, the transport layer:
 2. Starts heartbeat monitoring (ping/pong) to detect unresponsive clients
 3. Parses the connection URL for `sessionId`, `roomId`, and authentication tokens
 4. Forwards the connection to the appropriate room via `matchMaker`
+
+## Batched Writes
+
+[`room.autoBatch` and `room.batch()`](/room#batch-writes) hold a client's messages and write them to its connection together. The built-in transports support them from these versions: `@colyseus/ws-transport`, `@colyseus/uwebsockets-transport` and `@colyseus/bun-websockets` 0.18.5, and `@colyseus/h3-transport` 0.18.6.
+
+A custom transport opts in through two optional methods on its `Client`. The `cork()` method holds the client's reliable writes, and `uncork()` writes everything held, in order. The room pairs every `cork()` with one `uncork()`, and never nests them. A transport without these methods writes each frame as it comes.
