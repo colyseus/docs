@@ -1,0 +1,96 @@
+---
+title: "Share your dev server"
+description: "Share the game running on your machine on a public URL with the Colyseus tunnel. Press s in vite dev, or run npx colyseus-tunnel, and send playtesters a link or a QR code."
+---
+import { Callout, Steps } from "nextra/components";
+
+# Share your dev server
+
+The Colyseus tunnel puts the game running on your machine on a public URL, such as `https://mygame.play.colyseus.dev`. Playtesters open the link or scan a QR code, and play against your local server. The page, its WebSockets and WebTransport all reach your machine.
+
+Nothing on your machine listens on the internet. So the tunnel works behind home routers, NAT and office firewalls. Use it to show work in progress, run a quick playtest, or try your game on a phone before you deploy it.
+
+<Callout type="info">
+    The tunnel is in preview and free to use. You need a [Colyseus Cloud](https://cloud.colyseus.io) account, and any member of a team can share through it.
+</Callout>
+
+## Share from Vite
+
+This section uses the [Vite plugin](/server/vite).
+
+<Steps>
+
+### Install the tunnel
+
+```sh npm2yarn
+npm install --save-dev @colyseus/tunnel
+```
+
+### Start your dev server
+
+```sh
+npx vite
+```
+
+### Press `s`, then Enter
+
+The first time, your browser opens Colyseus Cloud. Log in, check the team, and select **Share**.
+
+</Steps>
+
+The terminal then shows the public URL, and a QR code to open it on a phone:
+
+```txt
+  ➜  Shared:  https://k3x9w2ab.play.colyseus.dev/
+```
+
+Press `s` again to show them again. The URL stays the same until you stop Vite. Your code changes reach playtesters through hot reload, the same way they reach your own browser.
+
+To ask for a name, set the plugin's `tunnel` option:
+
+```ts {5} filename="vite.config.ts"
+import { defineConfig } from 'vite';
+import { colyseus } from 'colyseus/vite';
+
+export default defineConfig({
+    plugins: [colyseus({ serverEntry: '/src/server/index.ts', tunnel: { name: 'mygame' } })],
+});
+```
+
+Names are first come, first served. Set `tunnel: false` to remove the `s` shortcut.
+
+## Share from the command line
+
+`colyseus-tunnel` shares any local server, with or without Vite:
+
+```sh
+npx colyseus-tunnel 2567
+npx colyseus-tunnel -n mygame 2567
+```
+
+The port can also be `host:port`, such as `[::1]:5173`. Press Ctrl+C to stop sharing.
+
+`npx colyseus-tunnel logout` forgets your login on this machine.
+
+## What playtesters can reach
+
+The tunnel forwards every request to your local server. With the Vite plugin, playtesters load the page, its assets and the game server.
+
+Files in your server entry's folder answer 404 through the tunnel, so keep server-only code there. Your client can still use `import type` from that folder, because a type import leaves no request behind.
+
+## Without a browser
+
+The login needs a browser once per machine. For a remote shell, `BROWSER=none` prints the login link instead of opening it.
+
+For CI or a container, set `COLYSEUS_CLOUD_TOKEN` to a tunnel token. After one login, your token is in `~/.colyseus/tunnel.json`.
+
+## Limits
+
+- The tunnel runs on macOS and Linux (x64 and arm64), and on Windows (x64).
+- The Vite dev server must use plain HTTP: `server.https` isn't supported yet.
+- Every request travels through the tunnel's server in San Francisco. Playtesters far from it see extra latency.
+- Your tunnel tokens stop working when you leave the team.
+
+## Report abuse
+
+To report a tunnel used for phishing, malware or other abuse, email [support@colyseus.io](mailto:support@colyseus.io) with its URL. We can close a tunnel within seconds.

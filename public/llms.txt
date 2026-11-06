@@ -121,6 +121,7 @@ The full corpus is at https://docs.colyseus.io/llms-full.txt.
 
 - [Built-in Tools](https://docs.colyseus.io/tools): Built-in Colyseus tools: Playground, Monitoring panel, load testing, and unit testing, all included in the template projects.
 - [Playground](https://docs.colyseus.io/tools/playground): Use the Colyseus Playground to create room connections, inspect messages, and debug state synchronization in the browser.
+- [Share your dev server](https://docs.colyseus.io/tools/tunnel): Share the game running on your machine on a public URL with the Colyseus tunnel. Press s in vite dev, or run npx colyseus-tunnel, and send playtesters a link or a QR code.
 - [Monitoring Panel](https://docs.colyseus.io/tools/monitoring): Use the Colyseus Monitoring Panel to view active rooms, inspect state, manage clients, and debug your multiplayer server in real time.
 - [Load Testing](https://docs.colyseus.io/tools/loadtest): Stress test your Colyseus multiplayer server by simulating concurrent client connections with the @colyseus/loadtest tool.
 - [Unit Testing](https://docs.colyseus.io/tools/unit-testing): Write unit tests for your Colyseus server rooms using the built-in testing utilities and Vitest.

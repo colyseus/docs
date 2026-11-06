@@ -2,6 +2,7 @@ import { HomeIcon, FileCodeIcon, ServerIcon, ThumbsupIcon, DevicesIcon, Database
 
 export default {
     "playground": {},
+    "tunnel": {},
     "monitoring": {},
     "loadtest": {}, 
     "unit-testing": {},

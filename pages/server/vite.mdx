@@ -79,6 +79,7 @@ Editing `MyRoom.ts` reloads the server in place; editing your frontend reloads t
 | `quiet` | `boolean` | `false` | Suppress the plugin's reload/room logs. |
 | `httpServer` | `http.Server` | — | Required only when running Vite in [middleware mode](#middleware-mode). |
 | `loadWsTransport` | `() => Promise<…>` | — | Provide a custom WebSocket transport loader. Defaults to `@colyseus/ws-transport`. |
+| `tunnel` | `boolean \| { name?: string }` | `true` | Press `s` + Enter in `vite dev` to share it on a public URL. See [Share your dev server](/tools/tunnel). |
 
 ## How server HMR works
 
