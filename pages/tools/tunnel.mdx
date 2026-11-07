@@ -74,9 +74,13 @@ The port can also be `host:port`, such as `[::1]:5173`. Press Ctrl+C to stop sha
 
 ## What playtesters can reach
 
-The tunnel forwards every request to your local server. With the Vite plugin, playtesters load the page, its assets and the game server.
+The tunnel forwards every request to your local server. With the Vite plugin, playtesters get what `vite build` would ship: the files in `public/`, your pages, and what they load, from imports to the assets beside them. Every other file in your project answers 404, such as a `data/` folder, scripts or keys.
 
-Files in your server entry's folder answer 404 through the tunnel, so keep server-only code there. Your client can still use `import type` from that folder, because a type import leaves no request behind.
+Files in your server entry's folder answer 404 too, so keep server-only code there. Your client can still use `import type` from that folder, because a type import leaves no request behind.
+
+If your page fetches a file at runtime, put it in `public/`, as you would for a build. Vite's terminal names each file the tunnel kept out.
+
+Without the Vite plugin, whatever your local server answers is public, including the playground and the monitor if your server mounts them. Every tunnel refuses secret files such as `.env`, `.git/` and keys.
 
 ## Without a browser
 
