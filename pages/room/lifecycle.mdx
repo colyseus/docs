@@ -331,7 +331,7 @@ onUncaughtException (err: Error, methodName: string) {
 
 ## On Unhandled Message
 
-Define `onUnhandledMessage()` to be notified when a client sends a message type that has no `onMessage()` handler and no [`"*"` fallback](/room#fallback-for-all-messages). Use it to report these messages, for example to an error tracker. Available since `@colyseus/core` version `0.18.26`.
+Define `onUnhandledMessage()` to be notified when a client sends a message type that has no `onMessage()` handler and no [`"*"` fallback](/room#fallback-for-all-messages). Use it to report these messages, for example to an error tracker.
 
 ```ts filename="MyRoom.ts"
 import * as Sentry from "@sentry/node";
