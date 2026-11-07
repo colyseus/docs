@@ -329,6 +329,33 @@ onUncaughtException (err: Error, methodName: string) {
 
 ---
 
+## On Unhandled Message
+
+Define `onUnhandledMessage()` to be notified when a client sends a message type that has no `onMessage()` handler and no [`"*"` fallback](/room#fallback-for-all-messages). Use it to report these messages, for example to an error tracker.
+
+```ts filename="MyRoom.ts"
+import * as Sentry from "@sentry/node";
+
+onUnhandledMessage (client: Client, type: string | number, message: unknown) {
+    Sentry.captureMessage(`Unhandled message "${type}"`, {
+        extra: { roomId: this.roomId, sessionId: client.sessionId, message },
+    });
+}
+```
+
+`onUnhandledMessage()` doesn't change what happens to the message. After it returns, the server still:
+
+- disconnects the client with code `4002` (`CloseCode.WITH_ERROR`) for `room.send()` and `room.sendBytes()`. In [devMode](/server/devmode), the client stays connected, and `room.onError` receives an `INVALID_PAYLOAD` (`4217`) error instead.
+- rejects `room.request()` with a `no_handler` error.
+
+Without `onUnhandledMessage()`, the server logs a warning when a `room.send()` or `room.sendBytes()` message has no handler.
+
+<Callout type="info">
+    To accept every message type instead of disconnecting the client, register a [`"*"` fallback](/room#fallback-for-all-messages) handler. The fallback doesn't answer `room.request()`, so unhandled requests still reach `onUnhandledMessage()`.
+</Callout>
+
+---
+
 ## On Before Patch
 
 The `onBeforePatch` lifecycle hook is triggered before state synchronization, at patch rate frequency. (see [`patchRate`](/room#configuration-properties))

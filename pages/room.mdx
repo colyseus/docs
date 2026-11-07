@@ -166,6 +166,10 @@ messages = {
 }
 ```
 
+Without a fallback, a client that sends a message type with no handler is disconnected with code `4002` (`CloseCode.WITH_ERROR`). On the client, `room.onLeave` fires with that code, and the SDK doesn't try to reconnect. In [devMode](/server/devmode), the client stays connected, and `room.onError` receives an `INVALID_PAYLOAD` (`4217`) error instead.
+
+The server logs a warning when this happens. To report these messages yourself, for example to an error tracker, define [`onUnhandledMessage()`](/room/lifecycle#on-unhandled-message).
+
 #### Registering handlers at runtime
 
 The declarative `messages` map covers most cases. You may also register a handler imperatively with `this.onMessage()`. It returns a function that removes the handler when called.
