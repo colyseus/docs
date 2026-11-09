@@ -14,7 +14,7 @@ const config: DocsThemeConfig = {
         link: 'https://github.com/colyseus/colyseus',
     },
     chat: {
-        link: 'http://chat.colyseus.io/',
+        link: 'https://discord.gg/RY8rRS7',
     },
     docsRepositoryBase: 'https://github.com/colyseus/docs/tree/master',
 
