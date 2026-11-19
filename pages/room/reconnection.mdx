@@ -20,8 +20,8 @@ import { MovedAnchors } from '../../components/moved-anchors'
 
 Colyseus supports two complementary reconnection flows. Both require the server to hold the client's seat via [`allowReconnection()`](#allowreconnectionclient-seconds):
 
-- **[Automatic reconnection](#automatic-reconnection)**: the SDK detects the drop and retries with exponential backoff. The same `room` instance survives, so your listeners stay attached. Introduced in version 0.17.
-- **[Manual reconnection](#manual-reconnection)**: the client rejoins later by calling `client.reconnect()` with a stored `reconnectionToken`. Use it when the app itself restarts (a page reload, an app switch on mobile) or after automatic retries give up. Available in all versions.
+- **[Automatic reconnection](#automatic-reconnection)**: the SDK detects the drop and retries with exponential backoff. The same `room` instance survives, so your listeners stay attached.
+- **[Manual reconnection](#manual-reconnection)**: the client rejoins later by calling `client.reconnect()` with a stored `reconnectionToken`. Use it when the app itself restarts (a page reload, an app switch on mobile) or after automatic retries give up.
 
 ## Overview
 

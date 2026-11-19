@@ -43,10 +43,9 @@ This error means that the client was not able to effectively connect with the se
 **This error may appear in a few scenarios:**
 
 - Server is under heavy load and by the time it can respond to a WebSocket connection request, the "seat reservation" code has already expired. [You may increase the seat reservation time limit](/matchmaker#reserve-a-seat-for) to remedy this.
-- You have mixed Colyseus package versions in your `package.json` (between `0.14.x` and `0.15.x`, for example).
-  Make sure to only use packages under `0.15.x` (if you are using version 0.15)
-  or `0.14.x` (if you are using version 0.14). The exact patch version does not
-  matter, but major and minor do.
+- You have mixed Colyseus package versions in your `package.json` (between `0.17.x` and `0.18.x`, for example).
+  Make sure every Colyseus package is on the same minor version, such as `0.18.x`.
+  The exact patch version does not matter.
 - When using multiple Node.js processes, your [scalability configuration](/scalability) may not be correct. Make sure to follow scalability instructions.
 
 ### How do I handle reconnection?
@@ -92,7 +91,7 @@ If you define your state with [`@type()` decorators](/state/schema/decorators) a
 
 ### How can I sync data only to a specific client?
 
-Support for per-client state visibility was introduced in version `0.16`. You can use the `StateView` class to control which parts of the state are visible to each client. See [State View](/state/view) for more details.
+Use the `StateView` class to control which parts of the state are visible to each client. See [State View](/state/view) for more details.
 
 ### When should I use state vs messages?
 
