@@ -27,8 +27,8 @@ export interface PremiumDemo {
      * Public playable build, rendered on the card. Anyone can play; only the
      * source is sponsor-gated.
      *
-     * Every one of these is a static Vercel build talking to the shared game
-     * server at demos.colyseus.cloud, one path prefix per demo. Note that
+     * The Vercel builds talk to the shared game server at demos.colyseus.cloud,
+     * one path prefix per demo; Fable of War is played on Wavedash. Note that
      * `check-links` does not validate external URLs, so a host that goes down
      * will not fail CI.
      */
@@ -43,22 +43,23 @@ export interface PremiumDemo {
 
 export const SPONSOR_URL = "https://github.com/sponsors/endel";
 
+// Same order as PREMIUM_DEMOS on colyseus.io (src/data/premium-demos.ts): FPS, RTS, MOBA, then the rest.
 export const premiumDemos: PremiumDemo[] = [
     {
-        title: "Air Hockey",
-        image: "/demos/netcode/air-hockey.webp",
-        description: "3D air hockey where everything is predicted: your mallet, the puck, hits and even goals resolve locally and are settled by the server. First to 7 wins.",
-        engines: ["Three.js", "Godot", "Unity"],
-        play: "https://air-hockey-colyseus.vercel.app/",
-        source: "https://github.com/colyseus/air-hockey-demo",
-    },
-    {
         title: "ColyStrike (FPS)",
-        image: "/demos/netcode/fps.webp",
+        image: "/demos/netcode/colystrike.webp",
         description: "First-person shooter: predicted movement with reconciliation, server-validated hitscan with lag compensation, and a C4 plant and defuse loop.",
         engines: ["Three.js"],
         play: "https://colystrike.vercel.app/",
         source: "https://github.com/colyseus/fps-colystrike-demo",
+    },
+    {
+        title: "Fable of War (RTS)",
+        image: "/demos/netcode/fable-of-war.webp",
+        description: "A 50-player RTS battle royale in one room: server-side fog of war through StateView, flow-field pathfinding, and bots in the empty seats.",
+        engines: ["PixiJS"],
+        play: "https://wavedash.com/games/fable-of-war",
+        source: "https://github.com/colyseus/rts-demo",
     },
     {
         title: "MOBA",
@@ -67,6 +68,14 @@ export const premiumDemos: PremiumDemo[] = [
         engines: ["Three.js"],
         play: "https://moba-colyseus.vercel.app/",
         source: "https://github.com/colyseus/moba-demo",
+    },
+    {
+        title: "Air Hockey",
+        image: "/demos/netcode/air-hockey.webp",
+        description: "3D air hockey where everything is predicted: your mallet, the puck, hits and even goals resolve locally and are settled by the server. First to 7 wins.",
+        engines: ["Three.js", "Godot", "Unity"],
+        play: "https://air-hockey-colyseus.vercel.app/",
+        source: "https://github.com/colyseus/air-hockey-demo",
     },
     {
         title: "Platformer",
